@@ -1,0 +1,235 @@
+<form
+  class="form-horizontal"
+  autocomplete="off"
+  #resourceRequestForm="ngForm"
+  novalidate
+>
+  <abp-modal-header
+    *ngIf="data.command == 'create'"
+    title="Create new resource request"
+    (onCloseClick)="dialogRef.close()"
+  >
+  </abp-modal-header>
+  <abp-modal-header
+    *ngIf="data.command == 'edit'"
+    title="Edit request: {{ title }}"
+    (onCloseClick)="dialogRef.close()"
+  >
+  </abp-modal-header>
+  <div class="modal-body">
+    <div *ngIf="typeControl == 'request'" class="form-group row required">
+      <label class="col-md-3 col-form-label" for="tenancyName">
+        Project:
+      </label>
+      <div class="col-md-9">
+        <mat-form-field class="mt-2 w-100" appearance="outline">
+          <mat-select
+            (closed)="focusOut()"
+            name="projectId"
+            #projectIdValid="ngModel"
+            placeholder="Select project"
+            required
+            [(ngModel)]="resourceRequestDto.projectId"
+          >
+            <mat-form-field
+              class="w-100 px-3"
+              style="
+                position: sticky;
+                top: 0;
+                z-index: 2;
+                background-color: white;
+              "
+            >
+              <input
+                matInput
+                [(ngModel)]="searchProject"
+                name="searchProjectName"
+                (keydown)="$event.stopPropagation()"
+                placeholder="Search"
+                #search
+              />{{ search.focus() }}
+            </mat-form-field>
+            <ng-container
+              *ngFor="
+                let project of listProject | listFilter: 'name':searchProject
+              "
+            >
+              <mat-option [value]="project.id">
+                {{ project.name }}
+              </mat-option>
+            </ng-container>
+          </mat-select>
+        </mat-form-field>
+        <mat-error
+          class="mt-1"
+          *ngIf="projectIdValid.hasError('required') && projectIdValid.touched"
+          style="font-size: 13px"
+        >
+          This field is required
+        </mat-error>
+      </div>
+    </div>
+    <div class="form-group row required">
+      <label class="col-md-3 col-form-label" for="tenancyName"> Skill: </label>
+      <div class="col-md-9">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-select
+            placeholder="Select skill"
+            multiple
+            [(ngModel)]="resourceRequestDto.skillIds"
+            name="SkillList"
+            #skill="ngModel"
+          >
+            <mat-option>
+              <ngx-mat-select-search
+                onkeydown="event.stopPropagation()"
+                placeholderLabel="Search..."
+                noEntriesFoundLabel="No match skill found"
+                ngModel
+                [ngModelOptions]="{ standalone: true }"
+                (ngModelChange)="filterSkills($event)"
+              >
+                <mat-icon ngxMatSelectSearchClear>
+                  <i class="fa fa-times" aria-hidden="true"></i>
+                </mat-icon>
+              </ngx-mat-select-search>
+            </mat-option>
+            <mat-option
+              *ngFor="let skill of filteredSkillList"
+              [value]="skill.id"
+            >
+              {{ skill.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-error
+          class="mt-1"
+          *ngIf="skill.hasError('required') && skill.touched"
+          style="font-size: 13px"
+        >
+          This field is required
+        </mat-error>
+      </div>
+    </div>
+
+    <div class="form-group row required">
+      <label class="col-md-3 col-form-label" for="tenancyName"> Level: </label>
+      <div class="col-md-9">
+        <mat-form-field class="mt-2 w-100" appearance="outline">
+          <mat-select
+            name="userLevel"
+            #userLevelValid="ngModel"
+            placeholder="Select Level"
+            required
+            [(ngModel)]="resourceRequestDto.level"
+          >
+            <ng-container *ngFor="let userLevel of userLevelList">
+              <mat-option [value]="userLevel.id">
+                {{ userLevel.name }}
+              </mat-option>
+            </ng-container>
+          </mat-select>
+        </mat-form-field>
+        <mat-error
+          class="mt-1"
+          *ngIf="userLevelValid.hasError('required') && userLevelValid.touched"
+          style="font-size: 13px"
+        >
+          This field is required
+        </mat-error>
+      </div>
+    </div>
+
+    <div class="form-group row required" *ngIf="data.command == 'create'">
+      <label class="col-md-3 col-form-label" for="tenancyName">
+        Quantity:
+      </label>
+      <div class="col-md-9">
+        <mat-form-field appearance="outline" class="w-100">
+          <input
+            matInput
+            placeholder="Quantity"
+            name="quantity"
+            #quantity="ngModel"
+            [(ngModel)]="resourceRequestDto.quantity"
+            required
+          />
+        </mat-form-field>
+        <mat-error
+          class="mt-1"
+          *ngIf="quantity.hasError('required') && quantity.touched"
+          style="font-size: 13px"
+        >
+          This field is required
+        </mat-error>
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <label class="col-md-3 col-form-label" for="tenancyName">
+        Priority:
+      </label>
+      <div class="col-md-9">
+        <mat-form-field class="mt-2" appearance="outline" class="w-100">
+          <mat-select
+            name="priority"
+            #priorityValid="ngModel"
+            placeholder="Select priority"
+            required
+            [(ngModel)]="resourceRequestDto.priority"
+          >
+            <ng-container *ngFor="let priority of priorityList">
+              <mat-option [value]="APP_ENUM.Priority[priority]">
+                {{ priority }}
+              </mat-option>
+            </ng-container>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="form-group row required">
+      <label class="col-md-3 col-form-label" for="tenancyName">
+        Time Need:
+      </label>
+      <div class="col-md-9">
+        <mat-form-field appearance="outline" class="w-100">
+          <input
+            matInput
+            placeholder="Time need"
+            [matDatepicker]="picker"
+            name="startTime"
+            name="timeNedd"
+            #timeNeed="ngModel"
+            [(ngModel)]="resourceRequestDto.timeNeed"
+            required
+          />
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="picker"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+        <mat-error
+          class="mt-1"
+          *ngIf="timeNeed.hasError('required') && timeNeed.touched"
+          style="font-size: 13px"
+        >
+          This field is required
+        </mat-error>
+      </div>
+    </div>
+  </div>
+  <div align="end" class="row justify-content-end">
+    <button class="btn btn-secondary btn-action mr-2" mat-dialog-close>
+      Cancel
+    </button>
+    <button
+      class="btn btn-primary btn-action"
+      [disabled]="!resourceRequestForm.valid || isLoading"
+      (click)="SaveAndClose()"
+    >
+      Save
+    </button>
+  </div>
+</form>

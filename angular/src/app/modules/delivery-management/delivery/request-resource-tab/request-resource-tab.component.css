@@ -1,0 +1,68 @@
+@media only screen and (max-width: 1500px) {
+    .fixTableHead {
+        height: 50vh
+    }
+}
+
+@media only screen and (min-width: 1501px) {
+    .fixTableHead {
+        height: 65vh
+    }
+}
+
+table td {
+    vertical-align: top;
+}
+
+ ::ng-deep .mat-radio-button .mat-radio-label-content {
+    padding-left: 5px;
+}
+
+.vertical-align-baseline {
+    vertical-align: baseline !important;
+}
+
+::ng-deep table thead th i:hover {
+    color: black;
+}
+
+::ng-deep #tbl-resource-request thead th {
+    vertical-align: top;
+}
+
+.badge {
+    height: fit-content;
+}
+.tl-link {
+    color: #1769aa;
+    display: inline-block;
+    font-weight: 600;
+  }
+.tl-link:hover{
+    text-decoration: underline;
+    cursor: pointer;
+}
+.fixHead {
+    overflow-y: auto;
+    max-height: 71vh;
+  }
+.fixHead thead {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+ }
+  .fixHead table tbody:nth-of-type(1) tr:nth-of-type(1) td {
+      border-top: none !important;
+  }
+  .fixHead table thead th, tr {
+      border-top: none !important;
+      border-bottom: none !important;
+      box-shadow: inset 0 0.4px 0 rgba(204, 204, 204, 0.35),
+                  inset 0 -0.4px 0 rgba(204, 204, 204, 0.35);
+  }
+
+.link:hover{
+    text-decoration: underline;
+    color: #1769aa;
+    cursor: pointer;
+}

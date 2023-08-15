@@ -1,0 +1,324 @@
+<section class="content px-2 mt-2" id="pool" *ngIf="permission.isGranted(Resource_TabPool_View)">
+    <div class="container-fluid">
+        <div class="">
+            <div class="">
+                <div class="input-group">
+
+                    <div class="row w-100">
+                        <div class="col-8 d-flex mt-1">
+                            <div class="input-group-prepend">
+                                <button type="button" class="btn bg-blue" (click)="getDataPage(1)">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                            <input type="text" class="form-control" name="keyword" placeholder="Search"
+                                [(ngModel)]="searchText" (keyup.enter)="getDataPage(1)" />
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-default" (click)="checkAddFilter()">
+                                    <i class="fas" [class.fa-angle-up]="advancedFiltersVisible"
+                                        [class.fa-angle-down]="!advancedFiltersVisible"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-3 row justify-content-end">
+                            <label for="" style="margin-top: 13px;" class="col-3 text-right">Skills:</label>
+                            <mat-form-field style="width: 300px;" class="col-9" appearance="outline">
+                                <mat-select placeholder="select skill" multiple (selectionChange)="getDataPage(1)"
+                                    [(ngModel)]="selectedSkillId">
+                                    <div style="width: 334px;"
+                                        style="position: sticky; top: 0; z-index: 2; background-color: white; padding: 10px 7px; padding: 13px 7px 0px 5px;">
+                                        <mat-radio-group aria-label="Filter by" class="w-100 px-3  row"
+                                            [(ngModel)]="isAndCondition" (ngModelChange)="getDataPage(1)"
+                                            style=" width: 100%;">
+                                            <div class="col-4">
+                                                <label style=" white-space: nowrap;" class="mt-2 mr-2">Search
+                                                    type:</label>
+                                            </div>
+                                            <div class="col-8 pt-2">
+                                                <mat-radio-button class="mr-3" [value]="true">And</mat-radio-button>
+                                                <mat-radio-button [value]="false">Or</mat-radio-button>
+                                            </div>
+                                        </mat-radio-group>
+                                    </div>
+                                    <mat-option *ngFor="let skill of listSkills" [value]="skill.id">
+                                        {{skill.name}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-1">
+                            <i class="fas fa-times fa-lg mt-3" *ngIf="selectedSkillId?.length > 0"
+                                (click)="selectedSkillId = null; refresh()"></i>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div *ngIf="advancedFiltersVisible" class="mb-0 mt-1">
+                <div class="card-body">
+                    <form class="form-horizontal">
+                        <div class="row">
+                            <div class="col-md-12 col-xl-12">
+                                <div class="mb-0">
+                                    <div>
+                                        <div *ngFor="let item of filterItems; let i = index">
+                                            <app-filter [item]="item" (emitChange)="onEmitChange($event, i)"
+                                                (deleteDataFilter)="deleteFilterItem(i)" [inputFilters]="FILTER_CONFIG">
+                                            </app-filter>
+                                        </div>
+                                        <i style="padding: 0" class="fas fa-plus-circle ml-3" (click)="addFilter()"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="table-responsive py-4 pool-table">
+                <div class="fixTableHead">
+                    <table [busy]="isLoading" style="border-collapse: collapse" class="table table-hover text-nowrap">
+                        <thead class="bg-light">
+                            <tr style="border: none">
+                                <th class="stt">#</th>
+                                <th>Employee</th>
+                                <th style="width: 75px;">History</th>
+                                <th>Planned Projects</th>
+                                <th>Temp Project</th>
+                                <th style="width: 200px;">Skills</th>
+                                <th style="min-width: 220px;">Note</th>
+                                <th style="width: 100px;">Start Pool</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="
+                  let item of availableResourceList
+                    | paginate
+                      : {
+                          id: 'server',
+                          itemsPerPage: pageSize,
+                          currentPage: pageNumber,
+                          totalItems: totalItems
+                        };
+                  let i = index">
+                                <td class="text-center">
+                                    <span>{{ i + 1 }}</span>
+                                </td>
+                                <td style="width: 350px;">
+                                    <div style="width: 100%; display: flex; flex-direction: row; align-items: center;">
+                                        <app-user-info class="w-100" [userData]="item" [averagePoint]="item.avgPoint">
+                                        </app-user-info>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <div style="display: inline">
+                                        <div>
+                                            <i *ngIf="permission.isGranted(Resource_TabPool_ViewHistory)"
+                                                class="fas fa-history fa-lg" (click)="projectHistorUser(item)"
+                                                matTooltip="Xem dự án trước đây"></i>
+                                        </div>
+                                        <div style="margin-top: 10px;">
+                                            <i *ngIf="permission.isGranted(Resource_TabPool_ViewHistory)"
+                                                class="fa fa-file" (click)="RetroReviewHistoryUser(item)"
+                                                matTooltip="Xem lịch sử của Retro và Review trước đây"></i>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td style="white-space: normal;">
+                                    <div class="d-flex justify-content-between" style="align-items: center;">
+                                        <div>
+                                            <div *ngFor="let plan of item.plannedProjects"
+                                                (mouseenter)="plan.onHover = true;" (mouseleave)="plan.onHover = false"
+                                                style="white-space: nowrap;">
+                                                <button class="btn p-0 text-left" style="white-space: normal;"
+                                                    [matMenuTriggerFor]="planMenu">
+
+                                                    <i class="fas fa-ellipsis-v fa-xs mr-1"
+                                                        style="font-size: 15px;"></i>
+                                                    <span [ngClass]="plan.onHover?'on-hover-plan':''">
+                                                        <span matTooltip="Potential project"
+                                                            *ngIf="plan.projectStatus==APP_ENUM.ProjectStatus.Potential"
+                                                            class="badge bg-info pointer mr-1">
+                                                            P</span>
+                                                        <strong class="mr-1">{{ plan.projectName }} </strong><strong
+                                                            [ngClass]="plan.isPool?'text-secondary' : 'text-primary'"
+                                                            class=" mr-1">
+                                                            {{plan.workType}}</strong> <strong
+                                                            [ngClass]="plan.allocatePercentage > 0?'badge-success' : 'badge-danger'"
+                                                            class="badge mr-1">
+                                                            {{plan.allocatePercentage > 0 ? 'Join' : 'Out'}}</strong> {{
+                                                        plan.startTime | date:
+                                                        'dd/MM/yyyy' }}
+                                                    </span>
+                                                    <!-- <span style="display: inline-block; width: 10px;">
+                                                    <i *ngIf="plan.onHover && (permission.isGranted(DeliveryManagement_ResourceRequest_CancelAnyPlanResource) 
+                                                     || isAllowCancelPlan(plan.creatorUserId))" class="fas fa-times pointer text-danger ml-1"
+                                                        (click)="CancelResourcePlan(plan,item.fullName)"></i>
+                                                </span> -->
+                                                </button>
+                                                <!-- <i class="fas fa-ellipsis-v" [matMenuTriggerFor]="planMenu"></i> -->
+                                                <mat-menu #planMenu="matMenu">
+                                                    <button *ngIf="permission.isGranted(Resource_TabPool_ProjectDetail)"
+                                                        mat-menu-item (click)="viewProjectDetail(plan)">
+                                                        <i class="fas fa-file-alt"></i> View Project Detail
+                                                    </button>
+                                                    <button
+                                                        *ngIf="plan.allocatePercentage > 0 && (permission.isGranted(Resource_TabPool_ConfirmPickEmployeeFromPoolToProject)
+                                                    || permission.isGranted(Resource_TabPool_ConfirmMoveEmployeeWorkingOnAProjectToOther))"
+                                                        mat-menu-item
+                                                        (click)="confirm(plan, item.userId, item.fullName)"><i
+                                                            class="fas fa-check mr-1 text-success"></i>Confirm
+                                                        Join</button>
+                                                    <button *ngIf="plan.allocatePercentage <= 0 && permission.isGranted(Resource_TabPool_ConfirmOut)
+                                                            " mat-menu-item
+                                                        (click)="confirm(plan, item.userId, item.fullName)"><i
+                                                            class="fas fa-check mr-1 text-success"></i>Confirm
+                                                        Out</button>
+                                                    <button
+                                                        *ngIf="permission.isGranted(Resource_TabPool_CancelMyPlan) || permission.isGranted(Resource_TabPool_CancelAnyPlan)"
+                                                        mat-menu-item (click)="CancelResourcePlan(plan,item.fullName)">
+                                                        <i class="fas fa-times mr-1 text-danger"></i> Cancel
+                                                        plan</button>
+                                                    <button *ngIf="permission.isGranted(Resource_TabPool_EditPlan)"
+                                                        mat-menu-item (click)="editUserPlan(plan,item)"> <i
+                                                            class="fas fa-edit mr-1 text-secondary"></i> Edit</button>
+                                                </mat-menu>
+                                            </div>
+                                        </div>
+                                        <div *ngIf="permission.isGranted(Resource_TabPool_CreatePlan)"
+                                            style="width: 14%;" class="text-right  ml-1">
+                                            <i class="fas fa-plus text-primary" (click)="planUser(item)"
+                                                matTooltip="Create plan for user"></i>
+                                        </div>
+                                    </div>
+
+                                </td>
+                                <td style="white-space: normal;">
+                                    <div class="d-flex justify-content-between"
+                                        style="align-items: center;width: 100%;">
+                                        <div style="width: 100%;" class="d-flex justify-content-between">
+                                            <div class="d-flex justify-content-between" style="width: 100%;"
+                                                *ngFor="let plan of item.poolProjects"
+                                                (mouseenter)="plan.onHover = true;" (mouseleave)="plan.onHover = false">
+                                                <div style="width: 100%;">
+                                                    <button class="btn p-0 text-left text-nowrap"
+                                                        [matMenuTriggerFor]="tempMenu">
+                                                        <span [ngClass]="plan.onHover?'on-hover-plan':''">
+                                                            <strong>{{ plan.projectName }} </strong>&nbsp;{{
+                                                            plan.startTime |
+                                                            date:
+                                                            'dd/MM/yyyy' }}
+                                                        </span>
+                                                    </button>
+                                                    <mat-menu #tempMenu="matMenu">
+                                                        <button mat-menu-item (click)="viewProjectDetail(plan)">
+                                                            <i class="fas fa-file-alt"></i> View Project Detail
+                                                        </button>
+                                                        <button *ngIf="permission.isGranted(Resource_TabPool_Release)"
+                                                            mat-menu-item (click)="releaseUser(plan,item.fullName)"> <i
+                                                                class="fas fa-sign-out-alt mr-1"></i>Release</button>
+                                                        <button
+                                                            *ngIf="permission.isGranted(Resource_TabPool_EditTempProject)"
+                                                            mat-menu-item (click)="addToTempProject(item,plan)"> <i
+                                                                class="fas fa-edit mr-1"></i>Edit Temp Project</button>
+                                                    </mat-menu>
+                                                </div>
+                                                <div>
+                                                    <div *ngIf="permission.isGranted(Resource_TabPool_EditTempProject) || permission.isGranted(Resource_TabPool_Release)"
+                                                        style="width: 10%;" class="text-right ml-1">
+
+                                                        <i *ngIf="item.poolProjects.length > 0"
+                                                            class="fas fa-ellipsis-v"
+                                                            [matMenuTriggerFor]="tempMenu"></i>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                        <div *ngIf="permission.isGranted(Resource_TabPool_AddTempProject)">
+                                            <i style="color: #007bff;"
+                                                *ngIf="item.poolProjects.length == 0 || !item.poolProjects.length"
+                                                class="fas fa-plus text-primary'" (click)="addToTempProject(item)"
+                                                matTooltip="Add Temp Project"></i>
+                                        </div>
+
+                                    </div>
+
+                                </td>
+                                <td style="white-space: normal; max-width: 200px">
+                                    <div class="d-flex" style="align-items: center;">
+                                        <div style="width: 200px">
+                                            <p class="m-0" *ngFor="let item of item.userSkills">
+                                                - {{item.skillName}} &nbsp;
+                                                <span *ngIf="item.skillRank">( {{item.skillRank}} <i class="fa fa-star"
+                                                      [ngClass] = '{crimson: item.skillRank == 5, grey:item.skillRank ==1 || item.skillRank == 2,yellow:item.skillRank == 3 ,orange:item.skillRank == 4}' style="
+                                                      font-size: 13px;"></i>  )</span>
+                                            </p>
+                                            <!-- {{ skillsCommas(item.listSkills) }} -->
+                                        </div>
+                                        <div *ngIf="permission.isGranted(Resource_TabPool_UpdateSkill)"
+                                            style="width: 10%; text-align: right;" class="ml-1">
+                                            <i class="fas fa-edit" (click)="updateUserSkill(item)"
+                                                matTooltip="Edit skill"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td style="
+                    white-space: pre-line;
+                    word-break: break-all;
+                    max-width: 200px;
+                    min-width: 150px;
+                  ">
+                                    <div class="d-flex" style="align-items: center">
+                                        <div style="width: 90%">{{ item.poolNote }}
+                                        </div>
+                                        <div *ngIf="permission.isGranted(Resource_TabPool_EditNote)"
+                                            style="width: 10%; text-align: right;" class="ml-1">
+                                            <i class="fas fa-edit " (click)="updateNote(item.userId, item.fullName)"
+                                                matTooltip="Edit note"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    {{ item.dateStartPool !== 0 ? formatDateStartPool(item.dateStartPool) : '' }}
+                                    <p *ngIf="item.totalFreeDay > 0"><strong>{{ item.totalFreeDay }}</strong> days ago
+                                    </p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="bg-light border-top pt-2">
+                <div class="row">
+                    <div class="col-sm-4 col-12 text-sm-left text-center">
+                        <button class="btn btn-secondary mb-2" (click)="refresh()">
+                            <i class="fas fa-redo-alt"></i>
+                        </button>
+                        <mat-form-field style="width: 20%; margin-left: 30px">
+                            <mat-label>Number items</mat-label>
+                            <mat-select [(ngModel)]="pageSizeType" (ngModelChange)="changePageSize()">
+                                <mat-option [value]="5"> 5 </mat-option>
+                                <mat-option [value]="10"> 10 </mat-option>
+                                <mat-option [value]="20"> 20 </mat-option>
+                                <mat-option [value]="50"> 50 </mat-option>
+                                <mat-option [value]="100"> 100 </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-sm-4 col-12 text-center">
+                        <p class="mb-0 my-2">
+                            {{ 'TotalRecordsCount' | localize: totalItems }}
+                        </p>
+                    </div>
+                    <div class="col-sm-4 col-12">
+                        <div class="float-sm-right m-auto">
+                            <abp-pagination-controls id="server" (pageChange)="getDataPage($event)">
+                            </abp-pagination-controls>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,19 @@
+
+  <form class="form-horizontal" autocomplete="off" #reportNote="ngForm">
+    <abp-modal-header title="Report: {{pmReport.name}}" (onCloseClick)="dialogRef.close()">
+    </abp-modal-header>
+    <div class="modal-body">
+        <div class="form-group row">
+            <label for="">Note:</label>
+            <mat-form-field class="w-100" appearance="outline">
+                <textarea #generalNote cdkTextareaAutosize #autosize="cdkTextareaAutosize" style="max-height: 68vh; overflow: auto;"
+                 name="note" rows="3" matInput placeholder="Leave a comment..." [(ngModel)]="pmReport.note">{{generalNote.focus()}}</textarea>
+              </mat-form-field>
+        </div>
+    </div>
+    <div style="background-color: white;" align="end" class="d-flex justify-content-end" >
+        <button class="btn btn-secondary mr-1" mat-raised-button mat-dialog-close>Cancel</button>
+        <button class="btn btn-primary btn-action" (click)="saveAndClose()" 
+            [disabled]="!reportNote.valid || isLoading">Save</button>
+    </div>
+</form>

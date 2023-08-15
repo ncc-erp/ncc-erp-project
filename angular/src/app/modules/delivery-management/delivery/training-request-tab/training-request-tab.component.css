@@ -1,0 +1,48 @@
+@media only screen and (max-width: 1500px) {
+    .fixTableHead {
+        height: 50vh
+    }
+}
+
+@media only screen and (min-width: 1501px) {
+    .fixTableHead {
+        height: 65vh
+    }
+}
+
+table td {
+    vertical-align: top;
+}
+
+::ng-deep .mat-radio-button .mat-radio-label-content {
+    padding-left: 5px;
+}
+
+.vertical-align-baseline {
+    vertical-align: baseline !important;
+}
+
+::ng-deep table thead th i:hover {
+    color: black;
+}
+
+::ng-deep #tbl-resource-request thead th {
+    vertical-align: top;
+}
+
+.badge {
+    height: fit-content;
+}
+
+.col-lg-4 {
+    margin-left: 65px;
+}
+.tl-link {
+    color: #1769aa;
+    display: inline-block;
+    font-weight: 600;
+  }
+.tl-link:hover{
+    text-decoration: underline;
+    cursor: pointer;
+}

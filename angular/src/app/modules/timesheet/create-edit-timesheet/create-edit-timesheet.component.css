@@ -1,0 +1,16 @@
+button:disabled{
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+::ng-deep input.is-check{
+    border: 1px solid #f33446;
+}
+.invalid{
+    width: 100%;
+    margin-top: .25rem;
+    font-size: 80%;
+    color: #dc3545;
+}
+.btn-save{
+    width: 75px;
+}

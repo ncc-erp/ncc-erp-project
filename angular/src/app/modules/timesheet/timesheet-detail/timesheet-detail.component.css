@@ -1,0 +1,129 @@
+.file-download {
+  color: #007bff;
+  cursor: pointer;
+}
+.file-download:hover {
+  color: blue;
+}
+.project-timesheet td{
+  vertical-align: middle;
+}
+::ng-deep #timesheet-detail .filter-pm .mat-form-field{
+  display: block;
+}
+::ng-deep #timesheet-detail .btn-search{
+  height: fit-content;
+}
+
+#timesheet-detail .bd-red{
+  border: 1px solid red;
+}
+
+#timesheet-detail .bg-tag{
+  background-color: #820505;
+}
+#timesheet-detail .btn-upload{
+  background-color: #F9F8A8;
+}
+.no-expand-text{
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 1;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.billinfo{
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+::ng-deep #title-page-tsdetail .breadcrumb-item+.breadcrumb-item::before{
+  content: '>';
+}
+::ng-deep mat-checkbox .mat-checkbox-layout{
+  margin-bottom: 10px;
+}
+
+button.special{
+  min-height: auto;
+  height: auto;
+  line-height: 30px;
+  overflow: inherit;
+}
+button.special span{
+  display: block;
+  padding-left: 25px;
+  font-size: 14px;
+}
+#timesheet-detail ::ng-deep .mat-checkbox-inner-container.mat-checkbox-inner-container-no-side-margin {
+  margin-top: auto;
+}
+.expand-note{
+  min-width:150px;
+}
+.noexpand-note{
+  min-width:80px;
+}
+#timesheet-detail .total-amount{
+  width: 100%;
+  display: inline-grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+#timesheet-detail .td-timesheet-file{
+  white-space: normal;
+  max-width: 170px;
+  min-width: 115px;
+}
+#timesheet-detail .p-custom{
+  padding: 0.75rem 0.25rem;
+}
+#timesheet-detail ::ng-deep .td-action .mat-button{
+  min-width: 40px;
+  padding: 0px 8px;
+}
+#timesheet-detail .td-project{
+  white-space: normal;
+  min-width: 150px;
+  max-width: 190px;
+}
+
+#timesheet-detail .td-note{
+  white-space: normal;
+  min-width: 195px;
+  max-width: 195px;
+}
+#timesheet-detail .td-note{
+  white-space: pre-line;
+  word-wrap: break-word;
+  min-width: 150px;
+  max-width: 200px;
+}
+#timesheet-detail .td-invoice-info{
+  white-space: pre-line;
+  word-break: break-all;
+  min-width: 165px;
+  max-width: 165px;
+}
+#timesheet-detail .text-special{
+ font-size: 15.5px;
+}
+
+#timesheet-detail .role{
+  margin-left: -45px;
+}
+
+#timesheet-detail .billRate{
+  margin-left: -3px;
+}
+
+#timesheet-detail .note{
+  width: 10px;
+}
+.btn-export-all-project{
+  background-color: rgb(201, 125, 119);
+  color:white;
+  margin-right: 8px;
+}
+:host .fixTableHead{
+  max-height: 65vh;
+}

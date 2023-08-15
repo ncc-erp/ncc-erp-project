@@ -1,0 +1,302 @@
+<div *ngIf="permission.isGranted(Audits_Results)">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-6">
+                    <h1>Audit Result</h1>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="content px-2">
+        <div class="container-fluid">
+            <div class="card">
+                <div class="card-header">
+                    <div class='row align-items-center'>
+                        <div class="col-3 mt-3 mt-md-0">
+                            <div class="input-group ">
+                                <div class="input-group-prepend">
+                                    <button type="button" class="btn bg-blue" (click)="searchProject()">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                                <input type="text" class="form-control" name="keyword"
+                                    placeholder="Project Name, Project Code, Client, PM" [(ngModel)]="searchText"
+                                    (keyup.enter)="searchProject()" />
+                            </div>
+                        </div>
+                        <div class="mr-2">
+                            <mat-form-field appearance="outline">
+                                <mat-label>PM</mat-label>
+                                <mat-select name="slt-PM" [(ngModel)]="pmId" placeholder="select a PM"
+                                    (selectionChange)="getDataPage(1)">
+                                    <mat-form-field class="w-100 px-3 "
+                                        style="position: sticky; top: 0; z-index: 2; background-color: white;">
+                                        <input matInput [(ngModel)]="searchPM" name="searchPMName" placeholder="Search"
+                                            #search (keydown)="$event.stopPropagation()">{{search.focus()}}
+                                    </mat-form-field>
+                                    <mat-option [value]="-1">All</mat-option>
+                                    <mat-option
+                                        *ngFor="let data of pmList | listFilter:  'fullName' : searchPM : 'emailAddress'"
+                                        [value]="data.id">
+                                        {{data.fullName}} - ({{data.emailAddress}})
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="mr-2">
+                            <mat-form-field appearance="outline">
+                                <mat-label>Client</mat-label>
+                                <mat-select name="slt-clientId" [(ngModel)]="clientId" placeholder="select a Client"
+                                    (selectionChange)="getDataPage(1)">
+                                    <mat-form-field class="w-100 px-3 "
+                                        style="position: sticky; top: 0; z-index: 2; background-color: white;">
+                                        <input matInput [(ngModel)]="searchClient" name="searchClientName"
+                                            placeholder="Search" #search
+                                            (keydown)="$event.stopPropagation()">{{search.focus()}}
+                                    </mat-form-field>
+                                    <mat-option [value]="-1">All</mat-option>
+                                    <mat-option
+                                        *ngFor="let data of clientList | listFilter:  'name' : searchClient : 'code'"
+                                        [value]="data.id">
+                                        {{data.name}} - [{{data.code}}]
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div>
+                            <mat-form-field appearance="outline">
+                                <mat-label>KPI Status</mat-label>
+                                <mat-select name="slt-clientId" [(ngModel)]="status" placeholder="select a Client"
+                                    (selectionChange)="getDataPage(1)">
+                                    <mat-option [value]="-1">All</mat-option>
+                                    <ng-container *ngFor="let flag of auditStatusList">
+                                        <mat-option style="border: 1px white solid;"
+                                            [ngClass]="APP_CONST.auditStatus[APP_ENUM.AuditStatus[flag]]"
+                                            [value]="APP_ENUM.AuditStatus[flag]">
+                                            <span style="font-weight: 100 !important;">
+                                                {{flag}}
+                                            </span>
+                                        </mat-option>
+                                    </ng-container>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+
+                        <div class="col mt-3 mt-lg-0 text-right">
+                            <!-- <button class="btn bg-success mr-2">
+                                <i class="fa fa-plus-square"></i>
+                                Create
+                            </button> -->
+
+                            <button *ngIf="permission.isGranted(Audits_Results_Import_Result)" class="btn bg-green mr-2"
+                                (click)="openImport()">
+                                <i class="fas fa-upload"></i>
+                                Import
+                            </button>
+
+                            <button *ngIf="permission.isGranted(Audits_ResultsAudits_Results_DownLoad_Template)"
+                                class="btn bg-blue" (click)="openDownloadTemplate()">
+                                <i class="fas fa-download"></i>
+                                Download Template
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body table-responsive py-3">
+                    <div class="fixTableHead">
+                        <table style="border-collapse: collapse;" class="table table-hover text-nowrap"
+                            [busy]="isLoading">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50px;">No</th>
+                                    <th style="width: 550px;">Project</th>
+                                    <th style="width: 200px;">Audit</th>
+                                    <th style="width: 50px;">KPI Score</th>
+                                    <th style="width: 300px;">PQA Note</th>
+                                    <th style="width: 200px;">Last Update</th>
+                                    <th style="width: 50px;" *ngIf="isShowAction">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <ng-container *ngFor=" let audit of listResult | paginate: {
+                                    id: 'server',
+                                    itemsPerPage: pageSize,
+                                    currentPage: pageNumber,
+                                    totalItems: totalItems
+                                } ; let j=index">
+                                    <tr>
+                                        <td
+                                            [attr.rowspan]="checkShowResult(audit.projectId) ? audit.auditResultInfor.length+1:2">
+                                            {{j+1}}</td>
+                                        <td [attr.rowspan]="checkShowResult(audit.projectId)? audit.auditResultInfor.length+1:2"
+                                            class="position-relative">
+                                            <div class="text-left d-flex flex-column ">
+                                                <div class="d-flex justify-content-between">
+                                                    <span><strong style="color: #014C6E;">[{{audit.projectCode}}]
+                                                            {{audit.projectName}}</strong></span>
+
+                                                    <div class="d-flex align-items-center">
+                                                        <span style="width: fit-content;" class="mr-2"
+                                                            [ngClass]=" APP_CONST.ProjectTypeStyle[getByEnum(audit.projectType,APP_ENUM.ProjectType)]">
+                                                            {{
+                                                            changeTextProjectType(getByEnum(audit.projectType,APP_ENUM.ProjectType))
+                                                            }}
+                                                        </span>
+                                                        <span style="width: fit-content;"
+                                                            [ngClass]=" APP_CONST.statusStyle[getByEnum(audit.projectStatus,APP_ENUM.ProjectStatus)]">{{
+                                                            getByEnum(audit.projectStatus,APP_ENUM.ProjectStatus)}}</span>
+                                                    </div>
+                                                </div>
+                                                <span><strong>Client: </strong>[{{audit.clientCode}}]</span>
+                                                <span><strong>PM: </strong>{{audit.pmName}}</span>
+                                                <button class="changeShow" *ngIf="audit.auditResultInfor.length > 1" (click)="changeShowResult(audit.projectId)"
+                                                    style="position: absolute;background-color: transparent; border: none;  right: 15px;bottom: 8px; border-radius: 99px;padding: 2px 5px;color:#014C6E;font-size: 12px; font-weight: 600;">
+                                                    <span  style="margin-right: 5px;">{{audit.auditResultInfor.length}} audits</span>
+                                                    <i  *ngIf="!checkShowResult(audit.projectId);else icon"  class="fa fa-chevron-right"></i>
+                                                    <ng-template #icon>
+                                                        <i class="fa fa-chevron-down"></i>
+                                                    </ng-template>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                        <tr class="text-center" *ngIf="!checkShowResult(audit.projectId); else elseBlock">
+                                            <td>
+                                                <div class="d-flex flex-column">
+                                                    <span class="hyperlink" (click)="showDetail(audit.auditResultInfor[0], audit)"><strong
+                                                            style="color: #014C6E;">{{audit.auditResultInfor[0].auditDate}}</strong></span>
+                                                    <span>PM: {{audit.auditResultInfor[0].pmName}}</span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex flex-column">
+                                                    <span><strong style="color: #014C6E;">{{audit.auditResultInfor[0].score}}</strong></span>
+                                                    <span [ngClass]="APP_CONST.auditStatus[audit.auditResultInfor[0].status]">
+                                                        {{auditStatusList[audit.auditResultInfor[0].status-1]}}</span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span *ngIf="audit.auditResultInfor[0].note!=''" [collapseLine]="1" class="max-line-content-1 note"
+                                                    [innerHTML]="audit.auditResultInfor[0].note| safeHtml" (click)="viewNote(audit.auditResultInfor[0])"></span>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex flex-column">
+                                                    <span> <strong style="color: #014C6E;">{{audit.auditResultInfor[0].lastModifyTime}} </strong></span>
+                                                    <span>by: {{audit.auditResultInfor[0].lastModifyUserName}}</span>
+                                                </div>
+                                            </td>
+                                            <td *ngIf="isShowAction">
+                                                <button mat-button [matMenuTriggerFor]="menu">
+                                                    <i class="fas fa-bars fa-lg"></i>
+                                                </button>
+                                                <mat-menu #menu="matMenu" class="p-2">
+                                                    <button *ngIf="permission.isGranted(Audits_Results_Edit)" type="button" class="mat-menu-item w-100"
+                                                        style="font-size: 14px" (click)="EditNote(audit.auditResultInfor[0])">
+                                                        <i class="fas fa-user-edit mr-3"></i>Edit PQA Note
+                                                    </button>
+
+                                                    <button *ngIf="permission.isGranted(Audits_Results_Delete)" type="button" class="mat-menu-item w-100"
+                                                        style="font-size: 14px" (click)="deleteResult(audit.auditResultInfor[0].id)">
+                                                        <i class="fas fa-trash mr-3"></i>Delete
+                                                    </button>
+                                                </mat-menu>
+                                            </td>
+                                        </tr>
+
+                                        <ng-template   #elseBlock>
+                                            <tr *ngFor="let item of audit.auditResultInfor ; let i=index" class="text-center">
+                                                <td>
+                                                    <div class="d-flex flex-column">
+                                                        <span class="hyperlink" (click)="showDetail(item, audit)"><strong
+                                                                style="color: #014C6E;">{{item.auditDate}}</strong></span>
+                                                        <span>PM: {{item.pmName}}</span>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex flex-column">
+                                                        <span><strong style="color: #014C6E;">{{item.score}}</strong></span>
+                                                        <span [ngClass]="APP_CONST.auditStatus[item.status]">
+                                                            {{auditStatusList[item.status-1]}}</span>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <span *ngIf="item.note!=''" [collapseLine]="1" class="max-line-content-1 note"
+                                                        [innerHTML]="item.note| safeHtml" (click)="viewNote(item)"></span>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex flex-column">
+                                                        <span> <strong style="color: #014C6E;">{{item.lastModifyTime}} </strong></span>
+                                                        <span>by: {{item.lastModifyUserName}}</span>
+                                                    </div>
+                                                </td>
+                                                <td *ngIf="isShowAction">
+                                                    <button mat-button [matMenuTriggerFor]="menu">
+                                                        <i class="fas fa-bars fa-lg"></i>
+                                                    </button>
+                                                    <mat-menu #menu="matMenu" class="p-2">
+                                                        <button *ngIf="permission.isGranted(Audits_Results_Edit)" type="button" class="mat-menu-item w-100"
+                                                            style="font-size: 14px" (click)="EditNote(item)">
+                                                            <i class="fas fa-user-edit mr-3"></i>Edit PQA Note
+                                                        </button>
+
+                                                    <button *ngIf="permission.isGranted(Audits_Results_Delete)"
+                                                        type="button" class="mat-menu-item w-100"
+                                                        style="font-size: 14px" (click)="deleteResult(item.id)">
+                                                        <i class="fas fa-trash mr-3"></i>Delete
+                                                    </button>
+                                                </mat-menu>
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                </ng-container>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer bg-light border-top">
+                    <div class="row">
+                        <div class="col-sm-4 col-12 text-sm-left text-center">
+                            <button class="btn btn-secondary mb-2" (click)="refresh()">
+                                <i class="fas fa-redo-alt"></i>
+                            </button>
+                            <mat-form-field style=" width: 20%;margin-left: 30px;">
+                                <mat-label>Number items</mat-label>
+                                <mat-select [(ngModel)]="pageSizeType" (ngModelChange)="changePageSize()">
+                                    <mat-option [value]="5">
+                                        5
+                                    </mat-option>
+                                    <mat-option [value]="10">
+                                        10
+                                    </mat-option>
+                                    <mat-option [value]="20">
+                                        20
+                                    </mat-option>
+                                    <mat-option [value]="50">
+                                        50
+                                    </mat-option>
+                                    <mat-option [value]="100">
+                                        100
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-sm-4 col-12 text-center">
+                            <p class="mb-0 my-2">
+                                {{ "TotalRecordsCount" | localize: totalItems }}
+                            </p>
+                        </div>
+                        <div class="col-sm-4 col-12">
+                            <div class="float-sm-right m-auto">
+                                <abp-pagination-controls id="server" (pageChange)="getDataPage($event)">
+                                </abp-pagination-controls>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

@@ -1,0 +1,27 @@
+<div id="content">
+    <abp-modal-header  [title]="title + ' Template'" (onCloseClick)="dialogRef.close()"></abp-modal-header>
+<div class="p-3 background-card" id="temp">
+    <div class="d-flex">
+        <button class="btn btn-primary mr-2" >
+            <i class="fa-solid fa-pen-to-square"></i>
+            Edit Template
+        </button>
+        <button class="btn btn-primary" (click)="printInvoiceToPDF()">
+            <i class="fa fa-file-pdf"></i>
+            Print Invoice
+        </button>
+    </div>
+    <div class="card mb-0 mt-2 rounded p-3" style="max-height: 70vh;overflow-y: auto;" *ngIf="html">
+        <div class="table table-responsive w-100 mb-0">
+            <div id="bodyMess" class="html-container" [innerHtml]="sanitizer.bypassSecurityTrustHtml(html)">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary btn-action mr-2"
+        (click)="dialogRef.close()">
+        Close
+    </button>
+</div>
+</div>

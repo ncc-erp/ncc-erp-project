@@ -1,0 +1,51 @@
+<form class="form-horizontal" autocomplete="off" #timesheetForm="ngForm" novalidate>
+    <div class="card-header">
+        <h3 *ngIf="data.command=='create'">Create</h3>
+        <h3 *ngIf="data.command!=='create'">Edit</h3>
+    </div>
+    <div class="modal-body">
+        <div class="form-group row required" *ngIf="data.command == 'create'">
+            <label class="col-md-3 col-form-label" for="type">
+               Audit Project:
+            </label>
+            <div class="col-md-9">
+                <mat-form-field style="width: 100%; height: 38px;" appearance="outline">
+                    <mat-select required placeholder="Select project name"  name="projectType" [(ngModel)]="saodoProject.projectId">
+                        <mat-option *ngFor="let project of projectList" [value]="project.id"  >
+                            {{project.name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+        <!-- <div class="form-group row required" >
+            <label class="col-md-3 col-form-label" for="pm">
+               PM Name:
+            </label>
+            <div class="col-md-9">
+                <mat-form-field style="width: 100%; height: 38px;" appearance="outline">
+                    <mat-select required placeholder="Select PM name"  name="pm" [(ngModel)]="saodoProject.pmId">
+                        <mat-option *ngFor="let pm of pmList" [value]="pm.id"  >
+                            {{pm.name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div> -->
+        <div class="form-group row required" *ngIf="data.command!=='create'" >
+            <label class="col-md-3 col-form-label" for="pm">
+               Status:
+            </label>
+            <div class="col-md-9">
+                <mat-radio-group *ngFor="let status of statusList" name="status" [(ngModel)]="saodoProject.status" class="d-flex justify-content-between" aria-label="Select an option">
+                    <mat-radio-button [value]="APP_ENUM.SaodoStatus[status]">{{status}}</mat-radio-button>
+                </mat-radio-group> 
+            </div>
+        </div> 
+    </div>
+    <div align="end" class="mat-dialog-actions" mat-dialog-actions="">
+        <button class="btn btn-secondary cancel-banks" mat-raised-button mat-dialog-close>Cancel</button>
+        <button mat-raised-button color="primary" class="saving-btn"mat-button
+        [disabled]="!timesheetForm.form.valid || isLoading" (click)="SaveAndClose()"  >Save</button>
+    </div>
+</form>

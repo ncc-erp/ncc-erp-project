@@ -1,0 +1,136 @@
+<form
+  class="form-horizontal"
+  autocomplete="off"
+  #resourceRequestForm="ngForm"
+  novalidate
+  id="form-set-done"
+>
+  <abp-modal-header
+    title="Send recruitment: {{ data.name }}"
+    (onCloseClick)="dialogRef.close()"
+  >
+  </abp-modal-header>
+  <div class="modal-body">
+    <div class="form-group row required">
+      <div class="col-md-3">
+        <label class="col-form-label" for="branch" style="line-height: 2">
+          Branch:
+        </label>
+      </div>
+      <div class="col-md-9">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-select
+            placeholder="Select Branch"
+            [(ngModel)]="recruitment.branchId"
+            name="usertype"
+            #branchNg="ngModel"
+            required
+          >
+            <mat-option *ngFor="let branch of branches" [value]="branch.id">
+              {{ branch.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-error
+          class="mt-1"
+          *ngIf="branchNg.hasError('required') && branchNg.touched"
+          style="font-size: 13px"
+        >
+          This field is required
+        </mat-error>
+      </div>
+    </div>
+    <div class="form-group row required">
+      <div class="col-md-3">
+        <label class="col-form-label" for="positionN" style="line-height: 2">
+          Position:
+        </label>
+      </div>
+      <div class="col-md-9">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-select
+            placeholder="Select Position"
+            [(ngModel)]="recruitment.subPositionId"
+            name="positionN"
+            #position="ngModel"
+            required
+          >
+            <mat-form-field
+              class="w-100 px-3"
+              style="
+                position: sticky;
+                top: 0;
+                z-index: 2;
+                background-color: white;
+              "
+            >
+              <input
+                #search
+                matInput
+                [(ngModel)]="searchSubPosition"
+                name="searchClient"
+                placeholder="Search"
+                (keydown)="$event.stopPropagation()"
+              />{{ search.focus() }}
+            </mat-form-field>
+            <mat-optgroup
+              *ngFor="let data of positions"
+              [label]="data.position"
+            >
+              <mat-option
+                *ngFor="
+                  let item of data.items | subpositionFilter: searchSubPosition
+                "
+                [value]="item.id"
+                >{{ item.subPosition }}</mat-option
+              >
+            </mat-optgroup>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-error
+          class="mt-1"
+          *ngIf="position.hasError('required') && position.touched"
+          style="font-size: 13px"
+        >
+          This field is required
+        </mat-error>
+      </div>
+    </div>
+    <div class="form-group row">
+      <div class="col-md-3">
+        <label class="col-form-label" for="note" style="line-height: 2">
+          Note:
+        </label>
+      </div>
+      <div class="col-md-9">
+        <mat-form-field appearance="outline" class="w-100">
+          <textarea
+            matInput
+            rows="6"
+            [(ngModel)]="recruitment.note"
+            name="note"
+            #note="ngModel"
+            required
+          ></textarea>
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
+  <div class="row d-flex justify-content-end">
+    <div class="col-md-2">
+      <button class="btn btn-secondary btn-block" (click)="dialogRef.close()">
+        Cancel
+      </button>
+    </div>
+    <div class="col-md-2">
+      <button
+        class="btn btn-primary btn-block"
+        [disabled]="isSending"
+        (click)="save()"
+      >
+        Send
+      </button>
+    </div>
+  </div>
+</form>

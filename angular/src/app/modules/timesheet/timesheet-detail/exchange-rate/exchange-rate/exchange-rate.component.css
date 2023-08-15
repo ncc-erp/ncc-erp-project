@@ -1,0 +1,11 @@
+:host ::ng-deep .modal-body {
+    text-align: center;
+}
+
+:host ::ng-deep .mat-dialog-actions[align=end] {
+    justify-content: space-between;
+}
+/* :host ::ng-deep .form-group{
+    align-items: center;
+    display: flex;
+} */

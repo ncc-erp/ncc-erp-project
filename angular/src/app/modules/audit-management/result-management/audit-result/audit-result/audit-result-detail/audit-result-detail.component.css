@@ -1,0 +1,127 @@
+.wrapper {
+  padding: 0.75rem;
+}
+
+.mat-tree-node {
+  background: #C4DFEC;
+  margin-top: 10px;
+}
+
+/* Style for the filter boxes */
+.form-control:focus {
+  border-color: #66afe9;
+  outline: 0;
+  box-shadow: none;
+}
+
+/* Style for the filter box placeholders */
+.form-control::-webkit-input-placeholder {
+  color: #ccc;
+}
+
+.form-control::-moz-placeholder {
+  color: #ccc;
+}
+
+.form-control:-ms-input-placeholder {
+  color: #ccc;
+}
+
+.form-control:-moz-placeholder {
+  color: #ccc;
+}
+
+.mat-mdc-form-field {
+  margin-right: 4px;
+}
+
+.item-criteria {
+  width: 100%;
+  display: flex;
+  align-items: center;
+
+}
+.name-criteria {
+  flex: end;
+  width: 40%;
+}
+.applicable {
+  width: 50px;
+  margin: auto;
+}
+.action {
+  width: 70px;
+}
+.example-tree-invisible {
+  display: none;
+}
+
+.example-tree ul,
+.example-tree li {
+  margin-top: 0;
+  margin-bottom: 0;
+  list-style-type: none;
+}
+.example-tree ul {
+  border: solid #48a8d4 1px;
+  padding-bottom: 10px;
+  padding-left: 10px;
+}
+
+/* style for mat-toolbar */
+mat-toolbar {
+  height: 50px; /* set the height of the toolbar */
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  background-color: #014C6E;
+  color: white;
+}
+
+mat-toolbar span {
+  display: inline-block;
+  border-right: 1px solid #ccc;
+  padding: 0 10px;
+  height: 100%;
+  box-sizing: border-box;
+  vertical-align: middle;
+  line-height: 50px; /* set the line-height to match the height of the toolbar */
+  text-align: center;
+  font-size: 18px;
+}
+
+mat-toolbar span:last-child {
+  border-right: none;
+}
+
+/* Chip Status */
+.nc-chip {
+  background-color: blue;
+  color: white;
+}
+
+.ob-chip {
+  background-color: orange;
+  color: white;
+}
+
+.re-chip {
+  background-color: red;
+  color: white;
+}
+
+.ex-chip {
+  background-color: green;
+  color: white;
+}
+
+.note{
+display: block;
+display: -webkit-box;
+max-width: 100%;
+margin: 0px 30px;
+font-size: 16px;
+-webkit-line-clamp: 1;
+-webkit-box-orient: vertical;
+overflow: hidden;
+text-overflow: ellipsis;
+}

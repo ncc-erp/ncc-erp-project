@@ -1,0 +1,65 @@
+<form action="" autocomplete="off" (submit)="SaveAndClose()">
+    <abp-modal-header [title]="'Edit invoice setting of project ' + projectName | localize"
+        (onCloseClick)="matDialogRef.close()"></abp-modal-header>
+    <div class="modal-body">
+        <div class="form-group row required">
+            <label class="col-form-label col-4">Last invoice number:</label>
+            <div class="col-8">
+                <mat-form-field appearance="outline" class="w-100">
+                    <input matInput type="number" name="invoiceNumber" [(ngModel)]="updateInvoiceDto.invoiceNumber"
+                        required>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row required">
+            <label class="col-form-label col-4">Discount(%):</label>
+            <div class="col-8">
+                <mat-form-field appearance="outline" class="w-100">
+                    <input matInput type="number" name="discount" [(ngModel)]="updateInvoiceDto.discount" required>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-form-label col-4 pt-2">
+                Invoice Setting:
+            </label>
+            <div class="col-8">
+                <mat-form-field class="w-100" appearance="outline">
+                    <mat-select name="invoiceSetting" [(ngModel)]="updateInvoiceDto.isMainProjectInvoice">
+                        <mat-option *ngFor="let item of invoiceSettingOptions" [value]="item.value">
+                            {{item.key}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+        <div *ngIf="updateInvoiceDto.isMainProjectInvoice == APP_ENUMS.InvoiceSetting.Main" class="form-group row">
+            <label class="col-form-label col-4 pt-2">
+                Sub projects:
+            </label>
+            <div name="slt-subProject" class="col-8">
+                <app-multi-select-option class="w-100" [dropdownData]="listSelectProject"
+                    [selectLabel]="'Select sub projects'" [selectedValues]="updateInvoiceDto.subProjectIds"
+                    (onMultiSelectionChange)="updateInvoiceDto.subProjectIds = $event"
+                    [searchPlaceHolder]="'Search projects'">
+                </app-multi-select-option>
+            </div>
+        </div>
+        <div *ngIf="!updateInvoiceDto.isMainProjectInvoice" class="form-group row required">
+            <label class="col-form-label col-4 pt-2">
+                Main project:
+            </label>
+            <div name="slt-mainProject" class="col-8" appearance="outline">
+                <app-multi-select-option class="w-100" [required]="true" [searchLabel]="'Search project'"
+                    [selectLabel]="'Select main project'" [selectedValue]="updateInvoiceDto.mainProjectId"
+                    [dropdownData]="listSelectProject" [multiple]="false"
+                    (onSingleSelectionChange)="updateInvoiceDto.mainProjectId = $event"
+                    [searchPlaceHolder]="'Search project'">
+                </app-multi-select-option>
+            </div>
+        </div>
+    </div>
+
+    <abp-modal-footer [cancelDisabled]="saving" (onCancelClick)="matDialogRef.close()" [saveDisabled]="saving">
+    </abp-modal-footer>
+</form>

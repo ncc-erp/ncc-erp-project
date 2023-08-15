@@ -1,0 +1,29 @@
+<abp-modal-header
+    title="Add Sub Invoice"
+    (onCloseClick)="bsModalRef.hide()"
+></abp-modal-header>
+<div class="modal-body">
+    <div class="row">
+        <div class="col">
+            <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Projects</mat-label>
+                <mat-select [(ngModel)]="selectedSubInvoiceId">
+                    <mat-option *ngFor="let item of subInvoiceCanAdd" [value]="item.projectId">{{item.projectName}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div class="col-2 d-flex align-items-center justify-content-end">
+            <button class="btn btn-primary" (click)="addSubInvoice()"><i class="fas fa-check"></i></button>
+        </div>
+    </div>
+    <ng-container *ngFor="let item of subInvoices">
+        <div class="row">
+            <div class="col">
+                <span>{{item.projectName}}</span>
+            </div>
+            <div class="col-2">
+                <i class="fas fa-times text-danger"></i>
+            </div>
+        </div>
+    </ng-container>
+</div>

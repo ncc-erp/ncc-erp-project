@@ -1,0 +1,73 @@
+<!-- <form class="form-horizontal" autocomplete="off" #addUserInRoleForm="ngForm" (ngSubmit)="save()">
+    <abp-modal-header [title]="'CreateNewRole' | localize" (onCloseClick)="bsModalRef.hide()"></abp-modal-header>
+    <div class="modal-body">
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="tenancyName">
+                User:
+            </label>
+            <div class="col-md-9">
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-select name="userValid" [(ngModel)]="userId" #userValid="ngModel" required
+                        (closed)="searchUser = ''" placeholder="select a User">
+                        <mat-form-field class="px-3 w-100"
+                            style="position: sticky; top: 0; z-index: 2; background-color: white;">
+                            <input matInput [(ngModel)]="searchUser" name="search" #search placeholder="Search"
+                                (keydown)="$event.stopPropagation()">
+                        </mat-form-field>
+                        <mat-option
+                            *ngFor="let data of listUsersNotInRole | listFilter:  'name' : searchUser : 'email' : 'surname' : 'name'"
+                            [value]="data.id">
+                            {{data.fullName}} - ({{data.email}})
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-error class="mt-1" *ngIf="userValid.hasError('required') && userValid.touched"
+                    style="font-size: 13px;">
+                    This field is required
+                </mat-error>
+            </div>
+        </div>
+    </div>
+    <abp-modal-footer [cancelDisabled]="saving" [saveDisabled]="!addUserInRoleForm.form.valid || saving"
+        (onCancelClick)="bsModalRef.hide()"></abp-modal-footer>
+</form> -->
+
+<form class="form-horizontal" autocomplete="off" #addUserInRoleForm="ngForm" [busy]="isLoading">
+    <abp-modal-header class="pt-0" title="Add user into role" (onCloseClick)="dialogRef.close()">
+    </abp-modal-header>
+    <div class="modal-body">
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="tenancyName">
+                User:
+            </label>
+            <div class="col-md-9">
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-select name="user" [(ngModel)]="userId" #userValid="ngModel" [required]="true" (closed)="searchUser = ''"
+                         placeholder="select a User">
+                        <mat-form-field class="px-3 w-100"
+                            style="position: sticky; top: 0; z-index: 2; background-color: white;">
+                            <input matInput [(ngModel)]="searchUser"  name="search"
+                                #search placeholder="Search" (keydown)="$event.stopPropagation()">{{search.focus()}}
+                        </mat-form-field>
+                        <mat-option
+                            *ngFor="let data of listUsersNotInRole | listFilter:  'name' : searchUser : 'email' : 'surname' : 'name'"
+                            [value]="data.id">
+                            {{data.fullName}} - ({{data.email}})
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                
+                <mat-error class="mt-1" *ngIf="userValid.hasError('required') && userValid.touched"
+                    style="font-size: 13px;">
+                    This field is required
+                </mat-error>
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-end">
+        <button class="btn btn-secondary btn-action mr-2" mat-dialog-close>Cancel</button>
+        <button class="btn btn-primary btn-action" [disabled]="!addUserInRoleForm.valid || isLoading"
+            (click)="SaveAndClose()">Add</button>
+    </div>
+</form>

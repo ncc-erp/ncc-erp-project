@@ -1,0 +1,70 @@
+::ng-deep .stars-line {
+    z-index: 0;
+}
+
+
+.all-resource-table i {
+    color: #686868;
+    font-size: 18px;
+}
+
+
+#all-resource .fa-edit,
+#all-resource .fa-plus {
+    font-size: 15px;
+}
+
+@media screen and (max-width: 1260px) {
+    .w-infor {
+        width: 100% !important;
+    }
+    .w-review {
+        width: 100% !important;
+        margin-left: 25%;
+    }
+}
+
+@media screen and (min-width: 1261px) {
+    .w-infor {
+        width: 70% !important;
+    }
+    .w-review {
+        width: 30% !important;
+    }
+}
+
+.hover-project-name:hover {
+    color: #007bff;
+    ;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.on-hover-plan {
+    text-decoration: underline;
+}
+
+button {
+    height: fit-content;
+}
+
+span {
+    height: fit-content;
+}
+
+.row .w-100 > div {
+    justify-content: space-around;
+    display: flex;
+}
+.crimson{
+    color:crimson !important
+}
+.grey{
+    color: grey !important;
+}
+.orange{
+    color: orange !important;
+}
+.yellow{
+    color: yellow !important;
+}

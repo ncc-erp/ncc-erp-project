@@ -1,0 +1,238 @@
+<div [@routerTransition] *ngIf="permission.isGranted(Admin_Users_View) " >
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-6">
+          <h1>{{ "Users" | localize }}</h1>
+        </div>
+        <div class="col-6 text-right">
+          <button name="btn-sync" href="javascript:;" class="btn btn-success mr-2"
+            *ngIf="permission.isGranted(Admin_Users_SyncDataFromHrm) " (click)="updateDataHRM()">
+            <i class="fas fa-sync-alt mr-1"></i>
+            {{ "Sync data from HRM" | localize }}
+          </button>
+          <button name="btn-create" href="javascript:;" class="btn bg-blue" *ngIf="permission.isGranted(Admin_Users_Create) "
+            (click)="createUser()">
+            <i class="fa fa-plus-square"></i>
+            {{ "Create User" | localize }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="content px-2">
+    <div class="container-fluid">
+      <div class="card">
+        <div class="card-header">
+
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <button type="button" class="btn bg-blue" (click)="getDataPage(1)">
+                <i class="fas fa-search"></i>
+              </button>
+            </div>
+            <input type="text" class="form-control" name="keyword" placeholder="Search" [(ngModel)]="searchText"
+              (keyup.enter)="getDataPage(1)" />
+            <div class="input-group-append">
+              <button type="button" class="btn btn-default" (click)="checkAddFilter()">
+                <i class="fas" [class.fa-angle-up]="advancedFiltersVisible"
+                  [class.fa-angle-down]="!advancedFiltersVisible"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="advancedFiltersVisible" class="mb-0 mt-1">
+          <div class="card-body">
+            <form class="form-horizontal">
+              <div class="row">
+                <div class="col-md-12 col-xl-12">
+                  <div class="mb-0">
+                    <div>
+                      <div *ngFor="let item of filterItems; let i = index">
+                        <app-filter [item]="item" (emitChange)="onEmitChange($event, i)"
+                          (deleteDataFilter)="deleteFilterItem(i)" [inputFilters]="FILTER_CONFIG">
+                        </app-filter>
+                      </div>
+                      <i style="padding: 0;" class="fas fa-plus-circle ml-3" (click)="addFilter()"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="card-body table-responsive p-0">
+          <div class="fixHead">
+            <table name="tbl_User" class="table text-nowrap" [busy]="isLoading">
+              <thead class="bg-light">
+                <tr>
+                  <th class="stt">#</th>
+                  <th>{{ "User" | localize }}</th>
+                  <th>Role</th>
+                  <th>Projects</th>
+                  <th>Skills</th>
+                  <th>{{ "IsActive" | localize }}</th>
+                  <th class="col-action-menu">{{ "Actions" | localize }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="
+                    let user of users
+                      | paginate
+                        : {
+                            id: 'server',
+                            itemsPerPage: pageSize,
+                            currentPage: pageNumber,
+                            totalItems: totalItems
+                          }
+                  ; let i =index">
+                  <td class="text-center">{{i+1}}</td>
+                  <td>
+                    <app-user-info [userData]="{fullName:user.fullName,branch:user.branch,
+                      branchColor:user.branchColor,
+                          branchDisplayName:user.branchDisplayName,
+                    userType:user.userType,emailAddress:user.emailAddress, avatarFullPath:user.avatarFullPath,
+                    position: user.position,
+                    positionColor: user.positionColor,
+                    positionName: user.positionName,
+                  userLevel:user.userLevel}"></app-user-info>
+                  </td>
+                  <td style="width: 100px; text-align: center;">
+                    <p class="mb-1" *ngFor="let role of user.roleNames">
+                      {{role}} </p>
+                  </td>
+  
+                  <td>
+                    <p *ngFor="let project of user.workingProjects" class="mb-1">
+                      <strong>{{project.projectName}} </strong> <strong [ngClass]="project.isPool ? 'text-secondary' : 'text-primary'">{{project.workType}}</strong>&nbsp;
+                      <span [ngClass]="APP_CONST.projectUserRole[project.projectRole]">
+                        {{getByEnum(project.projectRole, APP_ENUM.ProjectUserRole)}}</span>
+                        <span> - </span><span style="font-size: 15px; color: #494d50">{{project.startTime | date: "dd/MM/yyyy"}}</span>
+  
+                    </p>
+                    <i class=" fas fa-history pointer" style="color: #6b7278;" *ngIf="!user.isshowProjectHistory" matTooltip="View project history"
+                      (click)="getHistoryProjectsByUserId(user)"></i>
+                    <div *ngIf="user.isshowProjectHistory" [ngClass]="user.showAllHistory == false ? 'preHistory' : 'history'">
+                      <div  *ngIf="user.userProjectHistory && user.userProjectHistory.length > 0" [innerHTML]="user.userProjectHistory" style="white-space: nowrap;"></div>
+  
+                      <p *ngIf="!user.userProjectHistory || user.userProjectHistory.length == 0">
+                        No project history!
+                      </p>
+                    </div>
+                    <i [ngClass]="user.showAllHistory ? 'fas fa-chevron-up' :'fa fa-ellipsis-h'"  *ngIf="user.isshowProjectHistory == true && user.showMoreHistory"
+                      (click)="showMoreHistory(user);getHistoryProjectsByUserId(user)"></i>
+                  </td>
+                  <td style="width: 200px;">
+                    <p class="mb-1" *ngFor="let skill of user.userSkills; let i=index">- {{skill.skillName}} </p>
+                  </td>
+                  <td class="text-center" style="width: 100px;">
+                    <div class="custom-control custom-checkbox">
+                      <input *ngIf="user.isActive" type="checkbox" class="custom-control-input" disabled
+                        [checked]="user.isActive" />
+                      <label *ngIf="user.isActive" class="custom-control-label"></label>
+  
+                    </div>
+                    <span *ngIf="!user.isActive">Đã nghỉ việc</span>
+                  </td>
+                  <td class="text-center" >
+                    <button mat-button [matMenuTriggerFor]="menu" [disabled]="processProblem">
+                      <i class="fas fa-bars fa-lg"></i>
+                    </button>
+                    <mat-menu #menu="matMenu" class="p-2">
+                      <button *ngIf="permission.isGranted(Admin_Users_Edit)" type="button" class="mat-menu-item  w-100"
+                        (click)="editUser(user)">
+                        <i class="fas fa-pencil-alt fa-lg mr-1"></i>
+                        {{'Edit' | localize }}
+                      </button>
+                      <button *ngIf="permission.isGranted(Admin_Users_UpdateSkill)" type="button" class="mat-menu-item  w-100"
+                      (click)="updateUserSkill(user)">
+                      <i class="fas fa-edit fa-lg mr-1"></i>
+                      Update skill
+                    </button>
+                    <button *ngIf="permission.isGranted(Admin_Users_UpdateRole)" type="button" class="mat-menu-item  w-100"
+                    (click)="updateUserRole(user)">
+                    <i class="fas fa-edit fa-lg mr-1"></i>
+                    Update Roles
+                  </button>
+                      <button *ngIf="!user.isActive && permission.isGranted(Admin_Users_ActiveAndDeactive)" type="button"
+                        class="mat-menu-item  w-100" (click)="updateUserActive(user,true)">
+                        <i class="fas fa-check fa-lg mr-1"></i>
+                        Activate
+                      </button>
+                      <button *ngIf="user.isActive && permission.isGranted(Admin_Users_ActiveAndDeactive)" type="button"
+                        class="mat-menu-item  w-100" (click)="updateUserActive(user,false)">
+                        <i class="fas fa-times fa-lg mr-1"></i>
+                        Deactivate
+                      </button>
+                      <button
+                        *ngIf="permission.isGranted(Admin_Users_DeleteFakeUser) && user.userType == APP_ENUM.UserType.FakeUser"
+                        type="button" class="mat-menu-item  w-100" (click)="deleteFakeUser(user)">
+                        <i class="fas fa-trash fa-lg mr-1"></i>
+                        Delete
+                      </button>
+                      <button *ngIf="permission.isGranted(Admin_Users_UploadAvatar)" class="mat-menu-item  w-100"
+                        (click)="upLoadAvatar(user)">
+                        <i class="fas fa-upload fa-lg mr-1"></i>
+                        {{ "Upload Avatar" | localize }}
+                      </button>
+  
+                      <button *ngIf="this.permission.isGranted(Admin_Users_ResetPassword)" type="button"
+                        class="mat-menu-item  w-100" (click)="resetPassword(user)">
+                        <i class="fas fa-lock fa-lg mr-1"></i>
+                        {{ "ResetPassword" | localize }}
+                      </button>
+  
+                    </mat-menu>
+  
+  
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+        </div>
+        <div class="card-footer bg-light border-top">
+          <div class="row">
+            <div class="col-sm-4 col-12 text-sm-left text-center">
+              <button class="btn btn-secondary mb-2" (click)="refresh()">
+                <i class="fas fa-redo-alt"></i>
+              </button>
+              <mat-form-field style="width: 20%;margin-left: 30px;">
+                <mat-label>Number items</mat-label>
+                <mat-select [(ngModel)]="pageSizeType" (ngModelChange)="changePageSize()">
+                  <mat-option [value]="5">
+                    5
+                  </mat-option>
+                  <mat-option [value]="10">
+                    10
+                  </mat-option>
+                  <mat-option [value]="20">
+                    20
+                  </mat-option>
+                  <mat-option [value]="50">
+                    50
+                  </mat-option>
+                  <mat-option [value]="100">
+                    100
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div class="col-sm-4 col-12 text-center">
+              <p class="mb-0 my-2">
+                {{ "TotalRecordsCount" | localize: totalItems }}
+              </p>
+            </div>
+            <div class="col-sm-4 col-12">
+              <div class="float-sm-right m-auto">
+                <abp-pagination-controls id="server" (pageChange)="getDataPage($event)">
+                </abp-pagination-controls>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

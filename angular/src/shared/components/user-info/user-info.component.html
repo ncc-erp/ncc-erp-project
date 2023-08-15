@@ -1,0 +1,35 @@
+<div style="width : 300px;">
+    <div class="row w-100">
+
+        <div class="d-flex w-100">
+            <div class="col-3 text-center">
+                <img [src]="getAvatar(user)" class="rounded-circle  mt-1" [style]="isWeeklyReport? 'max-width: 67%;':'max-width: 100%;'"
+                    alt="avatar">
+                <!-- <ngx-stars style="z-index: 1 !important; margin-top: 10px;" [readonly]="true" [wholeStars]="true"
+                    [size]="1" [color]="getStarColor(user.starRate, false)" [initialStars]="user.starRate"
+                    [maxStars]="user.starRate ? user.starRate : 0 ">
+                </ngx-stars> -->
+                <div *ngIf="averagePoint != null" style="display: flex; align-items: center; justify-content: center;">
+                    {{averagePoint | number:'0.1'}}<ngx-stars style="z-index: 1 !important; margin-left: 3px;"
+                    [color]="getStarColorforReviewInternCapability(averagePoint, false)"
+                    [maxStars]="1" [initialStars]="1" [readonly]="true"></ngx-stars>
+                </div>
+            </div>
+            <div class="col-9  text-left">
+                <p class="m-0"><strong>{{user?.fullName}}</strong>&nbsp; <span style="font-weight: 600;" [ngClass]="isPool ? 'text-secondary' : 'text-primary'">{{workType}}</span></p>
+                <p class="m-0 text-left">
+                    <span *ngIf="user.branchDisplayName" class="mr-1 badge badge-pill text-white" [style.backgroundColor]="user.branchColor">
+                        {{user.branchDisplayName}}</span>
+                    <span *ngIf="user.userTypeName" [ngClass]="APP_CONST.userTypeStyle[user.userType]">{{user.userTypeName}}</span>
+                    <span *ngIf="!user.userTypeName" [ngClass]="APP_CONST.userTypeStyle[user.userType]">{{APP_ENUM.UserType[user.userType]}}
+                        {{getProjectTypefromEnum(user.userType,APP_ENUM.UserType)}}</span>
+                    <span *ngIf="user.positionName" class="ml-1 badge badge-pill text-white" [style.backgroundColor]="user.positionColor">
+                        {{user.positionName}}</span>
+                    <span *ngIf="user.userLevel || user.userLevel == 0" class="ml-1 badge text-white" [ngStyle]="getUserLevel().style">{{getUserLevel().userLevel}}
+                    </span>
+                </p>
+                <p class="m-0"><span>{{user?.emailAddress}}</span></p>
+            </div>
+        </div>
+    </div>
+</div>

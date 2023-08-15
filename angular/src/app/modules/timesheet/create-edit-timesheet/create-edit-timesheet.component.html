@@ -1,0 +1,80 @@
+<form class="form-horizontal" autocomplete="off" #timesheetForm="ngForm" novalidate [busy]="isDisable">
+
+    <abp-modal-header [title]="data.command == 'edit'?'Edit Timesheet: '+timesheet.name:'Create new Timesheet'"
+        (onCloseClick)="dialogRef.close()">
+    </abp-modal-header>
+    <div class="modal-body">
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="tenancyName">
+                Name:
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="timesheetName" id="timesheetName" class="form-control"
+                    placeholder="Nhập tên" name="name" minlength="2" maxlength="1024" required
+                    [(ngModel)]="timesheet.name" #timesheetNameModel="ngModel" #nameEl
+                    [ngClass]="((checkNull && timesheetNameModel.touched) || (timesheetNameModel.errors?.required && timesheetNameModel.touched ))?'is-check':''"
+                    (input)="enterName($event.target.value);" />
+                <span class="invalid"
+                    *ngIf="checkNull  && timesheetNameModel.touched && !timesheetNameModel.errors?.required">This field
+                    is invalid!</span>
+                    <abp-validation-summary [control]="timesheetNameModel" [controlEl]="nameEl">
+                    </abp-validation-summary>
+            </div>
+        </div>
+        <div class="form-group row required mt-4">
+            <label class="col-md-3 col-form-label" for="tenancyName">
+                Working day: 
+            </label>
+            <div class="col-md-9">
+                <input type="number" min=0 #totalWorking="ngModel" placeholder="Nhập số ngày làm việc"
+                    class="form-control" name="workingDays" [(ngModel)]="timesheet.totalWorkingDay" required
+                    #totalWorkingEl/>
+                    <abp-validation-summary [control]="totalWorking" [controlEl]="totalWorkingEl">
+                    </abp-validation-summary>
+            </div>
+        </div>
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="tenancyName">
+                Month:
+
+            </label>
+
+            <div class="col-md-9">
+                <mat-form-field class="w-100" appearance="outline">
+                    <mat-select [(ngModel)]="timesheet.month" name="monthSelect" placeholder="select month" required
+                        #account="ngModel">
+                        <ng-container *ngFor="let month of Months">
+                            <mat-option [value]="month">{{
+                                month
+                                }}</mat-option>
+                        </ng-container>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="code">
+                Year:
+            </label>
+
+            <div class="col-md-9">
+                <mat-form-field class="w-100" appearance="outline">
+                    <mat-select [(ngModel)]="timesheet.year" name="yearSelect" placeholder="select year" required
+                        #account="ngModel">
+                        <ng-container *ngFor="let year of listYear">
+                            <mat-option [value]="year">{{
+                                year
+                                }}</mat-option>
+                        </ng-container>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+
+    </div>
+    <div align="end" class="mat-dialog-actions" mat-dialog-actions="">
+        <button class="btn btn-secondary cancel-banks" mat-raised-button mat-dialog-close>Cancel</button>
+        <button mat-raised-button color="primary" class="saving-btn btn-save" mat-button
+            [disabled]=" !timesheetForm.form.valid || isDisable || checkNull" (click)="SaveAndClose()">Save</button>
+    </div>
+</form>

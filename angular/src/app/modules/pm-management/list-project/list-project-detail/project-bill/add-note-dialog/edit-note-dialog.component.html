@@ -1,0 +1,25 @@
+<form action="" autocomplete="off" (submit)="SaveAndClose()">
+  <abp-modal-header
+    [title]="'Edit bill account of user: ' + fullName | localize"
+    (onCloseClick)="bsModalRef.hide()"
+  ></abp-modal-header>
+  <div class="modal-body">
+    <label for="">Note:</label>
+    <mat-form-field appearance="outline" class="w-100">
+      <textarea
+        matInput
+        name="note"
+        maxlength="3000"
+        rows="5"
+        placeholder="Leave a comment..."
+        [(ngModel)]="note"
+      ></textarea>
+    </mat-form-field>
+  </div>
+
+  <abp-modal-footer
+    [cancelDisabled]="saving"
+    (onCancelClick)="bsModalRef.hide()"
+    [saveDisabled]="saving"
+  ></abp-modal-footer>
+</form>

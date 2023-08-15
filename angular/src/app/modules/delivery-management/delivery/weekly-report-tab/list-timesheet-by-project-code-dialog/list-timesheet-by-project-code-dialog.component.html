@@ -1,0 +1,39 @@
+<div class="card-header">
+    <h3 class="d-inline">
+        Collect timesheet result
+    </h3>
+    <mat-form-field appearance="outline" class="ml-4">
+        <input placeholder="search" matInput name="search" [(ngModel)]="searchText" (input)="searchProject()" />
+    </mat-form-field>
+    <button style="margin-bottom: 13px;" type="button" class="btn bg-blue " (click)="searchProject()">
+        <i class="fas fa-search"></i>
+    </button>
+    <i class="fas fa-times float-right fa-lg" (click)="dialogRef.close()"></i>
+</div>
+<div class="card-body" >
+    <div class="table-responsive">
+        <div class="fixTableHead">
+            <table class="table table-hover table-striped">
+                <thead class="bg-white">
+                    <tr>
+                        <th>#</th>
+                        <th>Project</th>
+                        <th style="width: 160px;">Normal time(h)</th>
+                        <th style="width: 160px;">OverTime(h)</th>
+                        <th>Note</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let project of listProjectWithTimesheet; let i =index">
+                        <td class="text-center">{{i+1}}</td>
+                        <td style="max-width: 500px; white-space: pre-line; word-wrap: break-word;"><strong>{{project.projectName}}</strong> ({{project.projectCode}}) - {{project.pmName}}</td>
+                        <td class="text-center" [ngClass]="project.normalWorkingTime==0?'text-danger':''"><strong>{{project.normalWorkingTime}}</strong></td>
+                        <td class="text-center"><strong>{{project.overTime}}</strong></td>
+                        <td class="text-center" [ngClass]="project.note=='Success'?'text-success':''">{{project.note}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

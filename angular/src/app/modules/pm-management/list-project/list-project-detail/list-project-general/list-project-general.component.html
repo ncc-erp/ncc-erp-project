@@ -1,0 +1,286 @@
+<section class="content px-2 py-2 m-0" style="background-color: #f1f1f1;"
+    *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabGeneral_View)">
+    <div class="container-fluid">
+        <div class="card mt-2">
+            <div class="card-body table-responsive p-4">
+                <form class="form-horizontal" autocomplete="off" #requestDetail="ngForm">
+                    <div class="row">
+                        <div class="col-md-6 col-12">
+                            <div class="straight form-group required row detail">
+                                <label class=" col-md-3 col-form-label" for="requestName">
+                                    Project Name:
+                                </label>
+                                <div *ngIf="readMode" class="col-md-7">
+                                    <div class="form-control text-read">{{project.name}}</div>
+                                </div>
+                                <div *ngIf="!readMode" class="col-md-7">
+                                    <input type="text" class="form-control" name="projectName" id="projectName"
+                                        minlength="2" maxlength="64" required [(ngModel)]="project.name"
+                                        #projectNameModel="ngModel" #projectNameEl />
+                                    <abp-validation-summary [control]="projectNameModel" [controlEl]="projectNameEl">
+                                    </abp-validation-summary>
+                                </div>
+                            </div>
+                            <div class="straight form-group required row detail">
+                                <label class="col-md-3 col-form-label" for="projectCode">
+                                    {{ 'Code' | localize }}:
+                                </label>
+                                <div *ngIf="readMode" class="col-md-7">
+                                    <div class="form-control text-read">{{project.code}}</div>
+                                </div>
+                                <div *ngIf="!readMode" class="col-md-7">
+                                    <input type="text" class="form-control" name="projectCode" id="projectCode" required
+                                        [(ngModel)]="project.code" #projectCode="ngModel" #projectCodeEl />
+                                    <abp-validation-summary [control]="projectCode" [controlEl]="projectCodeEl">
+                                    </abp-validation-summary>
+                                </div>
+                            </div>
+                            <div class="straight form-group required row detail">
+                                <label class="col-md-3 col-form-label m-special" for="projectPM">
+                                    PM:
+                                </label>
+                                <div *ngIf="readMode" class="col-md-7">
+                                    <div class="form-control text-read m-special">{{project.pmFullName}} -
+                                        ({{project.pmEmailAddress}})</div>
+                                </div>
+                                <div *ngIf="!readMode" class="col-md-7">
+                                    <mat-form-field class="w-100" appearance="outline">
+                                        <mat-select [(ngModel)]="project.pmId" class="manh" name="projectPM"
+                                            placeholder="select a PM" required #projectPM="ngModel">
+                                            <mat-form-field class="w-100 px-3"
+                                                style="position: sticky; top: 0; z-index: 2; background-color: white;">
+                                                <input matInput [(ngModel)]="searchPM" name="searchPMName"
+                                                    placeholder="Search" #search
+                                                    (keydown)="$event.stopPropagation()" />{{search.focus()}}
+                                            </mat-form-field>
+                                            <mat-option
+                                                *ngFor="let pm of pmList | listFilter: 'fullName' : searchPM : 'emailAddress' : 'surname' : 'name'"
+                                                [value]="pm.id">
+                                                {{pm.fullName}} - ({{pm.emailAddress}})
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <mat-error class="mt-1" *ngIf="projectPM.hasError('required') && projectPM.touched"
+                                        style="font-size: 13px;">
+                                        This field is required
+                                    </mat-error>
+                                </div>
+                            </div>
+                            <div class="straight form-group required row detail">
+                                <label class="col-md-3 col-form-label m-special" for="requestName">
+                                    Project Type:
+                                </label>
+                                <div *ngIf="readMode" class="col-md-7">
+                                    <div class="text-read m-special">
+                                        <span
+                                            [ngClass]="APP_CONST.ProjectTypeStyle[getByEnum(project.projectType , APP_ENUM.ProjectType)]">
+                                            {{changeTextProjectType(getByEnum(project.projectType ,
+                                            APP_ENUM.ProjectType))}}</span>
+                                    </div>
+                                </div>
+                                <div *ngIf="!readMode" class="col-md-7">
+                                    <mat-form-field class="w-100" appearance="outline">
+                                        <mat-select [(ngModel)]="project.projectType" name="projectType"
+                                            placeholder="select a project type" required #projectType="ngModel">
+                                            <ng-container *ngFor="let projectType of projectTypeList">
+                                                <mat-option [value]="APP_ENUM.ProjectType[projectType]"> {{
+                                                    changeTextProjectType(projectType) }}</mat-option>
+                                            </ng-container>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <mat-error class="mt-1"
+                                        *ngIf="projectType.hasError('required') && projectType.touched"
+                                        style="font-size: 13px;">
+                                        This field is required
+                                    </mat-error>
+                                </div>
+                            </div>
+                            <div class="straight form-group required row detail">
+                                <label class="col-md-3 col-form-label m-special" for="requestName">
+                                    Project Status:
+                                </label>
+                                <div *ngIf="readMode" class="col-md-7">
+                                    <div class="text-read m-special">
+                                        <p
+                                            [ngClass]="APP_CONST.statusStyle[getByEnum(project.status, APP_ENUM.ProjectStatus)]">
+                                            {{getByEnum(project.status, APP_ENUM.ProjectStatus)}}</p>
+                                    </div>
+                                </div>
+                                <div *ngIf="!readMode" class="col-md-7">
+                                    <mat-form-field class="w-100" appearance="outline">
+                                        <mat-select [(ngModel)]="project.status" name="projectStatus"
+                                            placeholder="select a project status" required #projectStatus="ngModel">
+                                            <ng-container *ngFor="let status of projectStatusList">
+                                                <mat-option [value]="APP_ENUM.ProjectStatus[status]">
+                                                    {{status}}</mat-option>
+                                            </ng-container>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <mat-error class="mt-1"
+                                        *ngIf="projectStatus.hasError('required') && projectStatus.touched"
+                                        style="font-size: 13px;">
+                                        This field is required
+                                    </mat-error>
+                                </div>
+                            </div>
+                            <div class="straight form-group required row detail">
+                                <label class="col-md-3 col-form-label m-special" for="requestName">
+                                    Customer:
+                                </label>
+                                <div *ngIf="readMode" class="col-md-7">
+                                    <div class="form-control text-read m-special">{{project.clientName}}</div>
+                                </div>
+                                <div *ngIf="!readMode" class="col-md-7">
+                                    <mat-form-field class="w-100" appearance="outline">
+                                        <mat-select [(ngModel)]="project.clientId" name="client"
+                                            placeholder="select customer" required #client="ngModel">
+                                            <mat-form-field class="w-100 px-3"
+                                                style="position: sticky; top: 0; z-index: 2; background-color: white;">
+                                                <input matInput [(ngModel)]="searchClient" name="searchClientName"
+                                                    placeholder="Search" #search
+                                                    (keydown)="$event.stopPropagation()" />{{search.focus()}}
+                                            </mat-form-field>
+                                            <mat-option
+                                                *ngFor="let client of clientList | listFilter : 'name' : searchClient"
+                                                [value]="client.id"> {{client.name}}</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <mat-error class="mt-1" *ngIf="client.hasError('required') && client.touched"
+                                        style="font-size: 13px;">
+                                        This field is required
+                                    </mat-error>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 col-12">
+                            <div class="straight form-group required row detail" *ngIf="isShowCurrencyCharge">
+                                <label class="col-md-3 col-form-label m-special" for="payCurrent">
+                                    Currency:
+                                </label>
+                                <div *ngIf="readMode" class="col-md-7">
+                                    <div class="form-control text-read m-special">{{project.currencyName}}</div>
+                                </div>
+                                <div *ngIf="!readMode" class="col-md-7">
+                                    <mat-form-field class="w-100" appearance="outline">
+                                        <mat-select [(ngModel)]="project.currencyId" name="currency"
+                                            placeholder="Select currency" required #currency="ngModel">
+                                            <mat-option *ngFor="let currency of currencyList" [value]="currency.id">
+                                                {{currency.name}}</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                            <div class="straight form-group row detail" *ngIf="isShowCurrencyCharge">
+                                <label class="col-md-3 col-form-label" for="requestName">Charge:</label>
+
+                                <div class="col-md-5">
+                                    <mat-checkbox [disabled]="readMode" [(ngModel)]="project.isCharge"
+                                        (change)="checkValue($event)" name="ischarge" class="mt-1">is Charged
+                                    </mat-checkbox>
+                                    <span><i class="fas fa-question-circle showText ml-1 mb-1"></i></span>
+                                </div>
+                            </div>
+
+                            <div class="straight form-group row detail" >
+                                <label class="col-md-3 col-form-label" for="requestName">Weekly report:</label>
+
+                                <div class="col-md-5">
+                                    <mat-checkbox [disabled]="readMode" [(ngModel)]="project.isRequiredWeeklyReport"
+                                        name="isRequiredWeeklyReport" class="mt-1">is Required
+                                    </mat-checkbox>
+                                    <span><i class="fas fa-question-circle showTextWR ml-1 mb-1"></i></span>
+                                </div>
+                            </div>
+
+                            <div class="straight form-group row detail" *ngIf="project.isCharge">
+                                <label class="col-md-3 col-form-label m-special" for="requestName">
+                                    Charge Type :
+                                </label>
+                                <div *ngIf="readMode" class="col-md-7">
+                                    <div class="form-control text-read m-special">{{getByEnum(project.chargeType ,
+                                        APP_ENUM.ChargeType)}}</div>
+                                </div>
+                                <div *ngIf="!readMode" class="col-md-7">
+                                    <mat-form-field class="w-100" appearance="outline">
+                                        <mat-select [(ngModel)]="project.chargeType" name="chargeType"
+                                            placeholder="Select charge type" #currency="ngModel">
+                                            <mat-option *ngFor="let type of chargeTypeList"
+                                                [value]="APP_ENUM.ChargeType[type]">
+                                                {{type}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                            <div class="straight form-group required row detail">
+                                <label class="col-md-3 col-form-label m-special" for="requestName">
+                                    Start time:
+                                </label>
+                                <div *ngIf="readMode" class="col-md-7">
+                                    <div class="form-control text-read m-special">{{project.startTime
+                                        |date:"dd/MM/yyyy"}}</div>
+                                </div>
+                                <div *ngIf="!readMode" class="col-md-7 datepick">
+                                    <mat-form-field class="datetime-picker" appearance="outline">
+                                        <input matInput [matDatepicker]="picker" [(ngModel)]="project.startTime"
+                                            placeholder="choose a date" required name="startTime" />
+                                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                        <mat-datepicker #picker></mat-datepicker>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                            <div class="straight form-group row detail">
+                                <label class="col-md-3 col-form-label m-special" for="requestName">
+                                    End time:
+                                </label>
+                                <div *ngIf="readMode" class="col-md-7">
+                                    <div class="form-control text-read m-special">{{project.endTime |date:"dd/MM/yyyy"}}
+                                    </div>
+                                </div>
+                                <div *ngIf="!readMode" class="col-md-7 datepick">
+                                    <mat-form-field class="datetime-picker" appearance="outline">
+                                        <input matInput [matDatepicker]="picker2" [(ngModel)]="project.endTime"
+                                            placeholder="choose a date" name="endTime" />
+                                        <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                                        <mat-datepicker #picker2></mat-datepicker>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+
+                            <div class="straight form-group row detail mb-3">
+                                <label for="require-timesheet" class="col-md-3 col-form-label">Require File:</label>
+                                <div class="col-md-5 pt-2">
+                                    <mat-checkbox [disabled]="readMode" [(ngModel)]="project.requireTimesheetFile"
+                                        name="requireFile">Require Upload Timesheet File</mat-checkbox>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-right">
+                        <div class="form-group" [hidden]="!readMode"
+                            *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabGeneral_Edit)">
+                            <button class="btn bg-primary" (click)="editRequest()">
+                                <i class="fas fa-edit"></i>
+                                Edit
+                            </button>
+                        </div>
+                        <div class="form-group" [hidden]="readMode">
+                            <div class="d-flex justify-content-end">
+                                <button name="btn-cancel" class="btn btn-secondary btn-action mx-2"
+                                    (click)="readMode = true; getProjectDetail()">
+                                    Cancel
+                                </button>
+                                <button name="btn-save" class="btn btn-primary btn-action"
+                                    [disabled]="!requestDetail.valid || isLoading " (click)="saveAndClose()">
+                                    Save
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>

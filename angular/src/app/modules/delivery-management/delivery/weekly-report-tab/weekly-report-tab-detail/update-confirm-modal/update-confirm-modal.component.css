@@ -1,0 +1,13 @@
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+
+  .project-name{
+    font-weight: bold;
+  }
+
+  .confirm-question{
+    display: flex;
+  }

@@ -1,0 +1,8 @@
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-flex{
+    height: 52px;
+}
+.pre-text{
+    white-space: pre-line;
+    font-family: sans-serif; 
+    align-self:flex-start;
+}

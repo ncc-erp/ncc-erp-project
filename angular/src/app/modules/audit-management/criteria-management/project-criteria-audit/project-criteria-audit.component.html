@@ -1,0 +1,94 @@
+<div *ngIf="permission.isGranted(Audits_Tailoring_Update_Project)" class="wrapper" style="min-height: 94vh; margin-bottom: 0; padding-bottom: 0;">
+  <section style="position: sticky; top: 0; z-index: 2;">
+    <div class="row">
+      <div class="col-6">
+        <h4 style="color: #014C6E;">Project tailoring update</h4>
+      </div>
+    </div>
+  </section>
+  <div class="container-fluid">
+    <div class="card" style="margin-bottom: 0;">
+      <div class="card-header" style="position: sticky; top: 0; z-index: 2;">
+        <div class="row justify-content-between">
+          <div class="col-lg-4 col-md-12">
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <button
+                  type="button"
+                  class="btn bg-blue"
+                  (click)="searchCriteria()"
+                >
+                  <i class="fas fa-search"></i>
+                </button>
+              </div>
+              <input
+              [(ngModel)]="search"
+                type="text"
+                class="form-control"
+                name="keyword"
+                placeholder="Search"
+                (keyup.enter)="searchCriteria()"
+              />
+            </div>
+          </div>
+
+          <div class="col-lg-5 col-md-5 mt-3 mt-lg-0 text-right">
+            <button style="width:78px ;" (click)="view()" class="btn bg-primary btn-action">
+              View
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <mat-tree  style="max-height: 80vh;overflow-y: auto;"
+        [dataSource]="dataSource"
+        [treeControl]="treeControl"
+        class="example-tree px-2"
+      >
+      <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle [style.marginLeft] = "node.level * 40 + 'px'"  style="background-color:rgb(245, 242, 242) ">
+        <button mat-icon-button disabled></button>
+        <div class="d-flex">
+          <mat-checkbox class="checklist-leaf-node d-flex align-items-center" [checked]="checklistSelection.isSelected(node)"
+          (change)="todoLeafItemSelectionToggle(node,true)"
+          [disabled]="!permission.isGranted(Audits_Tailoring_Update_Project_Tailoring)">
+        </mat-checkbox>
+        <div class="d-flex"  style="font-size: 16px; margin-left: 38px;">
+          <span class="d-flex align-items-center">{{ node.item.code }} </span>
+                  <div style="margin-left: 19px; word-break: break-word; padding-right: 45px;">  {{ node.item.name }} 
+          <i *ngIf="node.item.isApplicable" [style.color]="'#28a745'" style="font-size: 14px;" class="ml-2 fas fa-check-circle"></i>
+          </div>
+        </div>
+        </div>
+
+
+        
+      </mat-tree-node>
+
+      <mat-tree-node *matTreeNodeDef="let node; when: hasChild" [style.marginLeft] = "node.level * 40 + 'px'"  style="background-color:#c4dfec ">
+        <button mat-icon-button matTreeNodeToggle
+                [attr.aria-label]="'toggle ' + node.filename">
+                <i
+                *ngIf="treeControl.isExpanded(node); else elseBlock"
+                class="fa fa-chevron-down"
+              ></i>
+              <ng-template #elseBlock>
+                <i class="fa fa-chevron-right"></i
+              ></ng-template>
+        </button>
+        <div class="d-flex">
+          <mat-checkbox class="d-flex align-items-center" [checked]="descendantsAllSelected(node)" [indeterminate]="descendantsPartiallySelected(node)"
+            [disabled]="!permission.isGranted(Audits_Tailoring_Update_Project_Tailoring)"
+            (change)="todoItemSelectionToggle(node,true)">
+          </mat-checkbox>
+          <div class="d-flex"  style="font-size: 16px;margin-left: 38px;">
+            <span class="d-flex align-items-center">{{ node.item.code }} </span>
+            <div style="margin-left: 19px; word-break: break-word; padding-right: 45px;">  {{ node.item.name }} 
+            </div>
+          </div>
+        </div>
+      </mat-tree-node>
+      </mat-tree>
+
+    </div>
+  </div>
+</div>

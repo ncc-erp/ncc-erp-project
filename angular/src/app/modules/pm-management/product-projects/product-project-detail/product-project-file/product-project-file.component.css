@@ -1,0 +1,17 @@
+.upload-btn {
+    cursor: pointer;
+    padding: 6px 15px;
+    background: #28a745;
+    display: table;
+    color: #fff;
+    border-radius: 2px;
+  }
+  .upload-btn:hover{
+    background: #2bb14a;
+  
+  }
+  
+  input[type="file"] {
+    display: none;
+  }
+  

@@ -1,0 +1,51 @@
+<mat-form-field appearance="outline" style=" overflow: hidden; width: 80%;" class="dropdown">
+    <mat-select class="test" placeholder="{{data}}%" style="width: 300px;" name="xx" (selectionChange)="onSelectionChange()"
+     [(ngModel)]="data" required #percentageDropDown="ngModel">
+        <mat-option [value]="100">Sử dụng full (100%)</mat-option>
+        <mat-option [value]= "0">Không sử dụng (0%)</mat-option>
+        <mat-option [value]="50">50%</mat-option>
+        <mat-option  style="height: auto;">
+            <mat-radio-group aria-label="Select an option" name="aa"  [(ngModel)]="data" (change)="onSelectionChange()">
+                <table class="w-100 percentage-table">
+                    <tr>
+                        <td>
+                            <mat-radio-button  class="mr-1" [value]="10">10%</mat-radio-button>
+                        </td>
+                        <td>
+                            <mat-radio-button  [value]="20">20%</mat-radio-button>
+                        </td>
+                        <td>
+                            <mat-radio-button  [value]="30">30%</mat-radio-button>
+                        </td>
+                        <td>
+                            <mat-radio-button  [value]="40">40%</mat-radio-button>
+                        </td>
+                       
+                    </tr>
+                    <tr>
+                        <td>
+                            <mat-radio-button  [value]="60">60%</mat-radio-button>
+                        </td>
+                        <td>
+                            <mat-radio-button  [value]="70">70%</mat-radio-button>
+                        </td>
+                        <td>
+                            <mat-radio-button  [value]="80">80%</mat-radio-button>
+                        </td>
+                        <td>
+                            <mat-radio-button  [value]="90">90%</mat-radio-button>
+                        </td>
+                    </tr>
+                </table>
+
+
+            </mat-radio-group>
+        </mat-option>
+    </mat-select>
+ 
+</mat-form-field>
+<mat-error 
+*ngIf="percentageDropDown.hasError('required') && percentageDropDown.touched"
+style="font-size: 13px;">
+This field is required
+</mat-error>

@@ -1,0 +1,21 @@
+
+:host table,th,td,thead,tbody{
+    border: none;
+}
+:host thead{
+    top:-1px;
+}
+:host th,td{
+    vertical-align: middle;
+}
+
+::ng-deep.my-dialog .mat-dialog-container{
+    padding-top: 0;
+  }
+  :host::ng-deep .modal-header {
+    padding: 0;
+    align-items: center;
+  }
+  :host::ng-deep .mat-dialog-title{
+    margin: 20px 0;
+  }

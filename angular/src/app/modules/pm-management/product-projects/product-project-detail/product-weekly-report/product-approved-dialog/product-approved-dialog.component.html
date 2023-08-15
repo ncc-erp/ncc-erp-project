@@ -1,0 +1,80 @@
+
+<form class="form-horizontal" autocomplete="off" #approveForm="ngForm" novalidate>
+    <abp-modal-header title="Approve request for user: {{resourceRequest.fullName}}" (onCloseClick)="dialogRef.close()">
+    </abp-modal-header>
+    <div class="modal-body">
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="tenancyName">
+                User:
+            </label>
+            <div class="col-9">
+                <mat-form-field class="w-100" appearance="outline">
+                    <mat-select [(ngModel)]="resourceRequest.userId" name="projectEmployee" placeholder="select user"
+                        required #projectEmployee="ngModel">
+                        <mat-form-field class="w-100 px-3 "
+                            style="position: sticky; top: 0; z-index: 2; background-color: white;">
+                            <input matInput [(ngModel)]="searchUser" name="searchUserName" placeholder="search" (keydown)="$event.stopPropagation()">
+                        </mat-form-field>
+                        <mat-option *ngFor="let user of userList |listFilter: 'fullName'  :searchUser : 'emailAddress' : 'surname' : 'name'" [value]="user.id">
+                            {{user.fullName}} - ({{user.emailAddress}})</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-error class="mt-1" *ngIf="projectEmployee.hasError('required') && projectEmployee.touched"
+                    style="font-size: 13px;">
+                    This field is required
+                </mat-error>
+            </div>
+        </div>
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="tenancyName">
+                Role:
+            </label>
+            <div class="col-9">
+                <mat-form-field class="w-100 mx-auto" appearance="outline">
+                    <mat-select [(ngModel)]="resourceRequest.projectRole" name="projectrole" placeholder="select a role"
+                        required #projectPM="ngModel">
+                        <mat-option *ngFor="let role of projectRoleList" [value]="APP_ENUM.ProjectUserRole[role]">
+                            {{role}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-error class="mt-1" *ngIf="projectPM.hasError('required') && projectPM.touched"
+                    style="font-size: 13px;">
+                    This field is required
+                </mat-error>
+            </div>
+
+        </div>
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="tenancyName">
+                Start time:
+            </label>
+            <div class="col-9">
+                <mat-form-field appearance="outline">
+                    <input matInput [matDatepicker]="picker" placeholder="chose a date" required
+                        [(ngModel)]="resourceRequest.startTime" name="usercreateDate">
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="tenancyName">
+                allocatePercentage:
+            </label>
+            <div class="col-9">
+                    <div style="width: 250px;">
+                        <mat-radio-group [(ngModel)]="resourceRequest.allocatePercentage" aria-label="Select an option" name="allocatePercentage">
+                            <mat-radio-button [value]="100">Sử dụng</mat-radio-button>
+                            <br/>
+                            <mat-radio-button [value]="0">Không sử dụng</mat-radio-button>
+                          </mat-radio-group>
+                    </div>
+                    
+            </div>
+        </div>
+    </div>
+    <div align="end" class="justify-content-end" mat-dialog-actions="">
+        <button class="btn btn-secondary btn-action mr-2" mat-dialog-close>Cancel</button>
+        <button class="btn btn-primary btn-action" (click)="saveAndClose()" [disabled]="!approveForm.valid || isLoading">Save</button>
+    </div>
+</form>

@@ -1,0 +1,59 @@
+<form class="form-horizontal" autocomplete="off" #timesheetForm="ngForm" novalidate>
+    <abp-modal-header *ngIf="data.command=='create'" title="Create Criteria" (onCloseClick)="dialogRef.close()">
+    </abp-modal-header>
+    <abp-modal-header *ngIf="data.command=='edit'" title="Edit Criteria" (onCloseClick)="dialogRef.close()">
+    </abp-modal-header>
+    <div class="modal-body">
+        <div class="form-group required col-md-12 " >
+            <label for="criteriaName" class="col-form-label">
+                {{ 'Name' | localize }}:
+            </label>
+            <div>
+                <input type="text" class="form-control" name="criteriaName" id="criteriaName" required
+                    [(ngModel)]="criteria.name" #criteriaNameModel="ngModel" #criteriaNameEl />
+                <abp-validation-summary [control]="criteriaNameModel" [controlEl]="criteriaNameEl">
+                </abp-validation-summary>
+            </div>
+        </div>
+
+        <div class="form-group col-md-12 required">
+            <label for="criteriaGuideLine">
+                {{ 'Guideline' | localize }}:
+            </label>
+            <div>
+                <editor class="w-100" [init]="{
+                                    height: 300,
+                                    selector: 'textarea',
+                                    a_plugin_option: true,
+                                    a_configuration_option: 400,
+                                    class: 'w-100',
+                                    menubar: true,
+                                    plugins: ['table','code','preview','media', 'image', 'template'],
+                                    toolbars: ['image'],
+                                    branding: false
+                                    }" [(ngModel)]="criteria.guideline" #criteriaNameModel="ngModel" #criteriaNameEl name="guideline"
+                    initialValue="{{criteria.guideline}}">
+                </editor>
+            </div>
+        </div>
+        <div class="form-group col-md-12 required">
+            <div class="row">
+                <div>
+                    <mat-checkbox [(ngModel)]="criteria.isActive" name="iActive"
+                        (change)="checkValue($event)"> &nbsp; </mat-checkbox>
+                </div>
+                <label for="criteriaGuideLine">
+                    {{ 'Is Active' | localize }}
+                </label>
+            </div>
+
+        </div>
+    </div>
+    <!--
+    </div> -->
+    <div align="end" class="mat-dialog-actions" mat-dialog-actions="">
+        <button class="btn btn-default cancel-banks" mat-raised-button mat-dialog-close>Cancel</button>
+        <button mat-raised-button color="primary" class="saving-btn" mat-button
+            [disabled]="!timesheetForm.form.valid ||isLoading" (click)="SaveAndClose()">Save</button>
+    </div>
+</form>

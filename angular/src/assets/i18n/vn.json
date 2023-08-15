@@ -1,0 +1,295 @@
+{
+    "menu": {
+        "menu1": "Trang chủ",
+        "menu2": "Admin",
+        "menu3": "Quản trị danh mục",
+        "menu4": "Quản lý tài khoản",
+        "menu5": "Quản lý tài chính",
+        "menu6": "Báo cáo"
+    },
+    "action": {
+        "actions": "Hành động",
+        "create": "Thêm mới",
+        "edit": "Sửa",
+        "delete": "Xóa",
+        "cancel": "Hủy bỏ",
+        "save": "Lưu",
+        "search": "Tìm kiếm",
+        "add": "Thêm",
+        "UpdatePassword":"Đổi mật khẩu",
+        "Logout":"Đăng xuất"
+    },
+    "filter": {
+        "filterby": "Lọc",
+        "comparision": "Loại lọc",
+        "textFilter": "Text"
+    },
+    "menu1":{
+        "action":{
+            "viewAll":"Xem tất cả",
+            "remind":"Nhắc CEO",
+            "remindCFO":"Nhắc CFO"
+        },
+        "requestStatus":{
+            "pending":"Request đang chờ duyệt",
+            "approve":"Chờ CFO duyệt",
+            "transferred": "Request đã xuất tiền",
+            "end":"Request đã thực thi"
+        },
+        "chartTitle":{
+            "pieChart":"Thu, chi",
+            "lineChart": "biến động dòng tiền năm"
+        },
+        "incomeTitle":"Loại thu",
+        "outcomeTitle":"Loại chi",
+        "income":"tiền thu",
+        "outcome":"tiền chi"
+
+
+    },
+    "menu2":{
+        "tenants":"Công ty",
+        "user":"Người dùng",
+        "role":"Vai trò",
+        "workFlow":"Work flow",
+        "status":"Trạng thái"
+    },
+    "menu3": {
+        "m3_child1": "Tiền tệ",
+        "m3_child2": "Ngân hàng",
+        "m3_child3": "Loại đối tượng",
+        "m3_child4": "Chi nhánh",
+        "m3_child5": "Loại thu",
+        "m3_child6": "Loại chi",
+        "m3_child7": "Nhà cung cấp"
+    },
+    "menu4": {
+        "m4_child1": "Tài khoản ngân hàng",
+        "m4_child2": "Đối tượng kế toán"
+    },
+    "menu5": {
+        "m5_child1": "Ghi nhận thu",
+        "m5_child2": "Request chi",
+        "m5_child3": "Giao dịch ngân hàng",
+        "m5_child4": "Hóa đơn"
+    },
+    "m2_child4": {
+        "name": "Tên",
+        "outType": "Loại chi",
+        "workFlow": "Luồng dòng chảy",
+        "createTitle": "Tạo mới luồng dòng chảy",
+        "createTitleStatus": "Tạo mới trạng thái",
+        "editTitleStatus": "Chỉnh sửa trạng thái",
+        "createTitleTransition": "Tạo mới chuyển tiếp",
+        "editTitleStatusTransition": "Chỉnh sửa chuyển tiếp",
+        "code": "Mã",
+        "workFlowStatusMain": "Thông tin chung",
+        "workFlowStatusMainDetail": "Luồng chi tiết",
+        "workFlowStatusStatus": "Trạng thái",
+        "workFlowStatusTransition": "Chuyển tiếp",
+        "workFlowStatusTransitionName": "Tên",
+        "workFlowStatusTransitionFrom": "Từ",
+        "workFlowStatusTransitionTo": "Đến",
+        "workFlowStatusTransitionRole": "Vai trò",
+        "workFlowStatusTransitionPermission": "Quyền"
+    },
+    "m3_child1": {
+        "no": "STT",
+        "name": "Tên",
+        "code": "Mã",
+        "value": "Giá trị",
+        "currencies": "Danh sách tiền tệ",
+        "createTitle": "Thêm mới tiền tệ",
+        "editTitle": "Chỉnh sửa tiền tệ",
+        "search": "Tìm kiếm theo tên, mã"
+    },
+    "m3_child2": {
+        "no": "STT",
+        "name": "Tên",
+        "code": "Mã",
+        "value": "Giá trị",
+        "bank": "Danh sách ngân hàng",
+        "createTitle": "Tạo mới ngân hàng",
+        "editTitle": "Chỉnh sửa ngân hàng",
+        "search": "Tìm kiếm theo tên, mã"
+    },
+    "m3_child4": {
+        "no": "STT",
+        "name": "Tên",
+        "code": "Mã",
+        "default": "Default",
+        "branches": "Danh sách chi nhánh",
+        "createTitle": "Tạo mới chi nhánh",
+        "editTitle": "Chỉnh sửa chi nhánh",
+        "search": "Tìm kiếm theo tên, mã"
+    },
+    "m3_child5": {
+        "title": "Quản lý loại thu",
+        "createTitle": "Tạo mới loại thu",
+        "editTitle": "Chỉnh sửa loại thu",
+        "name": "Tên loại thu",
+        "code": "Mã loại thu",
+        "count": "Tính vào doanh thu",
+        "yesConfirm": "có",
+        "noConfirm": "không được tính"
+    },
+    "m3_child6": {
+        "title": "Quản lý loại chi",
+        "createTitle": "Tạo mới loại chi",
+        "editTitle": "Chỉnh sửa loại chi",
+        "name": "Tên loại chi",
+        "code": "Mã loại chi",
+        "count": "Tính vào doanh chi",
+        "yesConfirm": "có",
+        "noConfirm": "không được tính",
+        "Expense_Type":"Loại chi phí",
+        "REAL_EXPENSE": "Chi phí thực tế",
+        "NON_EXPENSE": "Không tính vào chi phí doanh nghiệp"
+
+    },
+    "m3_child7": {
+        "supplier": "Nhà cung cấp",
+        "search": "Tìm kiếm",
+        "no": "STT",
+        "name": "Tên",
+        "phoneNumber": "Số điện thoại",
+        "address": "Địa chỉ",
+        "contactPersonName": "Tên người liên lạc",
+        "contactPersonPhone": "Điện thoại liên lạc",
+        "taxNumber": "Số thuế",
+        "createTitle": "Tạo nhà cung cấp",
+        "editTitle": "Sửa nhà cung cấp"
+    },
+    "m4_child1": {
+        "bank account": "Danh sách tài khoản ngân hàng",
+        "no": "STT",
+        "hoder name": "Tên tài khoản",
+        "bank number": "Số tài khoản",
+        "bank": "Ngân hàng",
+        "currency": "Tiền tệ",
+        "account": "Đối tượng kế toán",
+        "amount": "Số tiền",
+        "action": "Hành động",
+        "createTitle": "Thêm tài khoản ngân hàng",
+        "editTitle": "Chỉnh sửa tài khoản ngân hàng",
+        "search": "Tìm kiếm theo tên, số tài khoản",
+        "choose a bank name": "Chọn tên ngân hàng",
+        "choose a currency": "Chọn loại tiền tệ",
+        "choose an account": "Chọn tài khoản",
+        "return": "Quay lại",
+        "bank account detail": "Tài khoản chi tiết"
+    },
+    "m4_child2": {
+        "no": "STT",
+        "name": "Tên",
+        "code": "Mã",
+        "default": "Default",
+        "accountType": "Loại đối tượng",
+        "banks": "Ngân hàng",
+        "accounts": "Đối tượng kế toán",
+        "createTitle": "Tạo mới đối tượng kế toán",
+        "editTitle": "Chỉnh sửa ",
+        "search": "Tìm kiếm theo tên, mã"
+    },
+    "m3_child3": {
+        "no": "STT",
+        "name": "Tên",
+        "code": "Mã",
+        "search": "Tìm kiếm theo tên, mã",
+        "accountType": "Loại đối tượng",
+        "createTitle": "Tạo mới loại đối tượng",
+        "editTitle": "Chỉnh sửa loại đối tượng"
+    },
+    "m5_child3": {
+        "name": "Tên giao dịch",
+        "title": "Quản lí giao dịch ngân hàng",
+        "create": "Thêm mới giao dịch ngân hàng",
+        "edit": "Update giao dịch ngân hàng",
+        "fromBank": "Bank gửi",
+        "toBank": "Bank nhận",
+        "fromValue": "Số tiền gửi",
+        "toValue": "Số tiền nhận",
+        "fee": "Phí giao dịch",
+        "sentDate": "Ngày giao dịch",
+        "detailTitle": "Chi tiết giao dịch",
+        "note": "Ghi chú"
+    },
+    "m5_child1": {
+        "title": "Ghi nhận thu",
+        "name": "Tên nguồn thu",
+        "account": "Thuộc về công ty",
+        "branch": "Chi nhánh",
+        "value": "Số tiền",
+        "incomeType": "Loại nguồn thu",
+        "create": "Thêm mới nguồn thu",
+        "edit": "Update nguồn thu"
+    },
+    "m5_child2": {
+        "title": "Quản lí request chi",
+        "create": "Thêm mới request chi",
+        "edit": "Update request",
+        "type": "Loại request",
+        "name": "Nội dung chi",
+        "author": "Người request",
+        "branch": "Chi nhánh",
+        "account": "Cho công ty",
+        "value": "Giá trị",
+        "status": "Trạng thái",
+        "detailName": "Tên",
+        "linkAccount": "Đối tượng liên quan",
+        "price": "Đơn giá",
+        "quantity": "Số lượng",
+        "total": "Thành tiền",
+        "fromAccount": "Từ tài khoản",
+        "toAccount": "Tới tài khoản",
+        "addNewTransaction": "Thêm mới giao dịch",
+        "linkToTransaction": "Liên kêt với giao dịch",
+        "linkToRevenues": "Liên kết với ghi nhận thu",
+        "linkToIncomingEntry": "Liên kết với ghi nhận thu",
+        "createMultiple": "Tạo nhanh giao dịch",
+        "deleteLink": "Xóa liên kết",
+        "deleteTransaction": "Xóa giao dịch",
+        "fromBankAccount": "Từ tài khoản",
+        "selectTransaction": "Chọn giao dịch",
+        "general information": "Thông tin chung",
+        "detail": "Thông tin chi tiết",
+        "related bank transactions": "Giao dịch ngân hàng liên quan",
+        "related revenue sources": "Nguồn thu liên quan",
+        "supplierTitle":"Nhà cung cấp",
+        "supplierName":"Tên nhà cung cấp",
+        "supplierPhone":"Số điện thoại",
+        "supplierAddress":"Địa chỉ",
+        "supplierContactName":"Người liên lạc",
+        "supplierContactPhone":"Điện thoại người liên lạc",
+        "supplierTax":"Mã số thuế",
+        "linkSupplier":"Liên kết với nhà cung cấp",
+        "createSupplier":"Thêm mới nhà cung cấp",
+        "editSupplier":"Update thông tin nhà cung cấp",
+        "expenditureRequest": "Yêu cầu chi",
+        "linkToexpenditureRequest": "Liên kết với yêu cầu chi"
+    },
+    "message": {
+        "delete": "Bạn có chắc chắn muốn xóa",
+        "deleteSuccess": "Xóa thành công !",
+        "createSuccess": "Lưu thành công !"
+    },
+    "errorcodes": {
+        "4000001": "Thiếu thời gian bắt đầu",
+        "4000002": "Thiếu PresenterId",
+        "4030001": "Không có quyền truy cập hồ sơ khác",
+        "4030002": "Không có quyền sửa hồ sơ khác",
+        "4030003": "Không có quyền thêm hoặc sửa hồ sơ ứng viên",
+        "4030004": "Không có quyền xóa tệp khác",
+        "4030005": "Không có quyền xem hồ sơ khác",
+        "4040001": "Bạn chưa đăng nhập",
+        "4040002": "Không tìm thấy id người dùng",
+        "4040003": "Không tìm thấy ứng viên",
+        "4040004": "Không tìm thấy kinh nghiệm làm việc",
+        "4040005": "Không tìm thấy tệp tải lên",
+        "4040006": "Không tìm thấy phiên bản của hồ sơ",
+        "4040007": "Không tìm thấy người giới thiệu",
+        "4090001": "Tên vị trí đã tồn tại",
+        "4090002": "Tên phiên bản đã tồn tại",
+        "4090003": "Tên nguồn đã tồn tại"
+    }
+}

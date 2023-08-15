@@ -1,0 +1,27 @@
+<form class="form-horizontal" autocomplete="off" #timesheetForm="ngForm" novalidate>
+    <abp-modal-header title="DownLoad Template" (onCloseClick)="dialogRef.close()">
+    </abp-modal-header>
+    <div class="modal-body row">
+        <mat-form-field class=" w-100">
+            <mat-label>Project</mat-label>
+            <mat-select (closed)="focusOutProject()" [ngModel]="projectId" name="select-Project"
+                (selectionChange)="onSelectChange($event)">
+                <mat-form-field class="w-100 px-3 "
+                    style="position: sticky; top: 0; z-index: 2; background-color: white;">
+                    <input matInput [(ngModel)]="searchPRJ" name="searchPMName" placeholder="Search" #search
+                        (keydown)="$event.stopPropagation()">{{search.focus()}}
+                </mat-form-field>
+                <mat-option *ngFor="let item of listProject | listFilter:  'projectName' : searchPRJ : 'projectCode'"
+                    [value]="item.projectId">
+                    <span><strong style="color: #014C6E;">[{{item.projectCode}}]
+                            {{item.projectName}} - </strong></span>
+                    <span> {{item.pmName}}</span></mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+    <div class="mat-dialog-actions" mat-dialog-actions="">
+        <button class="btn btn-default cancel-banks" mat-raised-button mat-dialog-close>Cancel</button>
+        <button mat-raised-button color="primary" class="saving-btn" mat-button [disabled]="!projectId" (click)="download()"
+            >DownLoad</button>
+    </div>
+</form>

@@ -1,0 +1,184 @@
+<section class="content px-2 pt-2 weekly-report" *ngIf="permission.isGranted(WeeklyReport_View)">
+    <div class="container-fluid">
+        <div class="card" style="min-height: 93vh;">
+            <div class="card-header">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <button type="button" class="btn bg-blue" (click)="getDataPage(1)">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <input type="text" class="form-control" name="keyword" placeholder="Search" [(ngModel)]="searchText"
+                        (keyup.enter)="getDataPage(1)" />
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-default" (click)="checkAddFilter()">
+                            <i class="fas" [class.fa-angle-up]="advancedFiltersVisible"
+                                [class.fa-angle-down]="!advancedFiltersVisible"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="advancedFiltersVisible" class="mb-0 mt-1">
+                <div class="card-body">
+                    <form class="form-horizontal">
+                        <div class="row">
+                            <div class="col-md-12 col-xl-12">
+                                <div class="mb-0">
+                                    <div>
+                                        <div *ngFor="let item of filterItems; let i = index">
+                                            <app-filter [item]="item" (emitChange)="onEmitChange($event, i)"
+                                                (deleteDataFilter)="deleteFilterItem(i)" [inputFilters]="FILTER_CONFIG">
+                                            </app-filter>
+                                        </div>
+                                        <i style="padding: 0;" class="fas fa-plus-circle ml-3"
+                                            (click)="addFilter()"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card-body table-responsive py-2">
+                <div class="fixHead">
+                    <table [busy]="isLoading" style="border-collapse: collapse;" class="table table-hover text-nowrap">
+                        <thead class="bg-light">
+                            <tr style="border: none;">
+                                <th class="stt">STT</th>
+                                <th style="width: 250px;">Weekly Report</th>
+                                <th style="width: 220px;">Projects</th>
+                                <th>Note</th>
+                                <th style="width: 100px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of pmReportList |paginate
+                        : {
+                            id: 'server',
+                            itemsPerPage: pageSize,
+                            currentPage: pageNumber,
+                            totalItems: totalItems
+                          }; let i=index">
+                                <td class="text-center">{{i+1}}</td>
+                                <td  style="white-space: normal; max-width: 150px;">
+                                    <div class="row">
+                                        <div class="col-9">
+                                            <span class="hyperlink" (click)="showDetail(item)">{{item.name}} </span>
+                                        </div>
+                                        <div class="col-3">
+                                            <span
+                                                [ngClass]="item.isActive?'badge  badge-success':'badge  badge-secondary'">{{item.isActive?'Active':'Closed'}}</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <strong>{{item.numberOfProject}} </strong>(
+                                    <span>{{item.countDraft }} </span>
+                                    <span>{{getByEnum(0,APP_ENUM.PMReportProjectStatus) }} / </span>
+                                    <span>{{item.countGreen }} </span>
+                                    <span [ngClass]="getByEnum(1,APP_ENUM.ProjectHealth)">{{getByEnum(1,APP_ENUM.ProjectHealth)}} / </span>
+                                    <span>{{item.countRed }} </span>
+                                    <span [ngClass]="getByEnum(3,APP_ENUM.ProjectHealth)">{{getByEnum(3,APP_ENUM.ProjectHealth)}} / </span>
+                                    <span>{{item.countYellow }} </span>
+                                    <span [ngClass]="getByEnum(2,APP_ENUM.ProjectHealth)">{{getByEnum(2,APP_ENUM.ProjectHealth)}}</span>
+                                    )
+                                </td>
+                                <td style="white-space: normal; max-width: 300px;">
+                                    <pre PrjResizeContent [collapseLine]="3" class="mb-0 p-0  ml-2 max-line-content-3" style=" white-space: pre-line;
+                                                                font-family: sans-serif; align-self:flex-start; line-height: initial;">
+                                                                    {{item.note}}
+                                                                </pre>
+
+                                </td>
+                                <td class="text-center">
+                                    <button *ngIf="(item.isActive || permission.isGranted(WeeklyReport_CloseAndAddNew)
+                                                                    || permission.isGranted(WeeklyReport_CollectTimesheet)
+                                                                    || permission.isGranted(WeeklyReport_Rename)
+                                                                    || permission.isGranted(WeeklyReport_View))
+                                                                    && item.isActive ==true
+                                                                    " mat-button [matMenuTriggerFor]="menu" [disabled]="processProblem">
+                                        <i class="fas fa-bars fa-lg"></i>
+                                    </button>
+                                    <mat-menu #menu="matMenu" class="p-2">
+                                        <div class="text-center">
+                                            <button *ngIf="item.isActive && permission.isGranted(WeeklyReport_CloseAndAddNew)"
+                                                class="mat-menu-item  w-100" (click)="closeReport(item)">
+                                                <i class="fas fa-times mr-1 text-danger fa-lg"></i>
+                                                Close & Add New
+                                            </button>
+                                        </div>
+                                        <!-- <button *ngIf="permission.isGranted(WeeklyReport_CollectTimesheet)" class="mat-menu-item  w-100 "
+                                            (click)="collectTimesheet(item.id)">
+                                            <i class="fas fa-business-time"></i>
+                                            Collect timesheet
+                                        </button> -->
+                                        <button *ngIf="item.isActive && permission.isGranted(WeeklyReport_Rename)" class="mat-menu-item  w-100 "
+                                            (click)="editReport(item)">
+                                            <i class="fas fa-pencil-alt mr-1"></i>
+                                            Rename
+                                        </button>
+                                        <button class="btn mat-menu-item  w-100" (click)="editNote(item.id)">
+                                            <i class="fas fa-sticky-note mr-1"></i>
+                                            Edit Note
+                                        </button>
+                                        <!-- <button *ngIf="item.isActive && permission.isGranted(WeeklyReport_ViewInfo)" class="mat-menu-item  w-100 "
+                                            (click)="viewReportInfo(item)">
+                                            <i class="fas fa-eye mr-1"></i>
+                                            View
+                                        </button> -->
+                                    </mat-menu>
+                                    <button matTooltip="Edit Note" class="btn" *ngIf="!item.isActive" (click)="editNote(item.id)">
+                                        <i class="fas fa-pencil-alt mr-1"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+            <div class="card-footer bg-light border-top pb-0">
+                <div class="row">
+                    <div class="col-sm-4 col-12 text-sm-left text-center">
+                        <button class="btn btn-secondary mb-2" (click)="refresh()">
+                            <i class="fas fa-redo-alt"></i>
+                        </button>
+                        <mat-form-field style="width: 20%;margin-left: 30px;">
+                            <mat-label>Number items</mat-label>
+                            <mat-select [(ngModel)]="pageSizeType" (ngModelChange)="changePageSize()">
+                                <mat-option [value]="5">
+                                    5
+                                </mat-option>
+                                <mat-option [value]="10">
+                                    10
+                                </mat-option>
+                                <mat-option [value]="20">
+                                    20
+                                </mat-option>
+                                <mat-option [value]="50">
+                                    50
+                                </mat-option>
+                                <mat-option [value]="100">
+                                    100
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-sm-4 col-12 text-center">
+                        <p class="mb-0 my-2">
+                            {{ "TotalRecordsCount" | localize: totalItems }}
+                        </p>
+                    </div>
+                    <div class="col-sm-4 col-12">
+                        <div class="float-sm-right m-auto">
+                            <abp-pagination-controls id="server" (pageChange)="getDataPage($event)">
+                            </abp-pagination-controls>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>

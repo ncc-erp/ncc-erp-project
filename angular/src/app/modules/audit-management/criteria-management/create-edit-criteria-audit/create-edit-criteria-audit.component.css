@@ -1,0 +1,27 @@
+
+
+.name-criteria {
+  line-height: 48px;
+}
+
+
+.label-active {
+  border-radius: 99px;
+  padding: 2px 8px;
+  background-color: #28a745;
+  color: #fff;
+}
+.w-95{
+  width: 95%;
+}
+::ng-deep.my-dialog .mat-dialog-container{
+  padding-top: 0;
+}
+ 
+:host::ng-deep .modal-header {
+  padding: 0;
+  align-items: center;
+}
+:host::ng-deep .mat-dialog-title{
+  margin: 20px 0;
+}

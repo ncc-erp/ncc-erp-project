@@ -1,0 +1,269 @@
+<section class="content-header pb-1">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-6">
+                <h1>{{'Training Projects' | localize}}</h1>
+            </div>
+            <div class="col-6 text-right">
+                <button name="btn-create" *ngIf="permission.isGranted(Projects_TrainingProjects_Create)" class="btn btn-primary"
+                    (click)="create()">
+                    <i class="fa fa-plus-square"></i>
+                    Create
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="content px-2 training-project">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <div class="row g-3">
+                    <div class="input-group col-6 pt-1">
+                        <div class="input-group-prepend">
+                            <button name="btn-search" type="button" class="btn bg-blue" (click)="searchInfoProject()">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                        <input type="text" class="form-control" name="keyword" placeholder="Search" [(ngModel)]="searchText"
+                            (keyup.enter)="searchInfoProject()" />
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-default" (click)="checkAddFilter()">
+                                <i class="fas" [class.fa-angle-up]="advancedFiltersVisible"
+                                    [class.fa-angle-down]="!advancedFiltersVisible"></i>
+                            </button>
+                        </div>
+
+                    </div>
+                    <div class="col-6 ">
+                        <div class="row filter-wrap">
+
+                            <div class="col-6 search-pm text-right">
+                                <!-- <label class="label-pm pr-2 mt-3 ">PM:</label> -->
+                                <mat-form-field appearance="outline">
+                                    <mat-label>PM</mat-label>
+                                    <mat-select [(ngModel)]="pmId" name="pmId" placeholder="select a PM"
+                                        (selectionChange)="getDataPage(1)"
+                                        [disabled]="!isEnablePMFilter()">
+                                        <mat-form-field class="w-100 px-3 "
+                                            style="position: sticky; top: 0; z-index: 2; background-color: white;">
+                                            <input matInput [(ngModel)]="searchPM" name="searchPMName" placeholder="Search"
+                                                #search (keydown)="$event.stopPropagation()">{{search.focus()}}
+                                        </mat-form-field>
+                                        <mat-option [value]="-1">All</mat-option>
+                                        <mat-option
+                                            *ngFor="let data of pmList | listFilter:  'fullName' : searchPM : 'emailAddress'"
+                                            [value]="data.id">
+                                            {{data.fullName}} - ({{data.emailAddress}})
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                            <div class="col-6 pr-2 search-status">
+                                <!-- <label class="mt-3 label-status"><span class="pr-2">Trạng thái:</span></label> -->
+                                <mat-form-field appearance="outline" class="listStatus">
+                                    <mat-label>Trạng thái</mat-label>
+                                    <mat-select [(ngModel)]="projectStatus" name="status" placeholder="Status"
+                                        (selectionChange)="getDataPage(1)">
+                                        <mat-option value="-1">All</mat-option>
+                                        <mat-option *ngFor="let item of statusFilterList" [value]="item.value">
+                                            {{item.displayName}}</mat-option>
+
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="advancedFiltersVisible" class="mb-0 mt-1">
+                <div class="card-body">
+                    <form class="form-horizontal">
+                        <div class="row">
+                            <div class="col-md-12 col-xl-12">
+                                <div class="mb-0">
+                                    <div>
+                                        <div *ngFor="let item of filterItems; let i = index">
+                                            <app-filter [item]="item" (emitChange)="onEmitChange($event, i)"
+                                                (deleteDataFilter)="deleteFilterItem(i)" [inputFilters]="FILTER_CONFIG">
+                                            </app-filter>
+                                        </div>
+                                        <i style="padding: 0;" class="fas fa-plus-circle ml-3"
+                                            (click)="addFilter()"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="card-body table-responsive px-4 pb-2">
+                <div class="fixTableHead">
+
+
+                    <table name="tbl_listProject" style="border-collapse: collapse;" class="table table-hover text-nowrap w-100">
+                        <thead class="bg-light">
+                            <tr style="border: none;">
+                                <th style="width: 70px;">#</th>
+                                <th style="width: 250px;">Projects</th>
+                                <th style="width: 400px;">{{'PM' | localize}}</th>
+                                <th *ngIf="permission.isGranted(Projects_TrainingProjects_ViewRequireWeeklyReport)"  style="width: 50px;">RequireWR</th>
+                                <th>Đánh giá chung</th>
+                                <th style="width: 120px;">Trạng thái</th>
+                                <th style="width: 120px;">
+                                    <div class="weekly-report-header-wrap d-flex align-items-center">
+                                        <div>
+                                            {{'Weekly Report' | localize}}
+                                        </div>
+                                        <div class="sort-icon-wrap" (click)="handleSortWeeklyReportClick()">
+                                            <i class="fas fa-sort-up" [class.active]="sortWeeklyReport === 1 || !sortWeeklyReport"></i>
+                                            <i class="fas fa-sort-down" [class.active]="sortWeeklyReport === 2 || !sortWeeklyReport" ></i>
+                                        </div>
+                                    </div>
+                                </th>
+                                <th style="width: 90px;text-align: center;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let project of listTrainingProjects  |paginate
+                        : {
+                            id: 'server',
+                            itemsPerPage: pageSize,
+                            currentPage: pageNumber,
+                            totalItems: totalItems
+                          }; let i = index" >
+                                <td class="text-center"> {{ i+1 }} </td>
+
+                                <td style="white-space: normal;">
+                                    <!-- <span class="hyperlink"
+                                        (click)="showDetail(project.id)">{{ project.name }}
+                                    </span> -->
+                                    <a style="cursor: pointer;" *ngIf="permission.isGranted(Projects_TrainingProjects_ProjectDetail)" (click)="viewProjectDetail(project)" >
+                                        {{ project.name }}
+                                    </a>
+                                </td>
+
+                                <td>
+                                    <div>
+                                        <app-user-info
+                                            [userData]="{fullName:project.pmFullName,branch:project.pmBranch,
+                                                branchColor:project.pmBranchColor,
+                                                branchDisplayName:project.pmBranchDisplayName,
+                                                position: project.position,
+                                                positionColor: project.positionColor,
+                                                positionName: project.positionName,
+                                                userLevel: project.pmUserLevel,
+                            userType:project.pmUserType,emailAddress:project.pmEmailAddress, avatarFullPath:project.pmAvatarFullPath}">
+                                        </app-user-info>
+                                    </div>
+                                </td>
+
+                                <td *ngIf="permission.isGranted(Projects_TrainingProjects_ViewRequireWeeklyReport)"  class="text-center">
+                                    <mat-checkbox class="is-charged-checkbox" (click)="changeRequireWeeklyReport(project)" color="primary" [ngModel]="project.isRequiredWeeklyReport">
+                                    </mat-checkbox>
+                                </td>
+                                
+                                <td style="word-break: break-word;
+                                    white-space: normal;">
+                                    <pre class="projectEvaluation mb-0 p-0 mt-3">
+                                        {{project.evaluation}}
+                                    </pre>
+                                </td>
+
+                                <td class="text-center">
+                                    <span
+                                        [ngClass]=" APP_CONST.statusStyle[getByEnum(project.status,APP_ENUM.ProjectStatus)]">{{
+                                        getByEnum(project.status,APP_ENUM.ProjectStatus)}}
+                                    </span>
+                                </td>
+
+                                <td class="text-center" >
+                                    <div class="weekly-report-wrap">
+                                        <span
+                                            [ngClass]=" APP_CONST.isSentStyle[getByEnum(project.isSent,APP_ENUM.WeeklySent)]">{{getByEnum(project.isSent,APP_ENUM.WeeklySent)}}
+                                        </span>
+                                        <div class="time-send-report-wrap" [class.report-late]="isReportLate(project.timeSendReport)" >
+                                            <div class="mb-0">{{project.timeSendReport| date:"yyyy-MM-dd"}}</div>
+                                            <div>{{project.timeSendReport| date:"hh:mm a"}}</div>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td class="text-center">
+                                    <div style="visibility: hidden; position: fixed"
+                                        [style.left]="contextMenuPosition.x" [style.top]="contextMenuPosition.y"
+                                        [matMenuTriggerFor]="menu"></div>
+                                    <button mat-button [matMenuTriggerFor]="menu">
+                                        <i class="fas fa-bars fa-lg"></i>
+                                    </button>
+                                    <mat-menu #menu="matMenu" class="p-2">
+                                        <button *ngIf="permission.isGranted(Projects_TrainingProjects_Edit)"
+                                            (click)="edit(project)" class="mat-menu-item  w-100 ">
+                                            <i class="fas fa-pencil-alt mr-1"></i>
+                                            Edit
+                                        </button>
+                                        <button *ngIf="permission.isGranted(Projects_TrainingProjects_Delete)"
+                                            (click)="delete(project)" class="mat-menu-item  w-100 ">
+                                            <i class="fas fa-trash fa-lg mr-1"></i>
+                                            Delete
+                                        </button>
+                                        <button mat-menu-item *ngIf="project.status == APP_ENUM.ProjectStatus.InProgress && permission.isGranted(Projects_TrainingProjects_Close)"
+                                            (click)="closeProject(project)">
+                                            <i class="fas fa-check mr-1"></i>
+                                            <span>{{ "Close" | localize }}</span>
+                                        </button>
+                                    </mat-menu>
+                                </td>
+
+
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+            <div class="card-footer bg-light border-top">
+                <div class="row">
+                    <div class="col-sm-4 col-12 text-sm-left text-center">
+                        <button class="btn btn-secondary mb-2" (click)="refresh()">
+                            <i class="fas fa-redo-alt"></i>
+                        </button>
+                        <mat-form-field style="width: 20%;margin-left: 30px;">
+                            <mat-label>Number items</mat-label>
+                            <mat-select [(ngModel)]="pageSizeType" (ngModelChange)="changePageSize()">
+                                <mat-option [value]="5">
+                                    5
+                                </mat-option>
+                                <mat-option [value]="10">
+                                    10
+                                </mat-option>
+                                <mat-option [value]="20">
+                                    20
+                                </mat-option>
+                                <mat-option [value]="50">
+                                    50
+                                </mat-option>
+                                <mat-option [value]="100">
+                                    100
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-sm-4 col-12 text-center">
+                        <p class="mb-0 my-2">
+                            {{ "TotalRecordsCount" | localize: totalItems }}
+                        </p>
+                    </div>
+                    <div class="col-sm-4 col-12">
+                        <div class="float-sm-right m-auto">
+                            <abp-pagination-controls id="server" (pageChange)="getDataPage($event)">
+                            </abp-pagination-controls>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>

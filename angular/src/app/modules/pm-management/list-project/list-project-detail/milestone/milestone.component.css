@@ -1,0 +1,9 @@
+.Green{
+    color: #00a32c;
+}
+.Red{
+    color: red;
+}
+::ng-deep .mat-form-field-outline {
+    background: white;
+}

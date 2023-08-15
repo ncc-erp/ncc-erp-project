@@ -1,0 +1,129 @@
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-6">
+                <h1></h1>
+            </div>
+            <div class="col-6 text-right">
+                <!-- <button
+                    class="btn bg-blue">
+                    <i class="fa fa-plus-square"></i>
+                   Create
+                </button> -->
+            </div>
+        </div>
+    </div>
+</section>
+<section class="content px-2">
+    <div class="container-fluid">
+        <div  class="mb-0 mt-1">
+            <div class="card-body">
+                <form class="form-horizontal">
+                    <div class="row">
+                        <div class="col-md-4 col-xl-4">
+                            <div class="mb-0">
+                                <div> 
+                                    <mat-form-field style="width: 100%; height: 38px;" appearance="outline">
+                                        <mat-select required placeholder="Select project name" 
+                                         name="reviewerName">
+                                            <mat-option *ngFor="let item of phaseList" [value]="item.phaseId"  >
+                                                {{item.phaseName}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-xl-4">
+                            <label style="padding-top: 10px; margin-right: 10px;">Year:</label>
+                            <mat-form-field style="max-width: 200px;" appearance="outline">
+                                <mat-select  name="yearSelect" placeholder="Select Year" [(ngModel)]="year" 
+                                    >
+                                    
+                                    <ng-container *ngFor="let year of listYear">
+                                        
+                                        <mat-option  [value]="year" >{{
+                                            year
+                                            }}</mat-option>
+                                    </ng-container>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        
+                    </div>
+                </form>
+                
+            </div>
+           
+            
+        </div>
+
+        <div class="card-body table-responsive p-4" >
+            <div *ngFor="let i of listReviewYourself.listDetail">
+                <div class="float-right mb-2 mr-1 row">
+                    <button mat-button class="btn bg-blue">Show history</button>
+                </div>
+                <table style="border-collapse: collapse;" class="table table-hover text-nowrap">
+                    <thead class="bg-light">
+                        <tr>
+                            <th>Tiêu chí</th>
+                            <th>Note</th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="2">
+                                <mat-button-toggle-group [(ngModel)]="i.score"[name]="i" style="width: 100%;"  name="point" aria-label="">
+                                    <mat-button-toggle style="width: 20%;"[value]="10">1</mat-button-toggle>
+                                    <mat-button-toggle style="width: 20%;" [value]="20">2</mat-button-toggle>
+                                    <mat-button-toggle style="width: 20%;" [value]="30">3</mat-button-toggle>
+                                    <mat-button-toggle style="width: 20%;"e [value]="40">4</mat-button-toggle>
+                                    <mat-button-toggle style="width: 20%;" [value]="50">5</mat-button-toggle>
+                                </mat-button-toggle-group>
+
+
+                                <!-- <mat-radio-group aria-label="Select an option" [(ngModel)]="i.score"[name]="i">
+                                    <label for="option1">10</label>
+                                    <mat-radio-button hidden [value]="10" id="option1"></mat-radio-button>
+                                    <mat-radio-button [value]="20">Option 2</mat-radio-button>
+                                    <mat-radio-button [value]="30">Option 3</mat-radio-button>
+                                    <mat-radio-button [value]="40">Option 4</mat-radio-button>
+                                    <mat-radio-button [value]="50">Option 5</mat-radio-button>
+                                
+                                  </mat-radio-group> -->
+                            </td>
+                        </tr>
+                        
+                           
+                    </tbody>
+                </table>
+                
+              
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <form class="example-form">
+                        <mat-form-field class="example-full-width" appearance="outline">
+                          <input matInput name="score" [(ngModel)]="listReviewYourself.score"  placeholder="Nhập điểm">
+                        </mat-form-field>
+                      </form>
+                </div>
+                <div class="col-6 text-right">
+                    <form class="example-form">
+                        <mat-form-field class="example-full-width" appearance="outline">
+                            <textarea matInput name="note" [(ngModel)]="listReviewYourself.note" placeholder="Nhập note"></textarea>
+                          </mat-form-field>
+                      </form>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 text-center">
+                    <button mat-button class="btn btn-primary" (click)="submit()">Submit</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>

@@ -1,0 +1,22 @@
+<form class="form-horizontal" autocomplete="off" #checkListTitle="ngForm">
+    <abp-modal-header title="Create/edit checklist title" (onCloseClick)="dialogRef.close()">
+    </abp-modal-header>
+    <div class="modal-body">
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="accountTypeName">
+                {{ 'name' | localize }}
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="name" minlength="2" required
+                    [(ngModel)]="checklistTitle.name" #accountTypeNameModel="ngModel" #accountTypeNameEl />
+                <abp-validation-summary [control]="accountTypeNameModel" [controlEl]="accountTypeNameEl">
+                </abp-validation-summary>
+            </div>
+        </div>
+    </div>
+    <div style="background-color: white;" align="end" class="d-flex justify-content-end" >
+        <button class="btn btn-secondary btn-action cancel-banks" mat-raised-button mat-dialog-close>Cancel</button>
+        <button class="btn btn-primary btn-action" (click)="saveAndClose()" 
+            [disabled]="!checkListTitle.valid || isLoading">Save</button>
+    </div>
+</form>

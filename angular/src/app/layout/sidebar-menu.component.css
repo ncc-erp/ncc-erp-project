@@ -1,0 +1,3 @@
+:host::ng-deep .nav-flat.nav-sidebar>.nav-item .nav-treeview .nav-item>.nav-link, .nav-flat.nav-sidebar>.nav-item>.nav-treeview .nav-item>.nav-link{
+    padding-left: 25px;
+}   

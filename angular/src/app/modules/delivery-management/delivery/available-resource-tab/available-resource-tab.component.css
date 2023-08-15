@@ -1,0 +1,20 @@
+.active {
+    font-weight: bold;
+    border-bottom: 2px #3f51b5 solid;
+}
+
+@media only screen and (max-width: 1500px) {
+    .fixTableHead {
+        height: 50vh
+    }
+}
+
+@media only screen and (min-width: 1501px) {
+    .fixTableHead {
+        height: 65vh
+    }
+}
+
+span {
+    height: fit-content;
+}

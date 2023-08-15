@@ -1,0 +1,39 @@
+<section class="content px-2 pt-2">
+    <div class="container-fluid">
+        <div class="row mb-4 card">
+            <div class="col-12 p-0">
+                <nav mat-tab-nav-bar style="position: sticky; z-index: 2; top: 56px; background: white;">
+                    <a name="tab-project-general" *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabGeneral)" [ngClass]="currentUrl.includes('list-project-general')?'active':''" mat-tab-link (click)="routingGeneralTab()">
+                        General
+                    </a>
+                    <a name="tab-project-resourcemanagement" *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement)" [ngClass]="currentUrl.includes('resourcemanagement')?'active':''" mat-tab-link (click)="routingResourceTab()">
+                        Resource Management
+                    </a>
+                    <a name="tab-project-weeklyreport" *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport)
+                    && permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_View)" [ngClass]="currentUrl.includes('weeklyreport')?'active':''" mat-tab-link (click)="routingWeeklyReportTab()">
+                        Weekly Report
+                    </a>
+                    <a name="tab-project-project-bill" *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo)" [ngClass]="currentUrl.includes('project-bill-tab')?'active':''" mat-tab-link (click)="routingProjectBillTab()">
+                        Bill Info
+                    </a>
+                    <a name="tab-project-timesheet" *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabTimesheet)" [ngClass]="currentUrl.includes('timesheet-tab')?'active':''" mat-tab-link (click)="routingTimesheetTab()">
+                        Timesheet
+                    </a>
+                    <a name="tab-project-description" *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabProjectDescription)" [ngClass]="currentUrl.includes('description-tab')?'active':''" mat-tab-link (click)="routingDescriptionTab()">
+                        Project Description
+                    </a>
+                    <a name="tab-project-project-file" *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabProjectFile)" [ngClass]="currentUrl.includes('project-file-tab')?'active':''" mat-tab-link (click)="routingFileTab()">
+                        Project Files
+                    </a>
+
+
+                </nav>
+                <router-outlet></router-outlet>
+            </div>
+
+
+
+
+        </div>
+    </div>
+</section>

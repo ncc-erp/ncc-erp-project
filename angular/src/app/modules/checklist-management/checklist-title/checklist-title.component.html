@@ -1,0 +1,139 @@
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-6">
+                <h1>{{'Checklist Category' | localize}}</h1>
+            </div>
+            <div class="col-6 text-right">
+                <button *ngIf="permission.isGranted(CheckList_CheckListCategory_Create)" type="button"
+                    class="btn bg-blue" (click)="createChecklistTitle()">
+                    <i class="fa fa-plus-square"></i>
+                    {{ 'Create' | localize }}
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="content px-2">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <button type="button" class="btn bg-blue" (click)="getDataPage(1)">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <input type="text" class="form-control" name="keyword" placeholder="Search" [(ngModel)]="searchText"
+                        (keyup.enter)="getDataPage(1)" />
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-default" (click)="checkAddFilter()">
+                            <i class="fas" [class.fa-angle-up]="advancedFiltersVisible"
+                                [class.fa-angle-down]="!advancedFiltersVisible"></i>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+            <div *ngIf="advancedFiltersVisible" class="mb-0 mt-1">
+                <div class="card-body">
+                    <form class="form-horizontal">
+                        <div class="row">
+                            <div class="col-md-12 col-xl-12">
+                                <div class="mb-0">
+                                    <div>
+                                        <div *ngFor="let item of filterItems; let i = index">
+                                            <app-filter [item]="item" (emitChange)="onEmitChange($event, i)"
+                                                (deleteDataFilter)="deleteFilterItem(i)" [inputFilters]="FILTER_CONFIG">
+                                            </app-filter>
+                                        </div>
+                                        <i style="padding: 0;" class="fas fa-plus-circle ml-3"
+                                            (click)="addFilter()"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="card-body table-responsive p-4">
+                <table style="border-collapse: collapse;" class="table table-hover text-nowrap" [busy]="isLoading">
+                    <thead class="bg-light">
+                        <tr>
+                            <th style="width: 100px;">STT</th>
+                            <th>Name</th>
+                            <th style="width: 200px;">action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let checkList of checkListTitleList  |paginate
+                : {
+                    id: 'server',
+                    itemsPerPage: pageSize,
+                    currentPage: pageNumber,
+                    totalItems: totalItems
+                  }; let i = index">
+                            <td>{{i+1}}</td>
+                            <td>{{checkList.name}}</td>
+                            <td class="text-center">
+                                <button *ngIf="permission.isGranted(CheckList_CheckListCategory_Update)"
+                                    class="btn btn-sm bg-secondary mr-1" (click)="editchecklistTitle(checkList)">
+                                    <i class="fas fa-pencil-alt"></i>
+                                    Edit
+                                </button>
+                                <button *ngIf="permission.isGranted(CheckList_CheckListCategory_Delete)"
+                                    class="btn btn-sm bg-danger ml-1" (click)="delete(checkList)" #deleteBtn>
+                                    <i class="fas fa-trash"></i>
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+            <div class="card-footer bg-light border-top">
+                <div class="row">
+                    <div class="col-sm-4 col-12 text-sm-left text-center">
+                        <button class="btn btn-secondary mb-2" (click)="refresh()">
+                            <i class="fas fa-redo-alt"></i>
+                        </button>
+                        <mat-form-field style=" width: 20%;margin-left: 30px;">
+                            <mat-label>Number items</mat-label>
+                            <mat-select [(ngModel)]="pageSizeType" (ngModelChange)="changePageSize()">
+                                <mat-option [value]="5">
+                                    5
+                                </mat-option>
+                                <mat-option [value]="10">
+                                    10
+                                </mat-option>
+                                <mat-option [value]="20">
+                                    20
+                                </mat-option>
+                                <mat-option [value]="50">
+                                    50
+                                </mat-option>
+                                <mat-option [value]="100">
+                                    100
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-sm-4 col-12 text-center">
+                        <p class="mb-0 my-2">
+                            {{ "TotalRecordsCount" | localize: totalItems }}
+                        </p>
+                    </div>
+                    <div class="col-sm-4 col-12">
+                        <div class="float-sm-right m-auto">
+                            <abp-pagination-controls id="server" (pageChange)="getDataPage($event)">
+                            </abp-pagination-controls>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>

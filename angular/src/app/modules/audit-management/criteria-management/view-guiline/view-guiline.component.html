@@ -1,0 +1,23 @@
+
+
+
+<div class="view">
+  <div  style="position: sticky; top: 0; z-index: 2; background-color: white;">
+    <abp-modal-header
+    title="View Guideline, Q&A Example"
+    (onCloseClick)="dialogRef.close()"
+  >
+  </abp-modal-header>
+  </div>
+     <div style="max-height: 37vh;overflow-y:auto;">
+        <div style="padding: 15px;"><div >
+          <h5 style="font-weight: 600;">Guideline:</h5>
+          <div [innerHTML]="data.item.guidLine | safeHtml"></div>
+        </div>
+            <div>
+                <h5 style="font-weight: 600;">Q&A Example:</h5>
+                <div [innerHTML]="data.item.qaExample| safeHtml"></div>
+            </div>
+        </div>
+     </div>
+</div>

@@ -1,0 +1,195 @@
+<div *ngIf="permission.isGranted(Audits_Tailoring)">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-6">
+                    <h1>Tailoring</h1>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="content px-2">
+        <div class="container-fluid">
+            <div class="card">
+                <div class="card-header">
+                    <div class='row'>
+                        <div class="col-6 mt-3 mt-md-0">
+                            <div class="input-group ">
+                                <div class="input-group-prepend">
+                                    <button type="button" class="btn bg-blue" (click)="getDataPage(1)">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                                <input type="text" class="form-control" name="keyword"
+                                    placeholder="Project Name, Project Code, Client, PM" [(ngModel)]="searchText"
+                                    (keyup.enter)="getDataPage(1)" />
+                                <!-- <div class="input-group-append">
+                                    <button type="button" class="btn btn-default" (click)="checkAddFilter()">
+                                        <i class="fas" [class.fa-angle-up]="advancedFiltersVisible"
+                                            [class.fa-angle-down]="!advancedFiltersVisible"></i>
+                                    </button>
+                                </div> -->
+                            </div>
+                        </div>
+
+                        <div class="col mt-3 mt-lg-0 text-right">
+                            <button *ngIf="permission.isGranted(Audits_Tailoring_DownLoadTemplate)" class="btn bg-blue mr-2" (click)="DownloadTemplate()"
+                                matTooltip="Template gán tiêu chí đánh giá cho dự án">
+                                <i class="fas fa-download"></i>
+                                Download Template
+                            </button>
+                            <button *ngIf="permission.isGranted(Audits_Tailoring_Import)" class="btn bg-success mr-2" (click)="openImportDialog()"
+                                matTooltip="Upload file tiêu chí đã được gán cho dự án">
+                                <i class="fas fa-upload"></i>
+                                Import
+                            </button>
+                            <button *ngIf="permission.isGranted(Audits_Tailoring_Create)" class="btn bg-blue" (click)="openCreateDialog()">
+                                <i class="fa fa-plus-square"></i>
+                                Add New
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- <div *ngIf="advancedFiltersVisible" class="mb-0 mt-1">
+                    <div class="card-body">
+                        <form class="form-horizontal">
+                            <div class="row">
+                                <div class="col-md-12 col-xl-12">
+                                    <div class="mb-0">
+                                        <div>
+                                            <div *ngFor="let item of filterItems; let i = index">
+                                                <app-filter [item]="item" (emitChange)="onEmitChange($event, i)"
+                                                    (deleteDataFilter)="deleteFilterItem(i)"
+                                                    [inputFilters]="FILTER_CONFIG">
+                                                </app-filter>
+                                            </div>
+                                            <i style="padding: 0;" class="fas fa-plus-circle ml-3"
+                                                (click)="addFilter()"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div> -->
+                <div class="card-body table-responsive py-3">
+                    <div class="fixTableHead">
+                        <table style="border-collapse: collapse;" class="table table-hover text-nowrap" [busy]="isLoading">
+                            <thead>
+                                <tr>
+                                    <th style="width: 140px;">No</th>
+                                    <th style="width: 450px;">Project</th>
+                                    <th>Total Criteria</th>
+                                    <th *ngIf="isShowAction">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let tailoring of listTailoring | paginate: {
+                                    id: 'server',
+                                    itemsPerPage: pageSize,
+                                    currentPage: pageNumber,
+                                    totalItems: totalItems
+                                }; let i=index" class="text-center">
+                                    <td>
+                                        <span>{{i + 1 + pageSize * (pageNumber - 1)}}</span>
+                                    </td>
+                                    <td>
+                                        <div class="text-left d-flex flex-column">
+                                            <div class="d-flex justify-content-between">
+                                                <span [ngClass]="this.permission.isGranted(this.Audits_Tailoring_Detail)? 'prj-info':''"
+                                                    (click)="navigateTaloringProject(tailoring)"><strong
+                                                        style="color: #014C6E;">[{{tailoring.projectCode}}]
+                                                        {{tailoring.projectName}}</strong></span>
+                                                <div class="d-flex align-items-center">
+                                                    <span style="width: fit-content;" class="mr-2"
+                                                        [ngClass]=" APP_CONST.ProjectTypeStyle[getByEnum(tailoring.projectType,APP_ENUM.ProjectType)]">
+                                                        {{
+                                                        changeTextProjectType(getByEnum(tailoring.projectType,APP_ENUM.ProjectType))
+                                                        }}
+                                                    </span>
+                                                    <span style="width: fit-content;"
+                                                        [ngClass]=" APP_CONST.statusStyle[getByEnum(tailoring.projectStatus,APP_ENUM.ProjectStatus)]">{{
+                                                        getByEnum(tailoring.projectStatus,APP_ENUM.ProjectStatus)}}</span>
+                                                </div>
+
+                                            </div>
+
+                                            <span><strong>Client: </strong>[{{tailoring.clientCode}}]</span>
+                                            <span><strong>PM: </strong>{{tailoring.pmName}}</span>
+
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span>
+                                            {{tailoring.countCriteria}}
+                                        </span>
+                                    </td>
+                                    <td *ngIf="isShowAction">
+                                        <button mat-button [matMenuTriggerFor]="menu">
+                                            <i class="fas fa-bars fa-lg"></i>
+                                        </button>
+                                        <mat-menu #menu="matMenu" class="p-2">
+                                            <button *ngIf="permission.isGranted(Audits_Tailoring_Update_Project )" type="button" class="mat-menu-item w-100"
+                                                (click)="updateTaloring(tailoring)" >
+                                                <i class="fas fa-user-edit fa-lg mr-1"></i>Update
+                                            </button>
+                                            <button *ngIf="permission.isGranted(Audits_Tailoring_DownLoadTailoringTemplate)" type="button" class="mat-menu-item w-100"
+                                                matTooltip="Template nhập kết quả đánh giá cho dự án"
+                                                (click)="downloadResultTemplate(tailoring.projectId)">
+                                                <i class="fas fa-download fa-lg mr-1"></i>Download Result Template
+                                            </button>
+                                            <button *ngIf="permission.isGranted(Audits_Tailoring_Delete)" type="button" class="mat-menu-item w-100"
+                                                (click)="deleteProject(tailoring)">
+                                                <i class="fas fa-trash fa-lg mr-1"></i>Delete
+                                            </button>
+                                        </mat-menu>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer bg-light border-top">
+                    <div class="row">
+                        <div class="col-sm-4 col-12 text-sm-left text-center">
+                            <button class="btn btn-secondary mb-2" (click)="refresh()">
+                                <i class="fas fa-redo-alt"></i>
+                            </button>
+                            <mat-form-field style=" width: 20%;margin-left: 30px;">
+                                <mat-label>Number items</mat-label>
+                                <mat-select [(ngModel)]="pageSizeType" (ngModelChange)="changePageSize()">
+                                    <mat-option [value]="5">
+                                        5
+                                    </mat-option>
+                                    <mat-option [value]="10">
+                                        10
+                                    </mat-option>
+                                    <mat-option [value]="20">
+                                        20
+                                    </mat-option>
+                                    <mat-option [value]="50">
+                                        50
+                                    </mat-option>
+                                    <mat-option [value]="100">
+                                        100
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-sm-4 col-12 text-center">
+                            <p class="mb-0 my-2">
+                                {{ "TotalRecordsCount" | localize: totalItems }}
+                            </p>
+                        </div>
+                        <div class="col-sm-4 col-12">
+                            <div class="float-sm-right m-auto">
+                                <abp-pagination-controls id="server" (pageChange)="getDataPage($event)">
+                                </abp-pagination-controls>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

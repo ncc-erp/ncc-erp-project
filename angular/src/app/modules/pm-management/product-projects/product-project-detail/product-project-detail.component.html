@@ -1,0 +1,36 @@
+<section class="content px-2 pt-2">
+    <div class="container-fluid">
+        <div class="row mb-4 card">
+            <div class="col-12">
+                <nav mat-tab-nav-bar style="position: sticky; z-index: 2; top: 56px; background: white;">
+                    <a *ngIf="permission.isGranted(Projects_ProductProjects_ProjectDetail_TabGeneral)" [ngClass]="currentUrl.includes('product-project-general')?'active':''" mat-tab-link (click)="routingGeneralTab()">
+                        General
+                    </a>
+                    <a *ngIf="permission.isGranted(Projects_ProductProjects_ProjectDetail_TabResourceManagement)" [ngClass]="currentUrl.includes('product-resource-management')?'active':''" mat-tab-link (click)="routingResourceTab()">
+                        Resource Management 
+                    </a>
+                    <!-- <a  *ngIf="permission.isGranted(PmManager_CanViewMenu_Milestone)"  [ngClass]="currentUrl.includes('product-milestone')?'active':''" mat-tab-link (click)="routingMilestoneTab()">
+                        Milestone
+                    </a> -->
+                    <a *ngIf="permission.isGranted(Projects_ProductProjects_ProjectDetail_TabWeeklyReport)
+                    && permission.isGranted(Projects_ProductProjects_ProjectDetail_TabWeeklyReport_View)" [ngClass]="currentUrl.includes('product-weekly-report')?'active':''" mat-tab-link (click)="routingWeeklyReportTab()">
+                        Weekly Report
+                    </a>
+                    <!-- <a *ngIf="permission.isGranted(PmManager_CanViewMenu_ProjectChecklist)"  [ngClass]="currentUrl.includes('training-timesheet-tab')?'active':''" mat-tab-link (click)="routingProjectChecklistTab()">
+                        Project Checklist
+                    </a> -->
+                    <a *ngIf="permission.isGranted(Projects_ProductProjects_ProjectDetail_TabTimesheet)" [ngClass]="currentUrl.includes('product-timesheet-tab')?'active':''" mat-tab-link (click)="routingTimesheetTab()">
+                        Timesheet
+                    </a>
+                    <a *ngIf="permission.isGranted(Projects_ProductProjects_ProjectDetail_TabProjectDescription)" [ngClass]="currentUrl.includes('training-description-tab')?'active':''" mat-tab-link (click)="routingDescriptionTab()">
+                        Project Description 
+                    </a>
+                    <a *ngIf="permission.isGranted(Projects_ProductProjects_ProjectDetail_TabProjectFile)" [ngClass]="currentUrl.includes('project-file-tab')?'active':''" mat-tab-link (click)="routingFileTab()">
+                        Project Files
+                    </a>
+                </nav>
+                <router-outlet></router-outlet>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,25 @@
+<form action="" autocomplete="off" (submit)="SaveAndClose()">
+  <abp-modal-header
+    [title]="'Edit user: ' + fullName | localize"
+    (onCloseClick)="bsModalRef.hide()"
+  ></abp-modal-header>
+  <div class="modal-body">
+    <label for="">Note:</label>
+    <mat-form-field appearance="outline" class="w-100">
+      <textarea
+        matInput
+        name="poolNote"
+        maxlength="3000"
+        rows="5"
+        placeholder="Leave a comment..."
+        [(ngModel)]="poolNote"
+      ></textarea>
+    </mat-form-field>
+  </div>
+
+  <abp-modal-footer
+    [cancelDisabled]="saving"
+    (onCancelClick)="bsModalRef.hide()"
+    [saveDisabled]="saving"
+  ></abp-modal-footer>
+</form>

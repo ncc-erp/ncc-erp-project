@@ -1,0 +1,59 @@
+<abp-modal-header title="Retro and review point history of {{ emailAddress }}" (onCloseClick)="dialogRef.close()">
+</abp-modal-header>
+<div class="modal-body">
+  <div class="fixTableHead">
+    <table [busy]="isLoading" style="border-collapse: collapse" class="table table-hover text-nowrap"
+      *ngIf="reviewInternRetroHisotyDto.length > 0; else other_template">
+      <thead class="bg-light">
+        <tr style="border: none">
+          <th class="stt">#</th>
+          <!-- <th>Time</th>
+          <th>Type</th>
+          <th style="width: 100px;">Point</th>
+          <th>Project Name</th> -->
+          <th>Retro and review point</th>
+          <th  style="min-width: 620px;">Note</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of reviewInternRetroHisotyDto[0]?.pointHistories; let i= index">
+          <td>{{i+1}}</td>
+          <td>
+              <div class="d-flex align-items-center">
+                  <div style="width: 100px;">
+                    <strong *ngIf="item.isRetro == 0">{{ item.startDate | date: 'dd/MM/yyyy' }}</strong>
+                    <strong *ngIf="item.isRetro == 1">{{ item.startDate | date: 'dd/MM/yyyy' }}</strong>
+                  </div>
+                  <span style="width: 100px;" [ngClass]="item.isRetro > 0 ? 'text-success' : 'text-danger' "> {{
+                    item.isRetro > 0?'Retro':'ReviewIntern'}}
+                  </span>
+                  <div *ngIf="item.point != null" style="width: 80px;;display: flex; justify-content: center;">
+                    <strong style="margin-top: 2px;">{{ item.point }}</strong>
+                    <ngx-stars style="z-index: 1 !important; margin-left: 6px;"
+                    [color]="getStarColorforReviewInternCapability(item.point, false)"
+                    [maxStars]="1" [initialStars]="1" [readonly]="true"></ngx-stars>
+                  </div>
+                  <span style="width: 150px; text-align: left;" class="max-line-content-1" PrjResizeContent [collapseLine]="1">
+                    {{item.projectName}}
+                  </span>
+              </div>
+          </td>
+          <td>
+            <div data-toggle="tooltip"
+            [title]="item.note"style="overflow: hidden; text-overflow: ellipsis;" >
+              {{item.note}}
+            </div>
+          </td>  
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <ng-template #other_template>
+    <div>Chưa có dữ liệu</div>
+  </ng-template>
+</div>
+<div>
+  <div align="end" class="row justify-content-end">
+    <button class="btn btn-secondary" mat-dialog-close>Close</button>
+  </div>
+</div>

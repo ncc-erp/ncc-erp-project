@@ -1,0 +1,76 @@
+<section class="content px-2 mt-2">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h3>Project Checklist</h3>
+                    </div>
+                    <div class="col-md-6 text-right">
+                        <button class="btn bg-blue" (click)="createProjectChecklist()">
+                           <i class="fa fa-plus-square"></i> Đăng kí thêm chỉ tiêu
+                       </button>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="card-body table-responsive p-4">
+                <div class="fixTableHead">
+
+                    <table style="border-collapse: collapse;" class="table table-hover text-nowrap">
+                        <thead class="bg-light">
+                            <tr style="border: none;">
+                                <th>STT</th>
+                                <th>Category</th>
+                                <th>Item</th>
+                                <th>Description</th>
+                                <th>Thời gian đăng kí</th>
+                                <th>Audit Target</th>
+                                <th>Person In Charge</th>
+                                <th>Lịch sử Audit</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of listCheckList; let i=index">
+                                <td><span>{{i+1}}</span></td>
+                                <td style="white-space: normal; min-width:100px;">{{item.categoryName}}</td>
+                                <td style="white-space: normal; min-width:100px;">{{item.name}}</td>
+                                <td style="white-space: normal; min-width:200px;">{{item.description}}</td>
+                                <td class="text-center">{{item.registrationDate |date:"dd/MM/yyyy"}}</td>
+                                <td>{{item.auditTarget}}</td>
+                                <td>{{item.personInCharge}}</td>
+                                <td class="text-center">
+                                    <ng-container *ngIf="item.createMode">
+
+                                        <div *ngFor="let form of item.people;let i=index" class="w-100 p-2 mb-2" style="border: 2px solid black;">
+                                            <div class="text-left">
+                                                <p class="mt-2"><strong>Người vi phạm: </strong>{{form.userName}}</p>
+                                                <p class="mt-2"><strong>Người liên đới: </strong>{{form.curatorName}}</p>
+                                            </div>
+                                        </div>
+                                        <button class="btn btn-sm bg-danger" (click)="item.createMode=false">Close</button>
+                                    </ng-container>
+                                    <ng-container *ngIf="item.people.length>0">
+
+                                        <button *ngIf="!item.createMode" class="btn btn-sm bg-success" (click)="item.createMode=true">View</button>
+                                    </ng-container>
+                                    <p *ngIf="item.people.length==0" class="mt-2">
+                                        No audit history
+                                    </p>
+
+                                </td>
+                                <td>
+                                    <button [disabled]="item.people.length > 0 || item.checkType" class="btn btn-danger" (click)="delete(item)">Xóa</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>

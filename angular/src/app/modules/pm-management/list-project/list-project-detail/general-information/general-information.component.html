@@ -1,0 +1,312 @@
+<section class="content px-2 mt-2">
+    <div class="container-fluid">
+        <div class="my-2">
+            <mat-expansion-panel [expanded]="!isShowUserBill">
+                <mat-expansion-panel-header name="pannel-userBill" class="mt-2 mb-2"
+                    (click)="isShowUserBill=!isShowUserBill">
+                    <strong class="d-inline table-title">Bill accounts ({{ filteredUserBillList.length }}):</strong>
+
+                    <div class="col-lg-2" (click)="$event.stopPropagation()" style="padding-left: 10%;">
+                        <div class="input-group">
+                            <mat-form-field appearance="outline">
+                                <mat-label>Charge Status</mat-label>
+                                <mat-select [(ngModel)]="selectedIsCharge" (selectionChange)="filterCharge()">
+                                    <mat-option value="All">All</mat-option>
+                                    <mat-option value="Charge">Charge</mat-option>
+                                    <mat-option value="Not Charge">No Charge</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                </mat-expansion-panel-header>
+                <div class="mb-1 fixTableHead">
+                        <table name="tbl-UserBill" style="border-collapse: collapse;"
+                            class="table table-hover text-nowrap" [busy]="isLoading">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="stt">#</th>
+                                    <th>Employee</th>
+                                    <th style="width: 250px;">Sub project</th>     
+                                    <th>Charge Name</th>
+                                    <th>Charge Role</th>
+                                    <th>
+                                        Rate <br>({{rateInfo.currencyName}})</th>
+                                    <th>Charge Type</th>
+                                    <th>Start charge</th>
+                                    <th>End charge</th>
+                                    <th>Is Charge</th>                                        
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let bill of filteredUserBillList |paginate:{
+                                    id: 'billUserInfo',
+                                    itemsPerPage: maxBillUserCurrentPage,
+                                    currentPage: userBillCurrentPage
+                                } ; let i = index">
+                                    <td><span>{{ ( userBillCurrentPage- 1 ) * maxBillUserCurrentPage + i + 1 }}</span></td>
+                                    <td class="text-left" style="min-width: 250px;">
+                                        <span>
+                                            <app-user-info [userData]="bill">
+                                            </app-user-info>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span style="cursor: pointer; font-weight: bold; color: #007bff;" class="subProject" (click)="routingProject(bill.projectId, bill.projectName, bill.projectCode)">{{bill.projectName}}</span>
+                                    </td>
+                                    <td>
+                                        <span >{{ bill.billAccountName }}</span>
+                                    </td>
+                                    <td>
+                                        <span >{{bill.billRole}}</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="text-center">{{bill.billRate |
+                                            number:'1.0':'en-US'}}
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="text-center">
+                                            {{bill.chargeTypeName}}</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span >{{bill.startTime |date:"dd/MM/yyyy"}}</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="text-center">{{bill.endTime | date:"dd/MM/yyyy"}}</span>                                    
+                                    </td>
+                                    <td class="text-center">
+                                        <mat-checkbox [disabled]="!bill.createMode" class="mt-1"
+                                            [(ngModel)]="bill.isActive">
+                                        </mat-checkbox>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>               
+                </div>
+                <div class="card-footer bg-light border-top">
+                    <div class="row" style="justify-content: space-between;">
+                        <div class="col-5 text-sm-left text-center">
+                            <mat-form-field style="width: 20%;margin-left: 30px;">
+                                <mat-label>Number items</mat-label>
+                                <mat-select [(ngModel)]="maxBillUserCurrentPage" (ngModelChange)="changePageSizeBill()">
+                                    <mat-option [value]="5">
+                                        5
+                                    </mat-option>
+                                    <mat-option [value]="10">
+                                        10
+                                    </mat-option>
+                                    <mat-option [value]="20">
+                                        20
+                                    </mat-option>
+                                    <mat-option [value]="50">
+                                        50
+                                    </mat-option>
+                                    <mat-option [value]="100">
+                                        100
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-2 text-center">
+                            <p class="mb-0 my-2">
+                                Total: {{ filteredUserBillList.length }}
+                            </p>
+                        </div>
+                        <div class="col-5">
+                            <pagination-controls autoHide="true" id="billUserInfo"
+                                (pageChange)="userBillCurrentPage = $event">
+                            </pagination-controls>
+                        </div>
+                    </div>
+                </div>
+            </mat-expansion-panel>
+
+            <mat-expansion-panel [expanded]="isShowProjectUser" style="margin-top: 30px;">
+            <mat-expansion-panel-header name="panel-current" class="mt-2 mb-2" (click)="isShowProjectUser = !isShowProjectUser">
+                <div class="col-md-6">
+                    <strong class="table-title">Current resource ({{projectUserList.length}}):</strong>
+                </div>
+                <div class="col-md-6">
+                <div class="col-md-6" *ngIf="isShowProjectUser">
+                    <section class="example-section">
+                        <mat-checkbox name="cbx-history" class="example-margin" [checked]="viewHistory"
+                            [disabled]="projectUserProcess" (change)="filterProjectUser(viewHistoryCheck); "
+                            (click)="$event.stopPropagation();userListCurrentPage=1" #viewHistoryCheck>View
+                            history
+                        </mat-checkbox>
+                    </section>
+                </div>
+            </div>
+            </mat-expansion-panel-header>
+            <div class=" mb-1 fixTableHead" style="max-height:50vh">
+                <div class="">
+                    <table name="tbl-currentResource" style="border-collapse: collapse;" class="table text-nowrap"
+                        [busy]="isLoading">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="stt">#</th>
+                                <th>Employee</th>
+                                <th>Sub project</th>
+                                <th>Note</th>
+                                <th>Skills</th>
+                                <th>Role</th>
+                                <th>Start time</th>
+                                <th>Work type</th>
+                                
+                                <th>
+                                    Normal
+                                    <div
+                                        [matTooltip]='normalTime'>
+                                        <strong>({{totalNormalWorkingTime}}h</strong> /
+                                        <strong>{{totalNormalWorkingTimeOfWeekly}}h</strong>/
+                                        <strong>{{totalNormalWorkingTimeStandard}}h)</strong>
+                                    </div>
+                                </th>
+                                <th> OT
+                                    <div [matTooltip]='otTime'>
+                                        (
+                                        <strong style="font-size: 14px;">{{overTimeNoCharge}}h
+                                        </strong>/
+                                        <strong style="font-size: 14px;">{{totalOverTime}}h
+                                        </strong>
+                                        )
+                                    </div>
+                                </th>
+                                <th style="width: 200px;">Timesheet</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr [ngClass]="user.workingStatus == APP_ENUM.ProjectUserStatus.Past ? 'past' : ''"
+                                *ngFor="let user of projectUserList |paginate:{
+                                    id: 'projectUser',
+                                itemsPerPage: maxUserCurrentPage,
+                                currentPage: userListCurrentPage
+                                }  ; let i = index">
+                                <td><span>{{  ( userListCurrentPage- 1 ) * maxUserCurrentPage + i + 1  }}</span></td>
+                                <td class="text-left">
+                                    <div class="d-flex">
+                                        <div class="col-10">
+                                            <app-user-info [userData]="user">
+                                            </app-user-info>
+                                        </div>
+                                        <div class="col-2 status-badges"
+                                            *ngIf="user.workingStatus == APP_ENUM.ProjectUserStatus.Past">
+                                            <span class="badge"
+                                                [ngClass]="user.allocatePercentage > 0? 'bg-success' :'bg-danger'">{{user.allocatePercentage
+                                                > 0 ? 'Join' : 'Out'}}</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span style="cursor: pointer; font-weight: bold; color: #007bff;" class="subProject" (click)="routingProject(user.projectId, user.projectName, user.projectCode)">{{user.projectName}}</span>
+                                </td>
+                                <td class="text-center">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <p PrjResizeContent [collapseLine]="1" style="flex: 1;"
+                                            class="mb-0 p-0  ml-2 max-line-content-1">{{user.note}}
+                                        </p>
+                                    </div>
+                                </td>
+                                <td style="vertical-align: middle;"> <span
+                                        style="white-space: normal; max-width: 200px">
+                                        <div class="d-flex " style="align-items: center;">
+                                            <div style="width: 90%; text-align: left;">
+                                                <p class="m-0" *ngFor="let item of user.userSkills">
+                                                    - {{item.skillName}}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </span>
+                                </td>
+
+                                <td class="text-center">
+                                    <span [ngClass]="APP_CONST.projectUserRole[user.projectRole]"
+                                        class="badge table-vertical">{{
+                                        user.projectRoleName
+                                        }}</span>
+                                </td>
+
+
+                                <td class="text-center">
+                                        {{user.startTime | date:"dd/MM/yyyy"}}
+                                </td>
+
+
+                                <td>
+                                    <div  class="table-vertical">
+                                        <strong [ngClass]="user.isPool ? 'text-secondary' : 'text-primary'">
+                                            {{user.workType }}
+                                        </strong>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="table-vertical" [matTooltip]="user.normalWorkingTime + 'h of project'+ ' / ' + user.normalWorkingTimeAll + 'h all'+ ' / ' + user.normalWorkingTimeStandard + 'h standard'">
+                                            <strong>{{user?.normalWorkingTime}}</strong> /
+                                            <strong>{{user?.normalWorkingTimeAll}}</strong>/
+                                            <strong>{{user?.normalWorkingTimeStandard}}</strong>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div
+                                    class="table-vertical"
+                                    [matTooltip]="user.overTimeNoCharge + 'h OT NoCharge' + ' / ' + user.overTime + 'h OT'">
+                                        <strong
+                                        [ngClass]="user.overTimeNoCharge>0?'text-warning': ''">
+                                        {{user.overTimeNoCharge}}
+                                        </strong>/
+                                        <strong
+                                        [ngClass]="user.overTime>0?'text-danger': ''">
+                                        {{user.overTime}}
+                                        </strong>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div  style="width: 200px; height: 60px;" [id]="'user' + user.userId">
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer bg-light border-top">
+                <div class="row" style="justify-content: space-between;">
+                    <div class="col-5 text-sm-left text-center">
+                        <mat-form-field style="width: 20%;margin-left: 30px;">
+                            <mat-label>Number items</mat-label>
+                            <mat-select [(ngModel)]="maxUserCurrentPage" (ngModelChange)="changePageSizeCurrent()">
+                                <mat-option [value]="5">
+                                    5
+                                </mat-option>
+                                <mat-option [value]="10">
+                                    10
+                                </mat-option>
+                                <mat-option [value]="20">
+                                    20
+                                </mat-option>
+                                <mat-option [value]="50">
+                                    50
+                                </mat-option>
+                                <mat-option [value]="100">
+                                    100
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-2 text-center">
+                        <p class="mb-0 my-2">
+                            Total: {{ projectUserList.length }}
+                        </p>
+                    </div>
+                    <div class="col-5">
+                        <pagination-controls autoHide="true" id="projectUser"
+                            (pageChange)="userListCurrentPage = $event">
+                        </pagination-controls>
+                    </div>
+                </div>
+            </div>
+        </mat-expansion-panel>
+        </div>
+    </div>
+    <!-- </form> -->
+</section>

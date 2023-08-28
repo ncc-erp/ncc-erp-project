@@ -1,0 +1,61 @@
+<form class="form-horizontal" autocomplete="off" #timesheetForm="ngForm" novalidate>
+    <abp-modal-header title="Import Audit Result" (onCloseClick)="dialogRef.close()">
+    </abp-modal-header>
+    <div class="modal-body row">
+        <div class="d-flex align-items-baseline mb-1">
+            <label name="btn-uploadFile" class="upload-btn"><i class="fas fa-upload mr-1"></i> Upload result file
+                <input type="file" size="60"
+                    accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                    (change)="selectFile($event)">
+            </label>
+            <span class="text-decoration pl-4"> {{fileName}}</span>
+        </div>
+        <mat-form-field class=" w-100">
+            <mat-label>Project</mat-label>
+            <mat-select (closed)="focusOutProject()" [ngModel]="import.projectId" name="select-Project" #projectModel="ngModel" #projectEl  required
+                (selectionChange)="onSelectChange($event)">
+                <mat-form-field class="w-100 px-3 "
+                    style="position: sticky; top: 0; z-index: 2; background-color: white;">
+                    <input matInput [(ngModel)]="searchPRJ" name="searchPMName" placeholder="Search" #search
+                        (keydown)="$event.stopPropagation()">{{search.focus()}}
+                </mat-form-field>
+                <mat-option *ngFor="let item of listProject | listFilter:  'projectName' : searchPRJ : 'projectCode'"
+                    [value]="item.projectId">
+                    <span><strong style="color: #014C6E;">[{{item.projectCode}}]
+                            {{item.projectName}} - </strong></span>
+                    <span> {{item.pmName}}</span></mat-option>
+            </mat-select>
+        <abp-validation-summary [control]="projectModel" [controlEl]="projectEl"></abp-validation-summary>
+        </mat-form-field>
+        <mat-form-field>
+            <mat-label>Audit Date</mat-label>
+            <input matInput [matDatepicker]="picker" [(ngModel)]="startDate" name="ipt-date" #auditDateModel="ngModel" #auditDateEl  required
+                (ngModelChange)="onChangeDate()">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+        <abp-validation-summary [control]="auditDateModel" [controlEl]="auditDateEl"></abp-validation-summary>
+        <div class="d-flex flex-column w-100">
+            <label>PQA Note:</label>
+            <editor class="w-100" [init]="{
+                        height: 300,
+                        selector: 'textarea',
+                        a_plugin_option: true,
+                        a_configuration_option: 400,
+                        class: 'w-100',
+                        menubar: true,
+                        plugins: ['table','code','preview','media', 'image', 'template'],
+                        toolbars: ['image'],
+                        branding: false
+                        }" [(ngModel)]="import.note" #criteriaNameModel="ngModel" #criteriaNameEl name="note">
+            </editor>
+        </div>
+
+    </div>
+    <div class="mat-dialog-actions" mat-dialog-actions="">
+        <button class="btn btn-default cancel-banks" mat-raised-button mat-dialog-close>Cancel</button>
+        <button mat-raised-button color="primary" class="saving-btn" mat-button
+            [disabled]="!import.file || !import.projectId || !import.auditDate"
+            (click)="SaveAndClose(import.projectId)">Save</button>
+    </div>
+</form>

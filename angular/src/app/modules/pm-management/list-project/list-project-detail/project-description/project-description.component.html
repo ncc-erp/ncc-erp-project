@@ -1,0 +1,154 @@
+<div class="card mt-3"
+    *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabProjectDescription_View)">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Thông tin chi tiết dự án</h3>
+            </div>
+            <div class="col-6 text-right ">
+                <button name="btn-editPRJDetail" class="btn bg-primary  mt-3" (click)="editRequest()"
+                    *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabProjectDescription_Edit)">
+                    <i class="fas fa-edit"></i>
+                    Edit
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="card-body table-responsive p-4">
+        <form class="form-horizontal" autocomplete="off" #requestDetail="ngForm">
+            <div class="form-group row detail ">
+                <label class="col-md-2 col-form-label" for="requestName">
+                    Mô tả ngắn dự án:
+                </label>
+                <div *ngIf="readMode" class="col-md-9 mt-2">
+                    <pre class="mb-0 p-0  ml-2 pre-text">
+                        {{projectDetail.briefDescription}}
+                    </pre>
+                </div>
+                <div *ngIf="!readMode" class="col-md-9">
+                    <textarea rows="2" cdkTextareaAutosize #autosize="cdkTextareaAutosize" type="text"
+                        class="form-control" name="briefDescription" id="briefDescription" required
+                        [(ngModel)]="projectDetail.briefDescription" #briefDescription="ngModel"
+                        #briefDescriptionEl></textarea>
+                    <!-- <abp-validation-summary [control]="briefDescription" [controlEl]="briefDescriptionEl">
+                    </abp-validation-summary> -->
+                </div>
+            </div>
+            <div class="form-group row detail ">
+                <label class="col-md-2 col-form-label" for="detailDescription">
+                    Mô tả chi tiết dự án:
+                </label>
+                <div *ngIf="readMode" class="col-md-9 mt-2">
+                    <pre class="mb-0 p-0  ml-2 pre-text">
+                        {{projectDetail.detailDescription}}
+                    </pre>
+                </div>
+                <div *ngIf="!readMode" class="col-md-9">
+                    <textarea rows="2" cdkTextareaAutosize #autosize="cdkTextareaAutosize" type="text"
+                        class="form-control" name="detailDescription" id="detailDescription" required
+                        [(ngModel)]="projectDetail.detailDescription" #detailDescription="ngModel"
+                        #detailDescriptionEl></textarea>
+                    <!-- <abp-validation-summary [control]="detailDescription" [controlEl]="detailDescriptionEl">
+                    </abp-validation-summary> -->
+                </div>
+            </div>
+            <div class="form-group row detail ">
+                <label class="col-md-2 col-form-label" for="technologyUsed">
+                    Công nghệ sử dụng:
+                </label>
+                <div *ngIf="readMode" class="col-md-9 mt-2">
+                    <pre *ngIf="projectDetail.technologyUsed" class="mb-0 p-0  ml-2 pre-text">
+                        {{projectDetail.technologyUsed}}
+                    </pre>
+                    <pre class="mb-0 p-0  ml-2 pre-text">
+                        <span *ngFor="let technology of projectDetail.projectTechnologies; let i=index" class="mr-1 badge text-white" [style.backgroundColor]="technology.color">
+                            {{technology.name}}
+                        </span>
+                    </pre>
+                </div>
+                <div *ngIf="!readMode" class="col-md-9">
+                    <mat-form-field class="w-100" appearance="outline">
+                        <mat-select multiple [(ngModel)]="projectTechnologyList" name="projectTechnologies"
+                            placeholder="Select technologies" #projectTechnologies="ngModel">
+                            <mat-form-field class="w-100 px-3 "
+                                style="position: sticky; top: 0; z-index: 2; background-color: white;">
+                                <input matInput [(ngModel)]="searchTechnology" name="searchTechnology"
+                                    placeholder="Search" #search (input)="$event.stopPropagation();
+                                filterTechnology()">{{search.focus()}}
+                            </mat-form-field>
+                            <mat-option *ngFor="let technology of technologyList" [value]="technology.id">
+                                {{technology.name}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+
+
+            <div class="form-group row detail ">
+                <label class="col-md-2 col-form-label" for="technicalProblems">
+                    Các vấn đề kĩ thuật:
+                </label>
+                <div *ngIf="readMode" class="col-md-9 mt-2">
+                    <pre class="mb-0 p-0  ml-2 pre-text">
+                        {{projectDetail.technicalProblems}}
+                    </pre>
+                </div>
+                <div *ngIf="!readMode" class="col-md-9">
+                    <textarea rows="2" cdkTextareaAutosize #autosize="cdkTextareaAutosize" type="text"
+                        class="form-control" name="technicalProblems" id="technicalProblems" required
+                        [(ngModel)]="projectDetail.technicalProblems" #technicalProblems="ngModel"
+                        #technicalProblemsEl></textarea>
+                    <!-- <abp-validation-summary [control]="technicalProblems" [controlEl]="technicalProblemsEl">
+                    </abp-validation-summary> -->
+                </div>
+            </div>
+            <div class="form-group row detail ">
+                <label class="col-md-2 col-form-label" for="otherProblems">
+                    Các vấn đề khác:
+                </label>
+                <div *ngIf="readMode" class="col-md-9 mt-2">
+                    <pre class="mb-0 p-0  ml-2 pre-text">
+                        {{projectDetail.otherProblems}}
+                    </pre>
+                </div>
+                <div *ngIf="!readMode" class="col-md-9">
+                    <textarea rows="2" cdkTextareaAutosize #autosize="cdkTextareaAutosize" type="text"
+                        class="form-control" name="otherProblems" id="otherProblems" required
+                        [(ngModel)]="projectDetail.otherProblems" #otherProblems="ngModel" #otherProblemsEl></textarea>
+                    <!-- <abp-validation-summary [control]="otherProblems" [controlEl]="otherProblemsEl">
+                    </abp-validation-summary> -->
+                </div>
+            </div>
+            <div class="form-group row detail ">
+                <label class="col-md-2 col-form-label" for="newKnowledge">
+                    Kiến thức mới có thể sử dụng sau này:
+                </label>
+                <div *ngIf="readMode" class="col-md-9 mt-2">
+                    <pre class="mb-0 p-0  ml-2 pre-text">
+                        {{projectDetail.newKnowledge}}
+                    </pre>
+                </div>
+                <div *ngIf="!readMode" class="col-md-9">
+                    <textarea rows="2" cdkTextareaAutosize #autosize="cdkTextareaAutosize" type="text"
+                        class="form-control" name="newKnowledge" id="newKnowledge" required
+                        [(ngModel)]="projectDetail.newKnowledge" #newKnowledge="ngModel" #newKnowledgeEl></textarea>
+                    <!-- <abp-validation-summary [control]="newKnowledge" [controlEl]="newKnowledgeEl">
+                    </abp-validation-summary> -->
+                </div>
+            </div>
+
+            <div class="form-group row" [hidden]="readMode">
+                <div class="form-group row d-flex justify-content-end">
+                    <button name="btn-cancel" class="btn btn-secondary btn-action mx-2" (click)="readMode = true; "
+                        (click)="getProjectDetail()">
+                        Cancel
+                    </button>
+                    <button name="btn-save" class="btn btn-primary btn-action" [disabled]=" isLoading"
+                        (click)="updateInfo()">
+                        Save
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

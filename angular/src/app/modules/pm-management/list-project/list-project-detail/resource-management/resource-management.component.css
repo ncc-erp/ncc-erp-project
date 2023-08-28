@@ -1,0 +1,70 @@
+th,
+td {
+  text-align: center;
+}
+
+.disablePage ul li {
+  cursor: not-allowed;
+}
+
+::ng-deep .mat-form-field-outline {
+  background: white;
+}
+
+::ng-deep .mat-checkbox-layout {
+  margin-top: 10px;
+}
+
+.submit-btn:disabled i {
+  color: gray !important;
+}
+
+.btnCreate {
+  margin-bottom: 10px;
+}
+
+i {
+  margin-right: 5px;
+}
+
+span {
+  height: fit-content;
+}
+
+.table-vertical {
+  margin-top: 20px;
+}
+
+.table-title {
+  font-size: 24px;
+  color: #424242;
+}
+
+.past {
+  background-color: #efefef;
+}
+
+.status-badges {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+:ng-deep .mat-menu-panel {
+  height: fit-content;
+}
+
+.request-table .status-column{
+  width: 90px;
+}
+.request-table .date-column{
+  width: 110px;
+}
+.request-table .skill-column{
+  width: 180px;
+}
+.table-note{
+  white-space: pre-line;
+  word-wrap: break-word;
+  text-align: left;
+}
+

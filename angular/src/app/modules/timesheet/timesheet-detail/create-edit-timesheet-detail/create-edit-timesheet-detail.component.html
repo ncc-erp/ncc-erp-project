@@ -1,0 +1,44 @@
+<form class="form-horizontal" autocomplete="off" #timesheetDetailForm="ngForm" novalidate>
+    <abp-modal-header *ngIf="data.command !='create'" [title]="data.item.projectName +'-'+ data.item.clientName " (onCloseClick)="dialogRef.close()">
+    </abp-modal-header>
+    <abp-modal-header *ngIf="data.command =='create'" title="Create project timesheet" (onCloseClick)="dialogRef.close()">
+    </abp-modal-header>
+    <div class="modal-body">
+        <div class="form-group row required" *ngIf="data.command == 'create'">
+            <label class="col-md-3 col-form-label" for="type">
+               Timesheet Project:
+            </label>
+            <div class="col-md-9">
+                <mat-form-field style="width: 100%; height: 38px;" appearance="outline">
+                    <mat-select required placeholder="Select project name" [(ngModel)]="projectTimesheet.projectId" name="projectType">
+                        <mat-form-field class="w-100 px-3 "
+                        style="position: sticky; top: 0; z-index: 2; background-color: white;">
+                        <input matInput [(ngModel)]="searchProject" name="searchProjectName" placeholder="Search" #search (keydown)="$event.stopPropagation()"
+                        >{{search.focus()}}
+                    </mat-form-field>
+                        <mat-option *ngFor="let project of projectList |listFilter: 'name' :searchProject" [value]="project.id"  >
+                            {{project.name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>  
+        <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="tenancyName">
+               Note:
+            </label>
+            <div class="col-md-9">
+                <mat-form-field appearance="outline" class="w-100">
+                    <textarea rows="4" matInput type="text" name="note" [(ngModel)]="projectTimesheet.note"> </textarea>
+                </mat-form-field>
+            </div>
+        </div>
+       
+    </div>
+    <div align="end" class="mat-dialog-actions" mat-dialog-actions="">
+        <button class="btn btn-secondary cancel-banks" mat-raised-button mat-dialog-close>Cancel</button>
+        <button mat-raised-button color="primary" class="saving-btn btn-save"mat-button
+        [disabled]="!timesheetDetailForm.form.valid ||isDisable" (click)="SaveAndClose()">Save</button>
+    </div>
+</form>
+

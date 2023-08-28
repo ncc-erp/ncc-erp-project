@@ -1,0 +1,37 @@
+<div class="card-header px-0">
+    <h4>Update skill for: <strong>{{data.fullName}}</strong></h4>
+</div>
+<div class="form-group row  mt-4"  style="max-height: 50vh;overflow-y: auto;">
+    <label class="col-md-3 col-form-label" for="userSkills">Skills:</label>
+    <div class="col-md-9 ">
+        <mat-form-field class="w-100" appearance="outline">
+            <mat-select multiple [(ngModel)]="userSkillList" required name="userSkills" placeholder="select skill" #userSkills="ngModel"  (selectionChange)="onSelectChange()">
+                <mat-form-field class="w-100 px-3 " style="position: sticky; top: 0; z-index: 2; background-color: white;">
+                    <input matInput [(ngModel)]="searchSkill" name="searchSkillName" placeholder="Search" #search (input)="$event.stopPropagation();
+                     filterSkill()">{{search.focus()}}
+                </mat-form-field>
+                <mat-option *ngFor="let skill of skillList" [value]="skill.id">
+                    {{skill.name}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+    <div style="width: 100%;overflow: hidden;margin-top: 15px;">
+        <div *ngFor="let item of skillRankList " class="row align-items-center">
+            <span class="col-md-3">{{item.name}}</span>
+            <div class="col-md-9">
+                <button mat-icon-button [color]="color" *ngFor="let ratingId of ratingArr;index as i" (click)="onClick(i+1,item)">
+                    <i style="font-size: 16px;color: #ffd740;" [class]="showIcon(i,item)"></i>
+                </button>
+            </div>
+           
+        </div>
+    </div>
+</div>
+<div class="d-flex justify-content-end">
+    <button class="btn btn-secondary btn-action mr-2" mat-dialog-close>
+        Cancel
+    </button>
+    <button class="btn btn-primary btn-action" (click)="saveAndClose()">
+        Save
+    </button>
+</div>

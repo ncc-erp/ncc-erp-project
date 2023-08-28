@@ -1,0 +1,111 @@
+<form class="form-horizontal" autocomplete="off" #checkpointForm="ngForm" novalidate>
+    <abp-modal-header title="Create/Edit" (onCloseClick)="dialogRef.close()">
+    </abp-modal-header>
+    <div class="modal-body">
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="projectName">
+                {{ 'UserName' | localize }}:
+            </label>
+            <div class="col-md-9" *ngIf="data.command=='create'">
+                
+                    <mat-form-field style="width: 100%; height: 38px;" appearance="outline">
+                        <mat-select required placeholder="Select project name" 
+                        [(ngModel)]="reviewer.userId" name="reviewerName" #UserName="ngModel">
+                            <mat-form-field class="w-100 px-3 "
+                            style="position: sticky; top: 0; z-index: 2; background-color: white;">
+                            <input matInput [(ngModel)]="searchUser" name="searchUserName" (keydown)="$event.stopPropagation()"
+                                #search placeholder="search">{{search.focus()}}
+                            </mat-form-field>
+                            <mat-option *ngFor="let item of userList |listFilter: 'userName' : searchUser" [value]="item.userId"  >
+                                {{item.userName}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-error class="mt-1" *ngIf="UserName.hasError('required') && UserName.touched"
+                    style="font-size: 13px;">
+                    This field is required
+                     </mat-error>
+
+                    
+              
+                
+            </div>
+            <div class="col-md-9" *ngIf="data.command !=='create'">
+
+                
+                <mat-form-field style="width: 100%; height: 38px;" appearance="outline">
+                    <mat-select required placeholder="Select project name" 
+                    [(ngModel)]="reviewer.userId" name="userName" #UserName="ngModel">
+                        <mat-option *ngFor="let item of reviewerList" [value]="item.id"  >
+                            {{item.fullName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-error class="mt-1" *ngIf="UserName.hasError('required') && UserName.touched"
+                    style="font-size: 13px;">
+                    This field is required
+                </mat-error>
+                
+          
+            
+        </div>
+            
+        </div>
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="projectName">
+                {{ 'Reviewer' | localize }}:
+            </label>
+            <div class="col-md-9">
+                <mat-form-field style="width: 100%; height: 38px;" appearance="outline">
+                    <mat-select required placeholder="Select project name" 
+                    [(ngModel)]="reviewer.reviewerId" name="reviewerName" #ReviewerName="ngModel">
+                    <mat-form-field class="w-100 px-3 "
+                        style="position: sticky; top: 0; z-index: 2; background-color: white;">
+                        <input matInput [(ngModel)]="searchReviewer" name="searchReviewerName" (keydown)="$event.stopPropagation()"
+                            #searchReviewerName placeholder="search">{{searchReviewerName.focus() }}
+                    </mat-form-field>
+                        <mat-option *ngFor="let item of reviewerList| listFilter: 'fullName' : searchReviewer" [value]="item.id"  >
+                            {{item.fullName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-error class="mt-1" *ngIf="ReviewerName.hasError('required') && ReviewerName.touched"
+                    style="font-size: 13px;">
+                    This field is required
+                </mat-error>
+                
+            </div>
+        </div>
+        <div class="form-group row required" >
+            <label class="col-md-3 col-form-label" for="projectName">
+                {{ 'Type' | localize }}:
+            </label>
+            <div class="col-md-9">
+                <mat-form-field class="w-100" appearance="outline">
+                    <mat-select  [(ngModel)]="reviewer.type" name="type" placeholder="Select type" required
+                        #type="ngModel" (selectionChange)="onTypeChange()">
+                        <mat-option *ngFor="let type of reviewerTypeList" [value]="APP_ENUM.CheckPointUserType[type]">
+                            {{type}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-error class="mt-1" *ngIf="type.hasError('required') && type.touched"
+                    style="font-size: 13px;">
+                    This field is required
+                </mat-error>
+               
+            </div>
+        </div>
+       
+        
+        
+        
+    </div>
+    <!--         
+    </div> -->
+    <div align="end" class="mat-dialog-actions" mat-dialog-actions="">
+        <button class="btn btn-secondary cancel-banks" mat-raised-button mat-dialog-close>Cancel</button>
+        <button mat-raised-button color="primary" class="saving-btn"mat-button
+        [disabled]="!checkpointForm.valid || isLoading" (click)="SaveAndClose()">Save</button>
+    </div>
+</form>
+

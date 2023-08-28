@@ -1,0 +1,112 @@
+tr, th, td{
+    vertical-align: middle;
+   }
+   button{
+       height: fit-content;
+   }
+/* ::ng-deep .search-pm .mat-form-field{
+    width: 270px !important;
+}
+::ng-deep .search-status .mat-form-field{
+    width: 150px !important;
+} */
+/* @media only screen and (min-width: 1546px){
+    .label-pm{
+      width: 20%;
+    }
+    .list-status{
+        width: 30%;
+      }
+
+    .listPM {
+      width: 80% !important ;
+    }
+    .listStatus{
+        width: 70% !important ;
+    }
+  }
+  @media only screen and (min-width: 1349px)  and (max-width: 1545px){
+    .label-pm{
+      width: 20%;
+    }
+    .list-status{
+        width: 40%;
+      }
+
+    .listPM {
+      width: 80% !important ;
+    }
+    .listStatus{
+        width: 60% !important ;
+    }
+  }
+
+  @media only screen and (min-width: 768px) and (max-width: 1348px){
+    .label-pm{
+      width: 20%;
+    }
+    .list-status{
+        width: 50%;
+      }
+
+    .listPM {
+      width: 80% !important ;
+    }
+    .listStatus{
+        width: 50% !important ;
+    }
+  } */
+
+
+
+::ng-deep .filter-wrap .mat-form-field{
+  width: 100%;
+}
+
+::ng-deep .product-project .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
+  transform: translateY(-1.2em) scale(.75) ;
+}
+
+.product-project .search-status {
+  justify-content: flex-end;
+  padding-right: 0;
+}
+
+.product-project .project-name-wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.product-project .time-wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.product-project .time-wrap .start-time {
+  color: var(--secondary);
+}
+
+.product-project .time-wrap .end-time {
+  margin-top: 4px;
+}
+
+.time-send-report-wrap.report-late {
+  color: var(--danger);
+}
+
+.product-project .sort-icon-wrap {
+  margin-left: 6px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.product-project .sort-icon-wrap i {
+  opacity: 0.4;
+  line-height: 0px;
+  font-size: 20px;
+}
+
+.product-project .sort-icon-wrap i.active {
+  opacity: 1;
+}

@@ -1,0 +1,296 @@
+{
+    "menu": {
+        "menu1": "Dashboard",
+        "menu2": "Admin",
+        "menu3": "Directory",
+        "menu4": "Account",
+        "menu5": "Finance Management",
+        "menu6": "Report"
+    },
+    "action": {
+        "actions": "Actions",
+        "create": "Create",
+        "edit": "Edit",
+        "delete": "Delete",
+        "cancel": "Cancel",
+        "save": "Save",
+        "search": "Search",
+        "add": "Add",
+        "UpdatePassword":"Update Password",
+        "Logout":"Logout"
+    },
+    "filter": {
+        "filterby": "Filter by",
+        "comparision": "Comparision",
+        "textFilter": "Text filter"
+    },
+    "menu1":{
+        "action":{
+            "viewAll":"View all",
+            "remind":"Remind CEO",
+            "remindCFO":"Remind CFO"
+
+        },
+        "requestStatus":{
+            "pending":"Pending Request",
+            "approve":"Pending CFO",
+            "transferred": "Transferred Request",
+            "end":"Finished Request"
+        },
+        "chartTitle":{
+            "pieChart":"INCOME, OUTCOME",
+            "lineChart": "CASH FLOW YEAR"
+        },
+        "incomeTitle":"IncomingType",
+        "outcomeTitle":"OutcomingType",
+        "income":"income",
+        "outcome":"outcome"
+
+
+    },
+    "menu2":{
+        "tenants":"Tenants",
+        "user":"User",
+        "role":"Roles",
+        "workFlow":"Work flow",
+        "status":"Status"
+    },
+
+    "menu3": {
+        "m3_child1": "Currency",
+        "m3_child2": "Bank",
+        "m3_child3": "Account Type",
+        "m3_child4": "Branch",
+        "m3_child5": "Revenue",
+        "m3_child6": "Expenditure",
+        "m3_child7": "Supplier"
+    },
+    "menu4": {
+        "m4_child1": "Bank Account",
+        "m4_child2": "Finance Account"
+    },
+    "menu5": {
+        "m5_child1": "Revenue Record",
+        "m5_child2": "Expenditure Request",
+        "m5_child3": "Bank Transaction",
+        "m5_child4": "Invoice"
+    },
+    "m2_child4": {
+        "name": "Name",
+        "outType": "Out Type",
+        "workFlow": "Work flow",
+        "createTitle": "Create new work flow",
+        "createTitleStatus": "Create new work flow status",
+        "editTitleStatus": "Edit work flow status",
+        "createTitleTransition": "create work flow transition",
+        "editTitleStatusTransition": "Edit work flow transition",
+        "code": "Code",
+        "workFlowStatusMain": "Main",
+        "workFlowStatusMainDetail": "Work flow detail",
+        "workFlowStatusStatus": "Status",
+        "workFlowStatusTransition": "Transition",
+        "workFlowStatusTransitionName": "Name",
+        "workFlowStatusTransitionFrom": "From",
+        "workFlowStatusTransitionTo": "To",
+        "workFlowStatusTransitionRole": "Role",
+        "workFlowStatusTransitionPermission": "Permission"
+    },
+    "m3_child1": {
+        "no": "No",
+        "name": "Name",
+        "code": "Code",
+        "value": "Value",
+        "currencies": "Currencies",
+        "createTitle": "Create new currency",
+        "editTitle": "Edit currency",
+        "search": "Search by name, code"
+    },
+    "m3_child2": {
+        "no": "No",
+        "name": "Name",
+        "code": "Code",
+        "bank": "Banks",
+        "createTitle": "Create new bank",
+        "editTitle": "Edit bank",
+        "search": "Search by name, code"
+    },
+    "m3_child4": {
+        "no": "No",
+        "name": "Name",
+        "code": "Code",
+        "default": "Default",
+        "branches": "Branches",
+        "createTitle": "Create new branch",
+        "editTitle": "Edit branch",
+        "search": "Search by name, code"
+    },
+    "m3_child5": {
+        "title": "Revenue manager",
+        "createTitle": "Create revenue",
+        "editTitle": "Edit revenue",
+        "name": "Revenue name",
+        "code": "Revenue code",
+        "count": "Revenue count",
+        "yesConfirm": "Yes",
+        "noConfirm": "No"
+    },
+    "m3_child6": {
+        "title": "Expenditure manager",
+        "createTitle": "Create expenditure",
+        "editTitle": "Edit expenditure",
+        "name": "Expenditure name",
+        "code": "Expenditure code",
+        "count": "Expenditure count",
+        "yesConfirm": "Yes",
+        "noConfirm": "No",
+        "Expense_Type":"Expense Type",
+        "REAL_EXPENSE":"REAL EXPENSE",
+        "NON_EXPENSE": "NON EXPENSE"
+
+    },
+    "m3_child7": {
+        "supplier": "Supplier",
+        "search": "Search",
+        "no": "No",
+        "name": "Name",
+        "phoneNumber": "Phone",
+        "address": "Address",
+        "contactPersonName": "Contact person",
+        "contactPersonPhone": "Contact phone",
+        "taxNumber": "Tax number",
+        "createTitle": "Create supplier",
+        "editTitle": "Edit supplier"
+    },
+    "m4_child1": {
+        "bank account": "Bank Account",
+        "no": "No",
+        "hoder name": "Hoder name",
+        "bank number": "Bank Number",
+        "bank": "Bank",
+        "currency": "Currency",
+        "account": "Account",
+        "amount": "Amount",
+        "action": "Action",
+        "createTitle": "Create new bank account",
+        "editTitle": "Edit bank account",
+        "search": "Search by holder name, bank number",
+        "choose a bank name": "Choose a bank name",
+        "choose a currency": "Choose a currency",
+        "choose an account": "Choose an account",
+        "return": "Return",
+        "bank account detail": "Bank account detail"
+    },
+    "m4_child2": {
+        "no": "No",
+        "name": "Name",
+        "code": "Code",
+        "default": "Default",
+        "accounts": "Accounts",
+        "accountType": "Account Type",
+        "banks": "Bank",
+        "createTitle": "Create new account",
+        "editTitle": "Edit account",
+        "search": "Search by name, code"
+    },
+    "m3_child3": {
+        "no": "No",
+        "name": "Name",
+        "code": "Code",
+        "search": "Search by name, code",
+        "accountType": "Account Type",
+        "createTitle": "Create new account type",
+        "editTitle": "Edit account type"
+    },
+    "m5_child1": {
+        "title": "Revenue record",
+        "name": "Name",
+        "account": "Account",
+        "branch": "Branch",
+        "value": "Value",
+        "incomeType": "Income type",
+        "create": "Create revenue record",
+        "edit": "Update revenue record"
+    },
+    "m5_child2": {
+        "title": "Expenditure request management",
+        "create": "Create new request",
+        "edit": "Update request",
+        "type": "Request type",
+        "name": "Name",
+        "author": "Request author",
+        "branch": "Branch",
+        "account": "For company",
+        "value": "Value",
+        "status": "Status",
+        "linkAccount": "Relevant account",
+        "price": "Price",
+        "quantity": "Quantity",
+        "total": "Total",
+        "detailName": "Name",
+        "fromAccount": "From bank account",
+        "toAccount": "To bank account",
+        "addNewTransaction": "Create new transaction",
+        "linkToTransaction": "Link to transaction",
+        "linkToRevenues": "Link to revenues",
+        "linkToIncomingEntry": "Link to incomingentry",
+        "createMultiple": "create multiple transaction",
+        "deleteLink": "Delete Link",
+        "deleteTransaction": "Delete transaction",
+        "fromBankAccount": "From bank account",
+        "selectTransaction": "Transaction",
+        "general information": "General infomation",
+        "detail": "Detail",
+        "related bank transactions": "Related bank transactions",
+        "related revenue sources": "Related revenue sources",
+        "supplierTitle": "Supplier",
+        "supplierName": "Name",
+        "supplierPhone": "Phone Number",
+        "supplierAddress": "Address",
+        "supplierContactName": "Contact person",
+        "supplierContactPhone": "Contact Phone",
+        "supplierTax": "Tax number",
+        "linkSupplier": "Link to supplier",
+        "createSupplier": "Create new supplier",
+        "editSupplier": "Edit supplier",
+        "expenditureRequest": "Expenditure request",
+        "linkToexpenditureRequest": "Link to expenditure request"
+    },
+    "m5_child3": {
+        "name": "Name",
+        "title": "Bank transaction management",
+        "create": "Create bank transaction",
+        "edit": "Update bank transaction",
+        "fromBank": "From bank",
+        "toBank": "To bank",
+        "fromValue": "From value",
+        "toValue": "To value",
+        "fee": "Fee",
+        "sentDate": "Sent Date",
+        "detailTitle": "Transaction detail",
+        "note": "Note"
+    },
+    "message": {
+        "delete": "Are you sure you want to delete",
+        "deleteSuccess": "Delete successful !",
+        "createSuccess": "Save successful !"
+    },
+    "errorcodes": {
+        "4000001": "Lack start time",
+        "4000002": "PresenterId is missing",
+        "4030001": "No other profile access",
+        "4030002": "Does not have permission to edit other profiles",
+        "4030003": "Does not have permission to add or edit candidate profiles",
+        "4030004": "Does not have permission to delete other files",
+        "4030005": "Does not have permission to view other profiles",
+        "4040001": "Can't find the currently logged in user.",
+        "4040002": "Can't find the currently logged in user.",
+        "4040003": "Can't find the currently logged in user.",
+        "4040004": "Can't find the currently logged in user.",
+        "4040005": "Can't find the currently logged in user.",
+        "4040006": "Can't find the currently logged in user.",
+        "4040007": "Can't find the currently logged in user.",
+        "4090001": "Position name exist",
+        "4090002": "Version name exist",
+        "4090003": "Source name exist"
+    }
+}

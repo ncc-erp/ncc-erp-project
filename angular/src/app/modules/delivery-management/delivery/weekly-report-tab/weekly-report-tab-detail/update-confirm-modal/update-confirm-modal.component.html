@@ -1,0 +1,18 @@
+<h2>Confirm Update</h2>
+
+<span class="confirm-question" *ngIf="data.markReview == false">
+  <p >Completed reviewing </p> &nbsp;
+  <p class="project-name" > "{{data.projectName}}" ?</p>
+</span>
+<span class="confirm-question"  *ngIf="data.markReview == true">
+  <p >Un-completed reviewing </p> &nbsp;
+  <p  class="project-name" > "{{data.projectName}}" ?</p>
+</span>
+<!-- <p><mat-checkbox [(ngModel)]="isChecked" *ngIf="data.markReview == false">I confirm that I want to mark "{{data.projectName}}" as reviewed</mat-checkbox></p>
+<p><mat-checkbox [(ngModel)]="isChecked" *ngIf="data.markReview == true">I confirm that I want to un-mark "{{data.projectName}}" as not reviewed</mat-checkbox></p> -->
+<div class="modal-buttons">
+  <!-- <button mat-raised-button color="primary" [disabled]="!isChecked" (click)="onConfirm()">Complete</button> -->
+  <button mat-raised-button *ngIf="data.markReview == false" color="primary" (click)="onConfirm()">Complete</button>
+  <button mat-raised-button *ngIf="data.markReview == true" color="warn" (click)="onConfirm()">Un-complete</button>
+  <button mat-raised-button  (click)="onCancel()">Cancel</button>
+</div>

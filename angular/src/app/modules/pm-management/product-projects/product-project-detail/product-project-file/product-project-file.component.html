@@ -1,0 +1,23 @@
+<div class="card-body"*ngIf="permission.isGranted(Projects_ProductProjects_ProjectDetail_TabProjectFile_View)">
+    <label *ngIf="permission.isGranted(Projects_ProductProjects_ProjectDetail_TabProjectFile_UploadFile)" class="upload-btn"><i
+            class="fas fa-upload mr-1"></i> Upload file
+        <input type="file" size="60" type="file" multiple (change)="selectFile($event)">
+    </label>
+    <div class="table-responsive mt-1">
+        <table class="table table-striped table-hover">
+            <thead>
+                <th style="width: 100px;">#</th>
+                <th>File</th>
+            </thead>
+            <tbody>
+                <tr *ngFor="let file of fileList; let i=index">
+                    <td class="text-center">{{i+1}}</td>
+                    <td> <span class="hyperlink" (click)="downloadFile(file)">{{file.fileName}}</span> <i
+                            class="fas fa-times fa-lg ml-1" (click)="removeFile(file)"
+                            *ngIf="permission.isGranted(Projects_ProductProjects_ProjectDetail_TabProjectFile_DeleteFile)"></i>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

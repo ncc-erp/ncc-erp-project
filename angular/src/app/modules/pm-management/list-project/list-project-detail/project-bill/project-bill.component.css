@@ -1,0 +1,16 @@
+::ng-deep .checkbox-invoice label{
+    margin: 0 !important;
+}
+
+::ng-deep .mat-expansion-panel-content {
+    font-family: unset !important;
+    font-size: 1rem !important;
+    font-weight: 400 !important;
+    line-height: 1.5 !important;
+    color: #212529 !important;
+}
+
+
+.submit-btn:disabled i {
+    color: gray !important;
+}

@@ -1,0 +1,30 @@
+<form class="example-form">
+  <abp-modal-header title="Import Tailoring" (onCloseClick)="dialogRef.close()">
+  </abp-modal-header>
+  <section style="padding-top: 20px;">
+    <div class="example-label">Status</div>
+    <mat-form-field class="example-full-width">
+      <input matInput placeholder="NC Status" aria-label="NC Status" [matAutocomplete]="auto" [formControl]="stateCtrl">
+      <mat-autocomplete #auto="matAutocomplete">
+        <mat-option *ngFor="let state of filteredStates | async" [value]="state.name">
+          <img class="example-option-img" aria-hidden [src]="state.flag" height="25">
+          <span>{{state.name}}</span> |
+          <small>Population: {{state.population}}</small>
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+  </section>
+
+  <br>
+  <section style="padding-top: 20px;">
+    <div class="example-label">Note</div>
+    <editor [init]="configEditor">
+    </editor>
+  </section>
+
+</form>
+
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+</mat-dialog-actions>

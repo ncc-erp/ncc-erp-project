@@ -1,0 +1,13 @@
+
+
+:host th,td{
+    vertical-align: middle;
+}
+:host .fixTableHead{
+    max-height: 65vh;
+}
+
+.prj-info:hover{
+    cursor: pointer;
+    text-decoration: underline;
+}

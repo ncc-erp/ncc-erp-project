@@ -1,0 +1,140 @@
+<form
+  class="form-horizontal"
+  autocomplete="off"
+  #resourceRequestForm="ngForm"
+  novalidate
+>
+  <abp-modal-header
+    title="{{
+      data.command == 'create'
+        ? 'Add new client'
+        : 'Edit client: ' + title
+    }}"
+    (onCloseClick)="dialogRef.close()"
+  >
+  </abp-modal-header>
+  <div class="modal-body">
+    <div class="form-group row required">
+      <label class="col-md-3 col-form-label" for="pm"> Name: </label>
+      <div class="col-md-9">
+        <input name="{{data.command == 'create'?'ipt-name':'ipt-name_edit'}}"
+          class="form-control mt-1"
+          type="text"
+          placeholder="Name"
+          required
+          name="clientName"
+          [(ngModel)]="client.name"
+          #name="ngModel"
+          #nameEl
+          suffix="%"
+        />
+        <abp-validation-summary [control]="name" [controlEl]="nameEl">
+        </abp-validation-summary>
+      </div>
+    </div>
+    <div class="form-group row required">
+      <label class="col-md-3 col-form-label" for="pm"> Code: </label>
+      <div class="col-md-9">
+        <input
+          name="{{data.command == 'create'?'ipt-code':'ipt-name_code'}}"
+          class="form-control mt-1"
+          type="text"
+          placeholder="Code"
+          required
+          name="code"
+          [(ngModel)]="client.code"
+          #code="ngModel"
+          #codeEl
+          suffix="%"
+        />
+        <abp-validation-summary [control]="code" [controlEl]="codeEl">
+        </abp-validation-summary>
+      </div>
+    </div>
+    <div class="form-group row required">
+      <label class="col-md-3 col-form-label" for="projectType">Invoice Date :</label>
+      <div class="col-md-9 ">
+          <mat-form-field class="w-100" appearance="outline">
+              <mat-select name="{{data.command == 'create'?'slt-InvoiceDate':'slt-InvoiceDate_edit'}}" [(ngModel)]="client.invoiceDateSetting" name="clientInvoiceDateSetting" placeholder="Select Invoice date setting"
+                  required #clientInvoiceDateSetting="ngModel">
+                  <ng-container *ngFor="let item of invoiceDateSettingList">
+                    <mat-option [value]="item.value">
+                        {{item.text}}</mat-option>
+                  </ng-container>
+              </mat-select>
+          </mat-form-field>
+          <mat-error class="mt-1" *ngIf="clientInvoiceDateSetting.hasError('required') && clientInvoiceDateSetting.touched"
+              style="font-size: 13px;">
+              This field is required
+          </mat-error>
+      </div>
+    </div>
+    <div class="form-group row required">
+      <label class="col-md-3 col-form-label" for="projectType">Payment Due By :</label>
+      <div class="col-md-9 ">
+          <mat-form-field class="w-100" appearance="outline">
+              <mat-select name="{{data.command == 'create'?'slt-PaymentDueBy':'slt-PaymentDueBy_edit'}}" [(ngModel)]="client.paymentDueBy" name="paymentDueBy" placeholder="Select Payment due by"
+                  required #paymentDueBy="ngModel">
+                  <mat-form-field class="w-100 px-3 "style="position: sticky; top: 0; z-index: 2; background-color: white;">
+                    <input name="{{data.command == 'create'?'ipt-PaymentDueBySearch':'ipt-PaymentDueBySearch_edit'}}" matInput [(ngModel)]="searchPaymentDueBy" name="paymentDueBySearch" placeholder="Search"
+                    #search (input) ="$event.stopPropagation();searchPayment()" (keydown)="$event.stopPropagation()">
+                    {{search.focus()}}
+                  </mat-form-field>
+                        <mat-option *ngFor="let item of paymentDueByList " [value]="item.value">
+                          {{item.text}}
+                        </mat-option>
+              </mat-select>
+          </mat-form-field>
+          <mat-error class="mt-1" *ngIf="paymentDueBy.hasError('required') && paymentDueBy.touched"
+              style="font-size: 13px;">
+              This field is required
+          </mat-error>
+      </div>
+    </div>
+
+    <div class="form-group row required">
+      <label class="col-md-3 col-form-label" for="pm"> Transfer Fee: </label>
+      <div class="col-md-9">
+        <input name="{{data.command == 'create'?'ipt-TransferFee':'ipt-TransferFee_edit'}}"
+          class="form-control mt-1"
+          type="number"
+          step="0.01"
+          placeholder="Transfer Fee"
+          required
+          name="transferFee"
+          [(ngModel)]="client.transferFee"
+          #transferFee="ngModel"
+          #transferFeeEl
+          suffix="%"
+        />
+        <abp-validation-summary [control]="transferFee" [controlEl]="transferFeeEl">
+        </abp-validation-summary>
+
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <label class="col-md-3 col-form-label" for="pm"> Address: </label>
+      <div class="col-md-9">
+        <textarea name="{{data.command == 'create'?'ipt-address':'ipt-address_edit'}}"
+          class="form-control mt-1"
+          placeholder="Address"
+          name="address"
+          [(ngModel)]="client.address"
+          maxlength="1000"
+          rows="2"
+        ></textarea>
+      </div>
+    </div>
+  </div>
+  <div align="end" class="row justify-content-end">
+    <button name="btn-cancel" class="btn btn-secondary mr-2 btn-action" mat-dialog-close>Cancel</button>
+    <button name="btn-save"
+      class="btn btn-primary btn-action"
+      [disabled]="!resourceRequestForm.valid || isLoading"
+      (click)="SaveAndClose()"
+    >
+      Save
+    </button>
+  </div>
+</form>

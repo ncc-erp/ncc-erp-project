@@ -1,0 +1,54 @@
+td {
+    vertical-align: middle;
+}
+
+::ng-deep .stars-line {
+    z-index: 0;
+}
+
+.pool-table i {
+    color: #686868;
+    font-size: 18px;
+}
+
+::ng-deep .mat-tooltip {
+    font-size: 13px;
+}
+
+.cancel-plan {
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.on-hover-plan {
+    text-decoration: underline;
+}
+
+button {
+    height: fit-content;
+}
+
+span {
+    height: fit-content;
+}
+
+#pool .fa-edit,
+#pool .fa-plus {
+    font-size: 15px;
+}
+table { height: 1px; } /* Will be ignored, don't worry. */
+tr { height: 100%; }
+td { height: 100%; }
+td > div { height: 100%; }
+.crimson{
+    color:crimson !important
+}
+.grey{
+    color: grey !important;
+}
+.orange{
+    color: orange !important;
+}
+.yellow{
+    color: yellow !important;
+}

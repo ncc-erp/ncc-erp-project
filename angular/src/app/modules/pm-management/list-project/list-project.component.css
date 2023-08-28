@@ -1,0 +1,150 @@
+tr, th, td{
+ vertical-align: middle ;
+}
+button{
+    height: fit-content;
+}
+/* ::ng-deep .search-pm .mat-form-field{
+    width: 270px !important;
+}
+::ng-deep .search-status .mat-form-field{
+    width: 150px !important;
+} */
+
+::ng-deep .filter-wrap .mat-form-field{
+  width: 100%;
+}
+
+::ng-deep .list-project .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
+  transform: translateY(-1.2em) scale(.75) ;
+}
+
+.list-project .search-status {
+  justify-content: flex-end;
+  padding-right: 0;
+}
+
+.list-project .project-wrap {
+  display: flex;
+  justify-content: space-between;
+}
+
+.list-project .project-wrap .project-name-wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.list-project .project-wrap .project-type-wrap {
+  margin-left: 12px;
+}
+
+.list-project .project-wrap .project-type-wrap .sub-main-type {
+  height: 18px !important;
+  border-radius: 4px; 
+  background-color: rgb(168, 167, 167); 
+  padding: 3px 4.8px; 
+  font-weight: bold; 
+  font-size: 12px; 
+  color: white; 
+  margin-right: 3px;
+  line-height: 12px;
+  text-align: center;
+  box-sizing: border-box;
+  border-collapse: collapse;
+  display: inline-block;
+  
+}
+
+.sub-main-project-name:hover {
+  color: blue;
+}
+
+.list-project .time-wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.list-project .time-wrap .start-time {
+  color: var(--secondary);
+}
+
+.list-project .time-wrap .end-time {
+  margin-top: 4px;
+}
+
+.time-send-report-wrap.report-late {
+  color: var(--danger);
+}
+
+.list-project .sort-icon-wrap {
+  margin-left: 6px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.list-project .sort-icon-wrap i {
+  opacity: 0.4;
+  line-height: 0px;
+  font-size: 20px;
+}
+
+.list-project .sort-icon-wrap i.active {
+  opacity: 1;
+}
+
+::ng-deep .is-charged-checkbox .mat-checkbox-ripple {
+  width: 0 !important;
+  height: 0;
+}
+
+::ng-deep .is-charged-checkbox .mat-checkbox-layout {
+  margin-bottom: 0 !important;
+}
+/*
+@media only screen and (min-width: 1546px){
+    .label-pm{
+      width: 20%;
+    }
+    .list-status{
+        width: 30%;
+      }
+
+    .listPM {
+      width: 80% !important ;
+    }
+    .listStatus{
+        width: 70% !important ;
+    }
+  }
+  @media only screen and (min-width: 1349px)  and (max-width: 1545px){
+    .label-pm{
+      width: 20%;
+    }
+    .list-status{
+        width: 40%;
+      }
+
+    .listPM {
+      width: 80% !important ;
+    }
+    .listStatus{
+        width: 60% !important ;
+    }
+  }
+
+  @media only screen and (min-width: 768px) and (max-width: 1348px){
+    .label-pm{
+      width: 20%;
+    }
+    .list-status{
+        width: 50%;
+      }
+
+    .listPM {
+      width: 80% !important ;
+    }
+    .listStatus{
+        width: 50% !important ;
+    }
+  } */

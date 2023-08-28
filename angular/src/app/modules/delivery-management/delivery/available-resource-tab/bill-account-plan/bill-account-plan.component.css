@@ -1,0 +1,14 @@
+:host::ng-deep .is-charged-checkbox .mat-checkbox-ripple {
+    width: 0 !important;
+    height: 0;
+  }
+  
+ :host::ng-deep .is-charged-checkbox .mat-checkbox-layout {
+    margin-bottom: 0 !important;
+  }
+  :host th,td{
+    vertical-align: middle;
+}
+.redColor{
+  color: #dc3545;
+}

@@ -1,0 +1,65 @@
+<form class="form-horizontal" autocomplete="off" #resourceRequestForm="ngForm" novalidate>
+    <abp-modal-header title="Edit future resource for: {{editUser.fullName}}" (onCloseClick)="dialogRef.close()">
+    </abp-modal-header>
+    <div class="modal-body">
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="pm">
+                Sử dụng nhân sự:
+            </label>
+            <div class="col-md-9">
+                <div style="max-width: 260px;">
+                    <!-- <radio-dropdown (outputData)="getPercentage(editUser,$event)" [data]="editUser.allocatePercentage">
+                        </radio-dropdown> -->
+                    <mat-radio-group [(ngModel)]="editUser.allocatePercentage" name="allocatePercentageDropdown"  aria-label="Select an option">
+                        <mat-radio-button [value]="100">Sử dụng</mat-radio-button>
+                        <br />
+                        <mat-radio-button [value]="0">Không sử dụng</mat-radio-button>
+                    </mat-radio-group>
+                </div>
+            </div>
+        </div>
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="tenancyName">
+                Project:
+            </label>
+            <div class="col-md-9">
+                <mat-form-field class="mt-2" appearance="outline">
+                    <mat-select name="projectId" #projectIdValid="ngModel" placeholder="Select project" required
+                        [(ngModel)]="editUser.projectId">
+                        <ng-container *ngFor="let project of listProject">
+                            <mat-option [value]="project.id">
+                                {{project.name}}
+                            </mat-option>
+                        </ng-container>
+                    </mat-select>
+                </mat-form-field>
+                <mat-error class="mt-1" *ngIf="projectIdValid.hasError('required') && projectIdValid.touched"
+                    style="font-size: 13px;">
+                    This field is required
+                </mat-error>
+            </div>
+        </div>
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="tenancyName">
+                TimeStart:
+            </label>
+            <div class="col-md-9">
+                <mat-form-field appearance="outline">
+                    <input placeholder="Choose date" matInput [matDatepicker]="picker" name="startDate"
+                        [(ngModel)]="editUser.startTime" #timeStart="ngModel" required />
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+                <mat-error class="mt-1" *ngIf="timeStart.hasError('required') && timeStart.touched"
+                    style="font-size: 13px;">
+                    This field is required
+                </mat-error>
+            </div>
+        </div>
+    </div>
+    <div align="end" class="row justify-content-end">
+        <button class="btn btn-secondary btn-action mr-2" mat-dialog-close>Cancel</button>
+        <button class="btn btn-primary btn-action" [disabled]="!resourceRequestForm.valid || isLoading"
+            (click)="SaveAndClose()">Save</button>
+    </div>
+</form>

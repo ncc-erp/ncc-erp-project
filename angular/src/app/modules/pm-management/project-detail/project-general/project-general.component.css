@@ -1,0 +1,34 @@
+
+/* .read-mode{
+    border: none !important;
+} */
+/* :read-only{
+    background: none;
+} */
+/* .detail :read-only{
+    background: none;
+
+} */
+
+
+.showText:hover::after{
+    content: "Charge vào timesheet tháng này!";
+    background-color: rgba(66, 63, 63, 0.863);
+    color: white;
+    margin: 10px;
+    padding: 7px;
+    border-radius: 3px;
+    text-align: center;
+    
+    
+}
+
+.m-special{
+    margin: 0.25rem 0;
+}
+.text-read{
+    border-color: transparent;
+}
+.datetime-picker{
+    width: 100%;
+}

@@ -1,0 +1,83 @@
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-6">
+                <h1>Đợt kiểm tra:{{saodoName}} </h1>
+            </div>
+            
+            <div class="col-6 text-right">
+                <button  type="button" class="btn bg-blue" (click)="createSaodoDetail()" >
+                    <i class="fa fa-plus-square"></i>
+                    {{ 'Create' | localize }}
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="content px-2">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <button type="button" class="btn bg-blue" (click)="getSaodoDetail()">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <input type="text" class="form-control" name="keyword" placeholder="Search" [(ngModel)]="searchText" (keyup.enter)="getSaodoDetail()"
+                    />
+                </div>
+            </div>
+            
+            <div class="card-body table-responsive p-4">
+                <table style="border-collapse: collapse;" class="table table-hover text-nowrap">
+                    <thead class="bg-light">
+                        <tr>
+                            <th>STT</th>    
+                            <th>Tên Project</th>
+                            <th>Tên PM</th>
+                            <th>Trạng thái</th>
+                            <th>Tổng số sai phạm</th>
+                            <!-- <th>Thời gian bắt đầu</th>
+                            <th>Thời gian kết thúc</th> -->
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let saodo of listSaoDoDetail; let i = index">
+                            <td>{{i+1}}</td>
+                            <td><span
+                                class="hyperlink" (click)="showDetail(saodo)">{{saodo.projectName}}</span></td>
+                            <td>{{saodo.pmName}}</td>
+                            <td class="text-center"><span [ngClass]="APP_CONST.SaodoStatusStyle[saodo.auditResultStatus]">{{saodo.auditResultStatus}}</span></td>
+                            <td class="text-center"><strong>{{saodo.countFail}}</strong></td>
+                            <!-- <td>{{saodo.startTime}}</td>
+                            <td>{{saodo.endTime}}</td> -->
+                            <td  class="text-center">
+                                <button  *ngIf="permission.isGranted(SaoDo_AuditResultPeople_Update)"
+                                class="btn btn-sm bg-secondary mr-1" 
+                                (click)="editSaodoDetail(saodo)" >
+                                <i class="fas fa-pencil-alt"></i>
+
+                                Edit
+                            </button>
+                            <button 
+                            *ngIf="permission.isGranted(SaoDo_AuditResultPeople_Delete)"
+                                class="btn btn-sm bg-danger ml-1"
+                                (click)="delete(saodo)"
+                                 #deleteBtn>
+                                <i class="fas fa-trash"></i>
+                                Delete
+                            </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+         
+
+        </div>
+    </div>
+</section>

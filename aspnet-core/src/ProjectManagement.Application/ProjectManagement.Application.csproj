@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <VersionPrefix>1.0.0.0</VersionPrefix>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <AssetTargetFallback>$(AssetTargetFallback);portable-net45+win8+wp8+wpa81;</AssetTargetFallback>
+    <AssemblyName>ProjectManagement.Application</AssemblyName>
+    <PackageId>ProjectManagement.Application</PackageId>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <RootNamespace>ProjectManagement</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ProjectManagement.Core\ProjectManagement.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="APIs\Talent\Dto\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Aspose.Cells" Version="21.12.0" />
+    <PackageReference Include="Aspose.Cells.GridWeb" Version="21.12.0" />
+    <PackageReference Include="Microsoft.Office.Interop.Excel" Version="15.0.4795.1001" />
+  </ItemGroup>
+</Project>

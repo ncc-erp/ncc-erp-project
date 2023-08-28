@@ -1,0 +1,11 @@
+.fixTableHead {
+    overflow-y: auto;
+    max-height: 69vh;
+  }
+  
+  .fixTableHead thead th {
+    background-color: white;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }

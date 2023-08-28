@@ -1,0 +1,34 @@
+<form class="form-horizontal" autocomplete="off" #timesheetForm="ngForm" novalidate>
+    <div class="card-header">
+        <h3 *ngIf="data.command=='create'">Create</h3>
+        <h3 *ngIf="data.command!=='create'">Edit</h3>
+    </div>
+    <div class="modal-body">
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="tenancyName">
+               Name
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="name" minlength="2" maxlength="1024" [(ngModel)]="invoice.name"
+                     required #nameEl />
+            </div>
+        </div>
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="tenancyName">
+                Month:
+
+            </label>
+
+            <div class="col-md-9">
+                
+            </div>
+        </div>
+       
+        
+    </div>
+    <div align="end" class="mat-dialog-actions" mat-dialog-actions="">
+        <button class="btn btn-secondary btn-action cancel-banks" mat-raised-button mat-dialog-close>Cancel</button>
+        <button mat-raised-button color="primary" class="saving-btn btn-save"mat-button
+        [disabled]="!timesheetForm.form.valid ||isDisable" (click)="SaveAndClose()"  >Save</button>
+    </div>
+</form>

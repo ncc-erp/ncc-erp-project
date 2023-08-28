@@ -1,0 +1,63 @@
+<abp-modal-header [title]="data.node.processCriteria.code + '. ' + data.node.processCriteria.name" (onCloseClick)="dialogRef.close()"></abp-modal-header>
+<mat-dialog-content class="mat-typography">
+
+  <!-- For view note -->
+  <ng-container *ngIf="!isContentTypeViewFromName()">
+    <mat-divider></mat-divider>
+    <section>
+      <div class="example-label">NC Status</div>
+      <div class="example-button-row">
+        <div *ngFor="let button of availableColors">
+          <button mat-raised-button [color]="button.color" [style]="button.style" *ngIf="data.node.status === button.status">{{ button.label }}</button>
+        </div>
+      </div>
+    </section>
+
+    <mat-divider></mat-divider>
+    <section style="padding-top: 20px;">
+      <div class="example-label">Note</div>
+      <p style="overflow-wrap: break-word;">{{ data.node.note }}</p>
+    </section>
+    <mat-divider></mat-divider>
+  </ng-container>
+
+  <!-- For view detail by name -->
+  <ng-container *ngIf="isContentTypeViewFromName()">
+    <mat-divider></mat-divider>
+
+    <section>
+      <div class="example-label">Applicable</div>
+      <div class="example-button-row">
+        <div *ngFor="let item of applicableProjectProcessCriteria">
+          <button mat-raised-button [color]="item.color" [style]="item.style" *ngIf="data.node.applicable === item.applicable">{{ item.label }}</button>
+        </div>
+      </div>
+    </section>
+
+    <mat-divider></mat-divider>
+    <section style="padding-top: 20px;">
+      <div class="example-label">Guideline</div>
+      <p style="overflow-wrap: break-word;" [innerHTML]="data.node.processCriteria.guidLine | safeHtml"></p>
+    </section>
+
+    <mat-divider></mat-divider>
+    <section style="padding-top: 20px;">
+      <div class="example-label">Q&A Example</div>
+      <p style="overflow-wrap: break-word;" [innerHTML]="data.node.processCriteria.qaExample | safeHtml"></p>
+    </section>
+
+    <mat-divider></mat-divider>
+    <section style="padding-top: 20px;">
+      <div class="example-label">Tailoring note</div>
+      <p style="overflow-wrap: break-word;" [innerHTML]="data.node.tailoringNote | safeHtml"></p>
+    </section>
+
+    <mat-divider></mat-divider>
+  </ng-container>
+
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+</mat-dialog-actions>

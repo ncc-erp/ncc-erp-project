@@ -1,0 +1,343 @@
+ /* ::ng-deep .mat-form-field-outline {
+    background: white;
+}
+
+.submit-btn:disabled i {
+    color: gray !important;
+}
+
+.active {
+    color: green;
+}
+
+.inActive {
+    color: darkgrey;
+}
+
+::ng-deep .bg-success {
+    height: 42px;
+}
+
+
+button {
+    height: fit-content;
+}
+
+@media only screen and (min-width: 1921px) and (max-width: 2250px) {
+    .res-btn {
+        display: flex;
+        max-width: 15%;
+    }
+    .res-area {
+        max-width: 90% !important;
+    }
+}
+
+@media only screen and (max-width: 1920px) {
+    .res-area {
+        max-width: 85% !important;
+    }
+    .res-btn {
+        margin-top: 5px;
+        display: flex;
+    }
+}
+
+.label {
+    color: white;
+    padding: 12px;
+    font-family: Arial;
+    border-radius: 2px;
+    margin-bottom: -5px !important;
+}
+
+.info {
+    background-color: #2196F3;
+}
+
+.report-table td {
+    border: none;
+}
+
+.report-table tr {
+    border: none;
+}
+
+@media only screen and (max-width: 1824px) {
+    .send-block {
+        width: 31% !important
+    }
+}
+
+@media only screen and (max-width: 1500px) {
+    .send-block {
+        width: 46% !important
+    }
+}
+
+::ng-deep .mat-tooltip {
+    font-size: 12px;
+}
+
+::ng-deep .text-success .mat-form-field-outline {
+    background: #28a745;
+    border-radius: 5px;
+}
+
+::ng-deep .text-warning .mat-form-field-outline {
+    background: #ffc107;
+    border-radius: 5px;
+}
+
+::ng-deep .text-danger .mat-form-field-outline {
+    background: #dc3545;
+    border-radius: 5px;
+}
+
+ ::ng-deep .text-success .mat-select-value {
+    color: #fff;
+}
+
+ ::ng-deep .text-danger .mat-select-value {
+    color: #fff;
+}
+
+ ::ng-deep .mat-select-panel .mat-option.mat-selected:not(.mat-option-multiple) {
+    opacity: 0.7;
+}
+
+.note {
+    font-size: 1.2em;
+    font-family: sans-serif;
+    white-space: pre-line;
+    max-width: 91%;
+    max-height: 12.0em;
+    line-height: 1.2em;
+}
+
+.table-title {
+    font-size: 24px;
+    color: #424242;
+}
+
+.table-vertial {
+    margin-top: 20px;
+}
+
+.badge {
+    height: fit-content;
+}
+
+.table-vertical {
+    margin-top: 20px;
+}
+
+.table-title {
+    font-size: 24px;
+    color: #424242;
+}
+
+.past {
+    background-color: #efefef;
+}
+
+.status-badges {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+} */
+
+
+ /* mat-list-item:hover{
+    background-color: aliceblue;
+} */
+
+ .list-project:hover {
+     background-color: #eaebec;
+ }
+
+ ::ng-deep .mat-checkbox-inner-container.mat-checkbox-inner-container-no-side-margin {
+     margin-top: 80%;
+ }
+
+:host ::ng-deep .mat-content{
+    align-items: center;
+}
+ /* .project-list {
+  height: 150px;
+  padding-top: 20px;
+} */
+
+ .project-list {
+     /* width: 100%; */
+     white-space: nowrap;
+     text-overflow: ellipsis;
+     cursor: pointer;
+     overflow: hidden;
+ }
+
+ ::ng-deep .mat-list {
+     padding: 10px;
+ }
+
+ ::ng-deep .mat-list-item {
+     padding: 10px;
+ }
+
+ .projectActive {
+     background-color: #dce1e6;
+     border: 1.8px solid #c3ceda;
+     border-top-right-radius: 2px;
+     border-bottom-right-radius: 2px;
+     border-left: none;
+ }
+
+ .green {
+     border-left: 7px solid #28a745;
+ }
+
+ .red {
+     border-left: 7px solid #dc3545;
+ }
+
+ .yellow {
+     border-left: 7px solid #ffc107;
+ }
+
+ .submit-btn:disabled i {
+     color: gray !important;
+ }
+
+ button {
+     height: fit-content;
+ }
+
+ @media only screen and (min-width: 1921px) and (max-width: 2250px) {
+     .res-btn {
+         display: flex;
+         max-width: 15%;
+     }
+
+     .res-area {
+         max-width: 90% !important;
+     }
+ }
+
+ @media only screen and (max-width: 1920px) {
+     .res-area {
+         max-width: 85% !important;
+     }
+
+     .res-btn {
+         margin-top: 5px;
+         display: flex;
+     }
+ }
+
+ ::ng-deep .mat-expansion-panel-header {
+     margin: 0;
+ }
+
+ .sidebar-item:hover {
+     background-color: #e9edf1;
+ }
+
+ ::ng-deep .mat-expansion-panel .mat-expansion-panel-body {
+     padding: 0;
+ }
+
+ .project-info tr,
+ .project-info td {
+     border: none;
+ }
+
+ .expand-content {
+     width: 83% !important;
+     margin-left: 17% !important;
+ }
+
+ .toggle-bar {
+     display: none;
+     transition: 1s;
+ }
+
+ cd-timer {
+     font-size: 33px;
+     font-weight: bold;
+ }
+
+ .count-timer {
+     background-color: #ffc107;
+     height: 50px;
+     padding: 0px 12px;
+     border-radius: 5px;
+ }
+
+ .pointer {
+     cursor: pointer;
+ }
+
+
+
+ .table-vertical {
+     margin-top: 20px;
+ }
+
+ .badge {
+     height: fit-content;
+ }
+
+ td,
+ th {
+     padding: 5px !important;
+     vertical-align: middle;
+     white-space: nowrap;
+ }
+
+ .current-resource th,
+ td {
+     padding: 0;
+ }
+
+ .time-over {
+     color: darkviolet;
+     text-decoration: underline;
+     text-decoration-style: double;
+ }
+
+ .status-label {
+     width: 205px;
+     height: 36px;
+     font-weight: 700;
+     border-radius: 4px;
+     margin-left: 10px;
+ }
+
+ ::ng-deep #status-option-weekly-report .mat-form-field-wrapper {
+     width: 150px;
+ }
+
+ .guide-line:hover {
+     cursor: pointer;
+     text-decoration: underline;
+ }
+
+ .btn-editall-neutral {
+     color: #F75200;
+     background-color: white;
+     border: 2px solid;
+ }
+
+ .btn-editall-neutral:hover {
+     color: white;
+     background-color: #F75200;
+     border: 2px solid;
+ }
+ .hyperlink {
+    color: black;
+}
+
+.hyperlink:hover {
+    color: rgb(45, 57, 160);
+    text-decoration: underline;
+}

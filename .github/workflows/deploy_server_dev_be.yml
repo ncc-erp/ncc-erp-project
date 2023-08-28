@@ -1,0 +1,81 @@
+name: Deploy PROJECT_BE Dev
+on:
+  push:
+    branches:
+      - dev
+    paths:
+    - 'aspnet-core/**'
+    - '.github/workflows/deploy_server_dev_be.yml'
+
+jobs:
+  build:
+    runs-on: self-hosted
+    name: Build PROJECT_BE Dev
+    environment: dev
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Backup Log
+        run: |
+          # mv /var/www/app_git/project/dev-dotnet-host-project/wwwroot/avatars/ ~/soft/check_node_git/project/
+          cp -r /var/www/app_git/project/dev-dotnet-host-project/App_Data/Logs/* /home/nccsoft/data_git/project/Logs/
+
+      - name: Build Migrator
+        run: |
+          export PATH=$PATH:/opt/dotnet3/
+          cd aspnet-core/src/ProjectManagement.Migrator
+          dotnet3 publish -c Release
+
+      - name: Copy New Migrator
+        run: |
+          cd aspnet-core/src/ProjectManagement.Migrator/bin/Release/netcoreapp3.1/publish/
+          rm -rf appsettings.json
+          cp -r * /var/www/migrator_git/project/dev-dotnet-migrator-project/
+
+      - name: Build Host
+        run: |
+          export PATH=$PATH:/opt/dotnet3/
+          cd aspnet-core
+          dotnet3 publish -c Release
+
+      - name: Copy New Host
+        run: |
+          cd aspnet-core/src/ProjectManagement.Web.Host/bin/Release/netcoreapp3.1/publish/
+          rm -rf appsettings.json
+          cp -r * /var/www/app_git/project/dev-dotnet-host-project/
+  deploy:
+    runs-on: self-hosted
+    name: Deploy PROJECT_BE Dev
+    environment: dev
+    needs:
+      - build
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: Up Data appsettings.json
+        run: |
+          cd aspnet-core/
+          echo '${{ secrets.APP_SETTING_DEV }}' > appsettings.json
+
+      - name: Migrate Database
+        run: |
+          sudo service erp-projects-git stop
+          export PATH=$PATH:/opt/dotnet3/
+          cd aspnet-core/
+          cp appsettings.json /var/www/migrator_git/project/dev-dotnet-migrator-project/
+          cd /var/www/migrator_git/project/dev-dotnet-migrator-project/
+          dotnet3 ProjectManagement.Migrator.dll -q
+
+      - name: Restart Server
+        run: |
+          cd aspnet-core/
+          cp appsettings.json /var/www/app_git/project/dev-dotnet-host-project/
+          cd /var/www/app_git/project/dev-dotnet-host-project/
+          # mv ~/soft/check_node_git/project/avatars /var/www/app_git/project/dev-dotnet-host-project/wwwroot/
+          mkdir -p /var/www/app_git/project/dev-dotnet-host-project/App_Data/Logs/
+          cp -r /home/nccsoft/data_git/project/Logs/* /var/www/app_git/project/dev-dotnet-host-project/App_Data/Logs/
+          chmod 777 -R App_Data/
+          sudo service erp-projects-git start
+          sudo service erp-projects-git status

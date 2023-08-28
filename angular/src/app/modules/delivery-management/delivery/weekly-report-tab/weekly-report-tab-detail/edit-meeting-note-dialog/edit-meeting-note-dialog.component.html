@@ -1,0 +1,24 @@
+<form class="form-horizontal" id="edit-note-form" autocomplete="off" #reportNote="ngForm" [formGroup]="formEditMeetingNote">
+    <abp-modal-header title="Edit Meeting Note" class="pt-0" (onCloseClick)="dialogRef.close()">
+    </abp-modal-header>
+    <div class="modal-body">
+        <div class="form-group row">
+            <label for="">Note:</label>
+            <editor class="w-100"
+            formControlName="meetingSolution"
+             [init]="{
+                height:100,
+                menubar: true,
+                plugins: ['table', 'code', 'preview', 'media', 'image', 'template'],
+                toolbars: ['image'],
+                branding: false
+                                }" 
+                               >
+            </editor>
+        </div>
+    </div>
+    <div style="background-color: white;" align="end" class="d-flex justify-content-end">
+        <button class="btn btn-secondary mr-1" mat-dialog-close>Cancel</button>
+        <button class="btn btn-primary btn-action" (click)="saveAndClose()">Save</button>
+    </div>
+</form>

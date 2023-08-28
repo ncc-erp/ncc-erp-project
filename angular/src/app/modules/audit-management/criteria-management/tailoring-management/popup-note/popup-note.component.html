@@ -1,0 +1,57 @@
+<form class="form-horizontal" autocomplete="off" #timesheetForm="ngForm" novalidate>
+  <abp-modal-header title="{{
+        isEdit
+          ? 'Edit tailoring note: '+ title
+          : 'Tailoring note: ' + title
+      }}" (onCloseClick)="Cancel()">
+  </abp-modal-header>
+  <div *ngIf="isEdit;" class="modal-body row d-flex flex-column" style="flex: 1;">
+    <div class="form-group ">
+      <div class="d-flex justify-content-between">
+        <div>
+          <label for="criteriaGuidLine"> {{ "Note" | localize }}: </label>
+          <p style="font-size: 14px;">(Paste: Crtl + Shift + v)</p>
+        </div>
+        <div>
+          <mat-form-field>
+            <mat-label>Applicable</mat-label>
+            <mat-select [(ngModel)]="data.node.applicable" name="slt-applicable">
+              <mat-option *ngFor="let item of applicableList" [value]="item.value">
+                {{item.displayName}}
+            </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+      <div>
+        <editor class="w-100" [init]="{
+            height: 150,
+            selector: 'textarea',
+            a_plugin_option: true,
+            a_configuration_option: 400,
+            class: 'w-100',
+            menubar: true,
+            plugins: ['table', 'code', 'preview', 'media', 'image', 'template'],
+            toolbars: ['image'],
+            branding: false
+          }" [(ngModel)]="data.node.note" id="note" name="note">
+        </editor>
+      </div>
+    </div>
+    <div align="end" class="row justify-content-end">
+      <button name="btn-cancel" class="btn btn-secondary mr-2 btn-action" (click)="Cancel()">
+        Cancel
+      </button>
+      <button name="btn-save" class="btn btn-primary btn-action" (click)="SaveAndClose()">
+        Save
+      </button>
+
+    </div>
+  </div>
+  <div *ngIf="!isEdit;" class="modal-body row d-flex flex-column" style="flex:1">
+    <h5 style="font-weight: 600;">Note:</h5>
+    <span [innerHTML]="data.node.note| safeHtml" style="max-height: 500px; overflow-y: auto;"></span>
+  </div>
+
+
+</form>

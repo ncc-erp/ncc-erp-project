@@ -1,0 +1,35 @@
+.title{
+    line-height: 50px;
+    font-size: 20px;
+    font-weight: normal;
+    color: #111;
+    margin-bottom: 0px;
+}
+.panel-header{
+    margin: 10px 0px;
+    padding-left: 12px !important;
+    padding-right: 8px;
+}
+
+::ng-deep  .mat-expansion-indicator{
+    margin-right: 12px;
+}
+.edit-save{
+    margin-left: 20px;
+    line-height: 50px;
+}
+::ng-deep .mat-expansion-panel-body{
+    padding-left: 16px;
+    padding-right: 16px;
+}
+.inputTime{
+    outline: none;
+    border: none;
+    color: rgba(0,0,0,.38);
+    border-bottom: 1px rgba(0,0,0,.38) dotted;
+    
+}
+.editTime{
+    color: #000 !important;
+    border-bottom: 1px solid #000;
+}

@@ -1,0 +1,208 @@
+
+
+<section class="content px-2 mt-3">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h3>Milestone</h3>
+                    </div>
+                    
+                </div>
+                
+                
+            </div>
+            
+            <div class="card-body table-responsive p-4">
+               
+                  
+                <table style="border-collapse: collapse;" class="table table-hover text-nowrap w-100" >
+                    <thead class="bg-light">
+                        <tr>
+                            <th>Milestone</th>
+                            <th>Các chức năng cần tạo</th>
+                            <th style="max-width: 100px;">Flag</th>
+                            
+                            <th>Mốc UAT</th>
+                            <th>Thời điểm thanh toán</th>
+                            <th>Note</th>
+                            <th>Trạng thái</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of milestoneList |paginate
+                        : {
+                            id: 'server',
+                            itemsPerPage: pageSize,
+                            currentPage: pageNumber,
+                            totalItems: totalItems
+                          }; let i = index" >
+                            <td ><p class="mt-2">{{ i +1 }}</p></td>
+                            <td>
+                                <p class="mt-2"  *ngIf="!item.createMode">{{item.description}}</p>
+                                <div *ngIf="item.createMode">
+                                    <textarea  cdkTextareaAutosize #autosize="cdkTextareaAutosize" rows="2" class="mt-2" placeholder="text" [(ngModel)]="item.description" #inputDes="ngModel" #inputNameEl required
+                                [readonly]="item.createMode ==null" class="form-control" type="text"
+                                name="inputDescripton" 
+                                 >
+                                </textarea>
+                                <abp-validation-summary [control]="inputDes" [controlEl]="inputNameEl"></abp-validation-summary>
+                                </div>
+                            </td>
+                            <td class="text-center" style="max-width: 150px;">
+                                <p *ngIf="!item.createMode" class="mt-2">
+                                    <i [ngClass]="item.flag" class="fab fa-font-awesome-flag fa-lg"></i>
+                                </p>
+                                <mat-form-field style="margin-top: -5px;" class="mt-1 w-100"  *ngIf="item.createMode cla"
+                                    appearance="outline">
+                                    <mat-select name="flag"
+                                        placeholder="Flag" [(ngModel)]="item.flag">
+                                        <ng-container *ngFor="let flag of flagList">
+                                            <mat-option [value]="APP_ENUM.MilestoneFlag[flag]"
+                                                >
+                                                {{
+                                                flag
+                                                }}</mat-option>
+                                        </ng-container>
+                                    </mat-select>
+                                </mat-form-field>
+                            </td>
+                        
+                            <td class="text-center" style="max-width: 180px;">
+                                <p *ngIf="!item.createMode" class="mt-2 ">{{item.uatTimeStart |date:"dd/MM/yyyy"}}</p>
+                                <mat-form-field class="mt-1 w-100" appearance="outline" *ngIf="item.createMode"  >
+                                    <input matInput [matDatepicker]="picker"   [(ngModel)]="item.uatTimeStart" 
+                                    name="inputUatStartTime" 
+                                    [placeholder]="item.createMode !=null?'Mốc UAT':''" #uatStartTime>
+                                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                    <mat-datepicker #picker></mat-datepicker>
+                                  </mat-form-field>
+                            </td>
+                            <td  class="text-center" style="max-width: 180px;">
+                                <p *ngIf="!item.createMode" class="mt-2">{{item.uatTimeEnd |date:"dd/MM/yyyy"}}</p>
+                                <mat-form-field class="mt-1 w-100" appearance="outline" *ngIf="item.createMode"  >
+                                    <input matInput [matDatepicker]="pickerEndTime" [(ngModel)]="item.uatTimeEnd" 
+                                    name="inputUatStartTime" 
+                                    [placeholder]="item.createMode !=null?'Thời điểm thanh toán':''" #uatTimeEnd>
+                                    <mat-datepicker-toggle matSuffix [for]="pickerEndTime"></mat-datepicker-toggle>
+                                    <mat-datepicker #pickerEndTime></mat-datepicker>
+                                  </mat-form-field>
+                            </td>
+                            <td style="white-space: normal ; width: 250px;">
+                                <p   *ngIf="!item.createMode" class="mt-2">{{item.note}}</p>
+
+                                <div *ngIf="item.createMode"> 
+                                    <textarea  cdkTextareaAutosize
+                                    #autosize="cdkTextareaAutosize" rows="2" style="min-width: 200px;" class="mt-2"  [(ngModel)]="item.note"  #Percentage="ngModel" #PercentageEl
+                                    [readonly]="item.createMode ==null" class="form-control" type="text"
+                                    name="inputNote" 
+                                    placeholder="text" #note >
+                                </textarea>
+                                
+                                </div>
+                               
+                            </td>
+                            <td class="text-center" style="max-width: 180px;">
+                                <p [ngClass]="APP_CONST.ProjectMilestoneStatus[item.status]" *ngIf="!item.createMode" class="mt-2" >{{item.status}}</p>
+                                <div  *ngIf="item.createMode">
+                                    <mat-form-field class="mt-1 w-100"
+                                    appearance="outline">
+                                    <mat-select name="status" #statusValid="ngModel"
+                                        placeholder="Select Status"required [(ngModel)]="item.status">
+                                        <ng-container *ngFor="let status of statusList">
+                                            <mat-option [value]="APP_ENUM.ProjectMilestoneStatus[status]"
+                                                >
+                                                {{
+                                                status
+                                                }}</mat-option>
+                                        </ng-container>
+                                    </mat-select>
+                                </mat-form-field>
+                                <mat-error class="mt-1"
+                                            *ngIf="statusValid.hasError('required') && statusValid.touched"
+                                            style="font-size: 13px;">
+                                            This field is required
+                                        </mat-error>
+                                </div>
+
+
+                                
+                            </td>
+                            <td *ngIf="item.createMode ==null"   class="text-center">
+                                <button  [disabled]="isEditing" *ngIf="permission.isGranted(PmManager_ProjectMilestone_Update)"
+                                class="btn btn-sm bg-secondary mr-1 mt-2" 
+                                (click)="item.createMode=true;edit(item);$event.stopPropagation()"
+                                 >
+                                <i class="fas fa-pencil-alt"></i>
+
+                                Edit
+                            </button>
+                            <button 
+                                *ngIf="permission.isGranted(PmManager_ProjectMilestone_Delete)"
+                                class="btn btn-sm bg-danger ml-1 mt-2"
+                                (click)="delete(item);$event.stopPropagation()"
+                                 #deleteBtn>
+                                <i class="fas fa-trash"></i>
+                                Delete
+                            </button>
+                            </td>
+                            <td *ngIf="item.createMode !=null" class="d-flex text-center" style="border: none;">
+                                <button [disabled]="!item.description || !item?.status?.toString()"  (click)="saveMilestoneRequest(item);"
+                                    type="submit" class="btn btn-primary btn-action mr-1 ml-3 mt-2"
+                                    >Save</button>
+                                <button  (click)="refresh();  isAllowed =true; isEditing=false" class="btn btn-default btn-action mt-2">Cancel</button>
+
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button  [disabled]="isEditing" style="border: none;" *ngIf="permission.isGranted(PmManager_ProjectMilestone_Create)" [hidden]="!isAllowed" (click)="addMore()" class=" bg-blue mt-2">
+                    <i class="fa fa-plus-square"></i>
+                </button>
+            </div>
+            <div class="card-footer bg-light border-top">
+                <div class="row">
+                    <div class="col-sm-4 col-12 text-sm-left text-center">
+                        <button class="btn btn-secondary mb-2" (click)="refresh()">
+                            <i class="fas fa-redo-alt"></i>
+                        </button>
+                        <mat-form-field style="width: 20%;margin-left: 30px;">
+                            <mat-label>Number items</mat-label>
+                            <mat-select [(ngModel)]="pageSizeType" (ngModelChange)="changePageSize()">
+                                <mat-option [value]="5">
+                                    5
+                                </mat-option>
+                                <mat-option [value]="10">
+                                    10
+                                </mat-option>
+                                <mat-option [value]="20">
+                                    20
+                                </mat-option>
+                                <mat-option [value]="50">
+                                    50
+                                </mat-option>
+                                <mat-option [value]="100">
+                                    100
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-sm-4 col-12 text-center">
+                        <p class="mb-0 my-2">
+                            {{ "TotalRecordsCount" | localize: totalItems }}
+                        </p>
+                    </div>
+                    <div class="col-sm-4 col-12">
+                        <div class="float-sm-right m-auto">
+                            <abp-pagination-controls id="server" (pageChange)="getDataPage($event)">
+                            </abp-pagination-controls>
+                        </div>
+                    </div>
+                </div>
+            </div>
+           
+        </div>
+    </div>
+</section>

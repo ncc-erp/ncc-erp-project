@@ -1,0 +1,39 @@
+<abp-modal-header title="Working history of {{ emailAddress }}" (onCloseClick)="dialogRef.close()">
+</abp-modal-header>
+<div class="modal-body">
+  <div class="fixTableHead">
+    <table [busy]="isLoading" style="border-collapse: collapse" class="table table-hover text-nowrap"
+      *ngIf="projectsHistoryUser.length > 0; else other_template">
+      <thead class="bg-light">
+        <tr style="border: none">
+          <th class="stt">#</th>
+          <th>Project Name</th>
+          <th>PM Name</th>
+          <th style="width: 100px;">Join/Out</th>
+          <th style="width: 120px;">Start time</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of projectsHistoryUser; let i= index">
+          <td>{{i+1}}</td>
+          <td><strong>{{ item.projectName }}</strong></td>
+          <td><strong>{{ item.pmName }}</strong></td>
+          <td class="text-center"><span [ngClass]="item.allocatePercentage > 0 ? 'text-success' : 'text-danger' "> {{
+              item.allocatePercentage > 0?'Join':'Out'}}</span>
+          </td>
+          <td class="text-center">
+            {{ item.startTime | date: 'dd/MM/yyyy' }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <ng-template #other_template>
+    <div>Chưa tham gia dự án nào</div>
+  </ng-template>
+</div>
+<div>
+  <div align="end" class="row justify-content-end">
+    <button class="btn btn-secondary" mat-dialog-close>Close</button>
+  </div>
+</div>

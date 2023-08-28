@@ -1,0 +1,16 @@
+<form class="form-horizontal" id="edit-note-form" autocomplete="off" #reportNote="ngForm">
+    <abp-modal-header title="Edit Note" class="pt-0" (onCloseClick)="Cancel()">
+    </abp-modal-header>
+    <div class="modal-body">
+        <div class="form-group row">
+            <label for="">Note:</label>
+            <mat-form-field class="w-100" appearance="outline">
+                <textarea #note cdkTextareaAutosize #autosize="cdkTextareaAutosize" style="max-height: 68vh; overflow: auto;" name="note" rows="3" matInput placeholder="Leave a comment..." [(ngModel)]="currentResource.note">{{note.focus()}}</textarea>
+            </mat-form-field>
+        </div>
+    </div>
+    <div style="background-color: white;" align="end" class="d-flex justify-content-end">
+        <button class="btn btn-secondary mr-1" (click)="Cancel()" mat-dialog-close>Cancel</button>
+        <button class="btn btn-primary btn-action" (click)="saveAndClose()">Save</button>
+    </div>
+</form>

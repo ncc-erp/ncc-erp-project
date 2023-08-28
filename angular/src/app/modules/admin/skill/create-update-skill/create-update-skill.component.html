@@ -1,0 +1,26 @@
+<form class="form-horizontal" autocomplete="off" #resourceRequestForm="ngForm" novalidate>
+    <abp-modal-header title="{{data.command == 'create'?'Add new skill':'Edit Skill: '+title}}" (onCloseClick)="dialogRef.close()">
+    </abp-modal-header>
+<div class="modal-body">
+    <div class="form-group row required">
+        <label class="col-md-3 col-form-label" for="pm">
+            Name:
+        </label>
+        <div class="col-md-9">
+            <input name="{{data.command == 'create'?'ipt-clientName':'ipt-clientName_edit'}}" class="form-control mt-1"  type="text"  placeholder="Name" required
+                name="clientName" [(ngModel)]="skill.name" #name="ngModel" #nameEl
+                suffix="%"  />
+                <abp-validation-summary [control]="name" [controlEl]="nameEl">
+                </abp-validation-summary>
+        </div>
+    </div>
+
+</div>
+<div align="end" class="row justify-content-end">
+    <button name="btn-cancel" class="btn btn-secondary btn-action mr-2" mat-dialog-close>Cancel</button>
+    <button name="btn-save" class="btn btn-primary btn-action"
+        [disabled]="!resourceRequestForm.valid || isLoading" (click)="SaveAndClose()">Save</button>
+</div>
+</form>
+
+

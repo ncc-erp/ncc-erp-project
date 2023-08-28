@@ -1,0 +1,63 @@
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-edit-neutral {
+    color: green;
+    background-color: white;
+    border: 2px solid;
+}
+
+.btn-edit-neutral:hover {
+    color: white;
+    background-color: green;
+    transition: all 0.25s;
+    border-radius: 5px;
+}
+
+.btn-editall-neutral {
+    color: #F75200;
+    background-color: white;
+    border: 2px solid;
+}
+
+.btn-editall-neutral:hover {
+    color: white;
+    background-color: #F75200;
+    border: 2px solid;
+}
+
+.btn-create-neutral {
+    color: blue;
+    background-color: white;
+    border: 2px solid;
+}
+
+.btn-create-neutral:hover {
+    color: white;
+    background-color: blue;
+    transition: all 0.25s;
+    border-radius: 5px;
+}
+
+.example-flex-container {
+    display: flex;
+    justify-content: flex-end;
+}
+
+::ng-deep #modal-bill-info .fixTableHead table tr th {
+    vertical-align: middle !important;
+}
+
+::ng-deep #modal-bill-info .fixTableHead .mat-checkbox-disabled.mat-checkbox-checked .mat-checkbox-background {
+    background-color: green;
+}
+
+::ng-deep #modal-bill-info .fixTableHead .mat-checkbox-checked.mat-accent .mat-checkbox-background {
+    background-color: green;
+}
+
+::ng-deep #done.mat-checkbox-checked.mat-accent .mat-checkbox-background {
+    background-color: green;
+}

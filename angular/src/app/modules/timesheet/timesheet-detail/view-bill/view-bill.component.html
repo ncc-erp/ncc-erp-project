@@ -1,0 +1,323 @@
+<form
+  class="form-horizontal"
+  autocomplete="off"
+  #timesheetDetailForm="ngForm"
+  novalidate
+>
+  <abp-modal-header
+    title="{{data.action == updateAction.UpdateBillInfo ? 'Update Bill Info:' : 'Update Timesheet:'}} {{ data.billInfo.projectName }}"
+    (onCloseClick)="dialogRef.close()"
+  >
+  </abp-modal-header>
+  <div class="modal-body row" id="modal-bill-info" style="justify-content: end;">
+    <div class="col-11 row mb-1" *ngIf="billDetail.length != 0 &&  billDetail.length != 1">
+
+      <button
+        class="btn btn-editall-neutral ml-2"
+        *ngIf="isShowEditAllBtn()"
+        (click)="editAllRow()"
+        [disabled]="data.billInfo.isComplete"
+      >
+        <i class="fas fa-pencil-alt mr-1"></i>Edit All
+      </button>
+
+      <div *ngIf="isEditingAllRow()" class="pt-1 ml-4">
+        <button *ngIf="isTSPopUp()"
+          [disabled]="!timesheetDetailForm.valid"
+          class="mr-3 submit-btn"
+          style="background: none; border: none"
+          (click)="saveAllUpdateTS()"
+        >
+          <i style="color: green" class="fas fa-check fa-2x"></i>
+        </button>
+
+        <button
+        *ngIf="isBillPopUp()"
+          [disabled]="!timesheetDetailForm.valid"
+          class="mr-3 submit-btn"
+          style="background: none; border: none"
+          (click)="saveAllUpdateBill()"
+        >
+          <i style="color: green" class="fas fa-check fa-2x"></i>
+        </button>
+        <i
+          style="color: red"
+          class="fas fa-times fa-2x"
+          (click)="cancelUpdateAll()"
+        ></i>
+      </div>
+    </div>
+
+    <section class="example-section col-1 text-center" *ngIf="isGranted(Timesheets_TimesheetDetail_UpdateBill_SetDone)">
+          <mat-checkbox id="done"
+        class="example-margin"
+        (change)="isComplete($event)"
+        [disabled]="isEditingAnyRow()"
+        [checked]="data.billInfo.isComplete"
+        >Done</mat-checkbox>
+    </section>
+
+    <div class="table-responsive mb-1 p-2">
+      <div class="fixTableHead">
+        <table
+          style="border-collapse: collapse"
+          class="table table-hover text-nowrap"
+        >
+          <thead class="bg-light">
+            <tr>
+              <th class="stt">#</th>
+              <th style="width: 350px;">Employee</th>
+              <th style="width: 200px;">Charge Name</th>
+              <th style="width: 150px;">Charge Role</th>
+              <th style="width: 100px;" *ngIf="isShowRate()">Rate<br>({{getCurrencyName()}})</th>
+              <th style="width: 50px;">Charge Type</th>
+              <th style="width: 90px; white-space: break-spaces;">Working Day</th>
+              <th style="width: 50px;">Is Charge</th>
+              <th>Note</th>
+              <th style="width: 190px;">Action</th>
+            </tr>
+          </thead>
+          <h5 *ngIf="billDetail.length == 0" class="text-center mt-2">
+            No data!
+          </h5>
+          <tbody *ngIf="billDetail.length > 0">
+            <tr *ngFor="let bill of billDetail; let i = index">
+              <td>
+                <span>{{ i + 1 }}</span>
+              </td>
+              <td class="text-left" style="min-width: 200px">
+                  <!-- <app-user-info
+                    [userData]="{
+                      fullName: bill.fullName,
+                      branch: bill.branch,
+                      branchColor:bill.branchColor,
+                      branchDisplayName:bill.branchDisplayName,
+                      userType: bill.userType,
+                      emailAddress: bill.emailAddress,
+                      avatarFullPath: bill.avatarFullPath,
+                      userLevel: bill.userLevel
+                    }"
+                  >
+                  </app-user-info> -->
+                  <app-user-info
+                    [userData]="bill"
+                  >
+                  </app-user-info>
+              </td>
+
+              <!-- Charge Name -->
+              <td class="text-center">
+                <span *ngIf="!bill.isEditing || isTSPopUp()" >{{
+                  bill.billAccountName
+                }}</span>
+                <div *ngIf="bill.isEditing && isBillPopUp()">
+                  <input
+                    style="min-width: 110px"
+                    class="form-control mt-1"
+                    #accountName="ngModel"
+                    #accountNameEl
+                    type="text"
+                    placeholder="Charge Name"
+                    [name]="i + 'accountName'"
+                    [(ngModel)]="bill.accountName"
+                  />
+
+                  <abp-validation-summary
+                    [control]="accountName"
+                    [controlEl]="accountNameEl"
+                  >
+                  </abp-validation-summary>
+                </div>
+              </td>
+
+              <!-- Charge Role -->
+              <td class="text-center">
+                <span *ngIf="!bill.isEditing || isTSPopUp()" >{{
+                  bill.billRole
+                }}</span>
+                <div *ngIf="bill.isEditing && isBillPopUp()">
+                  <input
+                    style="min-width: 110px"
+                    required
+                    class="form-control mt-1"
+                    #billRole="ngModel"
+                    #billRoleEl
+                    type="text"
+                    placeholder="Charge role"
+                    [name]="i + 'billRole'"
+                    [(ngModel)]="bill.billRole"
+                  />
+
+                  <abp-validation-summary
+                    [control]="billRole"
+                    [controlEl]="billRoleEl"
+                  >
+                  </abp-validation-summary>
+                </div>
+              </td>
+
+              <!-- Bill Rate -->
+              <td
+                class="text-center"
+                *ngIf="isShowRate()"
+              >
+                <span *ngIf="!bill.isEditing"
+                  >{{ bill.billRate | number: "1.0":"en-US" }}
+                </span>
+                <div *ngIf="bill.isEditing">
+                  <input
+                    style="min-width: 80px"
+                    required
+                    class="form-control mt-1"
+                    [name]="i + 'billrate'"
+                    #billRate="ngModel"
+                    #billRateEl
+                    type="text"
+                    mask="separator"
+                    thousandSeparator="."
+                    placeholder="number"
+                    [(ngModel)]="bill.billRate"
+                  />
+                  <abp-validation-summary
+                    [control]="billRate"
+                    [controlEl]="billRateEl"
+                  >
+                  </abp-validation-summary>
+                </div>
+              </td>
+
+              <!-- Charge Type -->
+              <td class="text-center">
+                <span class="text-center" *ngIf="!bill.isEditing || isTSPopUp()" >
+                  {{bill.chargeTypeName}}
+                </span>
+                <div *ngIf="bill.isEditing && isBillPopUp()" style="width: 100px;">
+                  <mat-form-field class="w-100" appearance="outline">
+                    <mat-select  [(ngModel)]="bill.chargeType" [name]="'chargeType' + i"
+                        placeholder="select Charge" >
+                        <mat-option
+                            *ngFor="let item of chargeTypeList"
+                            [value]="item.value">
+                            {{item.name}}
+                        </mat-option>
+                    </mat-select>
+
+                </mat-form-field>
+                </div>
+            </td>
+
+            <!-- Working day -->
+              <td class="text-center">
+                <span *ngIf="!bill.isEditing">
+                  {{ bill.workingTime }}
+                </span>
+                <div *ngIf="bill.isEditing">
+                  <input
+                    type="number"
+                    billrate
+                    [name]="i + 'workTime'"
+                    id=""
+                    class="form-control mt-1"
+                    [(ngModel)]="bill.workingTime"
+                  />
+                </div>
+              </td>
+
+              <!-- Is Charge -->
+              <td class="text-center pt-3">
+                <mat-checkbox
+                  [disabled]="!bill.isEditing"
+                  [ngClass]="{'bg-succes': bill.isActive}"
+                  class="mt-1"
+                  name="isactive+{{ i }}"
+                  (change)="onActiveChange(active, bill)"
+                  #active
+                  [checked]="bill.isActive"
+                >
+                </mat-checkbox>
+              </td>
+
+              <!-- Note -->
+              <td>
+                <pre
+                  class="mb-0 p-0 ml-2"
+                  *ngIf="!bill.isEditing"
+                  style="
+                    white-space: pre-line;
+                    word-wrap: break-word;
+                    font-family: sans-serif;
+                    align-self: flex-start;
+                    width: 150px;
+                  "
+                >
+                           {{ bill.note }}
+                      </pre
+                >
+                <div *ngIf="bill.isEditing">
+                  <textarea
+                    cdkTextareaAutosize
+                    #autosize="cdkTextareaAutosize"
+                    rows="2"
+                    style="min-width: 150px"
+                    class="form-control mt-1"
+                    #billRole="ngModel"
+                    placeholder="Note"
+                    [name]="i + 'billNote'"
+                    [(ngModel)]="bill.note"
+                  ></textarea>
+                </div>
+              </td>
+
+              <!-- Action -->
+              <td class="text-center" *ngIf="!isEditingAllRow() || billDetail.length == 1" >
+                <div *ngIf="!bill.isEditing" style="width: 156px;">
+                  <button *ngIf="isShowEditBtnOnRow()"
+                    [disabled]="data.billInfo.isComplete || isEditingAnyRow()"
+                    class="btn btn-sm btn-edit-neutral mr-1 mt-3"
+                    (click)="editUserBill(bill)"
+                  >
+                    <i class="fas fa-pencil-alt mr-1"></i>Edit
+                  </button>
+
+                  <button style="border:2px soild #dc3545;" *ngIf="isGranted(Timesheets_TimesheetDetail_RemoveAccount)"
+                  [disabled]="data.billInfo.isComplete || isEditingAnyRow()"
+                    class="btn btn-sm bg-danger ml-1 mt-3"
+                    (click)="removeAccountTS(bill)"
+                  >
+                  <i class="fas fa-trash"></i> Remove
+                  </button>
+                </div>
+
+                <div *ngIf="bill.isEditing" class="pt-1 mt-1">
+                  <button
+                  *ngIf="data.action == updateAction.UpdateBillInfo"
+                    [disabled]="!bill?.userId || !timesheetDetailForm.valid"
+                    class="mr-3 submit-btn"
+                    style="background: none; border: none"
+                    (click)="saveUserBill(bill)"
+                  >
+                    <i style="color: green" class="fas fa-check fa-2x"></i>
+                  </button>
+                  <button
+                    *ngIf="data.action == updateAction.UpdateTimesheet"
+                    [disabled]="!bill?.userId || !timesheetDetailForm.valid"
+                    class="mr-3 submit-btn"
+                    style="background: none; border: none"
+                    (click)="saveUpdateTS(bill)"
+                  >
+                    <i style="color: green" class="fas fa-check fa-2x"></i>
+                  </button>
+                  <i
+                    style="color: red"
+                    class="fas fa-times fa-2x"
+                    (click)="cancelUpdateAll()"
+                  ></i>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</form>

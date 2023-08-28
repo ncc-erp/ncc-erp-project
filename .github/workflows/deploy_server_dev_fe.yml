@@ -42,7 +42,7 @@ jobs:
         npm cache clean --force
         echo "=== INSTALL PACKAGE ==="
         npm install
-
+        npm install --save @types/lodash@4.14.74
     - name: Angular Build
       run: |
         cd angular/

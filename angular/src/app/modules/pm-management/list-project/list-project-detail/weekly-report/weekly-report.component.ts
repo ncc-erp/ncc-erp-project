@@ -1000,6 +1000,41 @@ export class WeeklyReportComponent extends PagedListingComponentBase<WeeklyRepor
     this.getProjectInfo();
   }
 
+  convertToRisk(issue){
+    abp.message.confirm(
+      "Convert Issue to Risk ?",
+      "",
+      (result: boolean) => {
+        if (result) {
+          this.reportIssueService.convertToRisk(issue.id).pipe(catchError(this.reportIssueService.handleError)).subscribe(res => {
+            if(res.success){
+              abp.notify.success("Convert successful")
+              this.getProjectProblem();
+              this.getRiskOfTheWeek();
+            }
+          })
+        }
+      }
+    );
+  }
+  convertToIssue(risk){
+    abp.message.confirm(
+      "Convert Risk to Issue?",
+      "",
+      (result: boolean) => {
+        if (result) {
+          this.pmReportRiskService.convertToIssue(risk.id).pipe(catchError(this.pmReportRiskService.handleError)).subscribe(res => {
+            if(res.success){
+              abp.notify.success("Convert successful")
+              this.getProjectProblem();
+              this.getRiskOfTheWeek();
+            }
+          })
+        }
+      }
+    );
+
+  }
   getPercentage(report, data) {
     report.allocatePercentage = data
   }

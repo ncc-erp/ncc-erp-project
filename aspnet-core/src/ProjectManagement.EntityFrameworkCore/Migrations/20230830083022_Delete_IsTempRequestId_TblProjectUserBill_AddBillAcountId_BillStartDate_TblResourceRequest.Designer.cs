@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectManagement.EntityFrameworkCore;
 
 namespace ProjectManagement.Migrations
 {
     [DbContext(typeof(ProjectManagementDbContext))]
-    partial class ProjectManagementDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230830083022_Delete_IsTempRequestId_TblProjectUserBill_AddBillAcountId_BillStartDate_TblResourceRequest")]
+    partial class Delete_IsTempRequestId_TblProjectUserBill_AddBillAcountId_BillStartDate_TblResourceRequest
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3602,8 +3604,6 @@ namespace ProjectManagement.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BillAccountId");
-
                     b.HasIndex("ProjectId");
 
                     b.ToTable("ResourceRequests");
@@ -4666,10 +4666,6 @@ namespace ProjectManagement.Migrations
 
             modelBuilder.Entity("ProjectManagement.Entities.ResourceRequest", b =>
                 {
-                    b.HasOne("ProjectManagement.Authorization.Users.User", "User")
-                        .WithMany()
-                        .HasForeignKey("BillAccountId");
-
                     b.HasOne("ProjectManagement.Entities.Project", "Project")
                         .WithMany()
                         .HasForeignKey("ProjectId")

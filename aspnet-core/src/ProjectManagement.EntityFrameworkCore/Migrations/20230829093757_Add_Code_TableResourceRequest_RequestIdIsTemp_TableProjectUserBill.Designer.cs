@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectManagement.EntityFrameworkCore;
 
 namespace ProjectManagement.Migrations
 {
     [DbContext(typeof(ProjectManagementDbContext))]
-    partial class ProjectManagementDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230829093757_Add_Code_TableResourceRequest_RequestIdIsTemp_TableProjectUserBill")]
+    partial class Add_Code_TableResourceRequest_RequestIdIsTemp_TableProjectUserBill
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3486,6 +3488,9 @@ namespace ProjectManagement.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsTemp")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime?>("LastModificationTime")
                         .HasColumnType("datetime2");
 
@@ -3496,6 +3501,9 @@ namespace ProjectManagement.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<long>("ProjectId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("ResourceRequestId")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime>("StartTime")
@@ -3517,6 +3525,8 @@ namespace ProjectManagement.Migrations
 
                     b.HasIndex("ProjectId");
 
+                    b.HasIndex("ResourceRequestId");
+
                     b.HasIndex("UserId");
 
                     b.ToTable("ProjectUserBills");
@@ -3528,12 +3538,6 @@ namespace ProjectManagement.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<long?>("BillAccountId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime?>("BillStartDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("Code")
                         .HasColumnType("nvarchar(max)");
@@ -3601,8 +3605,6 @@ namespace ProjectManagement.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BillAccountId");
 
                     b.HasIndex("ProjectId");
 
@@ -4657,6 +4659,10 @@ namespace ProjectManagement.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("ProjectManagement.Entities.ResourceRequest", "ResourceRequest")
+                        .WithMany()
+                        .HasForeignKey("ResourceRequestId");
+
                     b.HasOne("ProjectManagement.Authorization.Users.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
@@ -4666,10 +4672,6 @@ namespace ProjectManagement.Migrations
 
             modelBuilder.Entity("ProjectManagement.Entities.ResourceRequest", b =>
                 {
-                    b.HasOne("ProjectManagement.Authorization.Users.User", "User")
-                        .WithMany()
-                        .HasForeignKey("BillAccountId");
-
                     b.HasOne("ProjectManagement.Entities.Project", "Project")
                         .WithMany()
                         .HasForeignKey("ProjectId")

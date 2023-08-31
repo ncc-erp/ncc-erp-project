@@ -6,9 +6,11 @@ using NccCore.Extension;
 using ProjectManagement.APIs.PMReportProjectRisks.Dto;
 using ProjectManagement.Authorization;
 using ProjectManagement.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static ProjectManagement.Constants.Enum.ProjectEnum;
 
 namespace ProjectManagement.APIs.PMReportProjectRisks
 {
@@ -69,6 +71,31 @@ namespace ProjectManagement.APIs.PMReportProjectRisks
         public async Task Delete(long pmReportProjectIssueId)
         {
             await WorkScope.DeleteAsync<PMReportProjectRisk>(pmReportProjectIssueId);
+        }
+
+        [HttpGet]
+        [AbpAuthorize]
+        public async Task ConvertToIssue(long Id)
+        {
+            try
+            {
+                // insert into Issue table
+                var risk = WorkScope.Get<PMReportProjectRisk>(Id);
+                await WorkScope.InsertAsync(new PMReportProjectIssue
+                {
+                    PMReportProjectId = risk.PMReportProjectId,
+                    Description = risk.Risk,
+                    Impact = risk.Impact,
+                    Solution = risk.Solution,
+                    Status = Enum.Parse<PMReportProjectIssueStatus>(risk.Status.ToString())
+                });
+                // delete in Risk table
+                await WorkScope.DeleteAsync<PMReportProjectRisk>(Id);
+            }
+            catch (Exception)
+            {
+                throw new UserFriendlyException("Convert to Issue fail !");
+            }
         }
     }
 }

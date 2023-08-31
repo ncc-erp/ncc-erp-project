@@ -25,6 +25,27 @@
                   DeActive
                 </button>
               </div>
+              <div class="mr-2">
+                <div class="form-group form-float" [matTooltip] ="!canExportInvoice?'Chưa chọn Project, không cùng Currency hoặc Client':''">
+                  <button *ngIf="isShowBtnExportTsDetail()"
+                    [disabled]="listExportInvoice?.length <= 0 || !canExportInvoice" type="submit" class="btn bg-primary mr-2"
+                    [matMenuTriggerFor]="actionsExportTSDetail">
+                    Export TS Detail
+                  </button>
+                </div>
+                <mat-menu #actionsExportTSDetail="matMenu">
+                  <button mat-menu-item [disabled]="listExportInvoice?.length <= 0"
+                    (click)="exportTimesheetDetail(APP_ENUM.ExportInvoiceMode.Normal)">
+                    <i class="fa fa-file"></i>
+                    Normally
+                  </button>
+                  <button class="special" *ngIf="isMonthlyToDaily" mat-menu-item [disabled]="listExportInvoice?.length <= 0"
+                    (click)="exportTimesheetDetail(APP_ENUM.ExportInvoiceMode.MontlyToDaily)">
+                    <i class="fa fa-file-export"></i>
+                    Monthly to daily
+                  </button>
+                </mat-menu>
+              </div>
               <div class=" mr-2">
                 <button class="btn btn-export-all-project"
                   *ngIf="permission.isGranted(Timesheets_TimesheetDetail_ExportInvoiceAllProject)" (click)="confirmExport()">

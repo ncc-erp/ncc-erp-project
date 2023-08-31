@@ -153,6 +153,7 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
   Timesheets_TimesheetDetail_ExportInvoiceForTax = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_ExportInvoiceForTax;
   Timesheets_TimesheetDetail_EditInvoiceInfo = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_EditInvoiceInfo;
   Timesheets_TimesheetDetail_SendInvoiceToFinfast = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_SendInvoiceToFinfast;
+  Timesheets_TimesheetDetail_ExportTSDetail = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_ExportTSDetail
   constructor(
     private timesheetService: TimesheetService,
     public timesheetProjectService: TimesheetProjectService,
@@ -200,6 +201,11 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
       });
     })
   }
+
+  isShowBtnExportTsDetail() {
+    return this.isGranted(this.Timesheets_TimesheetDetail_ExportTSDetail)
+  }
+  
   showDialog(command: String, Timesheet: any): void {
     let timesheetDetail = {};
     if (command == "edit") {
@@ -544,6 +550,24 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
       mode: exportInvoiceMode
     }
     this.timesheetProjectService.exportInvoiceForTax(invoiceExcelDto).subscribe((res) => {
+      const file = new Blob([this.s2ab(atob(res.result.base64))], {
+        type: "application/vnd.ms-excel;charset=utf-8"
+      });
+      this.refresh();
+      this.listExportInvoice=[];
+      FileSaver.saveAs(file, res.result.fileName);
+      abp.notify.success("Export Invoice For Tax Successfully!");
+    })
+  }
+
+
+  exportTimesheetDetail(exportInvoiceMode) {
+    let payloadDto = {
+      timesheetId: this.timesheetId,
+      projectIds: this.listExportInvoice,
+      mode: exportInvoiceMode
+    }
+    this.timesheetProjectService.exportTimeSheetDetail(payloadDto).subscribe((res) => {
       const file = new Blob([this.s2ab(atob(res.result.base64))], {
         type: "application/vnd.ms-excel;charset=utf-8"
       });

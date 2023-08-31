@@ -20,6 +20,8 @@ import { FormPlanUserComponent } from './form-plan-user/form-plan-user.component
 import * as moment from 'moment';
 import { IDNameDto } from '@app/service/model/id-name.dto';
 import { ProjectDescriptionPopupComponent } from './project-description-popup/project-description-popup.component';
+import { FormCvUserComponent } from './form-cv-user/form-cv-user.component';
+import { ListProjectService } from '@app/service/api/list-project.service';
 
 @Component({
   selector: 'app-request-resource-tab',
@@ -33,6 +35,7 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
     { propertyName: 'timeNeed', comparisions: [0, 1, 2, 3, 4], displayName: "Time Need", filterType: 1 },
     { propertyName: 'timeDone', comparisions: [0, 1, 2, 3, 4], displayName: "Time Done", filterType: 1 },
   ];
+  public projectId = -1;
   public selectedOption: string = "PROJECT"
   public selectedStatus: any = 0
   public listRequest: RequestResourceDto[] = [];
@@ -41,6 +44,11 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
   public listLevels: any[] = []
   public listSkills: SkillDto[] = [];
   public listProjectUserRoles: IDNameDto[] = []
+  public listProject = []
+  public searchProject:string = "";
+  public listRequestCode = [];
+  public requestCode:any = -1;
+  public searchCode:string = "";
   public listPriorities: any[] = []
   public selectedLevel: any = -1
   public isAndCondition: boolean = false;
@@ -48,16 +56,13 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
   public sortResource = {priority: 0}
   public theadTable: THeadTable[] = [
     { name: '#' },
-    { name: 'Priority', sortName: 'priority', defaultSort: 'ASC', width: '88px' },
-    { name: 'Project', sortName: 'projectName', defaultSort: '', width: '88px' },
-    { name: 'Skill' },
-    { name: 'Level', sortName: 'level', defaultSort: '' },
-    { name: 'Time request', sortName: 'creationTime', defaultSort: '', width: '128px' },
-    { name: 'Time need', sortName: 'timeNeed', defaultSort: '', width: '128px' },
-    { name: 'Planned resource' },
-    { name: 'PM Note' },
-    { name: 'HR/DM Note' },
-    { name: 'Status' },
+    { name: 'Request Info' },
+    { name: 'Skill need' },
+    { name: 'Code' },
+    { name: 'CV' },
+    { name: 'Resource'},
+    { name: 'Description'},
+    { name: 'Note' },
     { name: 'Action' },
   ]
   public isShowModal: string = 'none'
@@ -86,7 +91,8 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
     private injector: Injector,
     private resourceRequestService: DeliveryResourceRequestService,
     private ref: ChangeDetectorRef,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private listProjectService: ListProjectService,
   ) {
     super(injector)
   }
@@ -97,6 +103,8 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
     this.getPriorities()
     this.getStatuses()
     this.getProjectUserRoles();
+    this.getAllProject()
+    this.getAllRequestCode();
     this.refresh();
   }
 
@@ -131,15 +139,9 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
       maxHeight: '90vh',
     })
     show.afterClosed().subscribe(rs => {
-      if (!rs) return
-      if (command == 'create')
+      if (rs){
         this.refresh()
-      else if (command == 'edit') {
-        let index = this.listRequest.findIndex(x => x.id == rs.id)
-        if (index >= 0) {
-          this.listRequest[index] = rs
-        }
-        this.refresh();
+        this.getAllRequestCode();
       }
     });
   }
@@ -217,12 +219,24 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
 
     });
   }
+
   async getPlanResource(item) {
     let data = new ResourcePlanDto(item.id, 0);
     if (!item.planUserInfo)
       return data;
     let res = await this.resourceRequestService.getPlanResource(item.planUserInfo.projectUserId, item.id)
     return res.result
+  }
+
+  showModalCvUser(item:any){
+    const show = this.dialog.open(FormCvUserComponent, {
+      data: item,
+      width: "700px",
+      maxHeight: "90vh"
+    })
+    show.afterClosed().subscribe(rs => {
+      if (rs) this.refresh()
+    });
   }
 
   sendRecruitment(item: ResourceRequestDto) {
@@ -283,6 +297,8 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
     let objFilter = [
       { name: 'status', isTrue: false, value: this.selectedStatus },
       { name: 'level', isTrue: false, value: this.selectedLevel },
+      {name:'projectId',isTrue:false, value:this.projectId},
+      {name:'code',isTrue:false,value: this.requestCode}
     ];
 
     objFilter.forEach((item) => {
@@ -390,6 +406,17 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
   getProjectUserRoles() {
     this.resourceRequestService.getProjectUserRoles().subscribe((rs: any) => {
       this.listProjectUserRoles = rs.result
+    })
+  }
+
+  getAllProject() {
+    this.listProjectService.getMyProjects().subscribe(data => {
+      this.listProject = data.result;
+    })
+  }
+  getAllRequestCode(){
+    this.resourceRequestService.getListRequestCode().subscribe(data=>{
+      this.listRequestCode = data.result
     })
   }
   // #endregion

@@ -96,6 +96,10 @@ export class DeliveryResourceRequestService extends BaseApiService {
     return this.http.delete<any>(this.rootUrl + '/DeleteResourceRequestPlan?requestId=' + id)
   }
 
+  public UpdateBillInfoPlan(input: any) {
+    return this.http.post(this.rootUrl + `/UpdateBillInfoTemp`, input)
+  }
+
   public cancelResourceRequest(id: number): Observable<any> {
     return this.http.post<any>(this.rootUrl + '/CancelRequest?requestId=' + id, {});
   }
@@ -170,5 +174,8 @@ export class DeliveryResourceRequestService extends BaseApiService {
 
   public createTraining(item: any): Observable<any> {
     return this.http.post<any>(this.rootUrl + '/CreateTraining', item);
+  }
+  public getListRequestCode(): Observable<any> {
+    return this.http.get<any>(this.rootUrl + '/GetResourceRequestCode');
   }
 }

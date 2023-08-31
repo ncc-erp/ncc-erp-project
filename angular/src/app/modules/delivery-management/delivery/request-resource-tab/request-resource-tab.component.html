@@ -104,7 +104,7 @@
                     <div
                       class="col-md-2 col-xl-4 d-flex rsp-label justify-content-end align-items-center"
                     >
-                      <label class="mr-2 mb-0">Status:</label>
+                      <label class="mb-0">Status:</label>
                     </div>
                     <div class="col-md-10 col-xl-8 rsp-group-form-field">
                       <mat-form-field
@@ -129,94 +129,86 @@
                 </div>
                 <div class="col-xl-4 col-lg-4" style="margin-left: 10px;">
                   <div class="row">
-                    <div
-                      class="col-md-2 col-xl-4 d-flex rsp-label justify-content-end align-items-center"
-                    >
-                      <label class="mr-2 mb-0">Level:</label>
+                    <div class="col-md-2 col-xl-4 d-flex rsp-label justify-content-end align-items-center">
+                      <label class="mb-0">
+                        Project:
+                      </label>
                     </div>
-                    <div class="col-md-10 col-xl-8 rsp-group-form-field">
-                      <mat-form-field
-                        appearance="outline"
-                        class="rsp-form-field"
-                      >
-                        <mat-select
-                          [(ngModel)]="selectedLevel"
-                          (selectionChange)="getDataPage(1)"
-                        >
-                          <mat-option [value]="-1">All</mat-option>
-                          <mat-option
-                            *ngFor="let level of listLevels"
-                            [value]="level.id"
+                      <div class="col-md-10 col-xl-8 rsp-group-form-field">
+                        <mat-form-field class="rsp-form-field" appearance="outline">
+                          <mat-select
+                            name="projectId"
+                            placeholder="Select project"
+                            [(ngModel)]="projectId"
+                            (selectionChange)="getDataPage(1)"
                           >
-                            {{ level.name }}
-                          </mat-option>
-                        </mat-select>
-                      </mat-form-field>
-                    </div>
+                            <mat-form-field
+                              class="w-100 px-3"
+                              style="
+                                position: sticky;
+                                top: 0;
+                                z-index: 2;
+                                background-color: white;
+                              "
+                            >
+                              <input
+                                matInput
+                                [(ngModel)]="searchProject"
+                                name="searchProjectName"
+                                (keydown)="$event.stopPropagation()"
+                                placeholder="Search"
+                                #search
+                              />{{ search.focus() }}
+                            </mat-form-field>        
+                              <mat-option [value]="-1">  All  </mat-option>
+                              <mat-option  *ngFor="let project of listProject | listFilter: 'name':searchProject" [value]="project.id">
+                                {{ project.name }}
+                              </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                      </div>
                   </div>
                 </div>
                 <div class="col-xl-4 col-lg-4" style="margin-left: 10px;">
                   <div class="row">
-                    <div
-                      class="col-md-2 col-xl-4 d-flex rsp-label justify-content-end align-items-center"
-                    >
-                      <label class="mr-2 mb-0">Skills:</label>
+                    <div class="col-md-2 col-xl-4 d-flex rsp-label justify-content-end align-items-center">
+                      <label class="mb-0">
+                       Code:
+                      </label>
                     </div>
-                    <div class="col-md-10 col-xl-8 rsp-group-form-field">
-                      <mat-form-field
-                        appearance="outline"
-                        class="rsp-form-field"
-                      >
-                        <mat-select
-                          placeholder="search skill"
-                          multiple
-                          (selectionChange)="getDataPage(1)"
-                          [(ngModel)]="skillIds"
-                        >
-                          <div
-                            style="width: 334px"
-                            style="
-                              position: sticky;
-                              top: 0;
-                              z-index: 2;
-                              background-color: white;
-                              padding: 10px 7px;
-                              padding: 13px 7px 0px 5px;
-                            "
+                      <div class="col-md-10 col-xl-8 rsp-group-form-field">
+                        <mat-form-field class="rsp-form-field" appearance="outline">
+                          <mat-select
+                            name="requestCode"
+                            placeholder="Select code"
+                            [(ngModel)]="requestCode"
+                            (selectionChange)="getDataPage(1)"
                           >
-                            <mat-radio-group
-                              aria-label="Filter by"
-                              class="w-100 px-3 row"
-                              [(ngModel)]="isAndCondition"
-                              (ngModelChange)="refresh()"
-                              style="width: 100%"
+                            <mat-form-field
+                              class="w-100 px-3"
+                              style="
+                                position: sticky;
+                                top: 0;
+                                z-index: 2;
+                                background-color: white;
+                              "
                             >
-                              <div class="col-4">
-                                <label
-                                  style="white-space: nowrap"
-                                  class="mt-2 mr-2"
-                                  >Search type:</label
-                                >
-                              </div>
-                              <div class="col-8 pt-2">
-                                <mat-radio-button class="mr-3" [value]="true"
-                                  >And</mat-radio-button
-                                >
-                                <mat-radio-button [value]="false"
-                                  >Or</mat-radio-button
-                                >
-                              </div>
-                            </mat-radio-group>
-                          </div>
-                          <mat-option
-                            *ngFor="let skill of listSkills"
-                            [value]="skill.id"
-                          >
-                            {{ skill.name }}
-                          </mat-option>
-                        </mat-select>
-                      </mat-form-field>
-                    </div>
+                              <input
+                                matInput
+                                [(ngModel)]="searchCode"
+                                name="searchCode"
+                                (keydown)="$event.stopPropagation()"
+                                placeholder="Search"
+                                #search
+                              />{{ search.focus() }}
+                            </mat-form-field>        
+                              <mat-option [value]="-1">  All  </mat-option>
+                              <mat-option  *ngFor="let code of listRequestCode | listFilter: 'code': searchCode" [value]="code.code">
+                                {{ code.code }}
+                              </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                      </div>
                   </div>
                 </div>
               </div>
@@ -257,7 +249,7 @@
                    class="text-center"
                 >
                   <div class="row sortHeader" [ngStyle]="styleThead(thead)">
-                    <div class="col-xl-8 col-lg-12 rsp-th-name text-left">
+                    <div class="col-lg-12 rsp-th-name text-left">
                       {{ thead.name }}
                     </div>
                     <div
@@ -297,74 +289,153 @@
                 <td class="text-center">
                   <span>{{ i + 1 + pageSize * (pageNumber - 1) }}</span>
                 </td>
-                <td class="text-center">
-                  <p
-                    class="tag mx-auto"
-                    [ngClass]="APP_CONST.priorityRequest[item.priority]"
-                  >
-                    {{ item.priorityName }}
-                  </p>
+                <td class="text-center" style="width: 490px;">
+                  <div class="row" style="align-items: flex-start;justify-content: space-between;">
+                    <div class="d-flex align-items-start col-8">
+                      <div
+                      style="padding: 4px 10px;white-space: normal; text-align: center;"
+                      class="tag mr-1"
+                      [ngClass]="APP_CONST.priorityRequest[item.priority]"
+                    >
+                      {{ item.priorityName }}
+                    </div>
+                    <span class="link mr-1" (click)="showProject(item)"> {{ item.projectName }} </span>
+                    <span
+                      [ngClass]="
+                        APP_CONST.ProjectTypeStyle[
+                          getByEnum(item.projectType, APP_ENUM.ProjectType)
+                        ]
+                      "
+                    >
+                      {{ item.projectTypeName }}
+                    </span>
+                    <span
+                      *ngIf="item.projectStatus == 'Potential'"
+                      [ngClass]="
+                        APP_CONST.statusStyle[
+                          getByEnum(item.status, APP_ENUM.ProjectStatus)
+                        ]
+                      "
+                    >
+                      {{ item.projectStatusName }}
+                    </span>
+                    </div>
+                    <div class="d-flex justify-content-end col-4" style="justify-content: space-between">
+                      <span
+                      class="ml-1 badge text-white"
+                      [ngStyle]="Utils.getUserLevel(item.level).style"
+                    >
+                      {{ item.levelName }}
+                    </span>
+                      <p class="ml-2"
+                        [ngClass]="
+                          APP_CONST.resourceRequestStyle[
+                            getValueByEnum(
+                              item.status,
+                              APP_ENUM.ResourceRequestStatus
+                            )
+                          ]
+                        "
+                      >
+                        {{
+                          getValueByEnum(
+                            item.status,
+                            APP_ENUM.ResourceRequestStatus
+                          )
+                        }}
+                      </p>
+                    </div>
+                  </div>
+                  <div class="d-flex justify-content-between mt-4">
+                    <span style="display: inline-block; max-width: 270px;text-align: left;">{{item.createAt | date:'d/MM/y h:mm a'}} 15:30 by {{item.userRequestName}}</span>
+                    <span>Time need: {{item.timeNeed | date:'d/MM/y'}}</span>
+                  </div>
                 </td>
-                <td class="text-center">
-                 <span class="link" (click)="showProject(item)"> {{ item.projectName }} </span>
-                  <br />
-                  <span
-                    [ngClass]="
-                      APP_CONST.ProjectTypeStyle[
-                        getByEnum(item.projectType, APP_ENUM.ProjectType)
-                      ]
-                    "
-                  >
-                    {{ item.projectTypeName }}
-                  </span>
-                  <span
-                    *ngIf="item.projectStatus == 'Potential'"
-                    [ngClass]="
-                      APP_CONST.statusStyle[
-                        getByEnum(item.status, APP_ENUM.ProjectStatus)
-                      ]
-                    "
-                  >
-                    {{ item.projectStatusName }}
-                  </span>
-                </td>
-                <td>
+                <td style="width: 200px;">
                   <ul class="pl-3 m-0">
                     <li *ngFor="let skill of item.skills">
                       {{ skill.name }}
                     </li>
                   </ul>
                 </td>
-                <td class="text-center">
-                  <span
-                    class="ml-1 badge text-white"
-                    [ngStyle]="Utils.getUserLevel(item.level).style"
-                  >
-                    {{ item.levelName }}
-                  </span>
+                <td class="text-center" style="width: 80px;">
+                 <span *ngIf="item.code">{{item.code}}</span>
                 </td>
-                <td class="text-center">
-                  <b>{{ item.creationTime | date: "dd/MM/yyyy" }}</b>
-                  <br />
-                  <small>{{ Utils.getTimeHistory(item.creationTime) }}</small>
-                </td>
-                <!-- <td class="text-center"> <strong>{{item.plannedNumberOfPersonnel}}</strong></td> -->
-                <td class="text-center">
-                  <b>{{ item.timeNeed | date: "dd/MM/yyyy" }}</b>
-                  <br />
-                  <small>{{ Utils.getTimeHistory(item.timeNeed) }}</small>
-                </td>
-                <td>
-                  <div class="row">
+                <td style="width: 190px;">
+                  <div class="row" >
                     <div class="col-md-10">
-                      <div *ngIf="item.planUserInfo">
+                      <div *ngIf="item.billUserInfo" class="d-flex align-items-start" style="flex-direction: column;" >
+                        <p class="m-0">
+                          <strong>
+                            {{item.billUserInfo.employee.fullName}}</strong>
+                        </p>
+                        <p class="m-0">
+                          <span *ngIf="item.billUserInfo.employee.branchDisplayName"
+                            class="mr-1 badge badge-pill text-white"
+                            [style.backgroundColor]="
+                              item.billUserInfo.employee.branchColor
+                            "
+                          >
+                            {{ item.billUserInfo.employee.branchDisplayName }}
+                          </span>
+                          <span *ngIf="item.billUserInfo.employee.userTypeName"
+                            [ngClass]="
+                              APP_CONST.userTypeStyle[
+                                item.billUserInfo.employee.userType
+                              ]
+                            "
+                          >
+                            {{ item.billUserInfo.employee.userTypeName }}
+                          </span>
+                          <span *ngIf="item.billUserInfo.employee.levelName"
+                          class="ml-1 badge text-white"
+                          [ngStyle]="
+                            Utils.getUserLevel(
+                              item.billUserInfo.employee.userLevel
+                            ).style
+                          "
+                        >
+                          {{ item.billUserInfo.employee.levelName }}
+                        </span>
+                          <span *ngIf="item.billUserInfo.employee.positionName"
+                            class="ml-1 badge text-white"
+                            [style.backgroundColor]="item.billUserInfo.employee.positionColor"
+                          >
+                            {{ item.billUserInfo.employee.positionName }}
+                          </span>
+                        </p>
+                        <b>{{
+                          item.billUserInfo.plannedDate | date: "dd/MM/yyyy"
+                        }}</b>
+                      </div>
+                    </div>
+                    <div
+                      class="col-md-2 text-right"
+                      *ngIf="
+                        item.statusName == 'PENDING' &&
+                        permission.isGranted(
+                          ResourceRequest_PlanNewResourceForRequest
+                        )
+                      "
+                    >
+                      <i
+                        class="fa fa-edit"
+                        (click)="showModalCvUser(item)"
+                      ></i>
+                    </div>
+                  </div>
+                </td>
+                <td style="width: 190px;">
+                  <div class="row" >
+                    <div class="col-md-10">
+                      <div *ngIf="item.planUserInfo" class="d-flex align-items-start" style="flex-direction: column;" >
                         <p class="m-0">
                           <strong>{{
                             item.planUserInfo.employee.fullName
                           }}</strong>
                         </p>
                         <p class="m-0">
-                          <span
+                          <span *ngIf="item.planUserInfo.employee.branchDisplayName"
                             class="mr-1 badge badge-pill text-white"
                             [style.backgroundColor]="
                               item.planUserInfo.employee.branchColor
@@ -372,7 +443,7 @@
                           >
                             {{ item.planUserInfo.employee.branchDisplayName }}
                           </span>
-                          <span
+                          <span *ngIf="item.planUserInfo.employee.userTypeName"
                             [ngClass]="
                               APP_CONST.userTypeStyle[
                                 item.planUserInfo.employee.userType
@@ -381,21 +452,21 @@
                           >
                             {{ item.planUserInfo.employee.userTypeName }}
                           </span>
-                          <span
+                          <span *ngIf="item.planUserInfo.employee.levelName"
+                          class="ml-1 badge text-white"
+                          [ngStyle]="
+                            Utils.getUserLevel(
+                              item.planUserInfo.employee.userLevel
+                            ).style
+                          "
+                        >
+                          {{ item.planUserInfo.employee.levelName }}
+                        </span>
+                          <span *ngIf="item.planUserInfo.employee.positionName"
                             class="ml-1 badge text-white"
                             [style.backgroundColor]="item.planUserInfo.employee.positionColor"
                           >
                             {{ item.planUserInfo.employee.positionName }}
-                          </span>
-                          <span
-                            class="ml-1 badge text-white"
-                            [ngStyle]="
-                              Utils.getUserLevel(
-                                item.planUserInfo.employee.userLevel
-                              ).style
-                            "
-                          >
-                            {{ item.planUserInfo.employee.levelName }}
                           </span>
                         </p>
                         <b>{{
@@ -488,24 +559,8 @@
                     </div>
                   </div>
                 </td>
-                <td class="text-center">
-                  <span
-                    [ngClass]="
-                      APP_CONST.resourceRequestStyle[
-                        getValueByEnum(
-                          item.status,
-                          APP_ENUM.ResourceRequestStatus
-                        )
-                      ]
-                    "
-                  >
-                    {{
-                      getValueByEnum(
-                        item.status,
-                        APP_ENUM.ResourceRequestStatus
-                      )
-                    }}
-                  </span>
+                <!-- <td class="text-center">
+            
                   <br />
                   <span *ngIf="item.statusName == 'DONE'">{{
                     item.timeDone | date: "dd/MM/yyyy"
@@ -516,7 +571,7 @@
                         class="tl-link">
                     #{{sliceUrl(item.recruitmentUrl)}}
                   </span>
-                </td>
+                </td> -->
                 <td class="text-center action-request-resource-tab">
                   <button
                     mat-button

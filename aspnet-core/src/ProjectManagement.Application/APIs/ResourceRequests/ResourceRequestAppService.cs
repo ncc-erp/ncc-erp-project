@@ -80,7 +80,7 @@ namespace ProjectManagement.APIs.ResourceRequests
             {
                 query = query.Where(s => s.ProjectType == ProjectType.TRAINING);
             }
-            
+
             query = _resourceRequestManager.ApplyOrders(query, input.SortParams);
             if (input.SkillIds == null || input.SkillIds.IsEmpty())
             {
@@ -99,7 +99,7 @@ namespace ProjectManagement.APIs.ResourceRequests
             var requestIds = await QetResourceRequestIdsHaveAllSkill(input.SkillIds);
             query = query.Where(s => requestIds.Contains(s.Id));
 
-           
+
             return await query.GetGridResult(query, input);
         }
 
@@ -485,7 +485,7 @@ namespace ProjectManagement.APIs.ResourceRequests
         }
 
         [HttpPost]
-        [AbpAuthorize]
+        [AbpAuthorize(PermissionNames.ResourceRequest_CreateBillResourceForRequest)]
         public async Task<ResourceRequestPlanDto> UpdateBillInfoTemp(ResourceRequestPlanDto input)
         {
             if (!input.ResourceRequestId.HasValue)
@@ -496,7 +496,7 @@ namespace ProjectManagement.APIs.ResourceRequests
             var request = await WorkScope.GetAll<ResourceRequest>()
                 .Where(s => s.Id == input.ResourceRequestId.Value)
                 .FirstOrDefaultAsync();
-
+             
             if (request == default)
                 throw new UserFriendlyException("Not found resource request Id " + input.ResourceRequestId);
 

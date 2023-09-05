@@ -1,0 +1,40 @@
+
+.wrapper {
+  padding: 0.75rem;
+}
+
+:host::ng-deep label {
+  margin-bottom: 0;
+}
+
+.mat-tree {
+  margin-bottom: 10px;
+}
+
+.mat-tree-node {
+  margin-top: 10px;
+}
+
+:host::ng-deep .mat-form-field-wrapper {
+  margin: 0 !important;
+}
+:host::ng-deep .mat-checkbox-inner-container.mat-checkbox-inner-container-no-side-margin{
+  margin-top: 0;
+}
+.example-tree-invisible {
+  display: none;
+}
+
+
+.note{
+  display: block;
+  display: -webkit-box;
+  max-width: 100%;
+  margin: 0 auto;
+  font-size: 16px;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-all;
+}

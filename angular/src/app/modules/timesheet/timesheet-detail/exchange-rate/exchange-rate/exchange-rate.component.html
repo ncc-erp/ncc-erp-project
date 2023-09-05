@@ -1,0 +1,47 @@
+<form class="form-horizontal" autocomplete="off" #timesheetForm="ngForm" novalidate>
+    <abp-modal-header title="Exchange Rate" subTitle="Currency unit: VND( Vietnam dong)" [isShowClose]="false"
+        (onCloseClick)="dialogRef.close()">
+    </abp-modal-header>
+    <div class="modal-body">
+        <div class="form-group required col-md-12 ">
+            <label for="criteriaName col-form-label" class="mr-2">
+                {{ 'Date' | localize }}:
+            </label>
+            <mat-form-field appearance="outline" class="w-50">
+                <input matInput placeholder="Choose a day" [matDatepicker]="picker" name="exchangeDate" [(ngModel)]="startDate"
+                    #timeStart="ngModel" required (ngModelChange)="onDateChange()"/>
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+            <mat-error class="mt-1" *ngIf="timeStart.hasError('required') && timeStart.touched" style="font-size: 13px;">
+                This field is required
+            </mat-error>
+        </div>
+
+        <div class="form-group col-md-12 required">
+            <div>
+                <table style="border-collapse: collapse;" class="table table-hover text-nowrap table-striped">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="w-25">Currency</th>
+                            <th>Exchange Rate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of listCurrencies">
+                            <td>{{item.currencyName}}</td>
+                            <td><input style="text-align: center;" type="number" [value]="item.exchangeRate" (change)="onInputCurrency($event,item)" name="ipt-currency"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--
+    </div> -->
+    <div align="end" class="mat-dialog-actions" mat-dialog-actions="">
+        <button class="btn btn-default cancel-banks" mat-raised-button mat-dialog-close>Cancel</button>
+        <button mat-raised-button color="primary" class="saving-btn" mat-button
+        [disabled]="!timesheetForm.form.valid" (click)="ExportAllInvoice()">Export</button>
+    </div>
+</form>

@@ -1,0 +1,57 @@
+<form class="form-horizontal" autocomplete="off" #saoDoForm="ngForm" novalidate [busy]="isLoading">
+    <div class="card-header">
+        <h3 *ngIf="data.command=='create'">Create</h3>
+        <h3 *ngIf="data.command!=='create'">Edit</h3>
+    </div>
+    <div class="modal-body">
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="tenancyName">
+                Name
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="name" minlength="2" maxlength="1024"
+                    [(ngModel)]="saodo.name" #name="ngModel" required #nameEl
+                    [ngClass]="(checkNull && name.touched)?'is-check':''" (input)="enterName($event.target.value);" />
+                <span class="invalid" *ngIf="checkNull  && name.touched && !name.errors?.required">This field is
+                    invalid!</span>
+                <abp-validation-summary [control]="name" [controlEl]="nameEl">
+                </abp-validation-summary>
+            </div>
+        </div>
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="tenancyName">
+                Ngày bắt đầu:
+            </label>
+            <div class="col-md-9">
+                <mat-form-field appearance="outline">
+                    <input matInput [matDatepicker]="picker" name="startTime" placeholder="Choose a date"
+                        [(ngModel)]="saodo.startTime" #startTime="ngModel" required>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+                <mat-error class="mt-1" *ngIf="startTime.hasError('required') && startTime.touched"
+                    style="font-size: 13px;">
+                    This field is required
+                </mat-error>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="tenancyName">
+                Ngày kết thúc:
+            </label>
+            <div class="col-md-9">
+                <mat-form-field appearance="outline">
+                    <input matInput [matDatepicker]="pickerEnd" placeholder="Choose a date" name="endTime"
+                        [(ngModel)]="saodo.endTime">
+                    <mat-datepicker-toggle matSuffix [for]="pickerEnd"></mat-datepicker-toggle>
+                    <mat-datepicker #pickerEnd></mat-datepicker>
+                </mat-form-field>
+            </div>
+        </div>
+    </div>
+    <div align="end" class="mat-dialog-actions" mat-dialog-actions="">
+        <button class="btn btn-secondary cancel-banks" mat-raised-button mat-dialog-close>Cancel</button>
+        <button mat-raised-button color="primary" class="saving-btn btn" mat-button
+            [disabled]="!saoDoForm.valid ||checkNull ||isLoading" (click)="SaveAndClose()">Save</button>
+    </div>
+</form>

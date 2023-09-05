@@ -1,0 +1,27 @@
+.upload-btn {
+    cursor: pointer;
+    padding: 6px 15px;
+    background: #28a745;
+    display: table;
+    color: #fff;
+    border-radius: 2px;
+}
+
+.upload-btn:hover {
+    background: #2bb14a;
+
+}
+
+input[type="file"] {
+    display: none;
+}
+::ng-deep.my-dialog .mat-dialog-container{
+    padding-top: 0;
+  }
+  :host::ng-deep .modal-header {
+    padding: 0;
+    align-items: center;
+  }
+  :host::ng-deep .mat-dialog-title{
+    margin: 20px 0;
+  }

@@ -1,0 +1,24 @@
+<form class="form-horizontal" autocomplete="off" #timesheetForm="ngForm" novalidate>
+    <abp-modal-header title="Create/edit project checklist" (onCloseClick)="dialogRef.close()">
+    </abp-modal-header>
+    <div class="modal-body">
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="projectName">
+                {{ 'Name' | localize }}:
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="projectName" id="projectName" 
+                    required [(ngModel)]="tag.name" #projectNameModel="ngModel" #projectNameEl />
+                <abp-validation-summary [control]="projectNameModel" [controlEl]="projectNameEl">
+                </abp-validation-summary>
+            </div>
+        </div>
+    </div>
+    <!--         
+    </div> -->
+    <div align="end" class="mat-dialog-actions" mat-dialog-actions="">
+        <button class="btn btn-secondary cancel-banks" mat-raised-button mat-dialog-close>Cancel</button>
+        <button mat-raised-button color="primary" class="saving-btn"mat-button
+        [disabled]="!timesheetForm.form.valid ||isLoading" (click)="SaveAndClose()"  >Save</button>
+    </div>
+</form>

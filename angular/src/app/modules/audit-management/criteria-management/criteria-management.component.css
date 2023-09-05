@@ -1,0 +1,107 @@
+.wrapper {
+  padding: 0.75rem;
+}
+
+:host::ng-deep label {
+  margin-bottom: 0;
+}
+
+.mat-tree {
+  margin-bottom: 10px;
+}
+
+.mat-tree-node {
+  margin-top: 10px;
+}
+
+:host:ng-deep .mat-form-field-wrapper {
+  margin: 0 !important;
+}
+
+/* Style for the filter boxes */
+.form-control:focus {
+  border-color: #66afe9;
+  outline: 0;
+  box-shadow: none;
+}
+
+/* Style for the filter box placeholders */
+.form-control::-webkit-input-placeholder {
+  color: #ccc;
+}
+
+.form-control::-moz-placeholder {
+  color: #ccc;
+}
+
+.form-control:-ms-input-placeholder {
+  color: #ccc;
+}
+
+.form-control:-moz-placeholder {
+  color: #ccc;
+}
+
+.item-criteria {
+  width: 100%;
+  display: flex;
+  justify-content: end;
+}
+.name-criteria {
+  flex: 1;
+
+}
+.name-criteria:hover{
+  text-decoration: underline;
+  margin: auto 0;
+  cursor: pointer;
+}
+.applicable {
+  width: 200px;
+  margin: auto;
+}
+.action {
+  width: 70px;
+}
+
+.example-tree-invisible {
+  display: none;
+}
+
+.example-tree ul,
+.example-tree li {
+  margin-top: 0;
+  margin-bottom: 0;
+  list-style-type: none;
+}
+.example-tree ul {
+  border: solid #014C6E 1px;
+  border-top: none;
+  border-right: none;
+  padding: 5px 0;
+  padding-left: 20px;
+}
+.example-tree li {
+  padding: 5px 0;
+}
+.label-inactive {
+  margin-left: 20px;
+  border-radius: 99px;
+  padding: 2px 8px;
+  font-size: 14px;
+  font-weight: 400;
+  background-color: #b6b1b1;
+  color: #000;
+}
+.note{
+  display: block;
+  display: -webkit-box;
+  max-width: 100%;
+  margin: 0 auto;
+  font-size: 16px;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-all;
+}

@@ -1,0 +1,70 @@
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-6">
+                <h1>{{'Timesheet' | localize}}</h1>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section class="content px-2">
+    <div class="container-fluid">
+        <div class="">
+            <div class="card-body table-responsive p-4">
+                <table name="tbl-timeSheet" style="border-collapse: collapse;" class="table table-hover text-nowrap" [busy]="isLoading">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="stt">STT</th>
+                            <th>Timesheet</th>
+                            <th>File</th>
+                            <th>Note</th>
+                            <th style="width: 150px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let timesheet of listTimesheetByProject ; let i = index">
+                            <td>{{i+1}}</td>
+                            <td> <span *ngIf="!timesheet.createMode">{{timesheet.timeSheetName}}</span>
+                                <div *ngIf="timesheet.createMode">
+                                    <mat-form-field class="w-100" appearence="outline">
+                                        <input matInput [(ngModel)]="timesheet.timeSheetName"
+                                            placeholder="timesheet name" />
+                                    </mat-form-field>
+                                </div>
+                            </td>
+                            <td>
+                                <span style="color: #007bff" (click)="downloadFile(timesheet)"
+                                    class="file-download">{{timesheet.timesheetFile}}</span>
+                                <span *ngIf="timesheet.timesheetFile !==null" style="margin-left: 5px;">
+                                    <i class="fas fa-times fa-lg ml-1" (click)="DeleteFile(timesheet)"></i>
+                                </span>
+                            </td>
+                            <td style="white-space: normal; max-width: 250px;">
+                                <pre class="mb-0 p-0  ml-2" style=" white-space: pre-line;
+                                font-family: sans-serif; align-self:flex-start; line-height: initial;">
+                                    {{timesheet.note}}
+                                </pre>
+
+                            </td>
+                            <td>
+                                <button
+                                    *ngIf="permission.isGranted(Timesheet_TimesheetProject_UploadFileTimesheetProject)"
+                                    class="btn btn-sm bg-success" (click)="importExcel(timesheet.id)" #importFileBtn>
+                                    <i class="fas fa-upload"></i>
+                                    Import File
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+            <!-- <button    style="border: none; width: 30px;" (click)="addTimesheet()" class=" bg-blue mt-2">
+                <i class="fa fa-plus-square"></i>
+            </button> -->
+
+        </div>
+    </div>
+</section>

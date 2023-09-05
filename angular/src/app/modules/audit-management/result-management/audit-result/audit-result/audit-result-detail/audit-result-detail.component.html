@@ -1,0 +1,224 @@
+<div class="wrapper" *ngIf="permission.isGranted(Audits_Results_Detail)" style="min-height: 94vh; margin-bottom: 0;padding-bottom: 0;">
+  <section style="position: sticky; top: 0; z-index: 2;">
+    <div class="row">
+      <div class="col-10 d-flex">
+        <h4>Quality Audit Result Project: &nbsp;</h4>
+        <div style="color: #014C6E;">
+          <h4> {{auditDate}} ({{pmName}})</h4>
+        </div>
+      </div>
+      <div class="col-2 d-flex">
+        <!-- <button class="btn"
+          [ngClass]="{'btn-success': totalScore >= 85, 'btn-warning': totalScore >= 75 && totalScore <= 85, 'btn-danger': totalScore < 70 }"
+          style="margin-bottom: 5%;">
+          Total Score: {{totalScore}}
+        </button> -->
+      </div>
+
+    </div>
+  </section>
+  <div class="container-fluid">
+    <div class="card" style="margin-bottom: 0;">
+      <div class="card-header">
+        <div class="row align-items-center">
+
+          <div class="col-lg-5 col-md-12">
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <button type="button" class="btn bg-blue" (click)="searchPPCR()">
+                  <i class="fas fa-search"></i>
+                </button>
+              </div>
+              <input type="text" class="form-control" [(ngModel)]="search" name="keyword" placeholder="Search"
+                (keyup.enter)="searchPPCR()" />
+            </div>
+          </div>
+
+          <div class="col-lg-2 col-md-12 mt-3 mt-md-0">
+            <div class="input-group">
+              <mat-form-field appearance="outline">
+                <mat-label>NC Status</mat-label>
+                <mat-select [(ngModel)]="selectedNCStatus" (selectionChange)="searchPPCR()">
+                  <mat-option value="All">All</mat-option>
+                  <mat-option value="Excellent">Excellent</mat-option>
+                  <mat-option value="Recommendation">Recommendation</mat-option>
+                  <mat-option value="Observation">Observation</mat-option>
+                  <mat-option value="NC">Non-Compliance</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+
+
+          <div class="col text-right">
+            <span style="color: #014C6E;font-size: 21px;"  class="mr-2">Total Score:<strong  style="font-size: 21px;">  {{totalScore}}</strong></span>
+            <span class="px-3" style="font-size:21px; font-weight: 500;"  [ngClass]="APP_CONST.auditStatus[statusFinal]">
+              {{auditStatusList[statusFinal-1]}}</span>
+          </div>
+
+        </div>
+      </div>
+
+
+    </div>
+    <div class="card" style="margin-bottom: 0;">
+
+      <table style="border-collapse: collapse;" style="margin-bottom: 0;" class="table table-hover text-nowrap"
+      [busy]="isLoading">
+      <thead>
+          <tr>
+              <th class="col-lg-5">Process Criteria</th>
+              <th class="col-lg-2">Status</th>
+              <th class="col-lg-1">Score</th>
+              <th class="col-lg-3">Note</th>
+              <th class="col-lg-1">Action</th>
+
+          </tr>
+      </thead>
+    </table>
+
+
+      <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="example-tree px-2 pb-2" style="max-height: 75vh;overflow: overlay;" >
+        <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle>
+          <li style="background-color: rgb(239, 239, 239);" class="mat-tree-node">
+            <button mat-icon-button disabled></button>
+            <div class="item-criteria d-flex justify-content-end">
+              <div  style="margin: auto 0; align-items: center; display: flex; flex: 1;"
+              class="name-criteria">
+              <div class="d-flex hyperlink"  (click)="viewPPCRnode(node.item, 'viewFromName')"  style="font-size: 16px;color: black; ">
+                <span class="d-flex align-items-center" style="min-width: 20px;">{{ node.item.processCriteria.code }} </span>
+                <div style="margin-left: 19px; word-break: break-word; padding-right: 45px;">  {{ node.item.processCriteria.name  }}
+                </div>
+
+                  <!-- <span>
+                                  <i *ngIf="node.item.processCriteria.isApplicable" [style.color]="'#28a745'"
+                                    style="font-size: 15px;" class="fas fa-check-circle"
+                                    [matTooltip]="node.item.processCriteria.isApplicable ? 'This is applicable' : 'This is not applicable'">
+                                  </i>
+                                </span> -->
+                </div>
+              </div>
+
+              <div class="chip-status" style="padding-left: 3%; width: 180px;">
+                <mat-chip-list aria-label="Status selection">
+                  <ng-container *ngFor="let chip of availableColors">
+                    <ng-container *ngIf="node.item.status === chipIndex(chip)">
+                      <mat-chip [color]="chip.color" [style]="chip.style" selected>
+                        {{chip.name}}
+                      </mat-chip>
+                    </ng-container>
+                  </ng-container>
+                </mat-chip-list>
+              </div>
+
+              <!-- <div *ngIf="node.item.status == 0" style="width: 150px;">
+                <div class="input-group">
+                  <select class="form-control" [value]="node.item.status">
+                    <option value="" selected disabled>Not Selected</option>
+                    <option value="4">Excellent</option>
+                    <option value="3">Recommendation</option>
+                    <option value="2">Observation</option>
+                    <option value="1">Non-Compliance</option>
+                  </select>
+                </div>
+              </div> -->
+
+              <div style="width: 150px;justify-content: right; display: flex;">
+                <span> {{node.item.score}} </span>
+              </div>
+
+              <div class="note" style="width: 400px;text-align: center;">
+                <span *ngIf= "permission.isGranted(Audits_Results_Detail_ViewNote)" class="hyperlink"  (click)="viewPPCRnode(node.item)"> {{ node.item.note }} </span>
+              </div>
+
+              <div *ngIf= "permission.isGranted(Audits_Results_Detail_ViewNote)" class="action" style="width: 80px;">
+                <button mat-button [matMenuTriggerFor]="menu" [disabled]="processProblem">
+                  <i class="fas fa-bars fa-lg"></i>
+                </button>
+                <mat-menu #menu="matMenu" class="p-2">
+                  <!-- <button type="button" class="mat-menu-item w-100" (click)="editProjectProcessCriteria(node)">
+                    <i class="fas fa-pencil-alt fa-lg mr-1"></i>Edit
+                  </button> -->
+                  <button *ngIf= "permission.isGranted(Audits_Results_Detail_ViewNote)" type="button" mat-button class="mat-menu-item w-100" (click)="viewPPCRnode(node.item)">
+                    <i class="fas fa-duotone fa-eye mr-1"></i>View
+                  </button>
+                </mat-menu>
+              </div>
+            </div>
+          </li>
+        </mat-tree-node>
+        <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChild">
+          <li>
+            <div class="mat-tree-node">
+              <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'toggle ' + node.name + node.code">
+                <i *ngIf="treeControl.isExpanded(node); else elseBlock" class="fa fa-chevron-down"></i>
+                <ng-template #elseBlock>
+                  <i class="fa fa-chevron-right"></i></ng-template>
+              </button>
+
+              <div class="item-criteria">
+                <div  style="margin: auto 0; align-items: center; display: flex; flex: 1;"
+                class="name-criteria">
+                <div class="d-flex hyperlink"  (click)="viewPPCRnode(node.item, 'viewFromName')"  style="font-size: 16px;color: black; ">
+                  <span class="d-flex align-items-center " style="min-width: 20px;">{{ node.item.processCriteria.code }} </span>
+                  <div style="margin-left: 19px; word-break: break-word; padding-right: 45px;">  {{ node.item.processCriteria.name  }}
+                  </div>
+                  <!-- <span>
+                                  <i *ngIf="node.item.processCriteria.isApplicable" [style.color]="'#28a745'"
+                                    style="font-size: 15px;" class="fas fa-check-circle"
+                                    [matTooltip]="node.item.processCriteria.isApplicable ? 'This is applicable' : 'This is not applicable'">
+                                  </i>
+                                </span> -->
+                </div>
+              </div>
+
+                <div class="col-lg-2 name-criteria" style="justify-content: space-between; padding-right: 3%; ">
+                  <!-- <mat-chip-list aria-label="Status selection">
+                  <ng-container *ngIf="node.item.status == 1">
+                      <mat-chip selected>Non-Compliance</mat-chip>
+                  </ng-container>
+                  <ng-container *ngIf="node.item.status == 2">
+                      <mat-chip color="primary" selected>Observation</mat-chip>
+                  </ng-container>
+                  <ng-container *ngIf="node.item.status == 3">
+                      <mat-chip color="accent" selected>Recommendation</mat-chip>
+                  </ng-container>
+                  <ng-container *ngIf="node.item.status == 4">
+                      <mat-chip class="assigned-chip" selected>Excellent</mat-chip>
+                  </ng-container>
+              </mat-chip-list> asdasdas-->
+                </div>
+
+                <div class="col-lg-1" style="padding-left: 30px;">
+                  <span> </span>
+                </div>
+
+                <div style="margin: auto 0;justify-content: space-between; display: flex; "
+                  class="col-lg-3 name-criteria">
+                  <span *ngIf= "permission.isGranted(Audits_Results_Detail_ViewNote)" class="mr-4"> {{ node.item.note }} </span>
+                </div>
+
+                <div class="action">
+                  <!-- <button mat-button [matMenuTriggerFor]="menu" [disabled]="processProblem">
+                    <i class="fas fa-bars fa-lg"></i>
+                  </button>
+                  <mat-menu #menu="matMenu" class="p-2">
+                    <button type="button" class="mat-menu-item w-100" (click)="editCriteria(node)">
+                      <i class="fas fa-pencil-alt fa-lg mr-1"></i>Edit
+                    </button>
+                    <button type="button" class="mat-menu-item w-100" (click)="deleteFakeUser(user)">
+                      <i class="fas fa-trash fa-lg mr-1"></i>Delete
+                    </button>
+                  </mat-menu> -->
+                </div>
+              </div>
+            </div>
+            <ul [class.example-tree-invisible]="!treeControl.isExpanded(node)">
+              <ng-container matTreeNodeOutlet></ng-container>
+            </ul>
+          </li>
+        </mat-nested-tree-node>
+      </mat-tree>
+    </div>
+  </div>
+</div>

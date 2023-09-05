@@ -1,0 +1,160 @@
+<div>
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-6">
+            <h1>Audit Logs</h1>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="content px-2">
+      <div class="container-fluid">
+        <div class="card">
+          <div class="card-header">
+            <div class="row">
+                <div class="col-9 center-flex">
+                    <div class="input-group pt-1">
+                        <div class="input-group-prepend">
+                            <button (click)="getDataPage(1)" class="btn btn-primary"><i class="fas fa-search"></i></button>
+                        </div>
+                        <input placeholder="Search by Email Address, Service Name, Method Name" id="IdOrDes" type="text" class="form-control" [(ngModel)]="searchText"
+                            (keyup.enter)="getDataPage(1)">
+                    </div>
+                </div>
+                  <div class="col-3 center-flex">
+                    <mat-form-field style="width: 100%;" appearance="outline">
+                      <mat-label >Email Address</mat-label>
+                      <mat-select name="selecteduserId" [(value)]="selecteduserId" (selectionChange)="getDataPage(1)">
+                        <mat-form-field class="p-2 input-wrapper" style="
+                        position: sticky;
+                        top: 0;
+                        z-index: 2;
+                        background-color: white;
+                        width: 100%;
+                      ">
+                          <input type="text" matInput class="search-input" placeholder="Search" [(ngModel)]="this.emailAddressSearch"
+                            (keydown)="$event.stopPropagation()" (ngModelChange)="handleSearch()"/>
+                        </mat-form-field>
+                        <mat-option value="">All</mat-option>
+                        <mat-option value="null">Null</mat-option>
+                        <mat-option *ngFor="let item of emailAddress" [value]='item.userId'>
+                          {{item.emailAddress}}
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
+            </div>
+          </div>
+          <div class="card-body table-responsive p-4">
+            <div class="fixHead">
+              <table class="table table-striped table-hover" [busy]="isLoading">
+                <thead class="bg-light">
+                  <tr>
+                    <th class="order" style="text-align: center; max-width: 20px;">#</th>
+                    <th (click)="sortOrderBy('userId')" style="cursor: pointer; text-align: center;">
+                      <span>UserId </span>
+                        <i [ngClass]="iconSort" *ngIf="iconCondition === 'userId'"></i>
+                        <i *ngIf="iconCondition !== 'userId'" class="fas fa-sort"></i>
+                    </th>
+                    <th (click)="sortOrderBy('emailAddress')" style="cursor: pointer">
+                      <span>Email Address </span>
+                        <i [ngClass]="iconSort" *ngIf="iconCondition === 'emailAddress'"></i>
+                        <i *ngIf="iconCondition !== 'emailAddress'" class="fas fa-sort"></i>
+                    </th>
+                    <th (click)="sortOrderBy('serviceName')" style="cursor: pointer">
+                      <span>Service Name - Method Name </span>
+                        <i [ngClass]="iconSort" *ngIf="iconCondition === 'serviceName'"></i>
+                        <i *ngIf="iconCondition !== 'serviceName'" class="fas fa-sort"></i>
+                    </th>
+                    <th (click)="sortOrderBy('parameters')" style="cursor: pointer">
+                      <span>Parameters </span>
+                        <i [ngClass]="iconSort" *ngIf="iconCondition === 'parameters'"></i>
+                        <i *ngIf="iconCondition !== 'parameters'" class="fas fa-sort"></i>
+                    </th>
+                    <th style="cursor: pointer;">
+                      <span>Note </span>
+                    </th>
+                    <th (click)="sortOrderBy('executionTime')" style="cursor: pointer">
+                      <span>ExeTime </span>
+                        <i [ngClass]="iconSort" *ngIf="iconCondition === 'executionTime'"></i>
+                        <i *ngIf="iconCondition !== 'executionTime'" class="fas fa-sort"></i>
+                    </th>
+                    <th (click)="sortOrderBy('executionDuration')" style="cursor: pointer;">
+                      <span>ExeDuration(ms) </span>
+                        <i [ngClass]="iconSort" *ngIf="iconCondition === 'executionDuration'"></i>
+                        <i *ngIf="iconCondition !== 'executionDuration'" class="fas fa-sort"></i>
+                  </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="let item of auditlogs | paginate: { id: 'server', itemsPerPage: pageSize, currentPage: pageNumber, totalItems: totalItems };index as i ">
+                    <td style="text-align: center;">{{ (pageNumber - 1) * pageSize + i + 1 }}</td>
+                    <td style="text-align: center;"><span [class]="item.userId ? '':'text-danger  '">{{ item.userId ? item.userId : "null" }}</span></td>
+                    <td>{{ item.emailAddress }}</td>
+                    <td style="max-width: 250px; word-wrap: break-word;">
+                      <p>{{item.serviceName}}</p>
+                      <b>{{item.methodName}}</b>
+                    </td>
+                    <td>
+                      <div (click)="changeStatusNote(item)">
+                        <textarea rows="10" cols="20" disabled="disabled"
+                          [ngClass]="item.hideNote == false ? 'preReview-parameters' : 'review-parameters'" data-placement="right"
+                          title="Cuộn chuột hoặc Click để mở rộng nội dung" disabled="disabled" [(ngModel)]="item.parameters"></textarea>
+                      </div>
+                    </td>
+                    <td style="max-width: 250px;">{{item.note}}
+                    </td>
+                    <td style="text-align: center;">
+                      {{item.executionTime | date: "dd/MM/yyyy"}}
+                      <br>
+                      {{item.executionTime | date: "HH:mm"}}
+                    </td>
+                    <td style="text-align: center;  width: 200px;">{{item.executionDuration}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+           
+          </div>
+          <div class="card-footer bg-light border-top">
+            <div class="row">
+              <div class="col-sm-4 col-12 text-sm-left text-center">
+                <button class="btn btn-secondary mb-2" (click)="refresh()">
+                  <i class="fas fa-redo-alt"></i>
+                </button>
+                <mat-form-field style="width: 20%; margin-left: 30px">
+                  <mat-label>Number items</mat-label>
+                  <mat-select
+                    [(ngModel)]="pageSizeType"
+                    (ngModelChange)="changePageSize()"
+                  >
+                    <mat-option [value]="5"> 5 </mat-option>
+                    <mat-option [value]="10"> 10 </mat-option>
+                    <mat-option [value]="20"> 20 </mat-option>
+                    <mat-option [value]="50"> 50 </mat-option>
+                    <mat-option [value]="100"> 100 </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div class="col-sm-4 col-12 text-center">
+                <p class="mb-0 my-2">
+                  {{ "TotalRecordsCount" | localize: totalItems }}
+                </p>
+              </div>
+              <div class="col-sm-4 col-12">
+                <div class="float-sm-right m-auto">
+                  <abp-pagination-controls
+                    id="server"
+                    (pageChange)="getDataPage($event)"
+                  >
+                  </abp-pagination-controls>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    </div>

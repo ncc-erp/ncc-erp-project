@@ -1,0 +1,129 @@
+<div *ngIf="permission.isGranted(Audits_Tailoring_Detail)"  style="min-height: 94vh; margin-bottom: 0; padding-bottom: 0;" class="wrapper">
+  <section style="position: sticky; top: 0; z-index: 2;">
+    <div class="row">
+      <div class="col-6">
+        <h4 style="color: #014C6E;">Project tailoring details</h4>
+      </div>
+    </div>
+  </section>
+  <div class="container-fluid">
+    <div class="card" style="margin-bottom: 0;">
+      <div class="card-header" style="position: sticky; top: 0; z-index: 2;">
+        <div class="row justify-content-between">
+          <div class="col-lg-6 col-md-12 d-flex">
+            <div class="input-group mr-2">
+              <div class="input-group-prepend">
+                <button type="button" class="btn bg-blue" (click)="searchDetail()">
+                  <i class="fas fa-search"></i>
+                </button>
+              </div>
+              <input type="text" [(ngModel)]="searchText" class="form-control" name="keyword" placeholder="Search"
+                (keyup.enter)="searchDetail()" />
+            </div>
+            <div class="input-group">
+              <mat-form-field appearance="outline">
+                <mat-label>Applicable</mat-label>
+                <mat-select [(ngModel)]="selectedApplicable" (selectionChange)="searchDetail()">
+                  <mat-option [value]="-1">All</mat-option>
+                  <mat-option *ngFor="let item of applicableList" [value]="item.value">
+                    {{item.displayName}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="col-lg-5 col-md-5 mt-3 mt-lg-0 text-right">
+            <button style="width:78px ; margin-right: 20px;" (click)="updateTaloring()" class="btn bg-primary btn-action">
+              Update
+            </button>
+              <button *ngIf="permission.isGranted(Audits_Tailoring_DownLoadTailoringTemplate)" class="btn bg-blue mr-2"
+                (click)="downloadResultTemplate()" matTooltip="Template nhập kết quả đánh giá cho dự án">
+                <i class="fas fa-download"></i>
+                Download Result Template
+              </button>
+          </div>
+        </div>
+      </div>
+
+      <mat-tree  style="max-height: 80vh;overflow-y: auto;" [dataSource]="dataSource" [treeControl]="treeControl" class="example-tree px-2">
+        <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle style="background-color: rgb(239, 239, 239)">
+          <li class="mat-tree-node d-flex">
+            <button mat-icon-button disabled></button>
+            <div class="d-flex justify-content-end align-items-center" style="flex: 1;">
+              <div style="flex:1;" class=" d-flex align-items-center">
+                <div class="d-flex align-items-center"  style="font-size: 16px;">
+                  <span class="d-flex align-items-center">{{ node.item.code }} </span>
+                  <div style="margin-left: 38px; word-break: break-word; padding-right: 45px;">  {{ node.item.name }} 
+                  <i *ngIf="node.item.isApplicable"
+                    [style.color]="'#28a745'" style="font-size: 15px; " class="fas fa-check-circle ml-2">
+                  </i>
+                  <span *ngIf="node.item.applicable==2" style="font-size: 13px;"
+                    class=" ml-2 badge badge-pill badge-info">
+                    Modify</span>
+                  </div>
+                </div>
+             
+              </div>
+              <span *ngIf="permission.isGranted(Audits_Tailoring_Detail_ViewNote)" class="note pointer ml-2 hyperlink text-center"
+                [innerHTML]="node.item.note| safeHtml" (click)="viewNote(node)"
+                style="width: 350px;margin-left:100px !important; margin-right: 40px;"></span>
+
+              <div class="action">
+                <button mat-button [matMenuTriggerFor]="menu" [disabled]="processProblem">
+                  <i class="fas fa-bars fa-lg"></i>
+                </button>
+                <mat-menu #menu="matMenu" class="p-2">
+                  <button type="button" class="mat-menu-item w-100"
+                    *ngIf="permission.isGranted(Audits_Tailoring_Detail_ViewNote)" style="font-size: 14px"
+                    (click)="viewNote(node)">
+                    <i style="color: #014c6e" class="fas fa-file-alt mr-3"></i>View
+                  </button>
+
+                  <button type="button" class="mat-menu-item w-100" style="font-size: 14px;"
+                    *ngIf="permission.isGranted(Audits_Tailoring_Detail_Update)" (click)="editNote(node)">
+                    <i style="color: #014c6e" class="fas fa-user-edit mr-3"></i>Edit
+                  </button>
+
+                  <button type="button" class="mat-menu-item w-100" style="font-size: 14px;"
+                    *ngIf="permission.isGranted(Audits_Tailoring_Detail_Detele)" (click)="deleteCriteria(node)">
+                    <i style="color: #014c6e" class="fas fa-trash mr-3"></i>Delete
+                  </button>
+                </mat-menu>
+              </div>
+            </div>
+          </li>
+        </mat-tree-node>
+        <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChild">
+          <li>
+            <div class="mat-tree-node" style="background-color: #c4dfec">
+              <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'toggle ' + node.item.name + node.item.code">
+                <i *ngIf="treeControl.isExpanded(node); else elseBlock" class="fa fa-chevron-down"></i>
+                <ng-template #elseBlock>
+                  <i class="fa fa-chevron-right"></i></ng-template>
+              </button>
+
+              <div style="flex:1;" class="d-flex align-items-center">
+                <div class="d-flex"  style="font-size: 16px;">
+                  <span class="d-flex align-items-center">{{ node.item.code }} </span>
+                  <div style="margin-left: 38px; word-break: break-word; padding-right: 45px;">  {{ node.item.name }} 
+                        <!-- <i *ngIf="node.item.isApplicable" [style.color]="'#28a745'"
+                      style="font-size: 15px; " class="fas fa-check-circle">
+                    </i> -->
+                    <span *ngIf="node.item.applicable==2" style="font-size: 13px;"
+                    class=" ml-4 badge badge-pill badge-info">
+                    Modify</span>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+            <ul [class.example-tree-invisible]="!treeControl.isExpanded(node)">
+              <ng-container matTreeNodeOutlet></ng-container>
+            </ul>
+          </li>
+        </mat-nested-tree-node>
+      </mat-tree>
+    </div>
+  </div>
+</div>

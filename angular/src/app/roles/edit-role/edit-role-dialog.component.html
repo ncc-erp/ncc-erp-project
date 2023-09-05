@@ -1,0 +1,207 @@
+<div>
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-6">
+          <h1>Edit Role <span class="text-success">{{title}}</span></h1>
+        </div>
+      </div>
+    </div>
+  </section>
+  <form class="form-horizontal" autocomplete="off" #editRoleForm="ngForm">
+    <div class="modal-body">
+      <tabset>
+        <tab id="tab_detail" [heading]="'Details' | localize" class="pt-3 px-2">
+          <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="name">
+              {{ "Name" | localize }}
+            </label>
+            <div class="col-md-9">
+              <input type="text" class="form-control" name="name" id="name" required minlength="2" maxlength="32"
+                [(ngModel)]="role.name" #nameModel="ngModel" #nameEl />
+              <abp-validation-summary [control]="nameModel" [controlEl]="nameEl"></abp-validation-summary>
+            </div>
+          </div>
+          <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="displayName">
+              {{ "DisplayName" | localize }}
+            </label>
+            <div class="col-md-9">
+              <input type="text" class="form-control" name="displayName" id="displayName" required minlength="2"
+                maxlength="32" [(ngModel)]="role.displayName" #displayNameModel="ngModel" #displayNameEl />
+              <abp-validation-summary [control]="displayNameModel" [controlEl]="displayNameEl"></abp-validation-summary>
+            </div>
+          </div>
+          <div class="form-group row mb-0">
+            <label class="col-md-3 col-form-label" for="description">
+              {{ "RoleDescription" | localize }}
+            </label>
+            <div class="col-md-9">
+              <textarea type="text" class="form-control" name="description" id="description"
+                [(ngModel)]="role.description">
+              </textarea>
+            </div>
+          </div>
+          <!-- <abp-modal-footer [cancelDisabled]="saving"
+            (onCancelClick)="bsModalRef.hide()" (onSaveClick)="onSaveClick()">
+          </abp-modal-footer> -->
+          <div class="text-right mt-3">
+            <button class="btn btn-secondary btn-action btn-action mr-3" (click)="onCancelClick()">
+              Cancel
+            </button>
+            <button class="btn btn-primary btn-action btn-action" (click)="onSaveClick()"
+              [disabled]="!editRoleForm.valid">
+              Save
+            </button>
+          </div>
+        </tab>
+        <!-- TAB PERMISSIONS -->
+        <tab id="tab_permission" class="tab-permission" [heading]="'Permissions' | localize" class="pt-3 px-2 test"
+          style="height : 90% !important">
+          <br />
+          <div class="row-fluid" style="max-height: 80vh;overflow: scroll;">
+            <div class="col-md-12">
+              <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="example-tree">
+                <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle>
+                  <li class="mat-tree-node">
+                    <!-- <button mat-icon-button disabled></button> -->
+                    <div class="spinner" *ngIf="node.isLoading">
+                      <mat-spinner [diameter]="16" style="margin-right: 8px;"></mat-spinner>{{node.displayName}}
+                    </div>
+                    <mat-checkbox [ngClass]="node.childrens == null?'noChild':''" color="primary"
+                      *ngIf="!node.isLoading" [disabled]="isStatic " [checked]="isSelected(node)"
+                      (change)="todoLeafItemSelectionToggle(node)">
+                      {{node.displayName}}</mat-checkbox>
+                  </li>
+                </mat-tree-node>
+                <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChild">
+                  <li>
+                    <div class="mat-tree-node">
+                      <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'Toggle '">
+                        <i
+                          class="nav-icon {{!treeControl.isExpanded(node) ? 'fas fa-chevron-down' : 'fas fa-chevron-right' }}"></i>
+                      </button>
+                      <div class="spinner" *ngIf="node.isLoading">
+                        <mat-spinner [diameter]="16" style="margin-right: 8px;"></mat-spinner>{{node.displayName}}
+                      </div>
+                      <mat-checkbox color="primary" *ngIf="!node.isLoading" [disabled]="isStatic"
+                        [checked]="descendantsAllSelected(node)" [indeterminate]="descendantsPartiallySelected(node)"
+                        (change)="todoItemSelectionToggle(node)">
+                        {{node.displayName}}</mat-checkbox>
+                    </div>
+                    <ul [class.example-tree-invisible]="treeControl.isExpanded(node)">
+                      <ng-container matTreeNodeOutlet></ng-container>
+                    </ul>
+                  </li>
+                </mat-nested-tree-node>
+              </mat-tree>
+            </div>
+          </div>
+        </tab>
+        <!-- TAB USER -->
+        <tab id="tab_user" class="tab-user" [heading]="'Users' | localize" class="pt-3 px-2 test"
+          style="height : auto !important; width: 100%;">
+          <div class="row mt-2">
+            <div class="col-10">
+              <div class="row form-search-role">
+                <div class="col-md-2">
+                  <mat-form-field>
+                    <mat-label>Branch</mat-label>
+                    <mat-select name="slt-branch" [(value)]='userBranchForFilter' (selectionChange)="searchMember()">
+                      <mat-option [value]='-1'>All</mat-option>
+                      <mat-option [value]='0'>Ha Noi</mat-option>
+                      <mat-option [value]='1'>Da Nang</mat-option>
+                      <mat-option [value]='2'>Ho Chi Minh</mat-option>
+                      <mat-option [value]='3'>Vinh</mat-option>
+
+
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+                <div class="col-md-2">
+                  <mat-form-field>
+                    <mat-label>Type</mat-label>
+                    <mat-select name="slt-usertype" [(value)]='userTypeForFilter' (selectionChange)="searchMember()">
+                      <mat-option [value]="-1">All</mat-option>
+                      <mat-option *ngFor="let item of userTypes" [value]="item.value">
+                        {{item.label}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+                <div class="col-md-2">
+                  <mat-form-field>
+                    <mat-label>Level</mat-label>
+                    <mat-select name="slt-userlevel" [(value)]='userLevelForFilter' (selectionChange)="searchMember()">
+                      <mat-option [value]="-1">All</mat-option>
+                      <mat-option *ngFor="let item of listUserLevel" [value]="item.id">
+                        {{item.name}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+                <div class="col-md-6">
+                  <mat-form-field>
+                    <input name="ipt-search" type="text" #name matInput placeholder="Search by name, email"
+                      [(ngModel)]="searchMemberText" name="searchMember" (keyup)="searchMember()"
+                      (keypress)="keyPressed($event)">
+                  </mat-form-field>
+                </div>
+              </div>
+            </div>
+            <div class="col-2 text-right">
+              <a name="btn-create" href="javascript:;" class="btn bg-blue" (click)="addUserInRole()">
+                <i class="fa fa-plus-square"></i>
+                {{ "Add" | localize }}
+              </a>
+            </div>
+          </div>
+          <div class="row bg-white mt-1">
+            <div class="col-md-12 scroll-user-role">
+              <table name="tbl_userRole" class="table table-striped table-hover">
+                <tbody>
+                  <tr *ngFor="let member of listUsers">
+                    <div class="row">
+                      <div class="col-1 col-sm-2 col-md-1 col-lg-1">
+                        <button type="button" (click)="removeMemberFromProject(member.id, member.fullName)"
+                          class="text-danger" mat-icon-button>
+                          <i class="fa fa-times"></i>
+                        </button>
+                        <img [src]="getAvatar(member)" width="60" height="60" style="border-radius: 50%;" />
+                      </div>
+                      <div class="col-11 col-sm-10 col-md-11 col-lg-11 name">
+                        <b>{{member.fullName}}</b>
+                        <span class="label tag bg-red " *ngIf="member.branch == 0">HN</span>
+                        <span class="label tag bg-green " *ngIf="member.branch == 1">ĐN</span>
+                        <span class="label tag bg-blue " *ngIf="member.branch == 2">HCM</span>
+                        <span class="label tag bg-orange " *ngIf="member.branch == 3">Vinh</span>
+
+
+                        <span style="margin-left: 10px;" *ngIf="member.userType == 0"
+                          class="label tag bg-red">{{userTypes[member.userType].label}}</span>
+                        <span style="margin-left: 10px;" *ngIf="member.userType == 1"
+                          class="label tag bg-green">{{userTypes[member.userType].label}}</span>
+                        <span style="margin-left: 10px;" *ngIf="member.userType == 2"
+                          class="label tag bg-blue">{{userTypes[member.userType].label}}</span>
+                        <span *ngIf="member.positionName" class="ml-1 badge text-white"
+                          [style.backgroundColor]="member.positionColor">
+                          {{ member.positionName }}
+                        </span>
+                        <label class="tag" [style.background-color]="styleTagLevel(member.userLevel)">
+                          {{findDevLevelName(member.userLevel)}}
+                        </label>
+
+                        <br>
+                        <span>{{member.email}}</span>
+                      </div>
+                    </div>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </tab>
+      </tabset>
+    </div>
+  </form>
+</div>

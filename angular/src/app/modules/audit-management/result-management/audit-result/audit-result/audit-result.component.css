@@ -1,0 +1,20 @@
+
+
+:host th,
+td,
+td>div {
+    vertical-align: middle;
+}
+
+:host .fixTableHead {
+    max-height: 65vh;
+}
+
+:host .note:hover {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.changeShow:hover{
+    text-decoration: underline;
+}

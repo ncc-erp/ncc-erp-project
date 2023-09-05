@@ -1,0 +1,357 @@
+<section class="content px-2 mt-2"
+    *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_View)">
+    <div class="container-fluid">
+        <div *ngIf="isShowInvoiceSetting()" class="card mt-2 mb-1">
+            <mat-expansion-panel [expanded]="!expandInvoiceSetting">
+                <mat-expansion-panel-header name="panel-InvoiceSetting" class="mt-2 mb-2"
+                    (click)="expandInvoiceSetting=!expandInvoiceSetting">
+                    <h4 class="d-inline">Invoice settings:</h4>
+                    <button name="btn-editInvoiceSetting" *ngIf="canEditInvoiceSetting() && !expandInvoiceSetting"
+                        style="border: none; height: fit-content;" class="btn btn-secondary ml-3 btn-sm mb-2"
+                        (click)="openInvoiceSettingDialog();$event.stopPropagation()">
+                        <i class="fas fa-edit m-0"></i>
+                    </button>
+                </mat-expansion-panel-header>
+                <div class="row p-2">
+                    <div class="col-lg-4 col-md-12">
+                        <div class="m-0 p-0">
+                            <div class="form-group row col-12">
+                                <label class="col-form-label col-6">
+                                    Last Invoice Number:
+                                </label>
+                                <div class="col-6 d-flex align-items-center">
+                                    <span style="width: 30px;" *ngIf="!isEditLastInvoiceNumber">
+                                        {{lastInvoiceNumber}}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="">
+                            <div class="form-group row col-12">
+                                <label class="col-form-label col-6">Discount(%): </label>
+                                <div class="col-6 d-flex align-items-center">
+                                    <span style="width: 30px;" *ngIf="!isEditDiscount">
+                                        {{updateInvoiceDto.discount}}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-12">
+                        <div class="form-group row col-12">
+                            <label class="col-form-label col-6 pt-2">
+                                Invoice Setting:
+                            </label>
+                            <div class="col-6 d-flex align-items-center">
+                                <span class="text-primary text-bold" *ngIf="parentInvoice.isMainInvoice">
+                                    Main
+                                </span>
+                                <span class="text-secondary text-bold" *ngIf="!parentInvoice.isMainInvoice">
+                                    Sub
+                                </span>
+                            </div>
+                        </div>
+                        <div *ngIf="parentInvoice.isMainInvoice == APP_ENUM.InvoiceSetting.Main"
+                            class="form-group row col-12">
+                            <label class="col-form-label col-6 pt-2">
+                                Sub projects:
+                            </label>
+                            <div class="col-6 d-flex align-items-center">
+                                <ng-container *ngIf="parentInvoice.projectId && parentInvoice.subInvoices.length">
+                                    <span class="badge bg-secondary mr-2"
+                                        *ngFor="let item of parentInvoice.subInvoices">{{item.projectName}}</span>
+                                </ng-container>
+                                <ng-container *ngIf="parentInvoice.projectId && !parentInvoice.subInvoices.length">
+                                    No sub project
+                                </ng-container>
+                            </div>
+                        </div>
+                        <div *ngIf="!parentInvoice.isMainInvoice" class="form-group row col-12">
+                            <label class="col-form-label col-6 pt-2">
+                                Main project:
+                            </label>
+                            <div class="col-6 d-flex align-items-center">
+                                <ng-container *ngIf="parentInvoice.parentName">
+                                    <span class="badge bg-primary mr-2">{{parentInvoice.parentName}}</span>
+                                </ng-container>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </mat-expansion-panel>
+        </div>
+        <div class="card mt-2">
+            <mat-expansion-panel [expanded]="!isShowUserBill">
+                <mat-expansion-panel-header name="pannel-userBill" class="mt-2 mb-2"
+                    (click)="isShowUserBill=!isShowUserBill">
+                    <h4 class="d-inline">Bill accounts ({{ filteredUserBillList.length }}):</h4>
+                    <button name="btn-createUserBill"
+                        *ngIf="!userBillProcess && permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Create)"
+                        [hidden]="isShowUserBill" style="border: none; height: fit-content;"
+                        class="btn bg-blue ml-3 btn-sm mb-2"
+                        (click)="addUserBill();userBillCurrentPage=1; $event.stopPropagation()">
+                        <i class="fa fa-plus m-0"></i>
+                    </button>
+
+                    <div class="col-lg-2" (click)="$event.stopPropagation()" style="padding-left: 10%;">
+                        <div class="input-group">
+                            <mat-form-field appearance="outline">
+                                <mat-label>Charge Status</mat-label>
+                                <mat-select [(ngModel)]="selectedIsCharge" (selectionChange)="filterByIsCharge()">
+                                    <mat-option value="All">All</mat-option>
+                                    <mat-option value="Charge">Charge</mat-option>
+                                    <mat-option value="Not Charge">No Charge</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                </mat-expansion-panel-header>
+                <div class="mb-1 fixTableHead">
+                        <table name="tbl-UserBill" style="border-collapse: collapse;"
+                            class="table table-hover text-nowrap" [busy]="isLoading">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="stt">#</th>
+                                    <th>Employee</th>
+                                    <th>Charge Name</th>
+                                    <th>Charge Role</th>
+                                    <th
+                                        *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Rate_View)">
+                                        Rate <br>({{rateInfo.currencyName}})</th>
+                                    <th>Charge Type</th>
+                                    <th>Start charge</th>
+                                    <th>End charge</th>
+                                    <th>Is Charge</th>
+                                    <th>Note</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let bill of filteredUserBillList |paginate:{
+                                    id: 'billUserInfo',
+                                    itemsPerPage: maxBillUserCurrentPage,
+                                    currentPage: userBillCurrentPage
+                                } ; let i = index">
+                                    <td><span>{{ i +1 }}</span></td>
+                                    <td class="text-left" style="min-width: 250px;">
+                                        <span *ngIf="!bill.createMode">
+                                            <app-user-info [userData]="bill">
+                                            </app-user-info>
+                                        </span>
+                                        <div *ngIf="bill.createMode">
+
+                                            <mat-form-field class="w-100" appearance="outline">
+                                                <mat-select (closed)="focusOut()" [(ngModel)]="bill.userId"
+                                                    name="userBill" placeholder="select an user *" required
+                                                    #userBill="ngModel">
+                                                    <mat-form-field class="w-100 px-3 "
+                                                        style="position: sticky; top: 0; z-index: 2; background-color: white;">
+                                                        <input matInput [(ngModel)]="searchUserBill"
+                                                            placeholder="search" (keydown)="$event.stopPropagation()"
+                                                            name="searchBillUser" #search>{{search.focus()}}
+                                                    </mat-form-field>
+                                                    <mat-option
+                                                        *ngFor="let user of userForUserBill | listFilter: 'fullName' : searchUserBill : 'emailAddress' : 'surname' : 'name'"
+                                                        [value]="user.id">
+                                                        {{user.fullName}} - ({{user.emailAddress}})</mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                            <mat-error class="mt-1"
+                                                *ngIf="userBill.hasError('required') && userBill.touched"
+                                                style="font-size: 13px;">
+                                                This field is required
+                                            </mat-error>
+
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span *ngIf="!bill.createMode">{{ bill.billAccountName }}</span>
+
+                                        <div *ngIf="bill.createMode">
+
+                                            <input style="min-width: 120px;" class="form-control mt-1"
+                                                #accountName="ngModel" #accountNameEl type="text"
+                                                placeholder="Charge Name" name="accountName"
+                                                [(ngModel)]="bill.accountName" [value]="bill.billAccountName"/>
+
+                                            <abp-validation-summary [control]="accountName" [controlEl]="accountNameEl">
+                                            </abp-validation-summary>
+
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span *ngIf="!bill.createMode">{{bill.billRole}}</span>
+
+                                        <div *ngIf="bill.createMode">
+
+                                            <input style="min-width: 75px;" required class="form-control mt-1"
+                                                #billRole="ngModel" #billRoleEl type="text" placeholder="Charge role *"
+                                                name="billRole" [(ngModel)]="bill.billRole" />
+
+                                            <abp-validation-summary [control]="billRole" [controlEl]="billRoleEl">
+                                            </abp-validation-summary>
+
+                                        </div>
+                                    </td>
+                                    <td class="text-center"
+                                        *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Rate_View)">
+                                        <span class="text-center" *ngIf="!bill.createMode">{{bill.billRate |
+                                            number:'1.0':'en-US'}}
+                                        </span>
+                                        <div *ngIf="bill.createMode">
+                                            <input style="min-width: 100px;" required class="form-control mt-1"
+                                                #billRate="ngModel" #billRateEl type="text" mask="separator"
+                                                thousandSeparator="." placeholder="number *"
+                                                [(ngModel)]="bill.billRate">
+                                            <abp-validation-summary [control]="billRate" [controlEl]="billRateEl">
+                                            </abp-validation-summary>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="text-center" *ngIf="!bill.createMode">
+                                            {{bill.chargeTypeName}}</span>
+                                        <div *ngIf="bill.createMode" style="width: 100px; ">
+                                            <mat-form-field class="w-100" appearance="outline">
+                                                <mat-select (closed)="focusOut()" [(ngModel)]="bill.chargeType"
+                                                    name="chargeTypes" placeholder="select Charge"
+                                                    #chargeTypes="ngModel">
+                                                    <mat-option *ngFor="let item of chargeTypeList"
+                                                        [value]="item.value">
+                                                        {{item.name}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <span *ngIf="!bill.createMode">{{bill.startTime |date:"dd/MM/yyyy"}}</span>
+                                        <div *ngIf="bill.createMode">
+                                            <mat-form-field appearance="outline" style="width: 125px;">
+                                                <input matInput [matDatepicker]="billStarttimePicker"
+                                                    placeholder="chose a date *" [(ngModel)]="bill.startTime"
+                                                    name="billStarttime" #billStartTime="ngModel" required>
+                                                <mat-datepicker-toggle matSuffix [for]="billStarttimePicker">
+                                                </mat-datepicker-toggle>
+                                                <mat-datepicker #billStarttimePicker></mat-datepicker>
+                                            </mat-form-field>
+
+                                            <mat-error class="mt-1"
+                                                *ngIf="billStartTime.hasError('required') && billStartTime.touched"
+                                                style="font-size: 13px;">
+                                                This field is required
+                                            </mat-error>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="text-center" *ngIf="!bill.createMode">{{bill.endTime
+                                            |date:"dd/MM/yyyy"}}</span>
+                                        <div *ngIf="bill.createMode">
+                                            <mat-form-field appearance="outline" style="width: 125px;">
+                                                <input matInput [matDatepicker]="billEndtimepicker"
+                                                    placeholder="chose a date" [(ngModel)]="bill.endTime"
+                                                    name="billEndtime">
+                                                <mat-datepicker-toggle matSuffix [for]="billEndtimepicker">
+                                                </mat-datepicker-toggle>
+                                                <mat-datepicker #billEndtimepicker></mat-datepicker>
+                                            </mat-form-field>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <mat-checkbox [disabled]="!bill.createMode" class="mt-1"
+                                            [(ngModel)]="bill.isActive">
+                                        </mat-checkbox>
+                                    </td>
+                                    <td style="white-space: pre-line;
+                                                word-break: break-all;
+                                                min-width: 125px;
+                                                text-align: left;">
+                                        <div class="d-flex" style="align-items: center">
+                                            <div style="width: 90%">
+                                                <span>
+                                                    {{bill.note}}
+                                                </span>
+                                            </div>
+                                            <div *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Note_Edit)"
+                                                style="width: 10%; text-align: right;" class="ml-1">
+                                                <i class="fas fa-edit "
+                                                    (click)="updateNote(bill.id, bill.fullName,bill.projectName,bill.note)"
+                                                    matTooltip="Edit note"></i>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td style="min-width: 156px;">
+                                        <div *ngIf="!bill.createMode">
+                                            <button
+                                                *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Edit)"
+                                                [disabled]="userBillProcess" class="btn btn-sm bg-secondary mr-1"
+                                                (click)="editUserBill(bill)"><i
+                                                    class="fas fa-pencil-alt"></i>Edit</button>
+                                            <button
+                                                *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Delete)"
+                                                [disabled]="userBillProcess" class="btn btn-sm bg-danger ml-1"
+                                                (click)="removeUserBill(bill)"><i
+                                                    class="fas fa-trash"></i>delete</button>
+
+
+                                        </div>
+                                        <div *ngIf="bill.createMode" class="pt-1">
+
+                                            <button
+                                                [disabled]="!bill?.userId || !bill?.billRole || !bill?.startTime  || bill?.billRate<0 || !bill?.billRate "
+                                                class=" mr-3 submit-btn" style="background: none; border: none;"
+                                                (click)="saveUserBill(bill)">
+                                                <i style="color: green;" class="fas fa-check fa-2x "></i>
+                                            </button>
+
+
+                                            <i style="color: red;" class="fas fa-times fa-2x"
+                                                (click)="cancelUserBill()"></i>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                
+                </div>
+                <div class="card-footer bg-light border-top">
+                    <div class="row" style="justify-content: space-between;">
+                        <div class="col-5 text-sm-left text-center">
+                            <mat-form-field style="width: 20%;margin-left: 30px;">
+                                <mat-label>Number items</mat-label>
+                                <mat-select [(ngModel)]="maxBillUserCurrentPage" (ngModelChange)="changePageSizeCurrent()">
+                                    <mat-option [value]="5">
+                                        5
+                                    </mat-option>
+                                    <mat-option [value]="10">
+                                        10
+                                    </mat-option>
+                                    <mat-option [value]="20">
+                                        20
+                                    </mat-option>
+                                    <mat-option [value]="50">
+                                        50
+                                    </mat-option>
+                                    <mat-option [value]="100">
+                                        100
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-2 text-center">
+                            <p class="mb-0 my-2">
+                                Total: {{ filteredUserBillList.length }}
+                            </p>
+                        </div>
+                        <div class="col-5">
+                            <pagination-controls autoHide="true" id="billUserInfo"
+                                (pageChange)="userBillCurrentPage = $event">
+                            </pagination-controls>
+                        </div>
+                    </div>
+                </div>
+            </mat-expansion-panel>
+        </div>
+    </div>
+    <!-- </form> -->
+</section>

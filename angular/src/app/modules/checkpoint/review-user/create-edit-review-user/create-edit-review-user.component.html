@@ -1,0 +1,134 @@
+<form class="form-horizontal" autocomplete="off" #checkpointForm="ngForm" novalidate>
+    <abp-modal-header [title]="command=='edit'?'Edit Review':'Create Review'" (onCloseClick)="dialogRef.close()">
+    </abp-modal-header>
+    <div class="modal-body">
+        <div class="form-group row required"  *ngIf="typeReview=='BySelf'">
+            <label class="col-md-3 col-form-label" for="projectName">
+                {{ 'UserName' | localize }}:
+            </label>
+            <div class="col-md-9" >
+                
+                    <mat-form-field style="width: 100%; height: 38px;" appearance="outline">
+                        <mat-select required placeholder="Select project name" 
+                        [(ngModel)]="review.userId" name="reviewerName" #UserName="ngModel">
+                        <ng-container>
+                            <mat-option *ngFor="let item of userList" [value]="item.userId">
+                                {{item.userName}}
+                            </mat-option>
+                        </ng-container>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-error class="mt-1" *ngIf="UserName.hasError('required') && UserName.touched"
+                    style="font-size: 13px;">
+                    This field is required
+                     </mat-error>
+
+            </div>
+            <!-- <div class="col-md-9" *ngIf="data.command !=='create'">
+                
+                <mat-form-field style="width: 100%; height: 38px;" appearance="outline">
+                    <mat-select required placeholder="Select project name" 
+                    [(ngModel)]="review.userId" name="userName" #UserName="ngModel">
+                        <mat-option *ngFor="let item of reviewerList" [value]="item.id"  >
+                            {{item.fullName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-error class="mt-1" *ngIf="UserName.hasError('required') && UserName.touched"
+                    style="font-size: 13px;">
+                    This field is required
+                </mat-error> -->
+                
+          
+            
+        </div>
+            
+        </div>
+        <div class="form-group row required"*ngIf="typeReview=='ForSelf'" >
+            <label class="col-md-3 col-form-label" for="projectName" >
+                {{ 'Reviewer' | localize }}:
+            </label>
+            <div class="col-md-9">
+                <mat-form-field style="width: 100%; height: 38px;" appearance="outline">
+                    <mat-select required placeholder="Select project name" 
+                    [(ngModel)]="review.reviewerId" name="reviewerName" #ReviewerName="ngModel">
+                        <ng-container >
+                            <mat-option *ngFor="let item of reviewerList" [value]="item.id"  >
+                                {{item.fullName}}
+                            </mat-option>
+                        </ng-container>
+                        
+                    </mat-select>
+                </mat-form-field>
+                <mat-error class="mt-1" *ngIf="ReviewerName.hasError('required') && ReviewerName.touched"
+                    style="font-size: 13px;">
+                    This field is required
+                </mat-error>
+                
+            </div>
+        </div>
+        <div class="form-group row" *ngIf="command=='edit'">
+            <label for="note" class="col-md-3 col-form-label">
+                {{'Note' | localize}}
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="note" id="note" placeholder="Note"
+                    required [(ngModel)]="review.note" #noteModel="ngModel" #noteEl />
+                <abp-validation-summary [control]="noteModel" [controlEl]="noteEl">
+                </abp-validation-summary>
+            </div>
+
+        </div>
+        <div class="form-group row" *ngIf="command=='edit'">
+            <label for="score" class="col-md-3 col-form-label">
+                {{'Score' | localize}}
+            </label>
+            <div class="col-md-9">
+                <input type="number" class="form-control" name="score" id="score" placeholder="Score"
+                    required [(ngModel)]="review.score" #scoreModel="ngModel" #scoreEl />
+                <abp-validation-summary [control]="scoreModel" [controlEl]="scoreEl">
+                </abp-validation-summary>
+            </div>
+
+        </div>
+        <div class="form-group row">
+            <!-- <label for="check">Ẩn danh người đánh giá: </label> -->
+            <div class="col-md-6">
+                <mat-checkbox id="check">
+                    Ẩn danh người đánh giá:
+                </mat-checkbox>
+            </div>
+        </div>
+        <!-- <div class="form-group row required" >
+            <label class="col-md-3 col-form-label" for="projectName">
+                {{ 'Type' | localize }}:
+            </label>
+            <div class="col-md-9">
+                <mat-form-field class="w-100" appearance="outline">
+                    <mat-select  [(ngModel)]="review.type" name="type" placeholder="Select type" required
+                        #type="ngModel">
+                        <mat-option *ngFor="let type of reviewerTypeList" [value]="APP_ENUM.CheckPointUserType[type]">
+                            {{type}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-error class="mt-1" *ngIf="type.hasError('required') && type.touched"
+                    style="font-size: 13px;">
+                    This field is required
+                </mat-error>
+               
+            </div>
+        </div> -->
+       
+        
+        
+        
+    <!-- </div>
+            
+    </div> -->
+    <div align="end" class="mat-dialog-actions" mat-dialog-actions="">
+        <button class="btn btn-secondary cancel-banks" mat-raised-button mat-dialog-close>Cancel</button>
+        <button mat-raised-button color="primary" class="saving-btn"mat-button
+        [disabled]="!checkpointForm.valid || isLoading" (click)="SaveAndClose()">Save</button>
+    </div>
+</form>
+

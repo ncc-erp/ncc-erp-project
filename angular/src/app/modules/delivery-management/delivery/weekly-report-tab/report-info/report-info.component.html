@@ -1,0 +1,263 @@
+<!-- <abp-modal-header  -->
+ <!-- title="Thống kê cho report: {{data.report.name}}" (onCloseClick)="dialogRef.close()"> -->
+
+<!-- </abp-modal-header> -->
+<div >
+    <h3 class="d-inline">Thống kê cho report: {{data.report.name}}  </h3>
+    <!-- <div class="text-right py-2"> -->
+        <mat-form-field appearance="outline" class="ml-4">
+            <input placeholder="Choose date" matInput [matDatepicker]="picker" name="startDate"
+                [(ngModel)]="reportDate" #timeStart="ngModel" required />
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+        <button style="margin-bottom: 13px;" type="button" class="btn bg-blue " (click)="getReportInfo()">
+            <i class="fas fa-search"></i>
+        </button>
+        <i class="fas fa-times float-right fa-lg" (click)="dialogRef.close()"></i>
+    <!-- </div> -->
+</div>
+
+<section class="content px-2 pt-2 report-info" >
+    <div class="container-fluid">
+        <div class="row mb-4 card">
+            <div class="col-12">
+                <mat-tab-group>
+                    <mat-tab label="Thông tin chung">
+                        <div class="mt-2">
+                            <div class="d-flex">
+                                <strong>Đánh giá chung: </strong>
+                                <pre class="mb-0 p-0  ml-2" style=" white-space: pre-line;
+                                font-size: 1.1em; font-family: sans-serif; align-self:flex-start;">
+                                       {{reportInfo.note}}
+                               </pre>
+                            </div>
+                            <strong>Danh sách Issue:</strong>
+                            <div class=" table-responsive ">
+                                <div class="fixTableHead" >
+                                    <table [busy]="isLoading" style="border-collapse: collapse;" class="table table-hover text-nowrap">
+                                        <thead>
+                                            <tr>
+                                                <th class="stt">STT</th>
+                                                <th>Project</th>
+                                                <th>Vấn đề</th>
+                                                <th>Impact</th>
+                                                <th>Solution</th>
+                                                <th>Thời gian tạo</th>
+                                                <th>projectHealth</th>
+                                                <th>Trạng thái</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let issue of reportInfo.issues |paginate:{
+                                                id: 'problemPaging',
+                                            itemsPerPage: itemPerPage,
+                                            currentPage: problemCurrentPage
+                                            }; let i=index">
+                                                <td>{{i+1}}</td>
+                                                <td class="line-break">{{issue.projectName}}</td>
+                                                <td class="line-break">{{issue.description}}</td>
+                                                <td class="line-break">{{issue.impact}}</td>
+                                                <td class="line-break">{{issue.solution}}</td>
+                                                <td class="text-center" style="width: 100px;">{{issue.createdAt |date:"dd/MM/yyyy"}}</td>
+                                                <td class="text-center" style="width: 100px;"><span
+                                                        [ngClass]="APP_CONST.projectHealth[issue.projectHealth]">
+                                                        {{getByEnum(
+                                                        issue.projectHealth,APP_ENUM.ProjectHealth)}}</span>
+                                                </td>
+                                                <td class="text-center" style="width: 100px;"><span
+                                                        [ngClass]="APP_CONST.PMReportProjectIssueStatus[issue.status]">{{issue.status}}</span>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <pagination-controls autoHide="true" id="problemPaging"
+                                    (pageChange)="problemCurrentPage = $event"></pagination-controls>
+                            </div>
+
+                        </div>
+                    </mat-tab>
+                    <mat-tab label="Resource trong tuần">
+                        <section class="content mt-2">
+                            <div class="container-fluid">
+                                <div class="mt-2">
+                                    <div class="row">
+                                        <div class="col-5 mt-2">
+                                            <label for="" class="mt-2">Nhân viên:</label>
+                                            <mat-form-field style="width: 300px;" class=" px-3 " appearance="outline"
+                                                style="position: sticky; top: 0; z-index: 2; background-color: white;">
+                                                <input matInput [(ngModel)]="searchWeekResource" name="searchUser" (ngModelChange)="searchWeeklyPercentage()"
+                                                    #search placeholder="Search user">
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="col-7 mt-2">
+                                            <label for="" class="mr-2">% sử dụng:</label>
+                                            <mat-form-field style="width: 200px;" appearance="outline">
+                                                <mat-select [(ngModel)]="searchWeeklyCom" (ngModelChange)="searchWeeklyPercentage()">
+                                                    <mat-option [value]="0">
+                                                        Lớn hơn 
+                                                    </mat-option >
+                                                    <mat-option [value]="1">
+                                                        Nhỏ hơn 
+                                                    </mat-option>
+                                                    <mat-option [value]="2">
+                                                        Lớn hơn hoặc bằng
+                                                    </mat-option >
+                                                    <mat-option [value]="3">
+                                                        Nhỏ hơn hoặc bằng
+                                                    </mat-option >
+                                                    <mat-option [value]="4">
+                                                        Bằng
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                            <mat-form-field style="width: 300px;" class=" px-3 " appearance="outline"
+                                                style="position: sticky; top: 0; z-index: 2; background-color: white;">
+                                                <input matInput [(ngModel)]="weeklyPercentage" 
+                                                
+                                                 name="searchWeeklyPercentage" (ngModelChange)="searchWeeklyPercentage()" type="number"
+                                                    #search placeholder="% sử dụng">
+                                            </mat-form-field>
+                                            
+                                        </div>
+                                     
+                                    </div>
+                                    <div class=" table-responsive ">
+                                        <div class="fixTableHead" >
+
+
+                                            <table  style="border-collapse: collapse;"
+                                                class="table table-hover text-nowrap">
+                                                <thead>
+                                                    <tr style="border: none;">
+                                                        <th>STT</th>
+                                                        <th>Nhân viên</th>
+                                                        <th>% sử dụng nhân sự</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let report of reportInfo.resourceInTheWeek |paginate:{
+                                                                    id: 'weeklyPaging',
+                                                                itemsPerPage: itemPerPage,
+                                                                currentPage: weeklyCurrentPage
+                                                                }; let i=index">
+                                                        <td>{{i+1}}</td>
+                                                        <td>
+                                                            <app-user-info [userData]="{fullName:report.fullName,branch:report.branch,
+                                                                branchColor:report.branchColor,branchDisplayName:report.branchDisplayName,
+                                                        userType:report.userType,emailAddress:report.email, avatarFullPath:report.avatarFullPath}">
+                                                            </app-user-info>
+                                                        </td>
+                                                        <td class="text-center">{{report.allocatePercentage}}%
+                                                        </td>
+
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-4">
+                                    <pagination-controls  id="weeklyPaging" autoHide="true"
+                                        (pageChange)="weeklyCurrentPage = $event"></pagination-controls>
+                                </div>
+
+                            </div>
+                        </section>
+                    </mat-tab>
+                    <mat-tab label="Resource tương lai">
+                        <section class="content mt-2">
+                            <div class="container-fluid">
+                                <div class="mt-2">
+                                    <div class="row">
+                                        <div class="col-5 mt-2">
+                                            <label for="" class="mt-2">Nhân viên:</label>
+                                            <mat-form-field style="width: 300px;" class=" px-3 " appearance="outline"
+                                                style="position: sticky; top: 0; z-index: 2; background-color: white;">
+                                                <input matInput [(ngModel)]="searchFutureResource" name="searchUserFuture" 
+                                                (ngModelChange)="searchFuturePercentage()"
+                                                    #searchUserFuture placeholder="Search user">
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="col-7 mt-2">
+                                            <label for="" class="mr-2">% sử dụng:</label>
+                                            <mat-form-field style="width: 200px;" appearance="outline">
+                                                <mat-select [(ngModel)]="searchFutureCom" (ngModelChange)="searchFuturePercentage()">
+                                                    <mat-option [value]="0">
+                                                        Lớn hơn 
+                                                    </mat-option >
+                                                    <mat-option [value]="1">
+                                                        Nhỏ hơn 
+                                                    </mat-option>
+                                                    <mat-option [value]="2">
+                                                        Lớn hơn hoặc bằng
+                                                    </mat-option >
+                                                    <mat-option [value]="3">
+                                                        Nhỏ hơn hoặc bằng
+                                                    </mat-option >
+                                                    <mat-option [value]="4">
+                                                        Bằng
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                            <mat-form-field style="width: 300px;" class=" px-3 " appearance="outline"
+                                                style="position: sticky; top: 0; z-index: 2; background-color: white;">
+                                                <input matInput [(ngModel)]="futurePercentage" 
+                                                
+                                                 name="futurePercentage" (ngModelChange)="searchFuturePercentage()" type="number"
+                                                    #search placeholder="% sử dụng">
+                                            </mat-form-field>
+                                            
+                                        </div>
+                                     
+                                    </div>
+                                    <div class=" table-responsive ">
+                                        <div class="fixTableHead" >
+                                            <table  style="border-collapse: collapse;"
+                                                class="table table-hover text-nowrap">
+                                                <thead>
+                                                    <tr style="border: none;">
+                                                        <th>STT</th>
+                                                        <th>Nhân viên</th>
+                                                        <th>% sử dụng nhân sự</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let report of reportInfo.resourceInTheFuture|paginate:{
+                                                                    id: 'futurePaging',
+                                                                itemsPerPage: itemPerPage,
+                                                                currentPage: futureCurrentPage
+                                                                }; let i=index">
+                                                        <td>{{i+1}}</td>
+                                                        <td>
+                                                            <app-user-info [userData]="{fullName:report.fullName,branch:report.branch,
+                                                                branchColor:report.branchColor,branchDisplayName:report.branchDisplayName,
+                                                        userType:report.userType,emailAddress:report.email, avatarFullPath:report.avatarFullPath}">
+                                                            </app-user-info>
+                                                        </td>
+                                                        <td class="text-center">{{report.allocatePercentage}}%
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="mt-4">
+                                        <pagination-controls autoHide="true" id="futurePaging"
+                                            (pageChange)="futureCurrentPage = $event"></pagination-controls>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </section>
+                    </mat-tab>
+
+                </mat-tab-group>
+                <hr />
+            </div>
+        </div>
+    </div>
+</section>

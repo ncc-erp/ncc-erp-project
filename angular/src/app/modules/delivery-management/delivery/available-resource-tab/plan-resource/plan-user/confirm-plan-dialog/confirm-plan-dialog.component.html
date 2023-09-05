@@ -1,0 +1,94 @@
+<div class="card-header p-0">
+    <h4 [innerHTML]="title">
+    </h4>
+</div>
+<div class="card-body mt-2">
+    <div class="form-group row required">
+        <div class="col-3">
+            <label for="releaseDate" class="mt-2">{{user.allocatePercentage > 0 ? 'Join date:' : 'Release date:' }}
+            </label>
+        </div>
+        <div class="col-9">
+            <mat-form-field appearance="outline" style="width: 200px;">
+                <input matInput [matDatepicker]="picker" placeholder="chose a date *" required [(ngModel)]="startDate" #startTime="ngModel" name="releaseDate">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+        </div>
+    </div>
+    <!-- <div class="form-group row required" *ngIf="user.allocatePercentage > 0">
+        <label class="col-md-3 col-form-label" for="tenancyName">
+            Role:
+        </label>
+        <div class="col-md-9">
+            <mat-form-field appearance="outline" *ngIf="user.allocatePercentage > 0">
+                <mat-select [(ngModel)]="user.projectRole" name="projectRole" placeholder="select a role" required #projectRole="ngModel">
+                    <mat-option *ngFor="let role of projectRoleList" [value]="APP_ENUM.ProjectUserRole[role]">
+                        {{role}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+    </div>
+    <div class="form-group row required" *ngIf="user.allocatePercentage > 0">
+        <label class="col-md-3 col-form-label" for="allocatePercentage">
+            Work type:
+        </label>
+        <div class="col-md-9">
+            <mat-radio-group [(ngModel)]="user.isPool" aria-label="Select an option" name="allocatePercentage">
+                <mat-radio-button class="mt-2 mr-3" [value]="false">Offical</mat-radio-button>
+                <mat-radio-button [value]="true">Tempt</mat-radio-button>
+            </mat-radio-group>
+        </div>
+    </div> -->
+
+    <div *ngIf="workingProject.length >0 && user.allocatePercentage > 0 && allowConfirm">
+        <p style="font-size: 20px;" class="text-danger"><strong>{{user.fullName}}</strong> is working on the following projects:
+        </p>
+        <ul>
+            <li *ngFor="let project of workingProject">
+                <strong>{{project.projectName}}</strong> (pm:
+                <strong>{{project.pmName}}</strong>) <strong [ngClass]="project.isPool ? 'text-secondary' : 'text-primary'">{{project.workType}}</strong> since
+                <strong>{{project.startTime | date: "dd/MM/yyyy"}}</strong>
+
+            </li>
+        </ul>
+        <p style="font-size: 17px;">
+            Are you sure to confirm <strong>{{this.user.fullName}} </strong> <strong class="text-success">join</strong> this project and <strong class="text-danger">release</strong> from other projects?
+        </p>
+
+    </div>
+    <div *ngIf="!allowConfirm">
+        <p style="font-size: 20px;" class="text-danger"><strong>{{user.fullName}}</strong> is working on the following projects:
+        </p>
+        <ul>
+            <li *ngFor="let project of workingProject">
+                <strong>{{project.projectName}}</strong> (pm:
+                <strong>{{project.pmName}}</strong>) <strong [ngClass]="project.isPool ? 'text-secondary' : 'text-primary'">{{project.workType}}</strong> since
+                <strong>{{project.startTime | date: "dd/MM/yyyy"}}</strong>
+
+            </li>
+        </ul>
+        <p style="font-size: 17px;">
+            Please contact PM to release <strong>{{user.fullName}}</strong>
+        </p>
+    </div>
+    
+
+
+    <div class="d-flex justify-content-end" *ngIf="allowConfirm">
+        <button class="btn btn-secondary mr-2" mat-dialog-close="">
+            Cancel
+        </button>
+        <button class="btn btn-primary" (click)="confirm()">
+            Confirm
+        </button>
+    </div>
+
+    <div class="d-flex justify-content-end" *ngIf="!allowConfirm">
+        <button class="btn btn-secondary mr-2" mat-dialog-close="">
+            Close
+        </button>
+
+    </div>
+
+</div>

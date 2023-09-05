@@ -1,0 +1,37 @@
+<form class="form-horizontal" autocomplete="off" #timesheetForm="ngForm" novalidate>
+    <abp-modal-header [title]="data.action=='view'?'PQA Note':'Edit PQA Note'" (onCloseClick)="dialogRef.close()">
+    </abp-modal-header>
+    <div *ngIf="data.action=='edit'" class="modal-body row d-flex flex-column" style="flex: 1;">
+        <div class="form-group d-flex flex-column">
+            <div>
+                <label for="criteriaGuidLine"> {{ "Note" | localize }}: </label>
+            </div>
+            <div>
+                <editor class="w-100" [init]="{
+                height: 300,
+                selector: 'textarea',
+                a_plugin_option: true,
+                a_configuration_option: 400,
+                class: 'w-100',
+                menubar: true,
+                plugins: ['table', 'code', 'preview', 'media', 'image', 'template'],
+                toolbars: ['image'],
+                branding: false
+            }" [(ngModel)]="data.item.note" name="note">
+                </editor>
+            </div>
+        </div>
+        <div align="end" class="row justify-content-end">
+            <button name="btn-cancel" class="btn btn-secondary mr-2 btn-action" (click)="Cancel()">
+                Cancel
+            </button>
+            <button name="btn-save" class="btn btn-primary btn-action" (click)="SaveAndClose()">
+                Save
+            </button>
+
+        </div>
+    </div>
+    <div *ngIf="data.action=='view'" class="modal-body row d-flex flex-column" >
+        <span [innerHTML]="data.item.note| safeHtml" style="max-height: 500px; overflow-y:auto;"></span>
+    </div>
+</form>

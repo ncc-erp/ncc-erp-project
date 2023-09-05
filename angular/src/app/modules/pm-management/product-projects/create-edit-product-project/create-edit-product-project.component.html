@@ -1,0 +1,140 @@
+<form class="form-horizontal" autocomplete="off" #bankForm="ngForm">
+    <abp-modal-header [title]="data.command =='create' ?'Create new project':'Edit project: '+title"
+        (onCloseClick)="dialogRef.close()">
+    </abp-modal-header>
+    <div class="modal-body" style="max-height: 80vh; overflow-y: auto;">
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="projectName">
+                {{ 'Name' | localize }}:
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="projectName" id="projectName"
+                    required [(ngModel)]="project.name" #projectNameModel="ngModel" #projectNameEl
+                    [ngClass]="(checkNull && projectNameModel.touched)?'is-check':''"
+                    (input)="enterName($event.target.value);"
+                    />
+                <span class="invalid" *ngIf="checkNull  && projectNameModel.touched && !projectNameModel.errors?.required">This field is invalid!</span>
+                <abp-validation-summary [control]="projectNameModel" [controlEl]="projectNameEl">
+                </abp-validation-summary>
+            </div>
+        </div>
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="projectCode">
+                {{ 'Code' | localize }}:
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="projectCode" id="projectCode" [(ngModel)]="project.code"
+                    #projectCode="ngModel" #projectCodeEl required />
+                <abp-validation-summary [control]="projectCode" [controlEl]="projectCodeEl">
+                </abp-validation-summary>
+            </div>
+        </div>
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="projectStatus">Project status:</label>
+            <div class="col-md-9 ">
+                <mat-form-field class="w-100" appearance="outline">
+                    <mat-select [(ngModel)]="project.status" name="projectStatus" placeholder="select a project status"
+                        required #projectStatus="ngModel">
+                        <ng-container *ngFor="let status of projectStatusList">
+                            <mat-option [value]="APP_ENUM.ProjectStatus[status]">
+                                {{status}}</mat-option>
+                        </ng-container>
+                    </mat-select>
+                </mat-form-field>
+                <mat-error class="mt-1" *ngIf="projectStatus.hasError('required') && projectStatus.touched"
+                    style="font-size: 13px;">
+                    This field is required
+                </mat-error>
+            </div>
+        </div>
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="PM">PM:</label>
+            <div class="col-md-9 ">
+                <mat-form-field class="w-100" appearance="outline">
+                    <mat-select (closed)="focusOut()" [(ngModel)]="project.pmId" name="projectPM" placeholder="select a PM" required
+                        #projectPM="ngModel">
+                        <mat-form-field class="w-100 px-3 "
+                            style="position: sticky; top: 0; z-index: 2; background-color: white;">
+                            <input matInput [(ngModel)]="searchPM" name="searchPMName" placeholder="Search" #search
+                                (keydown)="$event.stopPropagation()">{{search.focus()}}
+                        </mat-form-field>
+                        <mat-option
+                            *ngFor="let pm of pmList | listFilter:  'fullName' : searchPM : 'emailAddress' : 'surname' : 'name'"
+                            [value]="pm.id">
+                            {{pm.fullName}} - ({{pm.emailAddress}})</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-error class="mt-1" *ngIf="projectPM.hasError('required') && projectPM.touched"
+                    style="font-size: 13px;">
+                    This field is required
+                </mat-error>
+            </div>
+        </div>
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="client">Customer:</label>
+            <div class="col-md-9 ">
+                <mat-form-field class="w-100" appearance="outline">
+                    <mat-select [(ngModel)]="project.clientId" name="client" placeholder="select customer" required
+                    #client="ngModel">
+                        <mat-form-field class="w-100 px-3 "
+                            style="position: sticky; top: 0; z-index: 2; background-color: white;">
+                            <input matInput [(ngModel)]="searchClient" name="searchClientName" placeholder="Search" #search (keydown)="$event.stopPropagation()">{{search.focus()}}
+                        </mat-form-field>
+                        <mat-option *ngFor="let client of clientList | listFilter : 'name' : searchClient" [value]="client.id">
+                            {{client.name}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-error class="mt-1" *ngIf="client.hasError('required') && client.touched" style="font-size: 13px;">
+                    This field is required
+                </mat-error>
+            </div>
+        </div>
+        <div *ngIf="data.command =='create' || permission.isGranted(Projects_ProductProjects_ViewRequireWeeklyReport)" class="form-group row">
+            <label class="col-md-3 col-form-label" for="isRequiredWeeklyReport"></label>
+            <div class="col-md-9 pt-2">
+                <mat-checkbox name="{{data.command == 'create'?'ipt-isRequiredWeeklyReport':'ipt-isRequiredWeeklyReport-edit'}}" [(ngModel)]="project.isRequiredWeeklyReport" name="isRequiredWeeklyReport">
+                    is Require Weekly Report
+                    <span class="ml-2"
+                    matTooltip="Require weekly report tuần đang active!"
+                    ><i class="fas fa-question-circle "></i></span>
+                </mat-checkbox>
+            </div>
+        </div>
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label">
+                Start time:
+            </label>
+            <div class="col-md-9 datepick">
+                <mat-form-field appearance="outline">
+                    <input matInput [matDatepicker]="picker" [(ngModel)]="project.startTime"
+                        #productProjectTimeStart="ngModel" placeholder="choose a date" name="startTime" required>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+                <mat-error class="mt-1"
+                    *ngIf="productProjectTimeStart.hasError('required') && productProjectTimeStart.touched"
+                    style="font-size: 13px;">
+                    This field is required
+                </mat-error>
+            </div>
+        </div>
+        <div class="form-group row ">
+            <label class="col-md-3 col-form-label">
+                End time:
+            </label>
+            <div class="col-md-9 datepick">
+                <mat-form-field appearance="outline">
+                    <input matInput [matDatepicker]="picker2" [(ngModel)]="project.endTime" placeholder="choose a date"
+                        name="endTime">
+                    <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                    <mat-datepicker #picker2></mat-datepicker>
+                </mat-form-field>
+            </div>
+        </div>
+    </div>
+    <div style="background-color: white;" align="end" class="d-flex mb-0 px-3" mat-dialog-actions="">
+        <button class="btn btn-secondary cancel-banks" mat-raised-button mat-dialog-close>Cancel</button>
+        <button class="btn btn-primary btn-action ml-3" [disabled]="!bankForm.valid || isLoading || checkNull"
+            (click)='saveAndClose()'>Save</button>
+    </div>
+</form>

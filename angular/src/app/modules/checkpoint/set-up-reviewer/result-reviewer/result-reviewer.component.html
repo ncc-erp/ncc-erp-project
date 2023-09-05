@@ -1,0 +1,478 @@
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-6">
+                <h1>Kết quả:{{phaseName}}</h1>
+            </div>
+            
+        </div>
+    </div>
+</section>
+<section class="content px-2">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-header">
+
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <button type="button" class="btn bg-blue" (click)="getDataPage(1)">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                        <input type="text" class="form-control" name="keyword" placeholder="Search" [(ngModel)]="searchText"
+                            (keyup.enter)="getDataPage(1)" />
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-default" (click)="checkAddFilter()">
+                                <i class="fas" [class.fa-angle-up]="advancedFiltersVisible"
+                                    [class.fa-angle-down]="!advancedFiltersVisible"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="advancedFiltersVisible" class="mb-0 mt-1">
+                    <div class="card-body">
+                        <form class="form-horizontal">
+                            <div class="row">
+                                <div class="col-md-12 col-xl-12">
+                                    <div class="mb-0">
+                                        <div> 
+                                            <div *ngFor="let item of filterItems; let i = index">
+                                                <app-filter [item]="item" (emitChange)="onEmitChange($event, i)"
+                                                    (deleteDataFilter)="deleteFilterItem(i)" [inputFilters]="FILTER_CONFIG">
+                                                </app-filter>
+                                            </div>
+                                            <i style="padding: 0;" class="fas fa-plus-circle ml-3"
+                                                (click)="addFilter()"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div  class="mb-0 mt-1"  *ngIf="advancedFiltersVisible" >
+                    <div class="card-body">
+                        <form class="form-horizontal">
+                            <div class="row">
+                                <div class="col-md-4 col-xl-4">
+                                    <div class="mb-0">
+                                        <div> 
+                                            <mat-form-field style="width: 100%; height: 38px;" appearance="outline">
+                                                <mat-select  placeholder="Select name" 
+                                                 name="reviewerName" [(ngModel)]="reviewerName"  (selectionChange)="filterByReviewerName()">
+                                                    <mat-option *ngFor="let item of reviewerUserList" [value]="item.fullName"  >
+                                                        {{item.fullName}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-xl-4">
+                                    <div class="mb-0">
+                                        <div> 
+                                            <mat-form-field class="w-100" appearance="outline">
+                                                <mat-select   name="type" [(ngModel)]="type"  placeholder="Select type"   (selectionChange)="filerByType()"
+                                                   >
+                                                    <mat-option *ngFor="let reviewType of reviewerTypeList" [value]="APP_ENUM.CheckPointUserType[reviewType]">
+                                                        {{reviewType}}</mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-xl-4">
+                                    <div class="mb-0">
+                                        <div> 
+                                            <mat-form-field style="width: 100%; height: 38px;" appearance="outline">
+                                                <mat-select  placeholder="Select status"  [(ngModel)]="status"  (selectionChange)="filterByStatus()"
+                                                 name="status" >
+                                                    <mat-option *ngFor="let reviewStatus of reiviewerStatus" [value]="APP_ENUM.CheckPointUserStatus[reviewStatus]"  >
+                                                        {{reviewStatus}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-xl-4">
+                                    <div class="mb-0">
+                                        <div> 
+                                            <mat-form-field style="width: 100%; height: 38px;" appearance="outline">
+                                                <mat-select multiple required placeholder="Select Tags"  (selectionChange)="filterByTag()"
+                                                [(ngModel)]="tags" name="tag" #tag="ngModel">
+                                                    <mat-option *ngFor="let item of listTags" [value]="item.id"  >
+                                                        {{item.name}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    
+                </div>
+                
+                <div>
+                    <label style="padding-top: 10px; margin-right: 10px;">Year:</label>
+                    <mat-form-field style="max-width: 200px;" appearance="outline">
+                        <mat-select  name="yearSelect" placeholder="Select Year" [(ngModel)]="year" (selectionChange)="filterYear($event.value)"
+                            >
+                            <mat-option [value]="-1">All</mat-option>
+                            <ng-container *ngFor="let year of listYear">
+                                
+                                <mat-option  [value]="year" >{{
+                                    year
+                                    }}</mat-option>
+                            </ng-container>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div>
+                    <label style="padding-top: 10px; margin-right: 10px;">Phase:</label>
+                    <mat-form-field style="max-width: 200px;" appearance="outline">
+                        <mat-select  name="yearSelect" placeholder="Select Phase" 
+                         [(ngModel)]="phaseId" (selectionChange)="filterPhase($event.value)"
+                            >
+                            <ng-container *ngFor="let phase of phaseList" > 
+                                
+                                <mat-option  [value]="phase.phaseId" >{{
+                                    phase.phaseName
+                                    }}</mat-option>
+                            </ng-container>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                
+            </div>
+            <!-- <div class="card-header">
+
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <button type="button" class="btn bg-blue" (click)="getDataPage(1)">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <input type="text" class="form-control" name="keyword" placeholder="Search" [(ngModel)]="searchText"
+                        (keyup.enter)="getDataPage(1)" />
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-default" (click)="checkAddFilter()">
+                            <i class="fas" [class.fa-angle-up]="advancedFiltersVisible"
+                                [class.fa-angle-down]="!advancedFiltersVisible"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="advancedFiltersVisible" class="mb-0 mt-1">
+                <div class="card-body">
+                    <form class="form-horizontal">
+                        <div class="row">
+                            <div class="col-md-12 col-xl-12">
+                                <div class="mb-0">
+                                    <div> 
+                                        <div *ngFor="let item of filterItems; let i = index">
+                                            <app-filter [item]="item" (emitChange)="onEmitChange($event, i)"
+                                                (deleteDataFilter)="deleteFilterItem(i)" [inputFilters]="FILTER_CONFIG">
+                                            </app-filter>
+                                        </div>
+                                        <i style="padding: 0;" class="fas fa-plus-circle ml-3"
+                                            (click)="addFilter()"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div> -->
+            <!-- <div  class="mb-0 mt-1">
+                <div class="card-body">
+                    <form class="form-horizontal">
+                        <div class="row">
+                            <div class="col-md-4 col-xl-4">
+                                <div class="mb-0">
+                                    <div> 
+                                        <mat-form-field style="width: 100%; height: 38px;" appearance="outline">
+                                            <mat-select required placeholder="Select project name" 
+                                             name="reviewerName" (selectionChange)="filterByReviewer($event.value)">
+                                                <mat-option *ngFor="let item of reviewerUserList" [value]="item.id"  >
+                                                    {{item.fullName}}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-xl-4">
+                                <div class="mb-0">
+                                    <div> 
+                                        <mat-form-field class="w-100" appearance="outline">
+                                            <mat-select   name="type" placeholder="Select type" (click)="filerByType(value)"
+                                                (selectionChange)="onTypeChange()">
+                                                <mat-option *ngFor="let type of reviewerTypeList" [value]="APP_ENUM.CheckPointUserType[type]">
+                                                    {{type}}</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-xl-4">
+                                <div class="mb-0">
+                                    <div> 
+                                        <mat-form-field style="width: 100%; height: 38px;" appearance="outline">
+                                            <mat-select required placeholder="Select project name" (click)="filterByStatus(value)"
+                                             name="reviewerName" >
+                                                <mat-option *ngFor="let status of reiviewerStatus" [value]="APP_ENUM.CheckPointUserType[type]"  >
+                                                    {{status}}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                
+            </div> -->
+            
+
+            
+            <div class="card-body table-responsive p-4">
+                <table *ngIf="phaseType=='1'" style="border-collapse: collapse;" class="table table-hover text-nowrap">
+                    <thead class="bg-light">
+                        <tr>
+                            <th>STT</th>
+                            <th>User Name</th>
+                            <th>ReviewerName</th>
+                            <th>Type</th>
+                            <th>Note</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of listCheckpointResultSub
+                        |paginate
+                            : {
+                                id: 'server',
+                                itemsPerPage: pageSize,
+                                currentPage: pageNumber,
+                                totalItems: totalItems
+                              }; let i=index" (click)="showDetail(item)">
+                            <td>{{i+1}}</td>
+                            <td>
+                                <div style="width: 300px;">
+                                    <app-user-info [userData]="{fullName:item.userName,
+                                        emailAddress:item.userEmail,avatarFullPath:item.avatarFullPath}"></app-user-info>
+                                </div>
+                                
+                            </td>
+                            <td>
+                                <div style="width: 300px;">
+                                    <app-user-info [userData]="{fullName:item.reviewerName,
+                                        emailAddress:item.reviewerEmail,avatarFullPath:item.reviewerAvatarFullPath}"></app-user-info>
+                                </div></td>
+                            <td> <span [ngClass]="getByEnum(item.type,APP_ENUM.CheckPointUserType)" class="mr-1">
+                                {{getByEnum(item.type,APP_ENUM.CheckPointUserType)}}</span></td>
+                            <td style="white-space: normal; min-width: 300px;">
+                                {{item.note}}
+                            </td>
+                            <td [ngClass]="getByEnum(item.type,APP_ENUM.CheckPointUserType)">{{getByEnum(item.status,APP_ENUM.CheckPointUserStatus)}}</td>
+
+                            <td class="text-center">
+                                <button mat-button [matMenuTriggerFor]="menu" *ngIf="item.status==0">
+                                    <i class="fas fa-bars fa-lg"></i>
+                                </button>
+                                <mat-menu #menu="matMenu" class="p-2" >
+                                    <button
+                                        
+                                        class="mat-menu-item  w-100" (click)="edit(item)">
+                                        <i class="fas fa-pencil-alt fa-lg mr-1"></i>
+
+                                        Edit
+                                    </button>
+                                    <button
+                                       
+                                        class="mat-menu-item  w-100" (click)="delete(item)" #deleteBtn>
+                                        <i class="fas fa-trash fa-lg mr-1"></i>
+                                        Delete
+                                    </button>
+                                    
+                                </mat-menu>
+                            </td>
+                            
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="fixTableHead">
+                    <table *ngIf="phaseType=='0'" style="border-collapse: collapse;" class="table table-hover text-nowrap">
+                        <thead class="bg-light">
+                            <tr>
+                                <th rowspan="2">STT</th>
+                                <th rowspan="2">User Name</th>
+                                <th rowspan="2">Reviewer Name</th>
+                                <th rowspan="2">User Note</th>
+                                <th rowspan="2">PM Note</th>
+                                <th rowspan="2">Final Note</th>
+                                <th colspan="3">Level</th>
+                                <th rowspan="2">Score</th>
+                                <th rowspan="2">Tags</th>
+                                <th rowspan="2">Status</th>
+                                <th rowspan="2">Actions</th>
+                            </tr>
+                            <tr>
+                               
+                                <th>Current Level</th>
+                                <th>Expected Level</th>
+                                <th>Now Level</th>
+                               
+                                
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of listCheckpointResultMain
+                            |paginate
+                                : {
+                                    id: 'server',
+                                    itemsPerPage: pageSize,
+                                    currentPage: pageNumber,
+                                    totalItems: totalItems
+                                  }; let i=index">
+                                <td>{{i+1}}</td>
+                                <td>
+                                    <div style="width: 300px;">
+                                        <app-user-info [userData]="{fullName:item.userName,
+                                            emailAddress:item.userEmail,avatarFullPath:item.avatarFullPath}"></app-user-info>
+                                    </div>
+                                    
+                                </td>
+                                <td>
+                                    <div style="width: 300px;">
+                                        <app-user-info [userData]="{fullName:item.reviewerName,
+                                            emailAddress:item.reviewerEmail,avatarFullPath:item.reviewerAvatarFullPath}"></app-user-info>
+                                    </div></td>
+                                <!-- <td> <span [ngClass]="getByEnum(item.type,APP_ENUM.CheckPointUserType)" class="mr-1">
+                                    {{getByEnum(item.type,APP_ENUM.CheckPointUserType)}}</span></td> -->
+                                <td style="white-space: normal; min-width: 300px;">
+                                    {{item.userNote}}
+                                </td>
+                                <td style="white-space: normal; min-width: 300px;">
+                                    {{item.pmNote}}
+                                </td>
+                                <td style="white-space: normal; min-width: 300px;">
+                                    {{item.finalNote}}
+                                </td>
+                                
+                                
+                                    
+                                   
+                                        <td>-CurrentLevel: {{item.currentLevel}}</td>
+                                        <td>-ExpectedLevel: {{item.expectedLevel}}</td>
+                                        <td>-NowLevel: {{item.nowLevel}}</td>
+                                   
+                                    
+                                
+                                <td>
+                                    <p>-PmScore: {{item.pmScore}}</p>
+                                    <p>-TeamScore: {{item.teamScore}}</p>
+                                    <p>-ClientScore: {{item.clientScore}}</p>
+                                    <p>-ExamScore: {{item.examScore}}</p>
+                                    
+                                </td>
+                                <td>
+                                    <!-- <td [ngClass]="getByEnum(item.type,APP_ENUM.CheckPointUserType)">{{getByEnum(item.status,APP_ENUM.CheckPointUserStatus)}}</td> -->
+                                    <mat-form-field style="width: 100%; height: 38px;" appearance="outline">
+                                        <mat-select multiple [(ngModel)]="item.tags" name="tag" #tag="ngModel">
+                                            <mat-option *ngFor="let item of listTags" [value]="item.id"  >
+                                                {{item.name}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field> 
+                                  
+                                    </td>
+                                <td [ngClass]="getByEnum(item.status,APP_ENUM.CheckpointUserResult)">{{getByEnum(item.status,APP_ENUM.CheckpointUserResult)}}</td>
+    
+                                <td class="text-center">
+                                    <button mat-button [matMenuTriggerFor]="menu">
+                                        <i class="fas fa-bars fa-lg"></i>
+                                    </button>
+                                    <mat-menu #menu="matMenu" class="p-2" >
+                                        <button
+                                            
+                                            class="mat-menu-item  w-100" (click)="edit(item)">
+                                            <i class="fas fa-pencil-alt fa-lg mr-1"></i>
+    
+                                            Edit
+                                        </button>
+                                        <button
+                                           
+                                            class="mat-menu-item  w-100" (click)="delete(item)" #deleteBtn>
+                                            <i class="fas fa-trash fa-lg mr-1"></i>
+                                            Delete
+                                        </button>
+                                        <button
+                                           
+                                            class="mat-menu-item  w-100" (click)="done(item)" #deleteBtn>
+                                            <i class="fas fa-check-double"></i>
+                                            Done
+                                        </button>
+                                        
+                                    </mat-menu>
+                                </td>
+                                
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+               
+            
+            <!-- <div class="card-footer bg-light border-top">
+                <div class="row">
+                    <div class="col-sm-4 col-12 text-sm-left text-center">
+                        <button class="btn btn-secondary mb-2" (click)="refresh()">
+                            <i class="fas fa-redo-alt"></i>
+                        </button>
+                        <mat-form-field style="width: 20%;margin-left: 30px;">
+                            <mat-label>Number items</mat-label>
+                            <mat-select [(ngModel)]="pageSizeType" (ngModelChange)="changePageSize()">
+                                <mat-option [value]="5">
+                                    5
+                                </mat-option>
+                                <mat-option [value]="10">
+                                    10
+                                </mat-option>
+                                <mat-option [value]="20">
+                                    20
+                                </mat-option>
+                                <mat-option [value]="50">
+                                    50
+                                </mat-option>
+                                <mat-option [value]="100">
+                                    100
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-sm-4 col-12 text-center">
+                        <p class="mb-0 my-2">
+                            {{ "TotalRecordsCount" | localize: totalItems }}
+                        </p>
+                    </div>
+                    <div class="col-sm-4 col-12">
+                        <div class="float-sm-right m-auto">
+                            <abp-pagination-controls id="server" (pageChange)="getDataPage($event)">
+                            </abp-pagination-controls>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+        </div>
+    </div>
+    </div>
+</section>
+

@@ -1,0 +1,36 @@
+<form class="form-horizontal" autocomplete="off" #invoiceForm="ngForm" novalidate>
+    <abp-modal-header title= {{data.title}} (onCloseClick)="dialogRef.close()">
+    </abp-modal-header>
+    <div class="modal-body">
+        <div class=" table-responsive ">
+            <table style="border-collapse: collapse;" class="table table-hover text-nowrap">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="stt">#</th>
+                        <th>Tên khách hàng</th>
+                        <th>Số lượng Project</th>
+                        <th>Gộp Invoice</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let client of clientDataList ; let i = index">
+                        <td class="text-center"><span>{{ i +1 }}</span></td>
+                        <td class="text-center">{{client.clientName}}</td>
+                        <td class="text-center">{{client.totalProject}}</td>
+                        <td class="text-center">
+                            <mat-checkbox (change)="onMergeInvoice(client.clientId, $event)"></mat-checkbox>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+    <div align="end" class="mat-dialog-actions" mat-dialog-actions="">
+        <button class="btn btn-secondary cancel-banks" mat-raised-button mat-dialog-close>Cancel</button>
+        <button *ngIf="data.title !=='Export Invoice'" mat-raised-button color="primary" class="saving-btn btn-save" mat-button
+            [disabled]="!invoiceForm.form.valid ||isLoading" (click)="SaveAndClose()">Save</button>
+        <button *ngIf="data.title =='Export Invoice'" mat-raised-button color="primary" class="saving-btn" mat-button
+        [disabled]="!invoiceForm.form.valid ||isLoading" (click)="SaveAndClose()">Export</button>
+    </div>
+</form>

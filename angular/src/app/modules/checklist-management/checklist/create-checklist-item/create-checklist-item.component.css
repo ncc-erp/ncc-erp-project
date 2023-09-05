@@ -1,0 +1,13 @@
+button{
+    min-width: 100px;
+}
+::ng-deep .is-invalid .mat-form-field-outline{
+    color: #f33446 !important;
+    opacity: 1;
+}
+::ng-deep .is-invalid .mat-input-element{
+    caret-color: #f33446;
+}
+::ng-deep .is-invalid .mat-form-field-label{
+    color: #f33446 !important;
+}

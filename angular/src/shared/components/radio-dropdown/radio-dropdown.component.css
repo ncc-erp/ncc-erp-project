@@ -1,0 +1,6 @@
+.percentage-table td, .percentage-table tr{
+    border: none;
+  }
+  ::ng-deep .dropdown .mat-select .mat-select-placeholder{
+    color: black ;
+  }

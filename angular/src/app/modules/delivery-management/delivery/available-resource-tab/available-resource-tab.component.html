@@ -1,0 +1,22 @@
+<section class="content px-2 pt-2">
+    <div class="container-fluid">
+        <div class="row mb-4 card">
+            <div class="col-12">
+                <nav mat-tab-nav-bar>
+                    <a *ngIf="permission.isGranted(Resource_TabPool)" [ngClass]="currentUrl.includes('pool')?'active':''" mat-tab-link (click)="routingPlanResourceTab()">
+                       Pool
+                    </a>
+                    <a *ngIf="permission.isGranted(Resource_TabAllResource)" [ngClass]="currentUrl.includes('all-resource')?'active':''" mat-tab-link (click)="routingAllResourceTab()">
+                        All Resource
+                    </a>
+                    <a *ngIf="permission.isGranted(Resource_TabVendor)" [ngClass]="currentUrl.includes('vendor')?'active':''" mat-tab-link (click)="routingVendorTab()">
+                        Vendor
+                    </a>
+                </nav>
+                <router-outlet></router-outlet>
+            </div>
+
+
+        </div>
+    </div>
+</section>

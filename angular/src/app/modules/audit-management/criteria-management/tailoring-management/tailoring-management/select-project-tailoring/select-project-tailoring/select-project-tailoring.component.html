@@ -1,0 +1,70 @@
+<form class="form-horizontal" autocomplete="off" #timesheetForm="ngForm" novalidate>
+    <abp-modal-header title="Add Project for Quality Audit" (onCloseClick)="dialogRef.close()">
+    </abp-modal-header>
+    <div class="modal-body row">
+        <div class="col-6 mt-3 mt-md-0 px-0">
+            <div class="input-group ">
+                <div class="input-group-prepend">
+                    <button type="button" class="btn bg-blue">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                <input type="text" class="form-control" name="keyword" placeholder="Project Name, Project Code, Client, PM"
+                    [(ngModel)]="searchText" (keyup)="search()" />
+            </div>
+        </div>
+        <div class="col-6 mt-3 mt-lg-0 text-right">
+            <button  class="btn bg-blue" (click)="SaveAndClose()" [disabled]="!selectedProjects.length">
+                Save
+            </button>
+        </div>
+        <div class="table-responsive py-3">
+            <div class="fixTableHead">
+                <table style="border-collapse: collapse;" class="table table-hover text-nowrap">
+                    <thead>
+                        <tr>
+                            <th>
+                                <mat-checkbox [indeterminate]="someChecked()" [(ngModel)]="allSelected" [color]="'accent'" name="selectAll"
+                                (change)="selectAll($event.checked)">
+                            </mat-checkbox>
+                            </th>
+                            <th style="width: 300px;">Project</th>
+                            <th style="width: 450px;">Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of projectList let i=index;" class="text-center">
+                            <td>
+                                <mat-checkbox [(ngModel)]="item.selected" [color]="'primary'" [name]="'check-tailor'+i"
+                                    (change)="onProjectSelect(item)">
+                                </mat-checkbox>
+                            </td>
+                            <td>
+                                <div class="text-left d-flex flex-column">
+                                    <span><strong style="color: #014C6E;">[{{item.projectCode}}]
+                                            {{item.projectName}}</strong></span>
+                                    <span><strong>Client : </strong>[{{item.clientCode}}]</span>
+                                    <span><strong>PM : </strong>{{item.pmName}}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex justify-content-center">
+                                    <span style="width: fit-content;" class="mr-3"
+                                        [ngClass]=" APP_CONST.ProjectTypeStyle[getByEnum(item.projectType,APP_ENUM.ProjectType)]">
+                                        {{
+                                        changeTextProjectType(getByEnum(item.projectType,APP_ENUM.ProjectType))
+                                        }}
+                                    </span>
+                                    <span style="width: fit-content;"
+                                        [ngClass]=" APP_CONST.statusStyle[getByEnum(item.projectStatus,APP_ENUM.ProjectStatus)]">{{
+                                        getByEnum(item.projectStatus,APP_ENUM.ProjectStatus)}}</span>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</form>

@@ -1,0 +1,9 @@
+body {
+  background-color: grey;
+}
+
+#bodyMess {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

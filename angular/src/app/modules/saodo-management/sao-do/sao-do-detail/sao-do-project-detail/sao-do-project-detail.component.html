@@ -1,0 +1,158 @@
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-6">
+                <h1>Đợt kiểm tra: {{examinationName}} > {{projectName}} </h1>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="content px-2">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-9 row">
+                        <div class="col-2"> <strong>Đánh giá chung: </strong></div>
+                        <div class="col-10">
+                            <pre *ngIf="!isEditingNote" class="mb-0 p-0  ml-2" style=" white-space: pre-line;
+                                 font-family: sans-serif; align-self:flex-start; line-height: initial;">
+                                   {{note}}
+                               </pre>
+                            <textarea cdkTextareaAutosize #autosize="cdkTextareaAutosize" [(ngModel)]="note" [hidden]="!isEditingNote" type="text" class="form-control" style="padding-bottom: 20px;" rows="2" cdkTextareaAutosize name="notePM" placeholder="Đánh giá chung"></textarea>
+                        </div>
+
+
+
+                    </div>
+                    <div class="col-3 text-right">
+                        <div class="text-right">
+                            <button (click)="isEditingNote=true" type="button" class="btn bg-blue">
+                                <i class="fas fa-pencil-alt"></i>
+                            </button>
+                            <button *ngIf="isEditingNote" (click)="saveNote();isEditingNote=false" type="button" style="margin-right: 20px;" class="btn bg-blue">
+                                Save
+                            </button>
+                            <button *ngIf="isEditingNote" (click)="cancelNote();" class="btn btn-default">Cancel</button>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body table-responsive p-4">
+                <div class="fixTableHead">
+                    <table style="border-collapse: collapse;" class="table text-nowrap">
+                        <thead class="bg-light">
+                            <tr style="border: none;">
+                                <th>STT</th>
+                                <th>Catelog</th>
+                                <th>Item</th>
+                                <th>Description</th>
+                                <th>Thời gian đăng kí</th>
+                                <th>Audit Target</th>
+                                <th>Person In Charge</th>
+                                <th>Kết quả</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of listCheckList; let i=index">
+                                <td><span>{{i+1}}</span></td>
+                                <td style="white-space: normal;width: 200px;">{{item.categoryName}}</td>
+                                <td style="white-space: normal;width: 200px;">{{item.name}}</td>
+                                <td style="white-space: normal;min-width: 300px;">{{item.description}}</td>
+                                <td>{{item.registrationDate | date:"dd/MM/yyyy"}}</td>
+                                <td>{{item.auditTarget}}</td>
+                                <td>{{item.personInCharge}}</td>
+                                <td>
+                                    <div>
+                                        <div *ngFor="let form of item.people" class="form-horizontal mb-2 p-2" style="border: 1px solid black;">
+
+                                            <p class="mt-2" *ngIf="!form.createMode"><strong>Người vi phạm:
+                                                </strong>{{form.userName}}</p>
+                                            <mat-form-field *ngIf="form.createMode" appearance="outline" class="d-block">
+                                                <mat-select placeholder="Tên người vi phạm" [name]="form.id" [(ngModel)]="form.userId" #ngvipham>
+                                                    <ng-container>
+                                                        <mat-option *ngFor="let user of projectUserList" [value]="user.id">{{user.fullName}} - ({{user.emailAddress}})</mat-option>
+                                                    </ng-container>
+
+                                                </mat-select>
+                                            </mat-form-field>
+                                            <p *ngIf="!form.createMode" class="mt-2"><strong>Người liên đới:
+                                                </strong>{{form.curatorName}}</p>
+                                            <div *ngIf="form.createMode" class="form-group row">
+
+                                                <div class="col-md-12">
+                                                    <mat-form-field appearance="outline" class="d-block">
+                                                        <mat-select [name]="form.id" placeholder="Tên người vi phạm" [(ngModel)]="form.curatorId">
+                                                            <mat-option>None</mat-option>
+                                                            <ng-container *ngFor="let user of projectUserList">
+                                                                <mat-option *ngIf="user.id != ngvipham" [value]="user.id">{{user.fullName}} - ({{user.emailAddress}})</mat-option>
+                                                            </ng-container>
+                                                        </mat-select>
+                                                    </mat-form-field>
+                                                </div>
+
+                                            </div>
+                                            <div *ngIf="!form.createMode" class="text-center">
+                                                <button *ngIf="permission.isGranted(SaoDo_AuditResult_Update)" [disabled]="isEditing" class="btn btn-sm bg-secondary mr-1" mat-raised-button style="margin-right:20px ;" (click)="editPeople(form);">Edit</button>
+                                                <button *ngIf="permission.isGranted(SaoDo_AuditResult_Delete)" [disabled]="isEditing" class="btn btn-sm bg-danger ml-1" mat-raised-button (click)="deletePeople(form)">Delete</button>
+                                            </div>
+                                            <div *ngIf="form.createMode" class=" text-center ">
+                                                <button (click)="save(item.id,form);" class="btn btn-primary btn-action mr-1 ml-3">Save</button>
+                                                <button (click)="cancel();" isAllowed=true; class="btn btn-default btn-action">Cancel</button>
+
+                                            </div>
+                                        </div>
+                                        <div class="text-center">
+
+                                        </div>
+                                    </div>
+                                    <div *ngIf="permission.isGranted(SaoDo_AuditResult_Create)">
+                                        <form class="form-horizontal">
+                                            <div class="modal-body" style="display: flex;flex-direction: column;align-items: center;">
+                                                <div class="form-group row required">
+                                                    <mat-form-field appearance="outline">
+                                                        <mat-select [disabled]="isEditing" (selectionChange)="onChange(ngvipham.value, ngliendoi.value)" name="ngsaipham" placeholder="Tên người vi phạm" #ngvipham>
+                                                            <ng-container *ngFor="let user of projectUserList">
+                                                                <mat-option [value]="user.id">{{user.fullName}} - ({{user.emailAddress}})
+                                                                </mat-option>
+                                                            </ng-container>
+
+                                                        </mat-select>
+                                                    </mat-form-field>
+                                                </div>
+                                                <div class="form-group row required">
+                                                    <mat-form-field appearance="outline">
+                                                        <mat-select [disabled]="isEditing" (selectionChange)="onChange(ngvipham.value, ngliendoi.value)" name="ngliendoi" placeholder="Tên người liên đới" #ngliendoi>
+                                                            <mat-option>None</mat-option>
+                                                            <ng-container *ngFor="let user of projectUserList">
+                                                                <mat-option *ngIf="user.id != ngvipham.value" [value]="user.id">{{user.fullName}} - ({{user.emailAddress}})</mat-option>
+                                                            </ng-container>
+                                                        </mat-select>
+                                                    </mat-form-field>
+                                                </div>
+
+
+                                                <div class="form-group row required">
+                                                    <button [disabled]="!projectUser.userId" class="btn bg-blue" mat-raised-button (click)="submit(item)">Submit</button>
+                                                </div>
+                                            </div>
+
+                                        </form>
+                                    </div>
+                                </td>
+
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+
+        </div>
+    </div>
+</section>

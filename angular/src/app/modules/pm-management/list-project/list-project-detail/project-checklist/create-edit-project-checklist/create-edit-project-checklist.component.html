@@ -1,0 +1,46 @@
+<form class="form-horizontal" autocomplete="off" #timesheetForm="ngForm" novalidate>
+    <abp-modal-header title="Create/edit project checklist" (onCloseClick)="dialogRef.close()">
+    </abp-modal-header>
+    <div class="modal-body">
+        <div class="col-md-12">
+            <p *ngIf="listItems.length==0">Danh sách project checklist rỗng!</p>
+            <div class="fixTableHead">
+                <table *ngIf="listItems.length !==0" style="border-collapse: collapse;" class="table table-hover text-nowrap">
+                    <thead class="bg-light">
+                        <tr>
+                            <th>
+                               <span class="mr-2">Select All</span>
+                                <span>
+                                    <mat-checkbox (change)="checkAllTask($event)" [checked]="checkAllItems == 1"
+                                       class="m-l-11i"></mat-checkbox>
+                                  </span>
+                            </th>
+                            <th>Category</th>
+                            <th>Item</th>
+                            <th>Man</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of listItems;let i=index">
+                            <td class="text-center">
+                                 <mat-checkbox #checkItem [(ngModel)]="item.createMode" (change)="updateCheckAllStatus(item, checkItem)"
+                      [ngModelOptions]="{standalone: true}" style="padding-left: 8px;" class="m-l-11i"></mat-checkbox>
+                            </td>
+                            <td class="text-center">{{item.categoryName}}</td>
+                            <td class="text-center">{{item.name}}</td>
+                            <td class="text-center" style="white-space: normal; width: 300px;"><span  [ngClass]="APP_CONST.ProjectTypeStyle[getByEnum(i,APP_ENUM.ProjectType)]" *ngFor="let i of item.mandatorys" class="mr-2">{{getByEnum(i,APP_ENUM.ProjectType)}} </span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+    <!--         
+    </div> -->
+    <div align="end" class="mat-dialog-actions" mat-dialog-actions="">
+        <button class="btn btn-default cancel-banks" mat-raised-button mat-dialog-close>Cancel</button>
+        <button mat-raised-button color="primary" class="saving-btn"mat-button
+        [disabled]="!timesheetForm.form.valid ||isLoading" (click)="SaveAndClose()"  >Save</button>
+    </div>
+</form>

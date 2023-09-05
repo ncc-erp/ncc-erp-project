@@ -1,0 +1,310 @@
+<form style="  display: flex;
+flex-direction: column;"
+  class="form-horizontal"
+  autocomplete="off"
+  #createUserModal="ngForm"
+  (ngSubmit)="save()"
+>
+  <abp-modal-header
+    [title]="'CreateNewUser' | localize"
+    (onCloseClick)="dialogRef.close()"
+   
+  ></abp-modal-header>
+  <div class="modal-body" style="
+  max-height: 80vh;
+  overflow-y: auto;">
+    <tabset>
+      <tab [heading]="'UserDetails' | localize" class="pt-3 px-2">
+        <div class="form-group row required">
+          <label class="col-md-3 col-form-label" for="name">
+            {{ "Name" | localize }}
+          </label>
+          <div class="col-md-9">
+            <input
+              type="text"
+              class="form-control"
+              name="name"
+              id="name"
+              required
+              maxlength="32"
+              [(ngModel)]="user.name"
+              #nameModel="ngModel"
+              #nameEl
+            />
+            <abp-validation-summary
+              [control]="nameModel"
+              [controlEl]="nameEl"
+            ></abp-validation-summary>
+          </div>
+        </div>
+
+      
+        <div class="form-group row required">
+          <label class="col-md-3 col-form-label" for="surname">
+            {{ "Surname" | localize }}
+          </label>
+          <div class="col-md-9">
+            <input
+              type="text"
+              class="form-control"
+              name="surname"
+              id="surname"
+              required
+              maxlength="32"
+              [(ngModel)]="user.surname"
+              #surnameModel="ngModel"
+              #surnameEl
+            />
+            <abp-validation-summary
+              [control]="surnameModel"
+              [controlEl]="surnameEl"
+            ></abp-validation-summary>
+          </div>
+        </div>
+        <div class="form-group row required">
+          <label class="col-md-3 col-form-label" for="userName">
+            {{ "UserName" | localize }}
+          </label>
+          <div class="col-md-9">
+            <input
+              type="text"
+              class="form-control"
+              name="userName1"
+              id="userName1"
+              required
+              minlength="2"
+              maxlength="32"
+              [(ngModel)]="user.userName"
+              #userNameModel="ngModel"
+              #userNameEl
+            />
+            <abp-validation-summary
+              [control]="userNameModel"
+              [controlEl]="userNameEl"
+            ></abp-validation-summary>
+          </div>
+        </div>
+        <div class="form-group row required">
+          <label class="col-md-3 col-form-label" for="password">
+            {{ "Password" | localize }}
+          </label>
+          <div class="col-md-9">
+            <input
+              type="password"
+              class="form-control"
+              name="password1"
+              id="password1"
+              required
+              maxlength="32"
+              validateEqual="confirmPassword"
+              reverse="true"
+              pattern="(?=^.{8,}$)(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s)[0-9a-zA-Z!@#$%^&*()]*$"
+              [(ngModel)]="user.password"
+              #passwordModel="ngModel"
+              #passwordEl
+            />
+            <abp-validation-summary
+              [control]="passwordModel"
+              [controlEl]="passwordEl"
+              [customValidationErrors]="passwordValidationErrors"
+            ></abp-validation-summary>
+          </div>
+        </div>
+        <div class="form-group row required">
+          <label class="col-md-3 col-form-label" for="confirmPassword">
+            {{ "ConfirmPassword" | localize }}
+          </label>
+          <div class="col-md-9">
+            <input
+              type="password"
+              class="form-control"
+              name="confirmPassword"
+              id="confirmPassword"
+              required
+              maxlength="32"
+              validateEqual="password"
+              reverse="false"
+              ngModel
+              #confirmPasswordModel="ngModel"
+              #confirmPasswordEl
+            />
+            <abp-validation-summary
+              [control]="confirmPasswordModel"
+              [controlEl]="confirmPasswordEl"
+              [customValidationErrors]="confirmPasswordValidationErrors"
+            ></abp-validation-summary>
+          </div>
+        </div>
+         
+        
+      
+     
+        <!-- <div class="form-group row ">
+          <label class="col-md-3 col-form-label" for="userCode">
+            {{ "userCode" | localize }}
+          </label>
+          <div class="col-md-9">
+            <input
+              type="text"
+              class="form-control"
+              name="userCode"
+              id="userCode"
+              [(ngModel)]="user.userCode"
+            />
+          </div>
+        </div> -->
+
+    
+      <div class="form-group row required">
+        <label class="col-md-3 col-form-label" for="branch">Branch:</label>
+        <div class="col-md-9 ">
+            <mat-form-field class="w-100" appearance="outline">
+                <mat-select [(ngModel)]="user.branchId" name="branchId" placeholder="select branch" required
+                    #branch="ngModel">
+                    <mat-option *ngFor="let branch of userBranchList" [value]="branch.id">
+                        {{branch.displayName}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-error class="mt-1" *ngIf="branch.hasError('required') && branch.touched"
+                style="font-size: 13px;">
+                This field is required
+            </mat-error>
+        </div>
+      </div>
+      <div class="form-group row required">
+        <label class="col-md-3 col-form-label" for="position">Position:</label>
+        <div class="col-md-9 ">
+            <mat-form-field class="w-100" appearance="outline">
+                <mat-select [(ngModel)]="user.positionId" name="positionId" placeholder="select position" required
+                    #position="ngModel">
+                    <mat-option *ngFor="let position of userPositionList" [value]="position.id">
+                        {{position.shortName}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-error class="mt-1" *ngIf="position.hasError('required') && position.touched"
+                style="font-size: 13px;">
+                This field is required
+            </mat-error>
+        </div>
+      </div>
+    <div class="form-group row required">
+      <label class="col-md-3 col-form-label" for="userType">User type:</label>
+      <div class="col-md-9 ">
+          <mat-form-field class="w-100" appearance="outline">
+              <mat-select [(ngModel)]="user.userType" name="userType" placeholder="select user Type" required
+                  #userType="ngModel">
+                  <mat-option *ngFor="let userType of userTypeList" [value]="APP_ENUM.UserType[userType]">
+                      {{userType}}</mat-option>
+              </mat-select>
+          </mat-form-field>
+          <mat-error class="mt-1" *ngIf="userType.hasError('required') && userType.touched"
+              style="font-size: 13px;">
+              This field is required
+          </mat-error>
+      </div>
+  </div>
+
+        <div class="form-group row required">
+          <label class="col-md-3 col-form-label" for="userLevel">Level:</label>
+          <div class="col-md-9 ">
+              <mat-form-field class="w-100" appearance="outline">
+                  <mat-select [(ngModel)]="user.userLevel" name="userLevel" placeholder="select level" required
+                      #userLevel="ngModel">
+                      <mat-option *ngFor="let level of userLevelList" [value]="APP_ENUM.UserLevel[level]">
+                          {{level}}</mat-option>
+                  </mat-select>
+              </mat-form-field>
+              <mat-error class="mt-1" *ngIf="userLevel.hasError('required') && userLevel.touched"
+                  style="font-size: 13px;">
+                  This field is required
+              </mat-error>
+          </div>
+      </div>
+
+        <!-- <div class="form-group row required">
+          <label class="col-md-3 col-form-label" for="userSkills">Skill:</label>
+          <div class="col-md-9 ">
+              <mat-form-field class="w-100" appearance="outline">
+                  <mat-select multiple  [(ngModel)]="user.userSkills" name="projectPM" placeholder="select skill" required
+                      #userSkills="ngModel">
+                      <mat-option *ngFor="let skill of skillList" [value]="{skillId:skill.id}">
+                          {{skill.name}}</mat-option>
+                  </mat-select>
+              </mat-form-field>
+              <mat-error class="mt-1" *ngIf="userSkills.hasError('required') && userSkills.touched"
+                  style="font-size: 13px;">
+                  This field is required
+              </mat-error>
+          </div>
+      </div> -->
+        <div class="form-group row required">
+          <label class="col-md-3 col-form-label" for="emailAddress">
+            {{ "EmailAddress" | localize }}
+          </label>
+          <div class="col-md-9">
+            <input
+              type="email"
+              class="form-control"
+              name="emailAddress"
+              id="emailAddress"
+              required
+              maxlength="256"
+              pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{1,})+$"
+              [(ngModel)]="user.emailAddress"
+              #emailAddressModel="ngModel"
+              #emailAddressEl
+            />
+            <abp-validation-summary
+              [control]="emailAddressModel"
+              [controlEl]="emailAddressEl"
+            ></abp-validation-summary>
+          </div>
+        </div>
+        <!-- <div class="form-group row mb-0">
+          <label class="col-md-3 col-form-label">
+            {{ "IsActive" | localize }}
+          </label>
+          <div class="col-md-9">
+            <div class="custom-control custom-checkbox">
+              <input
+                type="checkbox"
+                class="custom-control-input"
+                name="isActive"
+                id="isActive"
+                [(ngModel)]="user.isActive"
+              />
+              <label class="custom-control-label mt-2" for="isActive"></label>
+            </div>
+          </div>
+        </div> -->
+      </tab>
+      <!-- <tab [heading]="'UserRoles' | localize" class="pt-3 px-2">
+        <div class="form-group row mb-0">
+          <ng-container *ngFor="let role of roles; let i = index">
+            <div class="col-md-6">
+              <div class="custom-control custom-checkbox">
+                <input
+                  type="checkbox"
+                  class="custom-control-input"
+                  [id]="'role_' + i"
+                  [checked]="isRoleChecked(role.normalizedName)"
+                  (change)="onRoleChange(role, $event)"
+                />
+                <label class="custom-control-label" [for]="'role_' + i">
+                  {{ role.name }}
+                </label>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </tab> -->
+    </tabset>
+  </div>
+  <abp-modal-footer
+  
+    [cancelDisabled]="saving"
+    [saveDisabled]="!createUserModal.form.valid || saving"
+    (onCancelClick)="dialogRef.close()"
+  
+  ></abp-modal-footer>
+</form>

@@ -1,0 +1,126 @@
+<form action="" autocomplete="off" (submit)="SaveAndClose()">
+    <abp-modal-header
+    [title]="'Edit for project: ' + projectName | localize"
+      (onCloseClick)="bsModalRef.hide()"
+    ></abp-modal-header>
+    <div class="modal-body">
+        <div class="form-group row required">
+            <label class="col-md-4 col-form-label" for="Invoice Number">Invoice Number: </label>
+            <div class="col-md-8">
+              <input
+                class="form-control mt-1"
+                type="number"
+                step="1"
+                placeholder="Invoice Number"
+                required
+                name="invoiceNumber"
+                [(ngModel)]="invoiceNumber"
+                #invoice="ngModel"
+                #invoiceEl
+                suffix="%"
+              />
+              <abp-validation-summary [control]="invoice" [controlEl]="invoiceEl">
+              </abp-validation-summary>
+            </div>
+        </div>
+        <div class="form-group row required">
+            <label class="col-md-4 col-form-label" for="Working Day">Working Day: </label>
+            <div class="col-md-8">
+              <input
+                class="form-control mt-1"
+                type="number"
+                step="0.01"
+                placeholder="Working Day"
+                required
+                name="workingDay"
+                [(ngModel)]="workingDay"
+                #working="ngModel"
+                #workingEl
+                suffix="%"
+              />
+              <abp-validation-summary [control]="working" [controlEl]="workingEl">
+              </abp-validation-summary>
+            </div>
+        </div>
+        <div class="form-group row required">
+          <label class="col-md-4 col-form-label" for="Transfer Fee">Transfer Fee: </label>
+          <div class="col-md-8">
+            <input 
+              class="form-control mt-1" 
+              type="number" step="0.01" 
+              placeholder="Transfer Fee" 
+              required 
+              name="transferFee"
+              [(ngModel)]="transferFee" 
+              #transferFeeId="ngModel" 
+              #transferFeeEl suffix="%" 
+            />
+            <abp-validation-summary [control]="transferFeeId" [controlEl]="transferFeeEl">
+            </abp-validation-summary>
+          </div>
+        </div>
+        <div class="form-group row required">
+          <label class="col-md-4 col-form-label" for="Discount">Discount: </label>
+          <div class="col-md-8">
+            <input 
+              class="form-control mt-1" 
+              type="number" 
+              step="0.01" 
+              placeholder="Discount" 
+              required name="discount"
+              [(ngModel)]="discount" 
+              #discountId="ngModel" 
+              #discountEl suffix="%" />
+            <abp-validation-summary [control]="discountId" [controlEl]="discountEl">
+            </abp-validation-summary>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-form-label col-md-4 pt-2">
+              Invoice Setting:
+          </label>
+          <div class="col-md-8">
+              <mat-form-field class="w-100" appearance="outline">
+                  <mat-select name="invoiceSetting" [(ngModel)]="isMainProjectInvoice">
+                      <mat-option *ngFor="let item of invoiceSettingOptions" [value]="item.value">
+                          {{item.key}}
+                      </mat-option>
+                  </mat-select>
+              </mat-form-field>
+          </div>
+      </div>
+      <div *ngIf="isMainProjectInvoice == APP_ENUMS.InvoiceSetting.Main" class="form-group row">
+          <label class="col-form-label col-md-4 pt-2">
+              Sub projects:
+          </label>
+          <div class="col-md-8">
+              <app-multi-select-option class="w-100" [dropdownData]="listSelectProject"
+                  [selectLabel]="'Select sub projects'" [selectedValues]="subProjectIds"
+                  (onMultiSelectionChange)="subProjectIds = $event"
+                  [searchPlaceHolder]="'Search projects'">
+              </app-multi-select-option>
+          </div>
+      </div>
+      <div *ngIf="!isMainProjectInvoice" class="form-group row required">
+          <label class="col-form-label col-md-4 pt-2">
+              Main project:
+          </label>
+          <div class="col-md-8" appearance="outline">
+              <app-multi-select-option class="w-100" [required]="true" [searchLabel]="'Search project'"
+                  [selectLabel]="'Select main project'" [selectedValue]="mainProjectId"
+                  [dropdownData]="listSelectProject" [multiple]="false"
+                  (onSingleSelectionChange)="mainProjectId = $event;"
+                  [searchPlaceHolder]="'Search project'">
+              </app-multi-select-option>
+          </div>
+      </div>
+    </div>
+  
+    <abp-modal-footer
+      [cancelDisabled]="saving"
+      (onCancelClick)="bsModalRef.hide()"
+      [saveDisabled]="saving"
+    ></abp-modal-footer>
+  </form>
+
+  

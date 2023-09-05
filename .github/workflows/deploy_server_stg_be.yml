@@ -20,7 +20,7 @@ jobs:
         run: |
           # mv /var/www/app_git/project/stg-dotnet-host-project/wwwroot/avatars/ ~/soft/check_node_git/project/
           # cp -r /var/www/app_git/project/stg-dotnet-host-project/wwwroot/avatars/ ~/soft/check_node_git/project/
-          cp -r /var/www/app_git/project/stg-dotnet-host-project/Uploads/ ~/soft/check_node_git/project/
+          cp -r /var/www/app_git/project/stg-dotnet-host-project/Uploads/* ~/soft/check_node_git/project/
           cp -r /var/www/app_git/project/stg-dotnet-host-project/App_Data/Logs/* /home/nccsoft/data_git/project/Logs/
           
       - name: Build Migrator
@@ -78,7 +78,7 @@ jobs:
           cp appsettings.json /var/www/app_git/project/stg-dotnet-host-project/
           cd /var/www/app_git/project/stg-dotnet-host-project/
           # mv ~/soft/check_node_git/project/avatars /var/www/app_git/project/stg-dotnet-host-project/wwwroot/
-          cp ~/soft/check_node_git/project/timesheets/* /var/www/app_git/project/stg-dotnet-host-project/Uploads/timesheets/
+          cp -r ~/soft/check_node_git/project/timesheets/* /var/www/app_git/project/stg-dotnet-host-project/Uploads/timesheets/
           mkdir -p /var/www/app_git/project/stg-dotnet-host-project/App_Data/Logs/
           cp -r /home/nccsoft/data_git/project/Logs/* /var/www/app_git/project/stg-dotnet-host-project/App_Data/Logs/
           chmod 777 -R App_Data/

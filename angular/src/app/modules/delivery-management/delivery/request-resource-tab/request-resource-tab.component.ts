@@ -22,6 +22,7 @@ import { IDNameDto } from '@app/service/model/id-name.dto';
 import { ProjectDescriptionPopupComponent } from './project-description-popup/project-description-popup.component';
 import { FormCvUserComponent } from './form-cv-user/form-cv-user.component';
 import { ListProjectService } from '@app/service/api/list-project.service';
+import { DescriptionPopupComponent } from './description-popup/description-popup.component';
 
 @Component({
   selector: 'app-request-resource-tab',
@@ -50,9 +51,7 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
   public requestCode:any = -1;
   public searchCode:string = "";
   public listPriorities: any[] = []
-  public selectedLevel: any = -1
   public isAndCondition: boolean = false;
-  public skillIds: number[]
   public sortResource = {priority: 0}
   public theadTable: THeadTable[] = [
     { name: '#' },
@@ -75,6 +74,7 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
   ResourceRequest_View = PERMISSIONS_CONSTANT.ResourceRequest_View;
   ResourceRequest_PlanNewResourceForRequest = PERMISSIONS_CONSTANT.ResourceRequest_PlanNewResourceForRequest;
   ResourceRequest_UpdateResourceRequestPlan = PERMISSIONS_CONSTANT.ResourceRequest_UpdateResourceRequestPlan;
+  ResourceRequest_CreateBillResourceForRequest = PERMISSIONS_CONSTANT.ResourceRequest_CreateBillResourceForRequest;
   ResourceRequest_RemoveResouceRequestPlan = PERMISSIONS_CONSTANT.ResourceRequest_RemoveResouceRequestPlan;
   ResourceRequest_SetDone = PERMISSIONS_CONSTANT.ResourceRequest_SetDone;
   ResourceRequest_CancelAllRequest = PERMISSIONS_CONSTANT.ResourceRequest_CancelAllRequest;
@@ -292,11 +292,9 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
   // #region paging, search, sortable, filter
   protected list(request: any, pageNumber: number, finishedCallback: Function): void {
     let requestBody: any = request
-    requestBody.skillIds = this.skillIds
     requestBody.isAndCondition = this.isAndCondition
     let objFilter = [
       { name: 'status', isTrue: false, value: this.selectedStatus },
-      { name: 'level', isTrue: false, value: this.selectedLevel },
       {name:'projectId',isTrue:false, value:this.projectId},
       {name:'code',isTrue:false,value: this.requestCode}
     ];
@@ -333,7 +331,6 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
         request.filterItems = this.clearFilter(request, item.name, '')
       }
     })
-    requestBody.skillIds = null
     requestBody.sort = null
     requestBody.sortDirection = null
     this.isLoading = false;
@@ -348,8 +345,8 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
   clearAllFilter() {
     this.filterItems = []
     this.searchText = ''
-    this.skillIds = []
-    this.selectedLevel = -1
+    this.projectId = -1
+    this.requestCode = -1
     this.selectedStatus = 0
     this.changeSortableByName('priority', 'DESC')
     this.sortable = new SortableModel('', 1, '')
@@ -437,6 +434,13 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
   viewRecruitment(url) {
     window.open(url, '_blank')
   }
+  showDescription(note){
+    const show = this.dialog.open(DescriptionPopupComponent, {
+      width: "700px",
+      maxHeight: '90vh',
+      data: note
+    })
+  }
   protected delete(item: RequestResourceDto): void {
     abp.message.confirm(
       "Delete this request?",
@@ -446,6 +450,7 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
           this.resourceRequestService.delete(item.id).pipe(catchError(this.resourceRequestService.handleError)).subscribe(() => {
             abp.notify.success(" Delete request successfully");
             this.refresh();
+            this.getAllRequestCode();
           });
 
         }

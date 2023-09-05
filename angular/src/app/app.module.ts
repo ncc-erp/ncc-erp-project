@@ -219,6 +219,7 @@ import { ActiveTimesheetProjectComponent } from './modules/timesheet/timesheet-d
 import { BillAccountPlanComponent } from './modules/delivery-management/delivery/available-resource-tab/bill-account-plan/bill-account-plan.component';
 import { GeneralInformationComponent } from './modules/pm-management/list-project/list-project-detail/general-information/general-information.component';
 import { FormCvUserComponent } from './modules/delivery-management/delivery/request-resource-tab/form-cv-user/form-cv-user.component';
+import { DescriptionPopupComponent } from './modules/delivery-management/delivery/request-resource-tab/description-popup/description-popup.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, "./assets/i18n/", ".json");
@@ -424,6 +425,7 @@ export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
     BillAccountPlanComponent,
     GeneralInformationComponent,
     FormCvUserComponent,
+    DescriptionPopupComponent,
   ],
   imports: [
     CommonModule,

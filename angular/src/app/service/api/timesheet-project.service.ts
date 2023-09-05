@@ -113,7 +113,7 @@ export class TimesheetProjectService extends BaseApiService {
   }
 
   public exportTimeSheetDetail(data: any): Observable<any> {
-    return this.http.post(this.rootUrl + "/ExportTSDetail", data);
+    return this.http.post(this.rootUrl + "/ExportInvoiceTSdetail", data);
   }
 
   updateTimesheetProject(item: any): Observable<any> {

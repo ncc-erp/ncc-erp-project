@@ -153,7 +153,7 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
   Timesheets_TimesheetDetail_ExportInvoiceForTax = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_ExportInvoiceForTax;
   Timesheets_TimesheetDetail_EditInvoiceInfo = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_EditInvoiceInfo;
   Timesheets_TimesheetDetail_SendInvoiceToFinfast = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_SendInvoiceToFinfast;
-  Timesheets_TimesheetDetail_ExportTSDetail = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_ExportTSDetail
+  Timesheets_TimesheetDetail_ExportInvoiceTSdetail = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_ExportInvoiceTSdetail
   constructor(
     private timesheetService: TimesheetService,
     public timesheetProjectService: TimesheetProjectService,
@@ -203,7 +203,7 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
   }
 
   isShowBtnExportTsDetail() {
-    return this.isGranted(this.Timesheets_TimesheetDetail_ExportTSDetail)
+    return this.isGranted(this.Timesheets_TimesheetDetail_ExportInvoiceTSdetail)
   }
   
   showDialog(command: String, Timesheet: any): void {

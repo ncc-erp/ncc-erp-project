@@ -908,6 +908,43 @@ namespace ProjectManagement.APIs.TimesheetProjects
             }
         }
 
+        [AbpAuthorize(PermissionNames.Timesheets_TimesheetDetail_ExportInvoiceTSdetail)]
+        public async Task<FileBase64Dto> ExportInvoiceTSdetail(InputExportInvoiceDto input)
+        {
+            var dataInvoice = await GetInvoiceData(input);
+            List<TimesheetDetailUser> dataTimesheetDetail = await GetTimesheetDetailData(dataInvoice);
+
+            var templateFilePath = Path.Combine(templateFolder, "Invoice.xlsx");
+
+            using (var memoryStream = new MemoryStream(File.ReadAllBytes(templateFilePath)))
+            {
+                using (var excelPackageIn = new ExcelPackage(memoryStream))
+                {
+                    FillDataToSheetTimesheetDetail(excelPackageIn, dataTimesheetDetail);
+                    var sheet1ToRemove = excelPackageIn.Workbook.Worksheets["Invoice"];
+                    if (sheet1ToRemove != null)
+                    {
+                        excelPackageIn.Workbook.Worksheets.Delete(sheet1ToRemove);
+                    }
+
+                    var sheet2ToRemove = excelPackageIn.Workbook.Worksheets["Detail"];
+                    if (sheet2ToRemove != null)
+                    {
+                        excelPackageIn.Workbook.Worksheets.Delete(sheet2ToRemove);
+                    }
+                    string fileBase64 = Convert.ToBase64String(excelPackageIn.GetAsByteArray());
+                    
+
+                    return new FileBase64Dto
+                    {
+                        FileName = dataInvoice.ExportFileName(),
+                        FileType = MimeTypeNames.ApplicationVndOpenxmlformatsOfficedocumentSpreadsheetmlSheet,
+                        Base64 = fileBase64
+                    };
+                }
+            }
+        }
+
         private async Task<List<TimesheetDetailUser>> GetTimesheetDetailData(InvoiceData invoiceData)
         {
             int month = invoiceData.Info.Month;

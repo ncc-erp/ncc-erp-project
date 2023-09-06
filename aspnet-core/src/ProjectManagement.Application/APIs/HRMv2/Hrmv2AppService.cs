@@ -181,31 +181,25 @@ namespace ProjectManagement.APIs.HRMv2
         [HttpPost]
         public async Task UpdateUserFromHRM(CreateUpdateUserFromHRMV2Dto input)
         {
-            try
+            CheckSecurityCode();
+            var user = await WorkScope.GetAll<User>()
+                .Where(x => x.EmailAddress.ToLower().Trim() == input.EmailAddress.ToLower().Trim())
+                .FirstOrDefaultAsync();
+            var positionId = GetPositionIdByCode(input.PositionCode);
+            if (user != null)
             {
-                CheckSecurityCode();
-                var user = await WorkScope.GetAll<User>()
-                    .Where(x => x.EmailAddress.ToLower().Trim() == input.EmailAddress.ToLower().Trim())
-                    .FirstOrDefaultAsync();
-                var positionId = GetPositionIdByCode(input.PositionCode);
-                if (user != null)
-                {
-                    var branch = await GetBranchByCode(input.BranchCode);
-                    user.UserName = input.EmailAddress;
-                    user.Name = input.Name;
-                    user.Surname = input.Surname;
-                    user.EmailAddress = input.EmailAddress;
-                    user.UserType = input.Type;
-                    user.UserLevel = input.Level;
-                    user.BranchId = branch.Id;
-                    user.PositionId = positionId;
-                    await WorkScope.UpdateAsync(user);
-                }
+                var branch = await GetBranchByCode(input.BranchCode);
+                user.UserName = input.EmailAddress;
+                user.Name = input.Name;
+                user.Surname = input.Surname;
+                user.EmailAddress = input.EmailAddress;
+                user.UserType = input.Type;
+                user.UserLevel = input.Level;
+                user.BranchId = branch.Id;
+                user.PositionId = positionId;
+                await WorkScope.UpdateAsync(user);
             }
-            catch (Exception)
-            {
-                throw new UserFriendlyException("User email is not exist!");
-            }
+            throw new UserFriendlyException("User email is not exist!");
         }
 
         [HttpPost]

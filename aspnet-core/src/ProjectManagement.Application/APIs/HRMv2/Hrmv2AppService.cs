@@ -197,8 +197,8 @@ namespace ProjectManagement.APIs.HRMv2
                 user.UserLevel = input.Level;
                 user.BranchId = branch.Id;
                 user.PositionId = positionId;
+                await WorkScope.UpdateAsync(user);
             }
-            await WorkScope.UpdateAsync(user);
         }
 
         [HttpPost]

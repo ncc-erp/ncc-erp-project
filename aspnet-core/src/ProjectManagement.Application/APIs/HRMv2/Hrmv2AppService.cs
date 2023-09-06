@@ -181,23 +181,30 @@ namespace ProjectManagement.APIs.HRMv2
         [HttpPost]
         public async Task UpdateUserFromHRM(CreateUpdateUserFromHRMV2Dto input)
         {
-            CheckSecurityCode();
-            var user = await WorkScope.GetAll<User>()
-                .Where(x => x.EmailAddress.ToLower().Trim() == input.EmailAddress.ToLower().Trim())
-                .FirstOrDefaultAsync();
-            var positionId = GetPositionIdByCode(input.PositionCode);
-            if (user != null)
+            try
             {
-                var branch = await GetBranchByCode(input.BranchCode);
-                user.UserName = input.EmailAddress;
-                user.Name = input.Name;
-                user.Surname = input.Surname;
-                user.EmailAddress = input.EmailAddress;
-                user.UserType = input.Type;
-                user.UserLevel = input.Level;
-                user.BranchId = branch.Id;
-                user.PositionId = positionId;
-                await WorkScope.UpdateAsync(user);
+                CheckSecurityCode();
+                var user = await WorkScope.GetAll<User>()
+                    .Where(x => x.EmailAddress.ToLower().Trim() == input.EmailAddress.ToLower().Trim())
+                    .FirstOrDefaultAsync();
+                var positionId = GetPositionIdByCode(input.PositionCode);
+                if (user != null)
+                {
+                    var branch = await GetBranchByCode(input.BranchCode);
+                    user.UserName = input.EmailAddress;
+                    user.Name = input.Name;
+                    user.Surname = input.Surname;
+                    user.EmailAddress = input.EmailAddress;
+                    user.UserType = input.Type;
+                    user.UserLevel = input.Level;
+                    user.BranchId = branch.Id;
+                    user.PositionId = positionId;
+                    await WorkScope.UpdateAsync(user);
+                }
+            }
+            catch (Exception)
+            {
+                throw new UserFriendlyException("User email is not exist!");
             }
         }
 
@@ -220,7 +227,7 @@ namespace ProjectManagement.APIs.HRMv2
 
             var activeReportId = await _resourceManager.GetActiveReportId();
             string note = "Tạm nghỉ từ HRM Tool";
-           
+
             // Join dự án nghỉ việc dưới dạng Official
             var inputToJoinQuitProject = new InputUpdateUserIntoProjectDto()
             {
@@ -281,7 +288,7 @@ namespace ProjectManagement.APIs.HRMv2
                 IsPool = false,
             };
 
-            
+
             await JoinOrUpdateUserIntoPauseProject(inputToJoinQuitProject);
 
             // Ra khỏi các dự án đang làm việc
@@ -294,7 +301,7 @@ namespace ProjectManagement.APIs.HRMv2
             };
             var sb = await _resourceManager.ReleaseUserFromAllWorkingProjectsByHRM(employee, activeReportId, note);
 
-           
+
             // Gửi thông báo cho komu
             sb.AppendLine($"{employee.KomuAccountInfo} pause on {DateTimeUtils.ToString(input.DateAt)}");
             sb.AppendLine("");
@@ -324,7 +331,7 @@ namespace ProjectManagement.APIs.HRMv2
 
             var activeReportId = await _resourceManager.GetActiveReportId();
             string note = "Nghỉ sinh từ HRM Tool";
-            
+
 
 
             // Join dự án nghỉ sinh
@@ -335,7 +342,7 @@ namespace ProjectManagement.APIs.HRMv2
                 ActiveReportId = activeReportId,
                 StartTime = input.DateAt,
                 IsPool = true,
-                
+
             };
             var pu = await JoinOrUpdateUserIntoMaternityLeaveProject(inputToJoinMaternityLeave);
             // Ra khỏi các dự án đang làm việc
@@ -475,8 +482,8 @@ namespace ProjectManagement.APIs.HRMv2
                 .Where(x => x.AllocatePercentage > 0);
         }
 
-        
-       
+
+
 
         //Join or Update User into Project with Code = NGHI_SINH_PROJECT_CODE
         private async Task<ProjectUser> JoinOrUpdateUserIntoMaternityLeaveProject(InputUpdateUserIntoProjectDto input)
@@ -601,5 +608,5 @@ namespace ProjectManagement.APIs.HRMv2
         }
     }
 
-    
+
 }

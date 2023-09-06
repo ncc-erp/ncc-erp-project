@@ -275,7 +275,7 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
         abp.notify.success('Update Note Successfully!')
         let index = this.listRequest.findIndex(x => x.id == request.resourceRequestId);
         if (index >= 0) {
-          if (this.typePM == 'PM')
+          if (this.typePM == 'Description')
             this.listRequest[index].pmNote = request.note;
           else
             this.listRequest[index].dmNote = request.note;
@@ -436,7 +436,7 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
   }
   showDescription(note){
     const show = this.dialog.open(DescriptionPopupComponent, {
-      width: "700px",
+      width: "1000px",
       maxHeight: '90vh',
       data: note
     })

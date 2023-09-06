@@ -347,7 +347,7 @@
                     </div>
                   </div>
                   <div class="d-flex justify-content-between mt-4">
-                    <span style="display: inline-block; max-width: 270px;text-align: left;">{{item.createAt | date:'d/MM/y h:mm a'}} by {{item.userRequestName}}</span>
+                    <span style="display: inline-block; max-width: 270px;text-align: left;">{{item.createAt | date:'d/MM/y HH:mm '}} by {{item.userRequestName}}</span>
                     <span>Time need: {{item.timeNeed | date:'d/MM/y'}}</span>
                   </div>
                 </td>
@@ -361,7 +361,7 @@
                 <td class="text-center" style="width: 80px;">
                  <span *ngIf="item.code">{{item.code}}</span>
                 </td>
-                <td style="width: 190px;">
+                <td style="min-width: 191px;">
                   <div class="row" >
                     <div class="col-md-10">
                       <div *ngIf="item.billUserInfo" class="d-flex align-items-start" style="flex-direction: column;" >
@@ -425,7 +425,7 @@
                     </div>
                   </div>
                 </td>
-                <td style="width: 190px;">
+                <td style="min-width: 191px;">
                   <div class="row" >
                     <div class="col-md-10">
                       <div *ngIf="item.planUserInfo" class="d-flex align-items-start" style="flex-direction: column;" >
@@ -493,15 +493,16 @@
                 <td
                   style="
                     white-space: normal;
-                    max-width: 250px;
-                    min-width: 150px;
+                    min-width: 180px;
+                    max-width: 180px;
                   "
                 >
                   <div class="row">
                     <div class="col-md-10">
                       <pre
+                      (click) = "showDescription(item.pmNote);$event.stopPropagation()"
                         class="mb-0 p-0 ml-2 max-line"
-                        (click) = "showDescription(item.pmNote);$event.stopPropagation() "
+                        PrjResizeContent [collapseLine]="3"
                         style="
                           white-space: pre-line;
                           font-family: sans-serif;
@@ -520,7 +521,7 @@
                       <i
                         class="fa fa-edit"
                         (click)="
-                          openModal(item.name, 'PM', item.pmNote, item.id)
+                          openModal(item.name, 'Description', item.pmNote, item.id)
                         "
                       ></i>
                     </div>
@@ -529,14 +530,15 @@
                 <td
                   style="
                     white-space: normal;
-                    max-width: 250px;
-                    min-width: 150px;
+                    min-width: 180px;
+                    max-width: 180px;
                   "
                 >
                   <div class="row">
                     <div class="col-md-10">
                       <pre
-                        class="mb-0 p-0 ml-2"
+                        class="mb-0 p-0 ml-2 max-line-content-3"
+                        PrjResizeContent [collapseLine]="3"
                         style="
                           white-space: pre-line;
                           font-family: sans-serif;
@@ -554,7 +556,7 @@
                       <i
                         class="fa fa-edit"
                         (click)="
-                          openModal(item.name, 'HR/DM', item.dmNote, item.id)
+                          openModal(item.name, 'Note', item.dmNote, item.id)
                         "
                       ></i>
                     </div>
@@ -708,7 +710,7 @@
         <!-- Modal Header -->
         <div class="modal-header">
           <h4 class="modal-title">
-            {{ typePM }} Note:
+            {{ typePM }}:
             <span class="text-success">{{ modal_title }}</span>
           </h4>
           <button type="button" class="close" (click)="closeModal()">
@@ -721,11 +723,10 @@
             <div class="col-md-2">
               <label for="">Note:</label>
             </div>
-            <div class="col-md-10">
+            <div class="col-md-10"  style="height: 550px;">
               <textarea
                 rows="6"
-                cdkTextareaAutosize
-                #autosize="cdkTextareaAutosize"
+                style="height: 100%;"
                 placeholder="Enter note"
                 name="note"
                 type="text"

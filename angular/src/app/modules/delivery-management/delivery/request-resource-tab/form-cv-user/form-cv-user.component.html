@@ -1,7 +1,11 @@
 <form class="form-horizontal" autocomplete="off" #resourceRequestForm="ngForm" novalidate>
-    <abp-modal-header title="Cv User"
-        (onCloseClick)="dialogRef.close()">
-    </abp-modal-header>
+    <div style="position: sticky; top: 0; z-index: 2; background-color: white;">
+        <abp-modal-header
+        title="CV User"
+        (onCloseClick)="dialogRef.close()"
+      >
+      </abp-modal-header>
+      </div>
     <div class="modal-body">
         <div class="form-group row required">
             <label class="col-md-3 col-form-label" for="tenancyName">
@@ -31,7 +35,7 @@
         </div>
         <div class="form-group row required">
             <label class="col-md-3 col-form-label" for="tenancyName">
-                Time Join:
+                Bill Start Date
             </label>
             <div class="col-md-9">
                 <mat-form-field appearance="outline" class="w-100">

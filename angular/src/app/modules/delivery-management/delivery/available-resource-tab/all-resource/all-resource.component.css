@@ -2,7 +2,9 @@
     z-index: 0;
 }
 
-
+::ng-deep .mat-radio-label{
+    margin: 0;
+}
 .all-resource-table i {
     color: #686868;
     font-size: 18px;

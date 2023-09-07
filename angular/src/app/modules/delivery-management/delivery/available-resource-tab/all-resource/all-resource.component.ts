@@ -39,6 +39,9 @@ import { result } from 'lodash-es';
 export class AllResourceComponent extends PagedListingComponentBase<any> implements OnInit {
 
   subscription: Subscription[] = [];
+  public searchSkill:string = '';
+  public searchBranch:string = '';
+  public searchPosition:string ='';
   public listSkills: SkillDto[] = [];
   public listBranchs: BranchDto[] = [];
   public listPositions: PositionDto[] = [];
@@ -165,6 +168,31 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
         this.refresh();
       }
     });
+  }
+
+  selectAllSkill(){
+    this.selectedSkillId = this.listSkills.map(item => item.id)
+    this.refresh()
+  }
+  clearSkill(){
+    this.selectedSkillId = [];
+    this.refresh()
+  }
+  selectAllBranch(){
+    this.selectedBranchIds = this.listBranchs.map(item => item.id)
+    this.refresh()
+  }
+  clearBranch(){
+    this.selectedBranchIds = [];
+    this.refresh()
+  }
+  selectAllPosition(){
+    this.selectedPositions = this.listPositions.map(item => item.id)
+    this.refresh()
+  }
+  clearPosition(){
+    this.selectedPositions= [];
+    this.refresh()
   }
 
   public isAllowCancelPlan(creatorUserId: number) {

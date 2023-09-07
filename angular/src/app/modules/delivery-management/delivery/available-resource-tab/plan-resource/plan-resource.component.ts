@@ -44,6 +44,7 @@ export class PlanResourceComponent
   implements OnInit {
   public listSkills: SkillDto[] = [];
   public skill = '';
+  public searchSkill:string = '';
   public skillsParam = [];
   private subscription: Subscription[] = [];
   public selectedSkillId: number[]
@@ -281,6 +282,15 @@ export class PlanResourceComponent
           };
         });
       }))
+  }
+
+  selectAllSkill(){
+    this.selectedSkillId = this.listSkills.map(item => item.id)
+    this.refresh()
+  }
+  clearSkill(){
+    this.selectedSkillId = [];
+    this.refresh()
   }
 
   skillsCommas(arr) {

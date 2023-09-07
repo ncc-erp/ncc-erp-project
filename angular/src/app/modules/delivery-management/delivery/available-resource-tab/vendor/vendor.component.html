@@ -20,34 +20,39 @@
                                 </button>
                             </div>
                         </div>
-                        <div class="col-3 row justify-content-end">
-                            <label for="" style="margin-top: 13px;" class="col-3 text-right">Skills:</label>
-                            <mat-form-field style="width: 300px;" class="col-9" appearance="outline">
-                                <mat-select placeholder="search skill" multiple (selectionChange)="getDataPage(1)"
-                                    [(ngModel)]="selectedSkillId">
-                                    <div style="width: 334px;"
-                                        style="position: sticky; top: 0; z-index: 2; background-color: white; padding: 10px 7px; padding: 13px 7px 0px 5px;">
-                                        <mat-radio-group aria-label="Filter by" class="w-100 px-3  row"
-                                            [(ngModel)]="isAndCondition" (ngModelChange)="getDataPage(1)"
-                                            style=" width: 100%;">
-                                            <div class="col-4">
-                                                <label style=" white-space: nowrap;" class="mt-2 mr-2">Search
-                                                    type:</label>
-                                            </div>
-                                            <div class="col-8 pt-2">
+                        <div class="col-4 mt-1 d-flex align-items-center">
+                            <mat-form-field appearance="outline" class="flex-grow-1">
+                                <mat-label>Skills:</mat-label>
+                                <mat-select placeholder="select skill" multiple (selectionChange)="getDataPage(1)" [(ngModel)]="selectedSkillId">
+                                    <div style="width: 334px;" style="position: sticky; top: 0; z-index: 2; background-color: white; padding: 10px 7px; padding: 13px 7px 0px 5px;">
+                                        <mat-form-field class="w-100 px-3 "
+                                            style="position: sticky; top: 0; z-index: 2; background-color: white;">
+                                            <input style="height: 30px; padding: 5px 10px; "
+                                            matInput [(ngModel)]="searchSkill"  placeholder="Search" #search
+                                            (keydown)="$event.stopPropagation()">
+                                          </mat-form-field>
+                                        <mat-radio-group aria-label="Filter by" class="w-80 px-2  row" [(ngModel)]="isAndCondition" (ngModelChange)="getDataPage(1)" style=" width: 100%;align-items: center;">                                           
+                                            <div class="col-6 d-flex" style="align-items: center;">
                                                 <mat-radio-button class="mr-3" [value]="true">And</mat-radio-button>
                                                 <mat-radio-button [value]="false">Or</mat-radio-button>
                                             </div>
+                                            <div class="col-6">
+                                                <button class="btn bg-primary" (click) = selectAllSkill()>
+                                                    Select All
+                                                  </button>
+                                                <button class="btn bg-secondary ml-4" (click) = clearSkill()>
+                                                    Clear
+                                                  </button>
+                                            </div>
                                         </mat-radio-group>
                                     </div>
-                                    <mat-option *ngFor="let skill of listSkills" [value]="skill.id">
-                                        {{skill.name}} &nbsp;
-                                        <span *ngIf="skill.skillRank">(  {{skill.skillRank}} <i class="fa fa-star" 
-                                            [ngClass] = '{crimson: skill.skillRank == 5, grey:skill.skillRank ==1 || skill.skillRank == 2,yellow:skill.skillRank == 3 ,orange:skill.skillRank == 4}' style="
-                                            font-size: 13px;"></i> )</span>
+                                    <mat-option *ngFor="let skill of listSkills | listFilter:  'name' : searchSkill" [value]="skill.id">
+                                        {{skill.name}}
                                     </mat-option>
                                 </mat-select>
                             </mat-form-field>
+                            <i class="fas fa-times fa-lg ml-2 mt-2" *ngIf="selectedSkillId?.length > 0"
+                                (click)="selectedSkillId = null; refresh()"></i>
                         </div>
                         <div class="col-1">
                             <i class="fas fa-times fa-lg mt-3" *ngIf="selectedSkillId?.length > 0"

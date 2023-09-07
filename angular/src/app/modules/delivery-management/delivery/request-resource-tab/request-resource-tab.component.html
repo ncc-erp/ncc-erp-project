@@ -721,13 +721,13 @@
         <div class="modal-body">
           <div class="row">
             <div class="col-md-2">
-              <label for="">Note:</label>
+              <label for="">{{ typePM }}:</label>
             </div>
-            <div class="col-md-10"  style="height: 550px;">
+            <div class="col-md-10">
               <textarea
                 rows="6"
-                style="height: 100%;"
-                placeholder="Enter note"
+                style="max-height: 550px;height: 550px;min-height: 200px;"
+                placeholder="{{ typePM }}"
                 name="note"
                 type="text"
                 class="form-control"

@@ -26,7 +26,8 @@
                                     (click)="view(item);" [ngClass]="{'checked': item.seen, 'unchecked': !item.seen}">
                                     <div style="overflow: hidden; overflow-x: hidden; width: 100%;">
                                         <div class="project-list">
-                                            <strong>{{i+1}}.  {{item.projectName}} </strong>
+                                            <strong style="color: #c45858;">{{i+1}}. </strong>
+                                            <strong> {{item.projectName}} </strong>
                                         </div>
                                         <div class="project-list">
                                             <div class="email-address">{{item.pmEmailAddress}} </div>

@@ -436,7 +436,7 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
   }
   showDescription(note){
     const show = this.dialog.open(DescriptionPopupComponent, {
-      width: "1000px",
+      width: "1100px",
       maxHeight: '90vh',
       data: note
     })

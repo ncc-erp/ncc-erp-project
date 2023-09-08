@@ -167,6 +167,8 @@ export const PERMISSIONS_CONSTANT = {
        Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectIssue_Edit: "Projects.OutsourcingProjects.ProjectDetail.TabWeeklyReport.PMProjectIssue.Edit",
        Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectIssue_Delete: "Projects.OutsourcingProjects.ProjectDetail.TabWeeklyReport.PMProjectIssue.Delete",
        Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectIssue_SetDone: "Projects.OutsourcingProjects.ProjectDetail.TabWeeklyReport.PMProjectIssue.SetDone",
+       Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectIssue_ConvertToRisk: "Projects.OutsourcingProjects.ProjectDetail.TabWeeklyReport.PMProjectIssue.ConvertToRisk",
+
 
        Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_CurrentResource: "Projects.OutsourcingProjects.ProjectDetail.TabWeeklyReport.CurrentResource",
        Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_CurrentResource_View: "Projects.OutsourcingProjects.ProjectDetail.TabWeeklyReport.CurrentResource.View",
@@ -385,6 +387,7 @@ export const PERMISSIONS_CONSTANT = {
        Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_Edit : "Projects.OutsourcingProjects.ProjectDetail.TabWeeklyReport.PMProjectRisk.Edit",
        Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_Delete : "Projects.OutsourcingProjects.ProjectDetail.TabWeeklyReport.PMProjectRisk.Delete",
        Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_SetDone : "Projects.OutsourcingProjects.ProjectDetail.TabWeeklyReport.PMProjectRisk.SetDone",
+       Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_ConvertToIssue : "Projects.OutsourcingProjects.ProjectDetail.TabWeeklyReport.PMProjectRisk.ConvertToIssue",
 
        Projects_TrainingProjects_ProjectDetail_TabWeeklyReport_CurrentResource: "Projects.TrainingProjects.ProjectDetail.TabWeeklyReport.CurrentResource",
        Projects_TrainingProjects_ProjectDetail_TabWeeklyReport_CurrentResource_View: "Projects.TrainingProjects.ProjectDetail.TabWeeklyReport.CurrentResource.View",
@@ -561,7 +564,7 @@ export const PERMISSIONS_CONSTANT = {
        Resource_TabVendor_UpdateSkill: "Resource.TabVendor.UpdateSkill",
        Resource_TabVendor_ProjectDetail: "Resource.TabVendor.ProjectDetail",
 
-       
+
        Resource_TabPlanningBillAccount:"Resource.TabPlanning.BillAccount",
        // #endregion
 

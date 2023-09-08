@@ -74,7 +74,7 @@ namespace ProjectManagement.APIs.PMReportProjectRisks
         }
 
         [HttpGet]
-        [AbpAuthorize]
+        [AbpAuthorize(PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_ConvertToIssue)]
         public async Task ConvertToIssue(long Id)
         {
             try

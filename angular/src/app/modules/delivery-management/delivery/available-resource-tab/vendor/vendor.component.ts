@@ -8,7 +8,7 @@ import { availableResourceDto } from './../../../../../service/model/delivery-ma
 import { ProjectDetailComponent } from './../plan-resource/plan-user/project-detail/project-detail.component';
 import { UpdateUserSkillDialogComponent } from './../../../../../users/update-user-skill-dialog/update-user-skill-dialog.component';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { Component, Injector, OnInit } from '@angular/core';
+import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 import { PlanUserComponent } from '../plan-resource/plan-user/plan-user.component';
 import { DeliveryResourceRequestService } from '../../../../../service/api/delivery-request-resource.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -109,6 +109,8 @@ export class VendorComponent extends PagedListingComponentBase<PlanResourceCompo
 
   ) { super(injector) }
 
+  @ViewChild("selectSkill") selectSkill;
+
   ngOnInit(): void {
     this.pageSizeType = 100
     this.changePageSize();
@@ -192,13 +194,23 @@ export class VendorComponent extends PagedListingComponentBase<PlanResourceCompo
 
   }
 
+  openedChange(opened){
+    if(!opened){
+          this.selectedSkillId = this.selectedSkillIdOld
+      }
+    }
+
+    doneSelectSkill(){
+      this.selectedSkillIdOld = this.selectedSkillId
+      this.selectSkill.close()
+      this.refresh()
+    }
+
   selectAllSkill(){
     this.selectedSkillId = this.listSkills.map(item => item.id)
-    this.refresh()
   }
   clearSkill(){
     this.selectedSkillId = [];
-    this.refresh()
   }
 
   skillsCommas(arr) {

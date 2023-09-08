@@ -22,7 +22,7 @@ import {
   PagedListingComponentBase,
   PagedRequestDto,
 } from '@shared/paged-listing-component-base';
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit, Injector, ViewChild } from '@angular/core';
 import { SkillDto } from '@app/service/model/list-project.dto';
 import { ProjectResourceRequestService } from '@app/service/api/project-resource-request.service';
 import { ProjectHistoryByUserComponent } from './plan-user/project-history-by-user/project-history-by-user.component';
@@ -48,6 +48,7 @@ export class PlanResourceComponent
   public skillsParam = [];
   private subscription: Subscription[] = [];
   public selectedSkillId: number[]
+  public selectedSkillIdOld: number[];
   public isAndCondition: boolean = false
 
   Resource_TabPool = PERMISSIONS_CONSTANT.Resource_TabPool
@@ -148,6 +149,8 @@ export class PlanResourceComponent
   ) {
     super(injector);
   }
+  
+  @ViewChild("selectSkill") selectSkill;
 
   ngOnInit(): void {
     this.pageSizeType = 100;
@@ -168,6 +171,19 @@ export class PlanResourceComponent
       )
     })
   }
+
+  openedChange(opened){
+    if(!opened){
+          this.selectedSkillId = this.selectedSkillIdOld
+      }
+    }
+
+    doneSelectSkill(){
+      this.selectedSkillIdOld = this.selectedSkillId
+      this.selectSkill.close()
+      this.refresh()
+    }
+
   public isAllowCancelPlan(creatorUserId: number) {
     if (this.permission.isGranted(this.DeliveryManagement_ResourceRequest_CancelMyPlanOnly)) {
       if (this.permission.isGranted(this.DeliveryManagement_ResourceRequest_CancelAnyPlanResource)) {
@@ -286,11 +302,9 @@ export class PlanResourceComponent
 
   selectAllSkill(){
     this.selectedSkillId = this.listSkills.map(item => item.id)
-    this.refresh()
   }
   clearSkill(){
     this.selectedSkillId = [];
-    this.refresh()
   }
 
   skillsCommas(arr) {

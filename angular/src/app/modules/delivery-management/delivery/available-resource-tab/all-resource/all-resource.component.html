@@ -36,21 +36,25 @@
                         <div class="col-12 col-md-4 mt-1 d-flex align-items-center mb-3">
                             <mat-form-field appearance="outline" class="flex-grow-1">
                                 <mat-label>Position:</mat-label>
-                                <mat-select placeholder="Select position" [(ngModel)]="selectedPositions" multiple
-                                    (selectionChange)="onChangePositionsEvent($event)">
-                                    <mat-form-field class="w-100 px-3 "
-                                        style="position: sticky; top: 0; z-index: 2; background-color: white;">
-                                        <input style="height: 30px; padding: 5px 10px; "
-                                        matInput [(ngModel)]="searchPosition"  placeholder="Search" #search
-                                        (keydown)="$event.stopPropagation()">
-                                    </mat-form-field>
-                                    <div class="ml-4">
-                                        <button class="btn bg-primary" (click) = selectAllPosition()>
-                                            Select All
-                                          </button>
-                                        <button class="btn bg-secondary ml-4" (click) = clearPosition()>
-                                            Clear
-                                          </button>
+                                <mat-select #selectPosition placeholder="Select position" [(ngModel)]="selectedPositions" multiple (openedChange)="openedChange($event,'Position')"
+                                    >
+                                    <div style="position: sticky; top: 0; z-index: 2; background-color: white;">
+                                        <mat-form-field class="w-100 px-3 ">
+                                            <input style="height: 30px; padding: 5px 10px; "
+                                            matInput [(ngModel)]="searchPosition"  placeholder="Search" #search
+                                            (keydown)="$event.stopPropagation()">
+                                        </mat-form-field>
+                                        <div class="ml-3 mb-2">
+                                            <button class="btn bg-primary" (click) = "selectAll('Position')">
+                                                Select All
+                                              </button>
+                                            <button class="btn bg-secondary ml-4" (click) = "clear('Position')">
+                                                Clear
+                                              </button>
+                                            <button class="btn bg-success ml-4" (click) = "doneSelectPosition()">
+                                                Done
+                                              </button>
+                                        </div>
                                     </div>
                                     <mat-option *ngFor="let position of listPositions | listFilter:  'name' : searchPosition" [value]="position.id">
                                         {{position.shortName}}
@@ -64,22 +68,27 @@
                         <div class="col-12 col-md-4 mt-1 d-flex align-items-center mb-3">
                             <mat-form-field appearance="outline" class="flex-grow-1">
                                 <mat-label>Branch:</mat-label>                               
-                                <mat-select [(ngModel)]="selectedBranchIds"
-                                    (selectionChange)="onChangeBranchEvent($event)" placeholder="Select branch"
+                                <mat-select #selectBranch [(ngModel)]="selectedBranchIds"
+                                    (openedChange)="openedChange($event,'Branch')" placeholder="Select branch"
                                     multiple>
-                                    <mat-form-field class="w-100 px-3 "
+                                    <div style="position: sticky; top: 0; z-index: 2; background-color: white;">
+                                        <mat-form-field class="w-100 px-3 "
                                         style="position: sticky; top: 0; z-index: 2; background-color: white;">
                                         <input style="height: 30px; padding: 5px 10px; "
                                         matInput [(ngModel)]="searchBranch"  placeholder="Search" #search
                                         (keydown)="$event.stopPropagation()">
                                     </mat-form-field>
-                                    <div class="ml-4">
-                                        <button class="btn bg-primary" (click) = selectAllBranch()>
+                                    <div class="ml-3 mb-2">
+                                        <button class="btn bg-primary" (click) = "selectAll('Branch')">
                                             Select All
                                           </button>
-                                        <button class="btn bg-secondary ml-4" (click) = clearBranch()>
+                                        <button class="btn bg-secondary ml-4" (click) = "clear('Branch')">
                                             Clear
                                           </button>
+                                          <button class="btn bg-success ml-4" (click) = "doneSelectBranch()">
+                                            Done
+                                          </button>
+                                    </div>
                                     </div>
                                     <mat-option *ngFor="let branch of listBranchs | listFilter:  'name' : searchBranch" [value]="branch.id">
                                         {{branch.name}}
@@ -90,7 +99,7 @@
                         <div class="col-12 col-md-4 mt-1 d-flex align-items-center mb-3">
                             <mat-form-field appearance="outline" class="flex-grow-1">
                                 <mat-label>Skills:</mat-label>
-                                <mat-select placeholder="select skill" multiple (selectionChange)="getDataPage(1)" [(ngModel)]="selectedSkillId">
+                                <mat-select #selectSkill placeholder="select skill" multiple (openedChange)="openedChange($event,'Skill')"  [(ngModel)]="selectedSkillId">
                                     <div style="width: 334px;" style="position: sticky; top: 0; z-index: 2; background-color: white; padding: 10px 7px; padding: 13px 7px 0px 5px;">
                                         <mat-form-field class="w-100 px-3 "
                                             style="position: sticky; top: 0; z-index: 2; background-color: white;">
@@ -99,16 +108,19 @@
                                             (keydown)="$event.stopPropagation()">
                                           </mat-form-field>
                                         <mat-radio-group aria-label="Filter by" class="w-80 px-2  row" [(ngModel)]="isAndCondition" (ngModelChange)="getDataPage(1)" style=" width: 100%;align-items: center;">                                           
-                                            <div class="col-6 d-flex" style="align-items: center;">
+                                            <div class="col-4 d-flex" style="align-items: center;">
                                                 <mat-radio-button class="mr-3" [value]="true">And</mat-radio-button>
                                                 <mat-radio-button [value]="false">Or</mat-radio-button>
                                             </div>
-                                            <div class="col-6">
-                                                <button class="btn bg-primary" (click) = selectAllSkill()>
+                                            <div class="col-8 mb-2">
+                                                <button class="btn bg-primary" (click) ="selectAll('Skill')">
                                                     Select All
                                                   </button>
-                                                <button class="btn bg-secondary ml-4" (click) = clearSkill()>
+                                                <button class="btn bg-secondary ml-4" (click) ="clear('Skill')">
                                                     Clear
+                                                  </button>
+                                                  <button class="btn bg-success ml-4" (click) = "doneSelectSkill()">
+                                                    Done
                                                   </button>
                                             </div>
                                         </mat-radio-group>

@@ -13,7 +13,7 @@ import { SkillDto } from './../../../../../service/model/list-project.dto';
 import { PagedListingComponentBase } from '@shared/paged-listing-component-base';
 import { PlanUserComponent } from './../plan-resource/plan-user/plan-user.component';
 import { ProjectDetailComponent } from './../plan-resource/plan-user/project-detail/project-detail.component';
-import { Component, OnInit, Injector, inject } from '@angular/core';
+import { Component, OnInit, Injector, inject, ViewChild } from '@angular/core';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { EditUserDialogComponent } from '@app/users/edit-user/edit-user-dialog.component';
 import { UpdateUserSkillDialogComponent } from '@app/users/update-user-skill-dialog/update-user-skill-dialog.component';
@@ -48,9 +48,12 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
   public skill = '';
   public skillsParam = [];
   public selectedSkillId: number[];
+  public selectedSkillIdOld: number[];
   public selectedBranchIds: number[] = [];
+  public selectedBranchIdsOld: number[] = [];
   public selectedUserTypes: number[] = [];
   public selectedPositions: number[] = [];
+  public selectedPositionsOld: number[] = [];
   public isAndCondition: boolean = false;
   public selectedIsPlanned: number;
   public listPlans: string[] = [];
@@ -129,6 +132,10 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     private positionService: PositionService,
   ) { super(injector) }
 
+  @ViewChild("selectPosition") selectPosition;
+  @ViewChild("selectBranch") selectBranch;
+  @ViewChild("selectSkill") selectSkill;
+
   ngOnInit(): void {
     this.pageSizeType = 100
     this.changePageSize();
@@ -170,30 +177,65 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     });
   }
 
-  selectAllSkill(){
-    this.selectedSkillId = this.listSkills.map(item => item.id)
+  openedChange(opened,typeSelect){
+    if(!opened){
+      switch(typeSelect){
+        case 'Branch':
+          this.selectedBranchIds = this.selectedBranchIdsOld
+          break;
+        case 'Position':
+          this.selectedPositions = this.selectedPositionsOld
+          break;
+        case 'Skill':
+          this.selectedSkillId = this.selectedSkillIdOld
+          break;
+      }
+    }
+  }
+
+  selectAll(typeSelect){
+    switch(typeSelect){
+      case 'Branch':
+        this.selectedBranchIds = this.listBranchs.map(item => item.id)
+        break;
+      case 'Position':
+        this.selectedPositions = this.listPositions.map(item => item.id)
+        break;
+      case 'Skill':
+        this.selectedSkillId = this.listSkills.map(item => item.id)
+        break;
+    }
+  }
+  clear(typeSelect){
+    switch(typeSelect){
+      case 'Branch':
+        this.selectedBranchIds = [];
+        break;
+      case 'Position':
+        this.selectedPositions= [];
+        break;
+      case 'Skill':
+        this.selectedSkillId = [];
+        break;
+    }
+  }
+
+  doneSelectPosition(){
+    this.selectedPositionsOld = this.selectedPositions
+    this.selectPosition.close()
     this.refresh()
   }
-  clearSkill(){
-    this.selectedSkillId = [];
+  doneSelectSkill(){
+    this.selectedSkillIdOld = this.selectedSkillId
+    this.selectSkill.close()
     this.refresh()
   }
-  selectAllBranch(){
-    this.selectedBranchIds = this.listBranchs.map(item => item.id)
+  doneSelectBranch(){
+    this.selectedBranchIdsOld = this.selectedBranchIds
+    this.selectBranch.close()
     this.refresh()
   }
-  clearBranch(){
-    this.selectedBranchIds = [];
-    this.refresh()
-  }
-  selectAllPosition(){
-    this.selectedPositions = this.listPositions.map(item => item.id)
-    this.refresh()
-  }
-  clearPosition(){
-    this.selectedPositions= [];
-    this.refresh()
-  }
+
 
   public isAllowCancelPlan(creatorUserId: number) {
     if (this.permission.isGranted(this.DeliveryManagement_ResourceRequest_CancelMyPlanOnly)) {
@@ -229,11 +271,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     )
   }
 
-  onChangeBranchEvent(event?): void {
-    this.selectedBranchIds = event.value;
-    this.getDataPage(1);
-    //this.refresh();
-  }
+
 
   onChangeUserTypeEvent(event?): void {
     this.selectedUserTypes = event.value;
@@ -258,20 +296,16 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     this.branchService.getAllNotPagging().subscribe((data) => {
       this.listBranchs = data.result
       this.selectedBranchIds = data.result.map(item => item.id)
+      this.selectedBranchIdsOld = this.selectedBranchIds
       this.refresh();
     })
-  }
-
-  onChangePositionsEvent(event?): void {
-    this.selectedPositions = event.value;
-    this.getDataPage(1);
-    //this.refresh();
   }
 
   getAllPositions() {
     this.positionService.getAllNotPagging().subscribe((data) => {
       this.listPositions = data.result
       this.selectedPositions = data.result.map(item => item.id)
+      this.selectedPositionsOld = this.selectedPositions
       this.refresh();
     })
   }

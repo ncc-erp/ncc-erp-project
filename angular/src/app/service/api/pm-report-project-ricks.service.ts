@@ -31,4 +31,8 @@ export class PmReportRiskService extends BaseApiService {
   public UpdateReportRisk(input): Observable<any> {
     return this.http.put<any>(this.rootUrl + `/Update`, input);
   }
+
+  public convertToIssue(id:number): Observable<any> {
+    return this.http.get<any>(this.rootUrl + `/ConvertToIssue?Id=${id}`);
+  }
 }

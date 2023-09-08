@@ -335,6 +335,12 @@
                                                 Edit
                                             </button>
                                             <button
+                                            (click)="convertToRisk(problem)"
+                                             class="mat-menu-item  w-100">
+                                            <i class="fas fa-pencil-alt mr-2 fa-lg "></i>
+                                            Convert to Risk
+                                            </button>
+                                            <button
                                                 *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_ProjectIssue_SetDone)"
                                                 (click)="setDone(problem)" class="mat-menu-item  w-100">
                                                 <i class="fas fa-check mr-2 fa-lg "></i>
@@ -450,6 +456,12 @@
                                                 <i class="fas fa-pencil-alt mr-2 fa-lg "></i>
                                                 Edit
                                             </button>
+                                            <button
+                                            (click)="convertToIssue(problem)"
+                                             class="mat-menu-item  w-100">
+                                            <i class="fas fa-pencil-alt mr-2 fa-lg "></i>
+                                            Convert to Issue
+                                        </button>
                                             <button (click)="setDoneRisk(problem)"
                                                     *ngIf="isShowChangeDoneTextRisk(problem) && permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_SetDone)"
                                                     class="mat-menu-item  w-100">

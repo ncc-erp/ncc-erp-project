@@ -1275,7 +1275,11 @@ export class WeeklyReportComponent extends PagedListingComponentBase<WeeklyRepor
       let option: echarts.EChartsOption;
       option = {
         tooltip: {
-          trigger: 'axis'
+          trigger: 'axis',
+          position: function (pos) {
+            var obj = { top: 1, left: pos[0] - 200 }; 
+            return obj;
+          }
         },
         grid: {
           top: "6%",

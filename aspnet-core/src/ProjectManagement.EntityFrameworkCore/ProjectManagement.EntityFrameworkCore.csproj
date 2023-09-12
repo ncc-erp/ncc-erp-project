@@ -1,50 +1,51 @@
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <AssetTargetFallback>$(AssetTargetFallback);portable-net45+win8+wp8+wpa81;</AssetTargetFallback>
-    <RootNamespace>ProjectManagement</RootNamespace>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
-    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Remove="Migrations\20180726102624_Upgrade_ABP_380.cs" />
-    <Compile Remove="Migrations\20180927062408_test.cs" />
-    <Compile Remove="Migrations\20190111071724_Upgraded_To_Abp_v4_1_0.cs" />
-    <Compile Remove="Migrations\20210810103146_add-TimeSendReport-PMReportProject.cs" />
-    <Compile Remove="Migrations\20210810103146_add-TimeSendReport-PMReportProject.Designer.cs" />
-    <Compile Remove="Migrations\20211203032757_update_table_AbpUser_add_column_StarRate.cs" />
-    <Compile Remove="Migrations\20211203032757_update_table_AbpUser_add_column_StarRate.Designer.cs" />
-    <Compile Remove="Migrations\20220827021634_AddTablePositionAndColumnPositionInUserTable.cs" />
-    <Compile Remove="Migrations\20220827021634_AddTablePositionAndColumnPositionInUserTable.Designer.cs" />
-    <Compile Remove="Migrations\20220827033445_renameTablePositionInDB.cs" />
-    <Compile Remove="Migrations\20220827033445_renameTablePositionInDB.Designer.cs" />
-    <Compile Remove="Migrations\20220827121838_addColumnColorForTablePosition.cs" />
-    <Compile Remove="Migrations\20220827121838_addColumnColorForTablePosition.Designer.cs" />
-    <Compile Remove="Migrations\20220829024135_AddColumnPositionOld.cs" />
-    <Compile Remove="Migrations\20220829024135_AddColumnPositionOld.Designer.cs" />
-    <Compile Remove="Migrations\20220829061535_AddNullableForColumnPositionOld.cs" />
-    <Compile Remove="Migrations\20220829061535_AddNullableForColumnPositionOld.Designer.cs" />
-    <Compile Remove="Migrations\20220830005426_RemoveColumnNoteInPositionTable.cs" />
-    <Compile Remove="Migrations\20220830005426_RemoveColumnNoteInPositionTable.Designer.cs" />
-    <Compile Remove="Migrations\20220830013636_AddSomeDataForPositionTable.cs" />
-    <Compile Remove="Migrations\20220830013636_AddSomeDataForPositionTable.Designer.cs" />
-    <Compile Remove="Migrations\20230115191736_add_tbls_for_ProjectCriteria_Feature.cs" />
-    <Compile Remove="Migrations\20230115191736_add_tbls_for_ProjectCriteria_Feature.Designer.cs" />
-    <Compile Remove="Migrations\20230303033422_add-lastReviewDate-PMReportProject.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.4" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.4">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.4">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ProjectManagement.Core\ProjectManagement.Core.csproj" />
-  </ItemGroup>
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>netcoreapp3.1</TargetFramework>
+		<AssetTargetFallback>$(AssetTargetFallback);portable-net45+win8+wp8+wpa81;</AssetTargetFallback>
+		<RootNamespace>ProjectManagement</RootNamespace>
+		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+		<GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+		<GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+	</PropertyGroup>
+	<ItemGroup>
+		<Compile Remove="Migrations\20180726102624_Upgrade_ABP_380.cs" />
+		<Compile Remove="Migrations\20180927062408_test.cs" />
+		<Compile Remove="Migrations\20190111071724_Upgraded_To_Abp_v4_1_0.cs" />
+		<Compile Remove="Migrations\20210810103146_add-TimeSendReport-PMReportProject.cs" />
+		<Compile Remove="Migrations\20210810103146_add-TimeSendReport-PMReportProject.Designer.cs" />
+		<Compile Remove="Migrations\20211203032757_update_table_AbpUser_add_column_StarRate.cs" />
+		<Compile Remove="Migrations\20211203032757_update_table_AbpUser_add_column_StarRate.Designer.cs" />
+		<Compile Remove="Migrations\20220827021634_AddTablePositionAndColumnPositionInUserTable.cs" />
+		<Compile Remove="Migrations\20220827021634_AddTablePositionAndColumnPositionInUserTable.Designer.cs" />
+		<Compile Remove="Migrations\20220827033445_renameTablePositionInDB.cs" />
+		<Compile Remove="Migrations\20220827033445_renameTablePositionInDB.Designer.cs" />
+		<Compile Remove="Migrations\20220827121838_addColumnColorForTablePosition.cs" />
+		<Compile Remove="Migrations\20220827121838_addColumnColorForTablePosition.Designer.cs" />
+		<Compile Remove="Migrations\20220829024135_AddColumnPositionOld.cs" />
+		<Compile Remove="Migrations\20220829024135_AddColumnPositionOld.Designer.cs" />
+		<Compile Remove="Migrations\20220829061535_AddNullableForColumnPositionOld.cs" />
+		<Compile Remove="Migrations\20220829061535_AddNullableForColumnPositionOld.Designer.cs" />
+		<Compile Remove="Migrations\20220830005426_RemoveColumnNoteInPositionTable.cs" />
+		<Compile Remove="Migrations\20220830005426_RemoveColumnNoteInPositionTable.Designer.cs" />
+		<Compile Remove="Migrations\20220830013636_AddSomeDataForPositionTable.cs" />
+		<Compile Remove="Migrations\20220830013636_AddSomeDataForPositionTable.Designer.cs" />
+		<Compile Remove="Migrations\20230115191736_add_tbls_for_ProjectCriteria_Feature.cs" />
+		<Compile Remove="Migrations\20230115191736_add_tbls_for_ProjectCriteria_Feature.Designer.cs" />
+		<Compile Remove="Migrations\20230303033422_add-lastReviewDate-PMReportProject.cs" />
+		<Compile Remove="Migrations\20230303033422_add-lastReviewDate-PMReportProject.Designer.cs" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.4" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.4">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.4">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\ProjectManagement.Core\ProjectManagement.Core.csproj" />
+	</ItemGroup>
 </Project>

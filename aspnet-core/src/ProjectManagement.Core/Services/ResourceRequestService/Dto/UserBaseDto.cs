@@ -51,7 +51,6 @@ namespace ProjectManagement.Services.ResourceRequestService.Dto
                 return CommonUtil.UserTypeName(UserType);
             }
         }
-        
     }
 
 }

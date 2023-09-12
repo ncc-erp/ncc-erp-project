@@ -84,5 +84,31 @@ namespace ProjectManagement.APIs.PMReportProjectIssues
             await WorkScope.UpdateAsync(projectIssue);
             return input;
         }
+
+        [HttpGet]
+        [AbpAuthorize(PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectIssue_ConvertToRisk)]
+        public async Task ConvertToRisk(long Id)
+        {
+            try
+            {
+                // insert into Risk table
+                var issue = WorkScope.Get<PMReportProjectIssue>(Id);
+                await WorkScope.InsertAsync(new PMReportProjectRisk
+                {
+                    PMReportProjectId = issue.PMReportProjectId,
+                    Risk = issue.Description,
+                    Impact = issue.Impact,
+                    Solution = issue.Solution,
+                    Priority = Priority.Medium,
+                    Status = Enum.Parse<PMReportProjectRiskStatus>(issue.Status.ToString())
+                });
+                // delete in Issue table
+                await WorkScope.DeleteAsync<PMReportProjectIssue>(Id);
+            }
+            catch (Exception)
+            {
+                throw new UserFriendlyException("Convert to Risk fail !");
+            }
+        }
     }
 }

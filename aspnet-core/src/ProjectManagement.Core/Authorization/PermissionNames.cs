@@ -193,6 +193,7 @@ namespace ProjectManagement.Authorization
         public const string Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectIssue_Edit = "Projects.OutsourcingProjects.ProjectDetail.TabWeeklyReport.PMProjectIssue.Edit";
         public const string Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectIssue_Delete = "Projects.OutsourcingProjects.ProjectDetail.TabWeeklyReport.PMProjectIssue.Delete";
         public const string Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectIssue_SetDone = "Projects.OutsourcingProjects.ProjectDetail.TabWeeklyReport.PMProjectIssue.SetDone";
+        public const string Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectIssue_ConvertToRisk = "Projects.OutsourcingProjects.ProjectDetail.TabWeeklyReport.PMProjectIssue.ConvertToRisk";
 
         public const string Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk = "Projects.OutsourcingProjects.ProjectDetail.TabWeeklyReport.PMProjectRisk";
         public const string Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_View = "Projects.OutsourcingProjects.ProjectDetail.TabWeeklyReport.PMProjectRisk.View";
@@ -200,6 +201,7 @@ namespace ProjectManagement.Authorization
         public const string Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_Edit = "Projects.OutsourcingProjects.ProjectDetail.TabWeeklyReport.PMProjectRisk.Edit";
         public const string Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_Delete = "Projects.OutsourcingProjects.ProjectDetail.TabWeeklyReport.PMProjectRisk.Delete";
         public const string Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_SetDone = "Projects.OutsourcingProjects.ProjectDetail.TabWeeklyReport.PMProjectRisk.SetDone";
+        public const string Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_ConvertToIssue = "Projects.OutsourcingProjects.ProjectDetail.TabWeeklyReport.PMProjectRisk.ConvertToIssue";
 
         public const string Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_CurrentResource = "Projects.OutsourcingProjects.ProjectDetail.TabWeeklyReport.CurrentResource";
         public const string Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_CurrentResource_View = "Projects.OutsourcingProjects.ProjectDetail.TabWeeklyReport.CurrentResource.View";
@@ -873,6 +875,7 @@ namespace ProjectManagement.Authorization
                     PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectIssue_Edit ,
                     PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectIssue_Delete ,
                     PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectIssue_SetDone ,
+                    PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectIssue_ConvertToRisk ,
 
                     PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk ,
                     PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_View ,
@@ -880,6 +883,7 @@ namespace ProjectManagement.Authorization
                     PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_Edit ,
                     PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_Delete ,
                     PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_SetDone ,
+                    PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_ConvertToIssue ,
 
                     PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_CurrentResource ,
                     PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_CurrentResource_View ,
@@ -1564,6 +1568,7 @@ namespace ProjectManagement.Authorization
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectIssue_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit" },
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectIssue_Delete, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Delete" },
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectIssue_SetDone, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Set Done" },
+                 new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectIssue_ConvertToRisk, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Convert to Risk" },
 
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "PM Project Risk" },
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View" },
@@ -1571,6 +1576,7 @@ namespace ProjectManagement.Authorization
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit" },
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_Delete, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Delete" },
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_SetDone, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Set Done" },
+                 new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_ConvertToIssue, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Convert to Issue" },
 
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_CurrentResource, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Current Resource" },
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_CurrentResource_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View" },
@@ -2564,6 +2570,9 @@ namespace ProjectManagement.Authorization
                                                                             new SystemPermission {
                                                                                 Name = PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectIssue_SetDone, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Set Done"
                                                                             },
+                                                                             new SystemPermission {
+                                                                                Name = PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectIssue_ConvertToRisk, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Convert To Risk"
+                                                                            },
                                                                         },
                                                                 },
                                                                 new SystemPermission {
@@ -2583,6 +2592,9 @@ namespace ProjectManagement.Authorization
                                                                             },
                                                                             new SystemPermission {
                                                                                 Name = PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_SetDone, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Set Done"
+                                                                            },
+                                                                             new SystemPermission {
+                                                                                Name = PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_ConvertToIssue, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Convert To Issue"
                                                                             },
                                                                         },
                                                                 },

@@ -65,6 +65,7 @@ import { FileUploadComponent } from './components/file-upload/file-upload.compon
 import { ListFilterPipe } from './pipes/list-filter.pipe';
 import { NgxStarsModule } from 'ngx-stars';
 import { SortableComponent } from './components/sortable/sortable.component';
+import { SelectClearOptionComponent } from './components/select-clear-option/select-clear-option.component';
 import { SubpositionFilterPipe } from './pipes/subposition-filter.pipe';
 import { MainSubInvoiceComponent } from './components/main-sub-invoice/main-sub-invoice.component';
 import { MultiSelectOptionComponent } from './components/multi-select-option/multi-select-option.component';
@@ -130,6 +131,7 @@ import { CustomTimeComponent } from './date-selector/custom-time/custom-time.com
         EditorModule,
         OwlDateTimeModule,
         OwlNativeDateTimeModule,
+        
 
     ],
     declarations: [
@@ -153,7 +155,8 @@ import { CustomTimeComponent } from './date-selector/custom-time/custom-time.com
         ResizeContentDirective,
         ResizableDirective,
         DateSelectorComponent,
-        CustomTimeComponent
+        CustomTimeComponent,
+        SelectClearOptionComponent
 
     ],
     exports: [
@@ -217,7 +220,8 @@ import { CustomTimeComponent } from './date-selector/custom-time/custom-time.com
         OwlDateTimeModule,
         OwlNativeDateTimeModule,
         DateSelectorComponent,
-        CustomTimeComponent
+        CustomTimeComponent,
+        SelectClearOptionComponent
 
     ],
     providers: [

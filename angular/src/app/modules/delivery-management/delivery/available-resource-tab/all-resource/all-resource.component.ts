@@ -45,6 +45,9 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
   public listSkills: SkillDto[] = [];
   public listBranchs: BranchDto[] = [];
   public listPositions: PositionDto[] = [];
+  public listSkillsId: number[] = [];
+  public listBranchsId: number[] = [];
+  public listPositionsId: number[] = [];
   public skill = '';
   public skillsParam = [];
   public selectedSkillId: number[];
@@ -193,49 +196,37 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     }
   }
 
-  selectAll(typeSelect){
-    switch(typeSelect){
+  actionSelect(typeSelect){
+    switch(typeSelect.type){
       case 'Branch':
-        this.selectedBranchIds = this.listBranchs.map(item => item.id)
+        this.selectedBranchIds = typeSelect.data
         break;
       case 'Position':
-        this.selectedPositions = this.listPositions.map(item => item.id)
+        this.selectedPositions = typeSelect.data
         break;
       case 'Skill':
-        this.selectedSkillId = this.listSkills.map(item => item.id)
-        break;
-    }
-  }
-  clear(typeSelect){
-    switch(typeSelect){
-      case 'Branch':
-        this.selectedBranchIds = [];
-        break;
-      case 'Position':
-        this.selectedPositions= [];
-        break;
-      case 'Skill':
-        this.selectedSkillId = [];
+        this.selectedSkillId = typeSelect.data
         break;
     }
   }
 
-  doneSelectPosition(){
-    this.selectedPositionsOld = this.selectedPositions
-    this.selectPosition.close()
+  selectDone(type){
+    switch(type){
+      case 'Branch':
+        this.selectedBranchIdsOld = this.selectedBranchIds
+        this.selectBranch.close()
+        break;
+      case 'Position':
+        this.selectedPositionsOld = this.selectedPositions
+        this.selectPosition.close()
+        break;
+      case 'Skill':
+        this.selectedSkillIdOld = this.selectedSkillId
+        this.selectSkill.close()
+        break;
+    }
     this.refresh()
   }
-  doneSelectSkill(){
-    this.selectedSkillIdOld = this.selectedSkillId
-    this.selectSkill.close()
-    this.refresh()
-  }
-  doneSelectBranch(){
-    this.selectedBranchIdsOld = this.selectedBranchIds
-    this.selectBranch.close()
-    this.refresh()
-  }
-
 
   public isAllowCancelPlan(creatorUserId: number) {
     if (this.permission.isGranted(this.DeliveryManagement_ResourceRequest_CancelMyPlanOnly)) {
@@ -261,6 +252,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     this.subscription.push(
       this.skillService.getAll().subscribe((data) => {
         this.listSkills = data.result;
+        this.listSkillsId = data.result.map(item => item.id)
         this.skillsParam = data.result.map(item => {
           return {
             displayName: item.name,
@@ -295,6 +287,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
   getAllBranchs() {
     this.branchService.getAllNotPagging().subscribe((data) => {
       this.listBranchs = data.result
+      this.listBranchsId = data.result.map(item => item.id)
       this.selectedBranchIds = data.result.map(item => item.id)
       this.selectedBranchIdsOld = this.selectedBranchIds
       this.refresh();
@@ -304,6 +297,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
   getAllPositions() {
     this.positionService.getAllNotPagging().subscribe((data) => {
       this.listPositions = data.result
+      this.listPositionsId = data.result.map(item => item.id)
       this.selectedPositions = data.result.map(item => item.id)
       this.selectedPositionsOld = this.selectedPositions
       this.refresh();

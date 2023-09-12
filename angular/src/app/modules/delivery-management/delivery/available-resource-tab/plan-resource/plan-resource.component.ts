@@ -43,6 +43,7 @@ export class PlanResourceComponent
   extends PagedListingComponentBase<PlanResourceComponent>
   implements OnInit {
   public listSkills: SkillDto[] = [];
+  public listSkillsId: number[] = [];
   public skill = '';
   public searchSkill:string = '';
   public skillsParam = [];
@@ -176,13 +177,17 @@ export class PlanResourceComponent
     if(!opened){
           this.selectedSkillId = this.selectedSkillIdOld
       }
-    }
+  }
 
-    doneSelectSkill(){
-      this.selectedSkillIdOld = this.selectedSkillId
-      this.selectSkill.close()
-      this.refresh()
-    }
+  actionSelect(typeSelect){
+    this.selectedSkillId = typeSelect.data
+  }
+
+  selectDone(){
+    this.selectedSkillIdOld = this.selectedSkillId
+    this.selectSkill.close()
+    this.refresh()
+  }
 
   public isAllowCancelPlan(creatorUserId: number) {
     if (this.permission.isGranted(this.DeliveryManagement_ResourceRequest_CancelMyPlanOnly)) {
@@ -291,6 +296,7 @@ export class PlanResourceComponent
     this.subscription.push(
       this.skillService.getAll().subscribe((data) => {
         this.listSkills = data.result;
+        this.listSkillsId = data.result.map(item => item.id)
         this.skillsParam = data.result.map((item) => {
           return {
             displayName: item.name,
@@ -298,13 +304,6 @@ export class PlanResourceComponent
           };
         });
       }))
-  }
-
-  selectAllSkill(){
-    this.selectedSkillId = this.listSkills.map(item => item.id)
-  }
-  clearSkill(){
-    this.selectedSkillId = [];
   }
 
   skillsCommas(arr) {

@@ -37,15 +37,7 @@
                                                 <mat-radio-button [value]="false">Or</mat-radio-button>
                                             </div>
                                             <div class="col-8 mb-2">
-                                                <button class="btn bg-primary" (click) ="selectAllSkill()">
-                                                    Select All
-                                                  </button>
-                                                <button class="btn bg-secondary ml-4" (click) ="clearSkill()">
-                                                    Clear
-                                                  </button>
-                                                  <button class="btn bg-success ml-4" (click) = "doneSelectSkill()">
-                                                    Done
-                                                  </button>
+                                                <app-select-clear-option  [listOption]="listSkillsId" (newListEvent)= "actionSelect($event)" (doneEvent)="selectDone()"></app-select-clear-option>
                                             </div>
                                         </mat-radio-group>
                                     </div>
@@ -54,8 +46,6 @@
                                     </mat-option>
                                 </mat-select>
                             </mat-form-field>
-                            <i class="fas fa-times fa-lg ml-2 mt-2" *ngIf="selectedSkillId?.length > 0"
-                                (click)="selectedSkillId = null; refresh()"></i>
                         </div>
                         <div class="col-1">
                             <i class="fas fa-times fa-lg mt-3" *ngIf="selectedSkillId?.length > 0"

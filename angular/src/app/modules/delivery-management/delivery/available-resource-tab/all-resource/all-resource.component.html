@@ -45,15 +45,7 @@
                                             (keydown)="$event.stopPropagation()">
                                         </mat-form-field>
                                         <div class="ml-3 mb-2">
-                                            <button class="btn bg-primary" (click) = "selectAll('Position')">
-                                                Select All
-                                              </button>
-                                            <button class="btn bg-secondary ml-4" (click) = "clear('Position')">
-                                                Clear
-                                              </button>
-                                            <button class="btn bg-success ml-4" (click) = "doneSelectPosition()">
-                                                Done
-                                              </button>
+                                            <app-select-clear-option [type]= "'Position'" [listOption]="listPositionsId" (newListEvent)= "actionSelect($event)" (doneEvent)="selectDone($event)"></app-select-clear-option>
                                         </div>
                                     </div>
                                     <mat-option *ngFor="let position of listPositions | listFilter:  'name' : searchPosition" [value]="position.id">
@@ -79,15 +71,7 @@
                                         (keydown)="$event.stopPropagation()">
                                     </mat-form-field>
                                     <div class="ml-3 mb-2">
-                                        <button class="btn bg-primary" (click) = "selectAll('Branch')">
-                                            Select All
-                                          </button>
-                                        <button class="btn bg-secondary ml-4" (click) = "clear('Branch')">
-                                            Clear
-                                          </button>
-                                          <button class="btn bg-success ml-4" (click) = "doneSelectBranch()">
-                                            Done
-                                          </button>
+                                        <app-select-clear-option [type]= "'Branch'" [listOption]="listBranchsId" (newListEvent)= "actionSelect($event)" (doneEvent)="selectDone($event)"></app-select-clear-option>
                                     </div>
                                     </div>
                                     <mat-option *ngFor="let branch of listBranchs | listFilter:  'name' : searchBranch" [value]="branch.id">
@@ -113,15 +97,7 @@
                                                 <mat-radio-button [value]="false">Or</mat-radio-button>
                                             </div>
                                             <div class="col-8 mb-2">
-                                                <button class="btn bg-primary" (click) ="selectAll('Skill')">
-                                                    Select All
-                                                  </button>
-                                                <button class="btn bg-secondary ml-4" (click) ="clear('Skill')">
-                                                    Clear
-                                                  </button>
-                                                  <button class="btn bg-success ml-4" (click) = "doneSelectSkill()">
-                                                    Done
-                                                  </button>
+                                                <app-select-clear-option [type]= "'Skill'" [listOption]="listSkillsId" (newListEvent)= "actionSelect($event)" (doneEvent)="selectDone($event)"></app-select-clear-option>
                                             </div>
                                         </mat-radio-group>
                                     </div>

@@ -10,8 +10,8 @@ using ProjectManagement.EntityFrameworkCore;
 namespace ProjectManagement.Migrations
 {
     [DbContext(typeof(ProjectManagementDbContext))]
-    [Migration("20230830083022_Delete_IsTempRequestId_TblProjectUserBill_AddBillAcountId_BillStartDate_TblResourceRequest")]
-    partial class Delete_IsTempRequestId_TblProjectUserBill_AddBillAcountId_BillStartDate_TblResourceRequest
+    [Migration("20230912065857_Add_Code_BillAccId_BillStartDate_TblResourceRequest")]
+    partial class Add_Code_BillAccId_BillStartDate_TblResourceRequest
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -3604,6 +3604,8 @@ namespace ProjectManagement.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BillAccountId");
+
                     b.HasIndex("ProjectId");
 
                     b.ToTable("ResourceRequests");
@@ -4666,6 +4668,10 @@ namespace ProjectManagement.Migrations
 
             modelBuilder.Entity("ProjectManagement.Entities.ResourceRequest", b =>
                 {
+                    b.HasOne("ProjectManagement.Authorization.Users.User", "User")
+                        .WithMany()
+                        .HasForeignKey("BillAccountId");
+
                     b.HasOne("ProjectManagement.Entities.Project", "Project")
                         .WithMany()
                         .HasForeignKey("ProjectId")

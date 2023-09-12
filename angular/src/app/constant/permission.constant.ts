@@ -146,6 +146,7 @@ export const PERMISSIONS_CONSTANT = {
 
        Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest: "Projects.OutsourcingProjects.ProjectDetail.TabResourceManagement.ResourceRequest",
        Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest_View: "Projects.OutsourcingProjects.ProjectDetail.TabResourceManagement.ResourceRequest.View",
+       ResourceRequest_CreateBillResourceForRequest:"ResourceRequest.CreateBillResourceForRequest",
        Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest_CreateNewRequest: "Projects.OutsourcingProjects.ProjectDetail.TabResourceManagement.ResourceRequest.CreateNewRequest",
        Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest_PlanNewResourceForRequest: "Projects.OutsourcingProjects.ProjectDetail.TabResourceManagement.ResourceRequest.PlanNewResourceForRequest",
        Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest_SetDone: "Projects.OutsourcingProjects.ProjectDetail.TabResourceManagement.ResourceRequest.SetDone",

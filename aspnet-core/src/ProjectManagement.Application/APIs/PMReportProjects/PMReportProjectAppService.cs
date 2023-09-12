@@ -120,7 +120,8 @@ namespace ProjectManagement.APIs.PMReportProjects
                     query = query.Where(x => x.Seen == true);
                     break;
             }
-            var list = (query.AsEnumerable()).Select(x =>{ x.PmEmailAddress = UserHelper.GetUserName(x.PmEmailAddress);return x;});
+            var list = (query.AsEnumerable())
+                .Select(x => { x.PmEmailAddress = UserHelper.GetUserName(x.PmEmailAddress); return x; });
             return list.ToList();
         }
 

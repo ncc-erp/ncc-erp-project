@@ -65,7 +65,6 @@ namespace ProjectManagement.Services.ResourceRequestService.Dto
                 $"Priority: {PriorityName}\n" +
                 $"PM Note: {PMNote}\n";
         }
-
         public List<long> SkillIds
         {
             get
@@ -123,7 +122,6 @@ namespace ProjectManagement.Services.ResourceRequestService.Dto
         public DateTime? CreateAt { get; set; }
         public PlanUserInfoDto BillUserInfo { get; set; }
     }
-
 
     public class PlanUserInfoDto
     {

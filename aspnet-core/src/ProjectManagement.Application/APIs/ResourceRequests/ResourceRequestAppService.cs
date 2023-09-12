@@ -1,6 +1,5 @@
 ﻿using Abp.Authorization;
 using Abp.Configuration;
-using Abp.Extensions;
 using Abp.UI;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -496,7 +495,7 @@ namespace ProjectManagement.APIs.ResourceRequests
             var request = await WorkScope.GetAll<ResourceRequest>()
                 .Where(s => s.Id == input.ResourceRequestId.Value)
                 .FirstOrDefaultAsync();
-             
+
             if (request == default)
                 throw new UserFriendlyException("Not found resource request Id " + input.ResourceRequestId);
 

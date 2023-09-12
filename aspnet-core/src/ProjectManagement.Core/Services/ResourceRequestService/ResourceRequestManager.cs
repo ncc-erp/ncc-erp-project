@@ -2,16 +2,13 @@
 using NccCore.Extension;
 using NccCore.IoC;
 using NccCore.Paging;
-using Nito.AsyncEx;
 using ProjectManagement.Authorization.Users;
 using ProjectManagement.Entities;
 using ProjectManagement.Services.ResourceRequestService.Dto;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
-using static ProjectManagement.Constants.Enum.ProjectEnum;
 using Expression = System.Linq.Expressions.Expression;
 
 namespace ProjectManagement.Services.ResourceRequestService

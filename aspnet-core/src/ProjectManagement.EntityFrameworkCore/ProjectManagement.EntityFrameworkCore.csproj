@@ -32,15 +32,6 @@
     <Compile Remove="Migrations\20230115191736_add_tbls_for_ProjectCriteria_Feature.cs" />
     <Compile Remove="Migrations\20230115191736_add_tbls_for_ProjectCriteria_Feature.Designer.cs" />
     <Compile Remove="Migrations\20230303033422_add-lastReviewDate-PMReportProject.cs" />
-    <Compile Remove="Migrations\20230303033422_add-lastReviewDate-PMReportProject.Designer.cs" />
-    <Compile Remove="Migrations\20230830085627_Delete_IsTempRequestId_TblProjectUserBill_AddBillAcountId_BillStartDate_TblResourceRequest_2.cs" />
-    <Compile Remove="Migrations\20230830085627_Delete_IsTempRequestId_TblProjectUserBill_AddBillAcountId_BillStartDate_TblResourceRequest_2.Designer.cs" />
-    <Compile Remove="Migrations\20230830085940_Add_UserForeignKey_TblResourceRequest.cs" />
-    <Compile Remove="Migrations\20230830085940_Add_UserForeignKey_TblResourceRequest.Designer.cs" />
-    <Compile Remove="Migrations\20230912065052_Add_Code_BillAccId_BillStartDate_TblResourceRequest.cs" />
-    <Compile Remove="Migrations\20230912065052_Add_Code_BillAccId_BillStartDate_TblResourceRequest.Designer.cs" />
-    <Compile Remove="Migrations\20230912065214_Add_Code_BillAccId_BillStartDate_TblResourceRequest.cs" />
-    <Compile Remove="Migrations\20230912065214_Add_Code_BillAccId_BillStartDate_TblResourceRequest.Designer.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.4" />

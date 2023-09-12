@@ -1,5 +1,4 @@
 ﻿using Abp.Application.Services.Dto;
-using NccCore.Anotations;
 using NccCore.Uitls;
 using ProjectManagement.Utils;
 using System;
@@ -51,11 +50,6 @@ namespace ProjectManagement.Services.ResourceRequestService.Dto
             {
                 return CommonUtil.UserTypeName(UserType);
             }
-        }
-
-        public static implicit operator UserBaseDto(PlanUserInfoDto v)
-        {
-            throw new NotImplementedException();
         }
     }
 

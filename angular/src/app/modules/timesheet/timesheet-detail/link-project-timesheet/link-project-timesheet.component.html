@@ -1,0 +1,16 @@
+<div>
+    <abp-modal-header [title]="title" (onCloseClick)="dialogRef.close()"></abp-modal-header>
+
+    <div class="modal-body">
+        <label>List project code in timesheet tool:</label>
+        <mat-form-field appearance="outline" class="w-100">
+            <textarea matInput maxlength="3000" rows="7" [(ngModel)]="listProjectCode" #projectCode
+                placeholder="VD: project-code1,project-code2.... ">{{projectCode.focus()}}</textarea>
+        </mat-form-field>
+    </div>
+
+    <div class="modal-footer">
+        <button [disabled] ='saving' mat-flat-button color="primary" class="btn-accept" (click)="handleSave()">Save</button>
+        <button [disabled] ='saving' mat-raised-button class="btn btn-secondary" style="margin-left: 10px;" mat-dialog-close>Cancel</button>
+    </div>
+</div>

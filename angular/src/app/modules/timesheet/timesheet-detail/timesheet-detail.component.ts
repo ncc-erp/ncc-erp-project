@@ -24,6 +24,7 @@ import { ExchangeRateComponent } from './exchange-rate/exchange-rate/exchange-ra
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ActiveTimesheetProjectComponent } from './active-timesheet-project/active-timesheet-project.component';
 import { TimeSheetProjectBillService } from '@app/service/api/time-sheet-project-bill.service';
+import { LinkProjectTimesheetComponent } from './link-project-timesheet/link-project-timesheet.component';
 
 
 @Component({
@@ -153,6 +154,8 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
   Timesheets_TimesheetDetail_ExportInvoiceForTax = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_ExportInvoiceForTax;
   Timesheets_TimesheetDetail_EditInvoiceInfo = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_EditInvoiceInfo;
   Timesheets_TimesheetDetail_SendInvoiceToFinfast = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_SendInvoiceToFinfast;
+  Timesheets_TimesheetDetail_ExportTSdetail = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_ExportTSdetail;
+  Timesheets_TimesheetDetail_UpdateProjectCodes = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_UpdateProjectCodes
   constructor(
     private timesheetService: TimesheetService,
     public timesheetProjectService: TimesheetProjectService,
@@ -200,6 +203,11 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
       });
     })
   }
+
+  isShowBtnExportTsDetail() {
+    return this.isGranted(this.Timesheets_TimesheetDetail_ExportTSdetail)
+  }
+
   showDialog(command: String, Timesheet: any): void {
     let timesheetDetail = {};
     if (command == "edit") {
@@ -260,6 +268,45 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
   //       }
   //     })
   // }
+
+  exportTimesheetDetail(exportInvoiceMode) {
+    let payloadDto = {
+      timesheetId: this.timesheetId,
+      projectIds: this.listExportInvoice,
+      mode: exportInvoiceMode
+    }
+    this.timesheetProjectService.exportTimeSheetDetail(payloadDto).subscribe((res) => {
+      const file = new Blob([this.s2ab(atob(res.result.base64))], {
+        type: "application/vnd.ms-excel;charset=utf-8"
+      });
+      this.refresh();
+      this.listExportInvoice=[];
+      FileSaver.saveAs(file, res.result.fileName);
+      abp.notify.success("Export Invoice For Tax Successfully!");
+    })
+  }
+
+
+  handleLinkProjectTS(item) {
+   const dialogref = this.dialog.open(LinkProjectTimesheetComponent, {
+      width: '600px',
+      height: '425px',
+      data: {
+        projectId: item.projectId,
+        timesheetId: this.timesheetId,
+        projectName: item.projectName,
+        listProjectCodes: item.listProjectCodes
+      }
+    })
+
+
+    dialogref.afterClosed().subscribe((rs)=> {
+      if(rs) {
+        console.log(rs);
+        this.refresh()
+      }
+    })
+  }
 
   createTimeSheet() {
     this.showDialog('create', {})

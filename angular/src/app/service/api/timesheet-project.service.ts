@@ -137,4 +137,10 @@ export class TimesheetProjectService extends BaseApiService {
     return this.http.post<any>(this.rootUrl + `/DeActiveTimesheetProject`,timesheetProjectIds)
   }
 
+  public exportTimeSheetDetail(data: any): Observable<any> {
+    return this.http.post(this.rootUrl + "/ExportTSdetail", data);
+  }
+  public updateProjectCode(id: number, projectCode: string): Observable<any> {
+    return this.http.put(this.rootUrl + `/UpdateProjectCodes?projectId=${id}&ListProjectCodes=${projectCode}`, {});
+  }
 }

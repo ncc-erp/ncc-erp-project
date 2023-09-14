@@ -1,0 +1,53 @@
+<div >
+  <abp-modal-header (onCloseClick)="bsModalRef.hide()" [title]="'Shadow Account'"></abp-modal-header>
+  <div class="modal-body">
+    <div class="wapper_shadow--account">
+      <mat-form-field  appearance="outline" class="example-full-width">
+        <mat-label>Search</mat-label>
+        <input [formControl]="shadowAccount" matInput placeholder="Search" />
+      </mat-form-field>
+    
+      <div class="mt-3 w-100 d-flex justify-content-between">
+        <button mat-raised-button>Clear</button>
+        <button mat-raised-button color="primary">Check all</button>
+      </div>
+      <ul class="shadow_account mt-4">
+        <li class="mt-2">
+          <mat-checkbox (change)="handleChangeShadowAccount()" [checked]="true"> 111111111111</mat-checkbox>
+        </li>
+        <li>
+          <mat-checkbox> 111111111111</mat-checkbox>
+        </li>
+        <li>
+          <mat-checkbox> 111111111111</mat-checkbox>
+        </li>
+        <li>
+          <mat-checkbox> 111111111111</mat-checkbox>
+        </li>
+        <li>
+          <mat-checkbox> 111111111111</mat-checkbox>
+        </li>
+        <li>
+          <mat-checkbox> 111111111111</mat-checkbox>
+        </li>
+        <li>
+          <mat-checkbox> 111111111111</mat-checkbox>
+        </li>
+        <li>
+          <mat-checkbox> 111111111111</mat-checkbox>
+        </li>
+        <li>
+          <mat-checkbox> 111111111111</mat-checkbox>
+        </li>
+        <li>
+          <mat-checkbox> 111111111111</mat-checkbox>
+        </li>
+        <li>
+          <mat-checkbox> 111111111111</mat-checkbox>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <abp-modal-footer (onCancelClick)="bsModalRef.hide()"></abp-modal-footer>
+</div>

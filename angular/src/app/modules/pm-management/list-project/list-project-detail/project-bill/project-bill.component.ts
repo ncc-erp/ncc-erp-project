@@ -19,6 +19,7 @@ import { InvoiceSettingDialogComponent } from '@app/modules/pm-management/list-p
 import { ProjectInvoiceSettingDto } from '@app/service/model/project-invoice-setting.dto';
 import { UpdateInvoiceDto } from '@app/service/model/updateInvoice.dto';
 import { MatDialog } from '@angular/material/dialog';
+import { ShadowAccountDialogComponent } from './shadow-account-dialog/shadow-account-dialog.component';
 
 
 @Component({
@@ -119,6 +120,21 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
       abp.notify.success(`Updated Last Invoice Number`);
       this.isEditLastInvoiceNumber = false;
     })
+  }
+  handleOpenDialogShadowAccount(projectId,userId)
+  {
+    let editNoteDialog: BsModalRef;
+    editNoteDialog = this._modalService.show(ShadowAccountDialogComponent, {
+      class: 'modal',
+      initialState: {
+        projectId,
+        userId
+      },
+    });
+
+    // editNoteDialog.content.onSave.subscribe(() => {
+    //   // this.getUserBill();
+    // });
   }
 
   getDiscount() {

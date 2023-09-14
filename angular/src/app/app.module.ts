@@ -1,3 +1,4 @@
+import { ShadowAccountDialogComponent } from './modules/pm-management/list-project/list-project-detail/project-bill/shadow-account-dialog/shadow-account-dialog.component';
 import { AppConsts } from "@shared/AppConsts";
 import { Ng2SearchPipeModule } from "ng2-search-filter";
 import { IConfig, NgxMaskModule } from "ngx-mask";
@@ -418,6 +419,7 @@ export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
     ProjectDescriptionPopupComponent,
     AddEditIssuseComponent,
     ActiveTimesheetProjectComponent,
+    ShadowAccountDialogComponent
   ],
   imports: [
     CommonModule,

@@ -1,0 +1,31 @@
+:host ::ng-deep .mat-form-field {
+  width: 100% !important;
+}
+
+.shadow_account {
+  height: 100px;
+  overflow-y: auto;
+}
+
+.shadow_account li {
+  list-style: none;
+}
+
+.mat-flat-button.mat-primary,
+.mat-raised-button.mat-primary,
+.mat-fab.mat-primary,
+.mat-mini-fab.mat-primary {
+  background-color: #007bff;
+}
+
+::ng-deep .mat-checkbox-ripple .mat-ripple-element {
+  background-color: #007bff !important;
+}
+
+::ng-deep .mat-checkbox-checked.mat-accent .mat-checkbox-background {
+  background-color: #007bff !important;
+}
+
+::ng-deep .mat-checkbox-indeterminate.mat-accent .mat-checkbox-background {
+  background-color: #007bff !important;
+}

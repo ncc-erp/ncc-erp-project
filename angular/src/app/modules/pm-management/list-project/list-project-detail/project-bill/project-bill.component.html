@@ -115,6 +115,7 @@
                                     <th class="stt">#</th>
                                     <th>Employee</th>
                                     <th>Charge Name</th>
+                                    <th>Shadow Account</th>
                                     <th>Charge Role</th>
                                     <th
                                         *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Rate_View)">
@@ -178,6 +179,14 @@
                                             <abp-validation-summary [control]="accountName" [controlEl]="accountNameEl">
                                             </abp-validation-summary>
 
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                             <p>
+                                                bùi nam,bùi nam,bùi nam,bùi nam,bùi nam,bùi nam,bùi nam,bùi nam,bùi nam,bùi nam,   bùi nam,bùi nam,bùi nam,bùi nam,bùi nam,bùi nam,bùi nam,bùi nam,bùi nam,bùi nam,
+                                             </p>   
+                                            <i (click)="handleOpenDialogShadowAccount(bill.projectId,bill.userId)" class="fas fa-plus ml-3"></i>
                                         </div>
                                     </td>
                                     <td>

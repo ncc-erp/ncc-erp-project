@@ -1,8 +1,6 @@
-import { startWith, map, catchError } from "rxjs/operators";
-import { ShadowAccountService } from "./../../../../../../service/api/shadow-account.service";
+import { catchError } from "rxjs/operators";
 import { AppComponentBase } from "@shared/app-component-base";
 import { Component, OnInit, Injector, Inject } from "@angular/core";
-import { ResourceManagerService } from "@app/service/api/resource-manager.service";
 import { ProjectUserBillService } from "@app/service/api/project-user-bill.service";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { forkJoin } from "rxjs";
@@ -27,14 +25,12 @@ export class ShadowAccountDialogComponent
     injector: Injector,
     public dialogRef: MatDialogRef<ShadowAccountDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data:any,
-    private shadowAccountService: ShadowAccountService,
-    private resourceManagerService:ResourceManagerService,
     private projectUserBillService: ProjectUserBillService
   ) {
     super(injector);
   }
 
-  ngOnInit() {
+  ngOnInit() { 
     this.listResourceSelect = this.data.listResource
     this.listResourceSelectCurrent = this.listResourceSelect
     this.projectUserBillService.GetAllResource().subscribe(res=> {
@@ -47,18 +43,18 @@ export class ShadowAccountDialogComponent
   }
   save(){
     const reqAdd = {
-      userId: this.data.userId,
+      billAccountId: this.data.userId,
       projectId: this.data.projectId,
-      userBillAccountIds: this.listResourceSelect.filter(item => !this.listResourceSelectCurrent.includes(item))
+      userIds: this.listResourceSelect.filter(item => !this.listResourceSelectCurrent.includes(item))
     }
 
     const reqDelete = {
-      userId: this.data.userId,
+      billAccountId: this.data.userId,
       projectId: this.data.projectId,
-      userBillAccountIds: this.listResourceSelectCurrent.filter(item => !this.listResourceSelect.includes(item))
+      userIds: this.listResourceSelectCurrent.filter(item => !this.listResourceSelect.includes(item))
     }
 
-      forkJoin(this.projectUserBillService.UpdateResource(reqAdd),this.projectUserBillService.RemoveBillAccountsFromUser(reqDelete))
+      forkJoin(this.projectUserBillService.LinkUserToBillAccount(reqAdd),this.projectUserBillService.RemoveUserFromBillAccount(reqDelete))
       .pipe(catchError(this.projectUserBillService.handleError))
       .subscribe(([rsAdd,rsRemove])=>{
         if(rsAdd.result && rsRemove.result){

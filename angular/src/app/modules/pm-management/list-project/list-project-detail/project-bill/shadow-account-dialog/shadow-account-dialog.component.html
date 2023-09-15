@@ -1,5 +1,5 @@
 
-<div class="row align-items-center">
+<div class="row align-items-center" [busy]="isLoading">
   <div
     class="col-2"
   >
@@ -35,7 +35,7 @@
     </mat-form-field>
   </div>
 </div>
-<div style="max-height: 50vh; overflow-y: auto; overflow-x: hidden;">
+<div style="height: 350px; overflow-y: auto; overflow-x: hidden;">
   <div class="row" style="font-size: 18px;" *ngFor="let item of resourceSelected;index as i">
     <strong class="col-2">{{i+1}}.</strong> 
     <span class="col-10">{{item.emailAddress}}</span>

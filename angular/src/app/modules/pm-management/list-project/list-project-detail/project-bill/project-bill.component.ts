@@ -130,7 +130,6 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
         listResource:listResource.map(item=> item.id)
       },
       width: "700px",
-      maxHeight: "70vh"
     })
 
     show.afterClosed().subscribe((res) => {

@@ -184,12 +184,12 @@
                                     <td>
                                         <div class="d-flex align-items-center justify-content-end">
                                             <div class="d-flex" style="flex-direction: column;">
-                                                <div *ngFor="let resource of bill.billAccounts" class="mb-2">
+                                                <div *ngFor="let resource of bill.linkedResources" class="mb-2">
                                                     <app-user-info [userData]="resource">
                                                     </app-user-info>
                                                 </div>
                                             </div>
-                                            <i (click)="handleOpenDialogShadowAccount(bill.projectId,bill.userId, bill.billAccounts)" class="fas fa-plus ml-3"></i>
+                                            <i (click)="handleOpenDialogShadowAccount(bill.projectId,bill.userId, bill.linkedResources)" class="fas fa-plus ml-3"></i>
                                         </div>
                                     </td>
                                     <td>

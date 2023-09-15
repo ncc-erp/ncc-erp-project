@@ -121,20 +121,23 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
       this.isEditLastInvoiceNumber = false;
     })
   }
-  handleOpenDialogShadowAccount(projectId,userId)
+  handleOpenDialogShadowAccount(projectId,userId,listResource)
   {
-    let editNoteDialog: BsModalRef;
-    editNoteDialog = this._modalService.show(ShadowAccountDialogComponent, {
-      class: 'modal',
-      initialState: {
-        projectId,
-        userId
+    const show = this.dialog.open(ShadowAccountDialogComponent, {
+      data: {
+        projectId:projectId,
+        userId:userId,
+        listResource:listResource.map(item=> item.id)
       },
-    });
+      width: "700px",
+      maxHeight: "70vh"
+    })
 
-    // editNoteDialog.content.onSave.subscribe(() => {
-    //   // this.getUserBill();
-    // });
+    show.afterClosed().subscribe((res) => {
+      if (res) {
+        this.getUserBill();
+      }
+    })
   }
 
   getDiscount() {

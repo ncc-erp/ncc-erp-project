@@ -1,53 +1,55 @@
-<div >
-  <abp-modal-header (onCloseClick)="bsModalRef.hide()" [title]="'Shadow Account'"></abp-modal-header>
-  <div class="modal-body">
-    <div class="wapper_shadow--account">
-      <mat-form-field  appearance="outline" class="example-full-width">
-        <mat-label>Search</mat-label>
-        <input [formControl]="shadowAccount" matInput placeholder="Search" />
-      </mat-form-field>
-    
-      <div class="mt-3 w-100 d-flex justify-content-between">
-        <button mat-raised-button>Clear</button>
-        <button mat-raised-button color="primary">Check all</button>
-      </div>
-      <ul class="shadow_account mt-4">
-        <li class="mt-2">
-          <mat-checkbox (change)="handleChangeShadowAccount()" [checked]="true"> 111111111111</mat-checkbox>
-        </li>
-        <li>
-          <mat-checkbox> 111111111111</mat-checkbox>
-        </li>
-        <li>
-          <mat-checkbox> 111111111111</mat-checkbox>
-        </li>
-        <li>
-          <mat-checkbox> 111111111111</mat-checkbox>
-        </li>
-        <li>
-          <mat-checkbox> 111111111111</mat-checkbox>
-        </li>
-        <li>
-          <mat-checkbox> 111111111111</mat-checkbox>
-        </li>
-        <li>
-          <mat-checkbox> 111111111111</mat-checkbox>
-        </li>
-        <li>
-          <mat-checkbox> 111111111111</mat-checkbox>
-        </li>
-        <li>
-          <mat-checkbox> 111111111111</mat-checkbox>
-        </li>
-        <li>
-          <mat-checkbox> 111111111111</mat-checkbox>
-        </li>
-        <li>
-          <mat-checkbox> 111111111111</mat-checkbox>
-        </li>
-      </ul>
-    </div>
-  </div>
 
-  <abp-modal-footer (onCancelClick)="bsModalRef.hide()"></abp-modal-footer>
+<div class="row align-items-center">
+  <div
+    class="col-2"
+  >
+    <label class="mr-2 mb-0">Resource</label>
+  </div>
+  <div class="col-10 rsp-group-form-field">
+    <mat-form-field
+      appearance="outline"
+      class="rsp-form-field"
+    >
+      <mat-select
+        multiple
+        [(ngModel)]="listResourceSelect"
+        (selectionChange)="onSelectChange()">
+        <div style="position: sticky; top: 0; z-index: 2; background-color: white;">
+            <mat-form-field class="w-100 px-3 ">
+                <input style="height: 50px; padding: 5px 10px; "
+                matInput [(ngModel)]="searchUser" name="search" placeholder="Search" #search
+                (keydown)="$event.stopPropagation()">{{search.focus()}}
+            </mat-form-field>
+            <div class="mb-2 ml-3">
+              <button class="btn bg-primary" (click)="selectAll()">Select All</button>
+              <button class="btn bg-secondary ml-4" (click)="clear()">Clear</button>
+            </div>
+        </div>
+        <mat-option
+          *ngFor="let resource of listAllResource | listFilter:  'fullName' : searchUser: 'emailAddress'"
+          [value]="resource.userId"
+        >
+          {{ resource.emailAddress }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+</div>
+<div style="max-height: 50vh; overflow-y: auto; overflow-x: hidden;">
+  <div class="row" style="font-size: 18px;" *ngFor="let item of resourceSelected;index as i">
+    <strong class="col-2">{{i+1}}.</strong> 
+    <span class="col-10">{{item.emailAddress}}</span>
+  </div>
+</div>
+<div class="d-flex justify-content-end mt-3" style="position: sticky; bottom: 0; z-index: 2;">
+  <div class="row d-flex justify-content-end">
+      <button name="btn-cancel" class="btn btn-secondary btn-action mx-2"
+      (click)="dialogRef.close()"> 
+          Cancel
+      </button>
+      <button name="btn-cancel" class="btn btn-success btn-action mx-2"
+      (click)="save()"> 
+          Save
+      </button>
+  </div>
 </div>

@@ -9,6 +9,7 @@ import { ParentInvoice } from '../model/bill-info.model';
 import { ApiResponse } from '../model/api-response.dto';
 import {UpdateInvoiceDto} from '../model/updateInvoice.dto'
 import { ProjectInvoiceSettingDto } from '@app/service/model/project-invoice-setting.dto';
+import { number } from 'echarts';
 @Injectable({
   providedIn: 'root'
 })
@@ -43,6 +44,15 @@ export class ProjectUserBillService extends BaseApiService {
   updateNote(item: any): Observable<any> {
     return this.http.put<any>(this.rootUrl + '/UpdateNote', item);
   }
+  GetAllResource(): Observable<any>{
+    return this.http.get<any>(this.rootUrl + '/GetAllResource1');
+  }
+  UpdateResource(input): Observable<any>{
+    return this.http.post<any>(this.rootUrl + '/LinkUserToBillAccount',input);
+  }
+  RemoveBillAccountsFromUser(input): Observable<any>{
+    return this.http.post<any>(this.rootUrl + '/RemoveBillAccountsFromUser',input);
+  }
   //#region Integrate Finfast
   getParentInvoice(projectId: number): Observable<ApiResponse<ParentInvoice>> {
     return this.http.get<ApiResponse<ParentInvoice>>(this.rootUrl + '/GetParentInvoiceByProject?projectId=' + projectId);
@@ -68,5 +78,7 @@ export class ProjectUserBillService extends BaseApiService {
   checkInvoiceSetting(): Observable<ApiResponse<string>>{
     return this.http.get<ApiResponse<string>>(this.rootUrl + '/CheckInvoiceSetting');
   }
+
+
   //#endregion
 }

@@ -31,7 +31,7 @@ export class LinkProjectTimesheetComponent extends AppComponentBase implements O
   handleSave() {
     this.saving = true
     this.timesheetProjectService.updateProjectCode(this.data.projectId,this.listProjectCode).subscribe(() => {
-        abp.notify.success('Updated ProjectCode successfully')
+        abp.notify.success('Link Project Timesheet Successfully')
         this.saving = false
         this.dialogRef.close(true)
     })

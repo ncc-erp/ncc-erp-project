@@ -35,3 +35,6 @@ button{
 .yellow{
   color: yellow !important;
 }
+::ng-deep .mat-select-panel{
+  max-height: 350px !important;
+}

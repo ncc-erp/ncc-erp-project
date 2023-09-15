@@ -81,7 +81,7 @@
                             </mat-form-field>
                         </div>
                         <div class="col-12 col-md-4 mt-1 d-flex align-items-center mb-3">
-                            <mat-form-field appearance="outline" class="flex-grow-1">
+                            <mat-form-field appearance="outline" class="flex-grow-1" style="max-height: 500px;">
                                 <mat-label>Skills:</mat-label>
                                 <mat-select #selectSkill placeholder="select skill" multiple (openedChange)="openedChange($event,'Skill')"  [(ngModel)]="selectedSkillId">
                                     <div style="width: 334px;" style="position: sticky; top: 0; z-index: 2; background-color: white; padding: 10px 7px; padding: 13px 7px 0px 5px;">
@@ -91,7 +91,7 @@
                                             matInput [(ngModel)]="searchSkill"  placeholder="Search" #search
                                             (keydown)="$event.stopPropagation()">
                                           </mat-form-field>
-                                        <mat-radio-group aria-label="Filter by" class="w-80 px-2  row" [(ngModel)]="isAndCondition" (ngModelChange)="getDataPage(1)" style=" width: 100%;align-items: center;">                                           
+                                        <mat-radio-group aria-label="Filter by" class="w-80 px-2  row" [(ngModel)]="isAndCondition" style=" width: 100%;align-items: center;">                                           
                                             <div class="col-4 d-flex" style="align-items: center;">
                                                 <mat-radio-button class="mr-3" [value]="true">And</mat-radio-button>
                                                 <mat-radio-button [value]="false">Or</mat-radio-button>

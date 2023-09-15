@@ -101,6 +101,18 @@ export class UpdateUserSkillDialogComponent implements OnInit {
     }
   }
 
+  selectAll(){
+    this.skillRankList = this.skillList.map(item => {
+      return {skillId:item.id,skillRank:0,name:item.name}
+    })
+    this.userSkillList = this.skillList.map(item => item.id)
+  }
+
+  clear(){
+    this.skillRankList = []
+    this.userSkillList = []
+  }
+
   ngOnDestroy(): void {
     this.subscription.forEach(sub => sub.unsubscribe())
   }

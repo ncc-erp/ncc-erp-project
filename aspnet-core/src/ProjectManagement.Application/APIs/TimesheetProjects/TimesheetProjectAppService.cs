@@ -1,4 +1,5 @@
 ﻿using Abp.Authorization;
+using Abp.Collections.Extensions;
 using Abp.Configuration;
 using Abp.UI;
 using Microsoft.AspNetCore.Hosting;
@@ -330,7 +331,8 @@ namespace ProjectManagement.APIs.TimesheetProjects
                     IsActive = tsp.IsActive,
                     ProjectType = tsp.Project.ProjectType,
                     ProjectStatus = tsp.Project.Status,
-                    CloseTime = _reactiveTimesheetProject.GetCloseTimeBackgroundJob(tsp.Id)
+                    CloseTime = _reactiveTimesheetProject.GetCloseTimeBackgroundJob(tsp.Id),
+                    ListProjectCodes = tsp.Project.ListProjectCodes
                 }).OrderByDescending(x => x.ClientId);
             }
         }
@@ -717,6 +719,8 @@ namespace ProjectManagement.APIs.TimesheetProjects
             return await _timesheetService.GetTimesheetDetailForTax(input);
         }
 
+        
+
         private ExcelWorksheet CopySheet(ExcelWorkbook workbook, string existingWorksheetName, string newWorksheetName)
         {
             ExcelWorksheet worksheet = workbook.Worksheets.Copy(existingWorksheetName, newWorksheetName);
@@ -727,11 +731,15 @@ namespace ProjectManagement.APIs.TimesheetProjects
         {
             var defaultWorkingHours = Convert.ToInt32(await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.DefaultWorkingHours));
             var result = new InvoiceData();
+            var listTSProjectCode = WorkScope.All<Project>()
+                .Where(s => input.ProjectIds.Contains(s.Id)).Select(x => x.ListProjectCodes).ToList()
+                .Where(x => !string.IsNullOrEmpty(x))
+                .SelectMany(x => x.Split(',').Select(code => code.Trim()));
 
             var qtimesheetProject = WorkScope.All<TimesheetProject>()
                 .Where(s => s.TimesheetId == input.TimesheetId)
                 .Where(s => input.ProjectIds.Contains(s.ProjectId));
-
+            
             var qtimesheetProjectBill = WorkScope.All<TimesheetProjectBill>()
                 .Where(s => s.TimesheetId == input.TimesheetId)
                 .Where(s => s.IsActive)
@@ -780,11 +788,10 @@ namespace ProjectManagement.APIs.TimesheetProjects
                                                EndTime = tpb.EndTime,
                                                StartTime = tpb.StartTime,
                                            }).ToListAsync();
-
-            result.ProjectCodes = await qtimesheetProject.Select(x => x.Project.Code).ToListAsync();
-
+            result.ProjectCodes = result.TimesheetUsers.Select(x => x.ProjectCode).Union(listTSProjectCode).ToList();
             return result;
         }
+        
 
         private void FillDataToExcelFileInvoiceSheet(ExcelPackage excelPackageIn, InvoiceData data)
         {
@@ -840,6 +847,32 @@ namespace ProjectManagement.APIs.TimesheetProjects
             }
 
             invoiceSheet.Cells["B" + indexPayment].Value = $"Payment Reference: {data.Info.InvoiceNumber}";
+        }
+
+        private void FillDataToExcelFileTSDetail(ExcelPackage excelPackageIn, InvoiceData data)
+        {
+
+            var invoiceSheet = excelPackageIn.Workbook.Worksheets[0];
+            var tsTable = invoiceSheet.Tables.First();
+            var tsTableStart = tsTable.Address.Start;
+            invoiceSheet.InsertRow(tsTableStart.Row + 1, data.TimesheetUsers.Count - 1, tsTableStart.Row + data.TimesheetUsers.Count);
+
+            int rowIndex = tsTableStart.Row + 1;
+            double sumLineTotal = 0;
+            int sequenceNumber = 1;
+
+            foreach (var tsUser in data.TimesheetUsers)
+            {
+                // Fill data sheet invoice
+                invoiceSheet.Cells[rowIndex, 2].Value = sequenceNumber;
+                invoiceSheet.Cells[rowIndex, 3].Value = tsUser.FullName;
+                invoiceSheet.Cells[rowIndex, 4].Value = tsUser.ProjectName;
+                invoiceSheet.Cells[rowIndex, 5].Value = tsUser.WorkingDayDisplay;
+
+                sumLineTotal += tsUser.LineTotal;
+                rowIndex++;
+                sequenceNumber++;
+            }
         }
 
         [AbpAuthorize(PermissionNames.Timesheets_TimesheetDetail_ExportInvoice)]
@@ -908,8 +941,36 @@ namespace ProjectManagement.APIs.TimesheetProjects
             }
         }
 
-        private async Task<List<TimesheetDetailUser>> GetTimesheetDetailData(InvoiceData invoiceData)
+        [AbpAuthorize(PermissionNames.Timesheets_TimesheetDetail_ExportTSdetail)]
+        public async Task<FileBase64Dto> ExportTSdetail(InputExportInvoiceDto input)
         {
+            var dataInvoice = await GetInvoiceData(input);
+            List<TimesheetDetailUser> dataTimesheetDetail = await GetTimesheetDetailData(dataInvoice, false);
+
+            var templateFilePath = Path.Combine(templateFolder, "TSDetail.xlsx");
+
+            using (var memoryStream = new MemoryStream(File.ReadAllBytes(templateFilePath)))
+            {
+                using (var excelPackageIn = new ExcelPackage(memoryStream))
+                {
+                    FillDataToExcelFileTSDetail(excelPackageIn, dataInvoice);
+                    FillDataToSheetTimesheetDetail(excelPackageIn, dataTimesheetDetail);
+                    string fileBase64 = Convert.ToBase64String(excelPackageIn.GetAsByteArray());
+
+
+                    return new FileBase64Dto
+                    {
+                        FileName = dataInvoice.ExportFileName(),
+                        FileType = MimeTypeNames.ApplicationVndOpenxmlformatsOfficedocumentSpreadsheetmlSheet,
+                        Base64 = fileBase64
+                    };
+                }
+            }
+        }
+
+        private async Task<List<TimesheetDetailUser>> GetTimesheetDetailData(InvoiceData invoiceData, bool isFilterProjectCode = true)
+        {
+
             int month = invoiceData.Info.Month;
             int year = invoiceData.Info.Year;
 
@@ -919,7 +980,6 @@ namespace ProjectManagement.APIs.TimesheetProjects
                 Month = invoiceData.Info.Month,
                 ProjectCodes = invoiceData.ProjectCodes
             };
-
             var timesheetDetailForTax = await GetTimesheetDetailForTaxInTimesheetTool(timesheetDetailForTaxDto);
 
             var listTimesheet = timesheetDetailForTax.ListTimesheet;
@@ -934,7 +994,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
                 var timesheetDetailUser = new TimesheetDetailUser { };
                 var tsDetails = listTimesheet
                                                         .Where(x => x.EmailAddress == tsProject.EmailAddress)
-                                                        .Where(x => x.ProjectCode == tsProject.ProjectCode)
+                                                        .WhereIf(isFilterProjectCode, x => x.ProjectCode == tsProject.ProjectCode)
                                                         .OrderBy(x => x.DateAt).ToList();
 
                 var firstDayOfMonth = DateTimeUtils.FirstDayOfMonth(new DateTime(year, month, 1));
@@ -960,6 +1020,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
             return resultList;
         }
 
+       
         private void AddMoreBillDate(List<DateTime> listBillDate, double totalWorkingDay)
         {
             var maxBillDay = listBillDate.Count;
@@ -1064,6 +1125,24 @@ namespace ProjectManagement.APIs.TimesheetProjects
             }
 
             return excelPackageIn;
+        }
+        [HttpPut]
+        [AbpAuthorize(PermissionNames.Timesheets_TimesheetDetail_UpdateProjectCodes)]
+        public async Task<string> UpdateProjectCodes(long projectId, string ListProjectCodes)
+        {
+            var project = await WorkScope.GetAll<Project>()
+                .FirstOrDefaultAsync(x => x.Id == projectId);
+
+            if (project == null)
+            {
+                throw new UserFriendlyException("Not found Project with projectId  provided.");
+            }
+
+            project.ListProjectCodes = ListProjectCodes;
+
+            await CurrentUnitOfWork.SaveChangesAsync();
+
+            return project.ListProjectCodes;
         }
 
         [HttpPut]

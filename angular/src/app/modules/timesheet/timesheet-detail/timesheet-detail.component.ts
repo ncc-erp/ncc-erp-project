@@ -302,7 +302,6 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
 
     dialogref.afterClosed().subscribe((rs)=> {
       if(rs) {
-        console.log(rs);
         this.refresh()
       }
     })

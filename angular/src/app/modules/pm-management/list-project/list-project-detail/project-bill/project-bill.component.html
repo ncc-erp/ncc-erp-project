@@ -133,7 +133,8 @@
                                     id: 'billUserInfo',
                                     itemsPerPage: maxBillUserCurrentPage,
                                     currentPage: userBillCurrentPage
-                                } ; let i = index">
+                                } ; let i = index"
+                                [ngClass]="{'highLight': bill.linkedResources.length > 1}" >
                                     <td><span>{{ i +1 }}</span></td>
                                     <td class="text-left" style="min-width: 250px;">
                                         <span *ngIf="!bill.createMode">
@@ -182,7 +183,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <div class="d-flex align-items-center justify-content-end">
+                                        <div class="d-flex align-items-start justify-content-end">
                                             <div class="d-flex" style="flex-direction: column;">
                                                 <div *ngFor="let resource of bill.linkedResources" class="mb-2">
                                                     <app-user-info [userData]="resource">

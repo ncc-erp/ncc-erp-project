@@ -14,3 +14,7 @@
 .submit-btn:disabled i {
     color: gray !important;
 }
+
+.highLight, .highLight:hover{
+    background-color: rgb(230, 238, 240) !important;
+}

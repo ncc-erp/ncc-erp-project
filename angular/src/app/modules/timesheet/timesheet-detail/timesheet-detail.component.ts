@@ -208,6 +208,10 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
     return this.isGranted(this.Timesheets_TimesheetDetail_ExportTSdetail)
   }
 
+  isShowBtnLinkProjectTs() {
+    return this.isGranted(this.Timesheets_TimesheetDetail_UpdateProjectCodes)
+  }
+
   showDialog(command: String, Timesheet: any): void {
     let timesheetDetail = {};
     if (command == "edit") {

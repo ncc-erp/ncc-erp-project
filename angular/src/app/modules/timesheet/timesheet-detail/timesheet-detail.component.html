@@ -457,9 +457,8 @@
                       <i class="fas fa-trash mr-1"></i>
                       Delete
                     </button>
-                    <!-- *ngIf="
-                        (permission.isGranted(Timesheets_TimesheetDetail_UpdateProjectCodes))" -->
-                    <button class="btn mat-menu-item w-100" (click)="handleLinkProjectTS(item);">
+                   
+                    <button  *ngIf="isShowBtnLinkProjectTs()" class="btn mat-menu-item w-100" (click)="handleLinkProjectTS(item);">
                         <i class="fas fa-link mr-1"></i>
                       Link Project In Timesheet
                     </button>

@@ -22,7 +22,7 @@ import {
   PagedListingComponentBase,
   PagedRequestDto,
 } from '@shared/paged-listing-component-base';
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit, Injector, ViewChild } from '@angular/core';
 import { SkillDto } from '@app/service/model/list-project.dto';
 import { ProjectResourceRequestService } from '@app/service/api/project-resource-request.service';
 import { ProjectHistoryByUserComponent } from './plan-user/project-history-by-user/project-history-by-user.component';
@@ -43,10 +43,13 @@ export class PlanResourceComponent
   extends PagedListingComponentBase<PlanResourceComponent>
   implements OnInit {
   public listSkills: SkillDto[] = [];
+  public listSkillsId: number[] = [];
   public skill = '';
+  public searchSkill:string = '';
   public skillsParam = [];
   private subscription: Subscription[] = [];
   public selectedSkillId: number[]
+  public selectedSkillIdOld: number[];
   public isAndCondition: boolean = false
 
   Resource_TabPool = PERMISSIONS_CONSTANT.Resource_TabPool
@@ -147,6 +150,8 @@ export class PlanResourceComponent
   ) {
     super(injector);
   }
+  
+  @ViewChild("selectSkill") selectSkill;
 
   ngOnInit(): void {
     this.pageSizeType = 100;
@@ -167,6 +172,23 @@ export class PlanResourceComponent
       )
     })
   }
+
+  openedChange(opened){
+    if(!opened){
+          this.selectedSkillId = this.selectedSkillIdOld
+      }
+  }
+
+  actionSelect(typeSelect){
+    this.selectedSkillId = typeSelect.data
+  }
+
+  selectDone(){
+    this.selectedSkillIdOld = this.selectedSkillId
+    this.selectSkill.close()
+    this.refresh()
+  }
+
   public isAllowCancelPlan(creatorUserId: number) {
     if (this.permission.isGranted(this.DeliveryManagement_ResourceRequest_CancelMyPlanOnly)) {
       if (this.permission.isGranted(this.DeliveryManagement_ResourceRequest_CancelAnyPlanResource)) {
@@ -274,6 +296,7 @@ export class PlanResourceComponent
     this.subscription.push(
       this.skillService.getAll().subscribe((data) => {
         this.listSkills = data.result;
+        this.listSkillsId = data.result.map(item => item.id)
         this.skillsParam = data.result.map((item) => {
           return {
             displayName: item.name,

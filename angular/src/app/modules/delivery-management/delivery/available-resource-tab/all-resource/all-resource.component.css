@@ -2,12 +2,16 @@
     z-index: 0;
 }
 
-
+::ng-deep .mat-radio-label{
+    margin: 0;
+}
 .all-resource-table i {
     color: #686868;
     font-size: 18px;
 }
-
+::ng-deep .mat-select-panel{
+    max-height: 350px !important;
+}
 
 #all-resource .fa-edit,
 #all-resource .fa-plus {

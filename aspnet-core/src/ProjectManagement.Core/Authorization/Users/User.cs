@@ -50,6 +50,7 @@ namespace ProjectManagement.Authorization.Users
         public string PoolNote { get; set; }
         public virtual ICollection<ProjectUser> ProjectUsers { get; set; }
         public virtual ICollection<UserSkill> UserSkills { get; set; }
+        public virtual ICollection<ProjectUserBillAccount> ProjectUserBillAccounts { get; set; }
 
         public long? BranchId { get; set; }
         [ForeignKey(nameof(BranchId))]

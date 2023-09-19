@@ -1,7 +1,9 @@
 ﻿using Abp.Application.Services.Dto;
 using NccCore.Anotations;
+using ProjectManagement.Services.ProjectUserBill.Dto;
 using ProjectManagement.Utils;
 using System;
+using System.Collections.Generic;
 using static ProjectManagement.Constants.Enum.ProjectEnum;
 
 namespace ProjectManagement.APIs.ProjectUserBills.Dto
@@ -40,6 +42,6 @@ namespace ProjectManagement.APIs.ProjectUserBills.Dto
         public long? PositionId { get; set; }
         public string PositionName { get; set; }
         public string PositionColor { get; set; }
-
+        public List<GetAllUserDto> LinkedResources { get; set; }
     }
 }

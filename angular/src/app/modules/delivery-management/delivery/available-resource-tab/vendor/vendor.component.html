@@ -23,7 +23,8 @@
                         <div class="col-4 mt-1 d-flex align-items-center">
                             <mat-form-field appearance="outline" class="flex-grow-1">
                                 <mat-label>Skills:</mat-label>
-                                <mat-select #selectSkill placeholder="select skill" multiple (openedChange)="openedChange($event)"  [(ngModel)]="selectedSkillId">
+                                <mat-select #selectSkill placeholder="select skill" multiple
+                                (openedChange)="openedChange($event)"  [(ngModel)]="selectedSkillId">
                                     <div style="width: 334px;" style="position: sticky; top: 0; z-index: 2; background-color: white; padding: 10px 7px; padding: 13px 7px 0px 5px;">
                                         <mat-form-field class="w-100 px-3 "
                                             style="position: sticky; top: 0; z-index: 2; background-color: white;">
@@ -37,7 +38,9 @@
                                                 <mat-radio-button [value]="false">Or</mat-radio-button>
                                             </div>
                                             <div class="col-8 mb-2">
-                                                <app-select-clear-option  [listOption]="listSkillsId" (newListEvent)= "actionSelect($event)" (doneEvent)="selectDone()"></app-select-clear-option>
+                                                <app-select-clear-option  [listOption]="listSkillsId"
+                                                    (newListEvent)= "actionSelect($event)" (doneEvent)="selectDone()">
+                                                </app-select-clear-option>
                                             </div>
                                         </mat-radio-group>
                                     </div>

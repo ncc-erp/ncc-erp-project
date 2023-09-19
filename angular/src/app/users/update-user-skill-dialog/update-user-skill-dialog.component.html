@@ -6,9 +6,13 @@
         <label class="col-md-3 col-form-label" for="userSkills">Skills:</label>
         <div class="col-md-9 ">
             <mat-form-field class="w-100" appearance="outline">
-                <mat-select multiple [(ngModel)]="userSkillList" style="position: sticky; top: 0; z-index: 2; background-color: white;" required name="userSkills" placeholder="select skill" #userSkills="ngModel"  (selectionChange)="onSelectChange()">
+                <mat-select multiple [(ngModel)]="userSkillList" 
+                style="position: sticky; top: 0; z-index: 2; background-color: white;"
+                required name="userSkills" placeholder="select skill" #userSkills="ngModel"
+                (selectionChange)="onSelectChange()">
                     <mat-form-field class="w-100 px-3 ">
-                        <input matInput [(ngModel)]="searchSkill" name="searchSkillName" placeholder="Search" #search (input)="$event.stopPropagation();"
+                        <input matInput [(ngModel)]="searchSkill" name="searchSkillName"
+                         placeholder="Search" #search (input)="$event.stopPropagation();"
                         >{{search.focus()}}
                     </mat-form-field>
                     <div class="mb-2 ml-3">

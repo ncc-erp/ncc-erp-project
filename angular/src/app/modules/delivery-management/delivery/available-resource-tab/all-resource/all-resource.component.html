@@ -36,8 +36,8 @@
                         <div class="col-12 col-md-4 mt-1 d-flex align-items-center mb-3">
                             <mat-form-field appearance="outline" class="flex-grow-1">
                                 <mat-label>Position:</mat-label>
-                                <mat-select #selectPosition placeholder="Select position" [(ngModel)]="selectedPositions" multiple (openedChange)="openedChange($event,'Position')"
-                                    >
+                                <mat-select #selectPosition placeholder="Select position" 
+                                [(ngModel)]="selectedPositions" multiple (openedChange)="openedChange($event,'Position')">
                                     <div style="position: sticky; top: 0; z-index: 2; background-color: white;">
                                         <mat-form-field class="w-100 px-3 ">
                                             <input style="height: 30px; padding: 5px 10px; "
@@ -45,7 +45,9 @@
                                             (keydown)="$event.stopPropagation()">
                                         </mat-form-field>
                                         <div class="ml-3 mb-2">
-                                            <app-select-clear-option [type]= "'Position'" [listOption]="listPositionsId" (newListEvent)= "actionSelect($event)" (doneEvent)="selectDone($event)"></app-select-clear-option>
+                                            <app-select-clear-option [type]= "'Position'" [listOption]="listPositionsId"
+                                                (newListEvent)= "actionSelect($event)" (doneEvent)="selectDone($event)">
+                                            </app-select-clear-option>
                                         </div>
                                     </div>
                                     <mat-option *ngFor="let position of listPositions | listFilter:  'name' : searchPosition" [value]="position.id">
@@ -71,7 +73,9 @@
                                         (keydown)="$event.stopPropagation()">
                                     </mat-form-field>
                                     <div class="ml-3 mb-2">
-                                        <app-select-clear-option [type]= "'Branch'" [listOption]="listBranchsId" (newListEvent)= "actionSelect($event)" (doneEvent)="selectDone($event)"></app-select-clear-option>
+                                        <app-select-clear-option [type]= "'Branch'" [listOption]="listBranchsId" 
+                                            (newListEvent)= "actionSelect($event)" (doneEvent)="selectDone($event)">
+                                        </app-select-clear-option>
                                     </div>
                                     </div>
                                     <mat-option *ngFor="let branch of listBranchs | listFilter:  'name' : searchBranch" [value]="branch.id">
@@ -83,7 +87,8 @@
                         <div class="col-12 col-md-4 mt-1 d-flex align-items-center mb-3">
                             <mat-form-field appearance="outline" class="flex-grow-1" style="max-height: 500px;">
                                 <mat-label>Skills:</mat-label>
-                                <mat-select #selectSkill placeholder="select skill" multiple (openedChange)="openedChange($event,'Skill')"  [(ngModel)]="selectedSkillId">
+                                <mat-select #selectSkill placeholder="select skill" multiple 
+                                (openedChange)="openedChange($event,'Skill')"  [(ngModel)]="selectedSkillId">
                                     <div style="width: 334px;" style="position: sticky; top: 0; z-index: 2; background-color: white; padding: 10px 7px; padding: 13px 7px 0px 5px;">
                                         <mat-form-field class="w-100 px-3 "
                                             style="position: sticky; top: 0; z-index: 2; background-color: white;">
@@ -97,7 +102,9 @@
                                                 <mat-radio-button [value]="false">Or</mat-radio-button>
                                             </div>
                                             <div class="col-8 mb-2">
-                                                <app-select-clear-option [type]= "'Skill'" [listOption]="listSkillsId" (newListEvent)= "actionSelect($event)" (doneEvent)="selectDone($event)"></app-select-clear-option>
+                                                <app-select-clear-option [type]= "'Skill'" [listOption]="listSkillsId" 
+                                                    (newListEvent)= "actionSelect($event)" (doneEvent)="selectDone($event)">
+                                                </app-select-clear-option>
                                             </div>
                                         </mat-radio-group>
                                     </div>

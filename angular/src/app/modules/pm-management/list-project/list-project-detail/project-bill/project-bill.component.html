@@ -190,7 +190,8 @@
                                                     </app-user-info>
                                                 </div>
                                             </div>
-                                            <i (click)="handleOpenDialogShadowAccount(bill.projectId,bill.userId, bill.linkedResources)" class="fas fa-plus ml-3"></i>
+                                            <i *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount)"
+                                             (click)="handleOpenDialogShadowAccount(bill.projectId,bill.userId, bill.linkedResources)" class="fas fa-plus ml-3"></i>
                                         </div>
                                     </td>
                                     <td>

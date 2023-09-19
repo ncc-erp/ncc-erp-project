@@ -58,5 +58,6 @@ namespace ProjectManagement.Services.ResourceService.Dto
         public string PositionColor { get; set; }
 
         public string PositionName { get; set; }
+        public string SkillNote { get; set; }
     }
 }

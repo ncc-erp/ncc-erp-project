@@ -18,6 +18,7 @@ using ProjectManagement.Services.ProjectUserBill.Dto;
 using Abp.UI;
 using Abp.Domain.Uow;
 using Abp;
+using System.Linq.Dynamic.Core;
 
 namespace ProjectManagement.Services.ProjectUserBills
 {
@@ -184,7 +185,7 @@ namespace ProjectManagement.Services.ProjectUserBills
 
             return listResult;
         }
-   
+
         public async Task CheckResourceInProject(long accountId, long projectId)
         {
             var existedPU = await _workScope.GetAll<ProjectManagement.Entities.ProjectUserBill>()
@@ -195,59 +196,62 @@ namespace ProjectManagement.Services.ProjectUserBills
                 throw new UserFriendlyException($"BillAccount(User) {accountId} is not working in Project {projectId}!");
         }
 
-        public async Task<ProjectUserBillAccount> AddProjectUserBillAccount(CreateProjectUserBillLinkDto input)
+        public async Task<List<ProjectUserBillAccount>> AddProjectUserBillAccounts(ProjectUserBillAccountsDto input)
         {
-            await ValidateProjectUserBillAccount(input.UserId, input.ProjectId, input.UserBillAccountId);
+            var listPUBA = new List<ProjectUserBillAccount>();
+            foreach (var userId in input.UserIds)
+            {
+                await ValidateProjectUserBillAccount(userId, input.ProjectId, input.BillAccountId);
 
-            var pUBA = new ProjectUserBillAccount();
+                var pUBA = new ProjectUserBillAccount();
 
-            using (UnitOfWorkManager.Current.DisableFilter(AbpDataFilters.SoftDelete))
-            {
-                pUBA = await _workScope.GetAll<ProjectUserBillAccount>()
-                 .Where(s => s.UserBillAccountId == input.UserBillAccountId && s.UserId == input.UserId && s.ProjectId == input.ProjectId)
-                 .FirstOrDefaultAsync();
-            }
-
-            if (pUBA != null && !pUBA.IsDeleted)
-            {
-                throw new UserFriendlyException("This UserBillAccount already exists!");
-            } 
-            else if (pUBA != null && pUBA.IsDeleted)
-            {
-                pUBA.IsDeleted = false;
-                await _workScope.UpdateAsync(pUBA);
-                return pUBA;
-            } 
-            else if (pUBA == null)
-            {
-                var newBA = new ProjectUserBillAccount
+                using (UnitOfWorkManager.Current.DisableFilter(AbpDataFilters.SoftDelete))
                 {
-                    UserId = input.UserId,
-                    ProjectId = input.ProjectId,
-                    UserBillAccountId = input.UserBillAccountId,
-                };
+                    pUBA = await _workScope.GetAll<ProjectUserBillAccount>()
+                     .Where(s => s.UserBillAccountId == input.BillAccountId && s.UserId == userId && s.ProjectId == input.ProjectId)
+                     .FirstOrDefaultAsync();
+                }
 
-                await _workScope.InsertAsync(newBA);    
-                return newBA;
+                if (pUBA != null && !pUBA.IsDeleted)
+                {
+                    throw new UserFriendlyException("This UserBillAccount already exists!");
+                }
+                else if (pUBA != null && pUBA.IsDeleted)
+                {
+                    pUBA.IsDeleted = false;
+                    await _workScope.UpdateAsync(pUBA);
+                    listPUBA.Add(pUBA);
+                }
+                else if (pUBA == null)
+                {
+                    var newBA = new ProjectUserBillAccount
+                    {
+                        UserId = userId,
+                        ProjectId = input.ProjectId,
+                        UserBillAccountId = input.BillAccountId,
+                    };
+
+                    await _workScope.InsertAsync(newBA);
+                    listPUBA.Add(newBA);
+                }
             }
 
-            return null;
+            return listPUBA;
         }
 
-        public async Task<bool> RemoveProjectUserBillAccount(GetProjectUserBillLinkDto input)
+        public async Task RemoveProjectUserBillAccount(ProjectUserBillAccountsDto input)
         {
-            await ValidateProjectUserBillAccount(input.UserId, input.ProjectId, input.UserBillAccountId);
+            foreach (var userId in input.UserIds)
+            {
+                await ValidateProjectUserBillAccount(userId, input.ProjectId, input.BillAccountId);
 
-            var pUBA = await _workScope.GetAll<ProjectUserBillAccount>()
-               .Where(s => s.UserBillAccountId == input.UserBillAccountId && s.UserId == input.UserId && s.ProjectId == input.ProjectId)
-               .FirstOrDefaultAsync();
+                var pUBA = await _workScope.GetAll<ProjectUserBillAccount>()
+                   .Where(s => s.UserBillAccountId == input.BillAccountId && s.UserId == userId && s.ProjectId == input.ProjectId)
+                   .FirstOrDefaultAsync();
 
-            if (pUBA == null)
-                throw new UserFriendlyException("This BillAccountUser does not exist!");
-            else
-                await _workScope.DeleteAsync(pUBA);
-
-            return true;
+                if (pUBA != null)
+                    await _workScope.DeleteAsync(pUBA);
+            }
         }
 
         private async Task ValidateProjectUserBillAccount(long userId, long projectId, long billAccountId)

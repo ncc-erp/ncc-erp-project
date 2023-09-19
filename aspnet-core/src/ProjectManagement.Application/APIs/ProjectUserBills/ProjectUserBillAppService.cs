@@ -4,11 +4,13 @@ using Abp.UI;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NccCore.Extension;
+using NccCore.IoC;
 using NccCore.Paging;
 using NccCore.Uitls;
 using ProjectManagement.APIs.ProjectUserBills.Dto;
 using ProjectManagement.APIs.Timesheets.Dto;
 using ProjectManagement.Authorization;
+using ProjectManagement.Authorization.Users;
 using ProjectManagement.Entities;
 using ProjectManagement.Services.ProjectTimesheet;
 using ProjectManagement.Services.ProjectUserBill.Dto;
@@ -18,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
+using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 using static ProjectManagement.Constants.Enum.ProjectEnum;
@@ -39,8 +42,8 @@ namespace ProjectManagement.APIs.ProjectUserBills
 
         [HttpGet]
         [AbpAuthorize(PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo,
-            PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo,
-            PermissionNames.Projects_TrainingProjects_ProjectDetail_TabBillInfo)]
+          PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo,
+          PermissionNames.Projects_TrainingProjects_ProjectDetail_TabBillInfo)]
         public async Task<List<GetProjectUserBillDto>> GetAllByProject(long projectId)
         {
             var isViewRate = await IsGrantedAsync(PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Rate_View);
@@ -85,7 +88,7 @@ namespace ProjectManagement.APIs.ProjectUserBills
 
             return query;
         }
-     
+
         private async Task<List<GetAllUserDto>> GetUserBillAccountsOfAccount(long accountId, long projectId)
         {
             var billAccounts = await projectUserBillManager.GetUserBillAccountsByAccount(accountId, projectId);
@@ -98,24 +101,15 @@ namespace ProjectManagement.APIs.ProjectUserBills
             PermissionNames.Projects_TrainingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount)]
         public async Task<bool> LinkUserToBillAccount(ProjectUserBillAccountsDto input)
         {
-            foreach (var userId in input.UserIds)
+            try
             {
-                await AddProjectUserBillAccount(input.ProjectId, userId, input.BillAccountId);
+                await projectUserBillManager.AddProjectUserBillAccounts(input);
+                return true;
             }
-
-            return true;
-        }
-
-        private async Task AddProjectUserBillAccount(long projectId, long userId, long userBillAccountId)
-        {
-            var billAccountUser = new CreateProjectUserBillLinkDto
+            catch (Exception ex)
             {
-                UserId = userId,
-                ProjectId = projectId,
-                UserBillAccountId = userBillAccountId
-            };
-
-            await projectUserBillManager.AddProjectUserBillAccount(billAccountUser);
+                 throw new UserFriendlyException(ex.Message);
+            }
         }
 
         [HttpPost]
@@ -124,24 +118,15 @@ namespace ProjectManagement.APIs.ProjectUserBills
             PermissionNames.Projects_TrainingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount)]
         public async Task<bool> RemoveUserFromBillAccount(ProjectUserBillAccountsDto input)
         {
-            foreach (var userId in input.UserIds)
+            try
             {
-                await RemoveProjectUserBillAccount(input.ProjectId, userId, input.BillAccountId);
+                await projectUserBillManager.RemoveProjectUserBillAccount(input);
+                return true;
             }
-
-            return true;
-        }
-
-        private async Task RemoveProjectUserBillAccount(long projectId, long userId, long userBillAccountId)
-        {
-            var billAccountUser = new GetProjectUserBillLinkDto
+            catch (Exception ex)
             {
-                UserId = userId,
-                ProjectId = projectId,
-                UserBillAccountId = userBillAccountId
-            };
-
-            await projectUserBillManager.RemoveProjectUserBillAccount(billAccountUser);
+                throw new UserFriendlyException(ex.Message);
+            }
         }
 
         [HttpPost]

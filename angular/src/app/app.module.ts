@@ -218,6 +218,8 @@ import { AddEditIssuseComponent } from './modules/pm-management/list-project/lis
 import { ActiveTimesheetProjectComponent } from './modules/timesheet/timesheet-detail/active-timesheet-project/active-timesheet-project.component';
 import { BillAccountPlanComponent } from './modules/delivery-management/delivery/available-resource-tab/bill-account-plan/bill-account-plan.component';
 import { GeneralInformationComponent } from './modules/pm-management/list-project/list-project-detail/general-information/general-information.component';
+import { FormCvUserComponent } from './modules/delivery-management/delivery/request-resource-tab/form-cv-user/form-cv-user.component';
+import { DescriptionPopupComponent } from './modules/delivery-management/delivery/request-resource-tab/description-popup/description-popup.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, "./assets/i18n/", ".json");
@@ -422,6 +424,8 @@ export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
     ActiveTimesheetProjectComponent,
     BillAccountPlanComponent,
     GeneralInformationComponent,
+    FormCvUserComponent,
+    DescriptionPopupComponent,
   ],
   imports: [
     CommonModule,

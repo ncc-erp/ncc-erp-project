@@ -9,7 +9,7 @@ namespace ProjectManagement.APIs.ResourceRequests.Dto
     {
         public long ProjectUserId { get; set; }
 
-        public long UserId { get; set; }
+        public long? UserId { get; set; }
 
         public ProjectUserRole ProjectRole { get; set; }
 

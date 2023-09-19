@@ -30,4 +30,8 @@ export class PmReportIssueService extends BaseApiService {
   public EditMeetingNote(input): Observable<any> {
     return this.http.post<any>(this.rootUrl + `/EditMeetingNote`, input);
   }
+
+  public convertToRisk(id:number): Observable<any> {
+    return this.http.get<any>(this.rootUrl + `/ConvertToRisk?Id=${id}`);
+  }
 }

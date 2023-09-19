@@ -2,10 +2,12 @@
 using NccCore.Extension;
 using NccCore.IoC;
 using NccCore.Paging;
+using ProjectManagement.Authorization.Users;
 using ProjectManagement.Entities;
 using ProjectManagement.Services.ResourceRequestService.Dto;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
 using Expression = System.Linq.Expressions.Expression;
 
@@ -110,6 +112,34 @@ namespace ProjectManagement.Services.ResourceRequestService
                                 PlannedDate = s.StartTime,
 
                             }).FirstOrDefault(),
+                            BillUserInfo = request.User != null ?
+                            new PlanUserInfoDto
+                            {
+                                Employee = new UserBaseDto
+                                {
+                                    PositionId = request.User.PositionId,
+                                    PositionName = request.User.Position.ShortName,
+                                    PositionColor = request.User.Position.Color,
+                                    Branch = request.User.BranchOld,
+                                    BranchColor = request.User.Branch.Color,
+                                    BranchDisplayName = request.User.Branch.DisplayName,
+                                    UserLevel = request.User.UserLevel,
+                                    UserType = request.User.UserType,
+                                    FullName = request.User.FullName,
+                                    EmailAddress = request.User.EmailAddress,
+                                    Id = request.BillAccountId ?? default,
+                                    AvatarPath = request.User.AvatarPath
+                                },
+
+                                PlannedDate = request.BillStartDate ?? default,
+
+                            } : null,
+                            BillCVEmail = request.User.EmailAddress,
+                            PlanUserEmail = request.ProjectUsers.FirstOrDefault() != null ?
+                             request.ProjectUsers.FirstOrDefault().User.EmailAddress : null,
+                            Code = request.Code,
+                            UserRequestName = _workScope.Get<User>((long)request.CreatorUserId).Name,
+                            CreateAt = request.CreationTime
                         };
             return query;
         }

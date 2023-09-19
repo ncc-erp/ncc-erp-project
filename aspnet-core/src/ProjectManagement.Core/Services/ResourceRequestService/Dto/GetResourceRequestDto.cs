@@ -65,7 +65,6 @@ namespace ProjectManagement.Services.ResourceRequestService.Dto
                 $"Priority: {PriorityName}\n" +
                 $"PM Note: {PMNote}\n";
         }
-        
         public List<long> SkillIds
         {
             get
@@ -113,10 +112,16 @@ namespace ProjectManagement.Services.ResourceRequestService.Dto
                 return CommonUtil.UserLevelName(Level);
             }
         }
-            
-        
+        [ApplySearchAttribute]
+        public string Code { get; set; }
+        public string UserRequestName { get; set; }
+        [ApplySearchAttribute]
+        public string BillCVEmail { get; set; }
+        [ApplySearchAttribute]
+        public string PlanUserEmail { get; set; }
+        public DateTime? CreateAt { get; set; }
+        public PlanUserInfoDto BillUserInfo { get; set; }
     }
-      
 
     public class PlanUserInfoDto
     {
@@ -130,5 +135,10 @@ namespace ProjectManagement.Services.ResourceRequestService.Dto
                 $"Start Working Date: {DateTimeUtils.ToString(PlannedDate)}";
 
         }
+    }
+
+    public class RequestCodeDto
+    {
+        public string Code { get; set; }
     }
 }

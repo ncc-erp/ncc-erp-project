@@ -185,6 +185,7 @@ export class WeeklyReportComponent extends PagedListingComponentBase<WeeklyRepor
   Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_ProjectIssue_Edit = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectIssue_Edit;
   Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_ProjectIssue_Delete = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectIssue_Delete;
   Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_ProjectIssue_SetDone = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectIssue_SetDone;
+  Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_ProjectIssue_ConvertToRisk = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectIssue_ConvertToRisk;
 
   Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk;
   Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_View = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_View;
@@ -192,6 +193,7 @@ export class WeeklyReportComponent extends PagedListingComponentBase<WeeklyRepor
   Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_Edit = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_Edit;
   Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_Delete = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_Delete;
   Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_SetDone = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_SetDone;
+  Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_ConvertToIssue = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_ConvertToIssue;
 
   Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_CurrentResource = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_CurrentResource;
   Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_CurrentResource_View = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_CurrentResource_View;
@@ -323,7 +325,7 @@ export class WeeklyReportComponent extends PagedListingComponentBase<WeeklyRepor
       this.getProjectProblem();
       this.getRiskOfTheWeek();
       this.getChangedResource();
-      
+
     })
   }
 
@@ -1000,6 +1002,41 @@ export class WeeklyReportComponent extends PagedListingComponentBase<WeeklyRepor
     this.getProjectInfo();
   }
 
+  convertToRisk(issue){
+    abp.message.confirm(
+      "Convert Issue to Risk ?",
+      "",
+      (result: boolean) => {
+        if (result) {
+          this.reportIssueService.convertToRisk(issue.id).pipe(catchError(this.reportIssueService.handleError)).subscribe(res => {
+            if(res.success){
+              abp.notify.success("Convert successful")
+              this.getProjectProblem();
+              this.getRiskOfTheWeek();
+            }
+          })
+        }
+      }
+    );
+  }
+  convertToIssue(risk){
+    abp.message.confirm(
+      "Convert Risk to Issue?",
+      "",
+      (result: boolean) => {
+        if (result) {
+          this.pmReportRiskService.convertToIssue(risk.id).pipe(catchError(this.pmReportRiskService.handleError)).subscribe(res => {
+            if(res.success){
+              abp.notify.success("Convert successful")
+              this.getProjectProblem();
+              this.getRiskOfTheWeek();
+            }
+          })
+        }
+      }
+    );
+
+  }
   getPercentage(report, data) {
     report.allocatePercentage = data
   }
@@ -1050,9 +1087,9 @@ export class WeeklyReportComponent extends PagedListingComponentBase<WeeklyRepor
       d.setDate(d.getDate() - (d.getDay() + 6) % 7);
       d.setDate(d.getDate() - 7);
       let lastWeekMonday = moment(new Date(d.getFullYear(), d.getMonth(), d.getDate())).format("YYYY-MM-DD")
-    return lastWeekMonday 
+    return lastWeekMonday
   }
-  getViewSubject() { 
+  getViewSubject() {
       forkJoin([
         this.projectUserService.getCurrentResource(this.projectId,false),
         this.pmReportProjectService.GetCurrentResourceOfProject(this.projectId)
@@ -1070,21 +1107,21 @@ export class WeeklyReportComponent extends PagedListingComponentBase<WeeklyRepor
           this.totalNormalWorkingTimeOfWeekly = 0
           this.totalNormalWorkingTimeStandard = 0
           this.totalOverTime = 0
-          this.overTimeNoCharge = 0 
+          this.overTimeNoCharge = 0
           this.projectCurrentResource = mergedData
           this.projectCurrentResource.forEach(user => {
           this.GetTimesheetWeeklyChartOfUserInProject( this.projectInfo.projectCode, user, this.mondayOf5weeksAgo, this.lastWeekSunday)
           this.GetTimesheetOfUserInProjectNew( this.projectInfo.projectCode, user, this.getCurrentLastWeekMonday(), this.lastWeekSunday)
           })
-          
+
         },
         () => {
           abp.notify.error('Data fetch failed');
         }
       );
 
-    } 
-  
+    }
+
 
   getUserFromTimesheet(projectCode, usersEmail, lastWeekMonday)
   {
@@ -1238,7 +1275,11 @@ export class WeeklyReportComponent extends PagedListingComponentBase<WeeklyRepor
       let option: echarts.EChartsOption;
       option = {
         tooltip: {
-          trigger: 'axis'
+          trigger: 'axis',
+          position: function (pos) {
+            var obj = { top: 1, left: pos[0] - 200 }; 
+            return obj;
+          }
         },
         grid: {
           top: "6%",
@@ -1671,9 +1712,9 @@ export class WeeklyReportComponent extends PagedListingComponentBase<WeeklyRepor
     public showGuideLineHeader(command: string) {
       this.settingService.getGuideLine().subscribe((data) => {
         const guideLine = data.result;
-  
+
         let guidelineContent = "";
-  
+
         switch (command) {
           case "Criteria Status":
             guidelineContent = guideLine.criteriaStatus;
@@ -1688,7 +1729,7 @@ export class WeeklyReportComponent extends PagedListingComponentBase<WeeklyRepor
             guidelineContent = guideLine.pmNote;
             break;
         }
-  
+
         if (guidelineContent) {  // Change this line
           const show = this.dialog.open(ReportGuidelineDetailComponent, {
             data: {
@@ -1698,7 +1739,7 @@ export class WeeklyReportComponent extends PagedListingComponentBase<WeeklyRepor
             },
             width: "60%"
           });
-  
+
           show.afterClosed().subscribe((updatedGuideline) => {
             if (updatedGuideline) {
               this.refresh();
@@ -1714,8 +1755,8 @@ export class WeeklyReportComponent extends PagedListingComponentBase<WeeklyRepor
             },
             width: "60%"
           });
-  
-  
+
+
           show.afterClosed().subscribe((updatedGuideline) => {
             if (updatedGuideline) {
               this.refresh();
@@ -1724,7 +1765,7 @@ export class WeeklyReportComponent extends PagedListingComponentBase<WeeklyRepor
         }
       });
     }
-  
+
     public guideLineCriteriaStatus() {
       this.showGuideLineHeader("Criteria Status")
     }

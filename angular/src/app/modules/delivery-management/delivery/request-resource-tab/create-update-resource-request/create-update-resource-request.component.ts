@@ -92,7 +92,8 @@ export class CreateUpdateResourceRequestComponent extends AppComponentBase imple
       level: this.resourceRequestDto.level,
       priority: this.resourceRequestDto.priority,
       id: this.resourceRequestDto.id,
-      skillIds: this.resourceRequestDto.skillIds
+      skillIds: this.resourceRequestDto.skillIds,
+      code:this.resourceRequestDto.code
     }
 
     if (this.data.command == "create") {
@@ -104,7 +105,6 @@ export class CreateUpdateResourceRequestComponent extends AppComponentBase imple
       }, () => this.isLoading = false)
     } else {
       this.resourceRequestService.update(request).pipe(catchError(this.resourceRequestService.handleError)).subscribe((res) => {
-        let updateRequest = {...request, quantity: this.resourceRequestDto.quantity};
         abp.notify.success("Update Successfully!");
         this.dialogRef.close(res.result);
       }, () => this.isLoading = false)

@@ -24,7 +24,7 @@
                                 </ng-container>
                             </mat-select>
                         </mat-form-field>
-                
+
                     </div>
                     <div class="col-5 m-0 p-0 d-flex align-items-center">
                         <mat-form-field  class="ml-2" style="width: 205px;" appearance="outline">
@@ -68,7 +68,7 @@
                           <span *ngIf="!permission.isGranted(WeeklyReport_ReportDetail_GuideLine_View)">
                             <strong style="font-size: 20px;">Evaluation criteria: </strong>
                           </span>
-                      
+
                         <button class="btn btn-editall-neutral ml-2" *ngIf="isShowEditAllBtn()" (click)="editAllRow()">
                             <i class="fas fa-pencil-alt mr-1"></i> Edit All</button>
                         <div *ngIf="isEditingAllRow()" class="pt-1 ml-4">
@@ -88,7 +88,7 @@
                             <lable *ngIf="permission.isGranted(WeeklyReport_ReportDetail_ProjectHealthCriteria_View_Guideline)" style="white-space: normal;" class="text-primary guide-line"
                                 (click)="showGuideLine(item)">
                                 <strong>{{item.criteriaName}}</strong> &nbsp;
-                                <i class="fas fa-question-circle "></i> 
+                                <i class="fas fa-question-circle "></i>
                             </lable>
                             <lable *ngIf="!permission.isGranted(WeeklyReport_ReportDetail_ProjectHealthCriteria_View_Guideline)"
                                 ><strong>{{item.criteriaName}}</strong>
@@ -222,9 +222,9 @@
                                 </div>
                             </span>
                         </mat-panel-title>
-                  
+
                     </mat-expansion-panel-header>
-                   
+
                     <div class="fixTableHead px-4" style="max-height: 46vh;">
                         <table style="border-collapse: collapse;" class="table table-hover text-nowrap">
                             <thead class="bg-light" style="z-index: 1;">
@@ -335,6 +335,13 @@
                                                 Edit
                                             </button>
                                             <button
+                                            (click)="convertToRisk(problem)"
+                                            *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_ProjectIssue_ConvertToRisk)"
+                                             class="mat-menu-item  w-100">
+                                            <i class="fas fa-pencil-alt mr-2 fa-lg "></i>
+                                            Convert to Risk
+                                            </button>
+                                            <button
                                                 *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_ProjectIssue_SetDone)"
                                                 (click)="setDone(problem)" class="mat-menu-item  w-100">
                                                 <i class="fas fa-check mr-2 fa-lg "></i>
@@ -384,7 +391,7 @@
                         </span>
                            </div>
                            <div style="width: calc(88% - 5px);">
-                                <button *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_AddNewRisk) && selectedReport.isActive " 
+                                <button *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_AddNewRisk) && selectedReport.isActive "
                                 (click)="addOrEditRisk('create');$event.stopPropagation()" [hidden]="selectedReport.pmReportProjectId==0" class="btn bg-blue ml-3 btn-sm mb-2"
                                 style="padding: 0px 5px;margin-bottom: 0 !important;">
                                 <i  class="fa fa-plus m-0"></i>
@@ -450,6 +457,13 @@
                                                 <i class="fas fa-pencil-alt mr-2 fa-lg "></i>
                                                 Edit
                                             </button>
+                                            <button
+                                            (click)="convertToIssue(problem)"
+                                            *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_ConvertToIssue)"
+                                             class="mat-menu-item  w-100">
+                                            <i class="fas fa-pencil-alt mr-2 fa-lg "></i>
+                                            Convert to Issue
+                                        </button>
                                             <button (click)="setDoneRisk(problem)"
                                                     *ngIf="isShowChangeDoneTextRisk(problem) && permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_SetDone)"
                                                     class="mat-menu-item  w-100">
@@ -491,15 +505,15 @@
                                 class="text-danger">({{projectCurrentResource?.length}})</strong> &nbsp;&nbsp;&nbsp;&nbsp;
                             <strong style="font-size: 20px;">Charged accounts</strong> &nbsp;
                             <strong style="font-size: 20px;"
-                                class="text-danger">({{projectInfo.totalBill || 0}})</strong> 
-                            </div>                 
+                                class="text-danger">({{projectInfo.totalBill || 0}})</strong>
+                            </div>
                             <mat-checkbox [(ngModel)]="checkViewSubject" (change)="handleViewSubject()"
                                 (click)="$event.stopPropagation()">
                                 View Sub Project
                             </mat-checkbox>
                         </mat-panel-title>
                     </mat-expansion-panel-header>
-                <div class="card-body">  
+                <div class="card-body">
                     <div class="fixTableHead" style="max-height: 46vh;">
                         <table name="tbl-currentResource" class="table table-hover ">
                             <thead>

@@ -1,5 +1,6 @@
 ﻿using Abp.Domain.Entities;
 using Abp.Domain.Entities.Auditing;
+using ProjectManagement.Authorization.Users;
 using ProjectManagement.Constants.Enum;
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,11 @@ namespace ProjectManagement.Entities
         [MaxLength(10000)]        
         public string PMNote { get; set; }
         public string DMNote { get; set; }
+        public string Code { get; set; }
+        [ForeignKey(nameof(BillAccountId))]
+        public User User { get; set; }
+        public long? BillAccountId { get; set; }
+        public DateTime? BillStartDate { get; set; }
         public bool IsRecruitmentSend { get; set; }
         public string RecruitmentUrl { get; set; }
 

@@ -259,7 +259,7 @@
                                                       yellow:skill.skillRank == 3 ,orange:skill.skillRank == 4}' style="
                                                       font-size: 13px;"></i> </strong>
                                             </p>
-                                            <p *ngIf="item.skillNote"><strong>Note: </strong> {{item.skillNote}}</p>
+                                            <div style="white-space: pre-line" *ngIf="item.skillNote"><strong>Note: </strong> {{item.skillNote}}</div>
                                             <!-- {{ skillsCommas(item.listSkills) }} -->
                                         </div>
                                         <div *ngIf="permission.isGranted(Resource_TabPool_UpdateSkill)"
@@ -276,7 +276,7 @@
                     min-width: 150px;
                   ">
                                     <div class="d-flex" style="align-items: center">
-                                        <div style="width: 90%">{{ item.poolNote }}
+                                        <div style="width: 90%;word-break:break-word">{{ item.poolNote }}
                                         </div>
                                         <div *ngIf="permission.isGranted(Resource_TabPool_EditNote)"
                                             style="width: 10%; text-align: right;" class="ml-1">

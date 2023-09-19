@@ -6,8 +6,9 @@
         <label class="col-md-3 col-form-label" for="note">Note:</label>
         <div class="col-md-9 ">
             <mat-form-field class="w-100" appearance="outline">
-                <input matInput [(ngModel)]="data.note" #note
-                placeholder="Experience details / Domains / Preference / Others notes" >
+                <textarea matInput [(ngModel)]="data.note" #note rows="3"
+                    placeholder="Experience details / Domains / Preference / Others notes" >
+                </textarea>
             </mat-form-field>
         </div>
     </div>
@@ -37,8 +38,8 @@
                 </mat-select>
             </mat-form-field>
         </div>
-       
-        <div style="width: 100%;overflow: hidden;margin-top: 15px;">
+    </div > 
+    <div style="width: 100%;margin-top: 15px; height: 350px;overflow-y: auto;overflow-x: hidden">
             <div *ngFor="let item of skillRankList " class="row align-items-center">
                 <span class="col-md-3">{{item.name}}</span>
                 <div class="col-md-9">
@@ -48,7 +49,6 @@
                 </div>
                
             </div>
-        </div>
     </div>
 </div>
 <div class="d-flex justify-content-end">

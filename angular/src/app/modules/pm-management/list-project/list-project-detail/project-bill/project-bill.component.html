@@ -112,7 +112,7 @@
                             class="table table-hover text-nowrap" [busy]="isLoading">
                             <thead class="bg-light">
                                 <tr>
-                                    <th class="stt">#</th>
+                                    <th style="border-left: 10px solid #fff" class="stt">#</th>
                                     <th>Employee</th>
                                     <th>Charge Name</th>
                                     <th>Charge Role</th>
@@ -133,10 +133,12 @@
                                     id: 'billUserInfo',
                                     itemsPerPage: maxBillUserCurrentPage,
                                     currentPage: userBillCurrentPage
-                                } ; let i = index"
-                                    [ngClass]="{'highLight': bill.linkedResources && bill.linkedResources.length > 1,
-                                    'highLightOne': bill.linkedResources && bill.linkedResources.length == 1  }">
-                                    <td><span>{{ i + 1 + maxBillUserCurrentPage * (userBillCurrentPage - 1) }}</span></td>
+                                } ; let i = index">
+                                    <td style="border-left: 10px solid #b9b8b8;"
+                                     [ngClass]="{'highLight': bill.linkedResources && bill.linkedResources.length > 1,
+                                        'highLightOne': bill.linkedResources && bill.linkedResources.length == 1  }">
+                                        <span>{{ i + 1 + maxBillUserCurrentPage * (userBillCurrentPage - 1) }}</span>
+                                    </td>
                                     <td class="text-left" style="min-width: 250px;">
                                         <span *ngIf="!bill.createMode">
                                             <app-user-info [userData]="bill">

@@ -20,6 +20,9 @@ import { FormPlanUserComponent } from './form-plan-user/form-plan-user.component
 import * as moment from 'moment';
 import { IDNameDto } from '@app/service/model/id-name.dto';
 import { ProjectDescriptionPopupComponent } from './project-description-popup/project-description-popup.component';
+import { FormCvUserComponent } from './form-cv-user/form-cv-user.component';
+import { ListProjectService } from '@app/service/api/list-project.service';
+import { DescriptionPopupComponent } from './description-popup/description-popup.component';
 
 @Component({
   selector: 'app-request-resource-tab',
@@ -33,6 +36,7 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
     { propertyName: 'timeNeed', comparisions: [0, 1, 2, 3, 4], displayName: "Time Need", filterType: 1 },
     { propertyName: 'timeDone', comparisions: [0, 1, 2, 3, 4], displayName: "Time Done", filterType: 1 },
   ];
+  public projectId = -1;
   public selectedOption: string = "PROJECT"
   public selectedStatus: any = 0
   public listRequest: RequestResourceDto[] = [];
@@ -41,23 +45,23 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
   public listLevels: any[] = []
   public listSkills: SkillDto[] = [];
   public listProjectUserRoles: IDNameDto[] = []
+  public listProject = []
+  public searchProject:string = "";
+  public listRequestCode = [];
+  public requestCode:any = -1;
+  public searchCode:string = "";
   public listPriorities: any[] = []
-  public selectedLevel: any = -1
   public isAndCondition: boolean = false;
-  public skillIds: number[]
   public sortResource = {priority: 0}
   public theadTable: THeadTable[] = [
     { name: '#' },
-    { name: 'Priority', sortName: 'priority', defaultSort: 'ASC', width: '88px' },
-    { name: 'Project', sortName: 'projectName', defaultSort: '', width: '88px' },
-    { name: 'Skill' },
-    { name: 'Level', sortName: 'level', defaultSort: '' },
-    { name: 'Time request', sortName: 'creationTime', defaultSort: '', width: '128px' },
-    { name: 'Time need', sortName: 'timeNeed', defaultSort: '', width: '128px' },
-    { name: 'Planned resource' },
-    { name: 'PM Note' },
-    { name: 'HR/DM Note' },
-    { name: 'Status' },
+    { name: 'Request Info' },
+    { name: 'Skill need' },
+    { name: 'Code' },
+    { name: 'CV' },
+    { name: 'Resource'},
+    { name: 'Description'},
+    { name: 'Note' },
     { name: 'Action' },
   ]
   public isShowModal: string = 'none'
@@ -70,6 +74,7 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
   ResourceRequest_View = PERMISSIONS_CONSTANT.ResourceRequest_View;
   ResourceRequest_PlanNewResourceForRequest = PERMISSIONS_CONSTANT.ResourceRequest_PlanNewResourceForRequest;
   ResourceRequest_UpdateResourceRequestPlan = PERMISSIONS_CONSTANT.ResourceRequest_UpdateResourceRequestPlan;
+  ResourceRequest_CreateBillResourceForRequest = PERMISSIONS_CONSTANT.ResourceRequest_CreateBillResourceForRequest;
   ResourceRequest_RemoveResouceRequestPlan = PERMISSIONS_CONSTANT.ResourceRequest_RemoveResouceRequestPlan;
   ResourceRequest_SetDone = PERMISSIONS_CONSTANT.ResourceRequest_SetDone;
   ResourceRequest_CancelAllRequest = PERMISSIONS_CONSTANT.ResourceRequest_CancelAllRequest;
@@ -86,7 +91,8 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
     private injector: Injector,
     private resourceRequestService: DeliveryResourceRequestService,
     private ref: ChangeDetectorRef,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private listProjectService: ListProjectService,
   ) {
     super(injector)
   }
@@ -97,6 +103,8 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
     this.getPriorities()
     this.getStatuses()
     this.getProjectUserRoles();
+    this.getAllProject()
+    this.getAllRequestCode();
     this.refresh();
   }
 
@@ -131,15 +139,9 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
       maxHeight: '90vh',
     })
     show.afterClosed().subscribe(rs => {
-      if (!rs) return
-      if (command == 'create')
+      if (rs){
         this.refresh()
-      else if (command == 'edit') {
-        let index = this.listRequest.findIndex(x => x.id == rs.id)
-        if (index >= 0) {
-          this.listRequest[index] = rs
-        }
-        this.refresh();
+        this.getAllRequestCode();
       }
     });
   }
@@ -217,12 +219,24 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
 
     });
   }
+
   async getPlanResource(item) {
     let data = new ResourcePlanDto(item.id, 0);
     if (!item.planUserInfo)
       return data;
     let res = await this.resourceRequestService.getPlanResource(item.planUserInfo.projectUserId, item.id)
     return res.result
+  }
+
+  showModalCvUser(item:any){
+    const show = this.dialog.open(FormCvUserComponent, {
+      data: item,
+      width: "700px",
+      maxHeight: "90vh"
+    })
+    show.afterClosed().subscribe(rs => {
+      if (rs) this.refresh()
+    });
   }
 
   sendRecruitment(item: ResourceRequestDto) {
@@ -261,7 +275,7 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
         abp.notify.success('Update Note Successfully!')
         let index = this.listRequest.findIndex(x => x.id == request.resourceRequestId);
         if (index >= 0) {
-          if (this.typePM == 'PM')
+          if (this.typePM == 'Description')
             this.listRequest[index].pmNote = request.note;
           else
             this.listRequest[index].dmNote = request.note;
@@ -278,11 +292,11 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
   // #region paging, search, sortable, filter
   protected list(request: any, pageNumber: number, finishedCallback: Function): void {
     let requestBody: any = request
-    requestBody.skillIds = this.skillIds
     requestBody.isAndCondition = this.isAndCondition
     let objFilter = [
       { name: 'status', isTrue: false, value: this.selectedStatus },
-      { name: 'level', isTrue: false, value: this.selectedLevel },
+      {name:'projectId',isTrue:false, value:this.projectId},
+      {name:'code',isTrue:false,value: this.requestCode}
     ];
 
     objFilter.forEach((item) => {
@@ -317,7 +331,6 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
         request.filterItems = this.clearFilter(request, item.name, '')
       }
     })
-    requestBody.skillIds = null
     requestBody.sort = null
     requestBody.sortDirection = null
     this.isLoading = false;
@@ -332,8 +345,8 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
   clearAllFilter() {
     this.filterItems = []
     this.searchText = ''
-    this.skillIds = []
-    this.selectedLevel = -1
+    this.projectId = -1
+    this.requestCode = -1
     this.selectedStatus = 0
     this.changeSortableByName('priority', 'DESC')
     this.sortable = new SortableModel('', 1, '')
@@ -392,6 +405,17 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
       this.listProjectUserRoles = rs.result
     })
   }
+
+  getAllProject() {
+    this.listProjectService.getMyProjects().subscribe(data => {
+      this.listProject = data.result;
+    })
+  }
+  getAllRequestCode(){
+    this.resourceRequestService.getListRequestCode().subscribe(data=>{
+      this.listRequestCode = data.result
+    })
+  }
   // #endregion
 
   styleThead(item: any) {
@@ -410,6 +434,13 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
   viewRecruitment(url) {
     window.open(url, '_blank')
   }
+  showDescription(note){
+    const show = this.dialog.open(DescriptionPopupComponent, {
+      width: "1100px",
+      maxHeight: '90vh',
+      data: note
+    })
+  }
   protected delete(item: RequestResourceDto): void {
     abp.message.confirm(
       "Delete this request?",
@@ -419,6 +450,7 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
           this.resourceRequestService.delete(item.id).pipe(catchError(this.resourceRequestService.handleError)).subscribe(() => {
             abp.notify.success(" Delete request successfully");
             this.refresh();
+            this.getAllRequestCode();
           });
 
         }

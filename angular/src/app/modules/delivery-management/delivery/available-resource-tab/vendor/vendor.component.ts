@@ -8,7 +8,7 @@ import { availableResourceDto } from './../../../../../service/model/delivery-ma
 import { ProjectDetailComponent } from './../plan-resource/plan-user/project-detail/project-detail.component';
 import { UpdateUserSkillDialogComponent } from './../../../../../users/update-user-skill-dialog/update-user-skill-dialog.component';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { Component, Injector, OnInit } from '@angular/core';
+import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 import { PlanUserComponent } from '../plan-resource/plan-user/plan-user.component';
 import { DeliveryResourceRequestService } from '../../../../../service/api/delivery-request-resource.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -33,7 +33,9 @@ export class VendorComponent extends PagedListingComponentBase<PlanResourceCompo
  
   subscription: Subscription[] = [];
   public listSkills: SkillDto[] = [];
+  public listSkillsId: number[] = [];
   public skill = '';
+  public searchSkill:string = '';
   public skillsParam = [];
   public selectedSkillId:number[]
   public isAndCondition:boolean =false;
@@ -108,6 +110,8 @@ export class VendorComponent extends PagedListingComponentBase<PlanResourceCompo
 
   ) { super(injector) }
 
+  @ViewChild("selectSkill") selectSkill;
+
   ngOnInit(): void {
     this.pageSizeType = 100
     this.changePageSize();
@@ -178,6 +182,7 @@ export class VendorComponent extends PagedListingComponentBase<PlanResourceCompo
     this.subscription.push(
       this.skillService.getAll().subscribe((data) => {
         this.listSkills = data.result;
+        this.listSkillsId = data.result.map(item => item.id)
         this.skillsParam = data.result.map(item => {
           return {
             displayName: item.name,
@@ -189,6 +194,22 @@ export class VendorComponent extends PagedListingComponentBase<PlanResourceCompo
     )
 
 
+  }
+
+  openedChange(opened){
+    if(!opened){
+      this.selectedSkillId = this.selectedSkillIdOld
+    }
+  }
+
+  actionSelect(typeSelect){
+    this.selectedSkillId = typeSelect.data
+  }
+
+  selectDone(){
+    this.selectedSkillIdOld = this.selectedSkillId
+    this.selectSkill.close()
+    this.refresh()
   }
 
   skillsCommas(arr) {

@@ -98,7 +98,17 @@ namespace ProjectManagement.APIs.ResourceRequests
             var requestIds = await QetResourceRequestIdsHaveAllSkill(input.SkillIds);
             query = query.Where(s => requestIds.Contains(s.Id));
 
+
             return await query.GetGridResult(query, input);
+        }
+
+        [HttpGet]
+        [AbpAuthorize]
+        public async Task<List<RequestCodeDto>> GetResourceRequestCode()
+        {
+            return await WorkScope.GetAll<ResourceRequest>()
+                .Where(r => r.Code != null)
+                .Select(r => new RequestCodeDto { Code = r.Code }).Distinct().ToListAsync();
         }
 
         [HttpGet]
@@ -347,6 +357,16 @@ namespace ProjectManagement.APIs.ResourceRequests
             request.Request.Status = ResourceRequestStatus.DONE;
             request.Request.TimeDone = DateTimeUtils.GetNow();
             await WorkScope.UpdateAsync(request.Request);
+
+            // add user in cv column to project user bill table
+            if (request.Request.BillAccountId != null)
+                await WorkScope.InsertAsync(new ProjectUserBill
+                {
+                    UserId = request.Request.BillAccountId ?? default,
+                    StartTime = request.Request.BillStartDate ?? default,
+                    ProjectId = request.Request.ProjectId,
+                    isActive = true
+                });
             return input;
         }
 
@@ -439,7 +459,7 @@ namespace ProjectManagement.APIs.ResourceRequests
 
             var projectUser = new ProjectUser()
             {
-                UserId = input.UserId,
+                UserId = input.UserId ?? default,
                 ProjectId = request.ProjectId,
                 ProjectRole = input.ProjectRole,
                 AllocatePercentage = 100,
@@ -464,6 +484,29 @@ namespace ProjectManagement.APIs.ResourceRequests
         }
 
         [HttpPost]
+        [AbpAuthorize(PermissionNames.ResourceRequest_CreateBillResourceForRequest)]
+        public async Task<ResourceRequestPlanDto> UpdateBillInfoTemp(ResourceRequestPlanDto input)
+        {
+            if (!input.ResourceRequestId.HasValue)
+            {
+                throw new UserFriendlyException("ResourceRequestId can't be null");
+            }
+
+            var request = await WorkScope.GetAll<ResourceRequest>()
+                .Where(s => s.Id == input.ResourceRequestId.Value)
+                .FirstOrDefaultAsync();
+
+            if (request == default)
+                throw new UserFriendlyException("Not found resource request Id " + input.ResourceRequestId);
+
+            request.BillAccountId = input.UserId;
+            request.BillStartDate = input.UserId != null ? input.StartTime : default;
+            WorkScope.Update(request);
+
+            return input;
+        }
+
+        [HttpPost]
         [AbpAuthorize]
         public async Task<PlanUserInfoDto> UpdateResourceRequestPlan(ResourceRequestPlanDto input)
         {
@@ -472,7 +515,7 @@ namespace ProjectManagement.APIs.ResourceRequests
             if (projectUser == null)
                 throw new UserFriendlyException($"Not found ProjectUser with id : {input.ProjectUserId}");
 
-            projectUser.UserId = input.UserId;
+            projectUser.UserId = input.UserId ?? default;
             projectUser.StartTime = input.StartTime;
             projectUser.ProjectRole = input.ProjectRole;
 

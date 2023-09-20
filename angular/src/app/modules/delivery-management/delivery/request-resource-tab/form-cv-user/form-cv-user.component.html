@@ -1,7 +1,11 @@
 <form class="form-horizontal" autocomplete="off" #resourceRequestForm="ngForm" novalidate>
-    <abp-modal-header title="Resource"
-        (onCloseClick)="dialogRef.close()">
-    </abp-modal-header>
+    <div style="position: sticky; top: 0; z-index: 2; background-color: white;">
+        <abp-modal-header
+        title="CV User"
+        (onCloseClick)="dialogRef.close()"
+      >
+      </abp-modal-header>
+      </div>
     <div class="modal-body">
         <div class="form-group row required">
             <label class="col-md-3 col-form-label" for="tenancyName">
@@ -10,7 +14,7 @@
             <div class="col-md-9">
                 <mat-form-field class="mt-2 w-100" appearance="outline">
                     <mat-select name="userId" #userIdValid="ngModel" placeholder="Select user" required
-                        [(ngModel)]="resourcePlan.userId">
+                        [(ngModel)]="billInfoPlan.userId">
                         <mat-form-field class="w-100 px-3 "
                             style="position: sticky; top: 0; z-index: 2; background-color: white;">
                             <input matInput [(ngModel)]="search" name="searchUserName"
@@ -31,7 +35,7 @@
         </div>
         <div class="form-group row required">
             <label class="col-md-3 col-form-label" for="tenancyName">
-                Time Join:
+                Bill Start Date
             </label>
             <div class="col-md-9">
                 <mat-form-field appearance="outline" class="w-100">
@@ -41,24 +45,6 @@
                     <mat-datepicker #picker></mat-datepicker>
                 </mat-form-field>
                 <mat-error class="mt-1" *ngIf="timeJoinNg.hasError('required') && timeJoinNg.touched"
-                    style="font-size: 13px;">
-                    This field is required
-                </mat-error>
-            </div>
-        </div>
-        <div class="form-group row required">
-            <label class="col-md-3 col-form-label" for="tenancyName">
-                Role:
-            </label>
-            <div class="col-md-9">
-                <mat-form-field appearance="outline" class="w-100">
-                    <mat-select placeholder="role" [(ngModel)]="resourcePlan.projectRole" name="projectRole" #role="ngModel" required>
-                        <mat-option *ngFor="let projectRole of listProjectUserRoles" [value]="projectRole.id">
-                            {{projectRole.name}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-                <mat-error class="mt-1" *ngIf="role.hasError('required') && role.touched"
                     style="font-size: 13px;">
                     This field is required
                 </mat-error>

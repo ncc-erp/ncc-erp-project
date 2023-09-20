@@ -1334,6 +1334,10 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
       option = {
         tooltip: {
           trigger: 'axis',
+          position: function (pos) {
+            var obj = { top: 1, left: pos[0] - 200 }; 
+            return obj;
+          }
         },
         grid: {
           top: "6%",

@@ -18,5 +18,6 @@ namespace ProjectManagement.APIs.ResourceRequests.Dto
         public Priority Priority { get; set; }
         public List<long> SkillIds { get; set; }
         public int Quantity { get; set; }
+        public string Code { get; set; }
     }
 }

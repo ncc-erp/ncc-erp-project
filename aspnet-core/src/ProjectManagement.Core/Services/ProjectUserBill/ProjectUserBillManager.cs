@@ -145,8 +145,8 @@ namespace ProjectManagement.Services.ProjectUserBills
               .Select(x => x.UserId)
               .ToListAsync();
 
-            var allPUBA = _workScope.GetAll<ProjectUserBillAccount>();
-            var allUser = _workScope.GetAll<User>();
+            var listPUBAs = _workScope.GetAll<ProjectUserBillAccount>();
+            var listUsers = _workScope.GetAll<User>();
 
             var query = await _workScope.GetAll<ProjectManagement.Entities.ProjectUserBill>()
                  .Where(x => x.ProjectId == projectId)
@@ -180,8 +180,8 @@ namespace ProjectManagement.Services.ProjectUserBills
                      ChargeType = x.ChargeType.HasValue ? x.ChargeType : x.Project.ChargeType,
                      CreationTime = x.CreationTime,
 
-                     LinkedResources = (from pu in allPUBA
-                                        join us in allUser on pu.UserId equals us.Id
+                     LinkedResources = (from pu in listPUBAs
+                                        join us in listUsers on pu.UserId equals us.Id
                                         where pu.UserBillAccountId == x.UserId && existedPUBLUIds.Contains(pu.UserId)
                                         select new GetAllUserDto
                                         {

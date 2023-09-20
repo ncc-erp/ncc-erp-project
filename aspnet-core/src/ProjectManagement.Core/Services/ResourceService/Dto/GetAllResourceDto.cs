@@ -36,6 +36,7 @@ namespace ProjectManagement.Services.ResourceService.Dto
         public long? PositionId { get; set; }
         public string PositionColor { get; set; }
         public string PositionName { get; set; }
+        [ApplySearchAttribute]
         public string SkillNote { get; set; }
     }
 }

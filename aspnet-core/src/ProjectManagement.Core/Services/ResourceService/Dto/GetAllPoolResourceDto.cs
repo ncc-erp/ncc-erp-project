@@ -14,7 +14,7 @@ namespace ProjectManagement.Services.ResourceService.Dto
         [ApplySearchAttribute]
         public string EmailAddress { get; set; }
         [ApplySearchAttribute]
-        public string FullName { get; set; }        
+        public string FullName { get; set; }
         public string AvatarPath { get; set; }
         public string AvatarFullPath => FileUtils.FullFilePath(AvatarPath);
         public UserType? UserType { get; set; }
@@ -24,7 +24,7 @@ namespace ProjectManagement.Services.ResourceService.Dto
         public List<ProjectOfUserDto> PoolProjects { get; set; }
         public List<UserSkillDto> UserSkills { get; set; }
         public int? StarRate { get; set; }
-        
+
         public string PoolNote { get; set; }
         public bool IsPool { get; set; }
         public DateTime LastReleaseDate { get; set; }
@@ -58,6 +58,7 @@ namespace ProjectManagement.Services.ResourceService.Dto
         public string PositionColor { get; set; }
 
         public string PositionName { get; set; }
+        [ApplySearchAttribute]
         public string SkillNote { get; set; }
     }
 }

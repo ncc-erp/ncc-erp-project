@@ -830,7 +830,7 @@ namespace ProjectManagement.Services.ResourceManager
                                 ProjectCode = pu.Project.Code
                             })
                            .ToList(),
-                           SkillNote = x.UserSkills.Select(s => s.Note).FirstOrDefault()
+                           SkillNote = x.UserSkills.Select(s => s.Note).FirstOrDefault() ?? ""
                        });
 
             var result = quser.ToList();
@@ -1008,7 +1008,7 @@ namespace ProjectManagement.Services.ResourceManager
                             .Select(x => x.StartTime).FirstOrDefault(),
 
                            UserCreationTime = u.CreationTime,
-                           SkillNote = u.UserSkills.Select(s => s.Note).FirstOrDefault()
+                           SkillNote = u.UserSkills.Select(s => s.Note).FirstOrDefault() ?? ""
                        });
 
             if (input.SkillIds == null || input.SkillIds.IsEmpty())
@@ -1031,28 +1031,28 @@ namespace ProjectManagement.Services.ResourceManager
 
         public async Task<GridResult<GetAllResourceDto>> GetResources(InputGetResourceDto input, bool isVendor)
         {
-            var query = await QueryAllResource(input, isVendor);
+                var query = await QueryAllResource(input, isVendor);
 
-            if (input.SkillIds == null || input.SkillIds.IsEmpty())
-            {
+                if (input.SkillIds == null || input.SkillIds.IsEmpty())
+                {
+                    return query.GetGridResultSync(query, input);
+                }
+                if (input.SkillIds.Count() == 1 || !input.IsAndCondition)
+                {
+                    var querySkillUserIds = queryUserIdsHaveAnySkill(input.SkillIds).Distinct();
+                    query = from u in query
+                            join userId in querySkillUserIds on u.UserId equals userId
+                            select u;
+
+                    return query.GetGridResultSync(query, input);
+                }
+
+                var userIdsHaveAllSkill = await getUserIdsHaveAllSkill(input.SkillIds);
+                query = query.Where(s => userIdsHaveAllSkill.Contains(s.UserId));
+
+
                 return query.GetGridResultSync(query, input);
             }
-            if (input.SkillIds.Count() == 1 || !input.IsAndCondition)
-            {
-                var querySkillUserIds = queryUserIdsHaveAnySkill(input.SkillIds).Distinct();
-                query = from u in query
-                        join userId in querySkillUserIds on u.UserId equals userId
-                        select u;
-
-                return query.GetGridResultSync(query, input);
-            }
-
-            var userIdsHaveAllSkill = await getUserIdsHaveAllSkill(input.SkillIds);
-            query = query.Where(s => userIdsHaveAllSkill.Contains(s.UserId));
-
-
-            return query.GetGridResultSync(query, input);
-        }
 
         public void SendKomu(StringBuilder komuMessage, string projectCode)
         {

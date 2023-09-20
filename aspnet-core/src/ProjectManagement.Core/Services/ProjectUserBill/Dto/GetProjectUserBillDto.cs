@@ -42,6 +42,7 @@ namespace ProjectManagement.Services.ProjectUserBill.Dto
         public long? PositionId { get; set; }
         public string PositionName { get; set; }
         public string PositionColor { get; set; }
+        public DateTime CreationTime { get; set; }
         public List<GetAllUserDto> LinkedResources { get; set; }
     }
 }

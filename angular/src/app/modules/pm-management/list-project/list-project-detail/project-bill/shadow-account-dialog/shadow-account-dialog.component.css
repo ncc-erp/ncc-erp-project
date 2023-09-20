@@ -1,0 +1,10 @@
+:host ::ng-deep .mat-form-field {
+    width: 100% !important;
+}
+  ::ng-deep .mat-select-panel{
+    max-height: 400px;
+}
+  
+  
+
+  

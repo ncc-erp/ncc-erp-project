@@ -14,3 +14,9 @@
 .submit-btn:disabled i {
     color: gray !important;
 }
+.highLight{
+    border-left: 10px solid #28a745 !important;
+}
+.highLightOne{
+    border-left: 10px solid #ffc107 !important;
+}

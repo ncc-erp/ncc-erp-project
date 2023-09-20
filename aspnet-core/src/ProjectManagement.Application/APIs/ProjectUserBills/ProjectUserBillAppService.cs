@@ -44,55 +44,9 @@ namespace ProjectManagement.APIs.ProjectUserBills
         [AbpAuthorize(PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo,
           PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo,
           PermissionNames.Projects_TrainingProjects_ProjectDetail_TabBillInfo)]
-        public async Task<List<GetProjectUserBillDto>> GetAllByProject(long projectId)
+        public async Task<List<Services.ProjectUserBill.Dto.GetProjectUserBillDto>> GetAllByProject(long projectId)
         {
-            var isViewRate = await IsGrantedAsync(PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Rate_View);
-            var query = await WorkScope.GetAll<ProjectUserBill>()
-                 .Where(x => x.ProjectId == projectId)
-                 .OrderByDescending(x => x.CreationTime)
-                 .Select(x => new GetProjectUserBillDto
-                 {
-                     Id = x.Id,
-                     UserId = x.UserId,
-                     UserName = x.User.Name,
-                     ProjectId = x.ProjectId,
-                     ProjectName = x.Project.Name,
-                     AccountName = x.AccountName,
-                     BillRole = x.BillRole,
-                     BillRate = isViewRate ? x.BillRate : 0,
-                     StartTime = x.StartTime.Date,
-                     EndTime = x.EndTime.Value.Date,
-                     //CurrencyName = x.Project.Currency.Name,
-                     Note = x.Note,
-                     shadowNote = x.shadowNote,
-                     isActive = x.isActive,
-                     AvatarPath = x.User.AvatarPath,
-                     FullName = x.User.FullName,
-                     Branch = x.User.BranchOld,
-                     BranchColor = x.User.Branch.Color,
-                     BranchDisplayName = x.User.Branch.DisplayName,
-                     PositionId = x.User.PositionId,
-                     PositionName = x.User.Position.ShortName,
-                     PositionColor = x.User.Position.Color,
-                     EmailAddress = x.User.EmailAddress,
-                     UserType = x.User.UserType,
-                     UserLevel = x.User.UserLevel,
-                     ChargeType = x.ChargeType.HasValue ? x.ChargeType : x.Project.ChargeType,
-                 })
-                 .ToListAsync();
-
-            foreach (var item in query)
-            {
-                item.LinkedResources = await GetUserBillAccountsOfAccount(item.UserId, projectId);
-            }
-
-            return query;
-        }
-
-        private async Task<List<GetAllUserDto>> GetUserBillAccountsOfAccount(long accountId, long projectId)
-        {
-            var billAccounts = await projectUserBillManager.GetUserBillAccountsByAccount(accountId, projectId);
-            return billAccounts ?? new List<GetAllUserDto>();
+            return await projectUserBillManager.GetAllByProject(projectId);
         }
 
         [HttpPost]

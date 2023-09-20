@@ -30,6 +30,7 @@ namespace ProjectManagement.Services.ProjectUserBills
         {
             _workScope = workScope;
         }
+
         public IQueryable<ProjectManagement.Entities.ProjectUserBill> GetSubProjectBills(long parentProjectId)
         {
             var query = from p in _workScope.GetAll<Project>()
@@ -135,65 +136,89 @@ namespace ProjectManagement.Services.ProjectUserBills
                 .Select(s => s.Id).FirstOrDefaultAsync();
         }
 
-        public async Task<List<GetAllUserDto>> GetUserBillAccountsByAccount(long accountId, long projectId)
+        public async Task<List<GetProjectUserBillDto>> GetAllByProject(long projectId)
         {
-            await CheckResourceInProject(accountId, projectId);
+            var isViewRate = await IsGrantedAsync(PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Rate_View);
 
-            var existedPUBLU = await _workScope.GetAll<ProjectUserBillAccount>()
-                .Where(x => x.UserBillAccountId == accountId && x.ProjectId == projectId)
-                .Select(x => x.UserId)
-                .ToListAsync();
+            var existedPUBLUIds = await _workScope.GetAll<ProjectUserBillAccount>()
+              .Where(x => x.ProjectId == projectId)
+              .Select(x => x.UserId)
+              .ToListAsync();
 
-            var listResult = await _workScope.GetAll<User>()
-                .Where(u => existedPUBLU.Contains(u.Id))
-                .Select(u => new GetAllUserDto
-                {
-                    Id = u.Id,
-                    EmailAddress = u.EmailAddress,
-                    UserName = u.UserName,
-                    AvatarPath = u.AvatarPath == null ? "" : u.AvatarPath,
-                    UserType = u.UserType,
-                    PositionId = u.PositionId,
-                    PositionColor = u.Position.Color,
-                    PositionName = u.Position.ShortName,
-                    UserLevel = u.UserLevel,
-                    Branch = u.BranchOld,
-                    BranchColor = u.Branch.Color,
-                    BranchDisplayName = u.Branch.DisplayName,
-                    IsActive = u.IsActive,
-                    FullName = u.Name + " " + u.Surname,
-                    CreationTime = u.CreationTime,
-                    UserSkills = u.UserSkills.Select(s => new UserSkillDto
-                    {
-                        UserId = u.Id,
-                        SkillId = s.SkillId,
-                        SkillName = s.Skill.Name
-                    }).ToList(),
-                    WorkingProjects = u.ProjectUsers
-                            .Where(s => s.Status == ProjectUserStatus.Present && s.AllocatePercentage > 0)
-                            .Where(x => x.Project.Status != ProjectStatus.Potential && x.Project.Status != ProjectStatus.Closed)
-                            .Select(p => new WorkingProjectDto
-                            {
-                                ProjectName = p.Project.Name,
-                                ProjectRole = p.ProjectRole,
-                                StartTime = p.StartTime,
-                                IsPool = p.IsPool
+            var query = await _workScope.GetAll<ProjectManagement.Entities.ProjectUserBill>()
+                 .Where(x => x.ProjectId == projectId)
+                 .OrderByDescending(x => x.CreationTime)
+                 .Select(x => new GetProjectUserBillDto
+                 {
+                     Id = x.Id,
+                     UserId = x.UserId,
+                     UserName = x.User.Name,
+                     ProjectId = x.ProjectId,
+                     ProjectName = x.Project.Name,
+                     AccountName = x.AccountName,
+                     BillRole = x.BillRole,
+                     BillRate = isViewRate ? x.BillRate : 0,
+                     StartTime = x.StartTime.Date,
+                     EndTime = x.EndTime.Value.Date,
+                     //CurrencyName = x.Project.Currency.Name,
+                     Note = x.Note,
+                     shadowNote = x.shadowNote,
+                     isActive = x.isActive,
+                     AvatarPath = x.User.AvatarPath,
+                     FullName = x.User.FullName,
+                     Branch = x.User.BranchOld,
+                     BranchColor = x.User.Branch.Color,
+                     BranchDisplayName = x.User.Branch.DisplayName,
+                     PositionId = x.User.PositionId,
+                     PositionName = x.User.Position.ShortName,
+                     PositionColor = x.User.Position.Color,
+                     EmailAddress = x.User.EmailAddress,
+                     UserType = x.User.UserType,
+                     UserLevel = x.User.UserLevel,
+                     ChargeType = x.ChargeType.HasValue ? x.ChargeType : x.Project.ChargeType,
 
-                            }).ToList(),
-                })
-                .ToListAsync();
+                     LinkedResources = (from pu in _workScope.GetAll<ProjectUserBillAccount>()
+                                        join us in _workScope.GetAll<User>() on pu.UserId equals us.Id
+                                        where pu.UserBillAccountId == x.UserId && existedPUBLUIds.Contains(pu.UserId)
+                                        select new GetAllUserDto
+                                        {
+                                            Id = us.Id, // Set the appropriate properties you want from us
+                                            EmailAddress = us.EmailAddress,
+                                            UserName = us.UserName,
+                                            AvatarPath = us.AvatarPath == null ? "" : us.AvatarPath,
+                                            UserType = us.UserType,
+                                            PositionId = us.PositionId,
+                                            PositionColor = us.Position.Color,
+                                            PositionName = us.Position.ShortName,
+                                            UserLevel = us.UserLevel,
+                                            Branch = us.BranchOld,
+                                            BranchColor = us.Branch.Color,
+                                            BranchDisplayName = us.Branch.DisplayName,
+                                            IsActive = us.IsActive,
+                                            FullName = us.Name + " " + us.Surname,
+                                            CreationTime = us.CreationTime,
+                                            UserSkills = us.UserSkills.Select(s => new UserSkillDto
+                                            {
+                                                UserId = us.Id,
+                                                SkillId = s.SkillId,
+                                                SkillName = s.Skill.Name
+                                            }).ToList(),
+                                            WorkingProjects = us.ProjectUsers
+                                                .Where(s => s.Status == ProjectUserStatus.Present && s.AllocatePercentage > 0)
+                                                .Where(x => x.Project.Status != ProjectStatus.Potential && x.Project.Status != ProjectStatus.Closed)
+                                                .Select(p => new WorkingProjectDto
+                                                {
+                                                    ProjectName = p.Project.Name,
+                                                    ProjectRole = p.ProjectRole,
+                                                    StartTime = p.StartTime,
+                                                    IsPool = p.IsPool
+                                                }).ToList(),
+                                        }).ToList()
 
-            return listResult;
-        }
+                 })
+                 .ToListAsync();
 
-        public async Task CheckResourceInProject(long accountId, long projectId)
-        {
-            var existedPU = await _workScope.GetAll<ProjectManagement.Entities.ProjectUserBill>()
-                .Where(x => x.UserId == accountId && x.ProjectId == projectId)
-                .FirstOrDefaultAsync();
-
-            if (existedPU == null)
-                throw new UserFriendlyException($"BillAccount(User) {accountId} is not working in Project {projectId}!");
+            return query;
         }
 
         public async Task<List<ProjectUserBillAccount>> AddProjectUserBillAccounts(ProjectUserBillAccountsDto input)
@@ -214,7 +239,7 @@ namespace ProjectManagement.Services.ProjectUserBills
 
                 if (pUBA != null && !pUBA.IsDeleted)
                 {
-                    throw new UserFriendlyException("This UserBillAccount already exists!");
+                    throw new UserFriendlyException($"UserBillAccount {pUBA.Id} already exists!");
                 }
                 else if (pUBA != null && pUBA.IsDeleted)
                 {

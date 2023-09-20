@@ -44,5 +44,6 @@ namespace ProjectManagement.Entities
         public long? ParentInvoiceId { get; set; }
         public virtual ICollection<ProjectUser> ProjectUsers { get; set; }
         public bool IsRequiredWeeklyReport { get; set; }
+        public virtual ICollection<ProjectUserBillAccount> ProjectUserBillAccounts { get; set; }
     }
 }

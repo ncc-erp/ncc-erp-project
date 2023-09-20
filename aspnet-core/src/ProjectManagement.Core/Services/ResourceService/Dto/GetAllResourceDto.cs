@@ -5,12 +5,14 @@ using System.Collections.Generic;
 using System.Text;
 using static ProjectManagement.Constants.Enum.ProjectEnum;
 using ProjectManagement.Utils;
+using System.Linq;
 
 namespace ProjectManagement.Services.ResourceService.Dto
 {
     public class GetAllResourceDto
     {
         public long UserId { get; set; }
+        [ApplySearchAttribute]
         public string UserName { get; set; }
         [ApplySearchAttribute]
         public string EmailAddress { get; set; }

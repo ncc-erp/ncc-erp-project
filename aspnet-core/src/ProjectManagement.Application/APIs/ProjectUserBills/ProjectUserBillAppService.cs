@@ -4,18 +4,23 @@ using Abp.UI;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NccCore.Extension;
+using NccCore.IoC;
 using NccCore.Paging;
 using NccCore.Uitls;
 using ProjectManagement.APIs.ProjectUserBills.Dto;
 using ProjectManagement.APIs.Timesheets.Dto;
 using ProjectManagement.Authorization;
+using ProjectManagement.Authorization.Users;
 using ProjectManagement.Entities;
 using ProjectManagement.Services.ProjectTimesheet;
+using ProjectManagement.Services.ProjectUserBill.Dto;
 using ProjectManagement.Services.ProjectUserBills;
+using ProjectManagement.Services.ResourceService.Dto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
+using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 using static ProjectManagement.Constants.Enum.ProjectEnum;
@@ -37,44 +42,45 @@ namespace ProjectManagement.APIs.ProjectUserBills
 
         [HttpGet]
         [AbpAuthorize(PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo,
-            PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo,
-            PermissionNames.Projects_TrainingProjects_ProjectDetail_TabBillInfo)]
-        public async Task<List<GetProjectUserBillDto>> GetAllByProject(long projectId)
+          PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo,
+          PermissionNames.Projects_TrainingProjects_ProjectDetail_TabBillInfo)]
+        public async Task<List<Services.ProjectUserBill.Dto.GetProjectUserBillDto>> GetAllByProject(long projectId)
         {
-            var isViewRate = await IsGrantedAsync(PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Rate_View);
-            var query = WorkScope.GetAll<ProjectUserBill>()
-                .Where(x => x.ProjectId == projectId)
-                .OrderByDescending(x => x.CreationTime)
-                        .Select(x => new GetProjectUserBillDto
-                        {
-                            Id = x.Id,
-                            UserId = x.UserId,
-                            UserName = x.User.Name,
-                            ProjectId = x.ProjectId,
-                            ProjectName = x.Project.Name,
-                            AccountName = x.AccountName,
-                            BillRole = x.BillRole,
-                            BillRate = isViewRate ? x.BillRate : 0,
-                            StartTime = x.StartTime.Date,
-                            EndTime = x.EndTime.Value.Date,
-                            //CurrencyName = x.Project.Currency.Name,
-                            Note = x.Note,
-                            shadowNote = x.shadowNote,
-                            isActive = x.isActive,
-                            AvatarPath = x.User.AvatarPath,
-                            FullName = x.User.FullName,
-                            Branch = x.User.BranchOld,
-                            BranchColor = x.User.Branch.Color,
-                            BranchDisplayName = x.User.Branch.DisplayName,
-                            PositionId = x.User.PositionId,
-                            PositionName = x.User.Position.ShortName,
-                            PositionColor = x.User.Position.Color,
-                            EmailAddress = x.User.EmailAddress,
-                            UserType = x.User.UserType,
-                            UserLevel = x.User.UserLevel,
-                            ChargeType = x.ChargeType.HasValue ? x.ChargeType : x.Project.ChargeType,
-                        });
-            return await query.ToListAsync();
+            return await projectUserBillManager.GetAllByProject(projectId);
+        }
+
+        [HttpPost]
+        [AbpAuthorize(PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount,
+            PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount,
+            PermissionNames.Projects_TrainingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount)]
+        public async Task<bool> LinkUserToBillAccount(ProjectUserBillAccountsDto input)
+        {
+            try
+            {
+                await projectUserBillManager.AddProjectUserBillAccounts(input);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                 throw new UserFriendlyException(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        [AbpAuthorize(PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount,
+            PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount,
+            PermissionNames.Projects_TrainingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount)]
+        public async Task<bool> RemoveUserFromBillAccount(ProjectUserBillAccountsDto input)
+        {
+            try
+            {
+                await projectUserBillManager.RemoveProjectUserBillAccount(input);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new UserFriendlyException(ex.Message);
+            }
         }
 
         [HttpPost]
@@ -231,6 +237,12 @@ namespace ProjectManagement.APIs.ProjectUserBills
 
         }
 
+        [HttpGet]
+        [AbpAuthorize()]
+        public async Task<List<GetAllResourceDto>> GetAllResource()
+        {
+            return await projectUserBillManager.QueryAllResource(false);
+        }
 
         [HttpPut]
         [AbpAuthorize(PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_InvoiceSetting_Edit)]

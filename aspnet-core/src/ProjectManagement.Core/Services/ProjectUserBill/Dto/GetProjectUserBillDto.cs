@@ -1,12 +1,12 @@
 ﻿using Abp.Application.Services.Dto;
 using NccCore.Anotations;
-using ProjectManagement.Services.ProjectUserBill.Dto;
 using ProjectManagement.Utils;
 using System;
 using System.Collections.Generic;
+using System.Text;
 using static ProjectManagement.Constants.Enum.ProjectEnum;
 
-namespace ProjectManagement.APIs.ProjectUserBills.Dto
+namespace ProjectManagement.Services.ProjectUserBill.Dto
 {
     public class GetProjectUserBillDto : EntityDto<long>
     {
@@ -42,6 +42,7 @@ namespace ProjectManagement.APIs.ProjectUserBills.Dto
         public long? PositionId { get; set; }
         public string PositionName { get; set; }
         public string PositionColor { get; set; }
+        public DateTime CreationTime { get; set; }
         public List<GetAllUserDto> LinkedResources { get; set; }
     }
 }

@@ -60,7 +60,7 @@ namespace ProjectManagement.Services.ProjectTimesheet
                .FirstOrDefaultAsync();
         }
 
-        public async Task CreateTimesheetProjectBill(ProjectUserBill pub, Project project)
+        public async Task CreateTimesheetProjectBill(ProjectManagement.Entities.ProjectUserBill pub, Project project)
         {
             var activeTimesheet = await GetLastTimesheet();
             if (!activeTimesheet.IsActive)
@@ -98,7 +98,7 @@ namespace ProjectManagement.Services.ProjectTimesheet
             await _workScope.InsertAsync(tpb);
         }
 
-        public async Task UpdateTimesheetProjectBill(ProjectUserBill pub)
+        public async Task UpdateTimesheetProjectBill(ProjectManagement.Entities.ProjectUserBill pub)
         {
             var activeTimesheet = await GetLastTimesheet();
             var timesheetproject = await _workScope.GetAll<TimesheetProject>()
@@ -160,7 +160,7 @@ namespace ProjectManagement.Services.ProjectTimesheet
         public async Task<List<ProjectUserBillDto>> GetListProjectUserBillDto(int year, int month, long? projectId)
         {
             var firstDayOfMonth = new DateTime(year, month, 1).Date;
-            var q = _workScope.GetAll<ProjectUserBill>()
+            var q = _workScope.GetAll<ProjectManagement.Entities.ProjectUserBill>()
                .Where(s => s.Project.IsCharge == true)
                .Where(s => s.isActive)
                .Where(s => !s.EndTime.HasValue || s.EndTime.Value.Date >= firstDayOfMonth);

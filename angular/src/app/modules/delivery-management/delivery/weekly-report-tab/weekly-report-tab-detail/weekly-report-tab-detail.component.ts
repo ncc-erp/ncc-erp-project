@@ -367,6 +367,7 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
 
 
   public getAllCriteria(hasCheck?: boolean) {
+    this.isLoading = true;
     forkJoin([this.pjCriteriaService.getAll(), this.pjCriteriaResultService.getAllCriteriaResult(this.projectId, this.pmReportId)])
       .subscribe(([resCriteria, resCriteriaResult]) => {
         this.bgFlag = 'bg-success';
@@ -411,7 +412,7 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
         }
         this.listPreEditCriteriaResult = cloneDeep(this.listCriteriaResult);
         this.setTotalHealth();
-      })
+      }, ()=> this.isLoading = false)
   }
 
   setTotalHealth() {
@@ -598,23 +599,26 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
 
   public getChangedResource() {
     if (this.projectId) {
+      this.isLoading = true;
       this.pmReportProjectService.getChangesDuringWeek(this.projectId, this.pmReportId).pipe(catchError(this.pmReportProjectService.handleError)).subscribe(data => {
         this.weeklyReportList = data.result;
         this.isShowWeeklyList = this.weeklyReportList.length == 0 ? false : true;
-      })
+      }, ()=> this.isLoading = false)
     }
   }
   public getFuturereport() {
     if (this.projectId) {
+      this.isLoading = true;
       this.pmReportProjectService.getChangesInFuture(this.projectId, this.pmReportId).pipe(catchError(this.pmReportProjectService.handleError)).subscribe(data => {
         this.futureReportList = data.result;
         this.isShowFutureList = this.futureReportList.length == 0 ? false : true;
-      })
+      },()=> this.isLoading = false)
     }
 
   }
   public getProjectProblem() {
     if (this.projectId) {
+      this.isLoading = true;
       this.pmReportProjectService.problemsOfTheWeekForReport(this.projectId, this.pmReportId).pipe(catchError(this.reportIssueService.handleError)).subscribe(data => {
         if (data.result) {
           this.problemList = [];
@@ -668,17 +672,18 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
         }
         this.isShowProblemList = this.problemList.length == 0 ? false : true;
         this.isShowIssues = this.problemList.length > 0;
-      })
+      }, ()=> this.isLoading = false)
     }
   }
   public getRiskOfTheWeek(){
     if(this.projectId && this.permission.isGranted(this.WeeklyReport_ReportDetail_PMRisk_View)){
+      this.isLoading = true;
       this.pmReportRiskService.getRiskOfTheWeek(this.projectId, this.pmReportId).pipe(catchError( this.pmReportRiskService.handleError)).subscribe(data => {
         if(data.result){
           this.projectRiskList = data.result;
           this.isShowRisks = this.projectRiskList.length >0
         }
-      })
+      }, ()=> this.isLoading = false)
     }
   }
   setDoneRisk(risk){
@@ -1710,10 +1715,11 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
   }
 
   getTimeCountDown(autoStart: boolean = false) {
+    this.isLoading = true;
     this._configuration.getTimeCountDown().subscribe((rs) => {
       this.countdownInterval.setValue(rs.result.timeCountDown);
       if (autoStart) setTimeout(() => this.startTimmer());
-    });
+    },()=> this.isLoading = false);
   }
 
   openSettingCountDown() {
@@ -1868,12 +1874,13 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
     });
   }
   getLastWeek() {
+    this.isLoading = true;
     this.pmReportProjectService.GetAllByProject(this.projectId).subscribe((res) => {
       this.oldWeeklyReport = res.result.find(x => x.pmReportProjectId != 0 && x.reportId < this.pmReportId);
       if (this.oldWeeklyReport) {
         this.getOldCriteriaResult();
       }
-    });
+    }, ()=> this.isLoading = false);
   }
   getOldCriteriaResult() {
     this.pjCriteriaResultService.getAllCriteriaResult(this.projectId, this.oldWeeklyReport.reportId).subscribe((res) => {

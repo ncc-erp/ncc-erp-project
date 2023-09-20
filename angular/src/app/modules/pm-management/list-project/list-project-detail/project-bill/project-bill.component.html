@@ -134,7 +134,8 @@
                                     itemsPerPage: maxBillUserCurrentPage,
                                     currentPage: userBillCurrentPage
                                 } ; let i = index"
-                                    [ngClass]="{'highLight': bill.linkedResources.length > 1}">
+                                    [ngClass]="{'highLight': bill.linkedResources && bill.linkedResources.length > 1,
+                                    'highLightOne': bill.linkedResources && bill.linkedResources.length == 1  }">
                                     <td><span>{{ i + 1 + maxBillUserCurrentPage * (userBillCurrentPage - 1) }}</span></td>
                                     <td class="text-left" style="min-width: 250px;">
                                         <span *ngIf="!bill.createMode">

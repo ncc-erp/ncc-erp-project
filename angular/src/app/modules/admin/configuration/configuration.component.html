@@ -570,14 +570,15 @@
             <p style="color: #f44336;font-size: 10.5px;"*ngIf="checkRequiredChannelId()">This field is required</p>
           </div>
         </div>
-        <button mat-raised-button  *ngIf="isEditSendTime" (click) = 'addTime()' class="mb-2">
-          <i style="font-size: 24px;color: #28a745;" class="fa fa-plus-circle"></i> &nbsp; <span>Add notify time!</span>
+        <button style="width: 108px;" class="btn btn-primary btn-action mb-2" *ngIf="isEditSendTime" (click) = 'addTime()'>
+          <i class="fa fa-plus-square"></i>
+          Add time
         </button>
         <form [formGroup]="form">
           <div formArrayName="credentials">
             <div class="row mb-2 w-50"  *ngFor="let creds of credentials.controls; let i = index;" [formGroupName]="i">
               <div class="d-flex justify-content-between w-100 align-items-baseline">
-                <mat-checkbox style="position: relative;top: 10px;" formControlName="IsCheck" class="col-2" [disabled]="!isEditSendTime" #check>Check!</mat-checkbox>
+                <mat-checkbox style="position: relative;top: 10px;" formControlName="IsCheck" class="col-2" [disabled]="!isEditSendTime" #check>Is active</mat-checkbox>
                 <div class="w-25">
                     <input [ngClass]="{editTime:isEditSendTime}"  class="w-100 inputTime" [readonly]="!isEditSendTime"   type="time" formControlName="Time"  />
                     <p style="color: #f44336;font-size: 10.5px;" *ngIf="form.controls.credentials.controls[i].get('Time').invalid 

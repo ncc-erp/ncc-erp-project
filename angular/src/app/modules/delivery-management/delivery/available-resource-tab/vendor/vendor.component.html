@@ -44,7 +44,8 @@
                                             </div>
                                         </mat-radio-group>
                                     </div>
-                                    <mat-option *ngFor="let skill of listSkills | listFilter:  'name' : searchSkill" [value]="skill.id">
+                                    <mat-option *ngFor="let skill of listSkills | listFilter:  'name' : searchSkill"
+                                     [value]="skill.id" (click)="onSelectChange(skill.id)">
                                         {{skill.name}}
                                     </mat-option>
                                 </mat-select>

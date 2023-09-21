@@ -15,6 +15,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class UpdateUserSkillDialogComponent implements OnInit {
   userSkillList: any[] = []
+  userSkillListCr: any[] = []
   skillList: SkillDto[] = []
   skillRankList=[]
   tempSkillList: SkillDto[] = []
@@ -33,6 +34,7 @@ export class UpdateUserSkillDialogComponent implements OnInit {
       this.ratingArr.push(index);
     }
     this.userSkillList = this.data.userSkills.map(skill => skill.skillId)
+    this.userSkillListCr = this.data.userSkills.map(skill => skill.skillId)
     this.getAllSkill()
   }
 
@@ -45,8 +47,21 @@ export class UpdateUserSkillDialogComponent implements OnInit {
       })
     )
   }
-  onSelectChange(){
+  openedChange(e){
+    if(!e){
+      this.searchSkill = ''
+    }
+  }
+  onSelectChange(id){
     this.skillRankList=[]
+    if(this.userSkillListCr.includes(id)){
+      this.userSkillListCr = this.userSkillListCr.filter(res => res != id)
+      this.userSkillList = [...this.userSkillListCr]
+    }
+    else{
+      this.userSkillListCr.push(id)
+      this.userSkillList = [...this.userSkillListCr]
+    }
     this.setSkillRankList()
   }
 
@@ -106,11 +121,13 @@ export class UpdateUserSkillDialogComponent implements OnInit {
       return {skillId:item.id,skillRank:0,name:item.name}
     })
     this.userSkillList = this.skillList.map(item => item.id)
+    this.userSkillListCr = [...this.userSkillList]
   }
 
   clear(){
     this.skillRankList = []
     this.userSkillList = []
+    this.userSkillListCr = []
   }
 
   ngOnDestroy(): void {

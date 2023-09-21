@@ -9,10 +9,11 @@
         appearance="outline"
         class="rsp-form-field"
       >
-        <mat-select
+        <mat-select #select
           multiple
           [(ngModel)]="listResourceSelect"
-          (selectionChange)="onSelectChange()">
+          (openedChange)="openedChange($event)"
+          >
           <div style="position: sticky; top: 0; z-index: 2; background-color: white;">
               <mat-form-field class="w-100 px-3 ">
                   <input style="height: 50px; padding: 5px 10px; "
@@ -25,7 +26,7 @@
               </div>
           </div>
           <mat-option
-            *ngFor="let resource of listAllResource | listFilter:  'fullName' : searchUser: 'emailAddress'"
+            *ngFor="let resource of listAllResource | listFilter:  'fullName' : searchUser: 'emailAddress'" (click)="onSelectChange(resource.userId)"
             [value]="resource.userId"
           >
             {{ resource.emailAddress }}

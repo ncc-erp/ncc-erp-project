@@ -48,8 +48,9 @@ export class PlanResourceComponent
   public searchSkill:string = '';
   public skillsParam = [];
   private subscription: Subscription[] = [];
-  public selectedSkillId: number[]
-  public selectedSkillIdOld: number[];
+  public selectedSkillId: number[] = []
+  public selectedSkillIdCr: number[] = []
+  public selectedSkillIdOld: number[] = []
   public isAndCondition: boolean = false
 
   Resource_TabPool = PERMISSIONS_CONSTANT.Resource_TabPool
@@ -175,11 +176,14 @@ export class PlanResourceComponent
 
   openedChange(opened){
     if(!opened){
-          this.selectedSkillId = this.selectedSkillIdOld
+          this.selectedSkillId = [...this.selectedSkillIdOld]
+          this.selectedSkillIdCr = [...this.selectedSkillIdOld]
+          this.searchSkill = '';
       }
   }
 
   actionSelect(typeSelect){
+    this.selectedSkillIdCr=typeSelect.data
     this.selectedSkillId = typeSelect.data
   }
 
@@ -365,6 +369,17 @@ export class PlanResourceComponent
     addOrEditNoteDialog.content.onSave.subscribe(() => {
       this.refresh();
     });
+  }
+
+  onSelectChange(id){
+    if(this.selectedSkillIdCr.includes(id)){
+      this.selectedSkillIdCr = this.selectedSkillIdCr.filter(res => res != id)
+      this.selectedSkillId = [...this.selectedSkillIdCr]
+    }
+    else{
+      this.selectedSkillIdCr.push(id)
+      this.selectedSkillId = [...this.selectedSkillIdCr]
+    }
   }
 
   CancelResourcePlan(projectUser, userName: string) {

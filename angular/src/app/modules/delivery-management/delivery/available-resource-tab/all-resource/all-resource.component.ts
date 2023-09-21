@@ -51,11 +51,14 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
   public skill = '';
   public skillsParam = [];
   public selectedSkillId: number[];
+  public selectedSkillIdCr: number[];
   public selectedSkillIdOld: number[];
   public selectedBranchIds: number[] = [];
+  public selectedBranchIdsCr: number[] = [];
   public selectedBranchIdsOld: number[] = [];
   public selectedUserTypes: number[] = [];
   public selectedPositions: number[] = [];
+  public selectedPositionsCr: number[] = [];
   public selectedPositionsOld: number[] = [];
   public isAndCondition: boolean = false;
   public selectedIsPlanned: number;
@@ -184,13 +187,19 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     if(!opened){
       switch(typeSelect){
         case 'Branch':
-          this.selectedBranchIds = this.selectedBranchIdsOld
+          this.selectedBranchIds = [...this.selectedBranchIdsOld]
+          this.selectedBranchIdsCr = [...this.selectedBranchIdsOld]
+          this.searchBranch = '';
           break;
         case 'Position':
-          this.selectedPositions = this.selectedPositionsOld
+          this.selectedPositions = [...this.selectedPositionsOld]
+          this.selectedPositionsCr = [...this.selectedPositionsOld]
+          this.searchPosition = '';
           break;
         case 'Skill':
-          this.selectedSkillId = this.selectedSkillIdOld
+          this.selectedSkillId = [...this.selectedSkillIdOld]
+          this.selectedSkillIdCr = [...this.selectedSkillIdOld]
+          this.searchSkill = '';
           break;
       }
     }
@@ -199,13 +208,51 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
   actionSelect(typeSelect){
     switch(typeSelect.type){
       case 'Branch':
+        this.selectedBranchIdsCr = typeSelect.data
         this.selectedBranchIds = typeSelect.data
         break;
       case 'Position':
+        this.selectedPositionsCr = typeSelect.data
         this.selectedPositions = typeSelect.data
         break;
       case 'Skill':
+        this.selectedSkillIdCr = typeSelect.data
         this.selectedSkillId = typeSelect.data
+        break;
+    }
+  }
+
+  onSelectChange(id,typeSelect){
+    switch(typeSelect){
+      case 'Branch':
+        if(this.selectedBranchIdsCr.includes(id)){
+          this.selectedBranchIdsCr = this.selectedBranchIdsCr.filter(res => res != id)
+          this.selectedBranchIds = [...this.selectedBranchIdsCr]
+        }
+        else{
+          this.selectedBranchIdsCr.push(id)
+          this.selectedBranchIds = [...this.selectedBranchIdsCr]
+        }
+        break;
+      case 'Position':
+        if(this.selectedPositionsCr.includes(id)){
+          this.selectedPositionsCr = this.selectedPositionsCr.filter(res => res != id)
+          this.selectedPositions = [...this.selectedPositionsCr]
+        }
+        else{
+          this.selectedPositionsCr.push(id)
+          this.selectedPositions = [...this.selectedPositionsCr]
+        }
+        break;
+      case 'Skill':
+        if(this.selectedSkillIdCr.includes(id)){
+          this.selectedSkillIdCr = this.selectedSkillIdCr.filter(res => res != id)
+          this.selectedSkillId = [...this.selectedSkillIdCr]
+        }
+        else{
+          this.selectedSkillIdCr.push(id)
+          this.selectedSkillId = [...this.selectedSkillIdCr]
+        }
         break;
     }
   }
@@ -289,7 +336,8 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
       this.listBranchs = data.result
       this.listBranchsId = data.result.map(item => item.id)
       this.selectedBranchIds = data.result.map(item => item.id)
-      this.selectedBranchIdsOld = this.selectedBranchIds
+      this.selectedBranchIdsOld = [...this.selectedBranchIds]
+      this.selectedBranchIdsCr = this.selectedBranchIds
       this.refresh();
     })
   }
@@ -299,7 +347,8 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
       this.listPositions = data.result
       this.listPositionsId = data.result.map(item => item.id)
       this.selectedPositions = data.result.map(item => item.id)
-      this.selectedPositionsOld = this.selectedPositions
+      this.selectedPositionsOld = [...this.selectedPositions]
+      this.selectedPositionsCr = this.selectedPositions
       this.refresh();
     })
   }

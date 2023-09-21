@@ -220,6 +220,7 @@ import { BillAccountPlanComponent } from './modules/delivery-management/delivery
 import { GeneralInformationComponent } from './modules/pm-management/list-project/list-project-detail/general-information/general-information.component';
 import { FormCvUserComponent } from './modules/delivery-management/delivery/request-resource-tab/form-cv-user/form-cv-user.component';
 import { DescriptionPopupComponent } from './modules/delivery-management/delivery/request-resource-tab/description-popup/description-popup.component';
+import { ShadowAccountDialogComponent } from './modules/pm-management/list-project/list-project-detail/project-bill/shadow-account-dialog/shadow-account-dialog.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, "./assets/i18n/", ".json");
@@ -426,6 +427,7 @@ export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
     GeneralInformationComponent,
     FormCvUserComponent,
     DescriptionPopupComponent,
+    ShadowAccountDialogComponent,
   ],
   imports: [
     CommonModule,

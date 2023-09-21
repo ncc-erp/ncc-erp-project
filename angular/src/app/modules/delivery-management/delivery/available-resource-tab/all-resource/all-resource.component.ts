@@ -327,7 +327,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
       height: '90vh',
     })
   }
-  updateUserSkill(user,note) {
+  updateUserSkill(user, note) {
     let ref = this.dialog.open(UpdateUserSkillDialogComponent, {
       width: "700px",
       data: {

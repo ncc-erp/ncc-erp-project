@@ -331,14 +331,14 @@ export class PlanResourceComponent
     });
   }
 
-  updateUserSkill(user,note) {
+  updateUserSkill(user, note) {
     let ref = this.dialog.open(UpdateUserSkillDialogComponent, {
       width: "700px",
       data: {
         userSkills: user.userSkills,
         id: user.userId,
         fullName: user.fullName,
-        note:note
+        note: note
       }
 
     });

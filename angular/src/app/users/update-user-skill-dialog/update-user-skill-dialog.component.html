@@ -39,12 +39,12 @@
             </mat-form-field>
         </div>
     </div > 
-    <div style="width: 100%;margin-top: 15px; height: 350px;overflow-y: auto;overflow-x: hidden">
+    <div style="width: 100%; margin-top: 15px; height: 350px; overflow-y: auto; overflow-x: hidden">
             <div *ngFor="let item of skillRankList " class="row align-items-center">
                 <span class="col-md-3">{{item.name}}</span>
                 <div class="col-md-9">
-                    <button mat-icon-button [color]="color" *ngFor="let ratingId of ratingArr;index as i" (click)="onClick(i+1,item)">
-                        <i style="font-size: 16px;color: #ffd740;" [class]="showIcon(i,item)"></i>
+                    <button mat-icon-button [color]="color" *ngFor="let ratingId of ratingArr; index as i" (click)="onClick(i+1, item)">
+                        <i style="font-size: 16px; color: #ffd740;" [class]="showIcon(i, item)"></i>
                     </button>
                 </div>
                

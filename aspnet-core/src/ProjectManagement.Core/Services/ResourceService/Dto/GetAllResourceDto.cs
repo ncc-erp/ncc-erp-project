@@ -13,8 +13,6 @@ namespace ProjectManagement.Services.ResourceService.Dto
     {
         public long UserId { get; set; }
         [ApplySearchAttribute]
-        public string UserName { get; set; }
-        [ApplySearchAttribute]
         public string EmailAddress { get; set; }
         [ApplySearchAttribute]
         public string FullName { get; set; }

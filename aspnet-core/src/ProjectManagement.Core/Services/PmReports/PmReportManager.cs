@@ -27,7 +27,9 @@ namespace ProjectManagement.Services.PmReports
             var list = workScope.GetAll<PMReportProject>()
                 .Where(x => x.PMReport.IsActive
                     && x.Status == PMReportProjectStatus.Draft
-                    && x.Project.IsRequiredWeeklyReport)
+                    && x.Project.IsRequiredWeeklyReport
+                    && x.Project.Status == ProjectStatus.InProgress
+                    && x.Project.ProjectType != ProjectType.TRAINING)
                 .Select(x => new PMUnsentWeeklyReportDto
                 {
                     Index = 0,

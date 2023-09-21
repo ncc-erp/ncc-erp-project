@@ -147,10 +147,6 @@ export class ListProjectComponent extends PagedListingComponentBase<any> impleme
     let checkFillterProject = false
     if(this.permission.isGranted( this.Projects_OutsourcingProjects_ViewMyProjectOnly) && !this.permission.isGranted(this.Projects_OutsourcingProjects_ViewAllProject)){
       this.pmId = Number(this.sessionService.userId);
-    }else{
-      if(request.searchText){
-        this.pmId = -1;
-      }
     }
 
     if(this.sortWeeklyReport) {
@@ -172,7 +168,6 @@ export class ListProjectComponent extends PagedListingComponentBase<any> impleme
         checkFillterProject = true;
         item.value = this.filterProjectType;
       }
-
 
     })
     if (check == false) {
@@ -221,18 +216,14 @@ export class ListProjectComponent extends PagedListingComponentBase<any> impleme
         }
       });
   }
+
   public isEnablePMFilter(){
     return this.permission.isGranted(this.Projects_OutsourcingProjects_ViewAllProject)
   }
+
   public searchProject(){
-    if (this.isEnablePMFilter() && this.searchText != ""){
-      this.pmId = -1;
-    }
     this.getDataPage(1);
   }
-
-
-
 
   public getAllPM(): void {
     this.listProjectService.GetOutsourcingPMs().pipe(catchError(this.userService.handleError))

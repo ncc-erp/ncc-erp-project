@@ -35,7 +35,7 @@
                             (keyup.enter)="searchProject()" />
                         <div class="input-group-append">
                             <button type="button" class="btn btn-default" (click)="checkAddFilter()">
-                                <i class="fas" [class.fa-angle-up]="advancedFiltersVisib1le"
+                                <i class="fas" [class.fa-angle-up]="advancedFiltersVisible"
                                     [class.fa-angle-down]="!advancedFiltersVisible"></i>
                             </button>
                         </div>
@@ -98,7 +98,7 @@
                             <div class="col-2" style="margin-top: 10px;" *ngIf="permission.isGranted(Projects_OutsourcingProjects_ViewBillInfo)">
                                     <mat-checkbox name="cbx-showBillInfo" [(ngModel)]="isShowBillInfo">Show bill info</mat-checkbox>
                             </div>
-                            
+
 
                         </div>
                     </div>
@@ -136,7 +136,7 @@
                                 <th>Main/Sub Project</th>
                                 <th>{{'PM' | localize}}</th>
                                 <th *ngIf="isShowBillInfo || isShowAccount"> {{isShowBillInfo && isShowAccount ? 'Bill info/Bill account' : isShowBillInfo && !isShowAccount ? 'Bill info' : 'Bill account' }}</th>
-                               
+
                                 <th *ngIf="permission.isGranted(Projects_OutsourcingProjects_ViewRequireWeeklyReport)" style="width: 50px;">RequireWR</th>
                                 <th style="width: 110px;">Time</th>
                                 <th style="width: 50px;">Is charged</th>
@@ -191,13 +191,13 @@
                                     </div>
                                 </td>
                                 <td style="max-width: 250px; white-space: normal;">
-                                    <div>{{ project.isParentInvoiceIdExist ? "Main Project: " : "Sub Project: "}}</div> 
+                                    <div>{{ project.isParentInvoiceIdExist ? "Main Project: " : "Sub Project: "}}</div>
                                     <div style="display: flex; justify-content: space-between;">
-                                        <div class="sub-main-project-name">                                       
-                                            <div>                                              
+                                        <div class="sub-main-project-name">
+                                            <div>
                                                 <a class="sub-main-project-name" *ngFor="let item of project.parentInvoices" style="cursor: pointer; font-weight: bold; display: grid; justify-content: start; "  (click)="viewProjectDetail(item)">
-                                                    {{ item.name }}   
-                                                </a>                   
+                                                    {{ item.name }}
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
@@ -214,12 +214,12 @@
                                                                 userType:project.pmUserType,emailAddress:project.pmEmailAddress, avatarFullPath:project.pmAvatarFullPath}">
                                         </app-user-info>
                                     </div>
-                                </td>                                
+                                </td>
                                 <td *ngIf="isShowBillInfo || isShowAccount">
                                     <strong *ngIf="filterBillInfo(project).length>0" style="color: red;">Total:{{project.billInfo.length}}</strong>
                                     <div *ngFor="let bill of filterBillInfo(project) let j = index;">
                                         <strong>{{j+1}}. </strong><strong>{{bill.fullName}} </strong>
-                                        <span 
+                                        <span
                                             >[{{bill.billRole}}]
                                         </span>
                                         <strong *ngIf="isShowBillInfo"
@@ -268,7 +268,7 @@
                                     <p class="mb-0">{{project.timeSendReport| date:"yyyy-MM-dd"}}</p>
                                     <p>{{project.timeSendReport| date:"hh:mm a"}}</p>
                                 </td> -->
-                                
+
                                 <td class="text-center">
                                     <div style="visibility: hidden; position: fixed"
                                         [style.left]="contextMenuPosition.x" [style.top]="contextMenuPosition.y"

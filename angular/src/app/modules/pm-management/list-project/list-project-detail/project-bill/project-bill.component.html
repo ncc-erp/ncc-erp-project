@@ -112,10 +112,11 @@
                             class="table table-hover text-nowrap" [busy]="isLoading">
                             <thead class="bg-light">
                                 <tr>
-                                    <th class="stt">#</th>
+                                    <th style="border-left: 10px solid #fff" class="stt">#</th>
                                     <th>Employee</th>
                                     <th>Charge Name</th>
                                     <th>Charge Role</th>
+                                    <th>Linked resources</th>
                                     <th
                                         *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Rate_View)">
                                         Rate <br>({{rateInfo.currencyName}})</th>
@@ -133,7 +134,11 @@
                                     itemsPerPage: maxBillUserCurrentPage,
                                     currentPage: userBillCurrentPage
                                 } ; let i = index">
-                                    <td><span>{{ i + 1 + maxBillUserCurrentPage * (userBillCurrentPage - 1) }}</span></td>
+                                    <td style="border-left: 10px solid #b9b8b8;"
+                                     [ngClass]="{'highLight': bill.linkedResources && bill.linkedResources.length > 1,
+                                        'highLightOne': bill.linkedResources && bill.linkedResources.length == 1  }">
+                                        <span>{{ i + 1 + maxBillUserCurrentPage * (userBillCurrentPage - 1) }}</span>
+                                    </td>
                                     <td class="text-left" style="min-width: 250px;">
                                         <span *ngIf="!bill.createMode">
                                             <app-user-info [userData]="bill">
@@ -194,13 +199,26 @@
 
                                         </div>
                                     </td>
+                                    <td>
+                                        <div class="d-flex align-items-start justify-content-end">
+                                            <div class="d-flex" style="flex-direction: column;">
+                                                <div *ngFor="let resource of bill.linkedResources" class="mb-2">
+                                                    <app-user-info [userData]="resource">
+                                                    </app-user-info>
+                                                </div>
+                                            </div>
+                                        <i *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount)"
+                                        (click)="handleOpenDialogShadowAccount(bill.projectId,bill.userId, bill.linkedResources)"
+                                         class="fas fa-plus ml-3"></i>
+                                        </div>
+                                    </td>
                                     <td class="text-center"
                                         *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Rate_View)">
                                         <span class="text-center" *ngIf="!bill.createMode">{{bill.billRate |
                                             number:'1.0':'en-US'}}
                                         </span>
                                         <div *ngIf="bill.createMode">
-                                            <input style="min-width: 100px;" required class="form-control mt-1"
+                                            <input style="min-width: 75px;" required class="form-control mt-1"
                                                 #billRate="ngModel" #billRateEl type="text" mask="separator"
                                                 thousandSeparator="." placeholder="number *"
                                                 [(ngModel)]="bill.billRate">

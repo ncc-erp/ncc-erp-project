@@ -438,7 +438,7 @@ namespace ProjectManagement.APIs.TrainingRequests
 
             var projectUser = new ProjectUser()
             {
-                UserId = input.UserId,
+                UserId = input.UserId ?? default,
                 ProjectId = request.ProjectId,
                 ProjectRole = input.ProjectRole,
                 AllocatePercentage = 100,
@@ -471,7 +471,7 @@ namespace ProjectManagement.APIs.TrainingRequests
             if (projectUser == null)
                 throw new UserFriendlyException($"Not found ProjectUser with id : {input.ProjectUserId}");
 
-            projectUser.UserId = input.UserId;
+            projectUser.UserId = input.UserId ?? default;
             projectUser.StartTime = input.StartTime;
             projectUser.ProjectRole = input.ProjectRole;
 

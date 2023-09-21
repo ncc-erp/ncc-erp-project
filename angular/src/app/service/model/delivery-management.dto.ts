@@ -20,7 +20,9 @@ export class RequestResourceDto {
   level?: any;
   priority?: any;
   quantity: number;
-  planUserInfo: any
+  planUserInfo: any;
+  code:string;
+  billUserInfo:any
 }
 
 export class TrainingRequestDto {

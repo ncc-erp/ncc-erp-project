@@ -1,4 +1,4 @@
-<mat-drawer-container class="example-container" style="min-height: 94vh;"
+<mat-drawer-container class="example-container" style="min-height: 94vh;" [busy] ="isLoading"
     *ngIf="permission.isGranted(WeeklyReport_ReportDetail_View)">
     <mat-drawer #drawer mode="side" opened style="position: fixed;top: 6%;padding-top: 10px;width: 15%;">
         <div>
@@ -17,7 +17,7 @@
 
                 <div style="margin-bottom: 20px;">
                     <p style="margin-left: 8px; font-size: 20px; margin-top: 20px; font-weight: 600;" *ngIf="pmReportProjectList.length < 1">No data !</p>
-                    <mat-list *ngFor="let item of pmReportProjectList">
+                    <mat-list *ngFor="let item of pmReportProjectList;index as i">
                         <div class="row sidebar-item" style="flex: 1;"
                             [ngClass]="item.setBackground == true ? 'projectActive' : ''">
                             <div class="col-10 project-menu-item"
@@ -26,7 +26,8 @@
                                     (click)="view(item);" [ngClass]="{'checked': item.seen, 'unchecked': !item.seen}">
                                     <div style="overflow: hidden; overflow-x: hidden; width: 100%;">
                                         <div class="project-list">
-                                            <strong>{{item.projectName}} </strong>
+                                            <strong style="color: #2662d3;">{{i+1}}. </strong>
+                                            <strong> {{item.projectName}} </strong>
                                         </div>
                                         <div class="project-list">
                                             <div class="email-address">{{item.pmEmailAddress}} </div>

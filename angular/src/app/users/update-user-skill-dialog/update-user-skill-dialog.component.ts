@@ -85,13 +85,6 @@ export class UpdateUserSkillDialogComponent implements OnInit {
     )
   }
 
-  filterSkill() {
-    let selectedSkills = this.tempSkillList.filter(skill=>this.userSkillList.includes(skill.id))
-   this.skillList = this.tempSkillList.filter(skill => skill.name.toLowerCase()
-    .includes(this.searchSkill.toLowerCase())).filter(s => !this.userSkillList.includes(s.id))
-         this.skillList.unshift(...selectedSkills)
-  }
-
   onClick(rating:number,item) {
     this.snackBar.open('You rated ' + rating + ' / ' + this.starCount, '', {
       duration: this.snackBarDuration
@@ -106,6 +99,18 @@ export class UpdateUserSkillDialogComponent implements OnInit {
     } else {
       return 'far fa-star';
     }
+  }
+
+  selectAll(){
+    this.skillRankList = this.skillList.map(item => {
+      return {skillId:item.id,skillRank:0,name:item.name}
+    })
+    this.userSkillList = this.skillList.map(item => item.id)
+  }
+
+  clear(){
+    this.skillRankList = []
+    this.userSkillList = []
   }
 
   ngOnDestroy(): void {

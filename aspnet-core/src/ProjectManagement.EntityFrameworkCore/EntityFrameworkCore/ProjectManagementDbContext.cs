@@ -92,6 +92,8 @@ namespace ProjectManagement.EntityFrameworkCore
         public DbSet<ProjectProcessCriteria> ProjectProcessCriterias { get; set; }
         public DbSet<ProjectProcessResult> ProjectProcessResults { get; set; }
         public DbSet<ProjectProcessCriteriaResult> ProjectProcessCriteriaResults { get; set; }
+
+        public DbSet<ProjectUserBillAccount> ProjectUserBillAccounts  { get; set; }
         public ProjectManagementDbContext(DbContextOptions<ProjectManagementDbContext> options)
             : base(options)
         {

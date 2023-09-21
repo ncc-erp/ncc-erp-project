@@ -1,0 +1,27 @@
+
+  <div style="position: sticky; top: 0; z-index: 2; background-color: white;">
+    <abp-modal-header
+    title="Description"
+    (onCloseClick)="dialogRef.close()"
+  >
+  </abp-modal-header>
+  </div>
+  <div>
+    <pre class="mb-0 p-0 ml-2 mt-2" style="
+    max-height: 550px;
+    font-size: 16px;
+    white-space: pre-line;
+    font-family: sans-serif;
+    align-self: flex-start;
+    line-height: initial;
+  ">
+        {{note}}
+    </pre>
+  </div>
+
+  <div align="end" class="row justify-content-end mt-2">
+    <button class="btn btn-secondary btn-action mr-2" mat-dialog-close>
+      Cancel
+    </button>
+  </div>
+

@@ -16,5 +16,6 @@ namespace ProjectManagement.Entities
         [ForeignKey(nameof(UserId))]
         public User User { get; set; }
         public SkillRank SkillRank { get; set; }
+        public string Note { get; set; }
     }
 }

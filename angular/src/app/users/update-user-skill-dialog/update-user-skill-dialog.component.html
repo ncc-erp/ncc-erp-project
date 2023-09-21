@@ -1,10 +1,20 @@
 <div class="card-header px-0">
     <h4>Update skill for: <strong>{{data.fullName}}</strong></h4>
 </div>
-<div class="form-group  mt-4" style="height: 350px;overflow-y: auto;overflow-x: hidden;">
+<div class="form-group  mt-4">
+    <div class="row mb-3">
+        <label class="col-md-3 col-form-label" for="note">Note:</label>
+        <div class="col-md-9 ">
+            <mat-form-field class="w-100" appearance="outline">
+                <textarea matInput [(ngModel)]="data.note" #note rows="3"
+                    placeholder="Experience details / Domains / Preference / Others notes" >
+                </textarea>
+            </mat-form-field>
+        </div>
+    </div>
     <div class="row">
         <label class="col-md-3 col-form-label" for="userSkills">Skills:</label>
-        <div class="col-md-9 ">
+        <div class="col-md-9">
             <mat-form-field class="w-100" appearance="outline">
                 <mat-select multiple [(ngModel)]="userSkillList" 
                 style="position: sticky; top: 0; z-index: 2; background-color: white;"
@@ -28,17 +38,17 @@
                 </mat-select>
             </mat-form-field>
         </div>
-    </div>
-    <div style="width: 100%;overflow: hidden;margin-top: 15px;">
-        <div *ngFor="let item of skillRankList " class="row align-items-center">
-            <span class="col-md-3">{{item.name}}</span>
-            <div class="col-md-9">
-                <button mat-icon-button [color]="color" *ngFor="let ratingId of ratingArr;index as i" (click)="onClick(i+1,item)">
-                    <i style="font-size: 16px;color: #ffd740;" [class]="showIcon(i,item)"></i>
-                </button>
+    </div > 
+    <div style="width: 100%; margin-top: 15px; height: 350px; overflow-y: auto; overflow-x: hidden">
+            <div *ngFor="let item of skillRankList " class="row align-items-center">
+                <span class="col-md-3">{{item.name}}</span>
+                <div class="col-md-9">
+                    <button mat-icon-button [color]="color" *ngFor="let ratingId of ratingArr; index as i" (click)="onClick(i+1, item)">
+                        <i style="font-size: 16px; color: #ffd740;" [class]="showIcon(i, item)"></i>
+                    </button>
+                </div>
+               
             </div>
-           
-        </div>
     </div>
 </div>
 <div class="d-flex justify-content-end">

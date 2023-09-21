@@ -252,17 +252,19 @@
                                 <td style="white-space: normal; max-width: 200px">
                                     <div class="d-flex" style="align-items: center;">
                                         <div style="width: 200px">
-                                            <p class="m-0" *ngFor="let item of item.userSkills">
-                                                - {{item.skillName}} &nbsp;
-                                                <span *ngIf="item.skillRank">( {{item.skillRank}} <i class="fa fa-star"
-                                                      [ngClass] = '{crimson: item.skillRank == 5, grey:item.skillRank ==1 || item.skillRank == 2,yellow:item.skillRank == 3 ,orange:item.skillRank == 4}' style="
-                                                      font-size: 13px;"></i>  )</span>
+                                            <p class="m-0" *ngFor="let skill of item.userSkills">
+                                                - {{skill.skillName}}
+                                                <strong *ngIf="skill.skillRank">- {{skill.skillRank}} <i class="fa fa-star"
+                                                      [ngClass] = '{crimson: skill.skillRank == 5, grey:skill.skillRank ==1 || skill.skillRank == 2,
+                                                      yellow:skill.skillRank == 3 ,orange:skill.skillRank == 4}' style="
+                                                      font-size: 13px;"></i> </strong>
                                             </p>
+                                            <div style="white-space: pre-line" *ngIf="item.skillNote"><strong>Note: </strong> {{item.skillNote}}</div>
                                             <!-- {{ skillsCommas(item.listSkills) }} -->
                                         </div>
                                         <div *ngIf="permission.isGranted(Resource_TabPool_UpdateSkill)"
                                             style="width: 10%; text-align: right;" class="ml-1">
-                                            <i class="fas fa-edit" (click)="updateUserSkill(item)"
+                                            <i class="fas fa-edit" (click)="updateUserSkill(item, item.skillNote)"
                                                 matTooltip="Edit skill"></i>
                                         </div>
                                     </div>
@@ -274,7 +276,7 @@
                     min-width: 150px;
                   ">
                                     <div class="d-flex" style="align-items: center">
-                                        <div style="width: 90%">{{ item.poolNote }}
+                                        <div style="width: 90%;word-break:break-word">{{ item.poolNote }}
                                         </div>
                                         <div *ngIf="permission.isGranted(Resource_TabPool_EditNote)"
                                             style="width: 10%; text-align: right;" class="ml-1">

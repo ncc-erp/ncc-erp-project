@@ -75,7 +75,8 @@ export class UpdateUserSkillDialogComponent implements OnInit {
     const userSkills = this.skillRankList.map(skill => { return {skillId:skill.skillId,skillRank:skill.skillRank}})
     let requestBody = {
       userId: this.data.id,
-      userSkills:userSkills
+      userSkills: userSkills,
+      note: this.data.note
     }
     this.subscription.push(
       this.userService.updateUserSkills(requestBody).pipe(catchError(this.userService.handleError)).subscribe(rs => {

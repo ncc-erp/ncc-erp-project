@@ -578,7 +578,7 @@
           <div formArrayName="credentials">
             <div class="row mb-2 w-50"  *ngFor="let creds of credentials.controls; let i = index;" [formGroupName]="i">
               <div class="d-flex justify-content-between w-100 align-items-baseline">
-                <mat-checkbox style="position: relative;top: 10px;" formControlName="IsCheck" class="col-2" [disabled]="!isEditSendTime" #check>Is active</mat-checkbox>
+                <mat-checkbox style="position: relative; top: 10px;" formControlName="IsCheck" class="col-2" [disabled]="!isEditSendTime" #check>Is active</mat-checkbox>
                 <div class="w-25">
                     <input [ngClass]="{editTime:isEditSendTime}"  class="w-100 inputTime" [readonly]="!isEditSendTime"   type="time" formControlName="Time"  />
                     <p style="color: #f44336;font-size: 10.5px;" *ngIf="form.controls.credentials.controls[i].get('Time').invalid 

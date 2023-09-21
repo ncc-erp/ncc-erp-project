@@ -19,6 +19,7 @@ import { InvoiceSettingDialogComponent } from '@app/modules/pm-management/list-p
 import { ProjectInvoiceSettingDto } from '@app/service/model/project-invoice-setting.dto';
 import { UpdateInvoiceDto } from '@app/service/model/updateInvoice.dto';
 import { MatDialog } from '@angular/material/dialog';
+import { ShadowAccountDialogComponent } from './shadow-account-dialog/shadow-account-dialog.component';
 
 
 @Component({
@@ -66,6 +67,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Note_Edit = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Note_Edit;
   Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport;
   Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_View = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_View;
+  Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount
   constructor(private router: Router,
     private projectUserBillService: ProjectUserBillService,
     private route: ActivatedRoute,
@@ -347,6 +349,24 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
       } as ProjectRateDto
       this.discount = rs.result.discount,
       this.lastInvoiceNumber = rs.result.invoiceNumber
+    })
+  }
+
+  handleOpenDialogShadowAccount(projectId,userId,listResource)
+  {
+    const show = this.dialog.open(ShadowAccountDialogComponent, {
+      data: {
+        projectId:projectId,
+        userId:userId,
+        listResource:listResource.map(item=> item.id)
+      },
+      width: "700px",
+    })
+
+    show.afterClosed().subscribe((res) => {
+      if (res) {
+        this.getUserBill();
+      }
     })
   }
 

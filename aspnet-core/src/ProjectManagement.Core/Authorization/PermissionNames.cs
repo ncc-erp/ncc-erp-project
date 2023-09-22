@@ -617,6 +617,8 @@ namespace ProjectManagement.Authorization
         public const string Timesheets_TimesheetDetail_ExportInvoiceAllProject = "Timesheets.TimesheetDetail.ExportInvoiceAllProject";
         public const string Timesheets_TimesheetDetail_ExportInvoice = "Timesheets.TimesheetDetail.ExportInvoice";
         public const string Timesheets_TimesheetDetail_ExportInvoiceForTax = "Timesheets.TimesheetDetail.ExportInvoiceForTax";
+        public const string Timesheets_TimesheetDetail_ExportTSdetail = "Timesheets.TimesheetDetail.ExportTSdetail";
+        public const string Timesheets_TimesheetDetail_UpdateProjectCodes = "Timesheets.TimesheetDetail.UpdateProjectCodes";
         public const string Timesheets_TimesheetDetail_UpdateNote = "Timesheets.TimesheetDetail.UpdateNote";
         public const string Timesheets_TimesheetDetail_Delete = "Timesheets.TimesheetDetail.Delete";
         public const string Timesheets_TimesheetDetail_EditInvoiceInfo = "Timesheets.TimesheetDetail.EditInvoiceInfo";
@@ -1302,6 +1304,8 @@ namespace ProjectManagement.Authorization
                     PermissionNames.Timesheets_TimesheetDetail_ExportInvoiceAllProject ,
                     PermissionNames.Timesheets_TimesheetDetail_ExportInvoice ,
                     PermissionNames.Timesheets_TimesheetDetail_ExportInvoiceForTax ,
+                    PermissionNames.Timesheets_TimesheetDetail_ExportTSdetail ,
+                    PermissionNames.Timesheets_TimesheetDetail_UpdateProjectCodes ,
                     PermissionNames.Timesheets_TimesheetDetail_UpdateNote ,
                     PermissionNames.Timesheets_TimesheetDetail_Delete ,
                     PermissionNames.Timesheets_TimesheetDetail_EditInvoiceInfo ,
@@ -1999,6 +2003,8 @@ namespace ProjectManagement.Authorization
                  new SystemPermission{ Name =  PermissionNames.Timesheets_TimesheetDetail_ExportInvoice ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Export Invoice"},
                  new SystemPermission{ Name =  PermissionNames.Timesheets_TimesheetDetail_ExportInvoiceAllProject ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Export Invoice All Project"},
                  new SystemPermission{ Name =  PermissionNames.Timesheets_TimesheetDetail_ExportInvoiceForTax ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Export Invoice For Tax"},
+                 new SystemPermission{ Name =  PermissionNames.Timesheets_TimesheetDetail_ExportTSdetail ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Export Timesheet Detail"},
+                 new SystemPermission{ Name =  PermissionNames.Timesheets_TimesheetDetail_UpdateProjectCodes ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Update project in timesheet"},
                  new SystemPermission{ Name =  PermissionNames.Timesheets_TimesheetDetail_UpdateNote ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Update Note"},
                  new SystemPermission{ Name =  PermissionNames.Timesheets_TimesheetDetail_Delete ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Delete"},
                  new SystemPermission{ Name =  PermissionNames.Timesheets_TimesheetDetail_EditInvoiceInfo ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit Invoice Info (Invoice Number,Working Day,Transfer Fee,Discount) of project"},
@@ -3704,6 +3710,12 @@ namespace ProjectManagement.Authorization
                                         },
                                         new SystemPermission {
                                             Name = PermissionNames.Timesheets_TimesheetDetail_ExportInvoiceForTax, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Export Invoice For Tax"
+                                        },
+                                        new SystemPermission {
+                                            Name = PermissionNames.Timesheets_TimesheetDetail_ExportTSdetail, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Export TimeSheet Detail"
+                                        },
+                                        new SystemPermission {
+                                            Name = PermissionNames.Timesheets_TimesheetDetail_UpdateProjectCodes, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Update project in timesheet"
                                         },
                                         new SystemPermission {
                                             Name = PermissionNames.Timesheets_TimesheetDetail_UpdateNote, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Update Note"

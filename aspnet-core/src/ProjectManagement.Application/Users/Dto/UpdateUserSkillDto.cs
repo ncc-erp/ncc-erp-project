@@ -7,6 +7,7 @@ namespace ProjectManagement.Users.Dto
     {
         public long UserId { get; set; }
         public List<SkillPoint> UserSkills { get; set; }
+        public string Note { get; set; }
 
     }
 

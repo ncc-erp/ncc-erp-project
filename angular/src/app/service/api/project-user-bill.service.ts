@@ -43,6 +43,15 @@ export class ProjectUserBillService extends BaseApiService {
   updateNote(item: any): Observable<any> {
     return this.http.put<any>(this.rootUrl + '/UpdateNote', item);
   }
+  GetAllResource(): Observable<any>{
+    return this.http.get<any>(this.rootUrl + '/GetAllResource');
+  }
+  LinkUserToBillAccount(input): Observable<any>{
+    return this.http.post<any>(this.rootUrl + '/LinkUserToBillAccount',input);
+  }
+  RemoveUserFromBillAccount(input): Observable<any>{
+    return this.http.post<any>(this.rootUrl + '/RemoveUserFromBillAccount',input);
+  }
   //#region Integrate Finfast
   getParentInvoice(projectId: number): Observable<ApiResponse<ParentInvoice>> {
     return this.http.get<ApiResponse<ParentInvoice>>(this.rootUrl + '/GetParentInvoiceByProject?projectId=' + projectId);

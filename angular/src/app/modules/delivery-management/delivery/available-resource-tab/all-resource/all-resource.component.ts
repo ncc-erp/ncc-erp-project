@@ -13,7 +13,7 @@ import { SkillDto } from './../../../../../service/model/list-project.dto';
 import { PagedListingComponentBase } from '@shared/paged-listing-component-base';
 import { PlanUserComponent } from './../plan-resource/plan-user/plan-user.component';
 import { ProjectDetailComponent } from './../plan-resource/plan-user/project-detail/project-detail.component';
-import { Component, OnInit, Injector, inject } from '@angular/core';
+import { Component, OnInit, Injector, inject, ViewChild } from '@angular/core';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { EditUserDialogComponent } from '@app/users/edit-user/edit-user-dialog.component';
 import { UpdateUserSkillDialogComponent } from '@app/users/update-user-skill-dialog/update-user-skill-dialog.component';
@@ -39,15 +39,24 @@ import { result } from 'lodash-es';
 export class AllResourceComponent extends PagedListingComponentBase<any> implements OnInit {
 
   subscription: Subscription[] = [];
+  public searchSkill:string = '';
+  public searchBranch:string = '';
+  public searchPosition:string ='';
   public listSkills: SkillDto[] = [];
   public listBranchs: BranchDto[] = [];
   public listPositions: PositionDto[] = [];
+  public listSkillsId: number[] = [];
+  public listBranchsId: number[] = [];
+  public listPositionsId: number[] = [];
   public skill = '';
   public skillsParam = [];
   public selectedSkillId: number[];
+  public selectedSkillIdOld: number[];
   public selectedBranchIds: number[] = [];
+  public selectedBranchIdsOld: number[] = [];
   public selectedUserTypes: number[] = [];
   public selectedPositions: number[] = [];
+  public selectedPositionsOld: number[] = [];
   public isAndCondition: boolean = false;
   public selectedIsPlanned: number;
   public listPlans: string[] = [];
@@ -126,6 +135,10 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     private positionService: PositionService,
   ) { super(injector) }
 
+  @ViewChild("selectPosition") selectPosition;
+  @ViewChild("selectBranch") selectBranch;
+  @ViewChild("selectSkill") selectSkill;
+
   ngOnInit(): void {
     this.pageSizeType = 100
     this.changePageSize();
@@ -167,6 +180,54 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     });
   }
 
+  openedChange(opened,typeSelect){
+    if(!opened){
+      switch(typeSelect){
+        case 'Branch':
+          this.selectedBranchIds = this.selectedBranchIdsOld
+          break;
+        case 'Position':
+          this.selectedPositions = this.selectedPositionsOld
+          break;
+        case 'Skill':
+          this.selectedSkillId = this.selectedSkillIdOld
+          break;
+      }
+    }
+  }
+
+  actionSelect(typeSelect){
+    switch(typeSelect.type){
+      case 'Branch':
+        this.selectedBranchIds = typeSelect.data
+        break;
+      case 'Position':
+        this.selectedPositions = typeSelect.data
+        break;
+      case 'Skill':
+        this.selectedSkillId = typeSelect.data
+        break;
+    }
+  }
+
+  selectDone(type){
+    switch(type){
+      case 'Branch':
+        this.selectedBranchIdsOld = this.selectedBranchIds
+        this.selectBranch.close()
+        break;
+      case 'Position':
+        this.selectedPositionsOld = this.selectedPositions
+        this.selectPosition.close()
+        break;
+      case 'Skill':
+        this.selectedSkillIdOld = this.selectedSkillId
+        this.selectSkill.close()
+        break;
+    }
+    this.refresh()
+  }
+
   public isAllowCancelPlan(creatorUserId: number) {
     if (this.permission.isGranted(this.DeliveryManagement_ResourceRequest_CancelMyPlanOnly)) {
       if (this.permission.isGranted(this.DeliveryManagement_ResourceRequest_CancelAnyPlanResource)) {
@@ -191,6 +252,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     this.subscription.push(
       this.skillService.getAll().subscribe((data) => {
         this.listSkills = data.result;
+        this.listSkillsId = data.result.map(item => item.id)
         this.skillsParam = data.result.map(item => {
           return {
             displayName: item.name,
@@ -201,11 +263,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     )
   }
 
-  onChangeBranchEvent(event?): void {
-    this.selectedBranchIds = event.value;
-    this.getDataPage(1);
-    //this.refresh();
-  }
+
 
   onChangeUserTypeEvent(event?): void {
     this.selectedUserTypes = event.value;
@@ -229,21 +287,19 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
   getAllBranchs() {
     this.branchService.getAllNotPagging().subscribe((data) => {
       this.listBranchs = data.result
+      this.listBranchsId = data.result.map(item => item.id)
       this.selectedBranchIds = data.result.map(item => item.id)
+      this.selectedBranchIdsOld = this.selectedBranchIds
       this.refresh();
     })
-  }
-
-  onChangePositionsEvent(event?): void {
-    this.selectedPositions = event.value;
-    this.getDataPage(1);
-    //this.refresh();
   }
 
   getAllPositions() {
     this.positionService.getAllNotPagging().subscribe((data) => {
       this.listPositions = data.result
+      this.listPositionsId = data.result.map(item => item.id)
       this.selectedPositions = data.result.map(item => item.id)
+      this.selectedPositionsOld = this.selectedPositions
       this.refresh();
     })
   }
@@ -271,13 +327,14 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
       height: '90vh',
     })
   }
-  updateUserSkill(user) {
+  updateUserSkill(user, note) {
     let ref = this.dialog.open(UpdateUserSkillDialogComponent, {
       width: "700px",
       data: {
         userSkills: user.userSkills,
         id: user.userId,
-        fullName: user.fullName
+        fullName: user.fullName,
+        note: note
       }
 
     });

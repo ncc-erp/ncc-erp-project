@@ -234,6 +234,7 @@ namespace ProjectManagement.Authorization
         public const string Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_InvoiceSetting_Edit = "Projects.OutsourcingProjects.ProjectDetail.TabBillInfo.InvoiceSetting_Edit";
         public const string Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Rate_View = "Projects.OutsourcingProjects.ProjectDetail.TabBillInfo.Rate_View";
         public const string Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Note_Edit = "Projects.OutsourcingProjects.ProjectDetail.TabBillInfo.Note_Edit";
+        public const string Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount = "Projects.OutsourcingProjects.ProjectDetail.TabBillInfo.UpdateUserToBillAccount";
 
         public const string Projects_OutsourcingProjects_ProjectDetail_TabTimesheet = "Projects.OutsourcingProjects.ProjectDetail.TabTimesheet";
 
@@ -334,6 +335,7 @@ namespace ProjectManagement.Authorization
         public const string Projects_ProductProjects_ProjectDetail_TabBillInfo_Create = "Projects.ProductProjects.ProjectDetail.TabBillInfo.Create";
         public const string Projects_ProductProjects_ProjectDetail_TabBillInfo_Edit = "Projects.ProductProjects.ProjectDetail.TabBillInfo.Edit";
         public const string Projects_ProductProjects_ProjectDetail_TabBillInfo_Delete = "Projects.ProductProjects.ProjectDetail.TabBillInfo.Delete";
+        public const string Projects_ProductProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount = "Projects.ProductProjects.ProjectDetail.TabBillInfo.UpdateUserToBillAccount";
 
         public const string Projects_ProductProjects_ProjectDetail_TabTimesheet = "Projects.ProductProjects.ProjectDetail.TabTimesheet";
 
@@ -433,6 +435,7 @@ namespace ProjectManagement.Authorization
         public const string Projects_TrainingProjects_ProjectDetail_TabBillInfo_Create = "Projects.TrainingProjects.ProjectDetail.TabBillInfo.Create";
         public const string Projects_TrainingProjects_ProjectDetail_TabBillInfo_Edit = "Projects.TrainingProjects.ProjectDetail.TabBillInfo.Edit";
         public const string Projects_TrainingProjects_ProjectDetail_TabBillInfo_Delete = "Projects.TrainingProjects.ProjectDetail.TabBillInfo.Delete";
+        public const string Projects_TrainingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount = "Projects.TrainingProjects.ProjectDetail.TabBillInfo.UpdateUserToBillAccount";
 
         public const string Projects_TrainingProjects_ProjectDetail_TabTimesheet = "Projects.TrainingProjects.ProjectDetail.TabTimesheet";
 
@@ -614,6 +617,8 @@ namespace ProjectManagement.Authorization
         public const string Timesheets_TimesheetDetail_ExportInvoiceAllProject = "Timesheets.TimesheetDetail.ExportInvoiceAllProject";
         public const string Timesheets_TimesheetDetail_ExportInvoice = "Timesheets.TimesheetDetail.ExportInvoice";
         public const string Timesheets_TimesheetDetail_ExportInvoiceForTax = "Timesheets.TimesheetDetail.ExportInvoiceForTax";
+        public const string Timesheets_TimesheetDetail_ExportTSdetail = "Timesheets.TimesheetDetail.ExportTSdetail";
+        public const string Timesheets_TimesheetDetail_UpdateProjectCodes = "Timesheets.TimesheetDetail.UpdateProjectCodes";
         public const string Timesheets_TimesheetDetail_UpdateNote = "Timesheets.TimesheetDetail.UpdateNote";
         public const string Timesheets_TimesheetDetail_Delete = "Timesheets.TimesheetDetail.Delete";
         public const string Timesheets_TimesheetDetail_EditInvoiceInfo = "Timesheets.TimesheetDetail.EditInvoiceInfo";
@@ -916,6 +921,7 @@ namespace ProjectManagement.Authorization
                     PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_InvoiceSetting_Edit ,
                     PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Rate_View ,
                     PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Note_Edit ,
+                    PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount,
 
                     PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabTimesheet ,
 
@@ -1017,6 +1023,7 @@ namespace ProjectManagement.Authorization
                     PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo_Create ,
                     PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo_Edit ,
                     PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo_Delete ,
+                    PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount,
 
                     PermissionNames.Projects_ProductProjects_ProjectDetail_TabTimesheet ,
 
@@ -1117,6 +1124,7 @@ namespace ProjectManagement.Authorization
                     PermissionNames.Projects_TrainingProjects_ProjectDetail_TabBillInfo_Create ,
                     PermissionNames.Projects_TrainingProjects_ProjectDetail_TabBillInfo_Edit ,
                     PermissionNames.Projects_TrainingProjects_ProjectDetail_TabBillInfo_Delete ,
+                    PermissionNames.Projects_TrainingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount ,
 
                     PermissionNames.Projects_TrainingProjects_ProjectDetail_TabTimesheet ,
 
@@ -1296,6 +1304,8 @@ namespace ProjectManagement.Authorization
                     PermissionNames.Timesheets_TimesheetDetail_ExportInvoiceAllProject ,
                     PermissionNames.Timesheets_TimesheetDetail_ExportInvoice ,
                     PermissionNames.Timesheets_TimesheetDetail_ExportInvoiceForTax ,
+                    PermissionNames.Timesheets_TimesheetDetail_ExportTSdetail ,
+                    PermissionNames.Timesheets_TimesheetDetail_UpdateProjectCodes ,
                     PermissionNames.Timesheets_TimesheetDetail_UpdateNote ,
                     PermissionNames.Timesheets_TimesheetDetail_Delete ,
                     PermissionNames.Timesheets_TimesheetDetail_EditInvoiceInfo ,
@@ -1610,6 +1620,7 @@ namespace ProjectManagement.Authorization
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Rate_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View Rate" },
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Note_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit Note" },
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabTimesheet, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Tab timesheet" },
+                 new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Update User To BillAccount" },
 
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabProjectDescription, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Tab Project Description" },
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabProjectDescription_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View" },
@@ -1708,6 +1719,7 @@ namespace ProjectManagement.Authorization
                  new SystemPermission{ Name =  PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo_Create, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Create" },
                  new SystemPermission{ Name =  PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit" },
                  new SystemPermission{ Name =  PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo_Delete, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Delete" },
+                 new SystemPermission{ Name =  PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Update User To BillAccount" },
 
                  new SystemPermission{ Name =  PermissionNames.Projects_ProductProjects_ProjectDetail_TabTimesheet, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Tab Timesheet" },
 
@@ -1808,6 +1820,7 @@ namespace ProjectManagement.Authorization
                  new SystemPermission{ Name =  PermissionNames.Projects_TrainingProjects_ProjectDetail_TabBillInfo_Create, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Create" },
                  new SystemPermission{ Name =  PermissionNames.Projects_TrainingProjects_ProjectDetail_TabBillInfo_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit" },
                  new SystemPermission{ Name =  PermissionNames.Projects_TrainingProjects_ProjectDetail_TabBillInfo_Delete, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Delete" },
+                 new SystemPermission{ Name =  PermissionNames.Projects_TrainingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Update User To BillAccount" },
 
                  new SystemPermission{ Name =  PermissionNames.Projects_TrainingProjects_ProjectDetail_TabTimesheet, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Tab Timesheet" },
 
@@ -1990,6 +2003,8 @@ namespace ProjectManagement.Authorization
                  new SystemPermission{ Name =  PermissionNames.Timesheets_TimesheetDetail_ExportInvoice ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Export Invoice"},
                  new SystemPermission{ Name =  PermissionNames.Timesheets_TimesheetDetail_ExportInvoiceAllProject ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Export Invoice All Project"},
                  new SystemPermission{ Name =  PermissionNames.Timesheets_TimesheetDetail_ExportInvoiceForTax ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Export Invoice For Tax"},
+                 new SystemPermission{ Name =  PermissionNames.Timesheets_TimesheetDetail_ExportTSdetail ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Export Timesheet Detail"},
+                 new SystemPermission{ Name =  PermissionNames.Timesheets_TimesheetDetail_UpdateProjectCodes ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Update project in timesheet"},
                  new SystemPermission{ Name =  PermissionNames.Timesheets_TimesheetDetail_UpdateNote ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Update Note"},
                  new SystemPermission{ Name =  PermissionNames.Timesheets_TimesheetDetail_Delete ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Delete"},
                  new SystemPermission{ Name =  PermissionNames.Timesheets_TimesheetDetail_EditInvoiceInfo ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit Invoice Info (Invoice Number,Working Day,Transfer Fee,Discount) of project"},
@@ -2675,6 +2690,9 @@ namespace ProjectManagement.Authorization
                                                                 new SystemPermission {
                                                                     Name = PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Note_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit Note"
                                                                 },
+                                                                new SystemPermission {
+                                                                    Name = PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Update User To Bill Account"
+                                                                }
                                                             }
                                                     },
                                                     new SystemPermission {
@@ -3692,6 +3710,12 @@ namespace ProjectManagement.Authorization
                                         },
                                         new SystemPermission {
                                             Name = PermissionNames.Timesheets_TimesheetDetail_ExportInvoiceForTax, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Export Invoice For Tax"
+                                        },
+                                        new SystemPermission {
+                                            Name = PermissionNames.Timesheets_TimesheetDetail_ExportTSdetail, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Export TimeSheet Detail"
+                                        },
+                                        new SystemPermission {
+                                            Name = PermissionNames.Timesheets_TimesheetDetail_UpdateProjectCodes, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Update project in timesheet"
                                         },
                                         new SystemPermission {
                                             Name = PermissionNames.Timesheets_TimesheetDetail_UpdateNote, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Update Note"

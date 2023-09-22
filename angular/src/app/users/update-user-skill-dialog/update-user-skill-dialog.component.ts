@@ -75,7 +75,8 @@ export class UpdateUserSkillDialogComponent implements OnInit {
     const userSkills = this.skillRankList.map(skill => { return {skillId:skill.skillId,skillRank:skill.skillRank}})
     let requestBody = {
       userId: this.data.id,
-      userSkills:userSkills
+      userSkills: userSkills,
+      note: this.data.note
     }
     this.subscription.push(
       this.userService.updateUserSkills(requestBody).pipe(catchError(this.userService.handleError)).subscribe(rs => {
@@ -83,13 +84,6 @@ export class UpdateUserSkillDialogComponent implements OnInit {
         this.dialogRef.close(true)
       })
     )
-  }
-
-  filterSkill() {
-    let selectedSkills = this.tempSkillList.filter(skill=>this.userSkillList.includes(skill.id))
-   this.skillList = this.tempSkillList.filter(skill => skill.name.toLowerCase()
-    .includes(this.searchSkill.toLowerCase())).filter(s => !this.userSkillList.includes(s.id))
-         this.skillList.unshift(...selectedSkills)
   }
 
   onClick(rating:number,item) {
@@ -106,6 +100,18 @@ export class UpdateUserSkillDialogComponent implements OnInit {
     } else {
       return 'far fa-star';
     }
+  }
+
+  selectAll(){
+    this.skillRankList = this.skillList.map(item => {
+      return {skillId:item.id,skillRank:0,name:item.name}
+    })
+    this.userSkillList = this.skillList.map(item => item.id)
+  }
+
+  clear(){
+    this.skillRankList = []
+    this.userSkillList = []
   }
 
   ngOnDestroy(): void {

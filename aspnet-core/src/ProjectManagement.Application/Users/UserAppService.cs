@@ -207,7 +207,7 @@ namespace ProjectManagement.Users
             }
 
             var userSkillInserts = listSkillInsert.Select(x => new UserSkill
-            { UserId = input.UserId, SkillId = x.SkillId, SkillRank = x.SkillRank });
+            { UserId = input.UserId, SkillId = x.SkillId, SkillRank = x.SkillRank, Note = input.Note });
             await _workScope.InsertRangeAsync(userSkillInserts);
 
             var userSkillUpdates = new List<UserSkill>();
@@ -216,6 +216,7 @@ namespace ProjectManagement.Users
                 var userSkill = _workScope.GetAll<UserSkill>()
                 .Where(u => u.UserId == input.UserId && u.SkillId == item.SkillId).FirstOrDefault();
                 userSkill.SkillRank = item.SkillRank;
+                userSkill.Note = input.Note;
                 userSkillUpdates.Add(userSkill);
             }
             await _workScope.UpdateRangeAsync(userSkillUpdates);

@@ -5,13 +5,13 @@ using System.Collections.Generic;
 using System.Text;
 using static ProjectManagement.Constants.Enum.ProjectEnum;
 using ProjectManagement.Utils;
+using System.Linq;
 
 namespace ProjectManagement.Services.ResourceService.Dto
 {
     public class GetAllResourceDto
     {
         public long UserId { get; set; }
-        public string UserName { get; set; }
         [ApplySearchAttribute]
         public string EmailAddress { get; set; }
         [ApplySearchAttribute]
@@ -34,5 +34,7 @@ namespace ProjectManagement.Services.ResourceService.Dto
         public long? PositionId { get; set; }
         public string PositionColor { get; set; }
         public string PositionName { get; set; }
+        [ApplySearchAttribute]
+        public string SkillNote { get; set; }
     }
 }

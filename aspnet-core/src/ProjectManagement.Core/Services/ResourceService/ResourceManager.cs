@@ -830,6 +830,7 @@ namespace ProjectManagement.Services.ResourceManager
                                 ProjectCode = pu.Project.Code
                             })
                            .ToList(),
+                           SkillNote = x.UserSkills.Select(s => s.Note).FirstOrDefault() ?? ""
                        });
 
             var result = quser.ToList();
@@ -1007,6 +1008,7 @@ namespace ProjectManagement.Services.ResourceManager
                             .Select(x => x.StartTime).FirstOrDefault(),
 
                            UserCreationTime = u.CreationTime,
+                           SkillNote = u.UserSkills.Select(s => s.Note).FirstOrDefault() ?? ""
                        });
 
             if (input.SkillIds == null || input.SkillIds.IsEmpty())

@@ -1,4 +1,4 @@
-<mat-drawer-container class="example-container" style="min-height: 94vh;"
+<mat-drawer-container class="example-container" style="min-height: 94vh;" [busy] ="isLoading"
     *ngIf="permission.isGranted(WeeklyReport_ReportDetail_View)">
     <mat-drawer #drawer mode="side" opened style="position: fixed;top: 6%;padding-top: 10px;width: 15%;">
         <div>

@@ -33,11 +33,15 @@ export class VendorComponent extends PagedListingComponentBase<PlanResourceCompo
  
   subscription: Subscription[] = [];
   public listSkills: SkillDto[] = [];
+  public unSelectedSkill: SkillDto[] = []
+  public selectedSkill: SkillDto[] = []
   public listSkillsId: number[] = [];
   public skill = '';
   public searchSkill:string = '';
   public skillsParam = [];
-  public selectedSkillId:number[]
+  public selectedSkillId: number[] = []
+  public selectedSkillIdCr: number[] = []
+  public selectedSkillIdOld: number[] = []
   public isAndCondition:boolean =false;
   Resource_TabVendor_View = PERMISSIONS_CONSTANT.Resource_TabVendor_View
   Resource_TabVendor_ViewHistory = PERMISSIONS_CONSTANT.Resource_TabVendor_ViewHistory
@@ -182,6 +186,7 @@ export class VendorComponent extends PagedListingComponentBase<PlanResourceCompo
     this.subscription.push(
       this.skillService.getAll().subscribe((data) => {
         this.listSkills = data.result;
+        this.unSelectedSkill = [...this.listSkills]
         this.listSkillsId = data.result.map(item => item.id)
         this.skillsParam = data.result.map(item => {
           return {
@@ -198,11 +203,14 @@ export class VendorComponent extends PagedListingComponentBase<PlanResourceCompo
 
   openedChange(opened){
     if(!opened){
-      this.selectedSkillId = this.selectedSkillIdOld
+      this.selectedSkillId = [...this.selectedSkillIdOld]
+      this.selectedSkillIdCr = [...this.selectedSkillIdOld]
+      this.searchSkill = '';
     }
   }
 
   actionSelect(typeSelect){
+    this.selectedSkillIdCr=typeSelect.data
     this.selectedSkillId = typeSelect.data
   }
 
@@ -210,6 +218,20 @@ export class VendorComponent extends PagedListingComponentBase<PlanResourceCompo
     this.selectedSkillIdOld = this.selectedSkillId
     this.selectSkill.close()
     this.refresh()
+  }
+
+  onSelectChange(id){
+    if(this.selectedSkillIdCr.includes(id)){
+      this.selectedSkillIdCr = this.selectedSkillIdCr.filter(res => res != id)
+      this.selectedSkillId = [...this.selectedSkillIdCr]
+    }
+    else{
+      this.selectedSkillIdCr.push(id)
+      this.selectedSkillId = [...this.selectedSkillIdCr]
+    }
+    this.unSelectedSkill = this.listSkills.filter(item => !this.selectedSkillId.includes(item.id))
+    this.selectedSkill = this.listSkills.filter(item => this.selectedSkillId.includes(item.id))
+    this.listSkills = [...this.selectedSkill, ...this.unSelectedSkill]
   }
 
   skillsCommas(arr) {

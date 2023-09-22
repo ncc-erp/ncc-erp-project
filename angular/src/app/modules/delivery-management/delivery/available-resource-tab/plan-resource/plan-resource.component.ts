@@ -43,13 +43,16 @@ export class PlanResourceComponent
   extends PagedListingComponentBase<PlanResourceComponent>
   implements OnInit {
   public listSkills: SkillDto[] = [];
+  public unSelectedSkill: SkillDto[] = []
+  public selectedSkill: SkillDto[] = []
   public listSkillsId: number[] = [];
   public skill = '';
   public searchSkill:string = '';
   public skillsParam = [];
   private subscription: Subscription[] = [];
-  public selectedSkillId: number[]
-  public selectedSkillIdOld: number[];
+  public selectedSkillId: number[] = []
+  public selectedSkillIdCr: number[] = []
+  public selectedSkillIdOld: number[] = []
   public isAndCondition: boolean = false
 
   Resource_TabPool = PERMISSIONS_CONSTANT.Resource_TabPool
@@ -175,11 +178,14 @@ export class PlanResourceComponent
 
   openedChange(opened){
     if(!opened){
-          this.selectedSkillId = this.selectedSkillIdOld
+          this.selectedSkillId = [...this.selectedSkillIdOld]
+          this.selectedSkillIdCr = [...this.selectedSkillIdOld]
+          this.searchSkill = '';
       }
   }
 
   actionSelect(typeSelect){
+    this.selectedSkillIdCr=typeSelect.data
     this.selectedSkillId = typeSelect.data
   }
 
@@ -296,6 +302,7 @@ export class PlanResourceComponent
     this.subscription.push(
       this.skillService.getAll().subscribe((data) => {
         this.listSkills = data.result;
+        this.unSelectedSkill = [...this.listSkills]
         this.listSkillsId = data.result.map(item => item.id)
         this.skillsParam = data.result.map((item) => {
           return {
@@ -366,6 +373,20 @@ export class PlanResourceComponent
     addOrEditNoteDialog.content.onSave.subscribe(() => {
       this.refresh();
     });
+  }
+
+  onSelectChange(id){
+    if(this.selectedSkillIdCr.includes(id)){
+      this.selectedSkillIdCr = this.selectedSkillIdCr.filter(res => res != id)
+      this.selectedSkillId = [...this.selectedSkillIdCr]
+    }
+    else{
+      this.selectedSkillIdCr.push(id)
+      this.selectedSkillId = [...this.selectedSkillIdCr]
+    }
+    this.unSelectedSkill = this.listSkills.filter(item => !this.selectedSkillId.includes(item.id))
+    this.selectedSkill = this.listSkills.filter(item => this.selectedSkillId.includes(item.id))
+    this.listSkills = [...this.selectedSkill, ...this.unSelectedSkill]
   }
 
   CancelResourcePlan(projectUser, userName: string) {

@@ -1,6 +1,6 @@
 import { catchError } from "rxjs/operators";
 import { AppComponentBase } from "@shared/app-component-base";
-import { Component, OnInit, Injector, Inject } from "@angular/core";
+import { Component, OnInit, Injector, Inject, ViewChild } from "@angular/core";
 import { ProjectUserBillService } from "@app/service/api/project-user-bill.service";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { forkJoin } from "rxjs";
@@ -18,8 +18,10 @@ export class ShadowAccountDialogComponent
   projectId: number;
   userId: number;
   listResourceSelect=[]
+  listResourceSelected=[]
   listResourceSelectCurrent=[]
   resourceSelected = [];
+  resourceUnSelected = [];
   searchUser='';
   constructor(
     injector: Injector,
@@ -29,29 +31,50 @@ export class ShadowAccountDialogComponent
   ) {
     super(injector);
   }
-
+  @ViewChild("select") select;
   ngOnInit() { 
     this.listResourceSelect = this.data.listResource
-    this.listResourceSelectCurrent = this.listResourceSelect
+    this.listResourceSelected = [...this.data.listResource]
+    this.listResourceSelectCurrent = [...this.listResourceSelect]
     this.projectUserBillService.GetAllResource().subscribe(res=> {
       this.listAllResource = res.result;
-      this.resourceSelected = this.listAllResource.filter(item => this.listResourceSelect.includes(item.userId))
+      this.orderListResource()
     })
   }
-  onSelectChange(){
-    this.resourceSelected = this.listAllResource.filter(item =>  this.listResourceSelect.includes(item.userId))
+  openedChange(event){
+    if(!event){
+      this.searchUser = ''
+    }
   }
+  onSelectChange(id){
+    if(this.listResourceSelectCurrent.includes(id)){
+      this.listResourceSelectCurrent = this.listResourceSelectCurrent.filter(res => res != id)
+      this.listResourceSelect = [...this.listResourceSelectCurrent]
+    }
+    else{
+      this.listResourceSelectCurrent.push(id)
+      this.listResourceSelect = [...this.listResourceSelectCurrent]
+    }
+    this.orderListResource()
+  }
+
+  orderListResource(){
+    this.resourceSelected = this.listAllResource.filter(item =>  this.listResourceSelect.includes(item.userId))
+    this.resourceUnSelected  = this.listAllResource.filter(item =>  !this.listResourceSelect.includes(item.userId))
+    this.listAllResource = [...this.resourceSelected, ...this.resourceUnSelected]
+  }
+
   save(){
     const reqAdd = {
       billAccountId: this.data.userId,
       projectId: this.data.projectId,
-      userIds: this.listResourceSelect.filter(item => !this.listResourceSelectCurrent.includes(item))
+      userIds: this.listResourceSelect.filter(item => !this.listResourceSelected.includes(item))
     }
 
     const reqDelete = {
       billAccountId: this.data.userId,
       projectId: this.data.projectId,
-      userIds: this.listResourceSelectCurrent.filter(item => !this.listResourceSelect.includes(item))
+      userIds: this.listResourceSelected.filter(item => !this.listResourceSelect.includes(item))
     }
 
       forkJoin(this.projectUserBillService.LinkUserToBillAccount(reqAdd),this.projectUserBillService.RemoveUserFromBillAccount(reqDelete))
@@ -66,10 +89,12 @@ export class ShadowAccountDialogComponent
   }
   clear(){
     this.listResourceSelect = [];
-    this.onSelectChange()
+    this.listResourceSelectCurrent = [];
+    this.resourceSelected = this.listAllResource.filter(item =>  this.listResourceSelect.includes(item.userId))
   }
   selectAll(){
     this.listResourceSelect = this.listAllResource.map(item => item.userId)
-    this.onSelectChange()
+    this.listResourceSelectCurrent = [... this.listResourceSelect]
+    this.resourceSelected = this.listAllResource.filter(item =>  this.listResourceSelect.includes(item.userId))
   }
 }

@@ -50,12 +50,15 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
   public listPositionsId: number[] = [];
   public skill = '';
   public skillsParam = [];
-  public selectedSkillId: number[];
-  public selectedSkillIdOld: number[];
+  public selectedSkillId: number[] = [];
+  public selectedSkillIdCr: number[] = [];
+  public selectedSkillIdOld: number[]= [];
   public selectedBranchIds: number[] = [];
+  public selectedBranchIdsCr: number[] = [];
   public selectedBranchIdsOld: number[] = [];
   public selectedUserTypes: number[] = [];
   public selectedPositions: number[] = [];
+  public selectedPositionsCr: number[] = [];
   public selectedPositionsOld: number[] = [];
   public isAndCondition: boolean = false;
   public selectedIsPlanned: number;
@@ -184,13 +187,19 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     if(!opened){
       switch(typeSelect){
         case 'Branch':
-          this.selectedBranchIds = this.selectedBranchIdsOld
+          this.selectedBranchIds = [...this.selectedBranchIdsOld]
+          this.selectedBranchIdsCr = [...this.selectedBranchIdsOld]
+          this.searchBranch = '';
           break;
         case 'Position':
-          this.selectedPositions = this.selectedPositionsOld
+          this.selectedPositions = [...this.selectedPositionsOld]
+          this.selectedPositionsCr = [...this.selectedPositionsOld]
+          this.searchPosition = '';
           break;
         case 'Skill':
-          this.selectedSkillId = this.selectedSkillIdOld
+          this.selectedSkillId = [...this.selectedSkillIdOld]
+          this.selectedSkillIdCr = [...this.selectedSkillIdOld]
+          this.searchSkill = '';
           break;
       }
     }
@@ -200,14 +209,54 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     switch(typeSelect.type){
       case 'Branch':
         this.selectedBranchIds = typeSelect.data
+        this.selectedBranchIdsCr = typeSelect.data
         break;
       case 'Position':
         this.selectedPositions = typeSelect.data
+        this.selectedPositionsCr = typeSelect.data
         break;
       case 'Skill':
         this.selectedSkillId = typeSelect.data
+        this.selectedSkillIdCr = typeSelect.data
         break;
     }
+  }
+
+  onSelectChange(listSelect,id){
+    if(listSelect.includes(id)){
+      return listSelect.filter(res => res != id)
+    }
+    else{
+      listSelect.push(id)
+      return listSelect
+    } 
+  }
+
+  onSelectChangePosition(id){
+    const position = this.onSelectChange(this.selectedPositionsCr,id)
+    this.selectedPositionsCr = position
+    this.selectedPositions = [...position]
+    this.listPositions = this.orderList(this.listPositions,this.selectedPositions)
+  }
+
+  onSelectChangeBranch(id){
+    const branch = this.onSelectChange(this.selectedBranchIdsCr,id)
+    this.selectedBranchIdsCr = branch
+    this.selectedBranchIds = [...branch]
+    this.listBranchs = this.orderList(this.listBranchs,this.selectedBranchIds)
+  }
+  
+  onSelectChangeSkill(id){
+    const skill = this.onSelectChange(this.selectedSkillIdCr,id)
+    this.selectedSkillIdCr = skill
+    this.selectedSkillId= [...skill]  
+    this.listSkills = this.orderList(this.listSkills,this.selectedSkillId)
+  }
+
+  orderList(listAll, listIdSelect){
+    const listSelect = listAll.filter(item => listIdSelect.includes(item.id))
+    const listUnSelect = listAll.filter(item => !listIdSelect.includes(item.id))
+    return [...listSelect, ...listUnSelect]
   }
 
   selectDone(type){
@@ -289,7 +338,8 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
       this.listBranchs = data.result
       this.listBranchsId = data.result.map(item => item.id)
       this.selectedBranchIds = data.result.map(item => item.id)
-      this.selectedBranchIdsOld = this.selectedBranchIds
+      this.selectedBranchIdsOld = [...this.selectedBranchIds]
+      this.selectedBranchIdsCr = this.selectedBranchIds
       this.refresh();
     })
   }
@@ -299,7 +349,8 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
       this.listPositions = data.result
       this.listPositionsId = data.result.map(item => item.id)
       this.selectedPositions = data.result.map(item => item.id)
-      this.selectedPositionsOld = this.selectedPositions
+      this.selectedPositionsOld = [...this.selectedPositions]
+      this.selectedPositionsCr = this.selectedPositions
       this.refresh();
     })
   }

@@ -21,6 +21,7 @@ export class ShadowAccountDialogComponent
   listResourceSelected=[]
   listResourceSelectCurrent=[]
   resourceSelected = [];
+  resourceUnSelected = [];
   searchUser='';
   constructor(
     injector: Injector,
@@ -37,7 +38,7 @@ export class ShadowAccountDialogComponent
     this.listResourceSelectCurrent = [...this.listResourceSelect]
     this.projectUserBillService.GetAllResource().subscribe(res=> {
       this.listAllResource = res.result;
-      this.resourceSelected = this.listAllResource.filter(item => this.listResourceSelect.includes(item.userId))
+      this.orderListResource()
     })
   }
   openedChange(event){
@@ -54,8 +55,15 @@ export class ShadowAccountDialogComponent
       this.listResourceSelectCurrent.push(id)
       this.listResourceSelect = [...this.listResourceSelectCurrent]
     }
-    this.resourceSelected = this.listAllResource.filter(item =>  this.listResourceSelect.includes(item.userId))
+    this.orderListResource()
   }
+
+  orderListResource(){
+    this.resourceSelected = this.listAllResource.filter(item =>  this.listResourceSelect.includes(item.userId))
+    this.resourceUnSelected  = this.listAllResource.filter(item =>  !this.listResourceSelect.includes(item.userId))
+    this.listAllResource = [...this.resourceSelected, ...this.resourceUnSelected]
+  }
+
   save(){
     const reqAdd = {
       billAccountId: this.data.userId,

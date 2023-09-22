@@ -43,6 +43,8 @@ export class PlanResourceComponent
   extends PagedListingComponentBase<PlanResourceComponent>
   implements OnInit {
   public listSkills: SkillDto[] = [];
+  public unSelectedSkill: SkillDto[] = []
+  public selectedSkill: SkillDto[] = []
   public listSkillsId: number[] = [];
   public skill = '';
   public searchSkill:string = '';
@@ -300,6 +302,7 @@ export class PlanResourceComponent
     this.subscription.push(
       this.skillService.getAll().subscribe((data) => {
         this.listSkills = data.result;
+        this.unSelectedSkill = [...this.listSkills]
         this.listSkillsId = data.result.map(item => item.id)
         this.skillsParam = data.result.map((item) => {
           return {
@@ -380,6 +383,9 @@ export class PlanResourceComponent
       this.selectedSkillIdCr.push(id)
       this.selectedSkillId = [...this.selectedSkillIdCr]
     }
+    this.unSelectedSkill = this.listSkills.filter(item => !this.selectedSkillId.includes(item.id))
+    this.selectedSkill = this.listSkills.filter(item => this.selectedSkillId.includes(item.id))
+    this.listSkills = [...this.selectedSkill, ...this.unSelectedSkill]
   }
 
   CancelResourcePlan(projectUser, userName: string) {

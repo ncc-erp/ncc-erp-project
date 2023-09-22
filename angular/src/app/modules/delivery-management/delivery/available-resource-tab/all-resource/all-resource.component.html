@@ -51,7 +51,7 @@
                                         </div>
                                     </div>
                                     <mat-option *ngFor="let position of listPositions | listFilter:  'name' : searchPosition"
-                                     [value]="position.id" (click)="onSelectChange(position.id,'Position')">
+                                     [value]="position.id" (click)="onSelectChangePosition(position.id)">
                                         {{position.shortName}}
                                     </mat-option>
                                 </mat-select>
@@ -80,7 +80,7 @@
                                     </div>
                                     </div>
                                     <mat-option *ngFor="let branch of listBranchs | listFilter:  'name' : searchBranch"
-                                     [value]="branch.id" (click)="onSelectChange(branch.id,'Branch')">
+                                     [value]="branch.id" (click)="onSelectChangeBranch(branch.id)">
                                         {{branch.name}}
                                     </mat-option>
                                 </mat-select>
@@ -111,7 +111,7 @@
                                         </mat-radio-group>
                                     </div>
                                     <mat-option *ngFor="let skill of listSkills | listFilter:  'name' : searchSkill"
-                                     [value]="skill.id"  (click)="onSelectChange(skill.id,'Skill')">
+                                     [value]="skill.id"  (click)="onSelectChangeSkill(skill.id)">
                                         {{skill.name}}
                                     </mat-option>
                                 </mat-select>

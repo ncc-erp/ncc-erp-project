@@ -17,8 +17,9 @@ export class UpdateUserSkillDialogComponent implements OnInit {
   userSkillList: any[] = []
   userSkillListCr: any[] = []
   skillList: SkillDto[] = []
+  unSelectSkillList: SkillDto[] = []
+  selectSkillList: SkillDto[] = []
   skillRankList=[]
-  tempSkillList: SkillDto[] = []
   subscription: Subscription[] = [];
   rating:number = 0;
   starCount:number = 5;
@@ -42,8 +43,8 @@ export class UpdateUserSkillDialogComponent implements OnInit {
     this.subscription.push(
       this.skillService.getAll().subscribe(data => {
         this.skillList = data.result
-        this.tempSkillList = this.skillList
         this.setSkillRankList()
+        this.orderListSelect()
       })
     )
   }
@@ -63,7 +64,15 @@ export class UpdateUserSkillDialogComponent implements OnInit {
       this.userSkillList = [...this.userSkillListCr]
     }
     this.setSkillRankList()
+    this.orderListSelect()
   }
+
+  orderListSelect(){
+    this.selectSkillList = this.skillList.filter(item => this.userSkillList.includes(item.id))
+    this.unSelectSkillList = this.skillList.filter(item => !this.userSkillList.includes(item.id))
+    this.skillList = [...this.selectSkillList, ...this.unSelectSkillList]
+  }
+
 
   setSkillRankList(){
     this.userSkillList.forEach(data=>{

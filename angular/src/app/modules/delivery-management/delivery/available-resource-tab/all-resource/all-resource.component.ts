@@ -50,9 +50,9 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
   public listPositionsId: number[] = [];
   public skill = '';
   public skillsParam = [];
-  public selectedSkillId: number[];
-  public selectedSkillIdCr: number[];
-  public selectedSkillIdOld: number[];
+  public selectedSkillId: number[] = [];
+  public selectedSkillIdCr: number[] = [];
+  public selectedSkillIdOld: number[]= [];
   public selectedBranchIds: number[] = [];
   public selectedBranchIdsCr: number[] = [];
   public selectedBranchIdsOld: number[] = [];
@@ -208,53 +208,55 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
   actionSelect(typeSelect){
     switch(typeSelect.type){
       case 'Branch':
-        this.selectedBranchIdsCr = typeSelect.data
         this.selectedBranchIds = typeSelect.data
+        this.selectedBranchIdsCr = typeSelect.data
         break;
       case 'Position':
-        this.selectedPositionsCr = typeSelect.data
         this.selectedPositions = typeSelect.data
+        this.selectedPositionsCr = typeSelect.data
         break;
       case 'Skill':
-        this.selectedSkillIdCr = typeSelect.data
         this.selectedSkillId = typeSelect.data
+        this.selectedSkillIdCr = typeSelect.data
         break;
     }
   }
 
-  onSelectChange(id,typeSelect){
-    switch(typeSelect){
-      case 'Branch':
-        if(this.selectedBranchIdsCr.includes(id)){
-          this.selectedBranchIdsCr = this.selectedBranchIdsCr.filter(res => res != id)
-          this.selectedBranchIds = [...this.selectedBranchIdsCr]
-        }
-        else{
-          this.selectedBranchIdsCr.push(id)
-          this.selectedBranchIds = [...this.selectedBranchIdsCr]
-        }
-        break;
-      case 'Position':
-        if(this.selectedPositionsCr.includes(id)){
-          this.selectedPositionsCr = this.selectedPositionsCr.filter(res => res != id)
-          this.selectedPositions = [...this.selectedPositionsCr]
-        }
-        else{
-          this.selectedPositionsCr.push(id)
-          this.selectedPositions = [...this.selectedPositionsCr]
-        }
-        break;
-      case 'Skill':
-        if(this.selectedSkillIdCr.includes(id)){
-          this.selectedSkillIdCr = this.selectedSkillIdCr.filter(res => res != id)
-          this.selectedSkillId = [...this.selectedSkillIdCr]
-        }
-        else{
-          this.selectedSkillIdCr.push(id)
-          this.selectedSkillId = [...this.selectedSkillIdCr]
-        }
-        break;
+  onSelectChange(listSelect,id){
+    if(listSelect.includes(id)){
+      return listSelect.filter(res => res != id)
     }
+    else{
+      listSelect.push(id)
+      return listSelect
+    } 
+  }
+
+  onSelectChangePosition(id){
+    const position = this.onSelectChange(this.selectedPositionsCr,id)
+    this.selectedPositionsCr = position
+    this.selectedPositions = [...position]
+    this.listPositions = this.orderList(this.listPositions,this.selectedPositions)
+  }
+
+  onSelectChangeBranch(id){
+    const branch = this.onSelectChange(this.selectedBranchIdsCr,id)
+    this.selectedBranchIdsCr = branch
+    this.selectedBranchIds = [...branch]
+    this.listBranchs = this.orderList(this.listBranchs,this.selectedBranchIds)
+  }
+  
+  onSelectChangeSkill(id){
+    const skill = this.onSelectChange(this.selectedSkillIdCr,id)
+    this.selectedSkillIdCr = skill
+    this.selectedSkillId= [...skill]  
+    this.listSkills = this.orderList(this.listSkills,this.selectedSkillId)
+  }
+
+  orderList(listAll, listIdSelect){
+    const listSelect = listAll.filter(item => listIdSelect.includes(item.id))
+    const listUnSelect = listAll.filter(item => !listIdSelect.includes(item.id))
+    return [...listSelect, ...listUnSelect]
   }
 
   selectDone(type){

@@ -33,6 +33,8 @@ export class VendorComponent extends PagedListingComponentBase<PlanResourceCompo
  
   subscription: Subscription[] = [];
   public listSkills: SkillDto[] = [];
+  public unSelectedSkill: SkillDto[] = []
+  public selectedSkill: SkillDto[] = []
   public listSkillsId: number[] = [];
   public skill = '';
   public searchSkill:string = '';
@@ -184,6 +186,7 @@ export class VendorComponent extends PagedListingComponentBase<PlanResourceCompo
     this.subscription.push(
       this.skillService.getAll().subscribe((data) => {
         this.listSkills = data.result;
+        this.unSelectedSkill = [...this.listSkills]
         this.listSkillsId = data.result.map(item => item.id)
         this.skillsParam = data.result.map(item => {
           return {
@@ -226,6 +229,9 @@ export class VendorComponent extends PagedListingComponentBase<PlanResourceCompo
       this.selectedSkillIdCr.push(id)
       this.selectedSkillId = [...this.selectedSkillIdCr]
     }
+    this.unSelectedSkill = this.listSkills.filter(item => !this.selectedSkillId.includes(item.id))
+    this.selectedSkill = this.listSkills.filter(item => this.selectedSkillId.includes(item.id))
+    this.listSkills = [...this.selectedSkill, ...this.unSelectedSkill]
   }
 
   skillsCommas(arr) {

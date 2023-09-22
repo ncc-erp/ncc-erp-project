@@ -13,7 +13,7 @@
                     <mat-form-field class="w-100 px-3 ">
                         <input matInput [(ngModel)]="searchSkill" name="searchSkillName"
                          placeholder="Search" #search (input)="$event.stopPropagation();"
-                        >{{search.focus()}}
+                        >
                     </mat-form-field>
                     <div class="mb-2 ml-3">
                         <button class="btn bg-primary" (click) ="selectAll()">
@@ -24,7 +24,7 @@
                         </button>
                 </div>
                     <mat-option *ngFor="let skill of skillList | listFilter : 'name' : searchSkill"
-                     [value]="skill.id"  (click)="onSelectChange(skill.id)">
+                     [value]="skill.id"  (click)="$event.stopPropagation(); onSelectChange(skill.id)">
                         {{skill.name}}</mat-option>
                 </mat-select>
             </mat-form-field>

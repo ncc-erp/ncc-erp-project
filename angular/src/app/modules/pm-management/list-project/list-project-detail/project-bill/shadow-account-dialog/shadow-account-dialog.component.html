@@ -26,7 +26,8 @@
               </div>
           </div>
           <mat-option
-            *ngFor="let resource of listAllResource | listFilter:  'fullName' : searchUser: 'emailAddress'" (click)="onSelectChange(resource.userId)"
+            *ngFor="let resource of listAllResource | listFilter:  'fullName' : searchUser: 'emailAddress'"
+             (click)="onSelectChange(resource.userId)"
             [value]="resource.userId"
           >
             {{ resource.emailAddress }}

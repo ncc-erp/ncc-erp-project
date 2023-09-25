@@ -323,7 +323,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
 
     const status = this.userBillList.find(item => item.id === id).createMode
     editNoteDialog.content.onSave.subscribe(() => {
-      this.getUserBill(id,status);
+      this.getUserBill(id, status);
     });
   }
 

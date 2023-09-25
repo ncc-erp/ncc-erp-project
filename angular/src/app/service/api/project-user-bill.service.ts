@@ -22,6 +22,18 @@ export class ProjectUserBillService extends BaseApiService {
   getAllUserBill(id: number): Observable<any> {
     return this.http.get<any>(this.rootUrl + `/GetAllByProject?projectId=${id}`);
   }
+  public GetAllUserActive(projectId, userId, onlyStaff: boolean, isFake?: any): Observable<any> {
+    if (isFake) {
+      return this.http.get<any>(
+        this.rootUrl +
+          `/GetAllUserActive?onlyStaff=${onlyStaff}&projectId=${projectId}&currentUserId=${userId}&isFake=${isFake}`
+      );
+    } else {
+      return this.http.get<any>(
+        this.rootUrl + `/GetAllUserActive?onlyStaff=${onlyStaff}`
+      );
+    }
+  }
   deleteUserBill(id: number): Observable<any> {
     return this.http.delete<any>(this.rootUrl + `/Delete?projectUserBillId=${id}`)
   }

@@ -20,6 +20,7 @@ import { ProjectInvoiceSettingDto } from '@app/service/model/project-invoice-set
 import { UpdateInvoiceDto } from '@app/service/model/updateInvoice.dto';
 import { MatDialog } from '@angular/material/dialog';
 import { ShadowAccountDialogComponent } from './shadow-account-dialog/shadow-account-dialog.component';
+import { concat } from 'rxjs';
 
 
 @Component({
@@ -31,6 +32,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   public userBillList: projectUserBillDto[] = [];
   private filteredUserBillList: projectUserBillDto[] = [];
   public userForUserBill: UserDto[] = [];
+  public userIdOld:number
   public parentInvoice: ParentInvoice = new ParentInvoice();
   public isEditUserBill: boolean = false;
   public userBillProcess: boolean = false;
@@ -82,12 +84,10 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
 
   ngOnInit(): void {
     this.getUserBill();
-    this.getAllFakeUser();
     this.getParentInvoice();
     this.getAllProject();
     this.getCurrentProjectInfo();
     this.getProjectBillInfo();
-
   }
   isShowInvoiceSetting(){
     return this.isGranted(PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_InvoiceSetting_View)
@@ -166,13 +166,14 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   }
   //#endregion
 
-  private getAllFakeUser() {
-    this.userService.GetAllUserActive(false, true).pipe(catchError(this.userService.handleError)).subscribe(data => {
+  private getAllFakeUser(userId?) {
+    this.projectUserBillService.GetAllUserActive(this.projectId, userId, false, true).pipe(catchError(this.userService.handleError)).subscribe(data => {
       // this.userForProjectUser = data.result;
       this.userForUserBill = data.result;
     })
   }
   public addUserBill(): void {
+    this.getAllFakeUser('')
     let newUserBill = {} as projectUserBillDto
     newUserBill.createMode = true;
     newUserBill.isActive = true;
@@ -189,11 +190,21 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     if (userBill.endTime) {
       userBill.endTime = moment(userBill.endTime).format("YYYY-MM-DD");
     }
+    
+    const reqAdd = {
+      billAccountId:userBill.userId,
+      projectId: this.projectId,
+      userIds: userBill.linkedResources ? userBill.linkedResources.map(item => item.id): []
+    }
+    const reqDelete = {
+      billAccountId: this.userIdOld,
+      projectId: this.projectId,
+      userIds: userBill.linkedResources ? userBill.linkedResources.map(item => item.id) : []
+    }
 
     if (!this.isEditUserBill) {
       userBill.projectId = this.projectId
       this.projectUserBillService.create(userBill).pipe(catchError(this.projectUserBillService.handleError)).subscribe(res => {
-
         abp.notify.success(`Created new user bill`)
         this.getUserBill()
         this.userBillProcess = false;
@@ -203,26 +214,19 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
       })
     }
     else {
-      this.projectUserBillService.update(userBill).pipe(catchError(this.projectUserBillService.handleError)).subscribe(res => {
-        abp.notify.success(`Updated request user bill`)
-        // if (userBill.isActive === true) {
-        //   this.selectedIsCharge = 'Charge';
-        //   this.getUserBill("Charge");
-        // } else {
-        //   this.selectedIsCharge = 'Not Charge'
-        //   this.getUserBill("Not Charge");
-        // }
-        this.getUserBill()
-        this.userBillProcess = false;
-        this.isEditUserBill = false;
-        this.searchUserBill = ""
+      concat(this.projectUserBillService.RemoveUserFromBillAccount(reqDelete),this.projectUserBillService.update(userBill),this.projectUserBillService.LinkUserToBillAccount(reqAdd))
+      .pipe(catchError(this.projectUserBillService.handleError))
+      .subscribe(() => {
+          abp.notify.success("Update successfully")
+          this.getUserBill()
+          this.userBillProcess = false;
+          this.isEditUserBill = false;
+          this.searchUserBill = ""
       },
         () => {
           userBill.createMode = true;
         })
     }
-
-
   }
   // private filterProjectUserDropDown() {
 
@@ -236,6 +240,8 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     this.searchUserBill = ""
   }
   public editUserBill(userBill: projectUserBillDto): void {
+    this.getAllFakeUser(userBill.userId)
+    this.userIdOld = userBill.userId
     userBill.createMode = true;
     this.userBillProcess = true;
     this.isEditUserBill = true;
@@ -273,17 +279,21 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   }
 
   public removeUserBill(userBill: projectUserBillDto): void {
+    const reqDelete = {
+      billAccountId: userBill.userId,
+      projectId: this.projectId,
+      userIds: userBill.linkedResources.map(item => item.id)
+    }
     abp.message.confirm(
       "Delete user bill?",
       "",
       (result: boolean) => {
         if (result) {
-          this.projectUserBillService.deleteUserBill(userBill.id).pipe(catchError(this.projectUserBillService.handleError)).subscribe(() => {
-            abp.notify.success("Deleted user bill");
-            this.getUserBill()
-            // this.selectedIsCharge = 'Charge';
-            // this.getUserBill("Charge");
-          });
+          concat(this.projectUserBillService.RemoveUserFromBillAccount(reqDelete),this.projectUserBillService.deleteUserBill(userBill.id))
+          .pipe(catchError(this.projectUserBillService.handleError)).subscribe(()=>{
+                abp.notify.success("Delete Bill account success")
+                this.getUserBill()
+          })
         }
       }
     );
@@ -352,20 +362,22 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     })
   }
 
-  handleOpenDialogShadowAccount(projectId,userId,listResource)
+  handleOpenDialogShadowAccount(projectId,userId,listResource,id)
   {
     const show = this.dialog.open(ShadowAccountDialogComponent, {
       data: {
         projectId:projectId,
         userId:userId,
-        listResource:listResource.map(item=> item.id)
+        listResource:listResource ? listResource.map(item=> item.id) : []
       },
       width: "700px",
     })
 
+    const status = this.userBillList.find(item => item.id === id).createMode
+
     show.afterClosed().subscribe((res) => {
       if (res) {
-        this.getUserBill();
+        this.getUserBill(id,status);
       }
     })
   }

@@ -100,6 +100,7 @@ export class projectUserBillDto {
   userList?: any[];
   chargeType?: number;
   chargeTypeName: string;
+  linkedResources: any[]
 }
 export class ProjectRateDto {
   currencyName: string;

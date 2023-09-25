@@ -362,13 +362,13 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     })
   }
 
-  handleOpenDialogShadowAccount(projectId,userId,listResource,id)
+  handleOpenDialogShadowAccount(projectId, userId, listResource, id)
   {
     const show = this.dialog.open(ShadowAccountDialogComponent, {
       data: {
-        projectId:projectId,
-        userId:userId,
-        listResource:listResource ? listResource.map(item=> item.id) : []
+        projectId: projectId,
+        userId: userId,
+        listResource: listResource ? listResource.map(item=> item.id) : []
       },
       width: "700px",
     })

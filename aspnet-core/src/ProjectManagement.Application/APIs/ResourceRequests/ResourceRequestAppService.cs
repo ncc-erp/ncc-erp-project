@@ -364,7 +364,7 @@ namespace ProjectManagement.APIs.ResourceRequests
                 await WorkScope.InsertAsync(new ProjectUserBill
                 {
                     UserId = request.Request.BillAccountId ?? default,
-                    StartTime = input.BillStartTime,
+                    StartTime = input.BillStartTime ?? default,
                     ProjectId = request.Request.ProjectId,
                     isActive = true
                 });

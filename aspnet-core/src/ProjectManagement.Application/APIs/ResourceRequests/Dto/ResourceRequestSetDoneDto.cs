@@ -9,6 +9,6 @@ namespace ProjectManagement.APIs.ResourceRequests.Dto
         public long RequestId { get; set; }
 
         public DateTime StartTime { get; set; }
-        public DateTime BillStartTime { get; set; }
+        public DateTime? BillStartTime { get; set; }
     }
 }

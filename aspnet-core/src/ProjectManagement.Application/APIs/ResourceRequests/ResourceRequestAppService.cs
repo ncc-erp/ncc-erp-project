@@ -356,6 +356,7 @@ namespace ProjectManagement.APIs.ResourceRequests
 
             request.Request.Status = ResourceRequestStatus.DONE;
             request.Request.TimeDone = DateTimeUtils.GetNow();
+            request.Request.BillStartDate = input.BillStartTime;
             await WorkScope.UpdateAsync(request.Request);
 
             // add user in cv column to project user bill table
@@ -363,7 +364,7 @@ namespace ProjectManagement.APIs.ResourceRequests
                 await WorkScope.InsertAsync(new ProjectUserBill
                 {
                     UserId = request.Request.BillAccountId ?? default,
-                    StartTime = request.Request.BillStartDate ?? default,
+                    StartTime = input.BillStartTime,
                     ProjectId = request.Request.ProjectId,
                     isActive = true
                 });

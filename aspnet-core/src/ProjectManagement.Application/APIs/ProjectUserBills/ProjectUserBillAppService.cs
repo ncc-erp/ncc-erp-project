@@ -387,17 +387,6 @@ namespace ProjectManagement.APIs.ProjectUserBills
             if (input.EndTime.HasValue && input.StartTime.Date > input.EndTime.Value.Date)
                 throw new UserFriendlyException($"Start date cannot be greater than end date !");
 
-            var duplicatedPUB = await WorkScope.GetAll<ProjectUserBill>()
-               .Where(s => s.UserId == input.UserId)
-               .Where(s => s.ProjectId == input.ProjectId)
-               .Select(s => new { s.User.FullName, s.BillRole, s.isActive, s.BillRate })
-               .FirstOrDefaultAsync();
-
-            if (duplicatedPUB != default)
-            {
-                throw new UserFriendlyException($"Already exist: {duplicatedPUB.FullName} - {duplicatedPUB.BillRole} - {duplicatedPUB.BillRate} - Active: {duplicatedPUB.isActive}");
-            }
-
             var isEditNote = await IsGrantedAsync(PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Note_Edit);
             if (!isEditNote)
             {

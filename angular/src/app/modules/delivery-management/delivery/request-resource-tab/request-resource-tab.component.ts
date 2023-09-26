@@ -152,8 +152,10 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
     this.showDialog("edit", item);
   }
   public setDoneRequest(item) {
+    console.log(item)
     let data = {
       ...item.planUserInfo,
+      billUserInfo: item.billUserInfo,
       requestName: item.name,
       resourceRequestId: item.id
     }

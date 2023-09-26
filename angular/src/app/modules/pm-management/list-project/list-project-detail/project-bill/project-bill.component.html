@@ -81,7 +81,7 @@
                 </div>
             </mat-expansion-panel>
         </div>
-        <div class="card mt-2">
+        <div class="card mt-2" [busy] = isLoading>
             <mat-expansion-panel [expanded]="!isShowUserBill">
                 <mat-expansion-panel-header name="pannel-userBill" class="mt-2 mb-2"
                     (click)="isShowUserBill=!isShowUserBill">

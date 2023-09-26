@@ -190,6 +190,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     if (userBill.endTime) {
       userBill.endTime = moment(userBill.endTime).format("YYYY-MM-DD");
     }
+    this.isLoading = true
     
     const reqAdd = {
       billAccountId:userBill.userId,
@@ -210,13 +211,12 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
         this.userBillProcess = false;
         this.searchUserBill = ""
       }, () => {
-        userBill.createMode = true
+        userBill.createMode = true;
       })
     }
     else {
-      concat(this.projectUserBillService.RemoveUserFromBillAccount(reqDelete),this.projectUserBillService.update(userBill),this.projectUserBillService.LinkUserToBillAccount(reqAdd))
-      .pipe(catchError(this.projectUserBillService.handleError))
-      .subscribe(() => {
+      if(this.userIdOld == userBill.userId){
+        this.projectUserBillService.update(userBill).pipe(catchError(this.projectUserBillService.handleError)).subscribe(()=>{
           abp.notify.success("Update successfully")
           this.getUserBill()
           this.userBillProcess = false;
@@ -225,7 +225,23 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
       },
         () => {
           userBill.createMode = true;
-        })
+        }
+        )
+      }
+      else {
+        concat(this.projectUserBillService.RemoveUserFromBillAccount(reqDelete),this.projectUserBillService.update(userBill),this.projectUserBillService.LinkUserToBillAccount(reqAdd))
+        .pipe(catchError(this.projectUserBillService.handleError))
+        .subscribe(() => {
+            abp.notify.success("Update successfully")
+            this.getUserBill()
+            this.userBillProcess = false;
+            this.isEditUserBill = false;
+            this.searchUserBill = ""
+        },
+          () => {
+            userBill.createMode = true;
+          })
+      }
     }
   }
   // private filterProjectUserDropDown() {
@@ -247,11 +263,12 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     this.isEditUserBill = true;
     // userBill.billRole = this.APP_ENUM.ProjectUserRole[userBill.billRole];
   }
-  private getUserBill( id?:number,status?:boolean): void {
+  private getUserBill( id?: number,status?: boolean, userIdNew?: number): void {
+    this.isLoading = true
     this.projectUserBillService.getAllUserBill(this.projectId).pipe(catchError(this.projectUserBillService.handleError)).subscribe(data => {
       this.userBillList = data.result.map(item=> {
       if(item.id === id){
-        return {...item,createMode:status}
+        return {...item,createMode:status,userId:userIdNew}
       }
       return {...item, createMode:false}
       })
@@ -263,6 +280,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
       } else if (this.selectedIsCharge === 'Not Charge') {
         this.filteredUserBillList = this.userBillList.filter(bill => bill.isActive === false);
       }
+      this.isLoading = false
     })
   }
 
@@ -289,6 +307,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
       "",
       (result: boolean) => {
         if (result) {
+          this.isLoading = true
           concat(this.projectUserBillService.RemoveUserFromBillAccount(reqDelete),this.projectUserBillService.deleteUserBill(userBill.id))
           .pipe(catchError(this.projectUserBillService.handleError)).subscribe(()=>{
                 abp.notify.success("Delete Bill account success")
@@ -367,8 +386,9 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     const show = this.dialog.open(ShadowAccountDialogComponent, {
       data: {
         projectId: projectId,
-        userId: userId,
-        listResource: listResource ? listResource.map(item=> item.id) : []
+        userId: this.userIdOld != userId && this.isEditUserBill ? this.userIdOld : userId,
+        listResource: listResource ? listResource.map(item=> item.id) : [],
+        userIdNew: userId
       },
       width: "700px",
     })
@@ -376,8 +396,8 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     const status = this.userBillList.find(item => item.id === id).createMode
 
     show.afterClosed().subscribe((res) => {
-      if (res) {
-        this.getUserBill(id,status);
+      if (res.isSave) {
+        this.getUserBill(id,status,res.userIdNew);
       }
     })
   }

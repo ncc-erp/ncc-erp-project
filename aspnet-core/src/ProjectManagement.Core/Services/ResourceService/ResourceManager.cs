@@ -808,7 +808,11 @@ namespace ProjectManagement.Services.ResourceManager
                                IsPool = pu.IsPool,
                                AllocatePercentage = pu.AllocatePercentage,
                                ProjectType = pu.Project.ProjectType,
-                               ProjectCode = pu.Project.Code
+                               ProjectCode = pu.Project.Code,
+
+                               ResourceRequestCode = pu.ResourceRequest.Code,
+                               ResourceRequestNote = pu.ResourceRequest.PMNote,
+                               ResourceRequestDes = pu.ResourceRequest.DMNote
                            })
                            .ToList(),
 
@@ -980,7 +984,11 @@ namespace ProjectManagement.Services.ResourceManager
                                AllocatePercentage = pu.AllocatePercentage,
                                IsPool = pu.IsPool,
                                ProjectType = pu.Project.ProjectType,
-                               ProjectCode = pu.Project.Code
+                               ProjectCode = pu.Project.Code,
+
+                               ResourceRequestCode = pu.ResourceRequest.Code,
+                               ResourceRequestNote = pu.ResourceRequest.PMNote,
+                               ResourceRequestDes = pu.ResourceRequest.DMNote
                            })
                            .ToList(),
 

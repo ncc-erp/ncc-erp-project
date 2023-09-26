@@ -1,0 +1,94 @@
+name: Deploy PROJECT_BE PROD
+on:
+  push:
+    branches:
+      - prod
+    paths:
+    - 'aspnet-core/**'
+    - '.github/workflows/deploy_server_prod_be.yml'
+
+jobs:
+  build:
+    runs-on: prod
+    name: Build PROJECT_BE PROD
+    environment: prod
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+          
+      - name: Build Migrator
+        run: |
+          export PATH=$PATH:/opt/dotnet3/
+          cd aspnet-core/src/ProjectManagement.Migrator
+          dotnet3 build
+          dotnet3 publish
+
+      - name: Build Host
+        run: |
+          export PATH=$PATH:/opt/dotnet3/
+          cd aspnet-core
+          dotnet3 build
+          dotnet3 publish
+          
+      - name: Copy New Migrator
+        run: |
+          cd aspnet-core/src/ProjectManagement.Migrator/bin/Debug/netcoreapp3.1/publish/
+          rm -rf appsettings.json
+          cp -r * /var/www/migrator_git/project/stg-dotnet-migrator-project/
+
+      - name: Backup Log
+        run: |
+          export PATH="$PATH:/home/erp/sqlpackage:/usr/local/bin/aws"
+          cd /var/www/app_git/project/prod-dotnet-host-project/
+          /usr/local/bin/aws s3 sync Uploads/ s3://ncc-erp/prod/Uploads/project/
+          cp -r /var/www/app_git/project/prod-dotnet-host-project/wwwroot/* /home/erp/data_git/project/
+          cp -r /var/www/app_git/project/prod-dotnet-host-project/Uploads/* /home/erp/data_git/project/Uploads/
+          cp -r /var/www/app_git/project/prod-dotnet-host-project/App_Data/Logs/* /home/erp/data_git/project/Logs/
+          sudo chown -R erp:erp /home/erp/data_git/project/
+          rm -rf /home/erp/data_git/project/swagger/
+          rm -rf /var/www/app_git/project/prod-dotnet-host-project-bk/*
+          cp -r /var/www/app_git/project/prod-dotnet-host-project/* /var/www/app_git/project/prod-dotnet-host-project-bk/
+
+      - name: Copy New Host
+        run: |
+          cd aspnet-core/src/ProjectManagement.Web.Host/bin/Debug/netcoreapp3.1/publish/
+          rm -rf appsettings.json
+          cp -r * /var/www/app_git/project/prod-dotnet-host-project/
+          cd /var/www/app_git/project/prod-dotnet-host-project/
+          mkdir -p /var/www/app_git/project/prod-dotnet-host-project/App_Data/Logs/
+          cp -r /home/erp/data_git/project/Logs/* /var/www/app_git/project/prod-dotnet-host-project/App_Data/Logs/
+          chmod 777 -R App_Data/
+          cp -r /home/erp/data_git/project/* /var/www/app_git/project/prod-dotnet-host-project/wwwroot/
+          cp -r /home/erp/data_git/project/Uploads/* /var/www/app_git/project/prod-dotnet-host-project/Uploads/
+          chmod -R 777 /var/www/app_git/project/prod-dotnet-host-project/wwwroot/
+          chmod -R 777 /var/www/app_git/project/prod-dotnet-host-project/Uploads/
+  deploy:
+    runs-on: prod
+    name: Deploy PROJECT_BE PROD
+    environment: prod
+    needs:
+      - build
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: Up Data appsettings.json
+        run: |
+          cd aspnet-core/
+          echo '${{ secrets.APP_SETTING_PROD }}' > appsettings.json
+
+      - name: Migrate Database
+        run: |
+          sudo service erp-project-git stop
+          export PATH=$PATH:/opt/dotnet3/
+          cd aspnet-core/
+          cp -r appsettings.json /var/www/migrator_git/project/stg-dotnet-migrator-project/
+          cd /var/www/migrator_git/project/stg-dotnet-migrator-project/
+          dotnet3 ProjectManagement.Migrator.dll -q
+
+      - name: Restart Server
+        run: |
+          cd aspnet-core/
+          cp -r appsettings.json /var/www/app_git/project/prod-dotnet-host-project/
+          sudo service erp-project-git restart
+          sudo service erp-project-git status

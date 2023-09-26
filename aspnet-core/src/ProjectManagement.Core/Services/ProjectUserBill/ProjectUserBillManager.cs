@@ -225,6 +225,44 @@ namespace ProjectManagement.Services.ProjectUserBills
             return query;
         }
 
+        public async Task<List<UserDto>> GetAllUserActive(bool onlyStaff, long projectId, long? currentUserId)
+        {
+            var listPUBIds = await _workScope.GetAll<ProjectManagement.Entities.ProjectUserBill>()
+                .Where(x => x.ProjectId == projectId)
+                .Select(x => x.UserId)
+                .ToListAsync();
+
+            if (currentUserId.HasValue)
+                listPUBIds = listPUBIds.Where(x => x != currentUserId).ToList();
+
+            var query = _workScope.GetAll<User>()
+                .Where(u => u.IsActive)
+                .Where(x => x.UserType != UserType.Vendor)
+                .Where(x => x.UserType != UserType.FakeUser)
+                .Where(x => onlyStaff ? x.UserType != UserType.Internship : true)
+                .Where(x => !listPUBIds.Contains(x.Id))
+                .Select(u => new UserDto
+                {
+                    Id = u.Id,
+                    UserName = u.UserName,
+                    Name = u.Name,
+                    Surname = u.Surname,
+                    EmailAddress = u.EmailAddress,
+                    FullName = u.FullName,
+                    AvatarPath = u.AvatarPath,
+                    UserType = u.UserType,
+                    UserLevel = u.UserLevel,
+                    Branch = u.BranchOld,
+                    PositionId = u.PositionId,
+                    UserSkills = u.UserSkills.Select(x => new UserSkillDto
+                    {
+                        SkillId = x.SkillId,
+                        SkillName = x.Skill.Name
+                    }).ToList()
+                });
+            return await query.ToListAsync();
+        }
+
         public async Task<List<ProjectUserBillAccount>> AddProjectUserBillAccounts(ProjectUserBillAccountsDto input)
         {
             var listPUBA = new List<ProjectUserBillAccount>();

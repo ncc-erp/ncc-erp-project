@@ -81,7 +81,7 @@
                 </div>
             </mat-expansion-panel>
         </div>
-        <div class="card mt-2">
+        <div class="card mt-2" [busy] = isLoading>
             <mat-expansion-panel [expanded]="!isShowUserBill">
                 <mat-expansion-panel-header name="pannel-userBill" class="mt-2 mb-2"
                     (click)="isShowUserBill=!isShowUserBill">
@@ -208,7 +208,7 @@
                                                 </div>
                                             </div>
                                         <i *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount)"
-                                        (click)="handleOpenDialogShadowAccount(bill.projectId,bill.userId, bill.linkedResources)"
+                                        (click)="handleOpenDialogShadowAccount(bill.projectId, bill.userId, bill.linkedResources, bill.id)"
                                          class="fas fa-plus ml-3"></i>
                                         </div>
                                     </td>

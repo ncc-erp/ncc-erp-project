@@ -36,9 +36,11 @@ export class ShadowAccountDialogComponent
     this.listResourceSelect = this.data.listResource
     this.listResourceSelected = [...this.data.listResource]
     this.listResourceSelectCurrent = [...this.listResourceSelect]
+    this.isLoading = true;
     this.projectUserBillService.GetAllResource().subscribe(res=> {
       this.listAllResource = res.result;
       this.orderListResource()
+      this.isLoading = false
     })
   }
   openedChange(event){
@@ -82,7 +84,10 @@ export class ShadowAccountDialogComponent
       .subscribe(([rsAdd,rsRemove])=>{
         if(rsAdd.result && rsRemove.result){
           abp.notify.success("Update successfully")
-          this.dialogRef.close(true)
+          this.dialogRef.close({
+            userIdNew: this.data.userIdNew,
+            isSave:true
+          })
         }
       })  
 

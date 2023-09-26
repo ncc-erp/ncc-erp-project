@@ -48,7 +48,7 @@ export class FormSetDoneComponent extends AppComponentBase implements OnInit {
     const request = {
       requestId: this.planUserInfo.resourceRequestId,
       startTime: moment(this.planUserInfo.plannedDate).format("YYYY-MM-DD"),
-      billStartTime: moment(this.planUserInfo.billUserInfo.plannedDate).format("YYYY-MM-DD"),
+      billStartTime: this.planUserInfo.billUserInfo ? moment(this.planUserInfo.billUserInfo.plannedDate).format("YYYY-MM-DD") : null,
     }
 
     if (this.plannedUserList.length > 0) {

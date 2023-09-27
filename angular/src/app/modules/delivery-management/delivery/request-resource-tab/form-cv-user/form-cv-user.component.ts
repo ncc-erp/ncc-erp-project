@@ -1,11 +1,10 @@
 import { ChangeDetectorRef, Component, Inject, Injector, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DeliveryResourceRequestService } from '@app/service/api/delivery-request-resource.service';
-import { UserService } from '@app/service/api/user.service';
-import { ResourcePlanDto } from '@app/service/model/resource-plan.dto';
 import * as moment from 'moment';
 import { FormPlanUserComponent } from '../form-plan-user/form-plan-user.component';
 import { AppComponentBase } from '@shared/app-component-base';
+import { ProjectUserBillService } from '@app/service/api/project-user-bill.service';
 
 @Component({
   selector: 'app-form-cv-user',
@@ -25,8 +24,8 @@ export class FormCvUserComponent extends AppComponentBase implements OnInit {
     public dialogRef: MatDialogRef<FormPlanUserComponent>,
     private resourceRequestService: DeliveryResourceRequestService,
     private ref: ChangeDetectorRef,
-    private _userService: UserService
-  ) 
+    private projectUserBillService: ProjectUserBillService
+    )
   {
     super(injector);
   }
@@ -54,7 +53,7 @@ export class FormCvUserComponent extends AppComponentBase implements OnInit {
       fullName: 'Unassigned',
       emailAddress: ''
     }
-    this._userService.getAllActiveUser().subscribe(res => {
+    this.projectUserBillService.GetAllUserActive(this.input.projectId, '', false, true).subscribe(res => {
       this.listUsers = res.result
       if(this.typePlan == 'update'){
         this.listUsers.unshift(unassigned)

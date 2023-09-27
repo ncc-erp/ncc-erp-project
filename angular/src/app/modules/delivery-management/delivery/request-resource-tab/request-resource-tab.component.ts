@@ -154,6 +154,7 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
   public setDoneRequest(item) {
     let data = {
       ...item.planUserInfo,
+      billUserInfo: item.billUserInfo,
       requestName: item.name,
       resourceRequestId: item.id
     }

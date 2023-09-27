@@ -48,8 +48,9 @@ export class FormSetDoneComponent extends AppComponentBase implements OnInit {
     const request = {
       requestId: this.planUserInfo.resourceRequestId,
       startTime: moment(this.planUserInfo.plannedDate).format("YYYY-MM-DD"),
+      billStartTime: this.planUserInfo.billUserInfo ? moment(this.planUserInfo.billUserInfo.plannedDate).format("YYYY-MM-DD") : null,
     }
-    console.log(request)
+
     if (this.plannedUserList.length > 0) {
         this._resourceRequestService.setDoneRequest(request).pipe(catchError(this.projectUserService.handleError)).subscribe(rs => {
           abp.notify.success(`Confirmed for user ${this.planUserInfo.employee.fullName} join project`)

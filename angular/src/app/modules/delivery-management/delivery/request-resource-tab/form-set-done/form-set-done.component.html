@@ -21,6 +21,25 @@
                 </mat-error>
             </div>
         </div>
+        <div class="form-group row required" *ngIf="planUserInfo.billUserInfo">
+            <div class="col-md-3">
+                <label class="col-form-label" for="tenancy" style="line-height: 2;">
+                    Bill Start Date:
+                </label>
+            </div>
+            <div class="col-md-9">
+                <mat-form-field appearance="outline" class="w-100">
+                    <input placeholder="Choose date" matInput [matDatepicker]="picker1" name="startDate1"
+                        [(ngModel)]="planUserInfo.billUserInfo.plannedDate" #billTimeStart="ngModel" required />
+                    <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                    <mat-datepicker #picker1></mat-datepicker>
+                </mat-form-field>
+                <mat-error class="mt-1" *ngIf="billTimeStart.hasError('required') && billTimeStart.touched"
+                    style="font-size: 13px;">
+                    This field is required
+                </mat-error>
+            </div>
+        </div>
         <div *ngIf="!allowConfirm">
             <p style="font-size: 20px;" class="text-danger"><strong>{{planUserInfo.employee.fullName}}</strong> is working on the following
                 projects:</p>

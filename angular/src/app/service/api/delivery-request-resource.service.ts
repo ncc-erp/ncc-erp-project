@@ -133,11 +133,11 @@ export class DeliveryResourceRequestService extends BaseApiService {
   }
 
   public updateNote(data: any, type: string): Observable<any> {
-    if (type == 'PM') {
-      return this.http.post<any>(this.rootUrl + '/UpdatePMNote', data)
+    if (type == 'Description') {
+      return this.http.post<any>(this.rootUrl + '/Description', data)
     }
     else {
-      return this.http.post<any>(this.rootUrl + '/UpdateHPMNote', data)
+      return this.http.post<any>(this.rootUrl + '/Note', data)
     }
   }
   public setDoneRequest(data: any): Observable<any> {

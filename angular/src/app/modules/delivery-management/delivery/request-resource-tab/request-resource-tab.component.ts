@@ -133,7 +133,8 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
         item: resourceRequest,
         skills: this.listSkills,
         levels: this.listLevels,
-        typeControl: 'request'
+        typeControl: 'request',
+        listRequestCode: this.listRequestCode
       },
       width: "700px",
       maxHeight: '90vh',

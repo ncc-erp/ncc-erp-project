@@ -1,5 +1,5 @@
 import { SkillService } from './../../../../../service/api/skill.service';
-import { catchError } from 'rxjs/operators';
+import { catchError, map, startWith } from 'rxjs/operators';
 import { DeliveryResourceRequestService } from './../../../../../service/api/delivery-request-resource.service';
 import { result } from 'lodash-es';
 import { ProjectDto, SkillDto } from './../../../../../service/model/list-project.dto';
@@ -12,6 +12,8 @@ import { Component, OnInit, Inject, Injector, ChangeDetectorRef } from '@angular
 import * as moment from 'moment';
 import * as _ from 'lodash'
 import { PERMISSIONS_CONSTANT } from '@app/constant/permission.constant';
+import { Observable } from 'rxjs';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-create-update-resource-request',
@@ -26,6 +28,7 @@ export class CreateUpdateResourceRequestComponent extends AppComponentBase imple
   public resourceRequestDto = {} as RequestResourceDto;
   public title: string = ""
   public searchProject: string = ""
+  public listRequestCode = []
   public isAddingSkill: boolean = false
   public listSkill: SkillDto[] = []
   public listSkillDetail: any[] = []
@@ -45,13 +48,15 @@ export class CreateUpdateResourceRequestComponent extends AppComponentBase imple
     super(injector);
   }
 
+  filteredOptions: Observable<any[]>;
+  myControl = new FormControl('');
+
   ngOnInit(): void {
+    this.listRequestCode = this.data.listRequestCode
     this.getAllProject();
     this.typeControl = this.data.typeControl
     if(this.data.command == 'create'){
       this.resourceRequestDto = new RequestResourceDto()
-      //if create from resource request project then command = 'create' & projectId != 0
-      //assign projectId in dto = projectId
       if(this.data.item.projectId > 0){
         this.resourceRequestDto.projectId = this.data.item.projectId
       }
@@ -62,7 +67,24 @@ export class CreateUpdateResourceRequestComponent extends AppComponentBase imple
     this.listSkill = this.data.skills
     this.filteredSkillList = this.data.skills
     this.userLevelList = this.data.levels
+    this.filteredOptions = this.myControl.valueChanges.pipe(
+      startWith(''),
+      map(value => {
+        const name = typeof value === 'string' ? value : value?.code;
+        return name ? this._filter(name as string) : this.listRequestCode.slice();
+      }),
+    );
   }
+  
+   _filter(name: string) {
+    const filterValue = name.toLowerCase();
+    return this.listRequestCode.filter(option => option.code.toLowerCase().includes(filterValue));
+  }
+
+  displayFn(data): string {
+    return data && data.code ? data.code : '';
+  }
+
 
   ngAfterViewChecked(): void {
     //Called after every check of the component's view. Applies to components only.
@@ -73,6 +95,7 @@ export class CreateUpdateResourceRequestComponent extends AppComponentBase imple
   getResourceRequestById(id: number){
     this.resourceRequestService.getResourceRequestById(id).subscribe(res => {
       this.resourceRequestDto = res.result
+      this.myControl.setValue({code: this.resourceRequestDto.code})
       this.title = res.result.name
     })
   }
@@ -93,7 +116,7 @@ export class CreateUpdateResourceRequestComponent extends AppComponentBase imple
       priority: this.resourceRequestDto.priority,
       id: this.resourceRequestDto.id,
       skillIds: this.resourceRequestDto.skillIds,
-      code:this.resourceRequestDto.code
+      code:this.myControl.value.code
     }
 
     if (this.data.command == "create") {
@@ -109,7 +132,6 @@ export class CreateUpdateResourceRequestComponent extends AppComponentBase imple
         this.dialogRef.close(res.result);
       }, () => this.isLoading = false)
     }
-
   }
 
   getAllProject() {

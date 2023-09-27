@@ -281,7 +281,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
         this.filteredUserBillList = this.userBillList.filter(bill => bill.isActive === false);
       }
       this.isLoading = false
-    })
+    }, ()=>{ this.isLoading = false })
   }
 
   filterByIsCharge() {

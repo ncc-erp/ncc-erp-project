@@ -811,8 +811,8 @@ namespace ProjectManagement.Services.ResourceManager
                                ProjectCode = pu.Project.Code,
 
                                ResourceRequestCode = pu.ResourceRequest.Code,
-                               ResourceRequestNote = pu.ResourceRequest.PMNote,
-                               ResourceRequestDes = pu.ResourceRequest.DMNote
+                               ResourceRequestNote = pu.ResourceRequest.DMNote,
+                               ResourceRequestDes = pu.ResourceRequest.PMNote
                            })
                            .ToList(),
 
@@ -987,8 +987,8 @@ namespace ProjectManagement.Services.ResourceManager
                                ProjectCode = pu.Project.Code,
 
                                ResourceRequestCode = pu.ResourceRequest.Code,
-                               ResourceRequestNote = pu.ResourceRequest.PMNote,
-                               ResourceRequestDes = pu.ResourceRequest.DMNote
+                               ResourceRequestNote = pu.ResourceRequest.DMNote,
+                               ResourceRequestDes = pu.ResourceRequest.PMNote
                            })
                            .ToList(),
 

@@ -98,7 +98,6 @@ namespace ProjectManagement.APIs.ResourceRequests
             var requestIds = await QetResourceRequestIdsHaveAllSkill(input.SkillIds);
             query = query.Where(s => requestIds.Contains(s.Id));
 
-
             return await query.GetGridResult(query, input);
         }
 

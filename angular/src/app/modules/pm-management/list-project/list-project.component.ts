@@ -103,6 +103,7 @@ export class ListProjectComponent extends PagedListingComponentBase<any> impleme
       }
     }
   }
+  
   listProjects: ProductProjectDto[] = [];
   protected delete(entity: any): void {
     abp.message.confirm(
@@ -228,7 +229,7 @@ export class ListProjectComponent extends PagedListingComponentBase<any> impleme
   public getAllPM(): void {
     this.listProjectService.GetOutsourcingPMs().pipe(catchError(this.userService.handleError))
       .subscribe(data => {
-        this.pmList = data.result;
+         this.pmList = data.result;
       })
   }
 

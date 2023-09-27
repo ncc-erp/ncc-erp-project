@@ -38,5 +38,8 @@ namespace ProjectManagement.Services.ResourceManager.Dto
             }
         }
 
+        public string ResourceRequestCode { get; set; }
+        public string ResourceRequestNote { get; set; }
+        public string ResourceRequestDes { get; set; }
     }
 }

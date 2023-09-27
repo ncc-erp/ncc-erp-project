@@ -36,7 +36,7 @@
                         <div class="col-12 col-md-4 mt-1 d-flex align-items-center mb-3">
                             <mat-form-field appearance="outline" class="flex-grow-1">
                                 <mat-label>Position:</mat-label>
-                                <mat-select #selectPosition placeholder="Select position" 
+                                <mat-select #selectPosition placeholder="Select position"
                                 [(ngModel)]="selectedPositions" multiple (openedChange)="openedChange($event,'Position')">
                                     <div style="position: sticky; top: 0; z-index: 2; background-color: white;">
                                         <mat-form-field class="w-100 px-3 ">
@@ -62,7 +62,7 @@
                     <div class="row">
                         <div class="col-12 col-md-4 mt-1 d-flex align-items-center mb-3">
                             <mat-form-field appearance="outline" class="flex-grow-1">
-                                <mat-label>Branch:</mat-label>                               
+                                <mat-label>Branch:</mat-label>
                                 <mat-select #selectBranch [(ngModel)]="selectedBranchIds"
                                     (openedChange)="openedChange($event,'Branch')" placeholder="Select branch"
                                     multiple>
@@ -74,7 +74,7 @@
                                         (keydown)="$event.stopPropagation()">
                                     </mat-form-field>
                                     <div class="ml-3 mb-2">
-                                        <app-select-clear-option [type]= "'Branch'" [listOption]="listBranchsId" 
+                                        <app-select-clear-option [type]= "'Branch'" [listOption]="listBranchsId"
                                             (newListEvent)= "actionSelect($event)" (doneEvent)="selectDone($event)">
                                         </app-select-clear-option>
                                     </div>
@@ -89,7 +89,7 @@
                         <div class="col-12 col-md-4 mt-1 d-flex align-items-center mb-3">
                             <mat-form-field appearance="outline" class="flex-grow-1" style="max-height: 500px;">
                                 <mat-label>Skills:</mat-label>
-                                <mat-select #selectSkill placeholder="select skill" multiple 
+                                <mat-select #selectSkill placeholder="select skill" multiple
                                 (openedChange)="openedChange($event,'Skill')"  [(ngModel)]="selectedSkillId">
                                     <div style="width: 334px;" style="position: sticky; top: 0; z-index: 2; background-color: white; padding: 10px 7px; padding: 13px 7px 0px 5px;">
                                         <mat-form-field class="w-100 px-3 "
@@ -98,13 +98,13 @@
                                             matInput [(ngModel)]="searchSkill"  placeholder="Search" #search
                                             (keydown)="$event.stopPropagation()">
                                           </mat-form-field>
-                                        <mat-radio-group aria-label="Filter by" class="w-80 px-2  row" [(ngModel)]="isAndCondition" style=" width: 100%;align-items: center;">                                           
+                                        <mat-radio-group aria-label="Filter by" class="w-80 px-2  row" [(ngModel)]="isAndCondition" style=" width: 100%;align-items: center;">
                                             <div class="col-4 d-flex" style="align-items: center;">
                                                 <mat-radio-button class="mr-3" [value]="true">And</mat-radio-button>
                                                 <mat-radio-button [value]="false">Or</mat-radio-button>
                                             </div>
                                             <div class="col-8 mb-2">
-                                                <app-select-clear-option [type]= "'Skill'" [listOption]="listSkillsId" 
+                                                <app-select-clear-option [type]= "'Skill'" [listOption]="listSkillsId"
                                                     (newListEvent)= "actionSelect($event)" (doneEvent)="selectDone($event)">
                                                 </app-select-clear-option>
                                             </div>
@@ -283,9 +283,11 @@
                                                 true;" (mouseleave)="plan.onHover=
                                                 false" style="white-space: nowrap;">
                                                 <button class="btn p-0 text-left text-nowrap"
-                                                    matTooltip="Click to show action" [matMenuTriggerFor]="planMenu">
+                                                        matTooltip="Description: {{plan.resourceRequestDes}} &#13;
+                                                                    Note: {{plan.resourceRequestNote}}"
+                                                        [matMenuTriggerFor]="planMenu">
                                                     <span [ngClass]="plan.onHover?'on-hover-plan':''">
-                                                        <strong class="mr-1">{{plan.projectName }}</strong>
+                                                        <strong class="mr-1">{{plan.projectName }} ({{plan.resourceRequestCode}})</strong>
                                                         <strong [ngClass]="plan.isPool?'text-secondary'
                                                             : 'text-primary'" class=" mr-1">
                                                             {{plan.workType}}</strong>
@@ -353,11 +355,11 @@
                                 <td style="white-space: normal; max-width:
                                     200px;">
                                     <div class="d-flex justify-content-between" style="align-items: center;">
-                                        <div style="width: 200px">                           
+                                        <div style="width: 200px">
                                             <p class="m-0" *ngFor="let skill of
                                                 item.userSkills">
                                                 - {{skill.skillName}}
-                                            <strong *ngIf="skill.skillRank">- {{skill.skillRank}} <i class="fa fa-star" 
+                                            <strong *ngIf="skill.skillRank">- {{skill.skillRank}} <i class="fa fa-star"
                                                 [ngClass] = '{crimson: skill.skillRank == 5, grey:skill.skillRank ==1 || skill.skillRank == 2,
                                                 yellow:skill.skillRank == 3 ,orange:skill.skillRank == 4}' style="
                                                 font-size: 13px;"></i></strong>

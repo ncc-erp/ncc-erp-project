@@ -306,7 +306,7 @@ namespace ProjectManagement.APIs.ResourceRequests
 
         [HttpPost]
         [AbpAuthorize]
-        public async Task<UpdateRequestNoteDto> UpdatePMNote(UpdateRequestNoteDto input)
+        public async Task<UpdateRequestNoteDto> Description(UpdateRequestNoteDto input)
         {
             var resourceRequest = await WorkScope.GetAsync<ResourceRequest>(input.ResourceRequestId);
 
@@ -319,7 +319,7 @@ namespace ProjectManagement.APIs.ResourceRequests
 
         [HttpPost]
         [AbpAuthorize]
-        public async Task<UpdateRequestNoteDto> UpdateHPMNote(UpdateRequestNoteDto input)
+        public async Task<UpdateRequestNoteDto> Note(UpdateRequestNoteDto input)
         {
             var resourceRequest = await WorkScope.GetAsync<ResourceRequest>(input.ResourceRequestId);
 

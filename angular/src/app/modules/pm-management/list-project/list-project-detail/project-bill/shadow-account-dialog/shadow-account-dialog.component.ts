@@ -41,7 +41,7 @@ export class ShadowAccountDialogComponent
       this.listAllResource = res.result;
       this.orderListResource()
       this.isLoading = false
-    })
+    }, () => { this.isLoading = false })
   }
   openedChange(event){
     if(!event){

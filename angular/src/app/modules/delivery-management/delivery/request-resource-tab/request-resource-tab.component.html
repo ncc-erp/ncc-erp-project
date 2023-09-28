@@ -299,16 +299,8 @@
                     >
                       {{ item.priorityName }}
                     </div>
-                    <span class="link mr-1" (click)="showProject(item)"> {{ item.projectName }} </span>
-                    <span
-                      [ngClass]="
-                        APP_CONST.ProjectTypeStyle[
-                          getByEnum(item.projectType, APP_ENUM.ProjectType)
-                        ]
-                      "
-                    >
-                      {{ item.projectTypeName }}
-                    </span>
+                    <span class="link mr-2" (click)="showProject(item)"> {{ item.projectName }} </span>
+                    <span style="margin-top: 2px;" class="badge badge-danger">Bill Acc</span>
                     <span
                       *ngIf="item.projectStatus == 'Potential'"
                       [ngClass]="
@@ -361,7 +353,7 @@
                 <td class="text-center" style="width: 80px;">
                  <span *ngIf="item.code">{{item.code}}</span>
                 </td>
-                <td style="min-width: 230px;max-width: 230px;">
+                <td style="min-width: 220px;">
                   <div class="row" >
                     <div class="col-md-10">
                       <div *ngIf="item.billUserInfo" class="d-flex align-items-start" style="flex-direction: column;" >
@@ -425,7 +417,7 @@
                     </div>
                   </div>
                 </td>
-                <td style="min-width: 230px;max-width: 230px;">
+                <td style="min-width: 220px;">
                   <div class="row" >
                     <div class="col-md-10">
                       <div *ngIf="item.planUserInfo" class="d-flex align-items-start" style="flex-direction: column;" >

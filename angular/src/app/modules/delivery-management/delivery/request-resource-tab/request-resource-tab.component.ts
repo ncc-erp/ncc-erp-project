@@ -58,7 +58,7 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
     { name: 'Request Info' },
     { name: 'Skill need' },
     { name: 'Code' },
-    { name: 'CV' },
+    { name: 'Bill Account' },
     { name: 'Resource'},
     { name: 'Description'},
     { name: 'Note' },

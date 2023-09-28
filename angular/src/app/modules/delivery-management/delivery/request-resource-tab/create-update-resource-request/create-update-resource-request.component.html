@@ -225,7 +225,7 @@
       </label>
       <div class="col-md-9">
         <form>
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="outline" class="w-100">
             <mat-label>Code</mat-label>
             <input type="text" matInput [formControl]="myControl" [matAutocomplete]="auto">
             <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
@@ -235,6 +235,15 @@
             </mat-autocomplete>
           </mat-form-field>
         </form>
+      </div>
+    </div>
+
+    <div class="form-group row ">
+      <label class="col-md-3 col-form-label" for="newBillAccount">
+        New Bill Account
+      </label>
+      <div class="col-md-9 d-flex align-items-center">
+        <mat-checkbox style="margin-top: 5px;"></mat-checkbox>
       </div>
     </div>
 

@@ -412,6 +412,7 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
         }
         this.listPreEditCriteriaResult = cloneDeep(this.listCriteriaResult);
         this.setTotalHealth();
+        this.isLoading = false
       }, ()=> this.isLoading = false)
   }
 
@@ -513,7 +514,6 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
         this.projectInfo = data.result
         this.generalNote = data.result.pmNote
         this.automationNote = data.result.automationNote
-        this.isLoading = false;
         this.getDataForBillChart(this.projectInfo.projectCode)
         this.getCurrentResourceOfProject(this.projectInfo.projectCode)
         if (this.weeklyReportStatus === 'Sent') {
@@ -550,6 +550,7 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
               queryParamsHandling: 'merge',
             });
         }
+        this.isLoading = false
       },
         () => { this.isLoading = false })
     }
@@ -603,6 +604,7 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
       this.pmReportProjectService.getChangesDuringWeek(this.projectId, this.pmReportId).pipe(catchError(this.pmReportProjectService.handleError)).subscribe(data => {
         this.weeklyReportList = data.result;
         this.isShowWeeklyList = this.weeklyReportList.length == 0 ? false : true;
+        this.isLoading = false
       }, ()=> this.isLoading = false)
     }
   }
@@ -612,6 +614,7 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
       this.pmReportProjectService.getChangesInFuture(this.projectId, this.pmReportId).pipe(catchError(this.pmReportProjectService.handleError)).subscribe(data => {
         this.futureReportList = data.result;
         this.isShowFutureList = this.futureReportList.length == 0 ? false : true;
+        this.isLoading = false
       },()=> this.isLoading = false)
     }
 
@@ -619,7 +622,7 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
   public getProjectProblem() {
     if (this.projectId) {
       this.isLoading = true;
-      this.pmReportProjectService.problemsOfTheWeekForReport(this.projectId, this.pmReportId).pipe(catchError(this.reportIssueService.handleError)).subscribe(data => {
+      this.pmReportProjectService.problemsOfTheWeekForReport(this.projectId, this.pmReportId).subscribe(data => {
         if (data.result) {
           this.problemList = [];
           for (let i = 0; i < data.result.result.length; i++) {
@@ -672,6 +675,7 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
         }
         this.isShowProblemList = this.problemList.length == 0 ? false : true;
         this.isShowIssues = this.problemList.length > 0;
+        this.isLoading = false
       }, ()=> this.isLoading = false)
     }
   }
@@ -683,6 +687,7 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
           this.projectRiskList = data.result;
           this.isShowRisks = this.projectRiskList.length >0
         }
+        this.isLoading = false
       }, ()=> this.isLoading = false)
     }
   }
@@ -1719,6 +1724,7 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
     this._configuration.getTimeCountDown().subscribe((rs) => {
       this.countdownInterval.setValue(rs.result.timeCountDown);
       if (autoStart) setTimeout(() => this.startTimmer());
+      this.isLoading = false
     },()=> this.isLoading = false);
   }
 
@@ -1880,6 +1886,7 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
       if (this.oldWeeklyReport) {
         this.getOldCriteriaResult();
       }
+      this.isLoading = false
     }, ()=> this.isLoading = false);
   }
   getOldCriteriaResult() {

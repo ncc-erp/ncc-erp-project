@@ -5,9 +5,15 @@ td {
 ::ng-deep .stars-line {
     z-index: 0;
 }
+
 ::ng-deep .mat-select-panel{
     max-height: 350px !important;
 }
+
+::ng-deep .mat-tooltip  {
+    white-space: pre-line !important;
+  }
+
 .pool-table i {
     color: #686868;
     font-size: 18px;

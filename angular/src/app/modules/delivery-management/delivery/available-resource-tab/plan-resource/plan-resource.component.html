@@ -32,13 +32,13 @@
                                             matInput [(ngModel)]="searchSkill"  placeholder="Search" #search
                                             (keydown)="$event.stopPropagation()">
                                           </mat-form-field>
-                                        <mat-radio-group aria-label="Filter by" class="w-80 px-2  row" [(ngModel)]="isAndCondition" style=" width: 100%;align-items: center;">                                           
+                                        <mat-radio-group aria-label="Filter by" class="w-80 px-2  row" [(ngModel)]="isAndCondition" style=" width: 100%;align-items: center;">
                                             <div class="col-4 d-flex" style="align-items: center;">
                                                 <mat-radio-button class="mr-3" [value]="true">And</mat-radio-button>
                                                 <mat-radio-button [value]="false">Or</mat-radio-button>
                                             </div>
                                             <div class="col-8 mb-2">
-                                                <app-select-clear-option  [listOption]="listSkillsId" 
+                                                <app-select-clear-option  [listOption]="listSkillsId"
                                                     (newListEvent)= "actionSelect($event)" (doneEvent)="selectDone()">
                                                 </app-select-clear-option>
                                             </div>
@@ -136,8 +136,9 @@
                                                 (mouseenter)="plan.onHover = true;" (mouseleave)="plan.onHover = false"
                                                 style="white-space: nowrap;">
                                                 <button class="btn p-0 text-left" style="white-space: normal;"
-                                                    [matMenuTriggerFor]="planMenu">
-
+                                                        matTooltip="Description: {{plan.resourceRequestDes}} &#13;
+                                                                    Note: {{plan.resourceRequestNote}}"
+                                                        [matMenuTriggerFor]="planMenu">
                                                     <i class="fas fa-ellipsis-v fa-xs mr-1"
                                                         style="font-size: 15px;"></i>
                                                     <span [ngClass]="plan.onHover?'on-hover-plan':''">
@@ -145,7 +146,7 @@
                                                             *ngIf="plan.projectStatus==APP_ENUM.ProjectStatus.Potential"
                                                             class="badge bg-info pointer mr-1">
                                                             P</span>
-                                                        <strong class="mr-1">{{ plan.projectName }} </strong><strong
+                                                        <strong class="mr-1">{{ plan.projectName }} ({{plan.resourceRequestCode}}) </strong><strong
                                                             [ngClass]="plan.isPool?'text-secondary' : 'text-primary'"
                                                             class=" mr-1">
                                                             {{plan.workType}}</strong> <strong
@@ -156,7 +157,7 @@
                                                         'dd/MM/yyyy' }}
                                                     </span>
                                                     <!-- <span style="display: inline-block; width: 10px;">
-                                                    <i *ngIf="plan.onHover && (permission.isGranted(DeliveryManagement_ResourceRequest_CancelAnyPlanResource) 
+                                                    <i *ngIf="plan.onHover && (permission.isGranted(DeliveryManagement_ResourceRequest_CancelAnyPlanResource)
                                                      || isAllowCancelPlan(plan.creatorUserId))" class="fas fa-times pointer text-danger ml-1"
                                                         (click)="CancelResourcePlan(plan,item.fullName)"></i>
                                                 </span> -->

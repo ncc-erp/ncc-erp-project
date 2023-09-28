@@ -103,6 +103,7 @@ export class ListProjectComponent extends PagedListingComponentBase<any> impleme
       }
     }
   }
+
   listProjects: ProductProjectDto[] = [];
   protected delete(entity: any): void {
     abp.message.confirm(

@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    runs-on: self-hosted
+    runs-on: dev
     name: Build PROJECT_BE Dev
     environment: dev
     steps:
@@ -53,7 +53,7 @@ jobs:
           chmod 777 -R App_Data/
 
   deploy:
-    runs-on: self-hosted
+    runs-on: dev
     name: Deploy PROJECT_BE Dev
     environment: dev
     needs:

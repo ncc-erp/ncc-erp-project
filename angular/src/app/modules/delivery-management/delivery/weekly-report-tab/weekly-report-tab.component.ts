@@ -21,17 +21,24 @@ import { AddReportNoteComponent } from './weekly-report-tab-detail/add-report-no
   styleUrls: ['./weekly-report-tab.component.css']
 })
 export class WeeklyReportTabComponent extends PagedListingComponentBase<WeeklyReportTabComponent> implements OnInit {
+  currentTuesday: string;
+  hasCurrentTuesday: boolean;
+
   protected list(request: PagedRequestDto, pageNumber: number, finishedCallback: Function): void {
-    this.isLoading = true
+    this.isLoading = true;
+    this.currentTuesday = this.nearestTuesday();
     this.pmReportService.getAllPaging(request).pipe(finalize(() => {
       finishedCallback();
     }), catchError(this.pmReportService.handleError)).subscribe((data) => {
       this.pmReportList = data.result.items;
       this.showPaging(data.result, pageNumber);
       this.isLoading = false;
-
-    })
+      this.hasCurrentTuesday = this.pmReportList.some((item) => {
+        return item.name === `Weekly ${this.currentTuesday}`;
+      });
+    });
   }
+
   protected delete(entity: WeeklyReportTabComponent): void {
     throw new Error('Method not implemented.');
   }
@@ -64,8 +71,8 @@ export class WeeklyReportTabComponent extends PagedListingComponentBase<WeeklyRe
 
   ngOnInit(): void {
     this.refresh();
-
   }
+
   showDetail(item: any) {
     if (this.permission.isGranted(this.WeeklyReport_ReportDetail)) {
       this.router.navigate(['app/weeklyReportTabDetail'], {
@@ -76,7 +83,6 @@ export class WeeklyReportTabComponent extends PagedListingComponentBase<WeeklyRe
         }
       })
     }
-
   }
 
   closeReport(report: any) {
@@ -87,8 +93,11 @@ export class WeeklyReportTabComponent extends PagedListingComponentBase<WeeklyRe
       type: this.pmReportList[0].type,
       pmReportProjectId: this.pmReportList[0].pmReportProjectId,
       pmReportStatus: this.pmReportList[0].status,
-      lastReviewDate: this.pmReportList[0].lastPreviewDate
+      lastReviewDate: this.pmReportList[0].lastPreviewDate,
+      hasCurrentTuesday: this.hasCurrentTuesday,
+      currentTuesday: this.currentTuesday
     }
+
     const dialogRef = this.dialog.open(EditReportComponent, {
       width: '700px',
       disableClose: true,
@@ -103,6 +112,7 @@ export class WeeklyReportTabComponent extends PagedListingComponentBase<WeeklyRe
       }
     });
   }
+
   editReport(pmReport: any) {
     let dialogData = {} as any
     dialogData = {
@@ -147,6 +157,7 @@ export class WeeklyReportTabComponent extends PagedListingComponentBase<WeeklyRe
       data: pmReportId
     })
   }
+
   editNote(reportId) {
     const show = this.dialog.open(AddReportNoteComponent, {
       data: {
@@ -158,4 +169,24 @@ export class WeeklyReportTabComponent extends PagedListingComponentBase<WeeklyRe
         this.refresh()
     });
   }
+
+  nearestTuesday(){
+     //get the Tuesday of current week
+    const today = new Date();
+    const day = today.getDay();
+    const tuesday = today.getDate() - day + (day === 0 ? -6 : 2);
+    const friday = today.getDate() - day + (day === 0 ? -6 : 5);
+
+    const closestDate = today.getHours() < 22 ? (tuesday < friday ? tuesday : friday) : friday;
+    const closest = new Date(today.getFullYear(), today.getMonth(), closestDate);
+
+  // format the date as "DD-MM-yyyy"
+    const dayFormatted = (closest.getDate() < 10 ? '0' : '') + closest.getDate();
+    const monthFormatted = (closest.getMonth() + 1 < 10 ? '0' : '') + (closest.getMonth() + 1);
+    const yearFormatted = closest.getFullYear();
+    const currentTuesday = `${dayFormatted}-${monthFormatted}-${yearFormatted}`;
+
+    return currentTuesday;
+  }
+
 }

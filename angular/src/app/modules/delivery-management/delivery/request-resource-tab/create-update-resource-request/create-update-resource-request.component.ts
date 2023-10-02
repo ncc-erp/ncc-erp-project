@@ -117,8 +117,7 @@ export class CreateUpdateResourceRequestComponent extends AppComponentBase imple
       id: this.resourceRequestDto.id,
       skillIds: this.resourceRequestDto.skillIds,
       isNewBillAccount:this.resourceRequestDto.isNewBillAccount,
-      code:this.myControl.value.code,
-      
+      code:this.myControl.value
     }
 
     if (this.data.command == "create") {

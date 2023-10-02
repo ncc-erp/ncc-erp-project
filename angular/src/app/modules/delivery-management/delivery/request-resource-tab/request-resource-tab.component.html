@@ -293,7 +293,7 @@
                   <div class="row" style="align-items: flex-start;justify-content: space-between;">
                     <div class="d-flex align-items-start col-8">
                       <div
-                      style="padding: 4px 10px;white-space: normal; text-align: center;"
+                      style="padding: 4px 10px;white-space: normal; text-align: center; border-radius: 0.25rem;"
                       class="tag mr-1"
                       [ngClass]="APP_CONST.priorityRequest[item.priority]"
                     >
@@ -328,6 +328,7 @@
                       {{ item.levelName }}
                     </span>
                       <p class="ml-2"
+                      style="border-radius: 0.25rem;"
                         [ngClass]="
                           APP_CONST.resourceRequestStyle[
                             getValueByEnum(
@@ -351,17 +352,15 @@
                     <span>Time need: {{item.timeNeed | date:'d/MM/y'}}</span>
                   </div>
                 </td>
-                <td style="width: 200px;">
-                  <ul class="pl-3 m-0">
-                    <li *ngFor="let skill of item.skills">
-                      {{ skill.name }}
-                    </li>
-                  </ul>
+                <td style="max-height: 130px; min-width: 130px; padding: 12px 0;">
+                    <p *ngFor="let skill of item.skills" class="m-0">
+                     - {{ skill.name }}
+                    </p>
                 </td>
-                <td class="text-center" style="width: 80px;">
+                <td class="text-center" style="max-height: 70px; min-width: 70px; padding: 12px 0;">
                  <span *ngIf="item.code">{{item.code}}</span>
                 </td>
-                <td style="min-width: 220px;">
+                <td style="min-width: 235px;">
                   <div class="row" >
                     <div class="col-md-10">
                       <div *ngIf="item.billUserInfo" class="d-flex align-items-start" style="flex-direction: column;" >
@@ -371,7 +370,7 @@
                         </p>
                         <p class="m-0">
                           <span *ngIf="item.billUserInfo.employee.branchDisplayName"
-                            class="mr-1 badge badge-pill text-white"
+                            class="mr-1 badge text-white"
                             [style.backgroundColor]="
                               item.billUserInfo.employee.branchColor
                             "
@@ -425,7 +424,7 @@
                     </div>
                   </div>
                 </td>
-                <td style="min-width: 220px;">
+                <td style="min-width: 235px;">
                   <div class="row" >
                     <div class="col-md-10">
                       <div *ngIf="item.planUserInfo" class="d-flex align-items-start" style="flex-direction: column;" >
@@ -493,8 +492,9 @@
                 <td
                   style="
                     white-space: normal;
-                    min-width: 180px;
-                    max-width: 180px;
+                    min-width: 200px;
+                    max-width: 200px;
+                    padding: 12px 0;
                   "
                 >
                   <div class="row">
@@ -532,6 +532,7 @@
                     white-space: normal;
                     min-width: 180px;
                     max-width: 180px;
+                    padding: 12px 0;
                   "
                 >
                   <div class="row">

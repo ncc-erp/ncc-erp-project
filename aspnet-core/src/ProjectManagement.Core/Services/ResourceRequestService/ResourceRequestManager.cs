@@ -71,7 +71,8 @@ namespace ProjectManagement.Services.ResourceRequestService
                             IsRecruitmentSend = request.IsRecruitmentSend,
                             ProjectName = request.Project.Name,
                             ProjectId = request.ProjectId,
-                            ProjectType = request.Project.ProjectType,
+                            //ProjectType = request.Project.ProjectType,
+                            ProjectType = null,
                             ProjectStatus = request.Project.Status,
 
                             Name = request.Name,
@@ -139,7 +140,8 @@ namespace ProjectManagement.Services.ResourceRequestService
                              request.ProjectUsers.FirstOrDefault().User.EmailAddress : null,
                             Code = request.Code,
                             UserRequestName = _workScope.Get<User>((long)request.CreatorUserId).Name,
-                            CreateAt = request.CreationTime
+                            CreateAt = request.CreationTime,
+                            IsNewBillAccount = request.IsNewBillAccount,
                         };
             return query;
         }

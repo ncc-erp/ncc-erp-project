@@ -16,18 +16,28 @@ export class EditReportComponent extends AppComponentBase implements OnInit {
   report = {} as pmReportDto
   reportName: string = ""
   dialogType: string = "RENAME"
-  nextTuesday: string
+  createdDate: string
+  currentTuesday: string
   constructor(injector: Injector, public dialogRef: MatDialogRef<EditReportComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogDataDto, private reportService: PmReportService) {
     super(injector)
   }
 
   ngOnInit(): void {
-    const now = new Date();
-    this.nextTuesday =  moment().day(9).format("DD-MM-yyyy")
+     this.setReportName();
+  }
+
+  setReportName(): void{
+    const nextTuesday =  moment().day(9).format("DD-MM-yyyy")
     this.dialogType = this.data.command || 'RENAME'
     this.report = this.data.dialogData;
-    this.report.name = this.dialogType === "RENAME" ? this.report.name : `Weekly ${this.nextTuesday}`
+
+    if(this.data.dialogData.hasCurrentTuesday)
+      this.createdDate = nextTuesday;
+    else
+      this.createdDate = this.data.dialogData.currentTuesday;
+
+    this.report.name = this.dialogType === "RENAME" ? this.report.name : `Weekly ${this.createdDate}`;
     this.reportName = this.report.name
   }
 
@@ -48,6 +58,6 @@ export class EditReportComponent extends AppComponentBase implements OnInit {
       },
       () => this.isLoading = false)
     }
-
   }
+
 }

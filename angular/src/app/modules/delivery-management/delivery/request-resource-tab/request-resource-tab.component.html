@@ -300,7 +300,7 @@
                       {{ item.priorityName }}
                     </div>
                     <span class="link mr-2" (click)="showProject(item)"> {{ item.projectName }} </span>
-                    <span style="margin-top: 2px;" class="badge badge-danger">Bill Acc</span>
+                    <span *ngIf="item.isNewBillAccount" style="margin-top: 2px;" class="badge badge-danger">Bill Acc</span>
                     <span
                       *ngIf="item.projectStatus == 'Potential'"
                       [ngClass]="

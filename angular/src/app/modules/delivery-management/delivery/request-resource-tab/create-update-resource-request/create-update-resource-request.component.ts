@@ -116,7 +116,9 @@ export class CreateUpdateResourceRequestComponent extends AppComponentBase imple
       priority: this.resourceRequestDto.priority,
       id: this.resourceRequestDto.id,
       skillIds: this.resourceRequestDto.skillIds,
-      code:this.myControl.value.code
+      isNewBillAccount:this.resourceRequestDto.isNewBillAccount,
+      code:this.myControl.value.code,
+      
     }
 
     if (this.data.command == "create") {
@@ -156,7 +158,6 @@ export class CreateUpdateResourceRequestComponent extends AppComponentBase imple
 
         let b = this.listSkillDetail.map(item => item.skillId)
         this.resourceRequestDto.skillIds = b
-        console.log(this.resourceRequestDto.skillIds)
       })
     }
   }

@@ -227,13 +227,20 @@
         <form>
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Code</mat-label>
-            <input type="text" matInput [formControl]="myControl" [matAutocomplete]="auto">
+            <input type="text" matInput [formControl]="myControl" [matAutocomplete]="auto" required />
             <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
-              <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+              <mat-option *ngFor="let option of filteredOptions | async" [value]="option.code">
                 {{option.code}}
               </mat-option>
             </mat-autocomplete>
           </mat-form-field>
+          <mat-error
+              class="mt-1"
+              *ngIf="myControl.errors?.required && myControl.touched"
+              style="font-size: 13px"
+            >
+              This field is required
+          </mat-error>
         </form>
       </div>
     </div>
@@ -254,7 +261,7 @@
     </button>
     <button
       class="btn btn-primary btn-action"
-      [disabled]="!resourceRequestForm.valid || isLoading"
+      [disabled]="!resourceRequestForm.valid || isLoading || myControl.invalid"
       (click)="SaveAndClose()"
     >
       Save

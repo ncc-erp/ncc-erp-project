@@ -82,7 +82,7 @@ export class CreateUpdateResourceRequestComponent extends AppComponentBase imple
   }
 
   displayFn(data): string {
-    return data && data.code ? data.code : '';
+    return data && data ? data : '';
   }
 
 
@@ -95,7 +95,7 @@ export class CreateUpdateResourceRequestComponent extends AppComponentBase imple
   getResourceRequestById(id: number){
     this.resourceRequestService.getResourceRequestById(id).subscribe(res => {
       this.resourceRequestDto = res.result
-      this.myControl.setValue({code: this.resourceRequestDto.code})
+      this.myControl.setValue(this.resourceRequestDto.code)
       this.title = res.result.name
     })
   }
@@ -119,6 +119,7 @@ export class CreateUpdateResourceRequestComponent extends AppComponentBase imple
       isNewBillAccount:this.resourceRequestDto.isNewBillAccount,
       code:this.myControl.value
     }
+    console.log(this.myControl.value)
 
     if (this.data.command == "create") {
       request.id = 0

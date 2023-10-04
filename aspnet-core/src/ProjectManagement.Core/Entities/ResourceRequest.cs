@@ -36,6 +36,7 @@ namespace ProjectManagement.Entities
         public int Quantity { get; set; }
         public UserLevel Level { get; set; }
         public Priority Priority { get; set; }
+        public bool IsNewBillAccount { get; set; }
 
         public ICollection<ResourceRequestSkill> ResourceRequestSkills { get; set; }
 

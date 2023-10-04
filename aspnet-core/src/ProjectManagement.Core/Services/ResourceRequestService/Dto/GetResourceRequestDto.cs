@@ -32,7 +32,7 @@ namespace ProjectManagement.Services.ResourceRequestService.Dto
         public long ProjectId { get; set; }
         [ApplySearchAttribute]
         public string ProjectName { get; set; }
-        public ProjectType ProjectType { get; set; }
+        public ProjectType? ProjectType { get; set; }
         public ProjectStatus ProjectStatus { get; set; }
         public string ProjectCode { get; set; }
 
@@ -42,7 +42,7 @@ namespace ProjectManagement.Services.ResourceRequestService.Dto
         {
             get
             {
-                return CommonUtil.ProjectTypeName(ProjectType);
+                return ProjectType == null ? null : CommonUtil.ProjectTypeName(ProjectType.Value);
             }
 
         }
@@ -121,6 +121,7 @@ namespace ProjectManagement.Services.ResourceRequestService.Dto
         public string PlanUserEmail { get; set; }
         public DateTime? CreateAt { get; set; }
         public PlanUserInfoDto BillUserInfo { get; set; }
+        public bool IsNewBillAccount { get; set; }
     }
 
     public class PlanUserInfoDto

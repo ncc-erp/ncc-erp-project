@@ -352,12 +352,12 @@
                     <span>Time need: {{item.timeNeed | date:'d/MM/y'}}</span>
                   </div>
                 </td>
-                <td style="max-height: 100px; min-width: 100px; padding: 12px 0;">
+                <td style="padding: 12px 4px;">
                     <p *ngFor="let skill of item.skills" class="m-0">
                      - {{ skill.name }}
                     </p>
                 </td>
-                <td class="text-center" style="max-height: 70px; min-width: 70px; padding: 12px 0;">
+                <td class="text-center" style="max-height: 70px; min-width: 70px; padding: 12px 4px;">
                  <span *ngIf="item.code">{{item.code}}</span>
                 </td>
                 <td style="min-width: 225px;">
@@ -496,8 +496,8 @@
                     padding: 12px 0;
                   "
                 >
-                  <div class="row">
-                    <div class="col-md-10">
+                  <div class="row justify-content-between flex-nowrap">
+                    <div class="mx-2">
                       <pre
                       (click) = "showDescription(item.pmNote);$event.stopPropagation()"
                         class="mb-0 p-0 ml-2 max-line"
@@ -514,7 +514,7 @@
                       >
                     </div>
                     <div
-                      class="col-md-2"
+                      class="mr-2"
                       *ngIf="permission.isGranted(ResourceRequest_EditPmNote)"
                     >
                       <i

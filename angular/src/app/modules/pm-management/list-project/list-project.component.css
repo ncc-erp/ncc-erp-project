@@ -34,14 +34,10 @@ button{
   flex-direction: column;
 }
 
-.list-project .project-wrap .project-type-wrap {
-  margin-left: 12px;
-}
-
-.list-project .project-wrap .project-type-wrap .sub-main-type {
+.list-project .project-wrap .sub-main-type {
   height: 18px !important;
   border-radius: 4px; 
-  background-color: rgb(168, 167, 167); 
+  background-color: lightgray;
   padding: 3px 4.8px; 
   font-weight: bold; 
   font-size: 12px; 

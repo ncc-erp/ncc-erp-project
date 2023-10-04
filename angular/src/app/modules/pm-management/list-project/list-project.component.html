@@ -93,7 +93,7 @@
                             </div>
 
                             <div class="col-2" style="margin-top: 10px;" *ngIf="permission.isGranted(Projects_OutsourcingProjects_ViewBillAccount)">
-                                <mat-checkbox name="cbx-showBillAccount" [(ngModel)]="isShowAccount" >Show bill Account</mat-checkbox>
+                                <mat-checkbox name="cbx-showBillAccount" [(ngModel)]="isShowAccount" >Show bill account</mat-checkbox>
                             </div>
                             <div class="col-2" style="margin-top: 10px;" *ngIf="permission.isGranted(Projects_OutsourcingProjects_ViewBillInfo)">
                                     <mat-checkbox name="cbx-showBillInfo" [(ngModel)]="isShowBillInfo">Show bill info</mat-checkbox>
@@ -134,7 +134,7 @@
                                 <th>#</th>
                                 <th>Projects</th>
                                 <th>Main/Sub Project</th>
-                                <th>{{'PM' | localize}}</th>
+                                <th style="width: 350px;">{{'PM' | localize}}</th>
                                 <th *ngIf="isShowBillInfo || isShowAccount"> {{isShowBillInfo && isShowAccount ? 'Bill info/Bill account' : isShowBillInfo && !isShowAccount ? 'Bill info' : 'Bill account' }}</th>
 
                                 <th *ngIf="permission.isGranted(Projects_OutsourcingProjects_ViewRequireWeeklyReport)" style="width: 50px;">RequireWR</th>
@@ -180,8 +180,9 @@
                                                 <span>{{project.clientCode}}</span>
                                             </div>
                                         </div>
-                                        <div class="project-type-wrap">
-                                            <span class="sub-main-type">
+                                        <div>
+                                            <span class="sub-main-type" [style.color]="project.isParentInvoiceIdExist ? '#000' : '#dc3545'"
+                                            >
                                                 {{ project.isParentInvoiceIdExist ? "SUB" : "MAIN" }}
                                              </span>
                                             <span [ngClass]=" APP_CONST.ProjectTypeStyle[getByEnum(project.projectType,APP_ENUM.ProjectType)]">
@@ -191,7 +192,9 @@
                                     </div>
                                 </td>
                                 <td style="max-width: 250px; white-space: normal;">
-                                    <div>{{ project.isParentInvoiceIdExist ? "Main Project: " : "Sub Project: "}}</div>
+                                    <strong [style.color]="project.isParentInvoiceIdExist ? '#dc3545' : '#000'"
+                                     style="font-size: 16px;">{{ project.isParentInvoiceIdExist ? "Main " : "Sub "}}</strong>
+                                    <span>of:</span>
                                     <div style="display: flex; justify-content: space-between;">
                                         <div class="sub-main-project-name">
                                             <div>

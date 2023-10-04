@@ -518,10 +518,10 @@
             </div>
         </div>
     </mat-drawer>
-    <div class="row pt-3 pr-3 ml-2" style="position: relative;" 
+    <div class="row pt-3 pr-3 ml-2 w-100 pl-2" style="position: relative;" 
         *ngIf="permission.isGranted(WeeklyReport_ReportDetail_View)" #tref>
-        <div id="right-content" [ngClass]="sidebarExpanded?'expand-content':''" style="width: 100%;">
-            <section class="content ">
+        <div id="right-content" style="width: 100%;">
+            <section class="content w-100">
                 <div class="row justify-content-start flex-nowrap">
                     <div class="position-relative mr-2" style="border-right: none; width: 100%;">
                         <div class="px-4 pb-2 pt-2 card position-relative"

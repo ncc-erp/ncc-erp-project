@@ -71,7 +71,6 @@ namespace ProjectManagement.Services.ResourceRequestService
                             IsRecruitmentSend = request.IsRecruitmentSend,
                             ProjectName = request.Project.Name,
                             ProjectId = request.ProjectId,
-                            //ProjectType = request.Project.ProjectType,
                             ProjectType = null,
                             ProjectStatus = request.Project.Status,
 

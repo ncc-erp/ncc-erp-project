@@ -85,7 +85,6 @@ export class CreateUpdateResourceRequestComponent extends AppComponentBase imple
     return data && data ? data : '';
   }
 
-
   ngAfterViewChecked(): void {
     //Called after every check of the component's view. Applies to components only.
     //Add 'implements AfterViewChecked' to the class.
@@ -116,10 +115,9 @@ export class CreateUpdateResourceRequestComponent extends AppComponentBase imple
       priority: this.resourceRequestDto.priority,
       id: this.resourceRequestDto.id,
       skillIds: this.resourceRequestDto.skillIds,
-      isNewBillAccount:this.resourceRequestDto.isNewBillAccount,
-      code:this.myControl.value
+      isNewBillAccount: this.resourceRequestDto.isNewBillAccount,
+      code: this.myControl.value
     }
-    console.log(this.myControl.value)
 
     if (this.data.command == "create") {
       request.id = 0

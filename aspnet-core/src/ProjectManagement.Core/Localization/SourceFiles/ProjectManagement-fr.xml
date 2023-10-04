@@ -118,5 +118,18 @@
 	  <text name="ResetPasswordStepOneInfo">1. Nhập mật khẩu quản trị viên của bạn</text>
 	  <text name="ResetPasswordStepTwoInfo">2. Sao chép mật khẩu ngẫu nhiên này để bạn có thể gửi cho người dùng</text>
 	  <!--/Default Abp-->
+
+    <!--Filter Component-->
+    <text name="Equal">Bằng</text>
+    <text name="Smaller">Nhỏ hơn</text>
+    <text name="Smaller_or_Equal">Nhỏ hơn hoặc bằng</text>
+    <text name="Bigger">Lớn hơn</text>
+    <text name="Bigger_or_Equal">Lớn hơn hoặc bằng</text>
+    <text name="Not_Equal">Không bằng</text>
+    <text name="Contains">Chứa</text>
+    <text name="Start_With">Bắt đầu với</text>
+    <text name="End_With">Kết thúc với</text>
+    <text name="In">Trong</text>
+    <!--/Filter Component-->
   </texts>
 </localizationDictionary>

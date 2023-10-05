@@ -562,19 +562,6 @@
                     </div>
                   </div>
                 </td>
-                <!-- <td class="text-center">
-            
-                  <br />
-                  <span *ngIf="item.statusName == 'DONE'">{{
-                    item.timeDone | date: "dd/MM/yyyy"
-                  }}</span>
-                  <br>
-                  <span *ngIf="item.isRecruitmentSend== true"
-                        (click)="viewRecruitment(item.recruitmentUrl)"
-                        class="tl-link">
-                    #{{sliceUrl(item.recruitmentUrl)}}
-                  </span>
-                </td> -->
                 <td class="text-center action-request-resource-tab">
                   <button
                     mat-button
@@ -655,6 +642,11 @@
                       </button>
                     </div>
                   </mat-menu>
+                  <span *ngIf="item.isRecruitmentSend== true"
+                      (click)="viewRecruitment(item.recruitmentUrl)"
+                      class="tl-link">
+                      #{{sliceUrl(item.recruitmentUrl)}}
+                  </span>
                 </td>
               </tr>
             </tbody>

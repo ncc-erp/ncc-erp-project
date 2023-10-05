@@ -192,8 +192,8 @@
                                     </div>
                                 </td>
                                 <td style="max-width: 250px; white-space: normal;">
-                                    <strong [style.color]="project.isParentInvoiceIdExist ? '#dc3545' : '#000'"
-                                     style="font-size: 16px;">{{ project.isParentInvoiceIdExist ? "Main " : "Sub "}}</strong>
+                                    <strong [style.color]="!project.isParentInvoiceIdExist ? '#dc3545' : '#000'"
+                                     style="font-size: 16px;">{{ !project.isParentInvoiceIdExist ? "Main " : "Sub "}}</strong>
                                     <span>of:</span>
                                     <div style="display: flex; justify-content: space-between;">
                                         <div class="sub-main-project-name">

@@ -9,7 +9,7 @@ using static ProjectManagement.Constants.Enum.ProjectEnum;
 
 namespace ProjectManagement.APIs.PMReportProjects.Dto
 {
-    public class GetProjectUserBillDto : EntityDto<long>
+    public class ProjectUserBillDto : EntityDto<long>
     {
         public long UserId { get; set; }
         [ApplySearchAttribute]

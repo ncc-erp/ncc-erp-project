@@ -167,7 +167,7 @@ namespace ProjectManagement.APIs.PMReportProjects
                                     AutomationNote = x.AutomationNote,
                                     ProjectUserBills = (from pub in projectUserBill
                                                         where pub.ProjectId == x.ProjectId
-                                                        select new GetProjectUserBillDto
+                                                        select new ProjectUserBillDto
                                                         {
                                                             Id = pub.Id,
                                                             UserId = pub.UserId,

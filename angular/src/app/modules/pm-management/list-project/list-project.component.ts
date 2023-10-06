@@ -223,6 +223,9 @@ export class ListProjectComponent extends PagedListingComponentBase<any> impleme
   }
 
   public searchProject(){
+    if (this.isEnablePMFilter() && this.searchText != ""){
+      this.pmId = -1;
+    }
     this.getDataPage(1);
   }
 

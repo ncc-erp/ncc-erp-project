@@ -23,6 +23,7 @@ import { ProjectDescriptionPopupComponent } from './project-description-popup/pr
 import { FormCvUserComponent } from './form-cv-user/form-cv-user.component';
 import { ListProjectService } from '@app/service/api/list-project.service';
 import { DescriptionPopupComponent } from './description-popup/description-popup.component';
+import { UpdateUserSkillDialogComponent } from '@app/users/update-user-skill-dialog/update-user-skill-dialog.component';
 
 @Component({
   selector: 'app-request-resource-tab',
@@ -267,6 +268,25 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
     this.isShowModal = 'none'
   }
 
+  openPopupSkill() {
+    let ref = this.dialog.open(UpdateUserSkillDialogComponent, {
+      width: "700px",
+      data: {
+        isUpdate: false,
+        userSkills: [],
+        id: 5,
+        fullName: 'sdf',
+        note: 'sdf'
+      }
+
+    });
+    ref.afterClosed().subscribe(rs => {
+      if (rs) {
+        this.refresh()
+      }
+    })
+  }
+  
   public updateNote() {
     let request = {
       resourceRequestId: this.resourceRequestId,

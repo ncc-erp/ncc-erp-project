@@ -1,8 +1,8 @@
-<div style="width : 300px;">
+<div [style]="isSmallerDiv? 'width: 230px;': 'width: 300px'">
     <div class="row w-100">
 
         <div class="d-flex w-100">
-            <div class="col-3 text-center">
+            <div [class] = "isChangeContentSize? 'col-2 text-center': 'col-3 text-center'">
                 <img [src]="getAvatar(user)" class="rounded-circle  mt-1" [style]="isWeeklyReport? 'max-width: 67%;':'max-width: 100%;'"
                     alt="avatar">
                 <!-- <ngx-stars style="z-index: 1 !important; margin-top: 10px;" [readonly]="true" [wholeStars]="true"
@@ -15,7 +15,7 @@
                     [maxStars]="1" [initialStars]="1" [readonly]="true"></ngx-stars>
                 </div>
             </div>
-            <div class="col-9  text-left">
+            <div [class] = "isChangeContentSize? 'col-10  text-left': 'col-9  text-left'">
                 <p class="m-0"><strong>{{user?.fullName}}</strong>&nbsp; <span style="font-weight: 600;" [ngClass]="isPool ? 'text-secondary' : 'text-primary'">{{workType}}</span></p>
                 <p class="m-0 text-left">
                     <span *ngIf="user.branchDisplayName" class="mr-1 badge badge-pill text-white" [style.backgroundColor]="user.branchColor">
@@ -28,7 +28,7 @@
                     <span *ngIf="user.userLevel || user.userLevel == 0" class="ml-1 badge text-white" [ngStyle]="getUserLevel().style">{{getUserLevel().userLevel}}
                     </span>
                 </p>
-                <p class="m-0"><span>{{user?.emailAddress}}</span></p>
+                <p *ngIf="!isHideEmail" class="m-0"><span>{{user?.emailAddress}}</span></p>
             </div>
         </div>
     </div>

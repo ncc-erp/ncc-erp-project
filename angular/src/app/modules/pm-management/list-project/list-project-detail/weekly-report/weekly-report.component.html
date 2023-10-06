@@ -496,16 +496,12 @@
             <div class="card" id="current-resource"
                 *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_CurrentResource_View)">
                 <mat-expansion-panel [expanded]="isShowCurrentResource">
-                    <mat-expansion-panel-header class="m-0" #resource
-                        (click)="isShowCurrentResource=!isShowCurrentResource">
+                    <mat-expansion-panel-header class="m-0" #resource (click)="isShowCurrentResource=!isShowCurrentResource">
                         <mat-panel-title class="align-items-baseline justify-content-between">
                             <div>
-                                <strong style="font-size: 20px;">Current Resource</strong> &nbsp;
-                            <strong style="font-size: 20px;"
-                                class="text-danger">({{projectCurrentResource?.length}})</strong> &nbsp;&nbsp;&nbsp;&nbsp;
-                            <strong style="font-size: 20px;">Charged accounts</strong> &nbsp;
-                            <strong style="font-size: 20px;"
-                                class="text-danger">({{projectInfo.totalBill || 0}})</strong>
+                                <strong style="font-size: 20px;">Current Resources</strong> &nbsp;
+                                <strong style="font-size: 20px;" class="text-danger">({{projectCurrentResource?.length}})</strong>
+                                &nbsp;&nbsp;&nbsp;&nbsp;
                             </div>
                             <mat-checkbox [(ngModel)]="checkViewSubject" (change)="handleViewSubject()"
                                 (click)="$event.stopPropagation()">
@@ -513,104 +509,189 @@
                             </mat-checkbox>
                         </mat-panel-title>
                     </mat-expansion-panel-header>
-                <div class="card-body">
-                    <div class="fixTableHead" style="max-height: 46vh;">
-                        <table name="tbl-currentResource" class="table table-hover ">
-                            <thead>
-                                <tr>
-                                    <th style="vertical-align: middle;">Employee</th>
-                                    <th style=" vertical-align: middle;" class="col-4">Note</th>
-                                    <th style="width: 80px;">
-                                        Normal
-                                        <div [matTooltip]='normalTime'>
-                                            <strong>({{totalNormalWorkingTime}}h</strong> /
-                                            <strong>{{totalNormalWorkingTimeOfWeekly}}h</strong>/
-                                            <strong>{{totalNormalWorkingTimeStandard}}h)</strong>
-                                        </div>
-                                    </th>
-                                    <th style="width: 80px; white-space: nowrap;">OT
-                                        <div
-                                            [matTooltip]='otTime'>
-                                            (
-                                            <strong [ngClass]="overTimeNoCharge>0?'text-warning':''"
-                                                style="font-size: 14px;">{{overTimeNoCharge}}h
-                                            </strong>/
-                                            <strong [ngClass]="totalOverTime>0?'text-danger':''"
-                                                style="font-size: 14px;">{{totalOverTime}}h
-                                            </strong>
-                                            )
-                                        </div>
-                                    </th>
-                                    <!-- <th style="width: 50px;">Action</th> -->
-                                    <th style="vertical-align: middle;">Timesheet</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr *ngFor="let user of projectCurrentResource; let i =index">
-                                    <td class="d-flex justify-content-between" style="border: none;">
-                                        <div style="width: 80%;">
-                                            <app-user-info [userData]="user" [isWeeklyReport]="true" [workType]="user.workType">
-                                            </app-user-info>
-                                        </div>
-                                        <div style="visibility: hidden; position: fixed"
-                                            [style.left]="contextMenuPosition.x" [style.top]="contextMenuPosition.y"
-                                            [matMenuTriggerFor]="menu">
-                                        </div>
-                                        <button mat-icon-button [matMenuTriggerFor]="menu" style="display: none;">
-                                        </button>
-                                        <mat-menu #menu="matMenu">
-                                            <button
-                                                *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_CurrentResource_Release)"
-                                                [disabled]="projectUserProcess" class="mat-menu-item  w-100"
-                                                (click)="releaseUser(user)">
-                                                <i class="fas fa-sign-out-alt mr-1"></i>Release</button>
-                                        </mat-menu>
-                                    </td>
-                                    <td class="text-center" style="white-space: break-spaces;">
-                                        <span class="d-flex align-items-center justify-content-between">
-                                            <p PrjResizeContent [collapseLine]="2" style="flex: 1;"
-                                                class="mb-0 p-0  ml-2 max-line-content-2">{{user.note}}
-                                            </p>
-                                            <i style="color: #585858;" class="fas fa-ellipsis-v ml-1"
-                                                [matMenuTriggerFor]="menu3"></i>
-                                            <mat-menu #menu3="matMenu">
-                                                <button class="mat-menu-item  w-100"
-                                                *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_CurrentResource_Update_Note)"
-                                                    (click)="editResoureNote(user)">
-                                                    <i class="fas fa-edit mr-2 fa-lg"></i>
-                                                    Edit
-                                                </button>
+                    <div class="card-body pt-0">
+                        <div class="fixTableHead" style="max-height: 46vh;">
+                            <table name="tbl-currentResource" class="table table-hover ">
+                                <thead>
+                                    <tr>
+                                        <th style="vertical-align: middle;">Employee</th>
+                                        <th style=" vertical-align: middle;" class="col-4">Note</th>
+                                        <th style="width: 80px;">
+                                            Normal
+                                            <div [matTooltip]='normalTime'>
+                                                <strong>({{totalNormalWorkingTime}}h</strong> /
+                                                <strong>{{totalNormalWorkingTimeOfWeekly}}h</strong>/
+                                                <strong>{{totalNormalWorkingTimeStandard}}h)</strong>
+                                            </div>
+                                        </th>
+                                        <th style="width: 80px; white-space: nowrap;">OT
+                                            <div [matTooltip]='otTime'>
+                                                (
+                                                <strong [ngClass]="overTimeNoCharge>0?'text-warning':''"
+                                                    style="font-size: 14px;">{{overTimeNoCharge}}h
+                                                </strong>/
+                                                <strong [ngClass]="totalOverTime>0?'text-danger':''"
+                                                    style="font-size: 14px;">{{totalOverTime}}h
+                                                </strong>
+                                                )
+                                            </div>
+                                        </th>
+                                        <!-- <th style="width: 50px;">Action</th> -->
+                                        <th style="vertical-align: middle;">Timesheet</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let user of projectCurrentResource; let i =index">
+                                        <td class="d-flex justify-content-between" style="border: none;">
+                                            <div style="width: 80%;">
+                                                <app-user-info [userData]="user" [isWeeklyReport]="true" [workType]="user.workType">
+                                                </app-user-info>
+                                            </div>
+                                            <div style="visibility: hidden; position: fixed" [style.left]="contextMenuPosition.x"
+                                                [style.top]="contextMenuPosition.y" [matMenuTriggerFor]="menu">
+                                            </div>
+                                            <button mat-icon-button [matMenuTriggerFor]="menu" style="display: none;">
+                                            </button>
+                                            <mat-menu #menu="matMenu">
+                                                <button
+                                                    *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_CurrentResource_Release)"
+                                                    [disabled]="projectUserProcess" class="mat-menu-item  w-100"
+                                                    (click)="releaseUser(user)">
+                                                    <i class="fas fa-sign-out-alt mr-1"></i>Release</button>
                                             </mat-menu>
-                                        </span>
-                                    </td>
-                                    <td class="text-center">
-                                        <div [matTooltip]="user.normalWorkingTime + 'h of project'
-                                                + ' / ' + user.normalWorkingTimeAll + 'h all'
-                                                + ' / ' + user.normalWorkingTimeStandard + 'h standard'">
-                                            <strong>{{user?.normalWorkingTime}}</strong> /
-                                            <strong
-                                                [ngClass]="(user.normalWorkingTimeAll <= user.normalWorkingTimeStandard)?'':'time-over'">{{user?.normalWorkingTimeAll}}</strong>
-                                            /
-                                            <strong>{{user?.normalWorkingTimeStandard}}</strong>
-                                        </div>
-                                    </td>
-                                    <td class="text-center">
-                                        <div
-                                            [matTooltip]="user.overTimeNoCharge + 'h OT NoCharge' + ' / ' + user.overTime + 'h OT'">
-                                            <strong
-                                                [ngClass]="user.overTimeNoCharge>0?'text-warning': ''">{{user.overTimeNoCharge}}</strong>/<strong
-                                                [ngClass]="user.overTime>0?'text-danger': ''">{{user.overTime}}</strong>
-                                        </div>
-                                    </td>
-                                    <td style="text-align: -webkit-center;">
-                                        <div style="width: 200px; height: 60px;" [id]="'user' + user.userId">
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                                        </td>
+                                        <td style="white-space: break-spaces;">
+                                            <span class="d-flex align-items-center justify-content-between">
+                                                <p PrjResizeContent [collapseLine]="2" style="flex: 1;"
+                                                    class="mb-0 p-0  ml-2 max-line-content-2">{{user.note}}
+                                                </p>
+                                                <i style="color: #585858;" class="fas fa-ellipsis-v ml-1"
+                                                    [matMenuTriggerFor]="menu3"></i>
+                                                <mat-menu #menu3="matMenu">
+                                                    <button class="mat-menu-item  w-100"
+                                                        *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_CurrentResource_Update_Note)"
+                                                        (click)="editResoureNote(user)">
+                                                        <i class="fas fa-edit mr-2 fa-lg"></i>
+                                                        Edit
+                                                    </button>
+                                                </mat-menu>
+                                            </span>
+                                        </td>
+                                        <td class="text-center">
+                                            <div [matTooltip]="user.normalWorkingTime + 'h of project'
+                                                                        + ' / ' + user.normalWorkingTimeAll + 'h all'
+                                                                        + ' / ' + user.normalWorkingTimeStandard + 'h standard'">
+                                                <strong>{{user?.normalWorkingTime}}</strong> /
+                                                <strong
+                                                    [ngClass]="(user.normalWorkingTimeAll <= user.normalWorkingTimeStandard)?'':'time-over'">{{user?.normalWorkingTimeAll}}</strong>
+                                                /
+                                                <strong>{{user?.normalWorkingTimeStandard}}</strong>
+                                            </div>
+                                        </td>
+                                        <td class="text-center">
+                                            <div
+                                                [matTooltip]="user.overTimeNoCharge + 'h OT NoCharge' + ' / ' + user.overTime + 'h OT'">
+                                                <strong
+                                                    [ngClass]="user.overTimeNoCharge>0?'text-warning': ''">{{user.overTimeNoCharge}}</strong>/<strong
+                                                    [ngClass]="user.overTime>0?'text-danger': ''">{{user.overTime}}</strong>
+                                            </div>
+                                        </td>
+                                        <td style="text-align: -webkit-center;">
+                                            <div style="width: 200px; height: 60px;" [id]="'user' + user.userId">
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
+                </mat-expansion-panel>
+            </div>
+
+            <div class="card" id="charge-account"
+                *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_BillAccount_View)">
+                <mat-expansion-panel [expanded]="isShowChargeAccount">
+                    <mat-expansion-panel-header class="m-0" #resource (click)="isShowChargeAccount=!isShowChargeAccount">
+                        <mat-panel-title class="align-items-baseline justify-content-between d-flex align-items-center">
+                            <div>
+                                <strong style="font-size: 20px;"> Bill Accounts</strong>&nbsp;
+                                <strong style="font-size: 20px;" class="text-danger">({{projectInfo.totalBill || 0}})</strong>
+                            </div>
+
+                        </mat-panel-title>
+                    </mat-expansion-panel-header>
+                    <div class="card-body pt-0">
+                        <div class="fixTableHead" style="max-height: 46vh;">
+                            <table name="tbl-currentResource" class="table table-hover ">
+                                <thead>
+                                    <tr>
+                                        <th style="vertical-align: middle;">Employee</th>
+                                        <th style="vertical-align: middle;">Charge Name</th>
+                                        <th style="vertical-align: middle;">Charge Role</th>
+                                        <th style="vertical-align: middle;">Start Date</th>
+                                        <th style="vertical-align: middle;">End Date</th>
+                                        <th style="vertical-align: middle;">Note</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let user of projectInfo.projectUserBills; let i =index">
+                                        <td class="d-flex justify-content-between" style="border: none;">
+                                            <div style="width: 80%;">
+                                                <app-user-info [userData]="user" [isWeeklyReport]="true" [workType]="user.workType">
+                                                </app-user-info>
+                                            </div>
+                                            <div style="visibility: hidden; position: fixed" [style.left]="contextMenuPosition.x"
+                                                [style.top]="contextMenuPosition.y" [matMenuTriggerFor]="menu">
+                                            </div>
+                                            <button mat-icon-button [matMenuTriggerFor]="menu" style="display: none;">
+                                            </button>
+                                            <mat-menu #menu="matMenu">
+                                                <button
+                                                    *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_CurrentResource_Release)"
+                                                    [disabled]="projectUserProcess" class="mat-menu-item  w-100"
+                                                    (click)="releaseUser(user)">
+                                                    <i class="fas fa-sign-out-alt mr-1"></i>Release</button>
+                                            </mat-menu>
+                                        </td>
+                                        <td class="text-center" style="white-space: break-spaces;">
+                                            <span class="d-flex align-items-center justify-content-between">
+                                                <p PrjResizeContent [collapseLine]="2" style="flex: 1;"
+                                                    class="mb-0 p-0  ml-2 max-line-content-2">{{user.billAccountName}}
+                                                </p>
+                                            </span>
+                                        </td>
+                                        <td class="text-center" style="white-space: break-spaces;">
+                                            <span class="d-flex align-items-center justify-content-between">
+                                                <p PrjResizeContent [collapseLine]="2" style="flex: 1;"
+                                                    class="mb-0 p-0  ml-2 max-line-content-2">{{user.billRole}}</p>
+                                            </span>
+                                        </td>
+                                        <td class="text-center" style="white-space: break-spaces;">
+                                            <span class="d-flex align-items-center justify-content-between">
+                                                <p PrjResizeContent [collapseLine]="2" style="flex: 1;"
+                                                    class="mb-0 p-0  ml-2 max-line-content-2">{{user.startTime
+                                                    |date:"dd/MM/yyyy"}}</p>
+                                            </span>
+                                        </td>
+                                        <td class="text-center" style="white-space: break-spaces;">
+                                            <span class="d-flex align-items-center justify-content-between">
+                                                <p PrjResizeContent [collapseLine]="2" style="flex: 1;"
+                                                    class="mb-0 p-0  ml-2 max-line-content-2">{{user.endTime
+                                                    |date:"dd/MM/yyyy"}}</p>
+                                            </span>
+                                        </td>
+                                        <td style="white-space: break-spaces;">
+                                            <span class="d-flex align-items-center justify-content-between">
+                                                <p PrjResizeContent [collapseLine]="2" style="flex: 1;"
+                                                    class="mb-0 p-0  ml-2 max-line-content-2">{{user.note}}
+                                                </p>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </mat-expansion-panel>
             </div>
 

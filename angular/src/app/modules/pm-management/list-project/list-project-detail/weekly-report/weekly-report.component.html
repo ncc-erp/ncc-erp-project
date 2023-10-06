@@ -401,7 +401,7 @@
                     </mat-expansion-panel-header>
                     <div class="px-4 fixTableHead" style="max-height: 46vh;">
                         <table style="border-collapse: collapse;" class="table table-hover">
-                            <thead class="bg-light">
+                            <thead class="bg-light" style="z-index: 1;">
                                 <tr>
                                     <th style="width: 40px;"> #</th>
                                     <th>Risks</th>
@@ -499,7 +499,7 @@
                     <mat-expansion-panel-header class="m-0" #resource (click)="isShowCurrentResource=!isShowCurrentResource">
                         <mat-panel-title class="align-items-baseline justify-content-between">
                             <div>
-                                <strong style="font-size: 20px;">Current Resources</strong> &nbsp;
+                                <strong style="font-size: 20px;">Current resources</strong> &nbsp;
                                 <strong style="font-size: 20px;" class="text-danger">({{projectCurrentResource?.length}})</strong>
                                 &nbsp;&nbsp;&nbsp;&nbsp;
                             </div>
@@ -512,7 +512,7 @@
                     <div class="card-body pt-0">
                         <div class="fixTableHead" style="max-height: 46vh;">
                             <table name="tbl-currentResource" class="table table-hover ">
-                                <thead>
+                                <thead style="z-index: 1;">
                                     <tr>
                                         <th style="vertical-align: middle;">Employee</th>
                                         <th style=" vertical-align: middle;" class="col-4">Note</th>
@@ -614,7 +614,7 @@
                     <mat-expansion-panel-header class="m-0" #resource (click)="isShowChargeAccount=!isShowChargeAccount">
                         <mat-panel-title class="align-items-baseline justify-content-between d-flex align-items-center">
                             <div>
-                                <strong style="font-size: 20px;"> Bill Accounts</strong>&nbsp;
+                                <strong style="font-size: 20px;"> Bill accounts</strong>&nbsp;
                                 <strong style="font-size: 20px;" class="text-danger">({{projectInfo.totalBill || 0}})</strong>
                             </div>
 
@@ -623,7 +623,7 @@
                     <div class="card-body pt-0">
                         <div class="fixTableHead" style="max-height: 46vh;">
                             <table name="tbl-currentResource" class="table table-hover ">
-                                <thead>
+                                <thead style="z-index: 1;">
                                     <tr>
                                         <th style="vertical-align: middle;">Employee</th>
                                         <th style="vertical-align: middle;">Charge Name</th>
@@ -738,7 +738,7 @@
                                     </mat-expansion-panel-header>
                                     <div class="px-4 pb-4 fixTableHead" style="max-height:46vh">
                                         <table style="border-collapse: collapse;" class="table table-hover text-nowrap">
-                                            <thead class="bg-light">
+                                            <thead class="bg-light" style="z-index: 1;">
                                                 <tr>
                                                     <th>Employee</th>
                                                     <th>Role</th>
@@ -902,7 +902,7 @@
                                     </mat-expansion-panel-header>
                                     <div class="px-4 pb-4 fixTableHead" style="max-height:46vh">
                                         <table style="border-collapse: collapse;" class="table table-hover text-nowrap">
-                                            <thead class="bg-light">
+                                            <thead class="bg-light" style="z-index: 1;">
                                                 <tr>
                                                     <th>Employee</th>
                                                     <th style="width: 80px;">Role</th>

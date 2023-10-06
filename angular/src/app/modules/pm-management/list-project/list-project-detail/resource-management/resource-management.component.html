@@ -36,13 +36,13 @@
                             <thead class="bg-light">
                                 <tr>
                                     <th class="stt">#</th>
-                                    <th>Employee</th>
-                                    <th style="width: 150px;">Note</th>
-                                    <th>Skills</th>
-                                    <th style="width: 150px;">Role</th>
-                                    <th style="width: 150px;">Start time</th>
-                                    <th style="width: 150px;">Work type</th>
-                                    <th style="width: 120px;">Actions</th>
+                                    <th style="width: 340px;">Employee</th>
+                                    <th style="width: 600px;">Note</th>
+                                    <th style="width: 60px;">Skills</th>
+                                    <th style="width: 90px;">Role</th>
+                                    <th style="width: 90px;">Start time</th>
+                                    <th style="width: 90px;">Work type</th>
+                                    <th style="width: 60px;">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -92,8 +92,8 @@
                                             </mat-error>
                                         </div>
                                     </td>
-                                    <td class="text-center">
-                                        <div class="d-flex align-items-center justify-content-between">
+                                    <td style="text-align: start;">
+                                        <div class="d-flex align-items-center">
                                             <p PrjResizeContent [collapseLine]="1" style="flex: 1;"
                                                 class="mb-0 p-0  ml-2 max-line-content-1">{{user.note}}
                                             </p>
@@ -110,16 +110,16 @@
                                     </td>
                                     <td style="vertical-align: middle;"> <span
                                             style="white-space: normal; max-width: 200px">
-                                            <div class="d-flex " style="align-items: center;">
+                                            <div class="d-flex">
                                                 <div style="width: 90%; text-align: left;">
-                                                    <p class="m-0" *ngFor="let item of user.userSkills">
+                                                    <p class="m-0 mr-1" *ngFor="let item of user.userSkills">
                                                         - {{item.skillName}}
                                                     </p>
                                                 </div>
                                                 <div style="width: 10%; text-align: right;"
                                                     *ngIf="!(user.workingStatus == APP_ENUM.ProjectUserStatus.Past
                                                 || (user.workingStatus == APP_ENUM.ProjectUserStatus.Present && user.allocatePercentage == 0))">
-                                                    <i class="fas fa-edit" (click)="updateUserSkill(user)"
+                                                    <i class="fas fa-edit ml-1" (click)="updateUserSkill(user)"
                                                         *ngIf="!user.createMode && !user.editMode && permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserSkill)"
                                                         matTooltip="Edit skill"></i>
                                                 </div>
@@ -214,10 +214,10 @@
                                             </mat-menu>
 
                                         </div>
-                                        <div *ngIf="user.createMode || user.editMode" class="pt-2">
+                                        <div *ngIf="user.createMode || user.editMode" class="pt-2 d-flex flex-baseline align-items-center">
                                             <button
                                                 [disabled]="!(user?.userId || user.userInfo )|| (!user?.projectRole && user?.projectRole != 0)|| !user?.startTime "
-                                                class=" mr-3 submit-btn" style="background: none; border: none;"
+                                                class="submit-btn" style="background: none; border: none;"
                                                 (click)="saveProjectUser(user)">
                                                 <i style="color: green; ;" class="fas fa-check fa-2x"></i>
                                             </button>
@@ -230,7 +230,7 @@
                         </table>
                     </div>
                 </div>
-                <div class="card-footer bg-light border-top">
+                <div class="card-footer bg-light border-top" style="height: 50px;">
                     <div class="row" style="justify-content: space-between;">
                         <div class="col-5 text-sm-left text-center">
                             <mat-form-field style="width: 20%;margin-left: 30px;">
@@ -294,14 +294,14 @@
                             <thead class="bg-light">
                                 <tr>
                                     <th class="stt">#</th>
-                                    <th>Employee</th>
+                                    <th style="width: 340px;">Employee</th>
                                     <th style="width: 200px;">Skill</th>
-                                    <th style="width: 130px;">Role</th>
-                                    <th style="width: 130px;">Start time</th>
-                                    <th style="width: 110px;">Work type</th>
-                                    <th style="width: 110px;">Join/Out</th>
-                                    <th style="width: 260px;">Note</th>
-                                    <th style="width: 120px;">Actions</th>
+                                    <th style="width: 90px;">Role</th>
+                                    <th style="width: 90px;">Start time</th>
+                                    <th style="width: 90px;">Work type</th>
+                                    <th style="width: 90px;">Join/Out</th>
+                                    <th style="width: 600px;">Note</th>
+                                    <th style="width: 90px;">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -505,14 +505,6 @@
                     (pageChange)="plannedResourceCurrentPage = $event">
                 </pagination-controls>
             </mat-expansion-panel>
-
-
-
-
-
-
-
-
         </div>
     </div>
 

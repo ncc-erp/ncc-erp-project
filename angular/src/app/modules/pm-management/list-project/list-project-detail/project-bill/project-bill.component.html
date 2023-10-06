@@ -123,8 +123,8 @@
                                     <th>Charge Type</th>
                                     <th>Start charge</th>
                                     <th>End charge</th>
-                                    <th>Is Charge</th>
-                                    <th>Note</th>
+                                    <th style="width:20px;">Is Charge</th>
+                                    <th style="width:300px;">Note</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -141,12 +141,12 @@
                                     </td>
                                     <td class="text-left" style="min-width: 250px;">
                                         <span *ngIf="!bill.createMode">
-                                            <app-user-info [userData]="bill">
+                                            <app-user-info [userData]="bill" [isSmallerDiv]="true">
                                             </app-user-info>
                                         </span>
                                         <div *ngIf="bill.createMode">
 
-                                            <mat-form-field class="w-100" appearance="outline">
+                                            <mat-form-field style="width: 200px" class="w-100" appearance="outline">
                                                 <mat-select (closed)="focusOut()" [(ngModel)]="bill.userId"
                                                     name="userBill" placeholder="select an user *" required
                                                     #userBill="ngModel">
@@ -175,7 +175,7 @@
 
                                         <div *ngIf="bill.createMode">
 
-                                            <input style="min-width: 120px;" class="form-control mt-1"
+                                            <input style="min-width: 100px;" class="form-control mt-1"
                                                 #accountName="ngModel" #accountNameEl type="text"
                                                 placeholder="Charge Name" name="accountName"
                                                 [(ngModel)]="bill.accountName" [value]="bill.billAccountName"/>
@@ -190,7 +190,7 @@
 
                                         <div *ngIf="bill.createMode">
 
-                                            <input style="min-width: 75px;" required class="form-control mt-1"
+                                            <input style="min-width: 60px;" required class="form-control mt-1"
                                                 #billRole="ngModel" #billRoleEl type="text" placeholder="Charge role *"
                                                 name="billRole" [(ngModel)]="bill.billRole" />
 
@@ -203,7 +203,12 @@
                                         <div class="d-flex align-items-start justify-content-end">
                                             <div class="d-flex" style="flex-direction: column;">
                                                 <div *ngFor="let resource of bill.linkedResources" class="mb-2">
-                                                    <app-user-info [userData]="resource">
+                                                    <app-user-info
+                                                        [userData]="resource"
+                                                        [isHideEmail] = "true"
+                                                        [isWeeklyReport] = "false"
+                                                        [isSmallerDiv]="true"
+                                                        [isChangeContentSize]="true">
                                                     </app-user-info>
                                                 </div>
                                             </div>
@@ -218,7 +223,7 @@
                                             number:'1.0':'en-US'}}
                                         </span>
                                         <div *ngIf="bill.createMode">
-                                            <input style="min-width: 75px;" required class="form-control mt-1"
+                                            <input style="min-width: 50px;" required class="form-control mt-1"
                                                 #billRate="ngModel" #billRateEl type="text" mask="separator"
                                                 thousandSeparator="." placeholder="number *"
                                                 [(ngModel)]="bill.billRate">
@@ -282,7 +287,7 @@
                                     </td>
                                     <td style="white-space: pre-line;
                                                 word-break: break-all;
-                                                min-width: 125px;
+                                                min-width: 30px;
                                                 text-align: left;">
                                         <div class="d-flex" style="align-items: center">
                                             <div style="width: 90%">
@@ -310,19 +315,15 @@
                                                 [disabled]="userBillProcess" class="btn btn-sm bg-danger ml-1"
                                                 (click)="removeUserBill(bill)"><i
                                                     class="fas fa-trash"></i>delete</button>
-
-
                                         </div>
-                                        <div *ngIf="bill.createMode" class="pt-1">
 
+                                        <div *ngIf="bill.createMode" class="pt-1">
                                             <button
                                                 [disabled]="!bill?.userId || !bill?.billRole || !bill?.startTime  || bill?.billRate<0 || !bill?.billRate "
                                                 class=" mr-3 submit-btn" style="background: none; border: none;"
                                                 (click)="saveUserBill(bill)">
                                                 <i style="color: green;" class="fas fa-check fa-2x "></i>
                                             </button>
-
-
                                             <i style="color: red;" class="fas fa-times fa-2x"
                                                 (click)="cancelUserBill()"></i>
                                         </div>
@@ -330,9 +331,9 @@
                                 </tr>
                             </tbody>
                         </table>
-                
+
                 </div>
-                <div class="card-footer bg-light border-top">
+                <div class="card-footer bg-light border-top" style="height: 60px;">
                     <div class="row" style="justify-content: space-between;">
                         <div class="col-5 text-sm-left text-center">
                             <mat-form-field style="width: 20%;margin-left: 30px;">

@@ -58,39 +58,6 @@
                       </button>
                     </div>
                   </div>
-                  <div *ngIf="advancedFiltersVisible" class="mb-0 mt-1">
-                    <div class="card-body">
-                      <form class="form-horizontal">
-                        <div class="row">
-                          <div class="col-md-12 col-xl-12">
-                            <div class="mb-0">
-                              <div>
-                                <div
-                                  *ngFor="
-                                    let item of filterItems;
-                                    let i = index
-                                  "
-                                >
-                                  <app-filter
-                                    [item]="item"
-                                    (emitChange)="onEmitChange($event, i)"
-                                    (deleteDataFilter)="deleteFilterItem(i)"
-                                    [inputFilters]="FILTER_CONFIG"
-                                  >
-                                  </app-filter>
-                                </div>
-                                <i
-                                  style="padding: 0"
-                                  class="fas fa-plus-circle ml-3"
-                                  (click)="addFilter()"
-                                ></i>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </form>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
@@ -159,7 +126,7 @@
                                 placeholder="Search"
                                 #search
                               />{{ search.focus() }}
-                            </mat-form-field>        
+                            </mat-form-field>
                               <mat-option [value]="-1">  All  </mat-option>
                               <mat-option  *ngFor="let project of listProject | listFilter: 'name':searchProject" [value]="project.id">
                                 {{ project.name }}
@@ -201,7 +168,7 @@
                                 placeholder="Search"
                                 #search
                               />{{ search.focus() }}
-                            </mat-form-field>        
+                            </mat-form-field>
                               <mat-option [value]="-1">  All  </mat-option>
                               <mat-option  *ngFor="let code of listRequestCode | listFilter: 'code': searchCode" [value]="code.code">
                                 {{ code.code }}
@@ -232,6 +199,40 @@
               </div>
             </div>
           </div>
+          <div class="row">
+            <div *ngIf="advancedFiltersVisible" class="mb-0 mt-1 w-100">
+                <form class="form-horizontal">
+                  <div class="row">
+                    <div class="col-md-12 col-xl-12">
+                      <div class="mb-0">
+                        <div>
+                          <div
+                            *ngFor="
+                              let item of filterItems;
+                              let i = index
+                            "
+                          >
+                            <app-filter
+                              [item]="item"
+                              (emitChange)="onEmitChange($event, i)"
+                              (deleteDataFilter)="deleteFilterItem(i)"
+                              [inputFilters]="FILTER_CONFIG"
+                            >
+                            </app-filter>
+                          </div>
+                          <i
+                            style="padding: 0"
+                            class="fas fa-plus-circle ml-3"
+                            (click)="addFilter()"
+                          ></i>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+
         </div>
 
         <div class="card-body table-responsive pb-4">
@@ -299,16 +300,8 @@
                     >
                       {{ item.priorityName }}
                     </div>
-                    <span class="link mr-1" (click)="showProject(item)"> {{ item.projectName }} </span>
-                    <span
-                      [ngClass]="
-                        APP_CONST.ProjectTypeStyle[
-                          getByEnum(item.projectType, APP_ENUM.ProjectType)
-                        ]
-                      "
-                    >
-                      {{ item.projectTypeName }}
-                    </span>
+                    <span class="link mr-2" (click)="showProject(item)"> {{ item.projectName }} </span>
+                    <span *ngIf="item.isNewBillAccount" style="margin-top: 2px;" class="badge badge-danger">Bill Acc</span>
                     <span
                       *ngIf="item.projectStatus == 'Potential'"
                       [ngClass]="
@@ -563,7 +556,7 @@
                   </div>
                 </td>
                 <!-- <td class="text-center">
-            
+
                   <br />
                   <span *ngIf="item.statusName == 'DONE'">{{
                     item.timeDone | date: "dd/MM/yyyy"
@@ -660,7 +653,7 @@
             </tbody>
           </table>
           </div>
-        
+
           <!-- </div> -->
         </div>
         <div class="card-footer bg-light border-top">

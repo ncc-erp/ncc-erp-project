@@ -21,5 +21,6 @@ namespace ProjectManagement.APIs.ResourceRequests.Dto
         public Priority Priority { get; set; }
         public List<long> SkillIds { get; set; }
         public string Code { get; set; }
+        public bool IsNewBillAccount { get; set; }
     }
 }

@@ -35,8 +35,10 @@ namespace ProjectManagement.APIs.PMReportProjects
         private readonly ResourceManager _resourceManager;
         private readonly PmReportManager _pmReport;
 
-        public PMReportProjectAppService(TimesheetService timesheetService,
-            ResourceManager resourceManager, PmReportManager pmReport)
+        public PMReportProjectAppService(
+            TimesheetService timesheetService,
+            ResourceManager resourceManager, 
+            PmReportManager pmReport)
         {
             _timesheetService = timesheetService;
             _resourceManager = resourceManager;
@@ -150,20 +152,50 @@ namespace ProjectManagement.APIs.PMReportProjects
                 .Where(x => x.isActive);
 
             var query = WorkScope.GetAll<PMReportProject>().Where(x => x.Id == pmReportProjectId)
-                                        .Select(x => new
-                                        {
-                                            ProjectCode = x.Project.Code,
-                                            ProjectName = x.Project.Name,
-                                            ClientName = x.Project.Client.Name,
-                                            ClientCode = x.Project.Client.Code,
-                                            PmName = x.PM.FullName,
-                                            TotalBill = projectUserBill.Where(b => b.ProjectId == x.ProjectId).Count(),
-                                            TotalResource = projectUser.Where(r => r.ProjectId == x.ProjectId).Count(),
-                                            TotalNormalWorkingTime = x.TotalNormalWorkingTime,
-                                            TotalOverTime = x.TotalOverTime,
-                                            PmNote = x.Note,
-                                            AutomationNote = x.AutomationNote
-                                        });
+                                .Select(x => new
+                                {
+                                    ProjectCode = x.Project.Code,
+                                    ProjectName = x.Project.Name,
+                                    ClientName = x.Project.Client.Name,
+                                    ClientCode = x.Project.Client.Code,
+                                    PmName = x.PM.FullName,
+                                    TotalBill = projectUserBill.Where(b => b.ProjectId == x.ProjectId).Count(),
+                                    TotalResource = projectUser.Where(r => r.ProjectId == x.ProjectId).Count(),
+                                    TotalNormalWorkingTime = x.TotalNormalWorkingTime,
+                                    TotalOverTime = x.TotalOverTime,
+                                    PmNote = x.Note,
+                                    AutomationNote = x.AutomationNote,
+                                    ProjectUserBills = (from pub in projectUserBill
+                                                        where pub.ProjectId == x.ProjectId
+                                                        select new ProjectUserBillDto
+                                                        {
+                                                            Id = pub.Id,
+                                                            UserId = pub.UserId,
+                                                            UserName = pub.User.Name,
+                                                            ProjectId = pub.ProjectId,
+                                                            ProjectName = pub.Project.Name,
+                                                            AccountName = pub.AccountName,
+                                                            BillRole = pub.BillRole,
+                                                            StartTime = pub.StartTime.Date,
+                                                            EndTime = pub.EndTime.Value.Date,
+                                                            Note = pub.Note,
+                                                            shadowNote = pub.shadowNote,
+                                                            isActive = pub.isActive,
+                                                            AvatarPath = pub.User.AvatarPath,
+                                                            FullName = pub.User.FullName,
+                                                            Branch = pub.User.BranchOld,
+                                                            BranchColor = pub.User.Branch.Color,
+                                                            BranchDisplayName = pub.User.Branch.DisplayName,
+                                                            PositionId = pub.User.PositionId,
+                                                            PositionName = pub.User.Position.ShortName,
+                                                            PositionColor = pub.User.Position.Color,
+                                                            EmailAddress = pub.User.EmailAddress,
+                                                            UserType = pub.User.UserType,
+                                                            UserLevel = pub.User.UserLevel,
+                                                            ChargeType = pub.ChargeType.HasValue ? pub.ChargeType : pub.Project.ChargeType,
+                                                            CreationTime = pub.CreationTime,
+                                                        }).ToList()
+                                });
 
             return await query.FirstOrDefaultAsync();
         }

@@ -299,6 +299,11 @@ button {
      padding: 0;
  }
 
+ .charge-account th,
+ td {
+     padding: 0;
+ }
+
  .time-over {
      color: darkviolet;
      text-decoration: underline;

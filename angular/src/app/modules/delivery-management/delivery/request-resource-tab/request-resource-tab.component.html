@@ -290,7 +290,7 @@
                 <td class="text-center">
                   <span>{{ i + 1 + pageSize * (pageNumber - 1) }}</span>
                 </td>
-                <td class="text-center" style="min-width: 380px;">
+                <td style="min-width: 380px;">
                   <div class="row" style="align-items: flex-start;justify-content: space-between;">
                     <div class="d-flex align-items-start col-8">
                       <div
@@ -350,7 +350,7 @@
                      - {{ skill.name }}
                     </p>
                 </td>
-                <td class="text-center" style="padding: 12px 4px;width: 100px; ">
+                <td style="padding: 12px 8px;width: 100px; ">
                  <span *ngIf="item.code">{{item.code}}</span>
                 </td>
                 <td style="min-width: 245px; max-width: 245px;">
@@ -428,7 +428,7 @@
                         </p>
                         <p class="m-0">
                           <span *ngIf="item.planUserInfo.employee.branchDisplayName"
-                            class="mr-1 badge badge-pill text-white"
+                            class="mr-1 badge badge text-white"
                             [style.backgroundColor]="
                               item.planUserInfo.employee.branchColor
                             "
@@ -554,19 +554,6 @@
                     </div>
                   </div>
                 </td>
-                <!-- <td class="text-center">
-
-                  <br />
-                  <span *ngIf="item.statusName == 'DONE'">{{
-                    item.timeDone | date: "dd/MM/yyyy"
-                  }}</span>
-                  <br>
-                  <span *ngIf="item.isRecruitmentSend== true"
-                        (click)="viewRecruitment(item.recruitmentUrl)"
-                        class="tl-link">
-                    #{{sliceUrl(item.recruitmentUrl)}}
-                  </span>
-                </td> -->
                 <td class="text-center action-request-resource-tab">
                   <button
                     mat-button
@@ -647,6 +634,11 @@
                       </button>
                     </div>
                   </mat-menu>
+                  <span *ngIf="item.isRecruitmentSend== true"
+                        (click)="viewRecruitment(item.recruitmentUrl)"
+                        class="tl-link">
+                    #{{sliceUrl(item.recruitmentUrl)}}
+                  </span>
                 </td>
               </tr>
             </tbody>

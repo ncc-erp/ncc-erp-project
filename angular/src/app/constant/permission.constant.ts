@@ -176,6 +176,9 @@ export const PERMISSIONS_CONSTANT = {
        Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_CurrentResource_Release: "Projects.OutsourcingProjects.ProjectDetail.TabWeeklyReport.CurrentResource.Release",
        Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_CurrentResource_Update_Note: "Projects.OutsourcingProjects.ProjectDetail.TabWeeklyReport.CurrentResource.Update.Note",
 
+       Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_BillAccount: "Projects.OutsourcingProjects.ProjectDetail.TabWeeklyReport.BillAccount",
+       Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_BillAccount_View: "Projects.OutsourcingProjects.ProjectDetail.TabWeeklyReport.BillAccount.View",
+
        Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PlannedResource: "Projects.OutsourcingProjects.ProjectDetail.TabWeeklyReport.PlannedResource",
        Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PlannedResource_View: "Projects.OutsourcingProjects.ProjectDetail.TabWeeklyReport.PlannedResource.View",
        Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PlannedResource_CreateNewPlan: "Projects.OutsourcingProjects.ProjectDetail.TabWeeklyReport.PlannedResource.CreateNewPlan",
@@ -465,6 +468,9 @@ export const PERMISSIONS_CONSTANT = {
        WeeklyReport_ReportDetail_CurrentResource_View: "WeeklyReport.ReportDetail.CurrentResource.View",
        WeeklyReport_ReportDetail_CurrentResource_Release: "WeeklyReport.ReportDetail.CurrentResource.Release",
        WeeklyReport_ReportDetail_CurrentResource_Update_Note: "WeeklyReport.ReportDetail.CurrentResource.Update.Note",
+
+       WeeklyReport_ReportDetail_BillAccount: "WeeklyReport.ReportDetail.BillAccount",
+       WeeklyReport_ReportDetail_BillAccount_View: "WeeklyReport.ReportDetail.BillAccount.View",
 
        WeeklyReport_ReportDetail_PlannedResource: "WeeklyReport.ReportDetail.PlannedResource",
        WeeklyReport_ReportDetail_PlannedResource_View: "WeeklyReport.ReportDetail.PlannedResource.View",

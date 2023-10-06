@@ -290,18 +290,17 @@
                 <td class="text-center">
                   <span>{{ i + 1 + pageSize * (pageNumber - 1) }}</span>
                 </td>
-                <td class="text-center" style="width: 490px;">
+                <td style="min-width: 380px;">
                   <div class="row" style="align-items: flex-start;justify-content: space-between;">
                     <div class="d-flex align-items-start col-8">
                       <div
-                      style="padding: 4px 10px;white-space: normal; text-align: center;"
-                      class="tag mr-1"
+                      class="mr-1 badge"
                       [ngClass]="APP_CONST.priorityRequest[item.priority]"
                     >
                       {{ item.priorityName }}
                     </div>
                     <span class="link mr-2" (click)="showProject(item)"> {{ item.projectName }} </span>
-                    <span *ngIf="item.isNewBillAccount" style="margin-top: 2px;" class="badge badge-danger">Bill Acc</span>
+                    <span *ngIf="item.isNewBillAccount" class="badge badge-danger">Bill Acc</span>
                     <span
                       *ngIf="item.projectStatus == 'Potential'"
                       [ngClass]="
@@ -321,6 +320,7 @@
                       {{ item.levelName }}
                     </span>
                       <p class="ml-2"
+                      style="border-radius: 0.25rem;"
                         [ngClass]="
                           APP_CONST.resourceRequestStyle[
                             getValueByEnum(
@@ -344,17 +344,15 @@
                     <span>Time need: {{item.timeNeed | date:'d/MM/y'}}</span>
                   </div>
                 </td>
-                <td style="width: 200px;">
-                  <ul class="pl-3 m-0">
-                    <li *ngFor="let skill of item.skills">
-                      {{ skill.name }}
-                    </li>
-                  </ul>
+                <td style="padding: 12px 4px; width: 120px;">
+                    <p *ngFor="let skill of item.skills" class="m-0">
+                     - {{ skill.name }}
+                    </p>
                 </td>
-                <td class="text-center" style="width: 80px;">
+                <td style="padding: 12px 8px;width: 100px; ">
                  <span *ngIf="item.code">{{item.code}}</span>
                 </td>
-                <td style="min-width: 220px;">
+                <td style="min-width: 245px; max-width: 245px;">
                   <div class="row" >
                     <div class="col-md-10">
                       <div *ngIf="item.billUserInfo" class="d-flex align-items-start" style="flex-direction: column;" >
@@ -364,7 +362,7 @@
                         </p>
                         <p class="m-0">
                           <span *ngIf="item.billUserInfo.employee.branchDisplayName"
-                            class="mr-1 badge badge-pill text-white"
+                            class="mr-1 badge text-white"
                             [style.backgroundColor]="
                               item.billUserInfo.employee.branchColor
                             "
@@ -418,7 +416,7 @@
                     </div>
                   </div>
                 </td>
-                <td style="min-width: 220px;">
+                <td style="min-width: 245px; max-width: 245px;">
                   <div class="row" >
                     <div class="col-md-10">
                       <div *ngIf="item.planUserInfo" class="d-flex align-items-start" style="flex-direction: column;" >
@@ -429,7 +427,7 @@
                         </p>
                         <p class="m-0">
                           <span *ngIf="item.planUserInfo.employee.branchDisplayName"
-                            class="mr-1 badge badge-pill text-white"
+                            class="mr-1 badge badge text-white"
                             [style.backgroundColor]="
                               item.planUserInfo.employee.branchColor
                             "
@@ -486,16 +484,16 @@
                 <td
                   style="
                     white-space: normal;
-                    min-width: 180px;
-                    max-width: 180px;
+                    min-width: 250px;
+                    padding: 12px 0;
                   "
                 >
-                  <div class="row">
-                    <div class="col-md-10">
+                  <div class="row justify-content-between flex-nowrap">
+                    <div class="mx-2">
                       <pre
                       (click) = "showDescription(item.pmNote);$event.stopPropagation()"
                         class="mb-0 p-0 ml-2 max-line"
-                        PrjResizeContent [collapseLine]="3"
+                        PrjResizeContent [collapseLine]="5"
                         style="
                           white-space: pre-line;
                           font-family: sans-serif;
@@ -508,7 +506,7 @@
                       >
                     </div>
                     <div
-                      class="col-md-2"
+                      class="mr-2"
                       *ngIf="permission.isGranted(ResourceRequest_EditPmNote)"
                     >
                       <i
@@ -524,7 +522,7 @@
                   style="
                     white-space: normal;
                     min-width: 180px;
-                    max-width: 180px;
+                    padding: 12px 0;
                   "
                 >
                   <div class="row">
@@ -555,19 +553,6 @@
                     </div>
                   </div>
                 </td>
-                <!-- <td class="text-center">
-
-                  <br />
-                  <span *ngIf="item.statusName == 'DONE'">{{
-                    item.timeDone | date: "dd/MM/yyyy"
-                  }}</span>
-                  <br>
-                  <span *ngIf="item.isRecruitmentSend== true"
-                        (click)="viewRecruitment(item.recruitmentUrl)"
-                        class="tl-link">
-                    #{{sliceUrl(item.recruitmentUrl)}}
-                  </span>
-                </td> -->
                 <td class="text-center action-request-resource-tab">
                   <button
                     mat-button
@@ -648,6 +633,11 @@
                       </button>
                     </div>
                   </mat-menu>
+                  <span *ngIf="item.isRecruitmentSend== true"
+                        (click)="viewRecruitment(item.recruitmentUrl)"
+                        class="tl-link">
+                    #{{sliceUrl(item.recruitmentUrl)}}
+                  </span>
                 </td>
               </tr>
             </tbody>

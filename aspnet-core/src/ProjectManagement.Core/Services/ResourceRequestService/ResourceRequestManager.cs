@@ -70,7 +70,8 @@ namespace ProjectManagement.Services.ResourceRequestService
                     UserId = x.UserId,
                     SkillId = x.SkillId,
                     SkillName = x.Skill.Name,
-                    SkillRank = x.SkillRank
+                    SkillRank = x.SkillRank,
+                    SkillNote = x.Note
                 }).ToList().GroupBy(u => u.UserId)
                 .ToDictionary(group => group.Key, group => group.ToList());
             var query = from request in _workScope.GetAll<ResourceRequest>()

@@ -77,6 +77,7 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
   ResourceRequest_UpdateResourceRequestPlan = PERMISSIONS_CONSTANT.ResourceRequest_UpdateResourceRequestPlan;
   ResourceRequest_CreateBillResourceForRequest = PERMISSIONS_CONSTANT.ResourceRequest_CreateBillResourceForRequest;
   ResourceRequest_RemoveResouceRequestPlan = PERMISSIONS_CONSTANT.ResourceRequest_RemoveResouceRequestPlan;
+  ResourceRequest_UpdateUserBillResourceSkill = PERMISSIONS_CONSTANT.ResourceRequest_UpdateUserBillResourceSkill;
   ResourceRequest_SetDone = PERMISSIONS_CONSTANT.ResourceRequest_SetDone;
   ResourceRequest_CancelAllRequest = PERMISSIONS_CONSTANT.ResourceRequest_CancelAllRequest;
   ResourceRequest_CancelMyRequest = PERMISSIONS_CONSTANT.ResourceRequest_CancelMyRequest;
@@ -268,15 +269,15 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
     this.isShowModal = 'none'
   }
 
-  openPopupSkill() {
+  openPopupSkill(user, userSkill) {
     let ref = this.dialog.open(UpdateUserSkillDialogComponent, {
       width: "700px",
       data: {
-        isUpdate: false,
-        userSkills: [],
-        id: 5,
-        fullName: 'sdf',
-        note: 'sdf'
+        isUpdate: this.permission.isGranted(this.ResourceRequest_UpdateUserBillResourceSkill),
+        userSkills: userSkill,
+        id: user.id,
+        fullName: user.fullName,
+        note: userSkill[0].note ?? ''
       }
 
     });

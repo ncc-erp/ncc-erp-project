@@ -16,6 +16,10 @@ export class UserInfoComponent extends AppComponentBase implements OnInit {
   @Input() isPool:boolean
   @Input() averagePoint: number
   @Input() isWeeklyReport: boolean;
+  @Input() isHideEmail: boolean = false;
+  @Input() isSmallerDiv: boolean = false;
+  @Input() isChangeContentSize: boolean = false;
+
   public user: UserDto
   constructor(injector: Injector) {
     super(injector)
@@ -24,7 +28,7 @@ export class UserInfoComponent extends AppComponentBase implements OnInit {
   }
 
   ngOnChanges(): void {
-    this.user = this.userData
+    this.user = this.userData;
   }
   public getProjectTypefromEnum(projectType: number, enumObject: any) {
     for (const key in enumObject) {

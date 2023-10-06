@@ -4,8 +4,6 @@
         <div class="row">
             <div class="col-md-6">
                 <h3>Thông tin chi tiết dự án</h3>
-            </div>
-            <div class="col-6 text-right ">
                 <button name="btn-editPRJDetail" class="btn bg-primary  mt-3" (click)="editRequest()"
                     *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabProjectDescription_Edit)">
                     <i class="fas fa-edit"></i>

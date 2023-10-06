@@ -133,8 +133,8 @@
                             <tr style="border: none;">
                                 <th>#</th>
                                 <th>Projects</th>
-                                <th>Main/Sub Project</th>
-                                <th style="width: 350px;">{{'PM' | localize}}</th>
+                                <th *ngIf="isShowAccount">Main/Sub Project</th>
+                                <th style="width: 325px;">{{'PM' | localize}}</th>
                                 <th *ngIf="isShowBillInfo || isShowAccount"> {{isShowBillInfo && isShowAccount ? 'Bill info/Bill account' : isShowBillInfo && !isShowAccount ? 'Bill info' : 'Bill account' }}</th>
 
                                 <th *ngIf="permission.isGranted(Projects_OutsourcingProjects_ViewRequireWeeklyReport)" style="width: 50px;">RequireWR</th>
@@ -181,17 +181,13 @@
                                             </div>
                                         </div>
                                         <div>
-                                            <span class="sub-main-type" [style.color]="project.isParentInvoiceIdExist ? '#000' : '#dc3545'"
-                                            >
-                                                {{ project.isParentInvoiceIdExist ? "SUB" : "MAIN" }}
-                                             </span>
                                             <span [ngClass]=" APP_CONST.ProjectTypeStyle[getByEnum(project.projectType,APP_ENUM.ProjectType)]">
                                                 {{ changeTextProjectType(getByEnum(project.projectType,APP_ENUM.ProjectType)) }}
                                             </span>
                                         </div>
                                     </div>
                                 </td>
-                                <td style="max-width: 250px; white-space: normal;">
+                                <td style="max-width: 250px; white-space: normal;" *ngIf="isShowAccount">
                                     <strong [style.color]="!project.isParentInvoiceIdExist ? '#dc3545' : '#000'"
                                      style="font-size: 16px;">{{ !project.isParentInvoiceIdExist ? "Main " : "Sub "}}</strong>
                                     <span>of:</span>

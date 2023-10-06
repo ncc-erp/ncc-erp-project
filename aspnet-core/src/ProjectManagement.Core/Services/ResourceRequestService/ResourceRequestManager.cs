@@ -29,18 +29,14 @@ namespace ProjectManagement.Services.ResourceRequestService
             IDictionary<string, SortDirection> sortParams)
         {
             if (query == null || sortParams == null) return query;
-            var source = query.OrderBy(q => true);
-            if (sortParams.ContainsKey("priority"))
-                source = OrderResourceRequest(source, "Priority", sortParams["priority"], false);
-            if (sortParams.ContainsKey("projectName"))
-                source = OrderResourceRequest(source, "projectName", sortParams["projectName"], false);
-            if (sortParams.ContainsKey("level"))
-                source = OrderResourceRequest(source, "level", sortParams["level"], false);
-            if (sortParams.ContainsKey("creationTime"))
-                source = OrderResourceRequest(source, "creationTime", sortParams["creationTime"], false);
-            if (sortParams.ContainsKey("timeNeed"))
-                source = OrderResourceRequest(source, "timeNeed", sortParams["timeNeed"], false);
-            return source;
+            var isOrder = true;
+            var queryOrder = (IOrderedQueryable<GetResourceRequestDto>) query;
+            foreach (var param in sortParams)
+            {
+                queryOrder = OrderResourceRequest(queryOrder, param.Key, param.Value, isOrder);
+                isOrder = false;
+            }
+            return queryOrder;
         }
 
         private IOrderedQueryable<GetResourceRequestDto> OrderResourceRequest(IQueryable<GetResourceRequestDto> query,

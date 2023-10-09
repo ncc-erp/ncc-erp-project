@@ -35,7 +35,7 @@ export class FormSendRecruitmentComponent extends AppComponentBase implements On
   }
   private setRecruitment() {
     this.recruitment.resourceRequestId = this.data.id;
-    this.recruitment.note = (this.data?.pmNote ?? '') + '\n' + (this.data.dmNote ?? '');
+    this.recruitment.note = this.data.dmNote ?? '';
   }
   getUserTypes() {
     this._talent.getBranches().subscribe((rs) => {

@@ -1736,11 +1736,7 @@ export class WeeklyReportComponent extends PagedListingComponentBase<WeeklyRepor
             width: "60%"
           });
 
-          show.afterClosed().subscribe((updatedGuideline) => {
-            if (updatedGuideline) {
-              this.refresh();
-            }
-          });
+          show.afterClosed().subscribe((updatedGuideline) => {});
         } else {
           // Display the dialog with empty content
           const show = this.dialog.open(ReportGuidelineDetailComponent, {
@@ -1752,12 +1748,7 @@ export class WeeklyReportComponent extends PagedListingComponentBase<WeeklyRepor
             width: "60%"
           });
 
-
-          show.afterClosed().subscribe((updatedGuideline) => {
-            if (updatedGuideline) {
-              this.refresh();
-            }
-          });
+          show.afterClosed().subscribe((updatedGuideline) => {});
         }
       });
     }

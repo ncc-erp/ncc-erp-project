@@ -39,20 +39,20 @@ export class CreateEditTimesheetComponent extends AppComponentBase implements On
     injector: Injector,){super(injector) }
     startDate: Date | string = '';
     minDate: Date;
-    submitDate='';
+    submitDate = '';
 
   ngOnInit(): void {
     if (this.data.command == "edit") {
       this.timesheet = this.data.item;
-      this.startDate =this.timesheet.closeTime ? moment(this.timesheet.closeTime).toDate(): '';
+      this.startDate = this.timesheet.closeTime ? moment(this.timesheet.closeTime).toDate(): '';
     }else{
-      this.timesheet.year= this.currentYear;
-      this.timesheet.month= this.currentMonth;
+      this.timesheet.year = this.currentYear;
+      this.timesheet.month = this.currentMonth;
     }
     for (let i = this.currentYear - 4; i < this.currentYear + 2; i++) {
       this.listYear.push(i)
     }
-    this.minDate= moment().toDate();
+    this.minDate = moment().toDate();
   }
   SaveAndClose() {
     this.isDisable = true
@@ -82,7 +82,7 @@ export class CreateEditTimesheetComponent extends AppComponentBase implements On
   }
   removeTime(){
     this.submitDate = ''
-    this.startDate=''
+    this.startDate = ''
   }
 
 

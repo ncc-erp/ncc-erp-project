@@ -81,7 +81,12 @@
                                 }; let i = index">
                                     <td class="text-center"><span>{{ i + 1 + pageSize * (pageNumber - 1)}}</span></td>
                                     <td><span class="hyperlink" (click)="showDetail(item)">{{ item.name
-                                        }}</span></td>
+                                        }}</span>
+                                        <p *ngIf="item.isActive && item.closeTime != null" class="mb-0">
+                                            <i  class="far fa-hourglass fa-spin ml-1"></i>&nbsp;
+                                             <span >{{item.closeTime }}</span>
+                                          </p>
+                                    </td>
                                     <td class="text-center">{{item.manMonth}}</td>
                                     <td class="text-center">{{item.year}}/{{item.month
                                         < 10 ? '0'+item.month : item.month}}</td>

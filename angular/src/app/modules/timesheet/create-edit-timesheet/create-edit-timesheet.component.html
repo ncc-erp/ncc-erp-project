@@ -23,7 +23,7 @@
         </div>
         <div class="form-group row required mt-4">
             <label class="col-md-3 col-form-label" for="tenancyName">
-                Working day: 
+                Working day:
             </label>
             <div class="col-md-9">
                 <input type="number" min=0 #totalWorking="ngModel" placeholder="Nhập số ngày làm việc"
@@ -68,6 +68,30 @@
                         </ng-container>
                     </mat-select>
                 </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="code">
+                Close time:
+            </label>
+
+            <div class="col-md-9">
+                <div class="input-group align-items-baseline">
+                    <mat-form-field appearance="outline" class="w-50">
+                        <input matInput
+                        placeholder="Choose a day"
+                        name="exchangeDate"
+                        [(ngModel)]="startDate"
+                        [min]="minDate"
+                        #timeStart="ngModel"
+                        (ngModelChange)="onDateChange()"
+                        readonly=true
+                        [owlDateTime]="dt1" [owlDateTimeTrigger]="dt1"
+                        />
+                        <owl-date-time #dt1></owl-date-time>
+                    </mat-form-field>
+                    <i style="margin-top: 0 !important;" class="fas fa-times fa-lg ml-2 mt-2" *ngIf="!!startDate" (click)="removeTime()"></i>
+                </div>
             </div>
         </div>
 

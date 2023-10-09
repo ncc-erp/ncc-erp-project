@@ -1,10 +1,13 @@
 ﻿using Abp.BackgroundJobs;
 using Abp.Domain.Repositories;
 using Abp.Timing;
+using Abp.UI;
 using NccCore.IoC;
+using Newtonsoft.Json;
 using ProjectManagement.BackgroundJobs;
 using ProjectManagement.Entities;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ProjectManagement.Manager.TimesheetManagers
@@ -20,17 +23,19 @@ namespace ProjectManagement.Manager.TimesheetManagers
             _backgroundJobManager = backgroundJobManager;
         }
 
-        public void CreateReqCloseTimesheetBGJ(Timesheet timesheet)
+        public void CreateReqCloseTimesheetBGJ(Timesheet timesheet, DateTime? closeTime)
         {
+            if (closeTime <= timesheet.CreationTime)
+                throw new UserFriendlyException("Close time must be greater than creation time!");
             DeleteOldRequestInBackgroundJob(timesheet.Id);
+            if (closeTime == null) return;
             var timesheetBGJ = new TimesheetBGJDto
             {
                 TimesheetId = timesheet.Id,
                 CurrentUserLoginId = AbpSession.UserId,
                 TenantId = AbpSession.TenantId
             };
-            var nextMonth = new DateTime(timesheet.CreationTime.AddMonths(1).Year, timesheet.CreationTime.AddMonths(1).Month, 1);
-            var delays = (nextMonth - timesheet.CreationTime).TotalMilliseconds;
+            var delays = (closeTime.Value - DateTime.Now).TotalMilliseconds;
             _backgroundJobManager.Enqueue<CloseTimeSheetBackgroundJob, TimesheetBGJDto>(
                     timesheetBGJ, BackgroundJobPriority.High, TimeSpan.FromMilliseconds(delays));
             //var delays = 1;
@@ -71,6 +76,21 @@ namespace ProjectManagement.Manager.TimesheetManagers
         {
             var item = WorkScope.Get<Timesheet>(timesheetId);
             item.IsActive = false;
+        }
+
+        public Dictionary<long, string> GetCloseTimeInBackgroundJobs()
+        {
+            var closeTimesheetBGJob = typeof(CloseTimeSheetBackgroundJob).FullName;
+            var filterEmployee = "TimesheetId";
+            var nextTryTimes = _storeJob.GetAll()
+                 .Where(s => s.JobType.Contains(closeTimesheetBGJob) && s.JobArgs.Contains(filterEmployee))
+                 .Select(s => new
+                 {
+                     ID = JsonConvert.DeserializeObject<TimesheetBGJDto>(s.JobArgs).TimesheetId,
+                     Time = s.NextTryTime.ToString("dd-MM-yyyy HH:mm")
+                 })
+                 .ToDictionary(s => s.ID, s => s.Time);
+            return nextTryTimes;
         }
     }
 }

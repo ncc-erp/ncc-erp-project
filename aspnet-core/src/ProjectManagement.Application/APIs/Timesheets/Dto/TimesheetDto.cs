@@ -1,6 +1,7 @@
 ﻿using Abp.Application.Services.Dto;
 using Abp.AutoMapper;
 using ProjectManagement.Entities;
+using System;
 
 namespace ProjectManagement.APIs.Timesheets.Dto
 {
@@ -13,5 +14,6 @@ namespace ProjectManagement.APIs.Timesheets.Dto
         public bool IsActive { get; set; }
         public bool CreatedInvoice { get; set; }
         public float? TotalWorkingDay { get; set; }
+        public DateTime? CloseTime { get; set; }
     }
 }

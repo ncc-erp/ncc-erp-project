@@ -277,7 +277,7 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
         userSkills: userSkill,
         id: user.id,
         fullName: user.fullName,
-        note: userSkill[0].note ?? ''
+        note: userSkill[0].skillNote ?? ''
       }
 
     });

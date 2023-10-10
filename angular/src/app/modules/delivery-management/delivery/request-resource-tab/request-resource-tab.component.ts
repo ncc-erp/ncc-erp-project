@@ -273,7 +273,7 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
     let ref = this.dialog.open(UpdateUserSkillDialogComponent, {
       width: "700px",
       data: {
-        isUpdate: this.permission.isGranted(this.ResourceRequest_UpdateUserBillResourceSkill),
+        isNotUpdate: !this.permission.isGranted(this.ResourceRequest_UpdateUserBillResourceSkill),
         userSkills: userSkill,
         id: user.id,
         fullName: user.fullName,

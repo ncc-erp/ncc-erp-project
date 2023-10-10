@@ -261,7 +261,6 @@ export class VendorComponent extends PagedListingComponentBase<PlanResourceCompo
     let ref = this.dialog.open(UpdateUserSkillDialogComponent, {
       width: "700px",
       data: {
-        isUpdate: true,
         userSkills: user.userSkills,
         id: user.userId,
         fullName: user.fullName

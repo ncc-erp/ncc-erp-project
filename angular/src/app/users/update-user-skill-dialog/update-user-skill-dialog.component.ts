@@ -21,7 +21,7 @@ export class UpdateUserSkillDialogComponent implements OnInit {
   selectSkillList: SkillDto[] = []
   skillRankList=[]
   subscription: Subscription[] = [];
-  isUpdate:boolean = false;
+  isNotUpdate:boolean = true;
   rating:number = 0;
   starCount:number = 5;
   public snackBarDuration: number = 2000;
@@ -35,7 +35,7 @@ export class UpdateUserSkillDialogComponent implements OnInit {
     for (let index = 0; index < this.starCount; index++) {
       this.ratingArr.push(index);
     }
-    this.isUpdate = this.data.isUpdate
+    this.isNotUpdate = this.data.isNotUpdate
     this.userSkillList = this.data.userSkills.map(skill => skill.skillId)
     this.userSkillListCr = this.data.userSkills.map(skill => skill.skillId)
     this.getAllSkill()

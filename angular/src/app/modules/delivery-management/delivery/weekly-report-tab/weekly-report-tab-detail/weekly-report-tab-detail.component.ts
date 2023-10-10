@@ -73,6 +73,8 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
   WeeklyReport_ReportDetail_ChangedResource = PERMISSIONS_CONSTANT.WeeklyReport_ReportDetail_ChangedResource;
   Admin_Configuartions_WeeklyReportTime_Edit = PERMISSIONS_CONSTANT.Admin_Configuartions_WeeklyReportTime_Edit;
   WeeklyReport_ReportDetail_CurrentResource_Update_Note = PERMISSIONS_CONSTANT.WeeklyReport_ReportDetail_CurrentResource_Update_Note;
+  WeeklyReport_ReportDetail_BillAccount = PERMISSIONS_CONSTANT.WeeklyReport_ReportDetail_BillAccount;
+  WeeklyReport_ReportDetail_BillAccount_View = PERMISSIONS_CONSTANT.WeeklyReport_ReportDetail_BillAccount_View;
 
   WeeklyReport_ReportDetail_ProjectHealthCriteria = PERMISSIONS_CONSTANT.WeeklyReport_ReportDetail_ProjectHealthCriteria
   WeeklyReport_ReportDetail_ProjectHealthCriteria_View = PERMISSIONS_CONSTANT.WeeklyReport_ReportDetail_ProjectHealthCriteria_View
@@ -154,6 +156,7 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
   public isShowPmNote:boolean=false;
   public isShowIssues:boolean=false;
   public isShowCurrentResource:boolean = false;
+  public isShowChargeAccount: boolean = false;
   public isShowSupportUser:boolean = false;
   public isShowBillInfo:boolean = true;
   public isShowTimesheet:boolean = true;
@@ -516,6 +519,11 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
         this.automationNote = data.result.automationNote
         this.getDataForBillChart(this.projectInfo.projectCode)
         this.getCurrentResourceOfProject(this.projectInfo.projectCode)
+        if (this.projectInfo.projectUserBills.length > 0){
+          this.isShowChargeAccount = true;
+        } else{
+          this.isShowChargeAccount = false;
+        }
         if (this.weeklyReportStatus === 'Sent') {
           this.router.navigate(
             [],
@@ -1340,7 +1348,7 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
         tooltip: {
           trigger: 'axis',
           position: function (pos) {
-            var obj = { top: 1, left: pos[0] - 200 }; 
+            var obj = { top: 1, left: pos[0] - 200 };
             return obj;
           }
         },
@@ -1818,7 +1826,7 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
             this.refresh();
           }
         });
-      } 
+      }
     });
   }
 

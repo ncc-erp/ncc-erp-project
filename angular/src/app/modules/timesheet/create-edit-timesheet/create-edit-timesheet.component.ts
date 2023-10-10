@@ -6,6 +6,7 @@ import { TimesheetDto } from '@app/service/model/timesheet.dto';
 import { TimesheetService } from '@app/service/api/timesheet.service';
 import { catchError } from 'rxjs/operators';
 import { ProjectUserBillService } from '@app/service/api/project-user-bill.service';
+import * as moment from 'moment';
 
 // tslint:disable-next-line:no-duplicate-imports
 
@@ -36,27 +37,33 @@ export class CreateEditTimesheetComponent extends AppComponentBase implements On
     private router: Router,
     private projectUserBillService: ProjectUserBillService,
     injector: Injector,){super(injector) }
+    startDate: Date | string = '';
+    minDate: Date;
+    submitDate = '';
 
   ngOnInit(): void {
     if (this.data.command == "edit") {
       this.timesheet = this.data.item;
+      this.startDate = this.timesheet.closeTime ? moment(this.timesheet.closeTime).toDate(): '';
     }else{
-      this.timesheet.year= this.currentYear;
-      this.timesheet.month= this.currentMonth;
+      this.timesheet.year = this.currentYear;
+      this.timesheet.month = this.currentMonth;
     }
     for (let i = this.currentYear - 4; i < this.currentYear + 2; i++) {
       this.listYear.push(i)
     }
+    this.minDate = moment().toDate();
   }
   SaveAndClose() {
     this.isDisable = true
+    this.timesheet.closeTime = this.submitDate;
     if (this.data.command == "create") {
       this.timesheet.isActive = true;
       this.timesheetService.create(this.timesheet).pipe(catchError(this.timesheetService.handleError)).subscribe((res) => {
         abp.notify.success("Create timesheet "+ this.timesheet.name +" successfully ");
         this.dialogRef.close(this.timesheet);
       }, () => this.isDisable = false);
-      // 
+      //
     }
     else {
       this.timesheetService.update(this.timesheet).pipe(catchError(this.timesheetService.handleError)).subscribe((res) => {
@@ -70,7 +77,13 @@ export class CreateEditTimesheetComponent extends AppComponentBase implements On
       this.router.navigate(['/app/timesheet']);
     });
   }
-
+  onDateChange(): void {
+    this.submitDate = moment(this.startDate.toString()).format('LLLL');
+  }
+  removeTime(){
+    this.submitDate = ''
+    this.startDate = ''
+  }
 
 
 }

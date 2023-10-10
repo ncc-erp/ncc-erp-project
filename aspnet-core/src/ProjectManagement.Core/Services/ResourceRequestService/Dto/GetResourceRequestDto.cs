@@ -1,7 +1,7 @@
 ﻿using Abp.Application.Services.Dto;
 using NccCore.Anotations;
 using NccCore.Uitls;
-
+using ProjectManagement.Services.ResourceService.Dto;
 using ProjectManagement.Utils;
 using System;
 using System.Collections.Generic;
@@ -136,6 +136,7 @@ namespace ProjectManagement.Services.ResourceRequestService.Dto
                 $"Start Working Date: {DateTimeUtils.ToString(PlannedDate)}";
 
         }
+        public List<UserSkillDto> UserSkill { get; set; }
     }
 
     public class RequestCodeDto

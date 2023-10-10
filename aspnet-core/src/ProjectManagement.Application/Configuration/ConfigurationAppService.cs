@@ -20,6 +20,8 @@ using System.Linq;
 using NccCore.Extension;
 using System.Threading.Tasks;
 using System;
+using ProjectManagement.Manager.TimesheetManagers;
+using ProjectManagement.BackgroundWorkers.Dtos;
 
 namespace ProjectManagement.Configuration
 {
@@ -89,7 +91,8 @@ namespace ProjectManagement.Configuration
                 TalentSecurityCode = _appConfiguration.GetValue<string>("TalentService:SecurityCode"),
                 MaxCountHistory = await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.MaxCountHistory),
                 InformPm = await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.InformPm),
-                ActiveTimesheetProjectPeriod = await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.ActiveTimesheetProjectPeriod)
+                ActiveTimesheetProjectPeriod = await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.ActiveTimesheetProjectPeriod),
+                CloseTimesheetNotification = await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.CloseTimesheetNotification),
             };
         }
         
@@ -121,7 +124,8 @@ namespace ProjectManagement.Configuration
                 string.IsNullOrEmpty(input.InformPm) ||
 
                 string.IsNullOrEmpty(input.MaxCountHistory) ||
-                string.IsNullOrEmpty(input.ActiveTimesheetProjectPeriod)
+                string.IsNullOrEmpty(input.ActiveTimesheetProjectPeriod) ||
+                string.IsNullOrEmpty(input.CloseTimesheetNotification)
                 )
             {
                 throw new UserFriendlyException("All setting values need to be completed");
@@ -150,7 +154,8 @@ namespace ProjectManagement.Configuration
             await SettingManager.ChangeSettingForApplicationAsync(AppSettingNames.MaxCountHistory, input.MaxCountHistory);
             await SettingManager.ChangeSettingForApplicationAsync(AppSettingNames.InformPm, input.InformPm);
             await SettingManager.ChangeSettingForApplicationAsync(AppSettingNames.ActiveTimesheetProjectPeriod, input.ActiveTimesheetProjectPeriod);
-        return input;
+            await SettingManager.ChangeSettingForApplicationAsync(AppSettingNames.CloseTimesheetNotification, input.CloseTimesheetNotification);
+            return input;
         }
 
         [AbpAuthorize(PermissionNames.Admin_Configuartions_Edit)]
@@ -289,6 +294,37 @@ namespace ProjectManagement.Configuration
             }
             var inform = JsonSerializer.Deserialize<InformPmDto>(json);
             return inform;
+        }
+
+        public async Task<CloseNotificationDto> SetCloseTimesheetNotification(CloseNotificationDto input)
+        {
+            ValidationCloseTimesheetDateTime(input);
+            var json = JsonSerializer.Serialize(input);
+            await SettingManager.ChangeSettingForApplicationAsync(AppSettingNames.CloseTimesheetNotification, json);
+            return input;
+        }
+
+        public async Task<CloseNotificationDto> GetCloseTimesheetNotification()
+        {
+            var json = await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.CloseTimesheetNotification);
+            if (string.IsNullOrEmpty(json))
+            {
+                return null;
+            }
+            var closeNoti = JsonSerializer.Deserialize<CloseNotificationDto>(json);
+            return closeNoti;
+        }
+
+        private void ValidationCloseTimesheetDateTime(CloseNotificationDto input)
+        {
+            DateTime dtime;
+            if (!input.CloseTime.HasValue() || input.CloseDay < (int)Days.Sun || input.CloseDay > (int)Days.Sat
+                || !DateTime.TryParse(input.CloseTime.Trim(), out dtime)) throw new UserFriendlyException("Time can not empty!");
+
+            if(input.CheckDateTimes.Any(c => c.TimeSpan < 0)) throw new UserFriendlyException("TimeSpan need to be larger or equal 0!");
+
+            var listDuplicate = input.CheckDateTimes.GroupBy(c => new { c.TimeSpan }).ToList();
+            if (listDuplicate.Count != input.CheckDateTimes.Count) throw new UserFriendlyException("TimeSpan can not be duplicated!!");
         }
 
         [HttpGet]

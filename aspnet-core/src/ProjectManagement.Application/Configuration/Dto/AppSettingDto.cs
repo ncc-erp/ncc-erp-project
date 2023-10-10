@@ -34,6 +34,7 @@ namespace ProjectManagement.Configuration.Dto
         public string MaxCountHistory { get; set; }
         public string InformPm { get; set; }
         public string ActiveTimesheetProjectPeriod { get; set; }
+        public string CloseTimesheetNotification { get; set; }
     }
 
     public class ProjectSetting

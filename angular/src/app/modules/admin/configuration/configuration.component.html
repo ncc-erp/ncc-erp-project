@@ -383,7 +383,7 @@
           <mat-panel-title>
             <p class="title">{{"Discord channels"}}</p>
             <div class="edit-save" *ngIf="isShowDiscordChannel">
-              <button *ngIf="permission.isGranted(Admin_Configuartions_Edit)" class="btn bg-blue mr-3" 
+              <button *ngIf="permission.isGranted(Admin_Configuartions_Edit)" class="btn bg-blue mr-3"
                 (click)="isEditDiscordChannel = !isEditDiscordChannel; clientId.focus();$event.stopPropagation()"
                 [hidden]="isEditDiscordChannel">
                 <i class="fas fa-edit"></i>
@@ -536,7 +536,7 @@
         </div>
       </mat-expansion-panel>
     </div>
-    
+
     <div class="card" *ngIf="permission.isGranted(Admin_Configurations_ViewInformPmSetting)">
       <mat-expansion-panel [expanded]="isShowSendTime">
         <mat-expansion-panel-header (click)="isShowSendTime = !isShowSendTime" class="panel-header">
@@ -564,7 +564,7 @@
         <div class="row mb-2">
           <div class="col col-12 col-md-12">
             <mat-form-field class="w-50 mt-2">
-              <input [disabled]="!isEditSendTime" class="w-100" name="ChannelId" matInput placeholder="Channel ID" 
+              <input [disabled]="!isEditSendTime" class="w-100" name="ChannelId" matInput placeholder="Channel ID"
                 [(ngModel)]="ChannelId" #channelID [required]="checkRequiredChannelId()"/>
             </mat-form-field>
             <p style="color: #f44336;font-size: 10.5px;"*ngIf="checkRequiredChannelId()">This field is required</p>
@@ -581,7 +581,7 @@
                 <mat-checkbox style="position: relative; top: 10px;" formControlName="IsCheck" class="col-2" [disabled]="!isEditSendTime" #check>Is active</mat-checkbox>
                 <div class="w-25">
                     <input [ngClass]="{editTime:isEditSendTime}"  class="w-100 inputTime" [readonly]="!isEditSendTime"   type="time" formControlName="Time"  />
-                    <p style="color: #f44336;font-size: 10.5px;" *ngIf="form.controls.credentials.controls[i].get('Time').invalid 
+                    <p style="color: #f44336;font-size: 10.5px;" *ngIf="form.controls.credentials.controls[i].get('Time').invalid
                     && (form.controls.credentials.controls[i].get('Time').dirty || form.controls.credentials.controls[i].get('Time').touched)
                     && form.controls.credentials.controls[i].get('Time').errors?.required"
                     >This field is required</p>
@@ -598,9 +598,9 @@
               </div>
           </div>
           </div>
-      
+
         </form>
-          
+
       </mat-expansion-panel>
     </div>
 
@@ -703,5 +703,62 @@
         </div>
       </mat-expansion-panel>
     </div>
+  </div>
+
+  <div class="card" *ngIf="permission.isGranted(Admin_Configurations_ViewInformPmSetting)">
+    <mat-expansion-panel [expanded]="isShowSendHour">
+      <mat-expansion-panel-header (click)="isShowSendHour = !isShowSendHour" class="panel-header">
+        <mat-panel-title>
+            <p class="title">{{"Set time span notification for PM before timesheet close"}}</p>
+          <div class="edit-save" *ngIf="isShowSendHour">
+            <a *ngIf="permission.isGranted(Admin_Configuartions_Edit)" href="javascript:;" class="btn bg-blue mr-3"
+              (click)="isEditSendHour = !isEditSendHour;$event.stopPropagation();" [hidden]="isEditSendHour">
+              <i class="fas fa-edit"></i>
+              Edit
+            </a>
+            <a href="javascript:;" class="btn bg-secondary"
+              (click)=" getSendTime();isEditSendHour = !isEditSendHour;$event.stopPropagation()"
+              [hidden]="!isEditSendHour">
+              Cancel
+            </a>
+            <button href="javascript:;" class="btn btn-primary btn-action ml-3" [disabled]="checkDisabledSave()" ng-disabled=""
+              (click)="saveSendTime();$event.stopPropagation()"
+              [hidden]="!isEditSendHour">
+              Save
+            </button>
+          </div>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <div class="row mb-2">
+        <div class="col col-12 col-md-12">
+          <mat-form-field class="w-50 mt-2">
+            <input [disabled]="!isEditSendHour" class="w-100" name="ChannelId" matInput placeholder="Channel ID"
+              [(ngModel)]="ChannelId" #channelID [required]="checkRequiredChannelId()"/>
+          </mat-form-field>
+          <p style="color: #f44336;font-size: 10.5px;"*ngIf="checkRequiredChannelId()">This field is required</p>
+        </div>
+      </div>
+      <button style="width: 108px;" class="btn btn-primary btn-action mb-2" *ngIf="isEditSendHour" (click) = 'addTime()'>
+        <i class="fa fa-plus-square"></i>
+        Add time
+      </button>
+      <form [formGroup]="form">
+        <div formArrayName="credentials">
+          <div class="row mb-2 w-50"  *ngFor="let creds of credentials.controls; let i = index;" [formGroupName]="i">
+            <div class="d-flex justify-content-between w-100 align-items-baseline">
+              <mat-checkbox style="position: relative; top: 10px;" formControlName="IsCheck" class="col-2" [disabled]="!isEditSendHour" #check>Is active</mat-checkbox>
+              <div class="w-25">
+                  <input [ngClass]="{editTime:isEditSendHour}" placeholder="Enter hour" class="w-100 inputTime" [readonly]="!isEditSendHour"   type="number" formControlName="Time"  />
+
+              </div>
+
+              <button style="border: none;background: transparent;" *ngIf="isEditSendHour"  (click)="$event.preventDefault();removeItem(i)"> <i style="color: #9e9e9e;font-size: 20px;" class="fas fa-trash"></i></button>
+            </div>
+        </div>
+        </div>
+
+      </form>
+
+    </mat-expansion-panel>
   </div>
 </section>

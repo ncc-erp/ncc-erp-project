@@ -387,7 +387,13 @@ export class WeeklyReportComponent extends PagedListingComponentBase<WeeklyRepor
   onChangeStatusProject(){
     this.pjCriteriaResultService.updateStatus(this.statusProject,this.selectedReport.reportId,this.projectId).subscribe(data => {
       abp.notify.success("Update status project successful");
-      this.getAllCriteria();
+      this.listCriteriaResult = this.listCriteriaResult.map(item => {
+        return {...item, status:this.statusProject}
+      })
+      this.listPreEditCriteriaResult = this.listPreEditCriteriaResult.map(item => {
+        return {...item, status:this.statusProject}
+      });
+      this.listPreEditCriteriaResult.forEach(s => s.editMode = false);
     }, () => { this.statusProject = this.statusProjectHistory}
     )
   }

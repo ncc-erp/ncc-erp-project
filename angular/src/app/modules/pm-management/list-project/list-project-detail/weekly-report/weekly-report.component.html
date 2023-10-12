@@ -99,7 +99,7 @@
                                     (permission.isGranted(ProjectHealthCriteria_ChangeStatus) && permission.isGranted(ProjectHealthCriteria_Edit)  && selectedReport.isActive && item.editMode)">
                                     <mat-form-field [ngClass]="APP_CONST.projectHealthStyle[item.status]"
                                         style="margin-left: 10px !important;width: 100px;" class="ml-3" appearance="outline">
-                                        <mat-select name="flag" placeholder="Select Status" [(ngModel)]="item.status" [disabled]="selectedReport.pmReportProjectId==0 "
+                                        <mat-select style="padding-bottom: 4px;" name="flag" placeholder="Select Status" [(ngModel)]="item.status" [disabled]="selectedReport.pmReportProjectId==0 "
                                             (ngModelChange)="handleChangeStatus(item,i)">
                                             <ng-container *ngFor="let flag of problemIssueList">
                                                 <mat-option style="border: 1px white solid;"
@@ -401,7 +401,7 @@
                     </mat-expansion-panel-header>
                     <div class="px-4 fixTableHead" style="max-height: 46vh;">
                         <table style="border-collapse: collapse;" class="table table-hover">
-                            <thead class="bg-light">
+                            <thead class="bg-light" style="z-index: 1;">
                                 <tr>
                                     <th style="width: 40px;"> #</th>
                                     <th>Risks</th>
@@ -512,7 +512,7 @@
                     <div class="card-body pt-0">
                         <div class="fixTableHead" style="max-height: 46vh;">
                             <table name="tbl-currentResource" class="table table-hover ">
-                                <thead>
+                                <thead style="z-index: 1;">
                                     <tr>
                                         <th style="vertical-align: middle;">Employee</th>
                                         <th style=" vertical-align: middle;" class="col-4">Note</th>
@@ -623,7 +623,7 @@
                     <div class="card-body pt-0">
                         <div class="fixTableHead" style="max-height: 46vh;">
                             <table name="tbl-currentResource" class="table table-hover ">
-                                <thead>
+                                <thead style="z-index: 1;">
                                     <tr>
                                         <th style="vertical-align: middle;">Employee</th>
                                         <th style="vertical-align: middle;">Charge Name</th>
@@ -738,7 +738,7 @@
                                     </mat-expansion-panel-header>
                                     <div class="px-4 pb-4 fixTableHead" style="max-height:46vh">
                                         <table style="border-collapse: collapse;" class="table table-hover text-nowrap">
-                                            <thead class="bg-light">
+                                            <thead class="bg-light" style="z-index: 1;">
                                                 <tr>
                                                     <th>Employee</th>
                                                     <th>Role</th>
@@ -902,7 +902,7 @@
                                     </mat-expansion-panel-header>
                                     <div class="px-4 pb-4 fixTableHead" style="max-height:46vh">
                                         <table style="border-collapse: collapse;" class="table table-hover text-nowrap">
-                                            <thead class="bg-light">
+                                            <thead class="bg-light" style="z-index: 1;">
                                                 <tr>
                                                     <th>Employee</th>
                                                     <th style="width: 80px;">Role</th>

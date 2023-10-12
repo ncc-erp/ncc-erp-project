@@ -498,6 +498,7 @@ export const PERMISSIONS_CONSTANT = {
        ResourceRequest_PlanNewResourceForRequest: "ResourceRequest.PlanNewResourceForRequest",
        ResourceRequest_UpdateResourceRequestPlan: "ResourceRequest.UpdateResourceRequestPlan",
        ResourceRequest_RemoveResouceRequestPlan: "ResourceRequest.RemoveResouceRequestPlan",
+       ResourceRequest_UpdateUserBillResourceSkill: 'ResourceRequest.UpdateUserBillResourceSkill',
        ResourceRequest_SetDone: "ResourceRequest.SetDone",
        ResourceRequest_CancelAllRequest: "ResourceRequest.CancelAllRequest",
        ResourceRequest_CancelMyRequest: "ResourceRequest.CancelMyRequest",

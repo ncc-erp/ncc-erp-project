@@ -467,6 +467,7 @@ export class WeeklyReportComponent extends PagedListingComponentBase<WeeklyRepor
 
   public saveCriteriaResult(item: ProjectCriteriaResultDto, index: number) {
     item.pmReportId = this.selectedReport.reportId;
+    item.note = item.note.replace(/^(<br\s*\/>)+|(<br\s*\/>)+$/g, '')
     if (item.id) {
       this.pjCriteriaResultService.update(item).subscribe(res => {
         abp.notify.success(`Update ${item.criteriaName} successfully`);
@@ -1805,6 +1806,10 @@ export class WeeklyReportComponent extends PagedListingComponentBase<WeeklyRepor
     this.listCriteriaResult = cloneDeep(this.listPreEditCriteriaResult);
   }
   saveAllUpdate() {
+    this.listCriteriaResult = this.listCriteriaResult.map(item => {
+      const note = item.note.replace(/^(<br\s*\/>)+|(<br\s*\/>)+$/g, '')
+      return {...item, note:note}
+    })
     this.pjCriteriaResultService.updateAllCriteriaResult(this.listCriteriaResult).subscribe(res => {
       if (res.success) {
         abp.notify.success(`Update successfully`);

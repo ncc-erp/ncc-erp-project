@@ -582,7 +582,7 @@
                                                         [ngClass]="APP_CONST.projectHealthStyle[item.status]"
                                                         style="margin-left: 10px !important;width: 100px;" class="ml-3"
                                                         appearance="outline">
-                                                        <mat-select name="flag" placeholder="Select Status"
+                                                        <mat-select name="flag" placeholder="Select Status" style="padding-bottom: 4px;"
                                                             [(ngModel)]="item.status"
                                                             (ngModelChange)="handleChangeStatus(item)">
                                                             <ng-container *ngFor="let flag of problemIssueList">

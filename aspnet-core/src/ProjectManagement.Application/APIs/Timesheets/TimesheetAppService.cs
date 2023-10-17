@@ -276,10 +276,13 @@ namespace ProjectManagement.APIs.TimeSheets
             if (timesheet.IsActive)
             {
                 _closeTimesheet.DeleteOldRequestInBackgroundJob(timesheet.Id);
+                var timesheetProjectJob = _reActiveTimeSheetproject.GetOldRequestInBackgroundJob();
                 WorkScope.GetAll<TimesheetProject>().Where(tp => tp.TimesheetId == id)
-                    .ToList().ForEach(tsp => { 
-                        _reActiveTimeSheetproject.DeleteOldRequestInBackgroundJob(tsp.Id);
+                    .ToList().ForEach(tsp =>
+                    {
                         tsp.IsActive = false;
+                        if (timesheetProjectJob.TryGetValue(tsp.Id, out var job))
+                            _reActiveTimeSheetproject.DeleteJob(job.JobId);
                     });
             }
         }

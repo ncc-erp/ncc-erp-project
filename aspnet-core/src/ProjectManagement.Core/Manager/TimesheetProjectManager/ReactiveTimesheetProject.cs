@@ -3,11 +3,13 @@ using Abp.Domain.Repositories;
 using Abp.Timing;
 using Abp.UI;
 using NccCore.IoC;
+using Newtonsoft.Json;
 using ProjectManagement.BackgroundJobs;
 using ProjectManagement.Configuration;
 using ProjectManagement.Entities;
 using ProjectManagement.Manager.TimesheetProjectManager.Dto;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ProjectManagement.Manager.TimesheetProjectManager
@@ -58,6 +60,25 @@ namespace ProjectManagement.Manager.TimesheetProjectManager
                  .Select(s => s.Id)
                  .ToList().ForEach(id => _backgroundJobManager.Delete(id.ToString()));
         }
+
+        public Dictionary<long, TimesheetProjectBGJobDto> GetOldRequestInBackgroundJob()
+        {
+            var jobTypeNameOfRequestToQuit = typeof(ReactivetimesheetProjectBackgroudJob).FullName;
+            var filterTimesheetProject = "TimesheetProjectId";
+            return _storeJob.GetAll()
+                 .Where(s => s.JobType.Contains(jobTypeNameOfRequestToQuit))
+                 .Where(s => s.JobArgs.Contains(filterTimesheetProject))
+                 .Select(s => new TimesheetProjectBGJobDto
+                 {
+                     JobId = s.Id,
+                     TimesheetProjectId = JsonConvert.DeserializeObject<ReactiveTimesheetBGJDto>(s.JobArgs).TimesheetProjectId,
+                     TryNextTime = s.NextTryTime
+                 })
+                 .ToDictionary(store => store.TimesheetProjectId);
+        }
+
+        public void DeleteJob(long JobId) => _backgroundJobManager.Delete(JobId.ToString());
+
 
         public string GetCloseTimeBackgroundJob(long timesheetProjectId)
         {

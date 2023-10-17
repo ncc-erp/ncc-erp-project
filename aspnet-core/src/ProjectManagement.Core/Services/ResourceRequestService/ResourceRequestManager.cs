@@ -144,7 +144,7 @@ namespace ProjectManagement.Services.ResourceRequestService
                                     AvatarPath = request.User.AvatarPath
                                 },
 
-                                PlannedDate = request.BillStartDate ?? default,
+                                PlannedDate = request.BillStartDate ?? null,
                                 UserSkill = request.BillAccountId.HasValue &&
                                 userSkills.ContainsKey(request.BillAccountId.Value) ? userSkills[request.BillAccountId.Value] : null
 

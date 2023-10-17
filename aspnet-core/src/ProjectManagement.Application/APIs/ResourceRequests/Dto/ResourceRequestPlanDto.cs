@@ -17,4 +17,17 @@ namespace ProjectManagement.APIs.ResourceRequests.Dto
 
         public long? ResourceRequestId { get; set; }
     }
+
+    public class UpdateResourceRequestPlanForBillInfoDto
+    {
+        public long ProjectUserId { get; set; }
+
+        public long? UserId { get; set; }
+
+        public ProjectUserRole ProjectRole { get; set; }
+
+        public DateTime? StartTime { get; set; }
+
+        public long? ResourceRequestId { get; set; }
+    }
 }

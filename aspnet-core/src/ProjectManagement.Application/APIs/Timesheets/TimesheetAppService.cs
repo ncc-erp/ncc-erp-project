@@ -275,6 +275,7 @@ namespace ProjectManagement.APIs.TimeSheets
             // delete all re-close background job of timesheetproject in this timesheet
             if (timesheet.IsActive)
             {
+                _closeTimesheet.DeleteOldRequestInBackgroundJob(timesheet.Id);
                 WorkScope.GetAll<TimesheetProject>().Where(tp => tp.TimesheetId == id)
                     .ToList().ForEach(tsp => { 
                         _reActiveTimeSheetproject.DeleteOldRequestInBackgroundJob(tsp.Id);

@@ -99,7 +99,7 @@
                                     (permission.isGranted(ProjectHealthCriteria_ChangeStatus) && permission.isGranted(ProjectHealthCriteria_Edit)  && selectedReport.isActive && item.editMode)">
                                     <mat-form-field [ngClass]="APP_CONST.projectHealthStyle[item.status]"
                                         style="margin-left: 10px !important;width: 100px;" class="ml-3" appearance="outline">
-                                        <mat-select style="padding-bottom: 4px;" name="flag" placeholder="Select Status" [(ngModel)]="item.status" [disabled]="selectedReport.pmReportProjectId==0 "
+                                        <mat-select name="flag" placeholder="Select Status" [(ngModel)]="item.status" [disabled]="selectedReport.pmReportProjectId==0 "
                                             (ngModelChange)="handleChangeStatus(item,i)">
                                             <ng-container *ngFor="let flag of problemIssueList">
                                                 <mat-option style="border: 1px white solid;"
@@ -133,7 +133,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="break-word" *ngIf="!item.editMode"  [innerHTML]="item.note| safeHtml">{{item.note}}</div>
+                        <div class="break-word criteria-note" *ngIf="!item.editMode" [innerHTML]="item.note| safeHtml">{{item.note}}</div>
                         <div *ngIf="item.editMode && selectedReport.isActive">
                             <editor
                             id=""
@@ -499,7 +499,7 @@
                     <mat-expansion-panel-header class="m-0" #resource (click)="isShowCurrentResource=!isShowCurrentResource">
                         <mat-panel-title class="align-items-baseline justify-content-between">
                             <div>
-                                <strong style="font-size: 20px;">Current resources</strong> &nbsp;
+                                <strong style="font-size: 20px;">Current Resources</strong> &nbsp;
                                 <strong style="font-size: 20px;" class="text-danger">({{projectCurrentResource?.length}})</strong>
                                 &nbsp;&nbsp;&nbsp;&nbsp;
                             </div>
@@ -614,7 +614,7 @@
                     <mat-expansion-panel-header class="m-0" #resource (click)="isShowChargeAccount=!isShowChargeAccount">
                         <mat-panel-title class="align-items-baseline justify-content-between d-flex align-items-center">
                             <div>
-                                <strong style="font-size: 20px;"> Bill accounts</strong>&nbsp;
+                                <strong style="font-size: 20px;"> Bill Accounts</strong>&nbsp;
                                 <strong style="font-size: 20px;" class="text-danger">({{projectInfo.totalBill || 0}})</strong>
                             </div>
 

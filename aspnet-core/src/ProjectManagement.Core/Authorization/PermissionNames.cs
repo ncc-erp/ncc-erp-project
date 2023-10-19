@@ -532,6 +532,7 @@ namespace ProjectManagement.Authorization
         public const string ResourceRequest_Delete = "ResourceRequest.Delete";
         public const string ResourceRequest_SendRecruitment = "ResourceRequest.SendRecruitment";
         public const string ResourceRequest_CreateBillResourceForRequest = "ResourceRequest.CreateBillResourceForRequest";
+        public const string ResourceRequest_UpdateUserBillResourceSkill = "ResourceRequest.UpdateUserBillResourceSkill";
         #endregion Resource Request
 
         #region Training Request
@@ -1292,6 +1293,7 @@ namespace ProjectManagement.Authorization
                     PermissionNames.Resource_TabPlanningBillAcccount,
                     PermissionNames.Resource_ViewUserLevel,
                     PermissionNames.ResourceRequest_CreateBillResourceForRequest,
+                    PermissionNames.ResourceRequest_UpdateUserBillResourceSkill,
 
                     #endregion Resource
 
@@ -1930,6 +1932,7 @@ namespace ProjectManagement.Authorization
                  new SystemPermission{ Name =  PermissionNames.ResourceRequest_Delete ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Delete"},
                  new SystemPermission{ Name =  PermissionNames.ResourceRequest_SendRecruitment ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Send Recruitment"},
                  new SystemPermission{ Name =  PermissionNames.ResourceRequest_CreateBillResourceForRequest ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Create User Bill(CV) For Resource Request"},
+                 new SystemPermission{ Name =  PermissionNames.ResourceRequest_UpdateUserBillResourceSkill ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Update User Bill Resource Skill"},
 
                  #endregion ResourceRequest
 
@@ -3494,6 +3497,9 @@ namespace ProjectManagement.Authorization
                             }
                             ,new SystemPermission {
                                 Name = PermissionNames.ResourceRequest_CreateBillResourceForRequest, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Create User Bill(CV) For Resource Request"
+                            }
+                             ,new SystemPermission {
+                                Name = PermissionNames.ResourceRequest_UpdateUserBillResourceSkill, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Update User Bill Resource Skill"
                             },
                         },
                 },

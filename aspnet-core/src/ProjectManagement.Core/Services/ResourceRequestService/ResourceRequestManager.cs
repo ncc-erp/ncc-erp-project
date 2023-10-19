@@ -5,6 +5,7 @@ using NccCore.Paging;
 using ProjectManagement.Authorization.Users;
 using ProjectManagement.Entities;
 using ProjectManagement.Services.ResourceRequestService.Dto;
+using ProjectManagement.Services.ResourceService.Dto;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
@@ -58,6 +59,17 @@ namespace ProjectManagement.Services.ResourceRequestService
 
         public IQueryable<GetResourceRequestDto> IQGetResourceRequest()
         {
+            // get all user skill
+            var userSkills = _workScope.GetAll<UserSkill>()
+                .Select(x => new UserSkillDto
+                {
+                    UserId = x.UserId,
+                    SkillId = x.SkillId,
+                    SkillName = x.Skill.Name,
+                    SkillRank = x.SkillRank,
+                    SkillNote = x.Note
+                }).ToList().GroupBy(u => u.UserId)
+                .ToDictionary(group => group.Key, group => group.ToList());
             var query = from request in _workScope.GetAll<ResourceRequest>()
                         orderby request.Priority descending, request.TimeNeed ascending
                         select new GetResourceRequestDto
@@ -106,6 +118,7 @@ namespace ProjectManagement.Services.ResourceRequestService
                                 },
 
                                 PlannedDate = s.StartTime,
+                                UserSkill = !userSkills.ContainsKey(s.UserId) ? null : userSkills[s.UserId]
 
                             }).FirstOrDefault(),
                             BillUserInfo = request.User != null ?
@@ -127,7 +140,9 @@ namespace ProjectManagement.Services.ResourceRequestService
                                     AvatarPath = request.User.AvatarPath
                                 },
 
-                                PlannedDate = request.BillStartDate ?? default,
+                                PlannedDate = request.BillStartDate ?? null,
+                                UserSkill = request.BillAccountId.HasValue &&
+                                userSkills.ContainsKey(request.BillAccountId.Value) ? userSkills[request.BillAccountId.Value] : null
 
                             } : null,
                             BillCVEmail = request.User.EmailAddress,

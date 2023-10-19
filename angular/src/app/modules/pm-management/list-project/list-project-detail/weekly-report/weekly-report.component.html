@@ -99,7 +99,7 @@
                                     (permission.isGranted(ProjectHealthCriteria_ChangeStatus) && permission.isGranted(ProjectHealthCriteria_Edit)  && selectedReport.isActive && item.editMode)">
                                     <mat-form-field [ngClass]="APP_CONST.projectHealthStyle[item.status]"
                                         style="margin-left: 10px !important;width: 100px;" class="ml-3" appearance="outline">
-                                        <mat-select name="flag" placeholder="Select Status" [(ngModel)]="item.status" [disabled]="selectedReport.pmReportProjectId==0 "
+                                        <mat-select style="padding-bottom: 4px;" name="flag" placeholder="Select Status" [(ngModel)]="item.status" [disabled]="selectedReport.pmReportProjectId==0 "
                                             (ngModelChange)="handleChangeStatus(item,i)">
                                             <ng-container *ngFor="let flag of problemIssueList">
                                                 <mat-option style="border: 1px white solid;"
@@ -144,7 +144,7 @@
                               plugins: ['table', 'code', 'preview', 'media', 'image', 'template'],
                               toolbars: ['image'],
                               branding: false,
-                              forced_root_block: false,
+                              forced_root_block: 'span',
                               paste_retain_style_properties: true
                             }"
                           ></editor>

@@ -44,7 +44,7 @@ export class CreateEditTimesheetComponent extends AppComponentBase implements On
   ngOnInit(): void {
     if (this.data.command == "edit") {
       this.timesheet = this.data.item;
-      this.startDate = this.timesheet.closeTime ? moment(this.timesheet.closeTime).toDate(): '';
+      this.startDate = this.timesheet.closeTime ? moment(this.timesheet.closeTime, 'DD-MM-YYYY HH:mm').toDate() : '';
     }else{
       this.timesheet.year = this.currentYear;
       this.timesheet.month = this.currentMonth;

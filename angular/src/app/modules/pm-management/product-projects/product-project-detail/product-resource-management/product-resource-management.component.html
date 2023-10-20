@@ -96,7 +96,7 @@
                                                 <div style="width: 10%; text-align: right;"
                                                     *ngIf="!(user.workingStatus == APP_ENUM.ProjectUserStatus.Past 
                                                 || (user.workingStatus == APP_ENUM.ProjectUserStatus.Present && user.allocatePercentage == 0))">
-                                                    <i  class="fas fa-edit" (click)="updateUserSkill(user)"
+                                                    <i  class="fas fa-edit" (click)="updateUserSkill(user, permission.isGranted(Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserStarSkill))"
                                                         *ngIf="!user.createMode && !user.editMode && permission.isGranted(Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserSkill)"
                                                         matTooltip="Edit skill"></i>
                                                 </div>
@@ -328,7 +328,7 @@
                                                     </p>
                                                 </div>
                                                 <div style="width: 10%; text-align: right;">
-                                                    <i class="fas fa-edit" (click)="updateUserSkill(user) "
+                                                    <i class="fas fa-edit" (click)="updateUserSkill(user, permission.isGranted(Projects_ProductProjects_ProjectDetail_TabResourceManagement_PlannedResource_ViewUserStarSkill))"
                                                         *ngIf="!user.createMode && !user.editMode  
                                                         && permission.isGranted(Projects_ProductProjects_ProjectDetail_TabResourceManagement_PlannedResource_UpdateUserSkill)"
                                                         matTooltip="Edit skill"></i>

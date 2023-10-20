@@ -133,7 +133,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="break-word" *ngIf="!item.editMode"  [innerHTML]="item.note| safeHtml">{{item.note}}</div>
+                        <div class="break-word" *ngIf="!item.editMode" [innerHTML]="item.note| safeHtml" >{{item.note}}</div>
                         <div *ngIf="item.editMode && selectedReport.isActive">
                             <editor
                             id=""

@@ -37,6 +37,7 @@ export class ProductResourceManagementComponent extends AppComponentBase impleme
   Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_Edit = PERMISSIONS_CONSTANT.Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_Edit;
   Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_Release = PERMISSIONS_CONSTANT.Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_Release;
   Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserSkill = PERMISSIONS_CONSTANT.Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserSkill;
+  Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserStarSkill = PERMISSIONS_CONSTANT.Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserStarSkill;
 
   Projects_ProductProjects_ProjectDetail_TabResourceManagement_PlannedResource = PERMISSIONS_CONSTANT.Projects_ProductProjects_ProjectDetail_TabResourceManagement_PlannedResource;
   Projects_ProductProjects_ProjectDetail_TabResourceManagement_PlannedResource_View = PERMISSIONS_CONSTANT.Projects_ProductProjects_ProjectDetail_TabResourceManagement_PlannedResource_View;
@@ -47,6 +48,7 @@ export class ProductResourceManagementComponent extends AppComponentBase impleme
   Projects_ProductProjects_ProjectDetail_TabResourceManagement_PlannedResource_CancelPlan = PERMISSIONS_CONSTANT.Projects_ProductProjects_ProjectDetail_TabResourceManagement_PlannedResource_CancelPlan;
   Projects_ProductProjects_ProjectDetail_TabResourceManagement_PlannedResource_Edit = PERMISSIONS_CONSTANT.Projects_ProductProjects_ProjectDetail_TabResourceManagement_PlannedResource_Edit;
   Projects_ProductProjects_ProjectDetail_TabResourceManagement_PlannedResource_UpdateUserSkill = PERMISSIONS_CONSTANT.Projects_ProductProjects_ProjectDetail_TabResourceManagement_PlannedResource_UpdateUserSkill;
+  Projects_ProductProjects_ProjectDetail_TabResourceManagement_PlannedResource_ViewUserStarSkill = PERMISSIONS_CONSTANT.Projects_ProductProjects_ProjectDetail_TabResourceManagement_PlannedResource_ViewUserStarSkill;
 
   Projects_ProductProjects_ProjectDetail_TabResourceManagement_ResourceRequest = PERMISSIONS_CONSTANT.Projects_ProductProjects_ProjectDetail_TabResourceManagement_ResourceRequest;
   Projects_ProductProjects_ProjectDetail_TabResourceManagement_ResourceRequest_View = PERMISSIONS_CONSTANT.Projects_ProductProjects_ProjectDetail_TabResourceManagement_ResourceRequest_View;
@@ -164,13 +166,14 @@ export class ProductResourceManagementComponent extends AppComponentBase impleme
 
 
 
-  updateUserSkill(user) {
+  updateUserSkill(user, viewUserStarSkill) {
     let ref = this.dialog.open(UpdateUserSkillDialogComponent, {
       width: "700px",
       data: {
         userSkills: user?.userSkills,
         id: user.userId,
-        fullName: user.fullName
+        fullName: user.fullName,
+        viewUserStarSkill: viewUserStarSkill
       }
 
     });

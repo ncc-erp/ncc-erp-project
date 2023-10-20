@@ -24,6 +24,7 @@ export class UpdateUserSkillDialogComponent implements OnInit {
   isNotUpdate:boolean = true;
   rating:number = 0;
   starCount:number = 5;
+  viewStarSkillUser = false;
   public snackBarDuration: number = 2000;
   public ratingArr = [];
   public searchSkill: string = ""
@@ -35,6 +36,7 @@ export class UpdateUserSkillDialogComponent implements OnInit {
     for (let index = 0; index < this.starCount; index++) {
       this.ratingArr.push(index);
     }
+    this.viewStarSkillUser = this.data.viewStarSkillUser
     this.isNotUpdate = this.data.isNotUpdate
     this.userSkillList = this.data.userSkills.map(skill => skill.skillId)
     this.userSkillListCr = this.data.userSkills.map(skill => skill.skillId)

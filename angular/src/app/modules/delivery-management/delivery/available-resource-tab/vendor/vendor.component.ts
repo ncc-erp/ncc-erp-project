@@ -53,6 +53,7 @@ export class VendorComponent extends PagedListingComponentBase<PlanResourceCompo
   Resource_TabVendor_CancelMyPlan = PERMISSIONS_CONSTANT.Resource_TabVendor_CancelMyPlan
   Resource_TabVendor_CancelAnyPlan = PERMISSIONS_CONSTANT.Resource_TabVendor_CancelAnyPlan
   Resource_TabVendor_UpdateSkill = PERMISSIONS_CONSTANT.Resource_TabVendor_UpdateSkill
+  Resource_TabVendor_ViewUserStarSkill = PERMISSIONS_CONSTANT.Resource_TabVendor_ViewUserStarSkill
   Resource_TabVendor_ProjectDetail = PERMISSIONS_CONSTANT.Resource_TabVendor_ProjectDetail
 
   protected list(request: PagedRequestDto, pageNumber: number, finishedCallback: Function, skill?): void {
@@ -262,6 +263,7 @@ export class VendorComponent extends PagedListingComponentBase<PlanResourceCompo
       width: "700px",
       data: {
         userSkills: user.userSkills,
+        viewStarSkillUser: this.permission.isGranted(this.Resource_TabVendor_ViewUserStarSkill),
         id: user.userId,
         fullName: user.fullName
       }

@@ -179,7 +179,8 @@ export class ResourceManagementComponent extends AppComponentBase implements OnI
         userSkills: user?.userSkills,
         id: user.userId,
         fullName: user.fullName,
-        viewStarSkillUser: viewStarSkillUser
+        viewStarSkillUser: viewStarSkillUser,
+        note: this.GetUserSkillNote(user)
       }
 
     });
@@ -271,7 +272,7 @@ export class ResourceManagementComponent extends AppComponentBase implements OnI
       this.getPlannedtUser();
       this.getResourceRequestList();
       abp.notify.success(`Added new employee to project`);
-      
+
       this.projectUserProcess = false
       this.searchUser = "";
     },
@@ -736,5 +737,9 @@ export class ResourceManagementComponent extends AppComponentBase implements OnI
     })
 
   }
+
+  IsSkillNoteExist = (user) => user.userSkills && user.userSkills[0]?.skillNote ? true : false;
+
+  GetUserSkillNote = (user) => user.userSkills[0]?.skillNote;
 }
 

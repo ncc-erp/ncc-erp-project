@@ -55,13 +55,13 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
   public searchCode:string = "";
   public listPriorities: any[] = []
   public isAndCondition: boolean = false;
-  public sortResource = {priority: 0}
+  public sortResource = { }
   public theadTable: THeadTable[] = [
     { name: '#' },
-    { name: 'Request Info' },
+    { name: 'Request Info', sortName: 'projectName', defaultSort: '' },
     { name: 'Skill need' },
-    { name: 'Code' },
-    { name: 'Bill Account' },
+    { name: 'Code', sortName: 'code', defaultSort: '' },
+    { name: 'CV', sortName: 'billCVEmail', defaultSort: '' },
     { name: 'Resource'},
     { name: 'Description'},
     { name: 'Note' },

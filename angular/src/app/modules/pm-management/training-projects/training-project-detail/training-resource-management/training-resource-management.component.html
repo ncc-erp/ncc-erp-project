@@ -15,7 +15,7 @@
                     <div class="col-md-6" *ngIf="permission.isGranted(Projects_TrainingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewHistory)">
                         <div class="col-md-6" *ngIf="isShowProjectUser">
                             <section class="example-section">
-                                <mat-checkbox class="example-margin" [checked]="viewHistory" [disabled]="projectUserProcess" 
+                                <mat-checkbox class="example-margin" [checked]="viewHistory" [disabled]="projectUserProcess"
                                 (change)="filterProjectUser(viewHistoryCheck); " (click)="$event.stopPropagation();userListCurrentPage=1" #viewHistoryCheck>View history
                                 </mat-checkbox>
                             </section>
@@ -37,7 +37,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr [ngClass]="user.workingStatus == APP_ENUM.ProjectUserStatus.Past ? 'past' : ''" *ngFor="let user of projectUserList |paginate:{ 
+                                <tr [ngClass]="user.workingStatus == APP_ENUM.ProjectUserStatus.Past ? 'past' : ''" *ngFor="let user of projectUserList |paginate:{
                                         id: 'projectUser',
                                     itemsPerPage: maxUserCurrentPage,
                                     currentPage: userListCurrentPage
@@ -75,10 +75,15 @@
                                                 <div style="width: 90%; text-align: left;">
                                                     <p class="m-0" *ngFor="let item of user.userSkills">
                                                         - {{item.skillName}}
+                                                        <strong *ngIf="item.skillRank && permission.isGranted(Projects_TrainingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserStarSkill)">- {{item.skillRank}} <i class="fa fa-star"
+                                                            [ngClass] = '{crimson: item.skillRank == 5, grey: item.skillRank == 1 || item.skillRank == 2,
+                                                            yellow: item.skillRank == 3, orange: item.skillRank == 4}' style="
+                                                            font-size: 13px;"></i> </strong>
                                                     </p>
+                                                    <div style="white-space: pre-line" *ngIf="IsSkillNoteExist(user)"><strong>Note:</strong> {{GetUserSkillNote(user)}}</div>
                                                 </div>
                                                 <div style="width: 10%; text-align: right;"
-                                                    *ngIf="!(user.workingStatus == APP_ENUM.ProjectUserStatus.Past 
+                                                    *ngIf="!(user.workingStatus == APP_ENUM.ProjectUserStatus.Past
                                                 || (user.workingStatus == APP_ENUM.ProjectUserStatus.Present && user.allocatePercentage == 0))">
                                                     <i  class="fas fa-edit" (click)="updateUserSkill(user, permission.isGranted(Projects_TrainingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserStarSkill))"
                                                         *ngIf="!user.createMode && !user.editMode && permission.isGranted(Projects_TrainingProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserSkill)"
@@ -144,7 +149,7 @@
 
                                     </td>
                                     <td style="vertical-align: middle;">
-                                        <div *ngIf="!user.createMode && !user.editMode && !(user.workingStatus == APP_ENUM.ProjectUserStatus.Past 
+                                        <div *ngIf="!user.createMode && !user.editMode && !(user.workingStatus == APP_ENUM.ProjectUserStatus.Past
                                         || (user.workingStatus == APP_ENUM.ProjectUserStatus.Present && user.allocatePercentage == 0))">
                                             <button mat-button [matMenuTriggerFor]="menu">
                                                 <i class="fas fa-bars fa-lg"></i>
@@ -238,7 +243,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr *ngFor="let user of plannedUserList |paginate:{ 
+                                <tr *ngFor="let user of plannedUserList |paginate:{
                                         id: 'plannedResource',
                                     itemsPerPage: itemPerPage,
                                     currentPage: plannedResourceCurrentPage
@@ -278,7 +283,12 @@
                                                 <div style="width: 90%; text-align: left;">
                                                     <p class="m-0" *ngFor="let item of user.userSkills">
                                                         - {{item.skillName}}
+                                                        <strong *ngIf="item.skillRank && permission.isGranted(Projects_TrainingProjects_ProjectDetail_TabResourceManagement_PlannedResource_ViewUserStarSkill)">- {{item.skillRank}} <i class="fa fa-star"
+                                                            [ngClass] = '{crimson: item.skillRank == 5, grey: item.skillRank == 1 || item.skillRank == 2,
+                                                            yellow: item.skillRank == 3, orange: item.skillRank == 4}' style="
+                                                            font-size: 13px;"></i> </strong>
                                                     </p>
+                                                    <div style="white-space: pre-line" *ngIf="IsSkillNoteExist(user)"><strong>Note:</strong> {{GetUserSkillNote(user)}}</div>
                                                 </div>
                                                 <div style="width: 10%; text-align: right;">
                                                     <i class="fas fa-edit" (click)="updateUserSkill(user, permission.isGranted(Projects_TrainingProjects_ProjectDetail_TabResourceManagement_PlannedResource_ViewUserStarSkill))"

@@ -60,7 +60,7 @@ export class ProductResourceManagementComponent extends AppComponentBase impleme
   Projects_ProductProjects_ProjectDetail_TabResourceManagement_ResourceRequest_Delete = PERMISSIONS_CONSTANT.Projects_ProductProjects_ProjectDetail_TabResourceManagement_ResourceRequest_Delete;
   Projects_ProductProjects_ProjectDetail_TabResourceManagement_ResourceRequest_SendRecruitment = PERMISSIONS_CONSTANT.Projects_ProductProjects_ProjectDetail_TabResourceManagement_ResourceRequest_SendRecruitment;
 
-  
+
 
   private projectId: number;
   public userBillCurrentPage = 1;
@@ -108,15 +108,15 @@ export class ProductResourceManagementComponent extends AppComponentBase impleme
   public listProjectUserRoles: IDNameDto[] = []
 
   constructor(
-    injector: Injector, 
-    private projectUserService: ProjectUserService, 
-    private projectUserBillService: ProjectUserBillService, 
+    injector: Injector,
+    private projectUserService: ProjectUserService,
+    private projectUserBillService: ProjectUserBillService,
     private userService: UserService,
-    private projectRequestService: ProjectResourceRequestService, 
-    private route: ActivatedRoute, 
+    private projectRequestService: ProjectResourceRequestService,
+    private route: ActivatedRoute,
     private dialog: MatDialog,
     private resourceRequestService: DeliveryResourceRequestService
-  ) 
+  )
   {
       super(injector)
       this.tomorrowDate.setDate(this.tomorrowDate.getDate() + 1)
@@ -173,6 +173,7 @@ export class ProductResourceManagementComponent extends AppComponentBase impleme
         userSkills: user?.userSkills,
         id: user.userId,
         fullName: user.fullName,
+        note: this.GetUserSkillNote(user),
         viewUserStarSkill: viewUserStarSkill
       }
 
@@ -529,7 +530,7 @@ export class ProductResourceManagementComponent extends AppComponentBase impleme
   showDialog(command: string, request: any) {
     let resourceRequest = {
       id: request.id ? request.id : null,
-      projectId: this.projectId 
+      projectId: this.projectId
     }
     const show = this.dialog.open(CreateUpdateResourceRequestComponent, {
       data: {
@@ -585,8 +586,8 @@ export class ProductResourceManagementComponent extends AppComponentBase impleme
 
   public setDoneRequest(item){
     let data = {
-      ...item.planUserInfo, 
-      requestName: item.name, 
+      ...item.planUserInfo,
+      requestName: item.name,
       resourceRequestId: item.id
     }
     const showModal = this.dialog.open(FormSetDoneComponent, {
@@ -716,4 +717,7 @@ export class ProductResourceManagementComponent extends AppComponentBase impleme
   {
     this.userListCurrentPage = 1
   }
+  IsSkillNoteExist = (user) => user.userSkills && user.userSkills[0]?.skillNote ? true : false;
+
+  GetUserSkillNote = (user) => user.userSkills[0]?.skillNote;
 }

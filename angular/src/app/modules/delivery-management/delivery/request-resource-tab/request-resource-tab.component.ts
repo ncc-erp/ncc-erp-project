@@ -61,7 +61,7 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
     { name: 'Request Info', sortName: 'projectName', defaultSort: '' },
     { name: 'Skill need' },
     { name: 'Code', sortName: 'code', defaultSort: '' },
-    { name: 'CV', sortName: 'billCVEmail', defaultSort: '' },
+    { name: 'Bill Account', sortName: 'billCVEmail', defaultSort: '' },
     { name: 'Resource'},
     { name: 'Description'},
     { name: 'Note' },
@@ -288,10 +288,10 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
       width: "700px",
       data: {
         isNotUpdate: !this.permission.isGranted(this.ResourceRequest_UpdateUserBillResourceSkill),
-        userSkills: userSkill,
+        userSkills: userSkill ? userSkill : [],
         id: user.id,
         fullName: user.fullName,
-        note: userSkill[0].skillNote ?? ''
+        note: userSkill ? userSkill[0].skillNote : ''
       }
 
     });
@@ -301,7 +301,7 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
       }
     })
   }
-  
+
   public updateNote() {
     let request = {
       resourceRequestId: this.resourceRequestId,

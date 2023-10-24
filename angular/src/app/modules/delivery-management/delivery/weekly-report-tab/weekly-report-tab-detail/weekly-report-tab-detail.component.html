@@ -629,7 +629,8 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="break-word format-editor" *ngIf="!item.editMode" [innerHTML]="item.note| safeHtml"></div>
+                                        <div class="break-word format-editor" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;"
+                                         *ngIf="!item.editMode" [innerHTML]="item.note| safeHtml"></div>
                                         <div *ngIf="item.editMode && isActive">
                                             <editor
                                             id=""

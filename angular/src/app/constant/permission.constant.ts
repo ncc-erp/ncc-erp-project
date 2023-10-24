@@ -131,6 +131,7 @@ export const PERMISSIONS_CONSTANT = {
        Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_Edit: "Projects.OutsourcingProjects.ProjectDetail.TabResourceManagement.CurrentResource.Edit",
        Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_Release: "Projects.OutsourcingProjects.ProjectDetail.TabResourceManagement.CurrentResource.Release",
        Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserSkill: "Projects.OutsourcingProjects.ProjectDetail.TabResourceManagement.CurrentResource.UpdateUserSkill",
+       Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserStarSkill: "Projects.OutsourcingProjects.ProjectDetail.TabResourceManagement.CurrentResource.ViewUserStarSkill",
 
 
        Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource: "Projects.OutsourcingProjects.ProjectDetail.TabResourceManagement.PlannedResource",
@@ -142,6 +143,7 @@ export const PERMISSIONS_CONSTANT = {
        Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_CancelPlan: "Projects.OutsourcingProjects.ProjectDetail.TabResourceManagement.PlannedResource.CancelPlan",
        Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_Edit: "Projects.OutsourcingProjects.ProjectDetail.TabResourceManagement.PlannedResource.Edit",
        Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_UpdateUserSkill: "Projects.OutsourcingProjects.ProjectDetail.TabResourceManagement.PlannedResource.UpdateUserSkill",
+       Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_ViewUserStarSkill: "Projects.OutsourcingProjects.ProjectDetail.TabResourceManagement.PlannedResource.ViewUserStarSkill",
 
 
        Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest: "Projects.OutsourcingProjects.ProjectDetail.TabResourceManagement.ResourceRequest",
@@ -246,6 +248,7 @@ export const PERMISSIONS_CONSTANT = {
        Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_Edit: "Projects.ProductProjects.ProjectDetail.TabResourceManagement.CurrentResource.Edit",
        Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_Release: "Projects.ProductProjects.ProjectDetail.TabResourceManagement.CurrentResource.Release",
        Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserSkill: "Projects.ProductProjects.ProjectDetail.TabResourceManagement.CurrentResource.UpdateUserSkill",
+       Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserStarSkill: "Projects.ProductProjects.ProjectDetail.TabResourceManagement.CurrentResource.ViewUserStarSkill",
 
 
        Projects_ProductProjects_ProjectDetail_TabResourceManagement_PlannedResource: "Projects.ProductProjects.ProjectDetail.TabResourceManagement.PlannedResource",
@@ -257,6 +260,7 @@ export const PERMISSIONS_CONSTANT = {
        Projects_ProductProjects_ProjectDetail_TabResourceManagement_PlannedResource_CancelPlan: "Projects.ProductProjects.ProjectDetail.TabResourceManagement.PlannedResource.CancelPlan",
        Projects_ProductProjects_ProjectDetail_TabResourceManagement_PlannedResource_Edit: "Projects.ProductProjects.ProjectDetail.TabResourceManagement.PlannedResource.Edit",
        Projects_ProductProjects_ProjectDetail_TabResourceManagement_PlannedResource_UpdateUserSkill: "Projects.ProductProjects.ProjectDetail.TabResourceManagement.PlannedResource.UpdateUserSkill",
+       Projects_ProductProjects_ProjectDetail_TabResourceManagement_PlannedResource_ViewUserStarSkill: "Projects.ProductProjects.ProjectDetail.TabResourceManagement.PlannedResource.ViewUserStarSkill",
 
 
        Projects_ProductProjects_ProjectDetail_TabResourceManagement_ResourceRequest: "Projects.ProductProjects.ProjectDetail.TabResourceManagement.ResourceRequest",
@@ -348,6 +352,7 @@ export const PERMISSIONS_CONSTANT = {
        Projects_TrainingProjects_ProjectDetail_TabResourceManagement_CurrentResource_Edit: "Projects.TrainingProjects.ProjectDetail.TabResourceManagement.CurrentResource.Edit",
        Projects_TrainingProjects_ProjectDetail_TabResourceManagement_CurrentResource_Release: "Projects.TrainingProjects.ProjectDetail.TabResourceManagement.CurrentResource.Release",
        Projects_TrainingProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserSkill: "Projects.TrainingProjects.ProjectDetail.TabResourceManagement.CurrentResource.UpdateUserSkill",
+       Projects_TrainingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserStarSkill: "Projects.TrainingProjects.ProjectDetail.TabResourceManagement.CurrentResource.ViewUserStarSkill",
 
 
        Projects_TrainingProjects_ProjectDetail_TabResourceManagement_PlannedResource: "Projects.TrainingProjects.ProjectDetail.TabResourceManagement.PlannedResource",
@@ -359,6 +364,7 @@ export const PERMISSIONS_CONSTANT = {
        Projects_TrainingProjects_ProjectDetail_TabResourceManagement_PlannedResource_CancelPlan: "Projects.TrainingProjects.ProjectDetail.TabResourceManagement.PlannedResource.CancelPlan",
        Projects_TrainingProjects_ProjectDetail_TabResourceManagement_PlannedResource_Edit: "Projects.TrainingProjects.ProjectDetail.TabResourceManagement.PlannedResource.Edit",
        Projects_TrainingProjects_ProjectDetail_TabResourceManagement_PlannedResource_UpdateUserSkill: "Projects.TrainingProjects.ProjectDetail.TabResourceManagement.PlannedResource.UpdateUserSkill",
+       Projects_TrainingProjects_ProjectDetail_TabResourceManagement_PlannedResource_ViewUserStarSkill: "Projects.TrainingProjects.ProjectDetail.TabResourceManagement.PlannedResource.ViewUserStarSkill",
 
 
        Projects_TrainingProjects_ProjectDetail_TabResourceManagement_ResourceRequest: "Projects.TrainingProjects.ProjectDetail.TabResourceManagement.ResourceRequest",
@@ -499,6 +505,7 @@ export const PERMISSIONS_CONSTANT = {
        ResourceRequest_UpdateResourceRequestPlan: "ResourceRequest.UpdateResourceRequestPlan",
        ResourceRequest_RemoveResouceRequestPlan: "ResourceRequest.RemoveResouceRequestPlan",
        ResourceRequest_UpdateUserBillResourceSkill: 'ResourceRequest.UpdateUserBillResourceSkill',
+       ResourceRequest_ViewUserResourceStarSkill: 'ResourceRequest.ViewUserResourceStarSkill',
        ResourceRequest_SetDone: "ResourceRequest.SetDone",
        ResourceRequest_CancelAllRequest: "ResourceRequest.CancelAllRequest",
        ResourceRequest_CancelMyRequest: "ResourceRequest.CancelMyRequest",
@@ -544,6 +551,7 @@ export const PERMISSIONS_CONSTANT = {
        Resource_TabPool_AddTempProject: "Resource.TabPool.AddTempProject",
        Resource_TabPool_Release: "Resource.TabPool.Release",
        Resource_TabPool_UpdateSkill: "Resource.TabPool.UpdateSkill",
+       Resource_TabPool_ViewUserStarSkill: "Resource.TabPool.ViewUserStarSkill",
        Resource_TabPool_EditNote: "Resource.TabPool.EditNote",
        Resource_TabPool_ProjectDetail: "Resource.TabPool.ProjectDetail",
 
@@ -558,6 +566,7 @@ export const PERMISSIONS_CONSTANT = {
        Resource_TabAllResource_CancelMyPlan: "Resource.TabAllResource.CancelMyPlan",
        Resource_TabAllResource_CancelAnyPlan: "Resource.TabAllResource.CancelAnyPlan",
        Resource_TabAllResource_UpdateSkill: "Resource.TabAllResource.UpdateSkill",
+       Resource_TabAllResource_ViewUserStarSkill: "Resource.TabAllResource.ViewUserStarSkill",
        Resource_TabAllResource_ProjectDetail: "Resource.TabAllResource.ProjectDetail",
 
        Resource_TabVendor: "Resource.TabVendor",
@@ -571,6 +580,7 @@ export const PERMISSIONS_CONSTANT = {
        Resource_TabVendor_CancelMyPlan: "Resource.TabVendor.CancelMyPlan",
        Resource_TabVendor_CancelAnyPlan: "Resource.TabVendor.CancelAnyPlan",
        Resource_TabVendor_UpdateSkill: "Resource.TabVendor.UpdateSkill",
+       Resource_TabVendor_ViewUserStarSkill: "Resource.TabVendor.ViewUserStarSkill",
        Resource_TabVendor_ProjectDetail: "Resource.TabVendor.ProjectDetail",
 
 

@@ -80,6 +80,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
   Resource_TabAllResource_CancelMyPlan = PERMISSIONS_CONSTANT.Resource_TabAllResource_CancelMyPlan
   Resource_TabAllResource_CancelAnyPlan = PERMISSIONS_CONSTANT.Resource_TabAllResource_CancelAnyPlan
   Resource_TabAllResource_UpdateSkill = PERMISSIONS_CONSTANT.Resource_TabAllResource_UpdateSkill
+  Resource_TabAllResource_ViewUserStarSkill = PERMISSIONS_CONSTANT.Resource_TabAllResource_ViewUserStarSkill
   Resource_TabAllResource_ProjectDetail = PERMISSIONS_CONSTANT.Resource_TabAllResource_ProjectDetail
 
   protected list(request: PagedRequestDto, pageNumber: number, finishedCallback: Function, skill?): void {
@@ -385,7 +386,8 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
         userSkills: user.userSkills,
         id: user.userId,
         fullName: user.fullName,
-        note: note
+        note: note,
+        viewStarSkillUser: this.permission.isGranted(this.Resource_TabAllResource_ViewUserStarSkill),
       }
 
     });

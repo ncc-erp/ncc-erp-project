@@ -114,7 +114,8 @@
                                                 <div style="width: 90%; text-align: left;">
                                                     <p class="m-0 mr-1" *ngFor="let item of user.userSkills">
                                                         - {{item.skillName}}
-                                                        <strong *ngIf="item.skillRank">- {{item.skillRank}} <i class = "fa fa-star"
+                                                        <strong *ngIf="item.skillRank && permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserStarSkill)">
+                                                            - {{item.skillRank}} <i class = "fa fa-star"
                                                             [ngClass] = '{crimson: item.skillRank == 5, grey: item.skillRank == 1 || item.skillRank == 2,
                                                             yellow: item.skillRank == 3 , orange: item.skillRank == 4}' style="
                                                             font-size: 13px;"></i> </strong>
@@ -124,7 +125,7 @@
                                                 <div style="width: 10%; text-align: right;"
                                                     *ngIf="!(user.workingStatus == APP_ENUM.ProjectUserStatus.Past
                                                 || (user.workingStatus == APP_ENUM.ProjectUserStatus.Present && user.allocatePercentage == 0))">
-                                                    <i class="fas fa-edit ml-1" (click)="updateUserSkill(user)"
+                                                    <i class="fas fa-edit ml-1" (click)="updateUserSkill(user, permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserStarSkill))"
                                                         *ngIf="!user.createMode && !user.editMode && permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserSkill)"
                                                         matTooltip="Edit skill"></i>
                                                 </div>
@@ -362,7 +363,8 @@
                                                 <div style="width: 90%; text-align: left;">
                                                     <p class="m-0" *ngFor="let item of user.userSkills">
                                                         - {{item.skillName}}
-                                                        <strong *ngIf="item.skillRank">- {{item.skillRank}} <i class="fa fa-star"
+                                                        <strong *ngIf="item.skillRank && permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_ViewUserStarSkill)">
+                                                            - {{item.skillRank}} <i class="fa fa-star"
                                                             [ngClass] = '{crimson: item.skillRank == 5, grey: item.skillRank == 1 || item.skillRank == 2,
                                                             yellow: item.skillRank == 3, orange: item.skillRank == 4}' style="
                                                             font-size: 13px;"></i> </strong>
@@ -370,7 +372,7 @@
                                                     <div style="white-space: pre-line" *ngIf="IsSkillNoteExist(user)"><strong>Note:</strong> {{GetUserSkillNote(user)}}</div>
                                                 </div>
                                                 <div style="width: 10%; text-align: right;">
-                                                    <i class="fas fa-edit" (click)="updateUserSkill(user) "
+                                                    <i class="fas fa-edit" (click)="updateUserSkill(user, permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_ViewUserStarSkill))"
                                                         *ngIf="!user.createMode && !user.editMode
                                                         && permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_UpdateUserSkill)"
                                                         matTooltip="Edit skill"></i>

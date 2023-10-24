@@ -13,11 +13,11 @@
         </div>
         <p style="margin-bottom: 0;" *ngIf="isNotUpdate">{{data.note}}</p>
     </div>
-    <div class="row" *ngIf="!isNotUpdate">
+    <div class="row">
         <label class="col-md-2 col-form-label" for="userSkills">Skills:</label>
         <div class="col-md-10">
             <mat-form-field class="w-100" appearance="outline">
-                <mat-select multiple [(ngModel)]="userSkillList" 
+                <mat-select multiple [(ngModel)]="userSkillList" [disabled] = "isNotUpdate"
                 style="position: sticky; top: 0; z-index: 2; background-color: white;"
                 required name="userSkills" placeholder="select skill" #userSkills="ngModel"
                 (openedChange)="openedChange($event)">
@@ -41,7 +41,7 @@
             </mat-form-field>
         </div>
     </div > 
-    <div *ngIf="!isNotUpdate" style="width: 100%; margin-top: 15px; height: 350px; overflow-y: auto; overflow-x: hidden">
+    <div *ngIf="!isNotUpdate && viewStarSkillUser" style="width: 100%; margin-top: 15px; height: 350px; overflow-y: auto; overflow-x: hidden">
             <div *ngFor="let item of skillRankList " class="row align-items-center">
                 <span class="col-md-2">{{item.name}}</span>
                 <div class="col-md-10">
@@ -52,7 +52,7 @@
                
             </div>
     </div>
-    <div *ngIf="isNotUpdate" style="width: 100%; margin-top: 15px; height: 350px; overflow-y: auto; overflow-x: hidden">
+    <div *ngIf="isNotUpdate && viewStarSkillUser" style="width: 100%; margin-top: 15px; height: 350px; overflow-y: auto; overflow-x: hidden">
             <div *ngFor="let item of skillRankList " class="row align-items-center">
                 <span class="col-md-2">{{item.name}}</span>
                 <div class="col-md-10">

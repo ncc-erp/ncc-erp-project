@@ -69,6 +69,7 @@ export class PlanResourceComponent
   Resource_TabPool_EditTempProject = PERMISSIONS_CONSTANT.Resource_TabPool_EditTempProject
   Resource_TabPool_Release = PERMISSIONS_CONSTANT.Resource_TabPool_Release
   Resource_TabPool_UpdateSkill = PERMISSIONS_CONSTANT.Resource_TabPool_UpdateSkill
+  Resource_TabPool_ViewUserStarSkill = PERMISSIONS_CONSTANT.Resource_TabPool_ViewUserStarSkill
   Resource_TabPool_EditNote = PERMISSIONS_CONSTANT.Resource_TabPool_EditNote
   Resource_TabPool_ProjectDetail = PERMISSIONS_CONSTANT.Resource_TabPool_ProjectDetail
   Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport;
@@ -343,6 +344,7 @@ export class PlanResourceComponent
       width: "700px",
       data: {
         userSkills: user.userSkills,
+        viewStarSkillUser: this.permission.isGranted(this.Resource_TabPool_ViewUserStarSkill),
         id: user.userId,
         fullName: user.fullName,
         note: note

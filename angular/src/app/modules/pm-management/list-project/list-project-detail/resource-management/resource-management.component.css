@@ -67,4 +67,16 @@ span {
   word-wrap: break-word;
   text-align: left;
 }
+.crimson{
+  color:crimson !important
+}
+.grey{
+  color: grey !important;
+}
+.orange{
+  color: orange !important;
+}
+.yellow{
+  color: yellow !important;
+}
 

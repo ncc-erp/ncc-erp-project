@@ -55,13 +55,13 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
   public searchCode:string = "";
   public listPriorities: any[] = []
   public isAndCondition: boolean = false;
-  public sortResource = {priority: 0}
+  public sortResource = { }
   public theadTable: THeadTable[] = [
     { name: '#' },
-    { name: 'Request Info' },
+    { name: 'Request Info', sortName: 'projectName', defaultSort: '' },
     { name: 'Skill need' },
-    { name: 'Code' },
-    { name: 'Bill Account' },
+    { name: 'Code', sortName: 'code', defaultSort: '' },
+    { name: 'Bill Account', sortName: 'billCVEmail', defaultSort: '' },
     { name: 'Resource'},
     { name: 'Description'},
     { name: 'Note' },
@@ -80,6 +80,7 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
   ResourceRequest_CreateBillResourceForRequest = PERMISSIONS_CONSTANT.ResourceRequest_CreateBillResourceForRequest;
   ResourceRequest_RemoveResouceRequestPlan = PERMISSIONS_CONSTANT.ResourceRequest_RemoveResouceRequestPlan;
   ResourceRequest_UpdateUserBillResourceSkill = PERMISSIONS_CONSTANT.ResourceRequest_UpdateUserBillResourceSkill;
+  ResourceRequest_ViewUserResourceStarSkill = PERMISSIONS_CONSTANT.ResourceRequest_ViewUserResourceStarSkill;
   ResourceRequest_SetDone = PERMISSIONS_CONSTANT.ResourceRequest_SetDone;
   ResourceRequest_CancelAllRequest = PERMISSIONS_CONSTANT.ResourceRequest_CancelAllRequest;
   ResourceRequest_CancelMyRequest = PERMISSIONS_CONSTANT.ResourceRequest_CancelMyRequest;
@@ -288,10 +289,11 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
       width: "700px",
       data: {
         isNotUpdate: !this.permission.isGranted(this.ResourceRequest_UpdateUserBillResourceSkill),
-        userSkills: userSkill,
+        userSkills: userSkill ? userSkill : [],
+        viewStarSkillUser: this.permission.isGranted(this.ResourceRequest_ViewUserResourceStarSkill),
         id: user.id,
         fullName: user.fullName,
-        note: userSkill[0].skillNote ?? ''
+        note: userSkill ? userSkill[0].skillNote : ''
       }
 
     });
@@ -301,7 +303,7 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
       }
     })
   }
-  
+
   public updateNote() {
     let request = {
       resourceRequestId: this.resourceRequestId,

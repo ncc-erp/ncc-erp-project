@@ -222,7 +222,10 @@
                                         <div style="width: 90%">
                                             <p class="m-0" *ngFor="let skill of item.userSkills">
                                                 - {{skill.skillName}}
-
+                                                <strong *ngIf="skill.skillRank && permission.isGranted(Resource_TabVendor_ViewUserStarSkill)">- {{skill.skillRank}} <i class="fa fa-star"
+                                                    [ngClass] = '{crimson: skill.skillRank == 5, grey:skill.skillRank ==1 || skill.skillRank == 2,
+                                                    yellow:skill.skillRank == 3 ,orange:skill.skillRank == 4}' style="
+                                                    font-size: 13px;"></i> </strong>
                                             </p>
                                         </div>
                                         <div *ngIf="permission.isGranted(Resource_TabVendor_UpdateSkill)" style="width: 10%; text-align: right;">

@@ -629,19 +629,20 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="break-word" *ngIf="!item.editMode" [innerHTML]="item.note| safeHtml"></div>
+                                        <div class="break-word format-editor" *ngIf="!item.editMode" [innerHTML]="item.note| safeHtml"></div>
                                         <div *ngIf="item.editMode && isActive">
                                             <editor
                                             id=""
                                             [(ngModel)]="item.note"
                                             [init]="{
-                                              height:100,
-                                              menubar: true,
-                                              plugins: ['table', 'code', 'preview', 'media', 'image', 'template'],
-                                              toolbars: ['image'],
-                                              branding: false,
-                                              forced_root_block: false,
-                                              paste_retain_style_properties: true
+                                                height:100,
+                                                menubar: true,
+                                                plugins: ['table', 'code', 'preview', 'media', 'image', 'template', 'paste'],
+                                                toolbars: ['image'],
+                                                branding: false,
+                                                forced_root_block: false,
+                                                paste_retain_style_properties: 'color font-weight font-style',
+                                                paste_webkit_styles: 'color font-weight font-style'
                                             }"
                                           ></editor>
                                         </div>

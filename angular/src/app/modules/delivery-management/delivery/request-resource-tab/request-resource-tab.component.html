@@ -250,11 +250,11 @@
                    class="text-center"
                 >
                   <div class="row sortHeader" [ngStyle]="styleThead(thead)">
-                    <div class="col-lg-12 rsp-th-name text-left">
+                    <div class="rsp-th-name text-left">
                       {{ thead.name }}
                     </div>
                     <div
-                      class="col-xl-4 col-lg-12 rsp-th-sort text-right"
+                      class="rsp-th-sort text-right"
                       *ngIf="i != 0 && thead.sortName"
                       style="vertical-align: middle"
                     >
@@ -356,7 +356,7 @@
                   <div class="row" >
                     <div class="col-md-10">
                       <div *ngIf="item.billUserInfo" class="d-flex align-items-start" style="flex-direction: column;" >
-                        <p class="m-0">
+                        <p class="m-0 pointer" (click) = "openPopupSkill(item.billUserInfo.employee, item.billUserInfo.userSkill)">
                           <strong>
                             {{item.billUserInfo.employee.fullName}}</strong>
                         </p>
@@ -420,7 +420,7 @@
                   <div class="row" >
                     <div class="col-md-10">
                       <div *ngIf="item.planUserInfo" class="d-flex align-items-start" style="flex-direction: column;" >
-                        <p class="m-0">
+                        <p class="m-0 pointer" (click) = "openPopupSkill(item.planUserInfo.employee, item.planUserInfo.userSkill)">
                           <strong>{{
                             item.planUserInfo.employee.fullName
                           }}</strong>

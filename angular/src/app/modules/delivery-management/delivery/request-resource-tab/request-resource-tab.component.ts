@@ -23,6 +23,9 @@ import { ProjectDescriptionPopupComponent } from './project-description-popup/pr
 import { FormCvUserComponent } from './form-cv-user/form-cv-user.component';
 import { ListProjectService } from '@app/service/api/list-project.service';
 import { DescriptionPopupComponent } from './description-popup/description-popup.component';
+import { ProjectUserService } from './../../../../service/api/project-user.service';
+import { concat, forkJoin, empty  } from 'rxjs';
+import { UpdateUserSkillDialogComponent } from '@app/users/update-user-skill-dialog/update-user-skill-dialog.component';
 
 @Component({
   selector: 'app-request-resource-tab',
@@ -52,13 +55,13 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
   public searchCode:string = "";
   public listPriorities: any[] = []
   public isAndCondition: boolean = false;
-  public sortResource = {priority: 0}
+  public sortResource = { }
   public theadTable: THeadTable[] = [
     { name: '#' },
-    { name: 'Request Info' },
+    { name: 'Request Info', sortName: 'projectName', defaultSort: '' },
     { name: 'Skill need' },
-    { name: 'Code' },
-    { name: 'Bill Account' },
+    { name: 'Code', sortName: 'code', defaultSort: '' },
+    { name: 'Bill Account', sortName: 'billCVEmail', defaultSort: '' },
     { name: 'Resource'},
     { name: 'Description'},
     { name: 'Note' },
@@ -76,6 +79,8 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
   ResourceRequest_UpdateResourceRequestPlan = PERMISSIONS_CONSTANT.ResourceRequest_UpdateResourceRequestPlan;
   ResourceRequest_CreateBillResourceForRequest = PERMISSIONS_CONSTANT.ResourceRequest_CreateBillResourceForRequest;
   ResourceRequest_RemoveResouceRequestPlan = PERMISSIONS_CONSTANT.ResourceRequest_RemoveResouceRequestPlan;
+  ResourceRequest_UpdateUserBillResourceSkill = PERMISSIONS_CONSTANT.ResourceRequest_UpdateUserBillResourceSkill;
+  ResourceRequest_ViewUserResourceStarSkill = PERMISSIONS_CONSTANT.ResourceRequest_ViewUserResourceStarSkill;
   ResourceRequest_SetDone = PERMISSIONS_CONSTANT.ResourceRequest_SetDone;
   ResourceRequest_CancelAllRequest = PERMISSIONS_CONSTANT.ResourceRequest_CancelAllRequest;
   ResourceRequest_CancelMyRequest = PERMISSIONS_CONSTANT.ResourceRequest_CancelMyRequest;
@@ -93,6 +98,7 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
     private ref: ChangeDetectorRef,
     private dialog: MatDialog,
     private listProjectService: ListProjectService,
+    private projectUserService: ProjectUserService,
   ) {
     super(injector)
   }
@@ -177,28 +183,32 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
         data:item
       })
       show.afterClosed().subscribe(rs => {
-       
+
       });
     }
-  
+
   cancelRequest(request: RequestResourceDto) {
+    const projectUserId = request.planUserInfo.projectUserId;
+    const cancelResourceRequest =  this.resourceRequestService.cancelResourceRequest(request.id);
+    const cancelResourcePlan = this.projectUserService.CancelResourcePlan(projectUserId);
+    const actions = [cancelResourceRequest, cancelResourcePlan];
     abp.message.confirm(
       'Are you sure cancel request for project: ' + request.projectName,
       '',
       (result) => {
         if (result) {
-          this.resourceRequestService.cancelResourceRequest(request.id).subscribe(res => {
-            if (res.success) {
-              abp.notify.success('Cancel Request Success!');
+          concat(...actions)
+            .pipe(catchError((error) => {
+              abp.notify.error(error);
+              return empty(); // Return an empty observable to continue
+            }))
+            .subscribe(() => {
+              abp.notify.success('Cancel Request and its Resource Plan successfully!');
               this.refresh();
-            }
-            else {
-              abp.notify.error(res.result)
-            }
-          })
+            });
         }
       }
-    )
+    );
   }
 
   async showModalPlanUser(item: any) {
@@ -230,9 +240,16 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
     return res.result
   }
 
-  showModalCvUser(item:any){
+  async showModalCvUser(item:any){
+    const isHasResource = item.planUserInfo !== null;
+    const planUser = await this.getPlanResource(item);
+
     const show = this.dialog.open(FormCvUserComponent, {
-      data: item,
+      data: {
+        item: item,
+        planUser: { ...planUser, projectUserRoles: this.listProjectUserRoles },
+        isHasResource: isHasResource
+      },
       width: "700px",
       maxHeight: "90vh"
     })
@@ -265,6 +282,26 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
 
   public closeModal() {
     this.isShowModal = 'none'
+  }
+
+  openPopupSkill(user, userSkill) {
+    let ref = this.dialog.open(UpdateUserSkillDialogComponent, {
+      width: "700px",
+      data: {
+        isNotUpdate: !this.permission.isGranted(this.ResourceRequest_UpdateUserBillResourceSkill),
+        userSkills: userSkill ? userSkill : [],
+        viewStarSkillUser: this.permission.isGranted(this.ResourceRequest_ViewUserResourceStarSkill),
+        id: user.id,
+        fullName: user.fullName,
+        note: userSkill ? userSkill[0].skillNote : ''
+      }
+
+    });
+    ref.afterClosed().subscribe(rs => {
+      if (rs) {
+        this.refresh()
+      }
+    })
   }
 
   public updateNote() {

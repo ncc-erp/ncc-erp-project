@@ -387,7 +387,13 @@ export class WeeklyReportComponent extends PagedListingComponentBase<WeeklyRepor
   onChangeStatusProject(){
     this.pjCriteriaResultService.updateStatus(this.statusProject,this.selectedReport.reportId,this.projectId).subscribe(data => {
       abp.notify.success("Update status project successful");
-      this.getAllCriteria();
+      this.listCriteriaResult = this.listCriteriaResult.map(item => {
+        return {...item, status:this.statusProject}
+      })
+      this.listPreEditCriteriaResult = this.listPreEditCriteriaResult.map(item => {
+        return {...item, status:this.statusProject}
+      });
+      this.listPreEditCriteriaResult.forEach(s => s.editMode = false);
     }, () => { this.statusProject = this.statusProjectHistory}
     )
   }
@@ -467,6 +473,7 @@ export class WeeklyReportComponent extends PagedListingComponentBase<WeeklyRepor
 
   public saveCriteriaResult(item: ProjectCriteriaResultDto, index: number) {
     item.pmReportId = this.selectedReport.reportId;
+    item.note = item.note.replace(/^(<br\s*\/>)+|(<br\s*\/>)+$/g, '');
     if (item.id) {
       this.pjCriteriaResultService.update(item).subscribe(res => {
         abp.notify.success(`Update ${item.criteriaName} successfully`);
@@ -1736,11 +1743,7 @@ export class WeeklyReportComponent extends PagedListingComponentBase<WeeklyRepor
             width: "60%"
           });
 
-          show.afterClosed().subscribe((updatedGuideline) => {
-            if (updatedGuideline) {
-              this.refresh();
-            }
-          });
+          show.afterClosed().subscribe((updatedGuideline) => {});
         } else {
           // Display the dialog with empty content
           const show = this.dialog.open(ReportGuidelineDetailComponent, {
@@ -1753,11 +1756,7 @@ export class WeeklyReportComponent extends PagedListingComponentBase<WeeklyRepor
           });
 
 
-          show.afterClosed().subscribe((updatedGuideline) => {
-            if (updatedGuideline) {
-              this.refresh();
-            }
-          });
+          show.afterClosed().subscribe((updatedGuideline) => {});
         }
       });
     }

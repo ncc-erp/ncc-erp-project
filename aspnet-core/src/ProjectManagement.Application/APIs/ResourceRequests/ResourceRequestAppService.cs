@@ -485,7 +485,7 @@ namespace ProjectManagement.APIs.ResourceRequests
 
         [HttpPost]
         [AbpAuthorize(PermissionNames.ResourceRequest_CreateBillResourceForRequest)]
-        public async Task<ResourceRequestPlanDto> UpdateBillInfoTemp(ResourceRequestPlanDto input)
+        public async Task<UpdateResourceRequestPlanForBillInfoDto> UpdateBillInfoTemp(UpdateResourceRequestPlanForBillInfoDto input)
         {
             if (!input.ResourceRequestId.HasValue)
             {
@@ -500,7 +500,7 @@ namespace ProjectManagement.APIs.ResourceRequests
                 throw new UserFriendlyException("Not found resource request Id " + input.ResourceRequestId);
 
             request.BillAccountId = input.UserId;
-            request.BillStartDate = input.UserId != null ? input.StartTime : default;
+            request.BillStartDate = input.UserId != null && input.StartTime != null ? input.StartTime : null;
             WorkScope.Update(request);
 
             return input;

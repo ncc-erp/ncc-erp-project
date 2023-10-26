@@ -1,7 +1,7 @@
 ﻿using Abp.Application.Services.Dto;
 using NccCore.Anotations;
 using NccCore.Uitls;
-
+using ProjectManagement.Services.ResourceService.Dto;
 using ProjectManagement.Utils;
 using System;
 using System.Collections.Generic;
@@ -128,14 +128,16 @@ namespace ProjectManagement.Services.ResourceRequestService.Dto
     {
         public long ProjectUserId { get; set; }
         public UserBaseDto Employee { get; set; }
-        public DateTime PlannedDate { get; set; }
+        public DateTime? PlannedDate { get; set; }
         public ProjectUserRole Role { get; set; }
         public string KomuInfo()
         {
-            return $"Employee: {Employee.KomuInfo()}]\n" +
-                $"Start Working Date: {DateTimeUtils.ToString(PlannedDate)}";
+            string plannedDateString = PlannedDate.HasValue ? DateTimeUtils.ToString(PlannedDate.Value) : "N/A";
 
+            return $"Employee: {Employee.KomuInfo()}]\n" +
+                $"Start Working Date: {plannedDateString}";
         }
+        public List<UserSkillDto> UserSkill { get; set; }
     }
 
     public class RequestCodeDto

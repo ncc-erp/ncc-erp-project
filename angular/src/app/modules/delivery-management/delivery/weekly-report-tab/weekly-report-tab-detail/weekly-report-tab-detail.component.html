@@ -518,10 +518,10 @@
             </div>
         </div>
     </mat-drawer>
-    <div class="row pt-3 pr-3 ml-2" style="position: relative;"
+    <div class="row pt-3 pr-3 ml-2 w-100 pl-2" style="position: relative;" 
         *ngIf="permission.isGranted(WeeklyReport_ReportDetail_View)" #tref>
-        <div id="right-content" [ngClass]="sidebarExpanded?'expand-content':''" style="width: 100%;">
-            <section class="content ">
+        <div id="right-content" style="width: 100%;">
+            <section class="content w-100">
                 <div class="row justify-content-start flex-nowrap">
                     <div class="position-relative mr-2" style="border-right: none; width: 100%;">
                         <div class="px-4 pb-2 pt-2 card position-relative"
@@ -582,7 +582,7 @@
                                                         [ngClass]="APP_CONST.projectHealthStyle[item.status]"
                                                         style="margin-left: 10px !important;width: 100px;" class="ml-3"
                                                         appearance="outline">
-                                                        <mat-select name="flag" placeholder="Select Status"
+                                                        <mat-select name="flag" placeholder="Select Status" style="padding-bottom: 4px;"
                                                             [(ngModel)]="item.status"
                                                             (ngModelChange)="handleChangeStatus(item)">
                                                             <ng-container *ngFor="let flag of problemIssueList">
@@ -629,19 +629,21 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="break-word" *ngIf="!item.editMode" [innerHTML]="item.note| safeHtml"></div>
+                                        <div class="break-word format-editor" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;"
+                                         *ngIf="!item.editMode" [innerHTML]="item.note| safeHtml"></div>
                                         <div *ngIf="item.editMode && isActive">
                                             <editor
                                             id=""
                                             [(ngModel)]="item.note"
                                             [init]="{
-                                              height:100,
-                                              menubar: true,
-                                              plugins: ['table', 'code', 'preview', 'media', 'image', 'template'],
-                                              toolbars: ['image'],
-                                              branding: false,
-                                              forced_root_block: false,
-                                              paste_retain_style_properties: true
+                                                height:100,
+                                                menubar: true,
+                                                plugins: ['table', 'code', 'preview', 'media', 'image', 'template', 'paste'],
+                                                toolbars: ['image'],
+                                                branding: false,
+                                                forced_root_block: false,
+                                                paste_retain_style_properties: 'color font-weight font-style',
+                                                paste_webkit_styles: 'color font-weight font-style'
                                             }"
                                           ></editor>
                                         </div>
@@ -930,7 +932,7 @@
                                 <mat-expansion-panel-header class="m-0" #resource (click)="isShowCurrentResource=!isShowCurrentResource">
                                     <mat-panel-title class="align-items-baseline justify-content-between d-flex align-items-center">
                                         <div>
-                                            <strong style="font-size: 20px; ">Current Resources</strong>&nbsp;
+                                            <strong style="font-size: 20px; ">Current resources</strong>&nbsp;
                                             <strong style="font-size: 20px;" class="text-danger">({{projectCurrentResource?.length}})</strong>
                                         </div>
                                         <mat-checkbox [(ngModel)]="checkViewSubject" (change)="handleViewSubject()"
@@ -1061,7 +1063,7 @@
                                 <mat-expansion-panel-header class="m-0" #resource (click)="isShowChargeAccount=!isShowChargeAccount">
                                     <mat-panel-title class="align-items-baseline justify-content-between d-flex align-items-center">
                                         <div>
-                                                <strong style="font-size: 20px;"> Bill Accounts</strong>&nbsp;
+                                                <strong style="font-size: 20px;"> Bill accounts</strong>&nbsp;
                                                 <strong style="font-size: 20px;" class="text-danger">({{projectInfo.totalBill || 0}})</strong>
                                         </div>
                                     </mat-panel-title>

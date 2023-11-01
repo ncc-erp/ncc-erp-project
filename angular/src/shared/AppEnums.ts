@@ -63,7 +63,7 @@ export const APP_ENUMS = {
         InProgress: "InProgress",
         Done: "Done"
     },
-    
+
     PMReportProjectStatus:
     {
         Draft: 0,
@@ -107,7 +107,7 @@ export const APP_ENUMS = {
         NOCHARGE: 4,
         TRAINING: 5
     },
-    FilterProjectType: 
+    FilterProjectType:
     {
         All: 0,
         Main: 1,
@@ -299,6 +299,13 @@ export const APP_ENUMS = {
         IsCharge : 2,
         IsNotCharge : 3
     },
+    PlanStatus: {
+        All : 1,
+        AllPlan : 2,
+        PlanningJoin : 3,
+        PlanningOut : 4,
+        NoPlan : 5
+    }
+
 }
 
- 

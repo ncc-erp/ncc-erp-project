@@ -10,16 +10,13 @@ import {PlanningBillInfoService} from '../../../../../service/api/bill-account-p
 
 
 @Component({
-  selector: "app-bill-account-plan",
-  templateUrl: "./bill-account-plan.component.html",
-  styleUrls: ["./bill-account-plan.component.css"],
+  selector: 'app-bill-account-plan',
+  templateUrl: './bill-account-plan.component.html',
+  styleUrls: ['./bill-account-plan.component.css'],
 })
-export class BillAccountPlanComponent
-  extends PagedListingComponentBase<any>
-  implements OnInit
-{
-  APP_ENUM = APP_ENUMS;
-  @Output() onDateSelectorChange = new EventEmitter();
+export class BillAccountPlanComponent extends PagedListingComponentBase<any> implements OnInit {
+  APP_ENUM = APP_ENUMS
+  @Output() onDateSelectorChange = new EventEmitter()
 
   searchProject: string = "";
   date = new FormControl(moment());
@@ -67,16 +64,8 @@ export class BillAccountPlanComponent
         this.projectList = data.result;
       });
     var date = new Date();
-    this.filterFromDate = new Date(
-      date.getFullYear(),
-      date.getMonth(),
-      1
-    ).toDateString();
-    this.filterToDate = new Date(
-      date.getFullYear(),
-      date.getMonth() + 1,
-      0
-    ).toDateString();
+    this.filterFromDate = new Date(date.getFullYear(), date.getMonth(), 1).toDateString();
+    this.filterToDate = new Date(date.getFullYear(), date.getMonth() + 1, 0).toDateString();
     this.birthdayFromDate = this.filterFromDate;
     this.birthdayToDate = this.filterToDate;
   }
@@ -85,12 +74,8 @@ export class BillAccountPlanComponent
   public birthdayFromDate: string;
   public birthdayToDate: string;
 
-  protected list(
-    request: PagedRequestDto,
-    pageNumber: number,
-    finishedCallback: Function,
-    skill?
-  ): void {
+  protected list(request: PagedRequestDto, pageNumber: number, finishedCallback: Function, skill?): void {
+
     const requestBody: any = {
       searchText: this.searchText,
       projectId: this.projectId,

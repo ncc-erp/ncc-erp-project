@@ -351,7 +351,6 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
       this.selectedPositions = data.result.map(item => item.id)
       this.selectedPositionsOld = [...this.selectedPositions]
       this.selectedPositionsCr = this.selectedPositions
-      console.log(this.listPositions)
       this.refresh();
     })
   }

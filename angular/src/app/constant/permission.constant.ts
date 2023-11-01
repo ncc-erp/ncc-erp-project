@@ -585,6 +585,7 @@ export const PERMISSIONS_CONSTANT = {
 
 
        Resource_TabPlanningBillAccount:"Resource.TabPlanning.BillAccount",
+       Resource_TabAllBillAccount: "Resource.TabAll.BillAccount",
        // #endregion
 
        // #region Timesheet

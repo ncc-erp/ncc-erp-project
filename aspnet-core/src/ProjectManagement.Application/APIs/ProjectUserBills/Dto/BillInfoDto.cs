@@ -58,6 +58,7 @@ namespace ProjectManagement.APIs.ProjectUserBills.Dto
         public long? ProjectId { get; set; }
         public JoinOutStatus? JoinOutStatus { get; set; }
         public ChargeStatus? ChargeStatus { get; set; }
+        public PlanStatus? PlanStatus { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public GridParam GirdParam { get; set; }

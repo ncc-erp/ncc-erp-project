@@ -30,6 +30,7 @@ import { PositionDto } from '@app/service/model/position.dto';
 import { RetroReviewHistoryByUserComponent } from "./../plan-resource/plan-user/retro-review-history-by-user/retro-review-history-by-user.component";
 import { ProjectHistoryByUserComponent } from "./../plan-resource/plan-user/project-history-by-user/project-history-by-user.component";
 import { result } from 'lodash-es';
+import { APP_ENUMS } from '@shared/AppEnums';
 
 @Component({
   selector: 'app-all-resource',
@@ -42,12 +43,15 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
   public searchSkill:string = '';
   public searchBranch:string = '';
   public searchPosition:string ='';
+  public searchUserType:string ='';
   public listSkills: SkillDto[] = [];
   public listBranchs: BranchDto[] = [];
   public listPositions: PositionDto[] = [];
+  public listUserTypes: any = [];
   public listSkillsId: number[] = [];
   public listBranchsId: number[] = [];
   public listPositionsId: number[] = [];
+  public listUserTypesId: number[] = [];
   public skill = '';
   public skillsParam = [];
   public selectedSkillId: number[] = [];
@@ -57,6 +61,8 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
   public selectedBranchIdsCr: number[] = [];
   public selectedBranchIdsOld: number[] = [];
   public selectedUserTypes: number[] = [];
+  public selectedUserTypesCr: number[] = [];
+  public selectedUserTypesOld: number[] = [];
   public selectedPositions: number[] = [];
   public selectedPositionsCr: number[] = [];
   public selectedPositionsOld: number[] = [];
@@ -92,7 +98,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
       branchIds: this.selectedBranchIds,
       userTypes: this.selectedUserTypes,
       positionIds: this.selectedPositions,
-      planStatus: this.selectedIsPlanned || PlanStatus.AllPlan
+      planStatus: this.selectedIsPlanned || APP_ENUMS.PlanStatus.AllPlan
     };
 
     this.subscription.push(
@@ -142,6 +148,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
   @ViewChild("selectPosition") selectPosition;
   @ViewChild("selectBranch") selectBranch;
   @ViewChild("selectSkill") selectSkill;
+  @ViewChild("selectUserType") selectUserType;
 
   ngOnInit(): void {
     this.pageSizeType = 100
@@ -149,11 +156,12 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     this.getAllSkills();
     this.getAllPositions();
     this.getAllBranchs();
-    this.userTypeParam.forEach(item => {
-      if (item.value != 4 && item.value != 5) {
-        this.selectedUserTypes.push(item.value);
-      }
-    });
+    this.getAllUserTypes();
+    // this.userTypeParam.forEach(item => {
+    //   if (item.value != 4 && item.value != 5) {
+    //     this.selectedUserTypes.push(item.value);
+    //   }
+    // });
 
     this.selectedIsPlanned = 1;
   }
@@ -202,6 +210,11 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
           this.selectedSkillIdCr = [...this.selectedSkillIdOld]
           this.searchSkill = '';
           break;
+        case 'UserType':
+          this.selectedUserTypes = [...this.selectedUserTypesOld]
+          this.selectedUserTypesCr = [...this.selectedUserTypesOld]
+          this.searchUserType = '';
+          break;
       }
     }
   }
@@ -220,6 +233,10 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
         this.selectedSkillId = typeSelect.data
         this.selectedSkillIdCr = typeSelect.data
         break;
+      case 'UserType':
+        this.selectedUserTypes = typeSelect.data
+        this.selectedUserTypesCr = typeSelect.data
+        break;
     }
   }
 
@@ -230,7 +247,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     else{
       listSelect.push(id)
       return listSelect
-    } 
+    }
   }
 
   onSelectChangePosition(id){
@@ -246,12 +263,19 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     this.selectedBranchIds = [...branch]
     this.listBranchs = this.orderList(this.listBranchs,this.selectedBranchIds)
   }
-  
+
   onSelectChangeSkill(id){
     const skill = this.onSelectChange(this.selectedSkillIdCr,id)
     this.selectedSkillIdCr = skill
-    this.selectedSkillId= [...skill]  
+    this.selectedSkillId= [...skill]
     this.listSkills = this.orderList(this.listSkills,this.selectedSkillId)
+  }
+
+  onSelectChangeUserType(id){
+    const userType = this.onSelectChange(this.selectedUserTypesCr,id)
+    this.selectedUserTypesCr = userType
+    this.selectedUserTypes = [...userType]
+    this.listUserTypes = this.orderList(this.listUserTypes,this.selectedUserTypes)
   }
 
   orderList(listAll, listIdSelect){
@@ -273,6 +297,10 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
       case 'Skill':
         this.selectedSkillIdOld = this.selectedSkillId
         this.selectSkill.close()
+        break;
+      case 'UserType':
+        this.selectedUserTypesOld = this.selectedUserTypes
+        this.selectUserType.close()
         break;
     }
     this.refresh()
@@ -315,21 +343,21 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
 
 
 
-  onChangeUserTypeEvent(event?): void {
-    this.selectedUserTypes = event.value;
-    this.getDataPage(1);
-    //this.refresh();
-  }
+  // onChangeUserTypeEvent(event?): void {
+  //   this.selectedUserTypes = event.value;
+  //   this.getDataPage(1);
+  //   //this.refresh();
+  // }
 
   planStatusList = [
-    { value: PlanStatus.AllPlan, displayName: 'Has plans' },
-    { value: PlanStatus.PlanningJoin, displayName: 'Planning join' },
-    { value: PlanStatus.PlanningOut, displayName: 'Planning out' },
-    { value: PlanStatus.NoPlan, displayName: 'No plan' }
+    { value: APP_ENUMS.PlanStatus.AllPlan, displayName: 'Has plans' },
+    { value: APP_ENUMS.PlanStatus.PlanningJoin, displayName: 'Planning join' },
+    { value: APP_ENUMS.PlanStatus.PlanningOut, displayName: 'Planning out' },
+    { value: APP_ENUMS.PlanStatus.NoPlan, displayName: 'No plan' }
   ];
 
   applyPlanFilter() {
-    this.selectedIsPlanned = PlanStatus.All;
+    this.selectedIsPlanned = APP_ENUMS.PlanStatus.All;
     this.isFilterSelected = false;
     this.getDataPage(1);
 }
@@ -352,8 +380,24 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
       this.selectedPositions = data.result.map(item => item.id)
       this.selectedPositionsOld = [...this.selectedPositions]
       this.selectedPositionsCr = this.selectedPositions
+      console.log(this.listPositions)
       this.refresh();
     })
+  }
+
+  getAllUserTypes() {
+    this.listUserTypes = Object.entries(this.APP_ENUM.UserTypeTabAllResource).map((item) => {
+      return {
+        displayName: item[0],
+        value: item[1],
+      };
+    });
+    this.listUserTypesId = this.listUserTypes.map(item => item.value);
+    this.selectedUserTypes = this.listUserTypes.map(item => item.value);
+    this.selectedUserTypesOld = [...this.selectedUserTypes];
+    this.selectedUserTypesCr = this.selectedUserTypes;
+    console.log(this.listUserTypes)
+    this.refresh();
   }
 
   skillsCommas(arr) {
@@ -549,7 +593,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
       routingToUrl = (this.permission.isGranted(this.Projects_TrainingProjects_ProjectDetail_TabWeeklyReport)
       && this.permission.isGranted(this.Projects_TrainingProjects_ProjectDetail_TabWeeklyReport_View))
      ? "/app/training-project-detail/training-weekly-report" : "/app/training-project-detail/training-project-general"
-    } 
+    }
 
     else if ( project.projectType == 3){
       routingToUrl= (this.permission.isGranted(this.Projects_ProductProjects_ProjectDetail_TabWeeklyReport)
@@ -618,11 +662,4 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     this.showDialogRetroReviewHistoryUser(user);
   }
 
-}
-export enum PlanStatus {
-  All = 1,
-  AllPlan = 2,
-  PlanningJoin = 3,
-  PlanningOut = 4,
-  NoPlan = 5
 }

@@ -92,14 +92,14 @@
                             </div>
 
                             <div class="col-5 row justify-content-between">
-                                <div style="margin-top: 10px;" *ngIf="permission.isGranted(Projects_OutsourcingProjects_ViewBillAccount)">
-                                    <mat-checkbox name="cbx-showBillAccount" [(ngModel)]="isShowResources" >Show resources</mat-checkbox>
+                                <div style="margin-top: 10px;" *ngIf="permission.isGranted(Projects_OutsourcingProjects_ViewResource)">
+                                    <mat-checkbox name="cbx-showResource" [(ngModel)]="isShowResources" >Show resources</mat-checkbox>
                                 </div>
                                 <div style="margin-top: 10px;" *ngIf="permission.isGranted(Projects_OutsourcingProjects_ViewBillAccount)">
                                     <mat-checkbox name="cbx-showBillAccount" [(ngModel)]="isShowAccount" >Show bill account</mat-checkbox>
                                 </div>
                                 <div style="margin-top: 10px;" *ngIf="permission.isGranted(Projects_OutsourcingProjects_ViewBillInfo)">
-                                        <mat-checkbox name="cbx-showBillInfo" [(ngModel)]="isShowBillInfo">Show bill info</mat-checkbox>
+                                    <mat-checkbox name="cbx-showBillInfo" [(ngModel)]="isShowBillInfo">Show bill info</mat-checkbox>
                                 </div>
                             </div>
                         </div>
@@ -204,22 +204,17 @@
                                     </div>
                                 </td>
                                 <td *ngIf="isShowResources">
-                                    <strong *ngIf="filterBillInfo(project).length>0" style="color: red;">Total:{{project.billInfo.length}}</strong>
-                                    <div *ngFor="let bill of filterBillInfo(project) let j = index;">
-                                        <strong>{{j+1}}. </strong><strong>{{bill.fullName}} </strong>
-                                        <span
-                                            >[{{bill.billRole}}]
-                                        </span>
-                                        <strong *ngIf="isShowBillInfo"
-                                            class="text-danger"> {{bill.billRate | number: "1.0"}} </strong>
-                                        <span  *ngIf="isShowBillInfo"
-                                            >{{project.currencyName
-                                            | lowercase}}/{{getChargeType(project.chargeType)}}</span>
+                                    <strong *ngIf="filterResource(project).length>0" style="color: red;">Total:{{project.currentResources.length}}</strong>
+                                    <div *ngFor="let resource of filterResource(project) let j = index;">
+                                        <strong>{{j+1}}. </strong><strong>{{resource.fullName}}</strong>
+                                        <span class="ml-1 badge badge-pill text-white" [style.backgroundColor]="resource.positionColor">
+                                            {{resource.positionName}}</span>
+                                        <p class="m-0"><span>{{resource?.emailAddress}}</span></p>
                                     </div>
                                     <span>
-                                        <i [ngClass]="project.isViewAllBillInfo ? 'fas fa-chevron-up' :'fa fa-ellipsis-h'"
-                                            *ngIf="project.billInfo.length > 5"
-                                            (click)="project.isViewAllBillInfo = !project.isViewAllBillInfo; filterBillInfo(project)"></i>
+                                        <i [ngClass]="project.isViewAllResource ? 'fas fa-chevron-up' :'fa fa-ellipsis-h'"
+                                            *ngIf="project.currentResources.length > 3"
+                                            (click)="project.isViewAllResource = !project.isViewAllResource; filterResource(project)"></i>
                                     </span>
                                 </td>
                                 <td *ngIf="isShowBillInfo || isShowAccount">

@@ -229,7 +229,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
       },
         () => {
           userBill.createMode = true;
-          this.isLoading = true
+          this.isLoading = false
         }
         )
       }
@@ -255,7 +255,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
         },
           () => {
             userBill.createMode = true;
-            this.isLoading = true
+            this.isLoading = false
           })
       }
     }

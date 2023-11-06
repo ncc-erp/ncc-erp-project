@@ -78,6 +78,7 @@ export class ListProjectComponent extends PagedListingComponentBase<any> impleme
   public tempPMList: any[] = [];
   public pmId = -1;
   public searchPM: string = "";
+  public isShowResources:boolean = false
   public isShowBillInfo:boolean = false
   public isShowAccount:boolean = false
   @ViewChild(MatMenuTrigger)

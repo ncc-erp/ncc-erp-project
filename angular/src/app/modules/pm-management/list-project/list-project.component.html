@@ -25,7 +25,7 @@
 
             <div class="card-header">
                 <div class="row g-3">
-                    <div class="input-group col-4 pt-1">
+                    <div class="input-group col-3 pt-1">
                         <div class="input-group-prepend">
                             <button name="btn-search" type="button" class="btn bg-blue" (click)="searchProject()">
                                 <i class="fas fa-search"></i>
@@ -41,10 +41,9 @@
                         </div>
 
                     </div>
-                    <div class="col-8 ">
+                    <div class="col-9">
                         <div class="row filter-wrap">
-
-                            <div class="col-4 search-pm text-right">
+                            <div class="col-3 search-pm text-right">
                                 <!-- <label class="label-pm pr-2 mt-3 ">PM:</label> -->
                                 <mat-form-field appearance="outline">
                                     <mat-label>PM</mat-label>
@@ -92,14 +91,17 @@
                                 </mat-form-field>
                             </div>
 
-                            <div class="col-2" style="margin-top: 10px;" *ngIf="permission.isGranted(Projects_OutsourcingProjects_ViewBillAccount)">
-                                <mat-checkbox name="cbx-showBillAccount" [(ngModel)]="isShowAccount" >Show bill account</mat-checkbox>
+                            <div class="col-5 row justify-content-between">
+                                <div style="margin-top: 10px;" *ngIf="permission.isGranted(Projects_OutsourcingProjects_ViewBillAccount)">
+                                    <mat-checkbox name="cbx-showBillAccount" [(ngModel)]="isShowResources" >Show resources</mat-checkbox>
+                                </div>
+                                <div style="margin-top: 10px;" *ngIf="permission.isGranted(Projects_OutsourcingProjects_ViewBillAccount)">
+                                    <mat-checkbox name="cbx-showBillAccount" [(ngModel)]="isShowAccount" >Show bill account</mat-checkbox>
+                                </div>
+                                <div style="margin-top: 10px;" *ngIf="permission.isGranted(Projects_OutsourcingProjects_ViewBillInfo)">
+                                        <mat-checkbox name="cbx-showBillInfo" [(ngModel)]="isShowBillInfo">Show bill info</mat-checkbox>
+                                </div>
                             </div>
-                            <div class="col-2" style="margin-top: 10px;" *ngIf="permission.isGranted(Projects_OutsourcingProjects_ViewBillInfo)">
-                                    <mat-checkbox name="cbx-showBillInfo" [(ngModel)]="isShowBillInfo">Show bill info</mat-checkbox>
-                            </div>
-
-
                         </div>
                     </div>
                 </div>
@@ -132,15 +134,12 @@
                         <thead class="bg-light">
                             <tr style="border: none;">
                                 <th>#</th>
-                                <th>Projects</th>
-                                <th *ngIf="isShowAccount">Main/Sub Project</th>
+                                <th style="max-width: 300px">Projects</th>
                                 <th style="width: 325px;">{{'PM' | localize}}</th>
+                                <th *ngIf="isShowResources">Resources</th>
                                 <th *ngIf="isShowBillInfo || isShowAccount"> {{isShowBillInfo && isShowAccount ? 'Bill info/Bill account' : isShowBillInfo && !isShowAccount ? 'Bill info' : 'Bill account' }}</th>
-
                                 <th *ngIf="permission.isGranted(Projects_OutsourcingProjects_ViewRequireWeeklyReport)" style="width: 50px;">RequireWR</th>
-                                <th style="width: 110px;">Time</th>
                                 <th style="width: 50px;">Is charged</th>
-                                <th style="width: 100px;">Status</th>
                                 <th style="width: 120px;">
                                     <div class="weekly-report-header-wrap d-flex align-items-center">
                                         <div>
@@ -164,42 +163,32 @@
                                     totalItems: totalItems
                                 }; let i = index" style="position: relative;" >
                                 <td class="text-center" style="width: 60px; max-width: 60px;"> {{  i + 1 + pageSize * (pageNumber - 1)}}</td>
-                                <td style="max-width: 250px; white-space: normal;">
-                                    <div class="project-wrap">
-                                        <div >
-                                            <a style="cursor: pointer; font-weight: bold;" *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail)" (click)="viewProjectDetail(project)" >
-                                                {{ project.name }}
-                                            </a>
-                                            <strong *ngIf="!permission.isGranted(Projects_OutsourcingProjects_ProjectDetail)">
-                                                {{ project.name }}
-                                            </strong>
-                                            <div>
-                                                <span>[{{ project.code }}]</span>
-                                            </div>
-                                            <div>
-                                                <span>{{project.clientCode}}</span>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <span [ngClass]=" APP_CONST.ProjectTypeStyle[getByEnum(project.projectType,APP_ENUM.ProjectType)]">
-                                                {{ changeTextProjectType(getByEnum(project.projectType,APP_ENUM.ProjectType)) }}
-                                            </span>
-                                        </div>
+                                <td style="white-space: normal;">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <a style="cursor: pointer; font-weight: bold;" *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail)" (click)="viewProjectDetail(project)" >
+                                            {{ project.name }}
+                                        </a>
+                                        <strong *ngIf="!permission.isGranted(Projects_OutsourcingProjects_ProjectDetail)">
+                                            {{ project.name }}
+                                        </strong>
+                                        <span [ngClass]=" APP_CONST.ProjectTypeStyle[getByEnum(project.projectType,APP_ENUM.ProjectType)]">
+                                            {{ changeTextProjectType(getByEnum(project.projectType,APP_ENUM.ProjectType)) }}
+                                        </span>
                                     </div>
-                                </td>
-                                <td style="max-width: 250px; white-space: normal;" *ngIf="isShowAccount">
-                                    <strong [style.color]="!project.isParentInvoiceIdExist ? '#dc3545' : '#000'"
-                                     style="font-size: 16px;">{{ !project.isParentInvoiceIdExist ? "Main " : "Sub "}}</strong>
-                                    <span>of:</span>
-                                    <div style="display: flex; justify-content: space-between;">
-                                        <div class="sub-main-project-name">
-                                            <div>
-                                                <a class="sub-main-project-name" *ngFor="let item of project.parentInvoices" style="cursor: pointer; font-weight: bold; display: grid; justify-content: start; "  (click)="viewProjectDetail(item)">
-                                                    {{ item.name }}
-                                                </a>
-                                            </div>
-                                        </div>
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <span>[{{ project.code }}]</span>
+                                        <span 
+                                            [ngClass]=" APP_CONST.statusStyle[getByEnum(project.status,APP_ENUM.ProjectStatus)]">
+                                            {{getByEnum(project.status,APP_ENUM.ProjectStatus)}}
+                                        </span>
                                     </div>
+                                    <div>
+                                        <span>{{project.clientCode}}</span>
+                                    </div>
+                                    <div class="time-wrap align-items-center">
+                                        <span class="time-item start-time">{{ project.startTime | date:"dd-MM-yyyy" }}</span>
+                                        <span class="time-item end-time">{{ project.endTime | date:"dd-MM-yyyy" }}</span>
+                                    </div>      
                                 </td>
                                 <td>
                                     <div>
@@ -213,6 +202,25 @@
                                                                 userType:project.pmUserType,emailAddress:project.pmEmailAddress, avatarFullPath:project.pmAvatarFullPath}">
                                         </app-user-info>
                                     </div>
+                                </td>
+                                <td *ngIf="isShowResources">
+                                    <strong *ngIf="filterBillInfo(project).length>0" style="color: red;">Total:{{project.billInfo.length}}</strong>
+                                    <div *ngFor="let bill of filterBillInfo(project) let j = index;">
+                                        <strong>{{j+1}}. </strong><strong>{{bill.fullName}} </strong>
+                                        <span
+                                            >[{{bill.billRole}}]
+                                        </span>
+                                        <strong *ngIf="isShowBillInfo"
+                                            class="text-danger"> {{bill.billRate | number: "1.0"}} </strong>
+                                        <span  *ngIf="isShowBillInfo"
+                                            >{{project.currencyName
+                                            | lowercase}}/{{getChargeType(project.chargeType)}}</span>
+                                    </div>
+                                    <span>
+                                        <i [ngClass]="project.isViewAllBillInfo ? 'fas fa-chevron-up' :'fa fa-ellipsis-h'"
+                                            *ngIf="project.billInfo.length > 5"
+                                            (click)="project.isViewAllBillInfo = !project.isViewAllBillInfo; filterBillInfo(project)"></i>
+                                    </span>
                                 </td>
                                 <td *ngIf="isShowBillInfo || isShowAccount">
                                     <strong *ngIf="filterBillInfo(project).length>0" style="color: red;">Total:{{project.billInfo.length}}</strong>
@@ -232,7 +240,6 @@
                                             *ngIf="project.billInfo.length > 5"
                                             (click)="project.isViewAllBillInfo = !project.isViewAllBillInfo; filterBillInfo(project)"></i>
                                     </span>
-
                                 </td>
 
                                 <td *ngIf="permission.isGranted(Projects_OutsourcingProjects_ViewRequireWeeklyReport)" class="text-center">
@@ -240,18 +247,9 @@
                                     </mat-checkbox>
                                 </td>
                                 <td class="text-center" >
-                                    <div class="time-wrap">
-                                        <span class="time-item start-time">{{ project.startTime | date:"dd-MM-yyyy" }}</span>
-                                        <span class="time-item end-time">{{ project.endTime | date:"dd-MM-yyyy" }}</span>
-                                    </div>
-                                </td>
-                                <td class="text-center" >
                                     <mat-checkbox class="example-margin is-charged-checkbox" color="primary" (click)="$event.preventDefault()" [ngModel]="project.isCharge">
                                     </mat-checkbox>
                                 </td>
-                                <td class="text-center" > <span
-                                        [ngClass]=" APP_CONST.statusStyle[getByEnum(project.status,APP_ENUM.ProjectStatus)]">{{
-                                        getByEnum(project.status,APP_ENUM.ProjectStatus)}}</span></td>
                                 <td class="text-center" >
                                     <div class="weekly-report-wrap">
                                         <span

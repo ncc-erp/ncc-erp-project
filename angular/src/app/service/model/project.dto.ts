@@ -102,6 +102,7 @@ export class projectUserBillDto {
   chargeTypeName: string;
   linkedResources: any[]
 }
+
 export class ProjectRateDto {
   currencyName: string;
   isCharge: boolean;

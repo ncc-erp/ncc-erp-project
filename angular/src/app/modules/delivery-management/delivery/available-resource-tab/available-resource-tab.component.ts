@@ -15,10 +15,11 @@ export class AvailableResourceTabComponent extends AppComponentBase implements O
   Resource_TabAllResource = PERMISSIONS_CONSTANT.Resource_TabAllResource
   Resource_TabVendor = PERMISSIONS_CONSTANT.Resource_TabVendor
   Resource_TabPlanningBillAccount = PERMISSIONS_CONSTANT.Resource_TabPlanningBillAccount
+  Resource_TabAllBillAccount = PERMISSIONS_CONSTANT.Resource_TabAllBillAccount
   constructor(injector: Injector, private router: Router, private route: ActivatedRoute) {
     super(injector);
     this.currentUrl =this.router.url
-   
+
   }
 
   ngOnInit(): void {
@@ -62,6 +63,6 @@ export class AvailableResourceTabComponent extends AppComponentBase implements O
     });
   }
 
-  
+
 
 }

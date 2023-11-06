@@ -30,6 +30,7 @@ import { PositionDto } from '@app/service/model/position.dto';
 import { RetroReviewHistoryByUserComponent } from "./../plan-resource/plan-user/retro-review-history-by-user/retro-review-history-by-user.component";
 import { ProjectHistoryByUserComponent } from "./../plan-resource/plan-user/project-history-by-user/project-history-by-user.component";
 import { result } from 'lodash-es';
+import { APP_ENUMS } from '@shared/AppEnums';
 
 @Component({
   selector: 'app-all-resource',
@@ -92,7 +93,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
       branchIds: this.selectedBranchIds,
       userTypes: this.selectedUserTypes,
       positionIds: this.selectedPositions,
-      planStatus: this.selectedIsPlanned || PlanStatus.AllPlan
+      planStatus: this.selectedIsPlanned || APP_ENUMS.PlanStatus.AllPlan
     };
 
     this.subscription.push(
@@ -230,7 +231,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     else{
       listSelect.push(id)
       return listSelect
-    } 
+    }
   }
 
   onSelectChangePosition(id){
@@ -246,11 +247,11 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     this.selectedBranchIds = [...branch]
     this.listBranchs = this.orderList(this.listBranchs,this.selectedBranchIds)
   }
-  
+
   onSelectChangeSkill(id){
     const skill = this.onSelectChange(this.selectedSkillIdCr,id)
     this.selectedSkillIdCr = skill
-    this.selectedSkillId= [...skill]  
+    this.selectedSkillId= [...skill]
     this.listSkills = this.orderList(this.listSkills,this.selectedSkillId)
   }
 
@@ -313,8 +314,6 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     )
   }
 
-
-
   onChangeUserTypeEvent(event?): void {
     this.selectedUserTypes = event.value;
     this.getDataPage(1);
@@ -322,14 +321,14 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
   }
 
   planStatusList = [
-    { value: PlanStatus.AllPlan, displayName: 'Has plans' },
-    { value: PlanStatus.PlanningJoin, displayName: 'Planning join' },
-    { value: PlanStatus.PlanningOut, displayName: 'Planning out' },
-    { value: PlanStatus.NoPlan, displayName: 'No plan' }
+    { value: APP_ENUMS.PlanStatus.AllPlan, displayName: 'Has plans' },
+    { value: APP_ENUMS.PlanStatus.PlanningJoin, displayName: 'Planning join' },
+    { value: APP_ENUMS.PlanStatus.PlanningOut, displayName: 'Planning out' },
+    { value: APP_ENUMS.PlanStatus.NoPlan, displayName: 'No plan' }
   ];
 
   applyPlanFilter() {
-    this.selectedIsPlanned = PlanStatus.All;
+    this.selectedIsPlanned = APP_ENUMS.PlanStatus.All;
     this.isFilterSelected = false;
     this.getDataPage(1);
 }
@@ -549,7 +548,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
       routingToUrl = (this.permission.isGranted(this.Projects_TrainingProjects_ProjectDetail_TabWeeklyReport)
       && this.permission.isGranted(this.Projects_TrainingProjects_ProjectDetail_TabWeeklyReport_View))
      ? "/app/training-project-detail/training-weekly-report" : "/app/training-project-detail/training-project-general"
-    } 
+    }
 
     else if ( project.projectType == 3){
       routingToUrl= (this.permission.isGranted(this.Projects_ProductProjects_ProjectDetail_TabWeeklyReport)
@@ -618,11 +617,4 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     this.showDialogRetroReviewHistoryUser(user);
   }
 
-}
-export enum PlanStatus {
-  All = 1,
-  AllPlan = 2,
-  PlanningJoin = 3,
-  PlanningOut = 4,
-  NoPlan = 5
 }

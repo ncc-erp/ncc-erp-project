@@ -477,6 +477,7 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
 
   public saveCriteriaResult(item: ProjectCriteriaResultDto,index:number) {
     item.pmReportId = this.pmReportId;
+    item.note = item.note.replace(/^(<br\s*\/>)+|(<br\s*\/>)+$/g, '');
     if (item.id) {
       this.pjCriteriaResultService.update(item).subscribe(res => {
         abp.notify.success(`Update ${item.criteriaName} successfully`);

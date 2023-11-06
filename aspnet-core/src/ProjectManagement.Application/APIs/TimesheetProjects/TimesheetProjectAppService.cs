@@ -994,7 +994,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
 
                     return new FileBase64Dto
                     {
-                        FileName = dataInvoice.ExportFileName(),
+                        FileName = dataInvoice.ExportTimesheetFileName(),
                         FileType = MimeTypeNames.ApplicationVndOpenxmlformatsOfficedocumentSpreadsheetmlSheet,
                         Base64 = fileBase64
                     };

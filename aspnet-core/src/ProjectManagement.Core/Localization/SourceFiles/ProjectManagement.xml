@@ -118,7 +118,19 @@
     <text name="ResetPasswordStepOneInfo">1. Enter your administrator password</text>
     <text name="ResetPasswordStepTwoInfo">2. Copy this random password so you can send it to the user</text>
 	<!--/Default Abp-->
-	  
+
+  <!--Filter Component-->
+    <text name="Equal">Equal</text>
+    <text name="Smaller">Smaller</text>
+    <text name="Smaller_or_Equal">Smaller or Equal</text>
+    <text name="Bigger">Bigger</text>
+    <text name="Bigger_or_Equal">Bigger or Equal</text>
+    <text name="Not_Equal">Not Equal</text>
+    <text name="Contains">Contains</text>
+    <text name="Start_With">Start With</text>
+    <text name="End_With">End With</text>
+    <text name="In">In</text>
+  <!--/Filter Component-->
 	  
   </texts>
 </localizationDictionary>

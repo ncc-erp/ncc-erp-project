@@ -23,10 +23,18 @@ export class PlanningBillInfoService extends BaseApiService {
       request
     );
   }
+  public GetAllBillInfo(
+    request: PagedRequestDto
+  ): Observable<any> {
+    return this.http.post<any>(
+      this.rootUrl + '/GetAllBillInfo',
+      request
+    );
+  }
   public GetAllProjectUserBill(): Observable<any> {
     return this.http.get<any>(this.rootUrl + `/GetAllProjectUserBill`);
   }
 }
-  
+
 
 

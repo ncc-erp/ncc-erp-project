@@ -38,7 +38,6 @@ export class TimesheetComponent extends PagedListingComponentBase<TimesheetDto> 
 
       this.timesheetList = data.result.items;
       this.showPaging(data.result, pageNumber);
-
     })
   }
   protected delete(item: TimesheetDto): void {
@@ -82,7 +81,8 @@ export class TimesheetComponent extends PagedListingComponentBase<TimesheetDto> 
         status: Timesheet.status,
         isActive: Timesheet.isActive,
         totalWorkingDay : Timesheet.totalWorkingDay,
-        id: Timesheet.id
+        id: Timesheet.id,
+        closeTime: Timesheet.closeTime
       }
     }
 

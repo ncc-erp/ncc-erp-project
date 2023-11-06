@@ -69,6 +69,7 @@ export class PlanResourceComponent
   Resource_TabPool_EditTempProject = PERMISSIONS_CONSTANT.Resource_TabPool_EditTempProject
   Resource_TabPool_Release = PERMISSIONS_CONSTANT.Resource_TabPool_Release
   Resource_TabPool_UpdateSkill = PERMISSIONS_CONSTANT.Resource_TabPool_UpdateSkill
+  Resource_TabPool_ViewUserStarSkill = PERMISSIONS_CONSTANT.Resource_TabPool_ViewUserStarSkill
   Resource_TabPool_EditNote = PERMISSIONS_CONSTANT.Resource_TabPool_EditNote
   Resource_TabPool_ProjectDetail = PERMISSIONS_CONSTANT.Resource_TabPool_ProjectDetail
   Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport;
@@ -77,7 +78,7 @@ export class PlanResourceComponent
   Projects_ProductProjects_ProjectDetail_TabWeeklyReport_View = PERMISSIONS_CONSTANT.Projects_ProductProjects_ProjectDetail_TabWeeklyReport_View
   Projects_TrainingProjects_ProjectDetail_TabWeeklyReport = PERMISSIONS_CONSTANT.Projects_TrainingProjects_ProjectDetail_TabWeeklyReport
   Projects_TrainingProjects_ProjectDetail_TabWeeklyReport_View = PERMISSIONS_CONSTANT.Projects_TrainingProjects_ProjectDetail_TabWeeklyReport_View
-  
+
   protected list(
     request: PagedRequestDto,
     pageNumber: number,
@@ -153,7 +154,7 @@ export class PlanResourceComponent
   ) {
     super(injector);
   }
-  
+
   @ViewChild("selectSkill") selectSkill;
 
   ngOnInit(): void {
@@ -249,7 +250,7 @@ export class PlanResourceComponent
     };
 
     const show = this.dialog.open(ProjectHistoryByUserComponent, {
-      width: '700px',
+      width: '1200px',
       disableClose: true,
       data: {
         item: userInfo,
@@ -292,7 +293,7 @@ export class PlanResourceComponent
   }
   editUserPlan(user: any, projectUser:any) {
     user.userId = projectUser.userId
-    user.projectUserId = user.id 
+    user.projectUserId = user.id
     user.fullName = projectUser.fullName
     this.showDialogPlanUser('edit', user);
   }
@@ -343,6 +344,7 @@ export class PlanResourceComponent
       width: "700px",
       data: {
         userSkills: user.userSkills,
+        viewStarSkillUser: this.permission.isGranted(this.Resource_TabPool_ViewUserStarSkill),
         id: user.userId,
         fullName: user.fullName,
         note: note
@@ -419,7 +421,7 @@ export class PlanResourceComponent
       data: {
         user: user,
         action: "Release"
-        
+
       }
     })
     ref.afterClosed().subscribe(rs => {
@@ -456,7 +458,7 @@ export class PlanResourceComponent
           workingProject: data.result,
           user: plan,
           fromPage: ConfirmFromPage.poolResource,
-          
+
         }
       })
 
@@ -483,7 +485,7 @@ export class PlanResourceComponent
           })
         }
       }, {isHtml:true}
-     
+
     )
   }
 
@@ -537,7 +539,7 @@ export class PlanResourceComponent
       routingToUrl = (this.permission.isGranted(this.Projects_TrainingProjects_ProjectDetail_TabWeeklyReport)
       && this.permission.isGranted(this.Projects_TrainingProjects_ProjectDetail_TabWeeklyReport_View))
      ? "/app/training-project-detail/training-weekly-report" : "/app/training-project-detail/training-project-general"
-    } 
+    }
 
     else if ( project.projectType == 3){
       routingToUrl= (this.permission.isGranted(this.Projects_ProductProjects_ProjectDetail_TabWeeklyReport)

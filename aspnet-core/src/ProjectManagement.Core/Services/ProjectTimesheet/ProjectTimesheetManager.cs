@@ -104,6 +104,12 @@ namespace ProjectManagement.Services.ProjectTimesheet
             var timesheetproject = await _workScope.GetAll<TimesheetProject>()
                .Where(x => x.ProjectId == pub.ProjectId && x.TimesheetId == activeTimesheet.Id)
                .FirstOrDefaultAsync();
+
+            if (timesheetproject == default)
+            {
+                Logger.LogInformation($"UpdateTimesheetProjectBill() not found TimesheetProject ProjectId={pub.ProjectId}, TimesheetId={activeTimesheet}");
+                return;
+            }
             if (!activeTimesheet.IsActive && !timesheetproject.IsActive)
             {
                 Logger.LogInformation("UpdateTimesheetProjectBill() no activeTimesheetId");
@@ -119,11 +125,6 @@ namespace ProjectManagement.Services.ProjectTimesheet
             if (tpb == default)
             {
                 Logger.LogInformation($"UpdateTimesheetProjectBill() not found TimesheetProjectBill ProjectId={pub.ProjectId}, TimesheetId={activeTimesheet}, UserId={pub.UserId}");
-                return;
-            }
-            if (timesheetproject == default)
-            {
-                Logger.LogInformation($"UpdateTimesheetProjectBill() not found TimesheetProject ProjectId={pub.ProjectId}, TimesheetId={activeTimesheet}");
                 return;
             }
             if (timesheetproject.IsComplete.HasValue && timesheetproject.IsComplete.Value == true)

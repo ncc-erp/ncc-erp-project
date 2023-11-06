@@ -41,6 +41,7 @@ namespace ProjectManagement.APIs.TimeSheets
             var qtimesheetProject = WorkScope.GetAll<TimesheetProject>();
             var qtimesheetProjectBill = WorkScope.GetAll<TimesheetProjectBill>()
                 .Where(s => s.IsActive);
+            var closeTimeBackgrounds = _closeTimesheet.GetCloseTimeInBackgroundJobs();
             var query = WorkScope.GetAll<Timesheet>().OrderByDescending(x => x.Year).ThenByDescending(x => x.Month)
                 .Select(x => new GetTimesheetDto
                 {
@@ -62,6 +63,7 @@ namespace ProjectManagement.APIs.TimeSheets
 
                     TotalIsRequiredFile = qtimesheetProject.Where(y => y.TimesheetId == x.Id)
                     .Where(s => s.Project.RequireTimesheetFile).Count(),
+                    CloseTime = closeTimeBackgrounds.ContainsKey(x.Id) ? closeTimeBackgrounds[x.Id] : null
                 });
 
             return await query.GetGridResult(query, input);
@@ -185,7 +187,8 @@ namespace ProjectManagement.APIs.TimeSheets
             await WorkScope.InsertRangeAsync(listTimesheetProject);
             await WorkScope.InsertRangeAsync(listTimesheetProjectBill);
             await CurrentUnitOfWork.SaveChangesAsync();
-            //_closeTimesheet.CreateReqCloseTimesheetBGJ(timesheet);
+            if (input.CloseTime != null)
+                _closeTimesheet.CreateReqCloseTimesheetBGJ(timesheet, input.CloseTime);
             return new { failList, input };
         }
 
@@ -217,6 +220,7 @@ namespace ProjectManagement.APIs.TimeSheets
             }
 
             await WorkScope.UpdateAsync(ObjectMapper.Map<TimesheetDto, Timesheet>(input, timesheet));
+            _closeTimesheet.CreateReqCloseTimesheetBGJ(timesheet, input.CloseTime);
             return input;
         }
 
@@ -248,8 +252,11 @@ namespace ProjectManagement.APIs.TimeSheets
         public async Task ForceDelete(long timesheetId)
         {
             var timesheet = await WorkScope.GetAsync<Timesheet>(timesheetId);
+            if (!timesheet.IsActive)
+                throw new UserFriendlyException("Timesheet not active !");
 
             var timesheetProject = await WorkScope.GetAll<TimesheetProject>().Where(x => x.TimesheetId == timesheetId).ToListAsync();
+            _closeTimesheet.DeleteOldRequestInBackgroundJob(timesheetId);
             foreach (var item in timesheetProject)
             {
                 item.IsDeleted = true;
@@ -268,11 +275,15 @@ namespace ProjectManagement.APIs.TimeSheets
             // delete all re-close background job of timesheetproject in this timesheet
             if (timesheet.IsActive)
             {
+                _closeTimesheet.DeleteOldRequestInBackgroundJob(timesheet.Id);
+                var timesheetProjectJob = _reActiveTimeSheetproject.GetOldRequestInBackgroundJob();
                 WorkScope.GetAll<TimesheetProject>().Where(tp => tp.TimesheetId == id)
-                    .ToList().ForEach(tsp => {
-                        _reActiveTimeSheetproject.DeleteOldRequestInBackgroundJob(tsp.Id);
+                    .ToList().ForEach(tsp =>
+                    {
                         tsp.IsActive = false;
-                        });
+                        if (timesheetProjectJob.TryGetValue(tsp.Id, out var job))
+                            _reActiveTimeSheetproject.DeleteJob(job.JobId);
+                    });
             }
         }
 

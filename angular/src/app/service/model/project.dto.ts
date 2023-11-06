@@ -102,6 +102,7 @@ export class projectUserBillDto {
   chargeTypeName: string;
   linkedResources: any[]
 }
+
 export class ProjectRateDto {
   currencyName: string;
   isCharge: boolean;
@@ -129,6 +130,7 @@ export class ProjectInfoDto {
   projectCode:string;
   automationNote: string;
   pmNote: string;
+  projectUserBills: any;
 }
 export class TrainingProjectDto {
   name: string;
@@ -179,3 +181,4 @@ export class ProductProjectDto {
   id: number;
   requireTimesheetFile?: boolean;
 }
+

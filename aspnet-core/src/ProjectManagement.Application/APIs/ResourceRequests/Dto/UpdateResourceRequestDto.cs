@@ -19,5 +19,6 @@ namespace ProjectManagement.APIs.ResourceRequests.Dto
         public List<long> SkillIds { get; set; }
         public int Quantity { get; set; }
         public string Code { get; set; }
+        public bool IsNewBillAccount { get; set; }
     }
 }

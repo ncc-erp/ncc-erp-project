@@ -1,7 +1,7 @@
 ﻿using Abp.Application.Services.Dto;
 using NccCore.Anotations;
 using NccCore.Uitls;
-
+using ProjectManagement.Services.ResourceService.Dto;
 using ProjectManagement.Utils;
 using System;
 using System.Collections.Generic;
@@ -32,7 +32,7 @@ namespace ProjectManagement.Services.ResourceRequestService.Dto
         public long ProjectId { get; set; }
         [ApplySearchAttribute]
         public string ProjectName { get; set; }
-        public ProjectType ProjectType { get; set; }
+        public ProjectType? ProjectType { get; set; }
         public ProjectStatus ProjectStatus { get; set; }
         public string ProjectCode { get; set; }
 
@@ -42,7 +42,7 @@ namespace ProjectManagement.Services.ResourceRequestService.Dto
         {
             get
             {
-                return CommonUtil.ProjectTypeName(ProjectType);
+                return ProjectType == null ? null : CommonUtil.ProjectTypeName(ProjectType.Value);
             }
 
         }
@@ -121,20 +121,23 @@ namespace ProjectManagement.Services.ResourceRequestService.Dto
         public string PlanUserEmail { get; set; }
         public DateTime? CreateAt { get; set; }
         public PlanUserInfoDto BillUserInfo { get; set; }
+        public bool IsNewBillAccount { get; set; }
     }
 
     public class PlanUserInfoDto
     {
         public long ProjectUserId { get; set; }
         public UserBaseDto Employee { get; set; }
-        public DateTime PlannedDate { get; set; }
+        public DateTime? PlannedDate { get; set; }
         public ProjectUserRole Role { get; set; }
         public string KomuInfo()
         {
-            return $"Employee: {Employee.KomuInfo()}]\n" +
-                $"Start Working Date: {DateTimeUtils.ToString(PlannedDate)}";
+            string plannedDateString = PlannedDate.HasValue ? DateTimeUtils.ToString(PlannedDate.Value) : "N/A";
 
+            return $"Employee: {Employee.KomuInfo()}]\n" +
+                $"Start Working Date: {plannedDateString}";
         }
+        public List<UserSkillDto> UserSkill { get; set; }
     }
 
     public class RequestCodeDto

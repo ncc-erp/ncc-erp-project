@@ -109,7 +109,9 @@ namespace ProjectManagement.Services.ResourceManager
                 UserSkills = s.User.UserSkills.Select(s => new UserSkillDto
                 {
                     SkillId = s.SkillId,
-                    SkillName = s.Skill.Name
+                    SkillName = s.Skill.Name,
+                    SkillRank = s.SkillRank,
+                    SkillNote = s.Note
                 }).ToList()
             })
             .OrderByDescending(s => s.PUStatus == ProjectUserStatus.Present && s.AllocatePercentage > 0)

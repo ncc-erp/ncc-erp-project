@@ -28,6 +28,6 @@ namespace ProjectManagement.APIs.Timesheets.Dto
                 return Math.Round((double) (WorkingDayOfUser/(TotalWorkingDay.HasValue ? TotalWorkingDay.Value : 22)), 2);
             }
         }
-
+        public string CloseTime { get; set; }
     }
 }

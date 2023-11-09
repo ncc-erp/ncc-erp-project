@@ -5,6 +5,7 @@ using NccCore.Paging;
 using ProjectManagement.Authorization.Users;
 using ProjectManagement.Entities;
 using ProjectManagement.Services.ResourceRequestService.Dto;
+using ProjectManagement.Services.ResourceService.Dto;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
@@ -29,18 +30,14 @@ namespace ProjectManagement.Services.ResourceRequestService
             IDictionary<string, SortDirection> sortParams)
         {
             if (query == null || sortParams == null) return query;
-            var source = query.OrderBy(q => true);
-            if (sortParams.ContainsKey("priority"))
-                source = OrderResourceRequest(source, "Priority", sortParams["priority"], false);
-            if (sortParams.ContainsKey("projectName"))
-                source = OrderResourceRequest(source, "projectName", sortParams["projectName"], false);
-            if (sortParams.ContainsKey("level"))
-                source = OrderResourceRequest(source, "level", sortParams["level"], false);
-            if (sortParams.ContainsKey("creationTime"))
-                source = OrderResourceRequest(source, "creationTime", sortParams["creationTime"], false);
-            if (sortParams.ContainsKey("timeNeed"))
-                source = OrderResourceRequest(source, "timeNeed", sortParams["timeNeed"], false);
-            return source;
+            var isOrder = true;
+            var queryOrder = (IOrderedQueryable<GetResourceRequestDto>) query;
+            foreach (var param in sortParams)
+            {
+                queryOrder = OrderResourceRequest(queryOrder, param.Key, param.Value, isOrder);
+                isOrder = false;
+            }
+            return queryOrder;
         }
 
         private IOrderedQueryable<GetResourceRequestDto> OrderResourceRequest(IQueryable<GetResourceRequestDto> query,
@@ -62,6 +59,17 @@ namespace ProjectManagement.Services.ResourceRequestService
 
         public IQueryable<GetResourceRequestDto> IQGetResourceRequest()
         {
+            // get all user skill
+            var userSkills = _workScope.GetAll<UserSkill>()
+                .Select(x => new UserSkillDto
+                {
+                    UserId = x.UserId,
+                    SkillId = x.SkillId,
+                    SkillName = x.Skill.Name,
+                    SkillRank = x.SkillRank,
+                    SkillNote = x.Note
+                }).ToList().GroupBy(u => u.UserId)
+                .ToDictionary(group => group.Key, group => group.ToList());
             var query = from request in _workScope.GetAll<ResourceRequest>()
                         orderby request.Priority descending, request.TimeNeed ascending
                         select new GetResourceRequestDto
@@ -71,7 +79,7 @@ namespace ProjectManagement.Services.ResourceRequestService
                             IsRecruitmentSend = request.IsRecruitmentSend,
                             ProjectName = request.Project.Name,
                             ProjectId = request.ProjectId,
-                            ProjectType = request.Project.ProjectType,
+                            ProjectType = null,
                             ProjectStatus = request.Project.Status,
 
                             Name = request.Name,
@@ -110,6 +118,7 @@ namespace ProjectManagement.Services.ResourceRequestService
                                 },
 
                                 PlannedDate = s.StartTime,
+                                UserSkill = !userSkills.ContainsKey(s.UserId) ? null : userSkills[s.UserId]
 
                             }).FirstOrDefault(),
                             BillUserInfo = request.User != null ?
@@ -131,7 +140,9 @@ namespace ProjectManagement.Services.ResourceRequestService
                                     AvatarPath = request.User.AvatarPath
                                 },
 
-                                PlannedDate = request.BillStartDate ?? default,
+                                PlannedDate = request.BillStartDate ?? null,
+                                UserSkill = request.BillAccountId.HasValue &&
+                                userSkills.ContainsKey(request.BillAccountId.Value) ? userSkills[request.BillAccountId.Value] : null
 
                             } : null,
                             BillCVEmail = request.User.EmailAddress,
@@ -139,7 +150,8 @@ namespace ProjectManagement.Services.ResourceRequestService
                              request.ProjectUsers.FirstOrDefault().User.EmailAddress : null,
                             Code = request.Code,
                             UserRequestName = _workScope.Get<User>((long)request.CreatorUserId).Name,
-                            CreateAt = request.CreationTime
+                            CreateAt = request.CreationTime,
+                            IsNewBillAccount = request.IsNewBillAccount,
                         };
             return query;
         }

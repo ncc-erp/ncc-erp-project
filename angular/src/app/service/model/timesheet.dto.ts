@@ -12,6 +12,7 @@ export class TimesheetDto {
     status: number;
     isActive: boolean;
     id?: number;
+    closeTime?: string;
 }
 export class TimesheetDetailDto {
     projectId: number;

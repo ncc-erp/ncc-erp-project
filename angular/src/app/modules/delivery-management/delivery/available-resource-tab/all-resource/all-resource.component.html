@@ -276,7 +276,7 @@
                                         (click)="showMoreHistory(item);getHistoryProjectsByUserId(item)"></i>
                                 </td>
                                 <td>
-                                    <div class="d-flex justify-content-between" style="align-items: center;">
+                                    <div class="d-flex justify-content-between">
                                         <div>
                                             <div *ngFor="let plan of
                                                 item.planProjects" (mouseenter)="plan.onHover=
@@ -359,7 +359,7 @@
                                             <p class="m-0" *ngFor="let skill of
                                                 item.userSkills">
                                                 - {{skill.skillName}}
-                                            <strong *ngIf="skill.skillRank">- {{skill.skillRank}} <i class="fa fa-star"
+                                            <strong *ngIf="skill.skillRank && permission.isGranted(Resource_TabAllResource_ViewUserStarSkill)">- {{skill.skillRank}} <i class="fa fa-star"
                                                 [ngClass] = '{crimson: skill.skillRank == 5, grey:skill.skillRank ==1 || skill.skillRank == 2,
                                                 yellow:skill.skillRank == 3 ,orange:skill.skillRank == 4}' style="
                                                 font-size: 13px;"></i></strong>

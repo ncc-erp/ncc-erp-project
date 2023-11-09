@@ -41,6 +41,7 @@ export class ResourceManagementComponent extends AppComponentBase implements OnI
   Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_Edit = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_Edit;
   Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_Release = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_Release;
   Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserSkill = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserSkill;
+  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserStarSkill = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserStarSkill;
 
   Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource;
   Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_View = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_View;
@@ -51,6 +52,7 @@ export class ResourceManagementComponent extends AppComponentBase implements OnI
   Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_CancelPlan = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_CancelPlan;
   Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_Edit = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_Edit;
   Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_UpdateUserSkill = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_UpdateUserSkill;
+  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_ViewUserStarSkill = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_ViewUserStarSkill;
 
   Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest;
   Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest_View = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest_View;
@@ -170,13 +172,15 @@ export class ResourceManagementComponent extends AppComponentBase implements OnI
 
 
 
-  updateUserSkill(user) {
+  updateUserSkill(user,viewStarSkillUser) {
     let ref = this.dialog.open(UpdateUserSkillDialogComponent, {
       width: "700px",
       data: {
         userSkills: user?.userSkills,
         id: user.userId,
         fullName: user.fullName,
+        viewStarSkillUser: viewStarSkillUser,
+        note: this.GetUserSkillNote(user)
       }
 
     });
@@ -268,7 +272,7 @@ export class ResourceManagementComponent extends AppComponentBase implements OnI
       this.getPlannedtUser();
       this.getResourceRequestList();
       abp.notify.success(`Added new employee to project`);
-      
+
       this.projectUserProcess = false
       this.searchUser = "";
     },
@@ -733,5 +737,9 @@ export class ResourceManagementComponent extends AppComponentBase implements OnI
     })
 
   }
+
+  IsSkillNoteExist = (user) => user.userSkills && user.userSkills[0]?.skillNote ? true : false;
+
+  GetUserSkillNote = (user) => user.userSkills[0]?.skillNote;
 }
 

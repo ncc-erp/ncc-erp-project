@@ -1,5 +1,5 @@
 <form class="form-horizontal" autocomplete="off" #reportForm="ngForm">
-    <abp-modal-header [title]="dialogType === 'RENAME' ? 'Edit report: ' + reportName : 'New report: Weekly ' + nextTuesday " (onCloseClick)="dialogRef.close()">
+    <abp-modal-header [title]="dialogType === 'RENAME' ? 'Edit report: ' + reportName : 'New report: Weekly ' + createdDate " (onCloseClick)="dialogRef.close()">
     </abp-modal-header>
     <div class="modal-body">
         <div class="form-group row required">

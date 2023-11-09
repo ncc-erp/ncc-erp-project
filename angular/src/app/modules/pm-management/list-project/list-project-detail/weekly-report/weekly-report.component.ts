@@ -28,6 +28,7 @@ import { ProjectCriteriaResultService } from '../../../../../service/api/project
 import { ProjectCriteriaResultDto } from '../../../../../service/model/project-criteria-result.dto'
 import { cloneDeep } from 'lodash-es';
 import { map } from 'rxjs/operators';
+import {Observable, Observer} from 'rxjs';
 
 // import { ApproveDialogComponent } from './../../../../pm-management/list-project/list-project-detail/weekly-report/approve-dialog/approve-dialog.component';
 
@@ -51,7 +52,6 @@ import { ReportGuidelineDetailComponent } from '@app/modules/delivery-management
 import { EditNoteResourceComponent } from '@app/modules/delivery-management/delivery/weekly-report-tab/weekly-report-tab-detail/edit-note-resource/edit-note-resource.component';
 import { AppConfigurationService } from '@app/service/api/app-configuration.service';
 import { AddEditIssuseComponent } from './add-edit-issuse/add-edit-issuse.component';
-
 
 @Component({
   selector: 'app-weekly-report',
@@ -110,6 +110,7 @@ export class WeeklyReportComponent extends PagedListingComponentBase<WeeklyRepor
   public isShowIssues:boolean=false;
   public isShowRisks: boolean = false;
   public isShowCurrentResource:boolean = false;
+  public isShowChargeAccount: boolean = false;
   public isShowSupportUser = false;
   public processFuture: boolean = false;
   public processProblem: boolean = false;
@@ -199,6 +200,9 @@ export class WeeklyReportComponent extends PagedListingComponentBase<WeeklyRepor
   Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_CurrentResource_View = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_CurrentResource_View;
   Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_CurrentResource_Release = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_CurrentResource_Release;
   Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_CurrentResource_Update_Note = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_CurrentResource_Update_Note;
+
+  Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_BillAccount = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_BillAccount;
+  Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_BillAccount_View = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_BillAccount_View;
 
   Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PlannedResource = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PlannedResource;
   Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PlannedResource_View = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PlannedResource_View;
@@ -304,15 +308,9 @@ export class WeeklyReportComponent extends PagedListingComponentBase<WeeklyRepor
     this.isStopCounting = false
     this.isRefresh = false
 
-
-
   }
 
-
-
   public getAllPmReport() {
-
-
     this.pmReportProjectService.GetAllByProject(this.projectId).pipe(catchError(this.pmReportProjectService.handleError)).subscribe(data => {
       this.pmReportList = data.result;
       this.selectedReport = this.pmReportList.filter(item => item.isActive == true)[0];
@@ -389,7 +387,13 @@ export class WeeklyReportComponent extends PagedListingComponentBase<WeeklyRepor
   onChangeStatusProject(){
     this.pjCriteriaResultService.updateStatus(this.statusProject,this.selectedReport.reportId,this.projectId).subscribe(data => {
       abp.notify.success("Update status project successful");
-      this.getAllCriteria();
+      this.listCriteriaResult = this.listCriteriaResult.map(item => {
+        return {...item, status:this.statusProject}
+      })
+      this.listPreEditCriteriaResult = this.listPreEditCriteriaResult.map(item => {
+        return {...item, status:this.statusProject}
+      });
+      this.listPreEditCriteriaResult.forEach(s => s.editMode = false);
     }, () => { this.statusProject = this.statusProjectHistory}
     )
   }
@@ -469,6 +473,7 @@ export class WeeklyReportComponent extends PagedListingComponentBase<WeeklyRepor
 
   public saveCriteriaResult(item: ProjectCriteriaResultDto, index: number) {
     item.pmReportId = this.selectedReport.reportId;
+    item.note = item.note.replace(/^(<br\s*\/>)+|(<br\s*\/>)+$/g, '');
     if (item.id) {
       this.pjCriteriaResultService.update(item).subscribe(res => {
         abp.notify.success(`Update ${item.criteriaName} successfully`);
@@ -523,6 +528,9 @@ export class WeeklyReportComponent extends PagedListingComponentBase<WeeklyRepor
     if (this.selectedReport.pmReportProjectId) {
       this.pmReportProjectService.GetInfoProject(this.selectedReport.pmReportProjectId).pipe(catchError(this.pmReportProjectService.handleError)).subscribe(data => {
         this.projectInfo = data.result
+        if (this.projectInfo.projectUserBills.length > 0){
+          this.isShowChargeAccount = true;
+        }
         if(cancel){
           this.isShowPmNote=true
         }
@@ -1122,7 +1130,6 @@ export class WeeklyReportComponent extends PagedListingComponentBase<WeeklyRepor
 
     }
 
-
   getUserFromTimesheet(projectCode, usersEmail, lastWeekMonday)
   {
     this.pmReportProjectService.GetUserInProjectFromTimesheet(projectCode, usersEmail, this.mondayOf5weeksAgo, this.lastWeekSunday).subscribe(rs => {
@@ -1153,10 +1160,6 @@ export class WeeklyReportComponent extends PagedListingComponentBase<WeeklyRepor
     this.isEditingNote = false;
     this.projectHealth = this.APP_ENUM.ProjectHealth[this.selectedReport.projectHealth]
   }
-
-
-
-
 
   buildProjectTSChart(normalAndOTchartData, officalChartData, TempChartData) {
     setTimeout(() => {
@@ -1277,7 +1280,7 @@ export class WeeklyReportComponent extends PagedListingComponentBase<WeeklyRepor
         tooltip: {
           trigger: 'axis',
           position: function (pos) {
-            var obj = { top: 1, left: pos[0] - 200 }; 
+            var obj = { top: 1, left: pos[0] - 200 };
             return obj;
           }
         },
@@ -1740,11 +1743,7 @@ export class WeeklyReportComponent extends PagedListingComponentBase<WeeklyRepor
             width: "60%"
           });
 
-          show.afterClosed().subscribe((updatedGuideline) => {
-            if (updatedGuideline) {
-              this.refresh();
-            }
-          });
+          show.afterClosed().subscribe((updatedGuideline) => {});
         } else {
           // Display the dialog with empty content
           const show = this.dialog.open(ReportGuidelineDetailComponent, {
@@ -1757,11 +1756,7 @@ export class WeeklyReportComponent extends PagedListingComponentBase<WeeklyRepor
           });
 
 
-          show.afterClosed().subscribe((updatedGuideline) => {
-            if (updatedGuideline) {
-              this.refresh();
-            }
-          });
+          show.afterClosed().subscribe((updatedGuideline) => {});
         }
       });
     }
@@ -1820,5 +1815,6 @@ export class WeeklyReportComponent extends PagedListingComponentBase<WeeklyRepor
     if(!string){return true}
     return string.trim()==""
   }
+
 }
 

@@ -115,7 +115,7 @@
                                     </div>
                                 </td>
                                 <td class="text-center">
-                                    <div style="display: inline">
+                                    <div>
                                         <div>
                                             <i *ngIf="permission.isGranted(Resource_TabPool_ViewHistory)"
                                                 class="fas fa-history fa-lg" (click)="projectHistorUser(item)"
@@ -130,7 +130,7 @@
                                 </td>
 
                                 <td style="white-space: normal;">
-                                    <div class="d-flex justify-content-between" style="align-items: center;">
+                                    <div class="d-flex justify-content-between">
                                         <div>
                                             <div *ngFor="let plan of item.plannedProjects"
                                                 (mouseenter)="plan.onHover = true;" (mouseleave)="plan.onHover = false"
@@ -192,7 +192,7 @@
                                             </div>
                                         </div>
                                         <div *ngIf="permission.isGranted(Resource_TabPool_CreatePlan)"
-                                            style="width: 14%;" class="text-right  ml-1">
+                                            style="width: 14%;" class="d-flex align-items-start justify-content-end">
                                             <i class="fas fa-plus text-primary" (click)="planUser(item)"
                                                 matTooltip="Create plan for user"></i>
                                         </div>
@@ -201,7 +201,7 @@
                                 </td>
                                 <td style="white-space: normal;">
                                     <div class="d-flex justify-content-between"
-                                        style="align-items: center;width: 100%;">
+                                        style="width: 100%;">
                                         <div style="width: 100%;" class="d-flex justify-content-between">
                                             <div class="d-flex justify-content-between" style="width: 100%;"
                                                 *ngFor="let plan of item.poolProjects"
@@ -252,11 +252,11 @@
 
                                 </td>
                                 <td style="white-space: normal; max-width: 200px">
-                                    <div class="d-flex" style="align-items: center;">
+                                    <div class="d-flex">
                                         <div style="width: 200px">
                                             <p class="m-0" *ngFor="let skill of item.userSkills">
                                                 - {{skill.skillName}}
-                                                <strong *ngIf="skill.skillRank">- {{skill.skillRank}} <i class="fa fa-star"
+                                                <strong *ngIf="skill.skillRank && permission.isGranted(Resource_TabPool_ViewUserStarSkill)">- {{skill.skillRank}} <i class="fa fa-star"
                                                       [ngClass] = '{crimson: skill.skillRank == 5, grey:skill.skillRank ==1 || skill.skillRank == 2,
                                                       yellow:skill.skillRank == 3 ,orange:skill.skillRank == 4}' style="
                                                       font-size: 13px;"></i> </strong>
@@ -272,12 +272,11 @@
                                     </div>
                                 </td>
                                 <td style="
-                    white-space: pre-line;
-                    word-break: break-all;
-                    max-width: 200px;
-                    min-width: 150px;
-                  ">
-                                    <div class="d-flex" style="align-items: center">
+                                    white-space: pre-line;
+                                    word-break: break-all;
+                                    max-width: 200px;
+                                    min-width: 150px;">
+                                    <div class="d-flex">
                                         <div style="width: 90%;word-break:break-word">{{ item.poolNote }}
                                         </div>
                                         <div *ngIf="permission.isGranted(Resource_TabPool_EditNote)"

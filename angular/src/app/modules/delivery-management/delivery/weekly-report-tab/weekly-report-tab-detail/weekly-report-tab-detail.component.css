@@ -196,6 +196,11 @@ th {
     padding: 0;
 }
 
+#charge-account td,
+th {
+    padding: 0;
+}
+
 .ot-noCharge {
     color: #ff7136;
 }

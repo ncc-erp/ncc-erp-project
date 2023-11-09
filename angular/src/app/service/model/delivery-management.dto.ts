@@ -22,6 +22,7 @@ export class RequestResourceDto {
   quantity: number;
   planUserInfo: any;
   code:string;
+  isNewBillAccount?:boolean;
   billUserInfo:any
 }
 

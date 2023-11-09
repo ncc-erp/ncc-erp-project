@@ -745,10 +745,8 @@ namespace ProjectManagement.Services.ResourceManager
             await _workScope.UpdateAsync(projectUser);
         }
 
-        public async Task<IQueryable<GetAllResourceDto>> QueryAllResource(InputGetResourceDto input, bool isVendor)
+        public async Task<IQueryable<GetAllResourceDto>> QueryAllResource(InputGetAllResourceDto input, bool isVendor)
         {
-
-
             // get current user and view user level permission
             // if user level = intern => all show no matter the permission
             var listLoginUserPM = _workScope.GetAll<ProjectUser>()
@@ -757,16 +755,19 @@ namespace ProjectManagement.Services.ResourceManager
                     || pu.Status == ProjectUserStatus.Future))
                 .Where(pu => pu.UserId == AbpSession.UserId.GetValueOrDefault() && pu.ProjectRole == 0 || pu.Project.PMId == AbpSession.UserId.GetValueOrDefault()
                     ).Select(pu => pu.Id);
+
             var hasViewUserLevelPermission = PermissionChecker.IsGranted(PermissionNames.Resource_ViewUserLevel);
 
             var activeReportId = await GetActiveReportId();
-            var quser = _workScope.GetAll<User>()
+
+            var qActiveUser = _workScope.GetAll<User>()
                        .Where(x => x.IsActive)
                        .Where(x => x.UserType != UserType.FakeUser)
-                       .Where(u => isVendor ? u.UserType == UserType.Vendor : u.UserType != UserType.Vendor)
-                       .WhereIf(input.BranchIds != null, x => input.BranchIds.Contains(x.BranchId.Value))
-                       .WhereIf(input.PositionIds != null, x => input.PositionIds.Contains(x.PositionId.Value))
-                       .WhereIf(input.UserTypes != null, x => input.UserTypes.Contains(x.UserType))
+                       .Where(x => isVendor ? x.UserType == UserType.Vendor : x.UserType != UserType.Vendor);
+
+            var projectUsers = _workScope.GetAll<ProjectUser>();
+
+            var quser = qActiveUser
                        .Select(x => new GetAllResourceDto
                        {
                            UserId = x.Id,
@@ -783,7 +784,7 @@ namespace ProjectManagement.Services.ResourceManager
                            PositionName = x.Position.ShortName,
                            UserLevel = hasViewUserLevelPermission || x.UserLevel >= UserLevel.Intern_0
                                 && x.UserLevel <= UserLevel.Intern_3 ? x.UserLevel :
-                                _workScope.GetAll<ProjectUser>().Any(pu => pu.UserId == x.Id
+                                projectUsers.Any(pu => pu.UserId == x.Id
                                 && listLoginUserPM.Contains(pu.Id)) ? x.UserLevel : default(UserLevel?),
                            AvatarPath = x.AvatarPath,
                            StarRate = x.StarRate,
@@ -836,32 +837,32 @@ namespace ProjectManagement.Services.ResourceManager
                                 ProjectCode = pu.Project.Code
                             })
                            .ToList(),
+
                            SkillNote = x.UserSkills.Select(s => s.Note).FirstOrDefault() ?? ""
                        });
 
-            var result = quser.ToList();
-            switch (input.PlanStatus)
+            if(
+                input.UserTypes.Count == 0 &&
+                input.BranchIds.Count == 0 &&
+                input.PositionIds.Count == 0 &&
+                input.SkillIds.Count == 0 && 
+                (input.PlanStatus == PlanStatus.All || input.PlanStatus == null)
+                )
             {
-                case PlanStatus.All:
-                    //do nothing
-                    break;
-                case PlanStatus.AllPlan:
-                    result = result.Where(x => x.PlanProjects.Count > 0).ToList();
-                    break;
-
-                case PlanStatus.PlanningJoin:
-                    result = result.Where(x => x.PlanProjects.Any(x => x.AllocatePercentage <= 100 && x.AllocatePercentage > 0)).ToList();
-                    break;
-
-                case PlanStatus.PlanningOut:
-                    result = result.Where(x => x.PlanProjects.Any(x => x.AllocatePercentage == 0)).ToList();
-                    break;
-
-                case PlanStatus.NoPlan:
-                    result = result.Where(x => x.PlanProjects.Count == 0).ToList();
-                    break;
+                return quser;
+            } 
+            else
+            {
+                return quser.WhereIf(input.BranchIds != null, x => input.BranchIds.Contains(x.BranchId.Value))
+                       .WhereIf(input.PositionIds != null, x => input.PositionIds.Contains(x.PositionId.Value))
+                       .WhereIf(input.UserTypes != null, x => input.UserTypes.Contains((UserType)x.UserType))
+                       .WhereIf(input.PlanStatus == PlanStatus.AllPlan, x => x.PlanProjects.Count > 0)
+                       .WhereIf(input.PlanStatus == PlanStatus.PlanningJoin,
+                        x => x.PlanProjects.Any(x => x.AllocatePercentage <= 100 && x.AllocatePercentage > 0))
+                       .WhereIf(input.PlanStatus == PlanStatus.PlanningOut,
+                        x => x.PlanProjects.Any(x => x.AllocatePercentage == 0))
+                       .WhereIf(input.PlanStatus == PlanStatus.NoPlan, x => x.PlanProjects.Count == 0);
             }
-            return result.AsQueryable();
         }
 
         public IQueryable<long> queryUserIdsHaveAnySkill(List<long> skillIds)
@@ -1039,7 +1040,7 @@ namespace ProjectManagement.Services.ResourceManager
             return await quser.GetGridResult(quser, input);
         }
 
-        public async Task<GridResult<GetAllResourceDto>> GetResources(InputGetResourceDto input, bool isVendor)
+        public async Task<GridResult<GetAllResourceDto>> GetResources(InputGetAllResourceDto input, bool isVendor)
         {
             var query = await QueryAllResource(input, isVendor);
 

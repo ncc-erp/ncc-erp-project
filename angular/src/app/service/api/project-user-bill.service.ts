@@ -64,6 +64,9 @@ export class ProjectUserBillService extends BaseApiService {
   RemoveUserFromBillAccount(input): Observable<any>{
     return this.http.post<any>(this.rootUrl + '/RemoveUserFromBillAccount',input);
   }
+  LinkOneProjectUserBillAccount(input): Observable<any>{
+    return this.http.post<any>(this.rootUrl + '/LinkOneProjectUserBillAccount',input);
+  }
   //#region Integrate Finfast
   getParentInvoice(projectId: number): Observable<ApiResponse<ParentInvoice>> {
     return this.http.get<ApiResponse<ParentInvoice>>(this.rootUrl + '/GetParentInvoiceByProject?projectId=' + projectId);

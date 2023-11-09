@@ -218,6 +218,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
           isActive: userBill.isActive,
           accountName: userBill.accountName,
           chargeType: userBill.chargeType,
+          linkedResources: userBill.linkedResources,
           id: userBill.id
         }
         this.projectUserBillService.update(userBillToUpdate).pipe(catchError(this.projectUserBillService.handleError)).subscribe(()=>{

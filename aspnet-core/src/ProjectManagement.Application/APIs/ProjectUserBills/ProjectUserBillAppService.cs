@@ -83,6 +83,19 @@ namespace ProjectManagement.APIs.ProjectUserBills
             }
         }
 
+        [HttpPost]
+        public async Task LinkOneProjectUserBillAccount(ProjectUserBillAccountDto input)
+        {
+            try
+            {
+                await projectUserBillManager.LinkOneProjectUserBillAccount(input);
+            }
+            catch (Exception ex)
+            {
+                throw new UserFriendlyException(ex.Message);
+            }
+        }
+
         [HttpGet]
         public async Task<List<UserDto>> GetAllUserActive(bool onlyStaff, long projectId, long? currentUserId)
         {

@@ -25,7 +25,7 @@
                         {{getProjectTypefromEnum(user.userType,APP_ENUM.UserType)}}</span>
                     <span *ngIf="user.positionName" class="ml-1 badge badge-pill text-white" [style.backgroundColor]="user.positionColor">
                         {{user.positionName}}</span>
-                    <span *ngIf="user.userLevel || user.userLevel == 0" class="ml-1 badge text-white" [ngStyle]="getUserLevel().style">{{getUserLevel().userLevel}}
+                    <span *ngIf="(user.userLevel || user.userLevel == 0) && !isHideLevel" class="ml-1 badge text-white" [ngStyle]="getUserLevel().style">{{getUserLevel().userLevel}}
                     </span>
                 </p>
                 <p *ngIf="!isHideEmail" class="m-0"><span>{{user?.emailAddress}}</span></p>

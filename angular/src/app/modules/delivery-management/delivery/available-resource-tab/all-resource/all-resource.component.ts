@@ -43,12 +43,15 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
   public searchSkill:string = '';
   public searchBranch:string = '';
   public searchPosition:string ='';
+  public searchUserType:string ='';
   public listSkills: SkillDto[] = [];
   public listBranchs: BranchDto[] = [];
   public listPositions: PositionDto[] = [];
+  public listUserTypes: any = [];
   public listSkillsId: number[] = [];
   public listBranchsId: number[] = [];
   public listPositionsId: number[] = [];
+  public listUserTypesId: number[] = [];
   public skill = '';
   public skillsParam = [];
   public selectedSkillId: number[] = [];
@@ -58,6 +61,8 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
   public selectedBranchIdsCr: number[] = [];
   public selectedBranchIdsOld: number[] = [];
   public selectedUserTypes: number[] = [];
+  public selectedUserTypesCr: number[] = [];
+  public selectedUserTypesOld: number[] = [];
   public selectedPositions: number[] = [];
   public selectedPositionsCr: number[] = [];
   public selectedPositionsOld: number[] = [];
@@ -120,7 +125,6 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     };
   });
 
-
   public readonly FILTER_CONFIG: InputFilterDto[] = [
     { propertyName: 'fullName', comparisions: [0, 6, 7, 8], displayName: "User Name" },
     { propertyName: 'used', comparisions: [0, 1, 2, 3, 4], displayName: "Used" },
@@ -143,6 +147,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
   @ViewChild("selectPosition") selectPosition;
   @ViewChild("selectBranch") selectBranch;
   @ViewChild("selectSkill") selectSkill;
+  @ViewChild("selectUserType") selectUserType;
 
   ngOnInit(): void {
     this.pageSizeType = 100
@@ -150,12 +155,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     this.getAllSkills();
     this.getAllPositions();
     this.getAllBranchs();
-    this.userTypeParam.forEach(item => {
-      if (item.value != 4 && item.value != 5) {
-        this.selectedUserTypes.push(item.value);
-      }
-    });
-
+    this.getAllUserTypes();
     this.selectedIsPlanned = 1;
   }
   showDialogPlanUser(command: string, user: any) {
@@ -203,6 +203,11 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
           this.selectedSkillIdCr = [...this.selectedSkillIdOld]
           this.searchSkill = '';
           break;
+        case 'UserType':
+          this.selectedUserTypes = [...this.selectedUserTypesOld]
+          this.selectedUserTypesCr = [...this.selectedUserTypesOld]
+          this.searchUserType = '';
+          break;
       }
     }
   }
@@ -220,6 +225,10 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
       case 'Skill':
         this.selectedSkillId = typeSelect.data
         this.selectedSkillIdCr = typeSelect.data
+        break;
+      case 'UserType':
+        this.selectedUserTypes = typeSelect.data
+        this.selectedUserTypesCr = typeSelect.data
         break;
     }
   }
@@ -255,6 +264,13 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     this.listSkills = this.orderList(this.listSkills,this.selectedSkillId)
   }
 
+  onSelectChangeUserType(id){
+    const userType = this.onSelectChange(this.selectedUserTypesCr,id)
+    this.selectedUserTypesCr = userType
+    this.selectedUserTypes = [...userType]
+    this.listUserTypes = this.orderList(this.listUserTypes,this.selectedUserTypes)
+  }
+
   orderList(listAll, listIdSelect){
     const listSelect = listAll.filter(item => listIdSelect.includes(item.id))
     const listUnSelect = listAll.filter(item => !listIdSelect.includes(item.id))
@@ -274,6 +290,10 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
       case 'Skill':
         this.selectedSkillIdOld = this.selectedSkillId
         this.selectSkill.close()
+        break;
+      case 'UserType':
+        this.selectedUserTypesOld = this.selectedUserTypes
+        this.selectUserType.close()
         break;
     }
     this.refresh()
@@ -314,12 +334,6 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     )
   }
 
-  onChangeUserTypeEvent(event?): void {
-    this.selectedUserTypes = event.value;
-    this.getDataPage(1);
-    //this.refresh();
-  }
-
   planStatusList = [
     { value: APP_ENUMS.PlanStatus.AllPlan, displayName: 'Has plans' },
     { value: APP_ENUMS.PlanStatus.PlanningJoin, displayName: 'Planning join' },
@@ -353,6 +367,20 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
       this.selectedPositionsCr = this.selectedPositions
       this.refresh();
     })
+  }
+
+  getAllUserTypes() {
+    this.listUserTypes = Object.entries(this.APP_ENUM.UserTypeTabAllResource).map((item) => {
+      return {
+        displayName: item[0],
+        value: item[1],
+      };
+    });
+    this.listUserTypesId = this.listUserTypes.map(item => item.value);
+    this.selectedUserTypes = this.listUserTypes.map(item => item.value);
+    this.selectedUserTypesOld = [...this.selectedUserTypes];
+    this.selectedUserTypesCr = this.selectedUserTypes;
+    this.refresh();
   }
 
   skillsCommas(arr) {
@@ -579,7 +607,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     };
 
     const show = this.dialog.open(ProjectHistoryByUserComponent, {
-      width: '800px',
+      width: '1200px',
       disableClose: true,
       data: {
         item: userInfo,

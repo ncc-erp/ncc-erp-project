@@ -156,7 +156,7 @@ button {
      background-color: #eaebec;
  }
 
- ::ng-deep .mat-checkbox-inner-container.mat-checkbox-inner-container-no-side-margin {
+:host ::ng-deep .mat-checkbox-inner-container.mat-checkbox-inner-container-no-side-margin {
      margin-top: 80%;
  }
 

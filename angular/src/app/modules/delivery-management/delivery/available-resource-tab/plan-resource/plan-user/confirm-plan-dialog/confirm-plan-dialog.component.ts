@@ -17,11 +17,11 @@ import { ConfirmFromPage } from '@app/modules/pm-management/list-project/list-pr
 })
 export class ConfirmPlanDialogComponent extends AppComponentBase implements OnInit {
 
-  Resource_TabPool_ConfirmMoveEmployeeWorkingOnAProjectToOther 
+  Resource_TabPool_ConfirmMoveEmployeeWorkingOnAProjectToOther
   = PERMISSIONS_CONSTANT.Resource_TabPool_ConfirmMoveEmployeeWorkingOnAProjectToOther
-  Resource_TabAllResource_ConfirmMoveEmployeeWorkingOnAProjectToOther 
+  Resource_TabAllResource_ConfirmMoveEmployeeWorkingOnAProjectToOther
   = PERMISSIONS_CONSTANT.Resource_TabAllResource_ConfirmMoveEmployeeWorkingOnAProjectToOther
-  Resource_TabVendor_ConfirmMoveEmployeeWorkingOnAProjectToOther 
+  Resource_TabVendor_ConfirmMoveEmployeeWorkingOnAProjectToOther
   = PERMISSIONS_CONSTANT.Resource_TabVendor_ConfirmMoveEmployeeWorkingOnAProjectToOther
 
   public allowConfirm: boolean = true
@@ -80,12 +80,12 @@ export class ConfirmPlanDialogComponent extends AppComponentBase implements OnIn
         })
       }
 
-      
+
     }
     else {
       let requestBody = {
         projectUserId: this.user.id,
-        startTime: this.startDate
+        startTime: moment(this.startDate).format("YYYY-MM-DD")
       }
       this.puService.ConfirmOutProject(requestBody).pipe(catchError(this.puService.handleError)).subscribe(rs => {
         abp.notify.success(`Confirmed for user ${this.user.fullName} out project`)

@@ -373,6 +373,8 @@ namespace ProjectManagement.Services.ResourceManager
                 projectUser.ProjectRole = input.ProjectRole;
                 projectUser.HistoryTime = DateTime.Now;
                 await _workScope.UpdateAsync(projectUser);
+                if (!projectUsers.IsNullOrEmpty())
+                    projectUsers.Remove(projectUser);
             }
             else
             {
@@ -908,12 +910,12 @@ namespace ProjectManagement.Services.ResourceManager
                 input.UserTypes.Count == 0 &&
                 input.BranchIds.Count == 0 &&
                 input.PositionIds.Count == 0 &&
-                input.SkillIds.Count == 0 && 
+                input.SkillIds.Count == 0 &&
                 (input.PlanStatus == PlanStatus.All || input.PlanStatus == null)
                 )
             {
                 return quser;
-            } 
+            }
             else
             {
                 return quser.WhereIf(input.BranchIds != null, x => input.BranchIds.Contains(x.BranchId.Value))

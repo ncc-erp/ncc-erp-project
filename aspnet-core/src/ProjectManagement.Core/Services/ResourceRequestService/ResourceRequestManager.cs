@@ -79,7 +79,7 @@ namespace ProjectManagement.Services.ResourceRequestService
                             IsRecruitmentSend = request.IsRecruitmentSend,
                             ProjectName = request.Project.Name,
                             ProjectId = request.ProjectId,
-                            ProjectType = null,
+                            ProjectType = request.Project.ProjectType,
                             ProjectStatus = request.Project.Status,
 
                             Name = request.Name,

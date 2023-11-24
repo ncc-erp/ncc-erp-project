@@ -590,19 +590,28 @@ namespace ProjectManagement.Services.ResourceManager
             }
 
             var activeReportId = await GetActiveReportId();
+            // delete case duplicate when create new weekly report
+            var outPlans = await _workScope.GetAll<ProjectUser>()
+                .Where(x => x.Id != outPU.Id && x.ProjectId == outPU.ProjectId && x.UserId == outPU.UserId)
+                .Where(x => x.Status == ProjectUserStatus.Future && x.AllocatePercentage < 100).ToListAsync();
+            foreach (var item in outPlans)
+            {
+                _workScope.Delete(item);
+                if (item.ResourceRequestId.HasValue && item.ResourceRequest != null)
+                    _workScope.Delete(item.ResourceRequest);
+            }
             var curentPUs = await _workScope.GetAll<ProjectUser>()
                 .Where(x => x.ProjectId == outPU.ProjectId)
                 .Where(x => x.Status == ProjectUserStatus.Present)
                 .Where(x => x.UserId == outPU.UserId)
                 .ToListAsync();
 
-            if (!curentPUs.IsNullOrEmpty() && curentPUs.Any(pu => input.StartTime.Date < pu.StartTime.Date))
+            if (!curentPUs.IsNullOrEmpty() && curentPUs.Any(pu => input.StartTime.Date < pu.StartTime.Date && pu.AllocatePercentage > 0))
                 throw new UserFriendlyException($"Out time must be greater than or equal Start time");
 
             foreach (var curentPU in curentPUs)
             {
                 curentPU.Status = ProjectUserStatus.Past;
-                curentPU.PMReportId = activeReportId;
                 curentPU.HistoryTime = DateTime.Now;
             }
             await _workScope.UpdateRangeAsync(curentPUs);
@@ -655,7 +664,6 @@ namespace ProjectManagement.Services.ResourceManager
             if (input.ReleaseDate.Date <= DateTimeUtils.GetNow())
             {
                 presentPU.PU.Status = ProjectUserStatus.Past;
-                presentPU.PU.PMReportId = activeReportId;
 
                 await _workScope.UpdateAsync(presentPU.PU);
             }

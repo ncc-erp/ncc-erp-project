@@ -18,11 +18,11 @@
     "ProjectManagement.Web.Host": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "http://10.10.43.139:21021/",
+      "launchUrl": "http://localhost:21021/",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "http://10.10.43.139:21021/"
+      "applicationUrl": "http://localhost:21021/"
     }
   }
 }

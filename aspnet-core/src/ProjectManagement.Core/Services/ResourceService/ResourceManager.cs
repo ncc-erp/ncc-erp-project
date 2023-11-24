@@ -3,6 +3,7 @@ using Abp.Configuration;
 using Abp.Linq.Extensions;
 using Abp.Runtime.Session;
 using Abp.UI;
+using Castle.Core.Internal;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NccCore.Extension;
@@ -286,12 +287,14 @@ namespace ProjectManagement.Services.ResourceManager
 
                 foreach (var pu in currentPUs)
                 {
+                    // if pu in this project, continue
+                    if (pu.ProjectId == futureU.ProjectId && pu.Status == ProjectUserStatus.Present && pu.AllocatePercentage > 0)
+                        continue;
                     //release user from current project
                     pu.PMReportId = activeReportId;
                     pu.Status = ProjectUserStatus.Past;
-
+                    pu.HistoryTime = DateTime.Now;
                     await _workScope.UpdateAsync(pu);
-
                     var outPU = new ProjectUser
                     {
                         IsPool = pu.IsPool,
@@ -303,13 +306,14 @@ namespace ProjectManagement.Services.ResourceManager
                         PMReportId = activeReportId,
                         ProjectRole = pu.ProjectRole,
                         Note = $"added to project {projectToJoin.ProjectName} {CommonUtil.ProjectUserWorkType(pu.IsPool)} by {sessionUser.FullName}",
+                        HistoryTime = DateTime.Now
                     };
                     await _workScope.InsertAsync(outPU);
                     sbKomuMessage.AppendLine($"{DateTimeUtils.ToString(outPU.StartTime)}: {sessionUser.KomuAccountInfo} " +
                         $"released {employee.KomuAccountInfo} from {pu.Project.Name} {CommonUtil.ProjectUserWorkTypeKomu(pu.IsPool)}");
                 }
             }
-
+            await CurrentUnitOfWork.SaveChangesAsync();
             return sbKomuMessage;
         }
 
@@ -339,10 +343,24 @@ namespace ProjectManagement.Services.ResourceManager
             };
             var sbKomuMessage = await releaseUserFromAllWorkingProjects(sessionUser, employee, projectToJoin, activeReportId, input.IsPool, allowConfirmMoveEmployeeToOtherProject, joinPU);
 
+            //var projectUserHistory = _workScope.GetAll<ProjectUser>()
+            //    .Where(pu => pu.UserId == input.UserId && pu.ProjectId == input.ProjectId
+            //    && (pu.Status == ProjectUserStatus.Present && pu.AllocatePercentage < 100)
+            //    || pu.Status == ProjectUserStatus.Past).OrderByDescending(pu => pu.HistoryTime);
+            //get project user list: Future && Allocate > 0, Present
+            var projectUsers = _workScope.All<ProjectUser>() // user 230885, project id = 130048
+               .Where(p => p.UserId == input.UserId && p.ProjectId == input.ProjectId
+               && (p.Status == ProjectUserStatus.Future && p.AllocatePercentage > 0)).ToList();
+
+
             //// set done project user plan
+
             var projectUser = _workScope.GetAll<ProjectUser>()
                 .Where(p => p.UserId == input.UserId && p.ProjectId == input.ProjectId
-                && p.Status == ProjectUserStatus.Future).FirstOrDefault();
+                && (p.Status == ProjectUserStatus.Future || p.Status == ProjectUserStatus.Present && p.AllocatePercentage > 0)).OrderByDescending(pu => pu.Id).FirstOrDefault();
+            //var currentWorking = _workScope.GetAll<ProjectUser>()
+            //    .Where(p => p.UserId == input.UserId && p.ProjectId == input.ProjectId
+            //    && p.Status == ProjectUserStatus.Present && p.AllocatePercentage > 0).OrderByDescending(pu => pu.Id).FirstOrDefault();
             if (projectUser != null)
             {
                 projectUser.IsPool = input.IsPool;
@@ -353,11 +371,30 @@ namespace ProjectManagement.Services.ResourceManager
                 projectUser.StartTime = input.StartTime;
                 projectUser.PMReportId = activeReportId;
                 projectUser.ProjectRole = input.ProjectRole;
+                projectUser.HistoryTime = DateTime.Now;
                 await _workScope.UpdateAsync(projectUser);
+                if (!projectUsers.IsNullOrEmpty())
+                    projectUsers.Remove(projectUser);
             }
             else
+            {
+                joinPU.HistoryTime = DateTime.Now;
                 await _workScope.InsertAsync(joinPU);
-
+            }
+            // set done all project user list
+            if (!projectUsers.IsNullOrEmpty())
+            {
+                foreach (var puq in projectUsers)
+                {
+                    puq.Status = ProjectUserStatus.Past;
+                    if (puq.ResourceRequestId.HasValue && puq.ResourceRequest != null)
+                    {
+                        puq.ResourceRequest.Status = ResourceRequestStatus.DONE;
+                        puq.ResourceRequest.TimeDone = DateTimeUtils.GetNow();
+                    }
+                }
+                _workScope.UpdateRange(projectUsers);
+            }
             if (projectToJoin.ProjectCode == AppConsts.CHO_NGHI_PROJECT_CODE)
             {
                 await _userManager.DeactiveUser(employee.UserId);
@@ -459,12 +496,22 @@ namespace ProjectManagement.Services.ResourceManager
 
                 nofityKomuDoneResourceRequest(listRequestDto, sessionUser, project);
             }
-
-            var sbKomuMessage = await releaseUserFromAllWorkingProjects(sessionUser, employee, project, activeReportId, futurePU.IsPool, allowConfirmMoveEmployeeToOtherProject, futurePU);
+            // if user is working in current project, just update
+            var userWorking = GetUserWorkingInProject(futurePU.UserId, futurePU.ProjectId);
+            var sbKomuMessage = new StringBuilder();
+            if (userWorking != null)
+            {
+                userWorking.IsDeleted = true;
+                await _workScope.UpdateAsync(userWorking);
+            }
+            else
+                sbKomuMessage = await releaseUserFromAllWorkingProjects(sessionUser, employee, project, activeReportId, futurePU.IsPool, allowConfirmMoveEmployeeToOtherProject, futurePU);
 
             futurePU.Status = ProjectUserStatus.Present;
+            futurePU.AllocatePercentage = 100;
             futurePU.StartTime = startTime;
             futurePU.PMReportId = activeReportId;
+            futurePU.HistoryTime = DateTime.Now;
 
             await _workScope.UpdateAsync(confirmPUExt.PU);
 
@@ -472,8 +519,8 @@ namespace ProjectManagement.Services.ResourceManager
             {
                 await _userManager.DeactiveUser(employee.UserId);
             }
-
-            nofityCreatePresentPU(futurePU, sbKomuMessage, sessionUser, employee, project);
+            if (userWorking != null)
+                nofityCreatePresentPU(futurePU, sbKomuMessage, sessionUser, employee, project);
             if (projectTypeAndPMEmail.ProjectType == ProjectType.TRAINING)
             {
                 UserJoinProjectInTimesheetTool(futurePU.Project.Code, futurePU.User.EmailAddress, futurePU.IsPool, futurePU.ProjectRole, startTime, projectTypeAndPMEmail.PMEmail);
@@ -485,6 +532,14 @@ namespace ProjectManagement.Services.ResourceManager
 
 
             return confirmPUExt;
+        }
+
+        // get user is working in project 
+        private ProjectUser GetUserWorkingInProject(long userId, long projectId)
+        {
+            return _workScope.GetAll<ProjectUser>()
+                 .Where(p => p.UserId == userId && p.ProjectId == projectId
+                 && p.Status == ProjectUserStatus.Present && p.AllocatePercentage > 0).FirstOrDefault();
         }
 
         public void nofityKomuDoneResourceRequest(GetResourceRequestDto listRequestDto, KomuUserInfoDto sessionUser, KomuProjectInfoDto project)
@@ -535,22 +590,36 @@ namespace ProjectManagement.Services.ResourceManager
             }
 
             var activeReportId = await GetActiveReportId();
+            // delete case duplicate when create new weekly report
+            var outPlans = await _workScope.GetAll<ProjectUser>()
+                .Where(x => x.Id != outPU.Id && x.ProjectId == outPU.ProjectId && x.UserId == outPU.UserId)
+                .Where(x => x.Status == ProjectUserStatus.Future && x.AllocatePercentage < 100).ToListAsync();
+            foreach (var item in outPlans)
+            {
+                _workScope.Delete(item);
+                if (item.ResourceRequestId.HasValue && item.ResourceRequest != null)
+                    _workScope.Delete(item.ResourceRequest);
+            }
             var curentPUs = await _workScope.GetAll<ProjectUser>()
                 .Where(x => x.ProjectId == outPU.ProjectId)
                 .Where(x => x.Status == ProjectUserStatus.Present)
                 .Where(x => x.UserId == outPU.UserId)
                 .ToListAsync();
 
+            if (!curentPUs.IsNullOrEmpty() && curentPUs.Any(pu => input.StartTime.Date < pu.StartTime.Date && pu.AllocatePercentage > 0))
+                throw new UserFriendlyException($"Out time must be greater than or equal Start time");
+
             foreach (var curentPU in curentPUs)
             {
                 curentPU.Status = ProjectUserStatus.Past;
-                curentPU.PMReportId = activeReportId;
-                await _workScope.UpdateAsync(curentPU);
+                curentPU.HistoryTime = DateTime.Now;
             }
+            await _workScope.UpdateRangeAsync(curentPUs);
 
             outPU.Status = ProjectUserStatus.Present;
             outPU.PMReportId = activeReportId;
             outPU.StartTime = input.StartTime;
+            outPU.HistoryTime = DateTime.Now;
             await _workScope.UpdateAsync(outPU);
 
             var sessionUser = await getSessionKomuUserInfo();
@@ -585,13 +654,16 @@ namespace ProjectManagement.Services.ResourceManager
             {
                 throw new UserFriendlyException($"Employee {presentPU.Employee.FullName} is not working in project {presentPU.Project.ProjectName}. So you can't release him/her from this project.");
             }
+            if (presentPU.PU.StartTime > input.ReleaseDate)
+            {
+                throw new UserFriendlyException($"Release date must greater or equal Start time!");
+            }
 
             var activeReportId = await GetActiveReportId();
 
             if (input.ReleaseDate.Date <= DateTimeUtils.GetNow())
             {
                 presentPU.PU.Status = ProjectUserStatus.Past;
-                presentPU.PU.PMReportId = activeReportId;
 
                 await _workScope.UpdateAsync(presentPU.PU);
             }
@@ -607,6 +679,7 @@ namespace ProjectManagement.Services.ResourceManager
                 StartTime = input.ReleaseDate,
                 IsFutureActive = false,
                 Note = input.Note,
+                HistoryTime = DateTime.Now
             };
             await _workScope.InsertAsync(releasePU);
 
@@ -745,10 +818,8 @@ namespace ProjectManagement.Services.ResourceManager
             await _workScope.UpdateAsync(projectUser);
         }
 
-        public async Task<IQueryable<GetAllResourceDto>> QueryAllResource(InputGetResourceDto input, bool isVendor)
+        public async Task<IQueryable<GetAllResourceDto>> QueryAllResource(InputGetAllResourceDto input, bool isVendor)
         {
-
-
             // get current user and view user level permission
             // if user level = intern => all show no matter the permission
             var listLoginUserPM = _workScope.GetAll<ProjectUser>()
@@ -757,16 +828,19 @@ namespace ProjectManagement.Services.ResourceManager
                     || pu.Status == ProjectUserStatus.Future))
                 .Where(pu => pu.UserId == AbpSession.UserId.GetValueOrDefault() && pu.ProjectRole == 0 || pu.Project.PMId == AbpSession.UserId.GetValueOrDefault()
                     ).Select(pu => pu.Id);
+
             var hasViewUserLevelPermission = PermissionChecker.IsGranted(PermissionNames.Resource_ViewUserLevel);
 
             var activeReportId = await GetActiveReportId();
-            var quser = _workScope.GetAll<User>()
+
+            var qActiveUser = _workScope.GetAll<User>()
                        .Where(x => x.IsActive)
                        .Where(x => x.UserType != UserType.FakeUser)
-                       .Where(u => isVendor ? u.UserType == UserType.Vendor : u.UserType != UserType.Vendor)
-                       .WhereIf(input.BranchIds != null, x => input.BranchIds.Contains(x.BranchId.Value))
-                       .WhereIf(input.PositionIds != null, x => input.PositionIds.Contains(x.PositionId.Value))
-                       .WhereIf(input.UserTypes != null, x => input.UserTypes.Contains(x.UserType))
+                       .Where(x => isVendor ? x.UserType == UserType.Vendor : x.UserType != UserType.Vendor);
+
+            var projectUsers = _workScope.GetAll<ProjectUser>();
+
+            var quser = qActiveUser
                        .Select(x => new GetAllResourceDto
                        {
                            UserId = x.Id,
@@ -783,7 +857,7 @@ namespace ProjectManagement.Services.ResourceManager
                            PositionName = x.Position.ShortName,
                            UserLevel = hasViewUserLevelPermission || x.UserLevel >= UserLevel.Intern_0
                                 && x.UserLevel <= UserLevel.Intern_3 ? x.UserLevel :
-                                _workScope.GetAll<ProjectUser>().Any(pu => pu.UserId == x.Id
+                                projectUsers.Any(pu => pu.UserId == x.Id
                                 && listLoginUserPM.Contains(pu.Id)) ? x.UserLevel : default(UserLevel?),
                            AvatarPath = x.AvatarPath,
                            StarRate = x.StarRate,
@@ -836,32 +910,32 @@ namespace ProjectManagement.Services.ResourceManager
                                 ProjectCode = pu.Project.Code
                             })
                            .ToList(),
+
                            SkillNote = x.UserSkills.Select(s => s.Note).FirstOrDefault() ?? ""
                        });
 
-            var result = quser.ToList();
-            switch (input.PlanStatus)
+            if(
+                input.UserTypes.Count == 0 &&
+                input.BranchIds.Count == 0 &&
+                input.PositionIds.Count == 0 &&
+                input.SkillIds.Count == 0 &&
+                (input.PlanStatus == PlanStatus.All || input.PlanStatus == null)
+                )
             {
-                case PlanStatus.All:
-                    //do nothing
-                    break;
-                case PlanStatus.AllPlan:
-                    result = result.Where(x => x.PlanProjects.Count > 0).ToList();
-                    break;
-
-                case PlanStatus.PlanningJoin:
-                    result = result.Where(x => x.PlanProjects.Any(x => x.AllocatePercentage <= 100 && x.AllocatePercentage > 0)).ToList();
-                    break;
-
-                case PlanStatus.PlanningOut:
-                    result = result.Where(x => x.PlanProjects.Any(x => x.AllocatePercentage == 0)).ToList();
-                    break;
-
-                case PlanStatus.NoPlan:
-                    result = result.Where(x => x.PlanProjects.Count == 0).ToList();
-                    break;
+                return quser;
             }
-            return result.AsQueryable();
+            else
+            {
+                return quser.WhereIf(input.BranchIds != null, x => input.BranchIds.Contains(x.BranchId.Value))
+                       .WhereIf(input.PositionIds != null, x => input.PositionIds.Contains(x.PositionId.Value))
+                       .WhereIf(input.UserTypes != null, x => input.UserTypes.Contains((UserType)x.UserType))
+                       .WhereIf(input.PlanStatus == PlanStatus.AllPlan, x => x.PlanProjects.Count > 0)
+                       .WhereIf(input.PlanStatus == PlanStatus.PlanningJoin,
+                        x => x.PlanProjects.Any(x => x.AllocatePercentage <= 100 && x.AllocatePercentage > 0))
+                       .WhereIf(input.PlanStatus == PlanStatus.PlanningOut,
+                        x => x.PlanProjects.Any(x => x.AllocatePercentage == 0))
+                       .WhereIf(input.PlanStatus == PlanStatus.NoPlan, x => x.PlanProjects.Count == 0);
+            }
         }
 
         public IQueryable<long> queryUserIdsHaveAnySkill(List<long> skillIds)
@@ -1039,7 +1113,7 @@ namespace ProjectManagement.Services.ResourceManager
             return await quser.GetGridResult(quser, input);
         }
 
-        public async Task<GridResult<GetAllResourceDto>> GetResources(InputGetResourceDto input, bool isVendor)
+        public async Task<GridResult<GetAllResourceDto>> GetResources(InputGetAllResourceDto input, bool isVendor)
         {
             var query = await QueryAllResource(input, isVendor);
 

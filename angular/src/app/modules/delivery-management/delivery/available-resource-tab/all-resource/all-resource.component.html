@@ -25,6 +25,30 @@
                         <div class="col-12 col-md-4 mt-1 d-flex align-items-center mb-3">
                             <mat-form-field appearance="outline" class="flex-grow-1">
                                 <mat-label>User Type:</mat-label>
+                                <mat-select #selectUserType placeholder="Select user type"
+                                [(ngModel)]="selectedUserTypes" multiple (openedChange)="openedChange($event,'UserType')">
+                                    <div style="position: sticky; top: 0; z-index: 2; background-color: white;">
+                                        <mat-form-field class="w-100 px-3 ">
+                                            <input style="height: 30px; padding: 5px 10px; "
+                                            matInput [(ngModel)]="searchUserType"  placeholder="Search" #search
+                                            (keydown)="$event.stopPropagation()">
+                                        </mat-form-field>
+                                        <div class="ml-3 mb-2">
+                                            <app-select-clear-option [type]= "'UserType'" [listOption]="listUserTypesId"
+                                                (newListEvent)= "actionSelect($event)" (doneEvent)="selectDone($event)">
+                                            </app-select-clear-option>
+                                        </div>
+                                    </div>
+                                    <mat-option *ngFor="let userType of listUserTypes | listFilter:  'displayName' : searchUserType"
+                                    [value]="userType.value" (click)="onSelectChangeUserType(userType.value)">
+                                       {{userType.displayName}}
+                                   </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <!-- <div class="col-12 col-md-4 mt-1 d-flex align-items-center mb-3">
+                            <mat-form-field appearance="outline" class="flex-grow-1">
+                                <mat-label>User Type:</mat-label>
                                 <mat-select placeholder="Select user type" [(ngModel)]="selectedUserTypes" multiple
                                     (selectionChange)="onChangeUserTypeEvent($event)">
                                     <mat-option *ngFor="let userType of userTypeParam" [value]="userType.value">
@@ -32,7 +56,7 @@
                                     </mat-option>
                                 </mat-select>
                             </mat-form-field>
-                        </div>
+                        </div> -->
                         <div class="col-12 col-md-4 mt-1 d-flex align-items-center mb-3">
                             <mat-form-field appearance="outline" class="flex-grow-1">
                                 <mat-label>Position:</mat-label>

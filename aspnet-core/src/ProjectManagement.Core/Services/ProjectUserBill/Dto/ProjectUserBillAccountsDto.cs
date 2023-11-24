@@ -13,4 +13,14 @@ namespace ProjectManagement.Services.ProjectUserBill.Dto
         public long ProjectId { get; set; }
         public List<long> UserIds { get; set; }
     }
+
+    public class ProjectUserBillAccountDto
+    {
+        [Required]
+        public long BillAccountId { get; set; }
+        [Required]
+        public long ProjectId { get; set; }
+        [Required]
+        public long UserId { get; set; }
+    }
 }

@@ -163,7 +163,8 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
       ...item.planUserInfo,
       billUserInfo: item.billUserInfo,
       requestName: item.name,
-      resourceRequestId: item.id
+      resourceRequestId: item.id,
+      projectId: item.projectId
     }
     const showModal = this.dialog.open(FormSetDoneComponent, {
       data,

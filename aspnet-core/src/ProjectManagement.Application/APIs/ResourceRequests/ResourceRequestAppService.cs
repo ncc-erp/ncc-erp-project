@@ -187,6 +187,10 @@ namespace ProjectManagement.APIs.ResourceRequests
             var resourceRequest = await WorkScope.GetAsync<ResourceRequest>(input.Id);
             ObjectMapper.Map(input, resourceRequest);
             resourceRequest.Quantity = 1;
+            // update project Id in ProjectUser
+            var projectUser = WorkScope.GetAll<ProjectUser>().Where(p=> p.ResourceRequestId == input.Id).FirstOrDefault();
+            if (projectUser != null)
+                projectUser.ProjectId = input.ProjectId;
             await WorkScope.UpdateAsync(resourceRequest);
 
             var dbRequestSkills = await WorkScope.GetAll<ResourceRequestSkill>()
@@ -360,13 +364,22 @@ namespace ProjectManagement.APIs.ResourceRequests
 
             // add user in cv column to project user bill table
             if (request.Request.BillAccountId != null)
-                await WorkScope.InsertAsync(new ProjectUserBill
+            {
+               var existedPUB = await WorkScope.GetAll<ProjectUserBill>()
+                  .Where(x => x.ProjectId == request.Request.ProjectId && x.UserId == request.Request.BillAccountId)
+                  .FirstOrDefaultAsync();
+                if (existedPUB == null)
                 {
-                    UserId = request.Request.BillAccountId ?? default,
-                    StartTime = input.BillStartTime ?? default,
-                    ProjectId = request.Request.ProjectId,
-                    isActive = true
-                });
+                    await WorkScope.InsertAsync(new ProjectUserBill
+                    {
+                        UserId = request.Request.BillAccountId ?? default,
+                        StartTime = input.BillStartTime ?? default,
+                        ProjectId = request.Request.ProjectId,
+                        isActive = true
+                    });
+                }
+            }
+              
             return input;
         }
 

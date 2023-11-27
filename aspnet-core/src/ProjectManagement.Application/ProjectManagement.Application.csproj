@@ -12,6 +12,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\ProjectManagement.Core\ProjectManagement.Core.csproj" />
+    <ProjectReference Include="..\ProjectManagement.EntityFrameworkCore\ProjectManagement.EntityFrameworkCore.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="APIs\Talent\Dto\" />
@@ -19,6 +20,9 @@
   <ItemGroup>
     <PackageReference Include="Aspose.Cells" Version="21.12.0" />
     <PackageReference Include="Aspose.Cells.GridWeb" Version="21.12.0" />
+    <PackageReference Include="Hangfire" Version="1.8.6" />
+    <PackageReference Include="Hangfire.AspNetCore" Version="1.8.6" />
+    <PackageReference Include="Hangfire.SqlServer" Version="1.8.6" />
     <PackageReference Include="Microsoft.Office.Interop.Excel" Version="15.0.4795.1001" />
   </ItemGroup>
 </Project>

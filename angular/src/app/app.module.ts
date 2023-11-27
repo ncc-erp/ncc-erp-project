@@ -222,6 +222,9 @@ import { FormCvUserComponent } from './modules/delivery-management/delivery/requ
 import { DescriptionPopupComponent } from './modules/delivery-management/delivery/request-resource-tab/description-popup/description-popup.component';
 import { LinkProjectTimesheetComponent } from './modules/timesheet/timesheet-detail/link-project-timesheet/link-project-timesheet.component';
 import { ShadowAccountDialogComponent } from './modules/pm-management/list-project/list-project-detail/project-bill/shadow-account-dialog/shadow-account-dialog.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { BillAccountDialogComponent } from './modules/admin/configuration/bill-account-dialog/bill-account-dialog.component';
+import { MatDialogModule } from '@angular/material/dialog';
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, "./assets/i18n/", ".json");
 }
@@ -429,6 +432,7 @@ export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
     DescriptionPopupComponent,
     LinkProjectTimesheetComponent,
     ShadowAccountDialogComponent,
+    BillAccountDialogComponent,
   ],
   imports: [
     CommonModule,
@@ -450,7 +454,8 @@ export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
     ImageCropperModule,
     CdTimerModule,
     NgxMatSelectSearchModule,
-
+    NgbModule,
+    MatDialogModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,

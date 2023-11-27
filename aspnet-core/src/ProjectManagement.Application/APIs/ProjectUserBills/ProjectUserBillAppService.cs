@@ -684,5 +684,13 @@ namespace ProjectManagement.APIs.ProjectUserBills
             await CurrentUnitOfWork.SaveChangesAsync();
         }
         #endregion
+
+        [HttpGet]
+        [AbpAuthorize]
+        public async Task<List<BillAccountDto>> GetAllBillAccount()
+        {
+            return await projectUserBillManager.GetAllBillAccount();
+        }
+
     }
 }

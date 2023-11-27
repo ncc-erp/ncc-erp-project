@@ -29,6 +29,9 @@ using Amazon;
 using ProjectManagement.UploadFilesService;
 using ProjectManagement.Services.Talent;
 using ProjectManagement.Services;
+using Hangfire;
+using ProjectManagement.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace ProjectManagement.Web.Host.Startup
 {
@@ -131,6 +134,12 @@ namespace ProjectManagement.Web.Host.Startup
                 });
             });
 
+            // add Hangfire service
+            services.AddDbContext<ProjectManagementDbContext>(opt =>
+            opt.UseSqlServer(_appConfiguration.GetConnectionString("Default")), ServiceLifetime.Transient);
+            services.AddHangfire(option => option.UseSqlServerStorage(_appConfiguration.GetConnectionString("Default")));
+            services.AddHangfireServer();
+
             // Configure Abp and Dependency Injection
             return services.AddAbp<ProjectManagementWebHostModule>(
                 // Configure Log4Net logging
@@ -154,7 +163,6 @@ namespace ProjectManagement.Web.Host.Startup
 
             app.UseAbpRequestLocalization();
 
-          
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapHub<AbpCommonHub>("/signalr");
@@ -174,6 +182,9 @@ namespace ProjectManagement.Web.Host.Startup
                     .GetManifestResourceStream("ProjectManagement.Web.Host.wwwroot.swagger.ui.index.html");
                 options.DisplayRequestDuration(); // Controls the display of the request duration (in milliseconds) for "Try it out" requests.  
             }); // URL: /swagger
+
+            // Hangfire Dashboard
+            app.UseHangfireDashboard();
         }
         void CreateAWSCredentialProfile()
         {

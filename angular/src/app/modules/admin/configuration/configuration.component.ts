@@ -298,7 +298,6 @@ export class ConfigurationComponent extends AppComponentBase implements OnInit {
   }
 
   addBillAccount(){
-
     const show = this.dialog.open(BillAccountDialogComponent, {
       data: {
         selectedIds: this.billAccountIds ? this.billAccountIds: [],
@@ -342,7 +341,8 @@ export class ConfigurationComponent extends AppComponentBase implements OnInit {
       });
     }
   }
- IschargeStatusFormValid() {
+
+  IschargeStatusFormValid() {
   const controls = (this.chargeStatusForm.get('chargeStatusCredentials') as FormArray).controls;
 
   const valuesArray = controls.map(control => {

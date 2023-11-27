@@ -62,7 +62,7 @@ namespace ProjectManagement.APIs.ProjectUserBills
             }
             catch (Exception ex)
             {
-                throw new UserFriendlyException(ex.Message);
+                 throw new UserFriendlyException(ex.Message);
             }
         }
 
@@ -105,35 +105,35 @@ namespace ProjectManagement.APIs.ProjectUserBills
         [HttpPost]
         public async Task<List<SubProjectBillDto>> GetSubProjectBills(InputSubProjectBillDto input)
         {
-            var query = projectUserBillManager.GetSubProjectBills(input.ParentProjectId)
-                .Select(x => new SubProjectBillDto
-                {
-                    ProjectBillId = x.Id,
-                    UserId = x.UserId,
-                    UserName = x.User.Name,
-                    ProjectId = x.ProjectId,
-                    ProjectName = x.Project.Name,
-                    ProjectCode = x.Project.Code,
-                    AccountName = x.AccountName,
-                    BillRole = x.BillRole,
-                    BillRate = x.BillRate,
-                    StartTime = x.StartTime.Date,
-                    EndTime = x.EndTime.Value.Date,
-                    isActive = x.isActive,
-                    AvatarPath = x.User.AvatarPath,
-                    FullName = x.User.FullName,
-                    Branch = x.User.BranchOld,
-                    BranchColor = x.User.Branch.Color,
-                    BranchDisplayName = x.User.Branch.DisplayName,
-                    PositionId = x.User.PositionId,
-                    PositionName = x.User.Position.ShortName,
-                    PositionColor = x.User.Position.Color,
-                    EmailAddress = x.User.EmailAddress,
-                    UserType = x.User.UserType,
-                    UserLevel = x.User.UserLevel,
-                    ChargeType = x.ChargeType.HasValue ? x.ChargeType : x.Project.ChargeType,
-                });
-            return await query.ToListAsync();
+                var query = projectUserBillManager.GetSubProjectBills(input.ParentProjectId)
+                    .Select(x => new SubProjectBillDto
+                    {
+                        ProjectBillId = x.Id,
+                        UserId = x.UserId,
+                        UserName = x.User.Name,
+                        ProjectId = x.ProjectId,
+                        ProjectName = x.Project.Name,
+                        ProjectCode = x.Project.Code,
+                        AccountName = x.AccountName,
+                        BillRole = x.BillRole,
+                        BillRate = x.BillRate,
+                        StartTime = x.StartTime.Date,
+                        EndTime = x.EndTime.Value.Date,
+                        isActive = x.isActive,
+                        AvatarPath = x.User.AvatarPath,
+                        FullName = x.User.FullName,
+                        Branch = x.User.BranchOld,
+                        BranchColor = x.User.Branch.Color,
+                        BranchDisplayName = x.User.Branch.DisplayName,
+                        PositionId = x.User.PositionId,
+                        PositionName = x.User.Position.ShortName,
+                        PositionColor = x.User.Position.Color,
+                        EmailAddress = x.User.EmailAddress,
+                        UserType = x.User.UserType,
+                        UserLevel = x.User.UserLevel,
+                        ChargeType = x.ChargeType.HasValue ? x.ChargeType : x.Project.ChargeType,
+                    });
+                return await query.ToListAsync();
         }
 
         [HttpGet]
@@ -287,7 +287,7 @@ namespace ProjectManagement.APIs.ProjectUserBills
                         UserInfor = group.First().UserInfor,
                         Projects = group.Select(g => g.Project).ToList()
                     })
-                    .WhereIf(input.PlanStatus == PlanStatus.AllPlan,
+                    .WhereIf(input.PlanStatus == PlanStatus.AllPlan, 
                         x => x.Projects.Any(x => (input.StartDate <= x.EndTime && x.EndTime <= input.EndDate)
                          || (input.StartDate <= x.StartTime && x.StartTime <= input.EndDate)))
                     .WhereIf(input.PlanStatus == PlanStatus.PlanningJoin,

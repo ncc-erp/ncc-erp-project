@@ -112,7 +112,6 @@ namespace ProjectManagement.Configuration
                 ActiveTimesheetProjectPeriod = await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.ActiveTimesheetProjectPeriod)
             };
         }
-
         [AbpAuthorize(PermissionNames.Admin_Configuartions_Edit)]
         public async Task<AppSettingDto> Change(AppSettingDto input)
         {
@@ -170,7 +169,7 @@ namespace ProjectManagement.Configuration
             await SettingManager.ChangeSettingForApplicationAsync(AppSettingNames.MaxCountHistory, input.MaxCountHistory);
             await SettingManager.ChangeSettingForApplicationAsync(AppSettingNames.InformPm, input.InformPm);
             await SettingManager.ChangeSettingForApplicationAsync(AppSettingNames.ActiveTimesheetProjectPeriod, input.ActiveTimesheetProjectPeriod);
-            return input;
+        return input;
         }
 
         [AbpAuthorize(PermissionNames.Admin_Configuartions_Edit)]
@@ -234,13 +233,13 @@ namespace ProjectManagement.Configuration
         }
 
 
-        [AbpAuthorize(
-           //PermissionNames.Admin_Configurations_ViewGuideLineSetting
-           PermissionNames.WeeklyReport_ReportDetail_GuideLine_View
-           )]
-        [HttpGet]
-        public async Task<GuideLineDto> GetGuideLine()
-        {
+         [AbpAuthorize(
+            //PermissionNames.Admin_Configurations_ViewGuideLineSetting
+            PermissionNames.WeeklyReport_ReportDetail_GuideLine_View
+            )]
+         [HttpGet]
+         public async Task<GuideLineDto> GetGuideLine()
+         {
             var allowViewGuideline = await PermissionChecker.IsGrantedAsync(PermissionNames.WeeklyReport_ReportDetail_GuideLine_View);
             if (!allowViewGuideline)
             {

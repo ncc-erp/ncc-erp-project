@@ -34,8 +34,6 @@ export class BillAccountDialogComponent extends AppComponentBase implements OnIn
       this.listAllResource = data.result;
       this.orderListResource();
     });
-
-
   }
 
   openedChange(event){
@@ -49,11 +47,13 @@ export class BillAccountDialogComponent extends AppComponentBase implements OnIn
     this.listResourceSelectCurrent = [... this.listResourceSelect]
     this.resourceSelected = this.listAllResource.filter(item =>  this.listResourceSelect.includes(item.userId))
   }
+
   clear(){
     this.listResourceSelect = [];
     this.listResourceSelectCurrent = [];
     this.resourceSelected = this.listAllResource.filter(item =>  this.listResourceSelect.includes(item.userId))
   }
+
   onSelectChange(id){
     if(this.listResourceSelectCurrent.includes(id)){
       this.listResourceSelectCurrent = this.listResourceSelectCurrent.filter(res => res != id)
@@ -71,26 +71,8 @@ export class BillAccountDialogComponent extends AppComponentBase implements OnIn
     this.resourceUnSelected  = this.listAllResource.filter(item =>  !this.listResourceSelect.includes(item.userId))
     this.listAllResource = [...this.resourceSelected, ...this.resourceUnSelected]
   }
+
   save(){
-    // const reqAdd = {
-    //   billAccountId: this.data.userId,
-    //   projectId: this.data.projectId,
-    //   // userIds: this.listResourceSelect.filter(item => !this.listResourceSelected.includes(item))
-    // }
-
-    // const reqDelete = {
-    //   billAccountId: this.data.userId,
-    //   projectId: this.data.projectId,
-    //   // userIds: this.listResourceSelected.filter(item => !this.listResourceSelect.includes(item))
-    // }
-
-    //   forkJoin(this.projectUserBillService.LinkUserToBillAccount(reqAdd),this.projectUserBillService.RemoveUserFromBillAccount(reqDelete))
-    //   .pipe(catchError(this.projectUserBillService.handleError))
-    //   .subscribe(([rsAdd,rsRemove])=>{
-    //     if(rsAdd.result && rsRemove.result){
-
-    //     }
-    //   })
       abp.notify.success("Add bill account successfully")
       this.dialogRef.close({
         updateBill: this.listResourceSelect,

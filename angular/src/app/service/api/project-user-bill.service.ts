@@ -92,6 +92,7 @@ export class ProjectUserBillService extends BaseApiService {
   checkInvoiceSetting(): Observable<ApiResponse<string>>{
     return this.http.get<ApiResponse<string>>(this.rootUrl + '/CheckInvoiceSetting');
   }
+
   getAllBillAccount(){
     return this.http.get<any>(this.rootUrl + '/GetAllBillAccount');
   }

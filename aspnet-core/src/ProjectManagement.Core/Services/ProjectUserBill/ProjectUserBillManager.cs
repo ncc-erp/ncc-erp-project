@@ -40,7 +40,6 @@ namespace ProjectManagement.Services.ProjectUserBills
                         select pub;
             return query.OrderBy(p => p.Project.Name).ThenBy(p => p.User.EmailAddress);
         }
-
         public async Task<List<GetAllResourceDto>> QueryAllResource(bool isVendor)
         {
             // get current user and view user level permission

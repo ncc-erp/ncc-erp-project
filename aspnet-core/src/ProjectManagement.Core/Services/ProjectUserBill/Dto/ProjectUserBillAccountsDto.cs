@@ -23,4 +23,10 @@ namespace ProjectManagement.Services.ProjectUserBill.Dto
         [Required]
         public long UserId { get; set; }
     }
+
+    public class BillAccountDto{
+        public long UserId { get; set; }
+        public string EmailAddress { get; set; }
+    }
+
 }

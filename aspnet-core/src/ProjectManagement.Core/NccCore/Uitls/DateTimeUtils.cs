@@ -111,5 +111,28 @@ namespace NccCore.Uitls
         {
             return Clock.Provider.Now.Minute;
         }
+
+        public static DateTime ConvertToUtcTime(int year, int month, int day, int hour, int minute)
+        {
+            try
+            {
+                // Get the current year and month, -1 : get current
+                int currentYear = year == -1 ? DateTime.Now.Year : year;
+                int currentMonth = month == -1 ? DateTime.Now.Month : month;
+                int currentDay = day == -1 ? DateTime.Now.Day : day;
+                int currentHour = hour == -1 ? DateTime.Now.Hour : hour;
+                int currentMinute = minute == -1 ? DateTime.Now.Minute : minute;
+                // Create a DateTime with the given day and hour in the local timezone
+                DateTime localTime = new DateTime(currentYear, currentMonth, currentDay, currentHour, currentMinute, 0, DateTimeKind.Local);
+                // Convert local time to UTC
+                return localTime.ToUniversalTime();
+            }
+            catch (Exception)
+            {
+                return new DateTime().ToUniversalTime();
+            }
+
+        }
+
     }
 }

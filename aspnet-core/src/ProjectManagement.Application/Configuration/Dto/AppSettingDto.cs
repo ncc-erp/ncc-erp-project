@@ -86,4 +86,17 @@ namespace ProjectManagement.Configuration.Dto
         public string Time { get; set; }
         public int Day { get; set; }
     }
+
+    public class ChargeBillAccountDto
+    {
+        public CheckDateTime AutoUpdateBillAccount { get; set; }
+        public List<long> UserIds { get; set; }
+        public InformPmDto NotiUsers { get; set; }
+    }
+
+    public class EmailProjectDto
+    {
+        public string EmailAddress { get; set; }
+        public List<string> Projects { get; set; }
+    }
 }

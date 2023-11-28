@@ -69,7 +69,7 @@ export class ConfigurationComponent extends AppComponentBase implements OnInit {
   public notiChargeChannelId: string = '';
   public billAccountIds: any[] = [];
   public showSpinner: boolean = false;
-  public autoUpdateChargeStatus : TimeSendDto;
+  public autoUpdateChargeStatus : TimeSendDto = new TimeSendDto(false, '00:00', 6);
   public time : NgbTimeStruct = {hour: 10, minute: 10, second: 0};
   public listDateofMonth: number[] = Array.from({ length: 31 }, (_, index) => index + 1);
   public ischargeStatusFormValid = false;
@@ -278,7 +278,8 @@ export class ConfigurationComponent extends AppComponentBase implements OnInit {
       this.billAccountIds = data.result.userIds;
       this.autoUpdateChargeStatus = data.result.autoUpdateBillAccount ?? new TimeSendDto(false, '00:00', 6);
       this.chargeStatusCredentials.clear()
-      data.result.notiUsers.checkDateTimes.forEach(item =>{
+      if(data.result.notiUsers){
+        data.result.notiUsers.checkDateTimes.forEach(item =>{
         const cred = this.fb.group({
           IsCheck: item.isCheck,
           Time: item.time,
@@ -286,6 +287,7 @@ export class ConfigurationComponent extends AppComponentBase implements OnInit {
         })
        this.chargeStatusCredentials.push(cred)
       })
+    }
     });
   }
 
@@ -305,7 +307,7 @@ export class ConfigurationComponent extends AppComponentBase implements OnInit {
       width: "700px",
     })
     show.afterClosed().subscribe((res) => {
-      if (res.isSave) {
+      if (res?.isSave) {
         this.billAccountIds = res.updateBill;
       }
     })

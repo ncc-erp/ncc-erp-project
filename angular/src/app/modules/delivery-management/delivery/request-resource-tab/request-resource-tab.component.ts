@@ -159,6 +159,20 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
     this.showDialog("edit", item);
   }
   public setDoneRequest(item) {
+    if(!item.planUserInfo && !item.billUserInfo){
+      const request = {
+        requestId: item.id,
+        startTime: moment().format("YYYY-MM-DD"),
+        billStartTime: null,
+      }
+      this.resourceRequestService.setDoneRequest(request).subscribe(rs => {
+        if(rs){
+          abp.notify.success(`Set done success`);
+          this.refresh();
+        }
+      })
+    }
+    else{
     let data = {
       ...item.planUserInfo,
       billUserInfo: item.billUserInfo,
@@ -176,6 +190,7 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
         this.refresh()
     })
   }
+}
 
   showProject(item){
       const show = this.dialog.open(ProjectDescriptionPopupComponent , {
@@ -523,7 +538,7 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
 
   isShowBtnSetDone(item) {
     return item.status == RESOURCE_REQUEST_STATUS.PENDING
-      && item.planUserInfo
+      && (item.isRequiredPlanResource && item.planUserInfo  || !item.isRequiredPlanResource)
       && this.isGranted(PERMISSIONS_CONSTANT.ResourceRequest_SetDone)
   }
 

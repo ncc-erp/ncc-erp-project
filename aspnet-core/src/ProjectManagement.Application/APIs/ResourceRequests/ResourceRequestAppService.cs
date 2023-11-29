@@ -350,12 +350,12 @@ namespace ProjectManagement.APIs.ResourceRequests
                 throw new UserFriendlyException("Not found Request with Id " + input.RequestId);
             }
 
-            if (request.PlanUserInfo == null)
+            if (request.PlanUserInfo == null && request.Request.IsRequiredPlanResource)
             {
                 throw new UserFriendlyException("You have to plan resource for this request first");
             }
-
-            await _resourceManager.ConfirmJoinProject(request.PlanUserInfo.Id, input.StartTime, true);
+            if (request.PlanUserInfo != null)
+                await _resourceManager.ConfirmJoinProject(request.PlanUserInfo.Id, input.StartTime, true);
 
             request.Request.Status = ResourceRequestStatus.DONE;
             request.Request.TimeDone = DateTimeUtils.GetNow();
@@ -365,9 +365,9 @@ namespace ProjectManagement.APIs.ResourceRequests
             // add user in cv column to project user bill table
             if (request.Request.BillAccountId != null)
             {
-               var existedPUB = await WorkScope.GetAll<ProjectUserBill>()
-                  .Where(x => x.ProjectId == request.Request.ProjectId && x.UserId == request.Request.BillAccountId)
-                  .FirstOrDefaultAsync();
+                var existedPUB = await WorkScope.GetAll<ProjectUserBill>()
+                   .Where(x => x.ProjectId == request.Request.ProjectId && x.UserId == request.Request.BillAccountId)
+                   .FirstOrDefaultAsync();
                 if (existedPUB == null)
                 {
                     await WorkScope.InsertAsync(new ProjectUserBill
@@ -379,7 +379,7 @@ namespace ProjectManagement.APIs.ResourceRequests
                     });
                 }
             }
-              
+
             return input;
         }
 

@@ -609,7 +609,8 @@ namespace ProjectManagement.Authorization
         public const string Resource_TabVendor_ViewUserStarSkill = "Resource.TabVendor.ViewUserStarSkill";
         public const string Resource_TabVendor_ProjectDetail = "Resource.TabVendor.ProjectDetail";
 
-        public const string Resource_TabPlanningBillAcccount = "Resource.TabPlanning.BillAccount";
+        //public const string Resource_TabPlanningBillAcccount = "Resource.TabPlanning.BillAccount";
+        public const string Resource_TabAllBillAccount = "Resource.TabAll.BillAccount";
         public const string Resource_ViewUserLevel = "Resource.ViewUserLevel";
         #endregion Resource
 
@@ -1309,7 +1310,8 @@ namespace ProjectManagement.Authorization
                     PermissionNames.Resource_TabVendor_ViewUserStarSkill ,
                     PermissionNames.Resource_TabVendor_ProjectDetail,
 
-                    PermissionNames.Resource_TabPlanningBillAcccount,
+                    //PermissionNames.Resource_TabPlanningBillAcccount,
+                    PermissionNames.Resource_TabAllBillAccount,
                     PermissionNames.Resource_ViewUserLevel,
                     PermissionNames.ResourceRequest_CreateBillResourceForRequest,
                     PermissionNames.ResourceRequest_UpdateUserBillResourceSkill,
@@ -2030,7 +2032,8 @@ namespace ProjectManagement.Authorization
                  new SystemPermission{ Name =  PermissionNames.Resource_TabVendor_ViewUserStarSkill ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View User Star Skill"},
                  new SystemPermission{ Name =  PermissionNames.Resource_TabVendor_ProjectDetail ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Project Detail"},
 
-                 new SystemPermission{ Name =  PermissionNames.Resource_TabPlanningBillAcccount ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Planning Bill Account"},
+                 //new SystemPermission{ Name =  PermissionNames.Resource_TabPlanningBillAcccount ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Planning Bill Account"},
+                 new SystemPermission{ Name =  PermissionNames.Resource_TabAllBillAccount ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "All Bill Account"},
                  new SystemPermission{ Name =  PermissionNames.Resource_ViewUserLevel ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View User Level"},
                  #endregion Resource
 
@@ -3751,8 +3754,11 @@ namespace ProjectManagement.Authorization
                                     },
                             },
                             // Tab Planning Bill Account
-                            new SystemPermission {
+                          /*  new SystemPermission {
                                 Name = PermissionNames.Resource_TabPlanningBillAcccount, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Tab Planning Bill Account",
+                            },*/
+                            new SystemPermission {
+                                Name = PermissionNames.Resource_TabAllBillAccount, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Tab All Bill Account",
                             },
                             new SystemPermission {
                                 Name = PermissionNames.Resource_ViewUserLevel, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View User Level",

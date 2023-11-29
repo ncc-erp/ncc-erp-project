@@ -33,5 +33,6 @@
         public const string GuideLine = "GuideLine";
         public const string ActiveTimesheetProjectPeriod = "ActiveTimesheetProject";
         public const string InformPm = "InformPmDateTime";
+        public const string UpdateChargeStatusBillAccount = "UpdateChargeStatusBillAccount";
     }
 }

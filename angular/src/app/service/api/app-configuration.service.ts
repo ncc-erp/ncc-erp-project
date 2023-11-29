@@ -91,4 +91,12 @@ export class AppConfigurationService extends BaseApiService {
   getTimeTimesheet(){
     return this.http.get(this.rootUrl + '/GetActiveTimesheetProjectPeriod')
   }
+
+  getChargeStatusConfig(){
+    return this.http.get(this.rootUrl + '/GetNotiAutoChargeBillAccount');
+  }
+
+  setChargeStatusConfig(item){
+    return this.http.post(this.rootUrl + '/SetNotiAutoChargeBillAccount', item);
+  }
 }

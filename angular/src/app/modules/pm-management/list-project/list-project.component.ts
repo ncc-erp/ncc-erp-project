@@ -36,6 +36,7 @@ export class ListProjectComponent extends PagedListingComponentBase<any> impleme
   Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport;
   Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_View = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_View;
   Projects_OutsourcingProjects_ViewBillInfo = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ViewBillInfo
+  Projects_OutsourcingProjects_ViewResource = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ViewResource
   Projects_OutsourcingProjects_ViewBillAccount = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ViewBillAccount
   Projects_OutsourcingProjects_CheckProjectInvoiceSetting = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_CheckProjectInvoiceSetting
   Projects_OutsourcingProjects_ViewRequireWeeklyReport= PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ViewRequireWeeklyReport
@@ -418,6 +419,23 @@ window.open(url, '_blank');
     }
     return billInfoAfterFilter
   }
+
+  filterResource(project){
+    let resourceAfterFilter = []
+    if(project.isViewAllResource){
+      resourceAfterFilter  = project.currentResources
+    }
+    else{
+      project.currentResources.forEach((bill, index)=>{
+        if(index < 5){
+          resourceAfterFilter.push(bill)
+        }
+      })
+    }
+    return resourceAfterFilter
+  }
+
+
 
   filterResourceInfo(project){
     let resourceInfoAfterFilter = []

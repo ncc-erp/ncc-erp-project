@@ -419,6 +419,23 @@ window.open(url, '_blank');
     return billInfoAfterFilter
   }
 
+  filterResourceInfo(project){
+    let resourceInfoAfterFilter = []
+    if(project.resourceInfo){
+    if(project.isViewAllResourceInfo){
+      resourceInfoAfterFilter = project.resourceInfo
+    }
+    else{
+      project.resourceInfo.forEach((resource, index)=>{
+        if(index < 5){
+          resourceInfoAfterFilter.push(resource)
+        }
+      })
+    }
+  }
+    return resourceInfoAfterFilter
+  }
+
   checkProjectInvoiceSetting(){
     this.projectUserBillService.checkInvoiceSetting().subscribe(rs => {
       if(rs.result.length){

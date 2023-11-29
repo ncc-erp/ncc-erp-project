@@ -176,7 +176,7 @@
                                     </div>
                                     <div class="d-flex align-items-center justify-content-between">
                                         <span>[{{ project.code }}]</span>
-                                        <span 
+                                        <span
                                             [ngClass]=" APP_CONST.statusStyle[getByEnum(project.status,APP_ENUM.ProjectStatus)]">
                                             {{getByEnum(project.status,APP_ENUM.ProjectStatus)}}
                                         </span>
@@ -187,7 +187,7 @@
                                     <div class="time-wrap align-items-center">
                                         <span class="time-item start-time">{{ project.startTime | date:"dd-MM-yyyy" }}</span>
                                         <span class="time-item end-time">{{ project.endTime | date:"dd-MM-yyyy" }}</span>
-                                    </div>      
+                                    </div>
                                 </td>
                                 <td>
                                     <div>
@@ -203,24 +203,19 @@
                                     </div>
                                 </td>
                                 <td *ngIf="isShowResources">
-                                    <strong *ngIf="filterBillInfo(project).length>0" style="color: red;">Total:{{project.billInfo.length}}</strong>
-                                    <div *ngFor="let bill of filterBillInfo(project) let j = index;">
-                                        <strong>{{j+1}}. </strong><strong>{{bill.fullName}} </strong>
+                                    <strong *ngIf="filterResourceInfo(project).length>0" style="color: red;">Total:{{project.resourceInfo.length}}</strong>
+                                    <div *ngFor="let resource of filterResourceInfo(project) let j = index;">
+                                        <strong>{{j+1}}. </strong><strong>{{resource.fullName}} </strong>
                                         <span
-                                            >[{{bill.billRole}}]
+                                            >[{{resource.projectUserRole}}]
                                         </span>
-                                        <strong *ngIf="isShowBillInfo"
-                                            class="text-danger"> {{bill.billRate | number: "1.0"}} </strong>
-                                        <span  *ngIf="isShowBillInfo"
-                                            >{{project.currencyName
-                                            | lowercase}}/{{getChargeType(project.chargeType)}}</span>
                                     </div>
                                     <span>
-                                        <i [ngClass]="project.isViewAllBillInfo ? 'fas fa-chevron-up' :'fa fa-ellipsis-h'"
+                                        <i [ngClass]="project.isViewAllResourceInfo ? 'fas fa-chevron-up' :'fa fa-ellipsis-h'"
                                             *ngIf="project.billInfo.length > 5"
-                                            (click)="project.isViewAllBillInfo = !project.isViewAllBillInfo; filterBillInfo(project)"></i>
+                                            (click)="project.isViewAllResourceInfo = !project.isViewAllResourceInfo; filterResourceInfo(project)"></i>
                                     </span>
-                                </td>
+                                 </td>
                                 <td *ngIf="isShowBillInfo || isShowAccount">
                                     <strong *ngIf="filterBillInfo(project).length>0" style="color: red;">Total:{{project.billInfo.length}}</strong>
                                     <div *ngFor="let bill of filterBillInfo(project) let j = index;">

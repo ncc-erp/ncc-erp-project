@@ -76,6 +76,17 @@ namespace ProjectManagement.APIs.Projects
             {
                 input.FilterItems.Remove(filterPmId);
             }
+            var resourceProject = WorkScope.GetAll<ProjectUser>()
+                .Where(s => s.User.UserType != UserType.FakeUser
+                && s.Status == ProjectUserStatus.Present && s.AllocatePercentage > 0)
+                .Select(pu => new ResourceInfo
+                {
+                    ProjectId = pu.ProjectId,
+                    FullName = pu.User.FullName,
+                    ProjectUserRole = pu.ProjectRole.ToString()
+                }).AsEnumerable()
+                .GroupBy(pu => pu.ProjectId, pu => pu)
+                .ToDictionary(group => group.Key, group => group.ToList());
             var query = from p in WorkScope.GetAll<Project>().Include(x => x.Currency)
                         .Where(x => isViewAll || x.PMId == AbpSession.UserId.Value)
                         .Where(x => x.ProjectType != ProjectType.TRAINING && x.ProjectType != ProjectType.PRODUCT)
@@ -144,7 +155,8 @@ namespace ProjectManagement.APIs.Projects
                                         EndTime = b.EndTime.Value,
                                         isActive = b.isActive,
                                         FullName = b.User.FullName,
-                                    }).ToList() : null
+                                    }).ToList() : null,
+                            ResourceInfo = resourceProject.ContainsKey(p.Id) ? resourceProject[p.Id] : null,
                         };
 
 
@@ -170,7 +182,7 @@ namespace ProjectManagement.APIs.Projects
                 .ToListAsync();
             return new OkObjectResult(pms);
         }
-      
+
         public async Task<IActionResult> GetProductPMs()
         {
             var pms = await WorkScope.GetAll<Project>()

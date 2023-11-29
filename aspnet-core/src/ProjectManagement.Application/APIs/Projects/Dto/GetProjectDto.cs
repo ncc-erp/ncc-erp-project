@@ -52,6 +52,7 @@ namespace ProjectManagement.APIs.Projects.Dto
         public long? ParentInvoiceId { get; set; } 
         public bool IsParentInvoiceIdExist { get; set; } 
         public IEnumerable<SubProjectInvoiceDto> ParentInvoices { get; set; }
-        
+        public List<ResourceInfo> ResourceInfo { get; set; }
+
     }
 }

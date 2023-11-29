@@ -589,6 +589,22 @@ export class TrainingResourceManagementComponent extends AppComponentBase implem
   }
 
   public setDoneRequest(item){
+    if(!item.planUserInfo){
+      const request = {
+        requestId: item.id,
+        startTime: moment().format("YYYY-MM-DD"),
+        billStartTime: null,
+      }
+      this.resourceRequestService.setDoneRequest(request).subscribe(rs => {
+        if(rs){
+          abp.notify.success(`Set done success`);
+          this.getResourceRequestList()
+          this.getPlannedtUser()
+          this.getProjectUser()
+        }
+      })
+    }
+    else{
     let data = {
       ...item.planUserInfo,
       requestName: item.name,
@@ -606,6 +622,7 @@ export class TrainingResourceManagementComponent extends AppComponentBase implem
         this.getProjectUser()
     })
   }
+    }
 
   cancelRequest(id){
     abp.message.confirm(

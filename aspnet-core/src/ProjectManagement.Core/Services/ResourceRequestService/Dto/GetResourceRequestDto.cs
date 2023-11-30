@@ -122,6 +122,7 @@ namespace ProjectManagement.Services.ResourceRequestService.Dto
         public DateTime? CreateAt { get; set; }
         public PlanUserInfoDto BillUserInfo { get; set; }
         public bool IsNewBillAccount { get; set; }
+        public bool IsRequiredPlanResource { get; set; }
     }
 
     public class PlanUserInfoDto

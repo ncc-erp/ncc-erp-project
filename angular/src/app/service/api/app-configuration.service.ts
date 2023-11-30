@@ -88,7 +88,18 @@ export class AppConfigurationService extends BaseApiService {
   /**
   * @param timeCloseTimesheet
   */
-  getTimeTimesheet(){
-    return this.http.get(this.rootUrl + '/GetActiveTimesheetProjectPeriod')
+  getCloseTimesheetNotification(){
+    return this.http.get(this.rootUrl + '/GetCloseTimesheetNotification')
+  }
+  setCloseTimesheetNotification(timeCloseTimesheet){
+    return this.http.post(this.rootUrl + '/SetCloseTimesheetNotification', timeCloseTimesheet)
+  }
+
+  getChargeStatusConfig(){
+    return this.http.get(this.rootUrl + '/GetNotiAutoChargeBillAccount');
+  }
+
+  setChargeStatusConfig(item){
+    return this.http.post(this.rootUrl + '/SetNotiAutoChargeBillAccount', item);
   }
 }

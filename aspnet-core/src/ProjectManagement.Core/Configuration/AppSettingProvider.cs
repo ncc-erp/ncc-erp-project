@@ -46,7 +46,8 @@ namespace ProjectManagement.Configuration
                 new SettingDefinition(AppSettingNames.ScoreAudit,  Configuration["DefaultSettings:ScoreAudit"], scopes: SettingScopes.Application | SettingScopes.Tenant),
                 new SettingDefinition(AppSettingNames.ActiveTimesheetProjectPeriod, Configuration["DefaultSettings:ActiveTimesheetProjectPeriod"]),
                 new SettingDefinition(AppSettingNames.InformPm, Configuration["DefaultSettings:InformPm"],scopes: SettingScopes.Application |SettingScopes.Tenant),
-                new SettingDefinition(AppSettingNames.CloseTimesheetNotification, Configuration["DefaultSettings:CloseTimesheetNotification"],scopes: SettingScopes.Application |SettingScopes.Tenant),
+                new SettingDefinition(AppSettingNames.UpdateChargeStatusBillAccount, Configuration["DefaultSettings:AutoUpdateNotifyBillAccountCharge"],scopes: SettingScopes.Application |SettingScopes.Tenant),
+             new SettingDefinition(AppSettingNames.CloseTimesheetNotification, "",scopes: SettingScopes.Application |SettingScopes.Tenant)
             };
         }
     }

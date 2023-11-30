@@ -781,7 +781,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
                 .Where(s => input.ProjectIds.Contains(s.ProjectId));
 
             result.Info = qtimesheetProject
-                .Where(s => !s.ParentInvoiceId.HasValue)
+                //.Where(s => !s.ParentInvoiceId.HasValue)
                 .Select(s => new InvoiceGeneralInfo
                 {
                     ClientAddress = s.Project.Client.Address,

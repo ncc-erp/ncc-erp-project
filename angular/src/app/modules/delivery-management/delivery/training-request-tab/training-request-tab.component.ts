@@ -19,6 +19,7 @@ import * as moment from 'moment';
 import { IDNameDto } from '@app/service/model/id-name.dto';
 import { CreateUpdateTrainingRequestComponent } from './create-update-training-request/create-update-training-request.component';
 import { TrainingRequestService } from '@app/service/api/training-request.service';
+import { DeliveryResourceRequestService } from '@app/service/api/delivery-request-resource.service';
 
 @Component({
   selector: 'app-training-request-tab',
@@ -85,6 +86,7 @@ export class TrainingRequestTabComponent extends PagedListingComponentBase<Train
   constructor(
     private injector: Injector,
     private trainingRequestService: TrainingRequestService,
+    private resourceRequestService: DeliveryResourceRequestService,
     private ref: ChangeDetectorRef,
     private dialog: MatDialog
   ) {
@@ -154,6 +156,20 @@ export class TrainingRequestTabComponent extends PagedListingComponentBase<Train
   }
 
   public setDoneRequest(item) {
+    if(!item.planUserInfo){
+      const request = {
+        requestId: item.id,
+        startTime: moment().format("YYYY-MM-DD"),
+        billStartTime: null,
+      }
+      this.resourceRequestService.setDoneRequest(request).subscribe(rs => {
+        if(rs){
+          abp.notify.success(`Set done success`);
+          this.refresh();
+        }
+      })
+    }
+    else{
     let data = {
       ...item.planUserInfo,
       requestName: item.name,
@@ -169,6 +185,7 @@ export class TrainingRequestTabComponent extends PagedListingComponentBase<Train
         this.refresh()
     })
   }
+}
 
   cancelRequest(request: TrainingRequestDto) {
     abp.message.confirm(
@@ -457,7 +474,7 @@ export class TrainingRequestTabComponent extends PagedListingComponentBase<Train
 
   isShowBtnSetDone(item) {
     return item.status == RESOURCE_REQUEST_STATUS.PENDING
-      && item.planUserInfo
+      && (item.isRequiredPlanResource && item.planUserInfo || !item.isRequiredPlanResource)
       && this.isGranted(PERMISSIONS_CONSTANT.TrainingRequest_SetDone)
   }
 

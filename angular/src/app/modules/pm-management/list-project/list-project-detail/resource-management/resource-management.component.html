@@ -689,7 +689,7 @@
                                             <!-- case 1: Status is inprogress -->
                                             <div *ngIf="item.statusName == 'PENDING'">
                                                 <button
-                                                    *ngIf="item.planUserInfo && isGranted(Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest_SetDone)"
+                                                    *ngIf="(item.isRequiredPlanResource && item.planUserInfo || !item.isRequiredPlanResource) && isGranted(Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest_SetDone)"
                                                     class="btn btn-block text-left" mat-button
                                                     (click)="setDoneRequest(item);">
                                                     <i class="fa fa-check text-success vertical-align-baseline"></i>

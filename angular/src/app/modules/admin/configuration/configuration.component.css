@@ -27,9 +27,14 @@
     border: none;
     color: rgba(0,0,0,.38);
     border-bottom: 1px rgba(0,0,0,.38) dotted;
-    
+
 }
 .editTime{
     color: #000 !important;
     border-bottom: 1px solid #000;
+}
+.closeTime{
+    width: 50px;
+    padding-left: 10px;
+    text-align: center;
 }

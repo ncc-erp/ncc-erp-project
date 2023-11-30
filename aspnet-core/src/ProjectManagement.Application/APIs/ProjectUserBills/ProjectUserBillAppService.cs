@@ -83,6 +83,19 @@ namespace ProjectManagement.APIs.ProjectUserBills
             }
         }
 
+        [HttpPost]
+        public async Task LinkOneProjectUserBillAccount(ProjectUserBillAccountDto input)
+        {
+            try
+            {
+                await projectUserBillManager.LinkOneProjectUserBillAccount(input);
+            }
+            catch (Exception ex)
+            {
+                throw new UserFriendlyException(ex.Message);
+            }
+        }
+
         [HttpGet]
         public async Task<List<UserDto>> GetAllUserActive(bool onlyStaff, long projectId, long? currentUserId)
         {
@@ -155,9 +168,9 @@ namespace ProjectManagement.APIs.ProjectUserBills
             return query;
         }
 
-        // duy
+        // duy - This method has been replaced by GetAllBillInfo in UI
         [HttpPost]
-        [AbpAuthorize(PermissionNames.Resource_TabPlanningBillAcccount)]
+        //[AbpAuthorize(PermissionNames.Resource_TabPlanningBillAcccount)]
         public async Task<GridResult<BillInfoDto>> GetAllPlanningBillInfo(InputGetBillInfoDto input)
         {
             // paging user id 
@@ -217,6 +230,74 @@ namespace ProjectManagement.APIs.ProjectUserBills
                         x => x.Projects.Any(x => (input.StartDate <= x.StartTime && x.StartTime <= input.EndDate)))
                     .WhereIf(input.JoinOutStatus == JoinOutStatus.IsOut,
                         x => x.Projects.Any(x => (input.StartDate <= x.EndTime && x.EndTime <= input.EndDate))).AsQueryable();
+            return projectUserBills.GetGridResultSync(projectUserBills, input.GirdParam);
+        }
+
+        [HttpPost]
+        [AbpAuthorize(PermissionNames.Resource_TabAllBillAccount)]
+        public async Task<GridResult<BillInfoDto>> GetAllBillInfo(InputGetBillInfoDto input)
+        {
+            // paging user id 
+            var projectUserBills = WorkScope.All<ProjectUserBill>()
+                .Include(p => p.User).Include(p => p.Project)
+                .Select(x => new
+                {
+                    UserInfor = new GetUserBillDto
+                    {
+                        UserId = x.UserId,
+                        UserName = x.User.Name,
+                        AvatarPath = x.User.AvatarPath,
+                        FullName = x.User.FullName,
+                        Branch = x.User.BranchOld,
+                        BranchColor = x.User.Branch.Color,
+                        BranchDisplayName = x.User.Branch.DisplayName,
+                        PositionId = x.User.PositionId,
+                        PositionName = x.User.Position.ShortName,
+                        PositionColor = x.User.Position.Color,
+                        EmailAddress = x.User.EmailAddress,
+                        UserType = x.User.UserType,
+                        UserLevel = x.User.UserLevel,
+                    },
+                    Project = new GetProjectBillDto
+                    {
+                        ProjectId = x.ProjectId,
+                        ProjectName = x.Project.Name,
+                        AccountName = x.AccountName,
+                        //BillRole = x.BillRole,
+                        BillRate = float.NaN,
+                        StartTime = x.StartTime,
+                        EndTime = x.EndTime,
+                        Note = x.Note,
+                        shadowNote = x.shadowNote,
+                        isActive = true,
+                        ChargeType = x.ChargeType.HasValue ? x.ChargeType.Value : x.Project.ChargeType,
+                    }
+                })
+                    .WhereIf(input.ProjectId != null, x => x.Project.ProjectId == input.ProjectId)
+                    .WhereIf(!string.IsNullOrEmpty(input.SearchText), x =>
+                        (x.UserInfor.UserName.Trim().ToLower().Contains(input.SearchText.Trim().ToLower())) ||
+                        (x.UserInfor.FullName.Trim().ToLower().Contains(input.SearchText.Trim().ToLower())) ||
+                        (x.UserInfor.EmailAddress.Trim().ToLower().Contains(input.SearchText.Trim().ToLower())) ||
+                        (x.Project.ProjectName.Trim().ToLower().Contains(input.SearchText.Trim().ToLower())))
+                    .WhereIf(input.ChargeStatus == ChargeStatus.IsCharge, x => x.Project.isActive == true)
+                    .WhereIf(input.ChargeStatus == ChargeStatus.IsNotCharge, x => x.Project.isActive == false)
+                    .AsEnumerable().GroupBy(p => p.UserInfor.UserId)
+                    .Select(group => new BillInfoDto
+                    {
+                        UserInfor = group.First().UserInfor,
+                        Projects = group.Select(g => g.Project).ToList()
+                    })
+                    .WhereIf(input.PlanStatus == PlanStatus.AllPlan, 
+                        x => x.Projects.Any(x => (input.StartDate <= x.EndTime && x.EndTime <= input.EndDate)
+                         || (input.StartDate <= x.StartTime && x.StartTime <= input.EndDate)))
+                    .WhereIf(input.PlanStatus == PlanStatus.PlanningJoin,
+                        x => x.Projects.Any(x => input.StartDate <= x.StartTime && x.StartTime <= input.EndDate))
+                    .WhereIf(input.PlanStatus == PlanStatus.PlanningOut,
+                        x => x.Projects.Any(x => input.StartDate <= x.EndTime && x.EndTime <= input.EndDate))
+                    .WhereIf(input.PlanStatus == PlanStatus.NoPlan,
+                        x => !x.Projects.Any(x => (input.StartDate <= x.EndTime && x.EndTime <= input.EndDate)
+                         || (input.StartDate <= x.StartTime && x.StartTime <= input.EndDate)))
+                    .AsQueryable();
             return projectUserBills.GetGridResultSync(projectUserBills, input.GirdParam);
         }
 
@@ -603,5 +684,13 @@ namespace ProjectManagement.APIs.ProjectUserBills
             await CurrentUnitOfWork.SaveChangesAsync();
         }
         #endregion
+
+        [HttpGet]
+        [AbpAuthorize]
+        public async Task<List<BillAccountDto>> GetAllBillAccount()
+        {
+            return await projectUserBillManager.GetAllBillAccount();
+        }
+
     }
 }

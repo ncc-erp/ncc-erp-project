@@ -20,8 +20,20 @@ using System.Linq;
 using NccCore.Extension;
 using System.Threading.Tasks;
 using System;
+using Hangfire;
+using ProjectManagement.Services.Komu;
+using NccCore.Uitls;
+using Hangfire.Storage;
+using NccCore.IoC;
+using ProjectManagement.Services.ProjectUserBills;
+using ProjectManagement.EntityFrameworkCore;
+using Abp.Domain.Repositories;
+using ProjectManagement.Entities;
+using Microsoft.Extensions.DependencyInjection;
+using Abp.Domain.Uow;
+using Microsoft.EntityFrameworkCore;
+using System.Text;
 using ProjectManagement.Manager.TimesheetManagers;
-using ProjectManagement.BackgroundWorkers.Dtos;
 
 namespace ProjectManagement.Configuration
 {
@@ -35,18 +47,25 @@ namespace ProjectManagement.Configuration
         private readonly TimesheetService _timesheetService;
         private readonly string defaultTime = "17:00";
         private readonly Days defaultDayOfWeek = Days.Tue; // tuesday
+        private readonly KomuService _komuService;
+        private readonly IServiceProvider _provider;
 
         public ConfigurationAppService(IConfiguration appConfiguration,
             TalentService talentService,
             HRMService hrmService,
             FinfastService finfastService,
-            TimesheetService timesheetService)
+            TimesheetService timesheetService,
+            KomuService komuService,
+            IServiceProvider serviceProvider
+            )
         {
             _appConfiguration = appConfiguration;
             _talentService = talentService;
             _hrmService = hrmService;
             _finfastService = finfastService;
             _timesheetService = timesheetService;
+            _komuService = komuService;
+            _provider = serviceProvider;
         }
 
         public async Task ChangeUiTheme(ChangeUiThemeInput input)
@@ -95,7 +114,7 @@ namespace ProjectManagement.Configuration
                 CloseTimesheetNotification = await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.CloseTimesheetNotification),
             };
         }
-        
+
         [AbpAuthorize(PermissionNames.Admin_Configuartions_Edit)]
         public async Task<AppSettingDto> Change(AppSettingDto input)
         {
@@ -219,13 +238,13 @@ namespace ProjectManagement.Configuration
         }
 
 
-         [AbpAuthorize(
-            //PermissionNames.Admin_Configurations_ViewGuideLineSetting
-            PermissionNames.WeeklyReport_ReportDetail_GuideLine_View
-            )]
-         [HttpGet]
-         public async Task<GuideLineDto> GetGuideLine()
-         {
+        [AbpAuthorize(
+           //PermissionNames.Admin_Configurations_ViewGuideLineSetting
+           PermissionNames.WeeklyReport_ReportDetail_GuideLine_View
+           )]
+        [HttpGet]
+        public async Task<GuideLineDto> GetGuideLine()
+        {
             var allowViewGuideline = await PermissionChecker.IsGrantedAsync(PermissionNames.WeeklyReport_ReportDetail_GuideLine_View);
             if (!allowViewGuideline)
             {
@@ -296,35 +315,35 @@ namespace ProjectManagement.Configuration
             return inform;
         }
 
-        public async Task<CloseNotificationDto> SetCloseTimesheetNotification(CloseNotificationDto input)
+        [AbpAuthorize(PermissionNames.Admin_Configuartions_Edit)]
+        [HttpPost]
+        public async Task<InformPmDto> SetCloseTimesheetNotification(InformPmDto input)
         {
-            ValidationCloseTimesheetDateTime(input);
+            ValidationCloseTimesheet(input);
             var json = JsonSerializer.Serialize(input);
             await SettingManager.ChangeSettingForApplicationAsync(AppSettingNames.CloseTimesheetNotification, json);
             return input;
         }
 
-        public async Task<CloseNotificationDto> GetCloseTimesheetNotification()
+        private void ValidationCloseTimesheet(InformPmDto input)
+        {
+            if (input.CheckDateTimes.Any(t => t.IsCheck) && !input.ChannelId.HasValue())
+                throw new UserFriendlyException("Channel Id is null!");
+            var listDuplicate = input.CheckDateTimes.GroupBy(c => new { c.Time}).ToList();
+            if (listDuplicate.Count != input.CheckDateTimes.Count) 
+                throw new UserFriendlyException("Time can not be duplicated!!");
+        }
+
+        [HttpGet]
+        public async Task<InformPmDto> GetCloseTimesheetNotification()
         {
             var json = await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.CloseTimesheetNotification);
             if (string.IsNullOrEmpty(json))
             {
                 return null;
             }
-            var closeNoti = JsonSerializer.Deserialize<CloseNotificationDto>(json);
+            var closeNoti = JsonSerializer.Deserialize<InformPmDto>(json);
             return closeNoti;
-        }
-
-        private void ValidationCloseTimesheetDateTime(CloseNotificationDto input)
-        {
-            DateTime dtime;
-            if (!input.CloseTime.HasValue() || input.CloseDay < (int)Days.Sun || input.CloseDay > (int)Days.Sat
-                || !DateTime.TryParse(input.CloseTime.Trim(), out dtime)) throw new UserFriendlyException("Time can not empty!");
-
-            if(input.CheckDateTimes.Any(c => c.TimeSpan < 0)) throw new UserFriendlyException("TimeSpan need to be larger or equal 0!");
-
-            var listDuplicate = input.CheckDateTimes.GroupBy(c => new { c.TimeSpan }).ToList();
-            if (listDuplicate.Count != input.CheckDateTimes.Count) throw new UserFriendlyException("TimeSpan can not be duplicated!!");
         }
 
         [HttpGet]
@@ -332,5 +351,118 @@ namespace ProjectManagement.Configuration
         {
             return await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.ActiveTimesheetProjectPeriod);
         }
+
+        [HttpPost]
+        public async Task<ChargeBillAccountDto> SetNotiAutoChargeBillAccount(ChargeBillAccountDto input)
+        {
+            try
+            {
+                var json = JsonSerializer.Serialize(input);
+                await SettingManager.ChangeSettingForApplicationAsync(AppSettingNames.UpdateChargeStatusBillAccount, json);
+                IEnumerable<string> recurringJobIds = JobStorage.Current.GetConnection().GetRecurringJobs()
+                    .Where(j => j.Id.Contains(nameof(UpdateChargeBillAccount)) || j.Id.Contains(nameof(NotifyIsChargeUserBill)))
+                    .Select(x => x.Id).ToList();
+                foreach (var jobId in recurringJobIds)
+                {
+                    RecurringJob.RemoveIfExists(jobId);
+                }
+                // auto update
+                var update = input.AutoUpdateBillAccount;
+                if (update != null && update.IsCheck)
+                {
+                    var utcTime = DateTimeUtils.ConvertToUtcTime(-1, -1, update.Day, int.Parse(update.Time.Split(":")[0]), int.Parse(update.Time.Split(":")[1]));
+                    var cronExpress = $"{utcTime.Minute} {utcTime.Hour} {utcTime.Day} * *";
+                    RecurringJob.AddOrUpdate<ConfigurationAppService>($"{nameof(UpdateChargeBillAccount)}-{Guid.NewGuid()}",
+                        s => s.UpdateChargeBillAccount(), cronExpress);
+                }
+                // noti user
+                var noti = input.NotiUsers;
+                if (noti != null && input.UserIds != null && noti.CheckDateTimes != null
+                    && input.UserIds.Any() && noti.ChannelId.HasValue() && noti.CheckDateTimes.Any(c => c.IsCheck))
+                {
+                    var notiTimes = noti.CheckDateTimes.Where(c => c.IsCheck);
+                    foreach (var time in notiTimes)
+                    {
+                        var utcTime = DateTimeUtils.ConvertToUtcTime(-1, -1, time.Day, int.Parse(time.Time.Split(":")[0]), int.Parse(time.Time.Split(":")[1]));
+                        var cronExpress = $"{utcTime.Minute} {utcTime.Hour} {utcTime.Day} * *";
+                        RecurringJob.AddOrUpdate<ConfigurationAppService>($"{nameof(NotifyIsChargeUserBill)}-{Guid.NewGuid()}",
+                            s => s.NotifyIsChargeUserBill(input.UserIds, time, noti.ChannelId), cronExpress);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                throw new UserFriendlyException("Set auto update and noti bill account fail!");
+            }
+            return input;
+        }
+
+        [HttpGet]
+        public async Task<ChargeBillAccountDto> GetNotiAutoChargeBillAccount()
+        {
+            var json = await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.UpdateChargeStatusBillAccount);
+            if (string.IsNullOrEmpty(json))
+            {
+                return null;
+            }
+            var settingObject = JsonSerializer.Deserialize<ChargeBillAccountDto>(json);
+            return settingObject;
+        }
+
+        public void UpdateChargeBillAccount()
+        {
+            using (var scope = _provider.CreateScope())
+            {
+                var WorkScope = scope.ServiceProvider.GetRequiredService<ProjectManagementDbContext>();
+
+                var billAccounts = WorkScope.ProjectUserBills.Where(p => !p.IsDeleted && p.isActive
+                 && p.EndTime != null && p.EndTime < DateTime.Now.Date && p.Project.Status != ProjectStatus.Closed);
+                foreach (var item in billAccounts)
+                {
+                    item.isActive = false;
+                }
+                WorkScope.UpdateRange(billAccounts);
+                WorkScope.SaveChanges();
+            }
+        }
+
+        public async Task NotifyIsChargeUserBill(List<long> userIds, CheckDateTime time, string channelId)
+        {
+            using (var scope = _provider.CreateScope())
+            {
+                var WorkScope = scope.ServiceProvider.GetRequiredService<ProjectManagementDbContext>();
+                var userEmails = WorkScope.ProjectUserBills
+                       .Include(p => p.Project).Include(p => p.User)
+                       .Where(u => !u.IsDeleted && userIds.Contains(u.UserId)
+                       && u.EndTime != null && u.EndTime < DateTime.Now.Date && u.Project.Status != ProjectStatus.Closed
+                       && u.Project.ProjectType != ProjectType.PRODUCT
+                       && u.Project.ProjectType != ProjectType.NoBill
+                       && u.Project.ProjectType != ProjectType.TRAINING
+                       && u.isActive
+                       )
+                       .ToList()
+                       .GroupBy(p => p.User.EmailAddress)
+                       .Select(group => new EmailProjectDto
+                       {
+                           EmailAddress = group.Key,
+                           Projects = group.Select(g => g.Project.Name).ToList()
+                       });
+                if (userEmails != null && userEmails.Any())
+                {
+                    var text = new StringBuilder();
+                    text.AppendLine($"Update your bill account charge status: ");
+                    var index = 0;
+                    var splitChar = "%%%";
+                    foreach (var item in userEmails)
+                    {
+                        string projectsString = string.Join(", ", item.Projects);
+                        text.Append(++index + ". ${" + item.EmailAddress.Split("@")[0] + "}\t**Project:** " + projectsString + "." + splitChar);
+                    }
+                    var arr = text.ToString().Split(splitChar);
+                    await _komuService.NotifyToChannelAwait(arr, channelId);
+                }
+            }
+        }
+
     }
 }

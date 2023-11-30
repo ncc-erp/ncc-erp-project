@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectManagement.EntityFrameworkCore;
 
 namespace ProjectManagement.Migrations
 {
     [DbContext(typeof(ProjectManagementDbContext))]
-    partial class ProjectManagementDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231109092625_Add_HistoryTime_ProjectUserTbt")]
+    partial class Add_HistoryTime_ProjectUserTbt
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3615,9 +3617,6 @@ namespace ProjectManagement.Migrations
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsRecruitmentSend")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsRequiredPlanResource")
                         .HasColumnType("bit");
 
                     b.Property<DateTime?>("LastModificationTime")

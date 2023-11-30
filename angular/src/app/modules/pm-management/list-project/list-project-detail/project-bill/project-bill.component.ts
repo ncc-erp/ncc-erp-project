@@ -172,6 +172,29 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
       this.userForUserBill = data.result;
     })
   }
+  public removeLinkResource(projectId, billAccountId, userId, id){
+    // this.isLoading = true
+    const req = {
+      billAccountId: billAccountId,
+      projectId: projectId,
+      userIds: [userId]
+    }
+    const status = this.userBillList.find(item => item.id === id).createMode
+    abp.message.confirm(
+      "Remove linked resource?",
+      "",
+      (result: boolean) => {
+        if (result) {
+          this.isLoading = true;
+          this.projectUserBillService.RemoveUserFromBillAccount(req).pipe(catchError(this.projectUserBillService.handleError)).subscribe(data => {
+             this.getUserBill(id, status);
+          }, () => {
+            this.isLoading = false
+          })
+        }
+      }
+    )
+  }
   public addUserBill(): void {
     this.getAllFakeUser('')
     let newUserBill = {} as projectUserBillDto
@@ -191,17 +214,6 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
       userBill.endTime = moment(userBill.endTime).format("YYYY-MM-DD");
     }
     this.isLoading = true
-    
-    const reqAdd = {
-      billAccountId:userBill.userId,
-      projectId: this.projectId,
-      userIds: userBill.linkedResources ? userBill.linkedResources.map(item => item.id): []
-    }
-    const reqDelete = {
-      billAccountId: this.userIdOld,
-      projectId: this.projectId,
-      userIds: userBill.linkedResources ? userBill.linkedResources.map(item => item.id) : []
-    }
 
     if (!this.isEditUserBill) {
       userBill.projectId = this.projectId
@@ -212,11 +224,27 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
         this.searchUserBill = ""
       }, () => {
         userBill.createMode = true;
+        this.isLoading = false
       })
     }
     else {
       if(this.userIdOld == userBill.userId){
-        this.projectUserBillService.update(userBill).pipe(catchError(this.projectUserBillService.handleError)).subscribe(()=>{
+        const userBillToUpdate = {
+          projectId : userBill.projectId,
+          userId: userBill.userId,
+          billRole: userBill.billRole,
+          billRate: userBill.billRate,
+          startTime: userBill.startTime,
+          endTime: userBill.endTime,
+          note: userBill.note,
+          shadowNote: userBill.shadowNote,
+          isActive: userBill.isActive,
+          accountName: userBill.accountName,
+          chargeType: userBill.chargeType,
+          linkedResources: userBill.linkedResources,
+          id: userBill.id
+        }
+        this.projectUserBillService.update(userBillToUpdate).pipe(catchError(this.projectUserBillService.handleError)).subscribe(()=>{
           abp.notify.success("Update successfully")
           this.getUserBill()
           this.userBillProcess = false;
@@ -225,10 +253,21 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
       },
         () => {
           userBill.createMode = true;
+          this.isLoading = false
         }
         )
       }
       else {
+        const reqAdd = {
+          billAccountId:userBill.userId,
+          projectId: this.projectId,
+          userIds: userBill.linkedResources ? userBill.linkedResources.map(item => item.id): []
+        }
+        const reqDelete = {
+          billAccountId: this.userIdOld,
+          projectId: this.projectId,
+          userIds: userBill.linkedResources ? userBill.linkedResources.map(item => item.id) : []
+        }
         concat(this.projectUserBillService.RemoveUserFromBillAccount(reqDelete),this.projectUserBillService.update(userBill),this.projectUserBillService.LinkUserToBillAccount(reqAdd))
         .pipe(catchError(this.projectUserBillService.handleError))
         .subscribe(() => {
@@ -240,6 +279,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
         },
           () => {
             userBill.createMode = true;
+            this.isLoading = false
           })
       }
     }
@@ -267,7 +307,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     this.isLoading = true
     this.projectUserBillService.getAllUserBill(this.projectId).pipe(catchError(this.projectUserBillService.handleError)).subscribe(data => {
       this.userBillList = data.result.map(item=> {
-      if(item.id === id){
+      if(item.id === id && userIdNew){
         return {...item,createMode:status,userId:userIdNew}
       }
       return {...item, createMode:false}

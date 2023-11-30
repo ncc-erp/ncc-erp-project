@@ -293,6 +293,7 @@ namespace ProjectManagement.APIs.ProjectUsers
             var query = WorkScope
                 .GetAll<ProjectUser>()
                 .Where(x => x.UserId == UserId & x.Status != ProjectUserStatus.Future)
+                .OrderByDescending(x => x.HistoryTime)
                                 .Select(x => new GetProjectUserDto
                                 {
                                     Id = x.Id,
@@ -312,7 +313,7 @@ namespace ProjectManagement.APIs.ProjectUsers
                                     IsFutureActive = x.IsFutureActive,
                                     Note = x.Note,
                                     PMName = x.Project.PM.FullName
-                                }).OrderByDescending(x => x.StartTime);
+                                });
             return await query.ToListAsync();
         }
 

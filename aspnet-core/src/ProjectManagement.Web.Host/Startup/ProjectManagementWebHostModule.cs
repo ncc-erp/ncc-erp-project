@@ -29,6 +29,8 @@ namespace ProjectManagement.Web.Host.Startup
             var wokerManager = IocManager.Resolve<IBackgroundWorkerManager>();
             // inform pm to send weekly report
             wokerManager.Add(IocManager.Resolve<InformPmWorker>());
+            // inform pm to close timesheet
+            wokerManager.Add(IocManager.Resolve<NotifyPmCloseTimesheet>());
         }
     }
 }

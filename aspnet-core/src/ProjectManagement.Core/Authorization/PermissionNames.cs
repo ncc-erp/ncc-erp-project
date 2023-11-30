@@ -136,6 +136,7 @@ namespace ProjectManagement.Authorization
         public const string Projects_OutsourcingProjects = "Projects.OutsourcingProjects";
         public const string Projects_OutsourcingProjects_ViewAllProject = "Projects.OutsourcingProjects.ViewAllProject";
         public const string Projects_OutsourcingProjects_ViewMyProjectOnly = "Projects.OutsourcingProjects.ViewMyProjectOnly";
+        public const string Projects_OutsourcingProjects_ViewResource = "Projects.OutsourcingProjects.ViewResource";
         public const string Projects_OutsourcingProjects_ViewBillInfo = "Projects.OutsourcingProjects.ViewBillInfo";
         public const string Projects_OutsourcingProjects_ViewBillAccount = "Projects.OutsourcingProjects.ViewBillAccount";
         public const string Projects_OutsourcingProjects_Create = "Projects.OutsourcingProjects.Create";
@@ -609,7 +610,8 @@ namespace ProjectManagement.Authorization
         public const string Resource_TabVendor_ViewUserStarSkill = "Resource.TabVendor.ViewUserStarSkill";
         public const string Resource_TabVendor_ProjectDetail = "Resource.TabVendor.ProjectDetail";
 
-        public const string Resource_TabPlanningBillAcccount = "Resource.TabPlanning.BillAccount";
+        //public const string Resource_TabPlanningBillAcccount = "Resource.TabPlanning.BillAccount";
+        public const string Resource_TabAllBillAccount = "Resource.TabAll.BillAccount";
         public const string Resource_ViewUserLevel = "Resource.ViewUserLevel";
         #endregion Resource
 
@@ -842,7 +844,8 @@ namespace ProjectManagement.Authorization
                     PermissionNames.Projects_OutsourcingProjects ,
                     PermissionNames.Projects_OutsourcingProjects_ViewAllProject ,
                     PermissionNames.Projects_OutsourcingProjects_ViewMyProjectOnly ,
-                    PermissionNames.Projects_OutsourcingProjects_ViewBillInfo ,
+                    PermissionNames.Projects_OutsourcingProjects_ViewResource ,
+                     PermissionNames.Projects_OutsourcingProjects_ViewBillInfo ,
                     PermissionNames.Projects_OutsourcingProjects_ViewBillAccount ,
                     PermissionNames.Projects_OutsourcingProjects_Create ,
                     PermissionNames.Projects_OutsourcingProjects_Edit ,
@@ -1309,7 +1312,8 @@ namespace ProjectManagement.Authorization
                     PermissionNames.Resource_TabVendor_ViewUserStarSkill ,
                     PermissionNames.Resource_TabVendor_ProjectDetail,
 
-                    PermissionNames.Resource_TabPlanningBillAcccount,
+                    //PermissionNames.Resource_TabPlanningBillAcccount,
+                    PermissionNames.Resource_TabAllBillAccount,
                     PermissionNames.Resource_ViewUserLevel,
                     PermissionNames.ResourceRequest_CreateBillResourceForRequest,
                     PermissionNames.ResourceRequest_UpdateUserBillResourceSkill,
@@ -1555,6 +1559,7 @@ namespace ProjectManagement.Authorization
 		         new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Outsourcing Projects" },
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ViewAllProject, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View All Project" },
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ViewMyProjectOnly ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View My Project Only" },
+                 new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ViewResource ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View Resource" },
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ViewBillInfo ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View Bill Info" },
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ViewBillAccount ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View Bill Account" },
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_Create, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Create" },
@@ -2030,7 +2035,8 @@ namespace ProjectManagement.Authorization
                  new SystemPermission{ Name =  PermissionNames.Resource_TabVendor_ViewUserStarSkill ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View User Star Skill"},
                  new SystemPermission{ Name =  PermissionNames.Resource_TabVendor_ProjectDetail ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Project Detail"},
 
-                 new SystemPermission{ Name =  PermissionNames.Resource_TabPlanningBillAcccount ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Planning Bill Account"},
+                 //new SystemPermission{ Name =  PermissionNames.Resource_TabPlanningBillAcccount ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Planning Bill Account"},
+                 new SystemPermission{ Name =  PermissionNames.Resource_TabAllBillAccount ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "All Bill Account"},
                  new SystemPermission{ Name =  PermissionNames.Resource_ViewUserLevel ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View User Level"},
                  #endregion Resource
 
@@ -2456,6 +2462,9 @@ namespace ProjectManagement.Authorization
                                         },
                                         new SystemPermission {
                                             Name = PermissionNames.Projects_OutsourcingProjects_ViewMyProjectOnly, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View My Project Only"
+                                        },
+                                        new SystemPermission {
+                                            Name = PermissionNames.Projects_OutsourcingProjects_ViewResource, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View Resource"
                                         },
                                         new SystemPermission {
                                             Name = PermissionNames.Projects_OutsourcingProjects_ViewBillInfo, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View Bill Info"
@@ -3751,8 +3760,11 @@ namespace ProjectManagement.Authorization
                                     },
                             },
                             // Tab Planning Bill Account
-                            new SystemPermission {
+                          /*  new SystemPermission {
                                 Name = PermissionNames.Resource_TabPlanningBillAcccount, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Tab Planning Bill Account",
+                            },*/
+                            new SystemPermission {
+                                Name = PermissionNames.Resource_TabAllBillAccount, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Tab All Bill Account",
                             },
                             new SystemPermission {
                                 Name = PermissionNames.Resource_ViewUserLevel, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View User Level",

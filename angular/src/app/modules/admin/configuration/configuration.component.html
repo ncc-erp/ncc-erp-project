@@ -536,7 +536,6 @@
         </div>
       </mat-expansion-panel>
     </div>
-
     <div class="card" *ngIf="permission.isGranted(Admin_Configurations_ViewInformPmSetting)">
       <mat-expansion-panel [expanded]="isShowSendTime">
         <mat-expansion-panel-header (click)="isShowSendTime = !isShowSendTime" class="panel-header">
@@ -598,9 +597,7 @@
               </div>
           </div>
           </div>
-
         </form>
-
       </mat-expansion-panel>
     </div>
 
@@ -703,13 +700,98 @@
         </div>
       </mat-expansion-panel>
     </div>
+
+    <div class="card">
+      <mat-expansion-panel [expanded]="isShowAutoUpdateNotifyBillAcc">
+        <mat-expansion-panel-header (click)="isShowAutoUpdateNotifyBillAcc = !isShowAutoUpdateNotifyBillAcc" class="panel-header">
+          <mat-panel-title>
+              <p class="title">{{"Auto update and Notify bill account charge status"}}</p>
+            <div class="edit-save" *ngIf="isShowAutoUpdateNotifyBillAcc">
+              <a *ngIf="permission.isGranted(Admin_Configuartions_Edit)" href="javascript:;" class="btn bg-blue mr-3"
+                (click)="isEditAutoUpdateNotifyBillAcc = !isEditAutoUpdateNotifyBillAcc;$event.stopPropagation();" [hidden]="isEditAutoUpdateNotifyBillAcc">
+                <i class="fas fa-edit"></i>
+                Edit
+              </a>
+              <a href="javascript:;" class="btn bg-secondary"
+                (click)=" getChargeStatusConfig();isEditAutoUpdateNotifyBillAcc = !isEditAutoUpdateNotifyBillAcc;$event.stopPropagation()"
+                [hidden]="!isEditAutoUpdateNotifyBillAcc">
+                Cancel
+              </a>
+              <button href="javascript:;" class="btn btn-primary btn-action ml-3" [disabled]="checkDisabledTSaveUpdateNotiCharge()" ng-disabled=""
+                (click)="saveAutoUpdateNotiChargeStatus();$event.stopPropagation()"
+                [hidden]="!isEditAutoUpdateNotifyBillAcc">
+                Save
+              </button>
+            </div>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <div class="row mb-2 w-50" >
+          <p class="title">Auto update bill account charge: </p>
+          <div class="d-flex justify-content-between w-100 align-items-baseline">
+            <mat-checkbox style="position: relative; top: 10px;" class="col-2" [disabled]="!isEditAutoUpdateNotifyBillAcc" #check [(ngModel)]="autoUpdateChargeStatus.isCheck">Is active</mat-checkbox>
+            <div class="w-25">
+                <input [ngClass]="{editTime:isEditAutoUpdateNotifyBillAcc}"  class="w-100 inputTime" [readonly]="!isEditAutoUpdateNotifyBillAcc"  type="time" [(ngModel)]="autoUpdateChargeStatus.time"/>
+            </div>
+            <div class="w-25">
+              <mat-form-field >
+                <mat-label>Choose date</mat-label>
+                <mat-select [disabled]="!isEditAutoUpdateNotifyBillAcc" [(ngModel)]="autoUpdateChargeStatus.day">
+                  <mat-option *ngFor="let item of listDateofMonth" [value] = 'item'> {{item}} </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mb-2">
+          <p class="title">Notify update bill account charge: </p>
+          <div class="col col-12 col-md-12">
+            <mat-form-field class="w-50 mt-2">
+              <input [disabled]="!isEditAutoUpdateNotifyBillAcc" class="w-100" name="ChannelId" matInput placeholder="Channel ID"
+                [(ngModel)]="notiChargeChannelId" #channelID [required]="checkRequiredChannelId()"/>
+            </mat-form-field>
+            <p style="color: #f44336;font-size: 10.5px;"*ngIf="checkRequiredChannelId()">This field is required</p>
+          </div>
+        </div>
+        <button style="width: 108px;" class="btn btn-primary btn-action mb-2" *ngIf="isEditAutoUpdateNotifyBillAcc" (click) = 'addChargeStatusNotiTime()'>
+          <i class="fa fa-plus-square"></i>
+          Add time
+        </button>
+        <button style="width: 180px; margin-left: 20px;" class="btn btn-primary btn-action mb-2" *ngIf="isEditAutoUpdateNotifyBillAcc" (click) = 'addBillAccount()'>
+          <i class="fas fa-user-plus"></i>
+          Add Bill account
+        </button>
+        <form [formGroup]="chargeStatusForm">
+          <div formArrayName="chargeStatusCredentials">
+            <div class="row mb-2 w-50"  *ngFor="let creds of chargeStatusCredentials.controls; let i = index;" [formGroupName]="i">
+              <div class="d-flex justify-content-between w-100 align-items-baseline">
+                <mat-checkbox style="position: relative; top: 10px;" class="col-2" formControlName="IsCheck" [disabled]="!isEditAutoUpdateNotifyBillAcc" #check>Is active</mat-checkbox>
+                <div class="w-25">
+                    <input [ngClass]="{editTime:isEditAutoUpdateNotifyBillAcc}"  class="w-100 inputTime" [readonly]="!isEditAutoUpdateNotifyBillAcc" formControlName="Time"  type="time"/>
+                </div>
+                <div class="w-25">
+                  <mat-form-field >
+                    <mat-label>Choose date</mat-label>
+                    <mat-select [disabled]="!isEditAutoUpdateNotifyBillAcc" formControlName="Day">
+                      <mat-option *ngFor="let item of listDateofMonth" [value] = 'item'> {{item}} </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+                <button style="border: none;background: transparent;" *ngIf="isEditAutoUpdateNotifyBillAcc"  (click)="$event.preventDefault();removeItemChargeStatusNoti(i)"> <i style="color: #9e9e9e;font-size: 20px;" class="fas fa-trash"></i></button>
+              </div>
+          </div>
+          </div>
+        </form>
+      </mat-expansion-panel>
+    </div>
   </div>
 
   <div class="card" *ngIf="permission.isGranted(Admin_Configurations_ViewInformPmSetting)">
     <mat-expansion-panel [expanded]="isShowSendHour">
       <mat-expansion-panel-header (click)="isShowSendHour = !isShowSendHour" class="panel-header">
         <mat-panel-title>
-            <p class="title">{{"Set time span notification for PM before timesheet close"}}</p>
+            <p class="title">{{"Set time to notify PM before timesheet close"}}</p>
           <div class="edit-save" *ngIf="isShowSendHour">
             <a *ngIf="permission.isGranted(Admin_Configuartions_Edit)" href="javascript:;" class="btn bg-blue mr-3"
               (click)="isEditSendHour = !isEditSendHour;$event.stopPropagation();" [hidden]="isEditSendHour">
@@ -717,12 +799,12 @@
               Edit
             </a>
             <a href="javascript:;" class="btn bg-secondary"
-              (click)=" getSendTime();isEditSendHour = !isEditSendHour;$event.stopPropagation()"
+              (click)=" getCloseTimesheetTime();isEditSendHour = !isEditSendHour;$event.stopPropagation()"
               [hidden]="!isEditSendHour">
               Cancel
             </a>
-            <button href="javascript:;" class="btn btn-primary btn-action ml-3" [disabled]="checkDisabledSave()" ng-disabled=""
-              (click)="saveSendTime();$event.stopPropagation()"
+            <button href="javascript:;" class="btn btn-primary btn-action ml-3" [disabled]="checkDisabledTSaveTimesheetClose()" ng-disabled=""
+              (click)="saveCloseTimesheetTime();$event.stopPropagation()"
               [hidden]="!isEditSendHour">
               Save
             </button>
@@ -733,26 +815,27 @@
         <div class="col col-12 col-md-12">
           <mat-form-field class="w-50 mt-2">
             <input [disabled]="!isEditSendHour" class="w-100" name="ChannelId" matInput placeholder="Channel ID"
-              [(ngModel)]="ChannelId" #channelID [required]="checkRequiredChannelId()"/>
+              [(ngModel)]="CloseTimesheetChannelId" #channelID [required]="checkRequiredChannelId()"/>
           </mat-form-field>
           <p style="color: #f44336;font-size: 10.5px;"*ngIf="checkRequiredChannelId()">This field is required</p>
         </div>
       </div>
-      <button style="width: 108px;" class="btn btn-primary btn-action mb-2" *ngIf="isEditSendHour" (click) = 'addTime()'>
+      <button style="width: 108px;" class="btn btn-primary btn-action mb-2" *ngIf="isEditSendHour" (click) = 'addCloseTimesheetTime()'>
         <i class="fa fa-plus-square"></i>
         Add time
       </button>
-      <form [formGroup]="form">
-        <div formArrayName="credentials">
-          <div class="row mb-2 w-50"  *ngFor="let creds of credentials.controls; let i = index;" [formGroupName]="i">
+      <form [formGroup]="closeTimesheetFrom">
+        <div formArrayName="closeTimesheetCredentials">
+          <div class="row mb-2 w-50"  *ngFor="let creds of closeTimesheetCredentials.controls; let i = index;" [formGroupName]="i">
             <div class="d-flex justify-content-between w-100 align-items-baseline">
               <mat-checkbox style="position: relative; top: 10px;" formControlName="IsCheck" class="col-2" [disabled]="!isEditSendHour" #check>Is active</mat-checkbox>
-              <div class="w-25">
-                  <input [ngClass]="{editTime:isEditSendHour}" placeholder="Enter hour" class="w-100 inputTime" [readonly]="!isEditSendHour"   type="number" formControlName="Time"  />
-
+              <div class="w-25" style="display: flex; align-items: center;">
+                      <input [ngClass]="{editTime: isEditSendHour}" class="inputTime closeTime" [readonly]="!isEditSendHour" type="number" formControlName="Hours" min="0" placeholder="HH"/>
+                      <span>:</span>
+                      <input [ngClass]="{editTime: isEditSendHour}" class="inputTime closeTime" [readonly]="!isEditSendHour" type="number" formControlName="Minutes" min="0" max="59" placeholder="mm"/>
               </div>
 
-              <button style="border: none;background: transparent;" *ngIf="isEditSendHour"  (click)="$event.preventDefault();removeItem(i)"> <i style="color: #9e9e9e;font-size: 20px;" class="fas fa-trash"></i></button>
+              <button style="border: none;background: transparent;" *ngIf="isEditSendHour"  (click)="$event.preventDefault();removeItemCloseTimesheet(i)"> <i style="color: #9e9e9e;font-size: 20px;" class="fas fa-trash"></i></button>
             </div>
         </div>
         </div>

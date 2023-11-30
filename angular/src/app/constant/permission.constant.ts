@@ -109,6 +109,7 @@ export const PERMISSIONS_CONSTANT = {
        Projects_OutsourcingProjects_ViewAllProject: "Projects.OutsourcingProjects.ViewAllProject",
        Projects_OutsourcingProjects_ViewMyProjectOnly: "Projects.OutsourcingProjects.ViewMyProjectOnly",
        Projects_OutsourcingProjects_ViewBillInfo: "Projects.OutsourcingProjects.ViewBillInfo",
+       Projects_OutsourcingProjects_ViewResource: "Projects.OutsourcingProjects.ViewResource",
        Projects_OutsourcingProjects_ViewBillAccount: "Projects.OutsourcingProjects.ViewBillAccount",
        Projects_OutsourcingProjects_Create: "Projects.OutsourcingProjects.Create",
        Projects_OutsourcingProjects_Edit: "Projects.OutsourcingProjects.Edit",
@@ -585,6 +586,7 @@ export const PERMISSIONS_CONSTANT = {
 
 
        Resource_TabPlanningBillAccount:"Resource.TabPlanning.BillAccount",
+       Resource_TabAllBillAccount: "Resource.TabAll.BillAccount",
        // #endregion
 
        // #region Timesheet

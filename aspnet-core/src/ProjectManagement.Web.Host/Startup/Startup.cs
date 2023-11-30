@@ -219,7 +219,7 @@ namespace ProjectManagement.Web.Host.Startup
             var strAllowTimesheetFileType = _appConfiguration.GetValue<string>("UploadFile:AllowTimesheetFileTypes");
             if (string.IsNullOrEmpty(strAllowTimesheetFileType))
             {
-                strAllowTimesheetFileType = "xlsx,xltx,docx";
+                strAllowTimesheetFileType = "xlsx,xltx,docx,zip";
             }
             ConstantUploadFile.AllowTimesheetFileTypes = strAllowTimesheetFileType.Split(",");
 

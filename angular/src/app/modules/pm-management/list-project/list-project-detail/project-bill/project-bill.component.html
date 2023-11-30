@@ -202,7 +202,7 @@
                                     <td>
                                         <div class="d-flex align-items-start justify-content-end">
                                             <div class="d-flex" style="flex-direction: column;">
-                                                <div *ngFor="let resource of bill.linkedResources" class="mb-2">
+                                                <div *ngFor="let resource of bill.linkedResources" class="mb-2 position-relative">
                                                     <app-user-info
                                                         [userData]="resource"
                                                         [isHideEmail] = "true"
@@ -210,6 +210,8 @@
                                                         [isSmallerDiv]="true"
                                                         [isChangeContentSize]="true">
                                                     </app-user-info>
+                                                    <i (click) = "removeLinkResource(bill.projectId, bill.userId, resource.id, bill.id)"
+                                                     class="fa fa-times position-absolute" style="top:32px; right: -28px;"></i>
                                                 </div>
                                             </div>
                                         <i *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount)"

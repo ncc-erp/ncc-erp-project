@@ -292,7 +292,7 @@
                                                 </div>
                                                 <div style="width: 10%; text-align: right;">
                                                     <i class="fas fa-edit" (click)="updateUserSkill(user, permission.isGranted(Projects_TrainingProjects_ProjectDetail_TabResourceManagement_PlannedResource_ViewUserStarSkill))"
-                                                        *ngIf="!user.createMode && !user.editMode  
+                                                        *ngIf="!user.createMode && !user.editMode
                                                         && permission.isGranted(Projects_TrainingProjects_ProjectDetail_TabResourceManagement_PlannedResource_UpdateUserSkill)"
                                                         matTooltip="Edit skill"></i>
                                                 </div>
@@ -566,7 +566,7 @@
                                         <mat-menu #menu="matMenu" class="p-2">
                                             <!-- case 1: Status is inprogress -->
                                             <div *ngIf="item.statusName == 'PENDING'">
-                                                <button *ngIf="item.planUserInfo && permission.isGranted(Projects_TrainingProjects_ProjectDetail_TabResourceManagement_ResourceRequest_SetDone)" class="btn btn-block text-left" mat-button (click)="setDoneRequest(item);">
+                                                <button *ngIf="(item.isRequiredPlanResource && item.planUserInfo || !item.isRequiredPlanResource)  && permission.isGranted(Projects_TrainingProjects_ProjectDetail_TabResourceManagement_ResourceRequest_SetDone)" class="btn btn-block text-left" mat-button (click)="setDoneRequest(item);">
                                                     <i class="fa fa-check text-success vertical-align-baseline"></i>
                                                     Set Done
                                                 </button>

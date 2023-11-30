@@ -56,15 +56,11 @@ button{
 
 .list-project .time-wrap {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
 }
 
 .list-project .time-wrap .start-time {
   color: var(--secondary);
-}
-
-.list-project .time-wrap .end-time {
-  margin-top: 4px;
 }
 
 .time-send-report-wrap.report-late {

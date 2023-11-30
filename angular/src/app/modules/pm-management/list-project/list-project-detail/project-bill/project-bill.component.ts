@@ -241,6 +241,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
           isActive: userBill.isActive,
           accountName: userBill.accountName,
           chargeType: userBill.chargeType,
+          linkedResources: userBill.linkedResources,
           id: userBill.id
         }
         this.projectUserBillService.update(userBillToUpdate).pipe(catchError(this.projectUserBillService.handleError)).subscribe(()=>{
@@ -252,7 +253,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
       },
         () => {
           userBill.createMode = true;
-          this.isLoading = true
+          this.isLoading = false
         }
         )
       }
@@ -278,7 +279,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
         },
           () => {
             userBill.createMode = true;
-            this.isLoading = true
+            this.isLoading = false
           })
       }
     }

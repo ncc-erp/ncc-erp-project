@@ -3,6 +3,10 @@ import { AppComponentBase } from '@shared/app-component-base';
 import { PERMISSIONS_CONSTANT } from '@app/constant/permission.constant';
 import { AppConfigurationService } from '../../../service/api/app-configuration.service';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NgbTimeStruct, NgbTimepickerConfig } from '@ng-bootstrap/ng-bootstrap';
+import { MatDialog } from '@angular/material/dialog';
+import { ProjectUserBillService } from '@app/service/api/project-user-bill.service';
+import { BillAccountDialogComponent } from './bill-account-dialog/bill-account-dialog.component';
 
 @Component({
   selector: 'app-configuration',
@@ -59,8 +63,18 @@ export class ConfigurationComponent extends AppComponentBase implements OnInit {
   public  auditScore: AuditScoreDto = {} as AuditScoreDto;
   public guideLine: GuideLineDto = {} as GuideLineDto ;
   public ChannelId:string=''
+  // auto and noti charge status
+  public isShowAutoUpdateNotifyBillAcc = false;
+  public isEditAutoUpdateNotifyBillAcc = false;
+  public notiChargeChannelId: string = '';
+  public billAccountIds: any[] = [];
+  public showSpinner: boolean = false;
+  public autoUpdateChargeStatus : TimeSendDto = new TimeSendDto(false, '00:00', 6);
+  public time : NgbTimeStruct = {hour: 10, minute: 10, second: 0};
+  public listDateofMonth: number[] = Array.from({ length: 31 }, (_, index) => index + 1);
+  public ischargeStatusFormValid = false;
 
- 
+
   public listDays: any[] = [
     { value: 1, text: 'Monday' },
     { value: 2, text: 'Tuesday' },
@@ -75,17 +89,23 @@ export class ConfigurationComponent extends AppComponentBase implements OnInit {
   public isEditingTimesheet: boolean = false;
   public isEditingGuideLine: boolean = false;
 
-
-  form : FormGroup
+  form : FormGroup;
+  chargeStatusForm : FormGroup;
 
   constructor(private fb: FormBuilder,
     private settingService: AppConfigurationService,
-    injector: Injector
+    private dialog: MatDialog,
+    injector: Injector, config : NgbTimepickerConfig
   ) {
     super(injector);
     this.form = this.fb.group({
       credentials: this.fb.array([])
     });
+    this.chargeStatusForm = this.fb.group({
+      chargeStatusCredentials: this.fb.array([])
+    });
+    config.seconds = false;
+    config.spinners = false;
   }
 
   ngOnInit(): void {
@@ -102,6 +122,7 @@ export class ConfigurationComponent extends AppComponentBase implements OnInit {
     if(this.permission.isGranted(this.Admin_Configurations_ViewInformPmSetting)){
     this.getSendTime()
     }
+    this.getChargeStatusConfig();
   }
   getSetting() {
     this.settingService.getConfiguration().subscribe((data) => {
@@ -190,7 +211,7 @@ export class ConfigurationComponent extends AppComponentBase implements OnInit {
 
   addTime(){
     this.credentials.push( this.fb.group({
-      IsCheck: true, 
+      IsCheck: true,
       Time: ['',Validators.required],
       Day: 2
     }))
@@ -245,6 +266,112 @@ export class ConfigurationComponent extends AppComponentBase implements OnInit {
     else{
       return false
     }
+  }
+
+  get chargeStatusCredentials(){
+    return this.chargeStatusForm.controls.chargeStatusCredentials as FormArray;
+   }
+
+  getChargeStatusConfig() {
+    this.settingService.getChargeStatusConfig().subscribe((data:any) => {
+      this.notiChargeChannelId = data.result.notiUsers ? data.result.notiUsers.channelId : '';
+      this.billAccountIds = data.result.userIds;
+      this.autoUpdateChargeStatus = data.result.autoUpdateBillAccount ?? new TimeSendDto(false, '00:00', 6);
+      this.chargeStatusCredentials.clear()
+      if(data.result.notiUsers){
+        data.result.notiUsers.checkDateTimes.forEach(item =>{
+        const cred = this.fb.group({
+          IsCheck: item.isCheck,
+          Time: item.time,
+          Day: item.day
+        })
+       this.chargeStatusCredentials.push(cred)
+      })
+    }
+    });
+  }
+
+  addChargeStatusNotiTime(){
+    this.chargeStatusCredentials.push( this.fb.group({
+      IsCheck: true,
+      Time: ['00:00',Validators.required],
+      Day: 6
+    }))
+  }
+
+  addBillAccount(){
+    const show = this.dialog.open(BillAccountDialogComponent, {
+      data: {
+        selectedIds: this.billAccountIds ? this.billAccountIds: [],
+      },
+      width: "700px",
+    })
+    show.afterClosed().subscribe((res) => {
+      if (res?.isSave) {
+        this.billAccountIds = res.updateBill;
+      }
+    })
+  }
+
+  checkDisabledTSaveUpdateNotiCharge(){
+    if(( this.chargeStatusCredentials.value.some(item=>{
+      return item.IsCheck == true
+    }) && !this.notiChargeChannelId) || this.chargeStatusForm.invalid){
+      return true
+    }
+    else{
+      return false
+    }
+  }
+
+  removeItemChargeStatusNoti(i){
+    this.chargeStatusCredentials.removeAt(i)
+  }
+
+  saveAutoUpdateNotiChargeStatus(){
+    this.IschargeStatusFormValid();
+    if(this.ischargeStatusFormValid){
+    this.settingService
+      .setChargeStatusConfig({AutoUpdateBillAccount: this.autoUpdateChargeStatus,
+        UserIds : this.billAccountIds,
+        NotiUsers:{ChannelId: this.notiChargeChannelId, CheckDateTimes:this.chargeStatusForm.value.chargeStatusCredentials }
+        })
+      .subscribe((data) => {
+        this.isEditAutoUpdateNotifyBillAcc = !this.isEditAutoUpdateNotifyBillAcc;
+        abp.notify.success('Edited successfully!');
+        this.ischargeStatusFormValid = false;
+      });
+    }
+  }
+
+  IschargeStatusFormValid() {
+  const controls = (this.chargeStatusForm.get('chargeStatusCredentials') as FormArray).controls;
+
+  const valuesArray = controls.map(control => {
+    return {
+      IsCheck: control.get('IsCheck').value,
+      Time: control.get('Time').value,
+      Day: control.get('Day').value
+    };
+  });
+
+  // Check for duplicates based on IsCheck, Time, and Day
+  const duplicates = valuesArray.some((value, index) => {
+    return (
+      index !== valuesArray.findIndex(
+        item =>
+          item.IsCheck === value.IsCheck &&
+          item.Time === value.Time &&
+          item.Day === value.Day
+      )
+    );
+  });
+  if(duplicates){
+    abp.notify.error("Notification times are duplicated");
+    return;
+  }
+  this.ischargeStatusFormValid = true;
+  return;
   }
 }
 export class ConfigurationDto {
@@ -307,5 +434,11 @@ export class GuideLineDto{
 export class TimeSendDto {
   isCheck : boolean;
   time: string;
-  day:string;
+  day:number;
+
+  constructor(isCheck : boolean, time: string,day:number){
+    this.isCheck = isCheck;
+    this.time = time;
+    this.day = day;
+  }
 }

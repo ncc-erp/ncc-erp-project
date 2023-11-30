@@ -109,6 +109,7 @@ export const PERMISSIONS_CONSTANT = {
        Projects_OutsourcingProjects_ViewAllProject: "Projects.OutsourcingProjects.ViewAllProject",
        Projects_OutsourcingProjects_ViewMyProjectOnly: "Projects.OutsourcingProjects.ViewMyProjectOnly",
        Projects_OutsourcingProjects_ViewBillInfo: "Projects.OutsourcingProjects.ViewBillInfo",
+       Projects_OutsourcingProjects_ViewResource: "Projects.OutsourcingProjects.ViewResource",
        Projects_OutsourcingProjects_ViewBillAccount: "Projects.OutsourcingProjects.ViewBillAccount",
        Projects_OutsourcingProjects_Create: "Projects.OutsourcingProjects.Create",
        Projects_OutsourcingProjects_Edit: "Projects.OutsourcingProjects.Edit",

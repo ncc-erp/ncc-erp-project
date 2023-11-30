@@ -37,6 +37,7 @@ namespace ProjectManagement.Entities
         public UserLevel Level { get; set; }
         public Priority Priority { get; set; }
         public bool IsNewBillAccount { get; set; }
+        public bool IsRequiredPlanResource { get; set; }
 
         public ICollection<ResourceRequestSkill> ResourceRequestSkills { get; set; }
 

@@ -63,7 +63,6 @@ export class ConfigurationComponent extends AppComponentBase implements OnInit {
   public  finfastConnectResult: GetConnectResultDto = {} as GetConnectResultDto
   public  auditScore: AuditScoreDto = {} as AuditScoreDto;
   public guideLine: GuideLineDto = {} as GuideLineDto ;
-  public ChannelId: string=''
   public CloseTimesheetChannelId: string = ''
   public ChannelId:string=''
   // auto and noti charge status
@@ -94,8 +93,6 @@ export class ConfigurationComponent extends AppComponentBase implements OnInit {
 
   form : FormGroup;
   chargeStatusForm : FormGroup;
-
-  form : FormGroup
   closeTimesheetFrom : FormGroup
 
   constructor(private fb: FormBuilder,
@@ -447,8 +444,8 @@ export class ConfigurationComponent extends AppComponentBase implements OnInit {
   this.ischargeStatusFormValid = true;
   return;
   }
-}
-  }
+
+
   removeItemCloseTimesheet(i){
     this.closeTimesheetCredentials.removeAt(i)
     }

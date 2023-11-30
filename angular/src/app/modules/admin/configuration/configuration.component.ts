@@ -56,12 +56,14 @@ export class ConfigurationComponent extends AppComponentBase implements OnInit {
   public isShowAuditScore: boolean = false;
   public isShowGuideLineSetting: boolean = false;
   public isShowActiveTimesheetProjectPeriod = false;
+  public isEditSendHour = false;
   public  timesheetConnectResult: GetConnectResultDto = {} as GetConnectResultDto;
   public  talentConnectResult: GetConnectResultDto = {} as GetConnectResultDto;
   public  hrmConnectResult: GetConnectResultDto = {} as GetConnectResultDto;
   public  finfastConnectResult: GetConnectResultDto = {} as GetConnectResultDto
   public  auditScore: AuditScoreDto = {} as AuditScoreDto;
   public guideLine: GuideLineDto = {} as GuideLineDto ;
+  public CloseTimesheetChannelId: string = ''
   public ChannelId:string=''
   // auto and noti charge status
   public isShowAutoUpdateNotifyBillAcc = false;
@@ -91,6 +93,7 @@ export class ConfigurationComponent extends AppComponentBase implements OnInit {
 
   form : FormGroup;
   chargeStatusForm : FormGroup;
+  closeTimesheetFrom : FormGroup
 
   constructor(private fb: FormBuilder,
     private settingService: AppConfigurationService,
@@ -100,6 +103,9 @@ export class ConfigurationComponent extends AppComponentBase implements OnInit {
     super(injector);
     this.form = this.fb.group({
       credentials: this.fb.array([])
+    });
+    this.closeTimesheetFrom = this.fb.group({
+      closeTimesheetCredentials: this.fb.array([])
     });
     this.chargeStatusForm = this.fb.group({
       chargeStatusCredentials: this.fb.array([])
@@ -118,6 +124,7 @@ export class ConfigurationComponent extends AppComponentBase implements OnInit {
     this.checkConnectToFinance();
     this.checkConnectToTalent();
     this.getAuditScore();
+    this.getCloseTimesheetTime();
     // this.getGuideLine();
     if(this.permission.isGranted(this.Admin_Configurations_ViewInformPmSetting)){
     this.getSendTime()
@@ -217,6 +224,15 @@ export class ConfigurationComponent extends AppComponentBase implements OnInit {
     }))
   }
 
+  addCloseTimesheetTime(){
+    this.closeTimesheetCredentials.push( this.fb.group({
+      IsCheck: true,
+      Hours: [],
+      Minutes: [ ,Validators.required],
+      Day: 0
+    }))
+  }
+
   getSendTime(){
       this.settingService.getTimeSend().subscribe((data:any) => {
         this.ChannelId = data.result.channelId;
@@ -262,6 +278,61 @@ export class ConfigurationComponent extends AppComponentBase implements OnInit {
       return item.IsCheck == true
     }) && !this.ChannelId && this.isEditSendTime){
       return  true
+    }
+    else{
+      return false
+    }
+  }
+
+  getCloseTimesheetTime(){
+    this.settingService.getCloseTimesheetNotification().subscribe((data:any) => {
+      this.CloseTimesheetChannelId = data.result.channelId;
+      this.closeTimesheetCredentials.clear()
+      data.result.checkDateTimes.forEach(item =>{
+        const cred = this.fb.group({
+          IsCheck: item.isCheck,
+          Hours: [item.time.split(':')[0]],
+          Minutes: [item.time.split(':')[1]],
+          Day: item.day
+        })
+       this.closeTimesheetCredentials.push(cred)
+      })
+    });
+  }
+
+  get closeTimesheetCredentials(){
+    return this.closeTimesheetFrom.controls.closeTimesheetCredentials as FormArray;
+   }
+
+  saveCloseTimesheetTime(){
+      // Check any null or invalid values in the array
+  if (this.closeTimesheetFrom.value.closeTimesheetCredentials.some((credential) => {
+    return !credential || (!credential.Hours || credential.Hours == 0) && (!credential.Minutes || credential.Minutes == 0);
+  })) {
+    abp.notify.error('Edited close time fail!');
+    return;
+  }
+    const modifiedCloseTimesheetCredentials = this.closeTimesheetFrom.value.closeTimesheetCredentials.map((credential) => {
+      const mergedTime = (credential.Hours ?? 0).toString() + ":" + (credential.Minutes ?? 0).toString();
+      return {
+        IsCheck: credential.IsCheck,
+        Time: mergedTime, // The merged time property
+        Day: credential.Day
+      };
+    });
+    this.settingService
+      .setCloseTimesheetNotification({ChannelId: this.ChannelId,CheckDateTimes:modifiedCloseTimesheetCredentials})
+      .subscribe((data) => {
+        this.isEditSendHour = !this.isEditSendHour
+        abp.notify.success('Edited timesheet close time successfully!');
+      });
+  }
+
+  checkDisabledTSaveTimesheetClose(){
+    if(( this.closeTimesheetCredentials.value.some(item=>{
+      return item.IsCheck == true
+    }) && !this.CloseTimesheetChannelId)){
+      return true
     }
     else{
       return false
@@ -373,6 +444,11 @@ export class ConfigurationComponent extends AppComponentBase implements OnInit {
   this.ischargeStatusFormValid = true;
   return;
   }
+
+
+  removeItemCloseTimesheet(i){
+    this.closeTimesheetCredentials.removeAt(i)
+    }
 }
 export class ConfigurationDto {
   clientAppId: string;

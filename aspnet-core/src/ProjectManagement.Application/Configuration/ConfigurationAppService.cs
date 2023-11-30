@@ -33,6 +33,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Abp.Domain.Uow;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
+using ProjectManagement.Manager.TimesheetManagers;
 
 namespace ProjectManagement.Configuration
 {
@@ -109,9 +110,11 @@ namespace ProjectManagement.Configuration
                 TalentSecurityCode = _appConfiguration.GetValue<string>("TalentService:SecurityCode"),
                 MaxCountHistory = await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.MaxCountHistory),
                 InformPm = await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.InformPm),
-                ActiveTimesheetProjectPeriod = await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.ActiveTimesheetProjectPeriod)
+                ActiveTimesheetProjectPeriod = await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.ActiveTimesheetProjectPeriod),
+                CloseTimesheetNotification = await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.CloseTimesheetNotification),
             };
         }
+
         [AbpAuthorize(PermissionNames.Admin_Configuartions_Edit)]
         public async Task<AppSettingDto> Change(AppSettingDto input)
         {
@@ -140,7 +143,8 @@ namespace ProjectManagement.Configuration
                 string.IsNullOrEmpty(input.InformPm) ||
 
                 string.IsNullOrEmpty(input.MaxCountHistory) ||
-                string.IsNullOrEmpty(input.ActiveTimesheetProjectPeriod)
+                string.IsNullOrEmpty(input.ActiveTimesheetProjectPeriod) ||
+                string.IsNullOrEmpty(input.CloseTimesheetNotification)
                 )
             {
                 throw new UserFriendlyException("All setting values need to be completed");
@@ -169,7 +173,8 @@ namespace ProjectManagement.Configuration
             await SettingManager.ChangeSettingForApplicationAsync(AppSettingNames.MaxCountHistory, input.MaxCountHistory);
             await SettingManager.ChangeSettingForApplicationAsync(AppSettingNames.InformPm, input.InformPm);
             await SettingManager.ChangeSettingForApplicationAsync(AppSettingNames.ActiveTimesheetProjectPeriod, input.ActiveTimesheetProjectPeriod);
-        return input;
+            await SettingManager.ChangeSettingForApplicationAsync(AppSettingNames.CloseTimesheetNotification, input.CloseTimesheetNotification);
+            return input;
         }
 
         [AbpAuthorize(PermissionNames.Admin_Configuartions_Edit)]
@@ -233,13 +238,13 @@ namespace ProjectManagement.Configuration
         }
 
 
-         [AbpAuthorize(
-            //PermissionNames.Admin_Configurations_ViewGuideLineSetting
-            PermissionNames.WeeklyReport_ReportDetail_GuideLine_View
-            )]
-         [HttpGet]
-         public async Task<GuideLineDto> GetGuideLine()
-         {
+        [AbpAuthorize(
+           //PermissionNames.Admin_Configurations_ViewGuideLineSetting
+           PermissionNames.WeeklyReport_ReportDetail_GuideLine_View
+           )]
+        [HttpGet]
+        public async Task<GuideLineDto> GetGuideLine()
+        {
             var allowViewGuideline = await PermissionChecker.IsGrantedAsync(PermissionNames.WeeklyReport_ReportDetail_GuideLine_View);
             if (!allowViewGuideline)
             {
@@ -308,6 +313,37 @@ namespace ProjectManagement.Configuration
             }
             var inform = JsonSerializer.Deserialize<InformPmDto>(json);
             return inform;
+        }
+
+        [AbpAuthorize(PermissionNames.Admin_Configuartions_Edit)]
+        [HttpPost]
+        public async Task<InformPmDto> SetCloseTimesheetNotification(InformPmDto input)
+        {
+            ValidationCloseTimesheet(input);
+            var json = JsonSerializer.Serialize(input);
+            await SettingManager.ChangeSettingForApplicationAsync(AppSettingNames.CloseTimesheetNotification, json);
+            return input;
+        }
+
+        private void ValidationCloseTimesheet(InformPmDto input)
+        {
+            if (input.CheckDateTimes.Any(t => t.IsCheck) && !input.ChannelId.HasValue())
+                throw new UserFriendlyException("Channel Id is null!");
+            var listDuplicate = input.CheckDateTimes.GroupBy(c => new { c.Time}).ToList();
+            if (listDuplicate.Count != input.CheckDateTimes.Count) 
+                throw new UserFriendlyException("Time can not be duplicated!!");
+        }
+
+        [HttpGet]
+        public async Task<InformPmDto> GetCloseTimesheetNotification()
+        {
+            var json = await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.CloseTimesheetNotification);
+            if (string.IsNullOrEmpty(json))
+            {
+                return null;
+            }
+            var closeNoti = JsonSerializer.Deserialize<InformPmDto>(json);
+            return closeNoti;
         }
 
         [HttpGet]

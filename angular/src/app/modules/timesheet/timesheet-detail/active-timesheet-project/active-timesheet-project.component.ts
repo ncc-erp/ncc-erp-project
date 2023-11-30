@@ -34,13 +34,13 @@ export class ActiveTimesheetProjectComponent extends AppComponentBase implements
   ngOnInit(): void {
     this.minDate= moment().toDate();
     this.projectList = _.cloneDeep(this.data.listTimesheetProject);
-    this.settingService.getTimeTimesheet().pipe(catchError(this.settingService.handleError)).subscribe((res:any)=>{
+    this.settingService.getCloseTimesheetNotification().pipe(catchError(this.settingService.handleError)).subscribe((res:any)=>{
       this.timeConfig = res.result
       let current = new Date().getTime()  + Number(res.result)
       this.startDate = new Date(current)
     })
    this.timer = setInterval(() => {
-      this.updateTime(); 
+      this.updateTime();
     },1000);
   }
 

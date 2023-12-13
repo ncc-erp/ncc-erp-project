@@ -99,7 +99,7 @@
               style="text-align: end"
             >
               <div class="row">
-                <div class="col-xl-4 col-lg-4" style="margin-left: 0px;">
+                <div class="col-xl-4 col-lg-4" style="margin-left: 0px">
                   <div class="row">
                     <div
                       class="col-md-2 col-xl-4 d-flex rsp-label justify-content-end align-items-center"
@@ -193,7 +193,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-xl-1 pt-1 clear" style="margin-left: -182px;">
+            <div class="col-xl-1 pt-1 clear" style="margin-left: -182px">
               <div class="row">
                 <div class="rsp-total-rows" style="display: none">
                   <label class="mb-0">Total:</label>
@@ -223,10 +223,8 @@
           >
             <thead>
               <tr>
-                <th
-                  *ngFor="let thead of theadTable; let i = index"
-                >
-                  <div class="row sortHeader" [ngStyle]="styleThead(thead)" >
+                <th *ngFor="let thead of theadTable; let i = index">
+                  <div class="row sortHeader" [ngStyle]="styleThead(thead)">
                     <div class="col-xl-8 col-lg-12 rsp-th-name text-left">
                       {{ thead.name }}
                     </div>
@@ -301,7 +299,7 @@
                 <td class="text-center">
                   {{ item.quantity }}
                 </td>
-                <td style="width: 150px;">
+                <td style="width: 150px">
                   <ul class="pl-3 m-0">
                     <li *ngFor="let skill of item.skills">
                       {{ skill.name }}
@@ -309,13 +307,13 @@
                   </ul>
                 </td>
                 <td class="text-center">
-                  <b>{{ item.creationTime | date: "dd/MM/yyyy" }}</b>
+                  <b>{{ item.creationTime | date : "dd/MM/yyyy" }}</b>
                   <br />
                   <small>{{ Utils.getTimeHistory(item.creationTime) }}</small>
                 </td>
                 <!-- <td class="text-center"> <strong>{{item.plannedNumberOfPersonnel}}</strong></td> -->
                 <td class="text-center">
-                  <b>{{ item.timeNeed | date: "dd/MM/yyyy" }}</b>
+                  <b>{{ item.timeNeed | date : "dd/MM/yyyy" }}</b>
                   <br />
                   <small>{{ Utils.getTimeHistory(item.timeNeed) }}</small>
                 </td>
@@ -348,7 +346,9 @@
                           </span>
                           <span
                             class="ml-1 badge text-white"
-                            [style.backgroundColor]="item.planUserInfo.employee.positionColor"
+                            [style.backgroundColor]="
+                              item.planUserInfo.employee.positionColor
+                            "
                           >
                             {{ item.planUserInfo.employee.positionName }}
                           </span>
@@ -364,7 +364,7 @@
                           </span>
                         </p>
                         <b>{{
-                          item.planUserInfo.plannedDate | date: "dd/MM/yyyy"
+                          item.planUserInfo.plannedDate | date : "dd/MM/yyyy"
                         }}</b>
                       </div>
                     </div>
@@ -376,9 +376,7 @@
                           TrainingRequest_PlanNewTrainingForRequest
                         )
                       "
-                      style="width: 80px;
-                      max-height: 80px;
-                      white-space: normal;"
+                      style="width: 80px; max-height: 80px; white-space: normal"
                     >
                       <i
                         class="fa fa-edit"
@@ -409,7 +407,8 @@
                       </pre>
                     </div>
                     <div
-                      class="col-md-2" style="margin-left: -10px;"
+                      class="col-md-2"
+                      style="margin-left: -10px"
                       *ngIf="permission.isGranted(TrainingRequest_EditPmNote)"
                     >
                       <i
@@ -475,13 +474,15 @@
                   </span>
                   <br />
                   <span *ngIf="item.statusName == 'DONE'">{{
-                    item.timeDone | date: "dd/MM/yyyy"
+                    item.timeDone | date : "dd/MM/yyyy"
                   }}</span>
-                  <br>
-                  <span *ngIf="item.isRecruitmentSend== true"
-                        (click)="viewRecruitment(item.recruitmentUrl)"
-                        class="tl-link">
-                    #{{sliceUrl(item.recruitmentUrl)}}
+                  <br />
+                  <span
+                    *ngIf="item.isRecruitmentSend == true"
+                    (click)="viewRecruitment(item.recruitmentUrl)"
+                    class="tl-link"
+                  >
+                    #{{ sliceUrl(item.recruitmentUrl) }}
                   </span>
                 </td>
                 <td class="text-center action-request-resource-tab">
@@ -589,7 +590,7 @@
             </div>
             <div class="col-sm-4 col-12 text-center">
               <p class="mb-0 my-2 total-rows">
-                {{ "TotalRecordsCount" | localize: totalItems }}
+                {{ "TotalRecordsCount" | localize : totalItems }}
               </p>
             </div>
             <div class="col-sm-4 col-12">
@@ -608,7 +609,7 @@
   </section>
 
   <!-- The Modal Update Note-->
-  <div class="modal" id="myModal" [ngStyle]="{ display: isShowModal }">
+  <div class="modal" id="myModal" [ngStyle]="{ display: isShowModal }" cdkDrag>
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <!-- Modal Header -->

@@ -66,7 +66,7 @@
               style="text-align: end"
             >
               <div class="row">
-                <div class="col-xl-4 col-lg-4" style="margin-left: -20px;">
+                <div class="col-xl-4 col-lg-4" style="margin-left: -20px">
                   <div class="row">
                     <div
                       class="col-md-2 col-xl-4 d-flex rsp-label justify-content-end align-items-center"
@@ -94,88 +94,106 @@
                     </div>
                   </div>
                 </div>
-                <div class="col-xl-4 col-lg-4" style="margin-left: 10px;">
+                <div class="col-xl-4 col-lg-4" style="margin-left: 10px">
                   <div class="row">
-                    <div class="col-md-2 col-xl-4 d-flex rsp-label justify-content-end align-items-center">
-                      <label class="mb-0">
-                        Project:
-                      </label>
+                    <div
+                      class="col-md-2 col-xl-4 d-flex rsp-label justify-content-end align-items-center"
+                    >
+                      <label class="mb-0"> Project: </label>
                     </div>
-                      <div class="col-md-10 col-xl-8 rsp-group-form-field">
-                        <mat-form-field class="rsp-form-field" appearance="outline">
-                          <mat-select
-                            name="projectId"
-                            placeholder="Select project"
-                            [(ngModel)]="projectId"
-                            (selectionChange)="getDataPage(1)"
+                    <div class="col-md-10 col-xl-8 rsp-group-form-field">
+                      <mat-form-field
+                        class="rsp-form-field"
+                        appearance="outline"
+                      >
+                        <mat-select
+                          name="projectId"
+                          placeholder="Select project"
+                          [(ngModel)]="projectId"
+                          (selectionChange)="getDataPage(1)"
+                        >
+                          <mat-form-field
+                            class="w-100 px-3"
+                            style="
+                              position: sticky;
+                              top: 0;
+                              z-index: 2;
+                              background-color: white;
+                            "
                           >
-                            <mat-form-field
-                              class="w-100 px-3"
-                              style="
-                                position: sticky;
-                                top: 0;
-                                z-index: 2;
-                                background-color: white;
-                              "
-                            >
-                              <input
-                                matInput
-                                [(ngModel)]="searchProject"
-                                name="searchProjectName"
-                                (keydown)="$event.stopPropagation()"
-                                placeholder="Search"
-                                #search
-                              />{{ search.focus() }}
-                            </mat-form-field>
-                              <mat-option [value]="-1">  All  </mat-option>
-                              <mat-option  *ngFor="let project of listProject | listFilter: 'name':searchProject" [value]="project.id">
-                                {{ project.name }}
-                              </mat-option>
-                          </mat-select>
-                        </mat-form-field>
-                      </div>
+                            <input
+                              matInput
+                              [(ngModel)]="searchProject"
+                              name="searchProjectName"
+                              (keydown)="$event.stopPropagation()"
+                              placeholder="Search"
+                              #search
+                            />{{ search.focus() }}
+                          </mat-form-field>
+                          <mat-option [value]="-1"> All </mat-option>
+                          <mat-option
+                            *ngFor="
+                              let project of listProject
+                                | listFilter : 'name' : searchProject
+                            "
+                            [value]="project.id"
+                          >
+                            {{ project.name }}
+                          </mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                    </div>
                   </div>
                 </div>
-                <div class="col-xl-4 col-lg-4" style="margin-left: 10px;">
+                <div class="col-xl-4 col-lg-4" style="margin-left: 10px">
                   <div class="row">
-                    <div class="col-md-2 col-xl-4 d-flex rsp-label justify-content-end align-items-center">
-                      <label class="mb-0">
-                       Code:
-                      </label>
+                    <div
+                      class="col-md-2 col-xl-4 d-flex rsp-label justify-content-end align-items-center"
+                    >
+                      <label class="mb-0"> Code: </label>
                     </div>
-                      <div class="col-md-10 col-xl-8 rsp-group-form-field">
-                        <mat-form-field class="rsp-form-field" appearance="outline">
-                          <mat-select
-                            name="requestCode"
-                            placeholder="Select code"
-                            [(ngModel)]="requestCode"
-                            (selectionChange)="getDataPage(1)"
+                    <div class="col-md-10 col-xl-8 rsp-group-form-field">
+                      <mat-form-field
+                        class="rsp-form-field"
+                        appearance="outline"
+                      >
+                        <mat-select
+                          name="requestCode"
+                          placeholder="Select code"
+                          [(ngModel)]="requestCode"
+                          (selectionChange)="getDataPage(1)"
+                        >
+                          <mat-form-field
+                            class="w-100 px-3"
+                            style="
+                              position: sticky;
+                              top: 0;
+                              z-index: 2;
+                              background-color: white;
+                            "
                           >
-                            <mat-form-field
-                              class="w-100 px-3"
-                              style="
-                                position: sticky;
-                                top: 0;
-                                z-index: 2;
-                                background-color: white;
-                              "
-                            >
-                              <input
-                                matInput
-                                [(ngModel)]="searchCode"
-                                name="searchCode"
-                                (keydown)="$event.stopPropagation()"
-                                placeholder="Search"
-                                #search
-                              />{{ search.focus() }}
-                            </mat-form-field>
-                              <mat-option [value]="-1">  All  </mat-option>
-                              <mat-option  *ngFor="let code of listRequestCode | listFilter: 'code': searchCode" [value]="code.code">
-                                {{ code.code }}
-                              </mat-option>
-                          </mat-select>
-                        </mat-form-field>
-                      </div>
+                            <input
+                              matInput
+                              [(ngModel)]="searchCode"
+                              name="searchCode"
+                              (keydown)="$event.stopPropagation()"
+                              placeholder="Search"
+                              #search
+                            />{{ search.focus() }}
+                          </mat-form-field>
+                          <mat-option [value]="-1"> All </mat-option>
+                          <mat-option
+                            *ngFor="
+                              let code of listRequestCode
+                                | listFilter : 'code' : searchCode
+                            "
+                            [value]="code.code"
+                          >
+                            {{ code.code }}
+                          </mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -201,447 +219,522 @@
           </div>
           <div class="row">
             <div *ngIf="advancedFiltersVisible" class="mb-0 mt-1 w-100">
-                <form class="form-horizontal">
-                  <div class="row">
-                    <div class="col-md-12 col-xl-12">
-                      <div class="mb-0">
-                        <div>
-                          <div
-                            *ngFor="
-                              let item of filterItems;
-                              let i = index
-                            "
+              <form class="form-horizontal">
+                <div class="row">
+                  <div class="col-md-12 col-xl-12">
+                    <div class="mb-0">
+                      <div>
+                        <div *ngFor="let item of filterItems; let i = index">
+                          <app-filter
+                            [item]="item"
+                            (emitChange)="onEmitChange($event, i)"
+                            (deleteDataFilter)="deleteFilterItem(i)"
+                            [inputFilters]="FILTER_CONFIG"
                           >
-                            <app-filter
-                              [item]="item"
-                              (emitChange)="onEmitChange($event, i)"
-                              (deleteDataFilter)="deleteFilterItem(i)"
-                              [inputFilters]="FILTER_CONFIG"
-                            >
-                            </app-filter>
-                          </div>
-                          <i
-                            style="padding: 0"
-                            class="fas fa-plus-circle ml-3"
-                            (click)="addFilter()"
-                          ></i>
+                          </app-filter>
                         </div>
+                        <i
+                          style="padding: 0"
+                          class="fas fa-plus-circle ml-3"
+                          (click)="addFilter()"
+                        ></i>
                       </div>
                     </div>
                   </div>
-                </form>
-              </div>
+                </div>
+              </form>
             </div>
-
+          </div>
         </div>
 
         <div class="card-body table-responsive pb-4">
           <div class="fixHead">
             <table
-            [busy]="isLoading"
-            style="border-collapse: collapse"
-            class="table table-hover text-nowrap mt-2"
-            id="tbl-resource-request"
-          >
-            <thead>
-              <tr>
-                <th
-                  *ngFor="let thead of theadTable; let i = index"
-                   class="text-center"
-                >
-                  <div class="row sortHeader" [ngStyle]="styleThead(thead)">
-                    <div class="rsp-th-name text-left">
-                      {{ thead.name }}
-                    </div>
-                    <div
-                      class="rsp-th-sort text-right"
-                      *ngIf="i != 0 && thead.sortName"
-                      style="vertical-align: middle"
-                    >
-                      <ng-container>
-                        <app-sortable
-                          #sortThead
-                          [data]="{
-                            sort: thead.sortName,
-                            typeSort: thead.defaultSort
-                          }"
-                          (sortEvent)="sortTable($event)"
-                        ></app-sortable>
-                      </ng-container>
-                    </div>
-                  </div>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                *ngFor="
-                  let item of listRequest
-                    | paginate
-                      : {
-                          id: 'server',
-                          itemsPerPage: pageSize,
-                          currentPage: pageNumber,
-                          totalItems: totalItems
-                        };
-                  let i = index
-                "
-              >
-                <td class="text-center">
-                  <span>{{ i + 1 + pageSize * (pageNumber - 1) }}</span>
-                </td>
-                <td style="min-width: 380px;">
-                  <div class="row" style="align-items: flex-start;justify-content: space-between;">
-                    <div class="d-flex align-items-start col-8">
+              [busy]="isLoading"
+              style="border-collapse: collapse"
+              class="table table-hover text-nowrap mt-2"
+              id="tbl-resource-request"
+            >
+              <thead>
+                <tr>
+                  <th
+                    *ngFor="let thead of theadTable; let i = index"
+                    class="text-center"
+                  >
+                    <div class="row sortHeader" [ngStyle]="styleThead(thead)">
+                      <div class="rsp-th-name text-left">
+                        {{ thead.name }}
+                      </div>
                       <div
-                      class="mr-1 badge"
-                      [ngClass]="APP_CONST.priorityRequest[item.priority]"
-                    >
-                      {{ item.priorityName }}
+                        class="rsp-th-sort text-right"
+                        *ngIf="i != 0 && thead.sortName"
+                        style="vertical-align: middle"
+                      >
+                        <ng-container>
+                          <app-sortable
+                            #sortThead
+                            [data]="{
+                              sort: thead.sortName,
+                              typeSort: thead.defaultSort
+                            }"
+                            (sortEvent)="sortTable($event)"
+                          ></app-sortable>
+                        </ng-container>
+                      </div>
                     </div>
-                    <span class="link mr-2" (click)="showProject(item)"> {{ item.projectName }} </span>
-                    <span *ngIf="item.isNewBillAccount" class="badge badge-danger">Bill Acc</span>
-                    <span
-                      *ngIf="item.projectStatus == 'Potential'"
-                      [ngClass]="
-                        APP_CONST.statusStyle[
-                          getByEnum(item.status, APP_ENUM.ProjectStatus)
-                        ]
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  *ngFor="
+                    let item of listRequest
+                      | paginate
+                        : {
+                            id: 'server',
+                            itemsPerPage: pageSize,
+                            currentPage: pageNumber,
+                            totalItems: totalItems
+                          };
+                    let i = index
+                  "
+                >
+                  <td class="text-center">
+                    <span>{{ i + 1 + pageSize * (pageNumber - 1) }}</span>
+                  </td>
+                  <td style="min-width: 380px">
+                    <div
+                      class="row"
+                      style="
+                        align-items: flex-start;
+                        justify-content: space-between;
                       "
                     >
-                      {{ item.projectStatusName }}
-                    </span>
-                    </div>
-                    <div class="d-flex justify-content-end col-4" style="justify-content: space-between">
-                      <span
-                      class="ml-1 badge text-white"
-                      [ngStyle]="Utils.getUserLevel(item.level).style"
-                    >
-                      {{ item.levelName }}
-                    </span>
-                      <p class="ml-2"
-                      style="border-radius: 0.25rem;"
-                        [ngClass]="
-                          APP_CONST.resourceRequestStyle[
+                      <div class="d-flex align-items-start col-8">
+                        <div
+                          class="mr-1 badge"
+                          [ngClass]="APP_CONST.priorityRequest[item.priority]"
+                        >
+                          {{ item.priorityName }}
+                        </div>
+                        <span class="link mr-2" (click)="showProject(item)">
+                          {{ item.projectName }}
+                        </span>
+                        <span
+                          *ngIf="item.isNewBillAccount"
+                          class="badge badge-danger"
+                          >Bill Acc</span
+                        >
+                        <span
+                          *ngIf="item.projectStatus == 'Potential'"
+                          [ngClass]="
+                            APP_CONST.statusStyle[
+                              getByEnum(item.status, APP_ENUM.ProjectStatus)
+                            ]
+                          "
+                        >
+                          {{ item.projectStatusName }}
+                        </span>
+                      </div>
+                      <div
+                        class="d-flex justify-content-end col-4"
+                        style="justify-content: space-between"
+                      >
+                        <span
+                          class="ml-1 badge text-white"
+                          [ngStyle]="Utils.getUserLevel(item.level).style"
+                        >
+                          {{ item.levelName }}
+                        </span>
+                        <p
+                          class="ml-2"
+                          style="border-radius: 0.25rem"
+                          [ngClass]="
+                            APP_CONST.resourceRequestStyle[
+                              getValueByEnum(
+                                item.status,
+                                APP_ENUM.ResourceRequestStatus
+                              )
+                            ]
+                          "
+                        >
+                          {{
                             getValueByEnum(
                               item.status,
                               APP_ENUM.ResourceRequestStatus
                             )
-                          ]
-                        "
-                      >
-                        {{
-                          getValueByEnum(
-                            item.status,
-                            APP_ENUM.ResourceRequestStatus
-                          )
-                        }}
-                      </p>
-                    </div>
-                  </div>
-                  <div class="d-flex justify-content-between mt-4">
-                    <span style="display: inline-block; max-width: 270px;text-align: left;">{{item.createAt | date:'d/MM/y HH:mm '}} by {{item.userRequestName}}</span>
-                    <span>Time need: {{item.timeNeed | date:'d/MM/y'}}</span>
-                  </div>
-                </td>
-                <td style="padding: 12px 4px; width: 120px;">
-                    <p *ngFor="let skill of item.skills" class="m-0">
-                     - {{ skill.name }}
-                    </p>
-                </td>
-                <td style="padding: 12px 8px;width: 100px; ">
-                 <span *ngIf="item.code">{{item.code}}</span>
-                </td>
-                <td style="min-width: 245px; max-width: 245px;">
-                  <div class="row" >
-                    <div class="col-md-10">
-                      <div *ngIf="item.billUserInfo" class="d-flex align-items-start" style="flex-direction: column;" >
-                        <p class="m-0 pointer" (click) = "openPopupSkill(item.billUserInfo.employee, item.billUserInfo.userSkill)">
-                          <strong>
-                            {{item.billUserInfo.employee.fullName}}</strong>
+                          }}
                         </p>
-                        <p class="m-0">
-                          <span *ngIf="item.billUserInfo.employee.branchDisplayName"
-                            class="mr-1 badge text-white"
-                            [style.backgroundColor]="
-                              item.billUserInfo.employee.branchColor
-                            "
-                          >
-                            {{ item.billUserInfo.employee.branchDisplayName }}
-                          </span>
-                          <span *ngIf="item.billUserInfo.employee.userTypeName"
-                            [ngClass]="
-                              APP_CONST.userTypeStyle[
-                                item.billUserInfo.employee.userType
-                              ]
-                            "
-                          >
-                            {{ item.billUserInfo.employee.userTypeName }}
-                          </span>
-                          <span *ngIf="item.billUserInfo.employee.levelName"
-                          class="ml-1 badge text-white"
-                          [ngStyle]="
-                            Utils.getUserLevel(
-                              item.billUserInfo.employee.userLevel
-                            ).style
-                          "
-                        >
-                          {{ item.billUserInfo.employee.levelName }}
-                        </span>
-                          <span *ngIf="item.billUserInfo.employee.positionName"
-                            class="ml-1 badge text-white"
-                            [style.backgroundColor]="item.billUserInfo.employee.positionColor"
-                          >
-                            {{ item.billUserInfo.employee.positionName }}
-                          </span>
-                        </p>
-                        <b>{{
-                          item.billUserInfo.plannedDate | date: "dd/MM/yyyy"
-                        }}</b>
                       </div>
                     </div>
-                    <div
-                      class="col-md-2 text-right"
-                      *ngIf="
-                        item.statusName == 'PENDING' &&
-                        permission.isGranted(
-                          ResourceRequest_CreateBillResourceForRequest
-                        )
-                      "
-                    >
-                      <i
-                        class="fa fa-edit"
-                        (click)="showModalCvUser(item)"
-                      ></i>
-                    </div>
-                  </div>
-                </td>
-                <td style="min-width: 245px; max-width: 245px;">
-                  <div class="row" >
-                    <div class="col-md-10">
-                      <div *ngIf="item.planUserInfo" class="d-flex align-items-start" style="flex-direction: column;" >
-                        <p class="m-0 pointer" (click) = "openPopupSkill(item.planUserInfo.employee, item.planUserInfo.userSkill)">
-                          <strong>{{
-                            item.planUserInfo.employee.fullName
-                          }}</strong>
-                        </p>
-                        <p class="m-0">
-                          <span *ngIf="item.planUserInfo.employee.branchDisplayName"
-                            class="mr-1 badge badge text-white"
-                            [style.backgroundColor]="
-                              item.planUserInfo.employee.branchColor
-                            "
-                          >
-                            {{ item.planUserInfo.employee.branchDisplayName }}
-                          </span>
-                          <span *ngIf="item.planUserInfo.employee.userTypeName"
-                            [ngClass]="
-                              APP_CONST.userTypeStyle[
-                                item.planUserInfo.employee.userType
-                              ]
-                            "
-                          >
-                            {{ item.planUserInfo.employee.userTypeName }}
-                          </span>
-                          <span *ngIf="item.planUserInfo.employee.levelName"
-                          class="ml-1 badge text-white"
-                          [ngStyle]="
-                            Utils.getUserLevel(
-                              item.planUserInfo.employee.userLevel
-                            ).style
-                          "
-                        >
-                          {{ item.planUserInfo.employee.levelName }}
-                        </span>
-                          <span *ngIf="item.planUserInfo.employee.positionName"
-                            class="ml-1 badge text-white"
-                            [style.backgroundColor]="item.planUserInfo.employee.positionColor"
-                          >
-                            {{ item.planUserInfo.employee.positionName }}
-                          </span>
-                        </p>
-                        <b>{{
-                          item.planUserInfo.plannedDate | date: "dd/MM/yyyy"
-                        }}</b>
-                      </div>
-                    </div>
-                    <div
-                      class="col-md-2 text-right"
-                      *ngIf="
-                        item.statusName == 'PENDING' &&
-                        permission.isGranted(
-                          ResourceRequest_PlanNewResourceForRequest
-                        )
-                      "
-                    >
-                      <i
-                        class="fa fa-edit"
-                        (click)="showModalPlanUser(item)"
-                      ></i>
-                    </div>
-                  </div>
-                </td>
-                <td
-                  style="
-                    white-space: normal;
-                    min-width: 250px;
-                    padding: 12px 0;
-                  "
-                >
-                  <div class="row justify-content-between flex-nowrap">
-                    <div class="mx-2">
-                      <pre
-                      (click) = "showDescription(item.pmNote);$event.stopPropagation()"
-                        class="mb-0 p-0 ml-2 max-line"
-                        PrjResizeContent [collapseLine]="5"
+                    <div class="d-flex justify-content-between mt-4">
+                      <span
                         style="
-                          white-space: pre-line;
-                          font-family: sans-serif;
-                          align-self: flex-start;
-                          line-height: initial;
+                          display: inline-block;
+                          max-width: 270px;
+                          text-align: left;
+                        "
+                        >{{ item.createAt | date : "d/MM/y HH:mm " }} by
+                        {{ item.userRequestName }}</span
+                      >
+                      <span
+                        >Time need: {{ item.timeNeed | date : "d/MM/y" }}</span
+                      >
+                    </div>
+                  </td>
+                  <td style="padding: 12px 4px; width: 120px">
+                    <p *ngFor="let skill of item.skills" class="m-0">
+                      - {{ skill.name }}
+                    </p>
+                  </td>
+                  <td style="padding: 12px 8px; width: 100px">
+                    <span *ngIf="item.code">{{ item.code }}</span>
+                  </td>
+                  <td style="min-width: 245px; max-width: 245px">
+                    <div class="row">
+                      <div class="col-md-10">
+                        <div
+                          *ngIf="item.billUserInfo"
+                          class="d-flex align-items-start"
+                          style="flex-direction: column"
+                        >
+                          <p
+                            class="m-0 pointer"
+                            (click)="
+                              openPopupSkill(
+                                item.billUserInfo.employee,
+                                item.billUserInfo.userSkill
+                              )
+                            "
+                          >
+                            <strong>
+                              {{ item.billUserInfo.employee.fullName }}</strong
+                            >
+                          </p>
+                          <p class="m-0">
+                            <span
+                              *ngIf="
+                                item.billUserInfo.employee.branchDisplayName
+                              "
+                              class="mr-1 badge text-white"
+                              [style.backgroundColor]="
+                                item.billUserInfo.employee.branchColor
+                              "
+                            >
+                              {{ item.billUserInfo.employee.branchDisplayName }}
+                            </span>
+                            <span
+                              *ngIf="item.billUserInfo.employee.userTypeName"
+                              [ngClass]="
+                                APP_CONST.userTypeStyle[
+                                  item.billUserInfo.employee.userType
+                                ]
+                              "
+                            >
+                              {{ item.billUserInfo.employee.userTypeName }}
+                            </span>
+                            <span
+                              *ngIf="item.billUserInfo.employee.levelName"
+                              class="ml-1 badge text-white"
+                              [ngStyle]="
+                                Utils.getUserLevel(
+                                  item.billUserInfo.employee.userLevel
+                                ).style
+                              "
+                            >
+                              {{ item.billUserInfo.employee.levelName }}
+                            </span>
+                            <span
+                              *ngIf="item.billUserInfo.employee.positionName"
+                              class="ml-1 badge text-white"
+                              [style.backgroundColor]="
+                                item.billUserInfo.employee.positionColor
+                              "
+                            >
+                              {{ item.billUserInfo.employee.positionName }}
+                            </span>
+                          </p>
+                          <b>{{
+                            item.billUserInfo.plannedDate | date : "dd/MM/yyyy"
+                          }}</b>
+                        </div>
+                      </div>
+                      <div
+                        class="col-md-2 text-right"
+                        *ngIf="
+                          item.statusName == 'PENDING' &&
+                          permission.isGranted(
+                            ResourceRequest_CreateBillResourceForRequest
+                          )
                         "
                       >
+                        <i
+                          class="fa fa-edit"
+                          (click)="showModalCvUser(item)"
+                        ></i>
+                      </div>
+                    </div>
+                  </td>
+                  <td style="min-width: 245px; max-width: 245px">
+                    <div class="row">
+                      <div class="col-md-10">
+                        <div
+                          *ngIf="item.planUserInfo"
+                          class="d-flex align-items-start"
+                          style="flex-direction: column"
+                        >
+                          <p
+                            class="m-0 pointer"
+                            (click)="
+                              openPopupSkill(
+                                item.planUserInfo.employee,
+                                item.planUserInfo.userSkill
+                              )
+                            "
+                          >
+                            <strong>{{
+                              item.planUserInfo.employee.fullName
+                            }}</strong>
+                          </p>
+                          <p class="m-0">
+                            <span
+                              *ngIf="
+                                item.planUserInfo.employee.branchDisplayName
+                              "
+                              class="mr-1 badge badge text-white"
+                              [style.backgroundColor]="
+                                item.planUserInfo.employee.branchColor
+                              "
+                            >
+                              {{ item.planUserInfo.employee.branchDisplayName }}
+                            </span>
+                            <span
+                              *ngIf="item.planUserInfo.employee.userTypeName"
+                              [ngClass]="
+                                APP_CONST.userTypeStyle[
+                                  item.planUserInfo.employee.userType
+                                ]
+                              "
+                            >
+                              {{ item.planUserInfo.employee.userTypeName }}
+                            </span>
+                            <span
+                              *ngIf="item.planUserInfo.employee.levelName"
+                              class="ml-1 badge text-white"
+                              [ngStyle]="
+                                Utils.getUserLevel(
+                                  item.planUserInfo.employee.userLevel
+                                ).style
+                              "
+                            >
+                              {{ item.planUserInfo.employee.levelName }}
+                            </span>
+                            <span
+                              *ngIf="item.planUserInfo.employee.positionName"
+                              class="ml-1 badge text-white"
+                              [style.backgroundColor]="
+                                item.planUserInfo.employee.positionColor
+                              "
+                            >
+                              {{ item.planUserInfo.employee.positionName }}
+                            </span>
+                          </p>
+                          <b>{{
+                            item.planUserInfo.plannedDate | date : "dd/MM/yyyy"
+                          }}</b>
+                        </div>
+                      </div>
+                      <div
+                        class="col-md-2 text-right"
+                        *ngIf="
+                          item.statusName == 'PENDING' &&
+                          permission.isGranted(
+                            ResourceRequest_PlanNewResourceForRequest
+                          )
+                        "
+                      >
+                        <i
+                          class="fa fa-edit"
+                          (click)="showModalPlanUser(item)"
+                        ></i>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    style="
+                      white-space: normal;
+                      min-width: 250px;
+                      padding: 12px 0;
+                    "
+                  >
+                    <div class="row justify-content-between flex-nowrap">
+                      <div class="mx-2">
+                        <pre
+                          (click)="
+                            showDescription(item.pmNote);
+                            $event.stopPropagation()
+                          "
+                          class="mb-0 p-0 ml-2 max-line"
+                          PrjResizeContent
+                          [collapseLine]="5"
+                          style="
+                            white-space: pre-line;
+                            font-family: sans-serif;
+                            align-self: flex-start;
+                            line-height: initial;
+                          "
+                        >
                                             {{ item.pmNote }}
                                         </pre
+                        >
+                      </div>
+                      <div
+                        class="mr-2"
+                        *ngIf="permission.isGranted(ResourceRequest_EditPmNote)"
                       >
+                        <i
+                          class="fa fa-edit"
+                          (click)="
+                            openModal(
+                              item.name,
+                              'Description',
+                              item.pmNote,
+                              item.id
+                            )
+                          "
+                        ></i>
+                      </div>
                     </div>
-                    <div
-                      class="mr-2"
-                      *ngIf="permission.isGranted(ResourceRequest_EditPmNote)"
-                    >
-                      <i
-                        class="fa fa-edit"
-                        (click)="
-                          openModal(item.name, 'Description', item.pmNote, item.id)
-                        "
-                      ></i>
-                    </div>
-                  </div>
-                </td>
-                <td
-                  style="
-                    white-space: normal;
-                    min-width: 180px;
-                    padding: 12px 0;
-                  "
-                >
-                  <div class="row">
-                    <div class="col-md-10">
-                      <pre
-                        class="mb-0 p-0 ml-2 max-line-content-3"
-                        PrjResizeContent [collapseLine]="3"
-                        style="
-                          white-space: pre-line;
-                          font-family: sans-serif;
-                          align-self: flex-start;
-                          line-height: initial;
-                        "
-                      >
-                                            {{ item.dmNote }}
-                      </pre>
-                    </div>
-                    <div
-                      class="col-md-2"
-                      *ngIf="permission.isGranted(ResourceRequest_EditDmNote)"
-                    >
-                      <i
-                        class="fa fa-edit"
-                        (click)="
-                          openModal(item.name, 'Note', item.dmNote, item.id)
-                        "
-                      ></i>
-                    </div>
-                  </div>
-                </td>
-                <td class="text-center action-request-resource-tab">
-                  <button
-                    mat-button
-                    [matMenuTriggerFor]="menu"
+                  </td>
+                  <td
+                    style="
+                      white-space: normal;
+                      min-width: 180px;
+                      padding: 12px 0;
+                    "
                   >
-                    <i class="fas fa-bars fa-lg"></i>
-                  </button>
-                  <mat-menu #menu="matMenu" class="p-2">
-                    <!-- case 1: Status is inprogress -->
-                    <div>
-                      <button
-                        *ngIf="isShowBtnSetDone(item)"
-                        class="btn btn-block text-left"
-                        mat-button
-                        (click)="setDoneRequest(item)"
+                    <div class="row">
+                      <div class="col-md-10">
+                        <pre
+                          class="mb-0 p-0 ml-2 max-line-content-3"
+                          PrjResizeContent
+                          [collapseLine]="3"
+                          style="
+                            white-space: pre-line;
+                            font-family: sans-serif;
+                            align-self: flex-start;
+                            line-height: initial;
+                          "
+                        >
+                                            {{ item.dmNote }}
+                      </pre
+                        >
+                      </div>
+                      <div
+                        class="col-md-2"
+                        *ngIf="permission.isGranted(ResourceRequest_EditDmNote)"
                       >
                         <i
-                          class="fa fa-fw fa-check text-success vertical-align-baseline"
+                          class="fa fa-edit"
+                          (click)="
+                            openModal(item.name, 'Note', item.dmNote, item.id)
+                          "
                         ></i>
-                        Set Done
-                      </button>
-
-                      <button
-                        *ngIf="isShowBtnCancel(item)"
-                        class="btn btn-block text-left"
-                        mat-button
-                        (click)="cancelRequest(item)"
-                      >
-                        <i
-                          class="fa fa-fw fa-times text-warning vertical-align-baseline"
-                        ></i>
-                        Cancel
-                      </button>
-
-                      <br />
-                      <button
-                        class="btn btn-block text-left"
-                        mat-button
-                        *ngIf="isShowBtnEdit(item)"
-                        (click)="editRequest(item)"
-                      >
-                        <i class="fa fa-fw fa-edit vertical-align-baseline"></i>
-                        Edit
-                      </button>
-
-                      <button
-                        *ngIf="item.isRecruitmentSend && item.recruitmentUrl"
-                        class="btn btn-block text-left"
-                        (click)="viewRecruitment(item.recruitmentUrl)"
-                        mat-button
-                      >
-                        <i class="fa fa-fw fa-eye vertical-align-baseline"></i>
-                        View recruitment
-                      </button>
-
-                      <button
-                        *ngIf="isShowBtnDelete(item)"
-                        class="btn btn-block text-left"
-                        mat-button
-                        (click)="delete(item)"
-                      >
-                        <i
-                          class="fa fa-fw fa-trash text-danger vertical-align-baseline"
-                        ></i>
-                        Delete
-                      </button>
-
-                      <button
-                        *ngIf="isShowBtnSendRecruitment(item)"
-                        class="btn btn-block text-left"
-                        mat-button
-                        (click)="sendRecruitment(item)"
-                      >
-                        <i
-                          class="fa fa-fw fa-paper-plane text-primary vertical-align-baseline"
-                        ></i>
-                        Send recruitment
-                      </button>
+                      </div>
                     </div>
-                  </mat-menu>
-                  <span *ngIf="item.isRecruitmentSend== true"
-                        (click)="viewRecruitment(item.recruitmentUrl)"
-                        class="tl-link">
-                    #{{sliceUrl(item.recruitmentUrl)}}
-                  </span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                  </td>
+                  <td class="text-center action-request-resource-tab">
+                    <button mat-button [matMenuTriggerFor]="menu">
+                      <i class="fas fa-bars fa-lg"></i>
+                    </button>
+                    <mat-menu #menu="matMenu" class="p-2">
+                      <!-- case 1: Status is inprogress -->
+                      <div>
+                        <button
+                          *ngIf="isShowBtnSetDone(item)"
+                          class="btn btn-block text-left"
+                          mat-button
+                          (click)="setDoneRequest(item)"
+                        >
+                          <i
+                            class="fa fa-fw fa-check text-success vertical-align-baseline"
+                          ></i>
+                          Set Done
+                        </button>
+
+                        <button
+                          *ngIf="isShowBtnCancel(item)"
+                          class="btn btn-block text-left"
+                          mat-button
+                          (click)="cancelRequest(item)"
+                        >
+                          <i
+                            class="fa fa-fw fa-times text-warning vertical-align-baseline"
+                          ></i>
+                          Cancel
+                        </button>
+
+                        <br />
+                        <button
+                          class="btn btn-block text-left"
+                          mat-button
+                          *ngIf="isShowBtnEdit(item)"
+                          (click)="editRequest(item)"
+                        >
+                          <i
+                            class="fa fa-fw fa-edit vertical-align-baseline"
+                          ></i>
+                          Edit
+                        </button>
+
+                        <button
+                          *ngIf="item.isRecruitmentSend && item.recruitmentUrl"
+                          class="btn btn-block text-left"
+                          (click)="viewRecruitment(item.recruitmentUrl)"
+                          mat-button
+                        >
+                          <i
+                            class="fa fa-fw fa-eye vertical-align-baseline"
+                          ></i>
+                          View recruitment
+                        </button>
+
+                        <button
+                          *ngIf="isShowBtnDelete(item)"
+                          class="btn btn-block text-left"
+                          mat-button
+                          (click)="delete(item)"
+                        >
+                          <i
+                            class="fa fa-fw fa-trash text-danger vertical-align-baseline"
+                          ></i>
+                          Delete
+                        </button>
+
+                        <button
+                          *ngIf="isShowBtnSendRecruitment(item)"
+                          class="btn btn-block text-left"
+                          mat-button
+                          (click)="sendRecruitment(item)"
+                        >
+                          <i
+                            class="fa fa-fw fa-paper-plane text-primary vertical-align-baseline"
+                          ></i>
+                          Send recruitment
+                        </button>
+                      </div>
+                    </mat-menu>
+                    <span
+                      *ngIf="item.isRecruitmentSend == true"
+                      (click)="viewRecruitment(item.recruitmentUrl)"
+                      class="tl-link"
+                    >
+                      #{{ sliceUrl(item.recruitmentUrl) }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
 
           <!-- </div> -->
@@ -668,7 +761,7 @@
             </div>
             <div class="col-sm-4 col-12 text-center">
               <p class="mb-0 my-2 total-rows">
-                {{ "TotalRecordsCount" | localize: totalItems }}
+                {{ "TotalRecordsCount" | localize : totalItems }}
               </p>
             </div>
             <div class="col-sm-4 col-12">
@@ -687,7 +780,7 @@
   </section>
 
   <!-- The Modal Update Note-->
-  <div class="modal" id="myModal" [ngStyle]="{ display: isShowModal }">
+  <div class="modal" id="myModal" [ngStyle]="{ display: isShowModal }" cdkDrag>
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <!-- Modal Header -->
@@ -709,7 +802,7 @@
             <div class="col-md-10">
               <textarea
                 rows="6"
-                style="max-height: 550px;height: 550px;min-height: 200px;"
+                style="max-height: 550px; height: 550px; min-height: 200px"
                 placeholder="{{ typePM }}"
                 name="note"
                 type="text"

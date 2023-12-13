@@ -1,167 +1,276 @@
-<section class="content px-2 mt-2" >
-    <div class="container-fluid">
-        <div class="">
-            <div class="">
-                <div class="input-group" style="display: block;">
-                    <div style="width: 100%;" class="row justify-content-between">
-                        <div class="col-12 col-md-4 mt-1 d-flex align-items-center mb-3">
-                            <div class="input-group">
-                                <input type="text" class="form-control" name="keyword" placeholder="Search"
-                                    [(ngModel)]="searchText" (keyup.enter)="getDataPage(1)" />
-                                <div class="input-group-prepend">
-                                    <button type="button" class="btn bg-blue" (click)="getDataPage(1)">
-                                        <i class="fas fa-search"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class=" mt-1 d-flex align-items-center mb-3">
-                            <mat-form-field appearance="outline" class="flex-grow-1" style="width: 180px;">
-                                <mat-label>Plan Type</mat-label>
-                                <mat-select placeholder="Select plan type" [(ngModel)]="selectedIsPlanned" (selectionChange)="getDataPage(1)">
-                                    <mat-option *ngFor="let plan of planStatusList" [value]="plan.value">
-                                        {{plan.displayName}}
-                                    </mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                            <i class="fas fa-times fa-lg ml-2 mt-2" *ngIf="selectedIsPlanned > 1" (click)="applyPlanTypeFilter()"></i>
-                        </div>
-                        <div class="mt-1 d-flex align-items-center mb-3">
-                            <app-date-selector [dropdownData]="listDateOptions"
-                            [defaultValue]="defaultValue"
-                            [fDate] = "birthdayFromDate"
-                            [tDate] = "birthdayToDate"
-                            [mode]="APP_ENUM.DateFilterMode.HomeMonthYear"
-                            (onDateSelectorChange)="handleDateSelectorChange($event)">
-                            </app-date-selector>
-                        </div>
-                        <div class="mt-1 d-flex align-items-center mb-3">
-                            <mat-form-field appearance="outline" class="flex-grow-1" style="width: 180px;">
-                                <mat-label>Project</mat-label>
-                                <mat-select placeholder="Select user type" [(ngModel)]="projectId" (selectionChange)="filerByProject()">
-                                    <mat-form-field class="w-100 px-3 "
-                                    style="position: sticky; top: 0; z-index: 2; background-color: white;">
-                                    <input style="height: 30px; padding: 5px 10px; "
-                                    matInput [(ngModel)]="searchProject"  placeholder="Search" #search
-                                    (keydown)="$event.stopPropagation()">
-                                  </mat-form-field>
-                                    <mat-option *ngFor="let item of projectList | listFilter:  'name' : searchProject" [value]="item.id">{{item.name}}</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                            <i style="margin-top: 0 !important;" class="fas fa-times fa-lg ml-2 mt-2" *ngIf="!!projectId" (click)="applyPlanFilter()"></i>
-                        </div>
-                        <div class=" mt-1 d-flex align-items-center mb-3">
-                            <mat-form-field appearance="outline" class="flex-grow-1" style="width: 180px;">
-                                <mat-label>Charge status</mat-label>
-                                <mat-select placeholder="Select user type" [(ngModel)]="chargeStatus" (selectionChange)="filerByChargeStatus()">
-                                    <mat-option *ngFor="let item of chargeStatusList" [value]="item.value">{{item.text}}</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </div>
-                    </div>
+<section class="content px-2 mt-2">
+  <div class="container-fluid">
+    <div class="">
+      <div class="">
+        <div class="input-group" style="display: block">
+          <div style="width: 100%" class="row justify-content-between">
+            <div class="col-12 col-md-4 mt-1 d-flex align-items-center mb-3">
+              <div class="input-group">
+                <input
+                  type="text"
+                  class="form-control"
+                  name="keyword"
+                  placeholder="Search"
+                  [(ngModel)]="searchText"
+                  (keyup.enter)="getDataPage(1)"
+                />
+                <div class="input-group-prepend">
+                  <button
+                    type="button"
+                    class="btn bg-blue"
+                    (click)="getDataPage(1)"
+                  >
+                    <i class="fas fa-search"></i>
+                  </button>
                 </div>
+              </div>
             </div>
 
-            <div class=" table-responsive py-4 all-resource-table">
-                <div class="fixTableHead">
-                    <table  style="border-collapse: collapse;" class="table text-nowrap">
-                        <thead class="bg-light">
-                            <tr style="border: none;">
-                                <th style="width:50px">#</th>
-                                <th>Bill accounts</th>
-                                <th style="width: 300px;">Projects</th>
-                                <th style="width: 130px;">Is charge</th>
-                                <th style="width: 130px;">Start date</th>
-                                <th style="width: 130px;">End date</th>
-                                <th>Note</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                             <ng-container  *ngFor="let item of billInfoList
-                             |paginate
-                             : {
-                             id: 'server',
-                             itemsPerPage: pageSize,
-                             currentPage: pageNumber,
-                             totalItems: totalItems
-                             }; let i= index">
-                                <tr>
-                                    <td [attr.rowspan]="item.projects.length+1" class="text-center"> {{ i + 1 + pageSize * (pageNumber - 1 ) }} </td>
-                                    <td [attr.rowspan]="item.projects.length+1" class="text-center"  style="width: 350px;"> <app-user-info [userData]="item.userInfor"> </app-user-info></td>
-                                </tr>
-                                <tr *ngFor="let project of item.projects ; let j=index">
-                                    <td style="width: 350px;">
-                                        <div class="d-flex flex-column">
-                                            <div>
-                                                <span *ngIf="checkTimeInFilterDate(project.startTime )" style="border-radius: 4px;padding: 2px 4px;" class="badge-success">Join</span>&nbsp;
-                                                <span *ngIf="checkTimeInFilterDate(project.endTime )" style="border-radius: 4px;padding: 2px 4px;" class="badge-danger">Out</span>&nbsp;
-                                                <strong>{{project.projectName}}</strong> &nbsp;
-                                                <span>{{project.billRole}}</span>&nbsp;
-
-                                            </div>
-                                            <div style="margin-top: 8px;margin-left: 8px;">
-                                                <span  *ngIf="checkTimeInFilterDate(project.startTime ) && !checkTimeInFilterDate(project.endTime )">{{ project.startTime | date:"dd-MM-yyyy" }}</span>
-                                                <span  *ngIf="!checkTimeInFilterDate(project.startTime ) && checkTimeInFilterDate(project.endTime )">{{ project.endTime | date:"dd-MM-yyyy" }}</span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td >
-                                        <span class="d-flex flex-column align-items-center">
-                                            <mat-checkbox color="primary" [disabled]="true" [(ngModel)]="project.isActive"></mat-checkbox>
-                                        </span>
-                                    </td>
-                                    <td><span class="d-flex flex-column align-items-center" [ngClass]="{redColor:checkTimeInFilterDate(project.startTime )}">{{ project.startTime | date:"dd-MM-yyyy" }}</span></td>
-                                    <td ><span class="d-flex flex-column align-items-center" [ngClass]="{redColor:checkTimeInFilterDate(project.endTime )}">{{ project.endTime | date:"dd-MM-yyyy" }}</span></td>
-                                    <td>
-                                        <span>{{project.note}}</span>
-                                    </td>
-                                </tr>
-                             </ng-container>
-                        </tbody>
-                    </table>
-                </div>
+            <div class="mt-1 d-flex align-items-center mb-3">
+              <mat-form-field
+                appearance="outline"
+                class="flex-grow-1"
+                style="width: 180px"
+              >
+                <mat-label>Project</mat-label>
+                <mat-select
+                  placeholder="Select user type"
+                  [(ngModel)]="projectId"
+                  (selectionChange)="filerByProject()"
+                >
+                  <mat-form-field
+                    class="w-100 px-3"
+                    style="
+                      position: sticky;
+                      top: 0;
+                      z-index: 2;
+                      background-color: white;
+                    "
+                  >
+                    <input
+                      style="height: 30px; padding: 5px 10px"
+                      matInput
+                      [(ngModel)]="searchProject"
+                      placeholder="Search"
+                      #search
+                      (keydown)="$event.stopPropagation()"
+                    />
+                  </mat-form-field>
+                  <mat-option
+                    *ngFor="
+                      let item of projectList
+                        | listFilter : 'name' : searchProject
+                    "
+                    [value]="item.id"
+                    >{{ item.name }}</mat-option
+                  >
+                </mat-select>
+              </mat-form-field>
+              <i
+                style="margin-top: 0 !important"
+                class="fas fa-times fa-lg ml-2 mt-2"
+                *ngIf="!!projectId"
+                (click)="applyPlanFilter()"
+              ></i>
             </div>
-            <div style="padding-top: 20px !important;" class="bg-light border-top pt-2">
-                <div class="row">
-                    <div class="col-sm-4 col-12 text-sm-left text-center">
-                        <button class="btn btn-secondary mb-2" (click)="refresh()">
-                            <i class="fas fa-redo-alt"></i>
-                        </button>
-                        <mat-form-field style="width: 20%;margin-left: 30px;">
-                            <mat-label>Number items</mat-label>
-                            <mat-select [(ngModel)]="pageSizeType" (ngModelChange)="changePageSize()">
-                                <mat-option [value]="5">
-                                    5
-                                </mat-option>
-                                <mat-option [value]="10">
-                                    10
-                                </mat-option>
-                                <mat-option [value]="20">
-                                    20
-                                </mat-option>
-                                <mat-option [value]="50">
-                                    50
-                                </mat-option>
-                                <mat-option [value]="100">
-                                    100
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                    </div>
-                    <div class="col-sm-4 col-12 text-center">
-                        <p class="mb-0 my-2">
-                            {{ "TotalRecordsCount" | localize: totalItems }}
-                        </p>
-                    </div>
-                    <div class="col-sm-4 col-12">
-                        <div class="float-sm-right m-auto">
-                            <abp-pagination-controls id="server" (pageChange)="getDataPage($event)">
-                            </abp-pagination-controls>
-                        </div>
-                    </div>
-                </div>
+            <div class="mt-1 d-flex align-items-center mb-3">
+              <mat-form-field appearance="outline" class="listStatus">
+                <mat-label>Project Type</mat-label>
+                <mat-select
+                  name="slt-project-type"
+                  [(ngModel)]="filterProjectType"
+                  name="project-type"
+                  (selectionChange)="getDataPage(1)"
+                >
+                  <mat-option
+                    *ngFor="let item of projectType"
+                    [value]="item.value"
+                  >
+                    {{ item.label }}</mat-option
+                  >
+                </mat-select>
+              </mat-form-field>
             </div>
+            <div class="mt-1 d-flex align-items-center mb-3">
+              <mat-form-field
+                appearance="outline"
+                class="flex-grow-1"
+                style="width: 180px"
+              >
+                <mat-label>Charge status</mat-label>
+                <mat-select
+                  placeholder="Select user type"
+                  [(ngModel)]="chargeStatus"
+                  (selectionChange)="filerByChargeStatus()"
+                >
+                  <mat-option
+                    *ngFor="let item of chargeStatusList"
+                    [value]="item.value"
+                    >{{ item.text }}</mat-option
+                  >
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
         </div>
-    </div>
-</section>
+      </div>
 
+      <div class="table-responsive py-4 all-resource-table">
+        <div class="fixTableHead">
+          <table style="border-collapse: collapse" class="table text-nowrap">
+            <thead class="bg-light">
+              <tr style="border: none">
+                <th style="width: 50px">#</th>
+                <th>Bill accounts</th>
+                <th style="width: 300px">Projects</th>
+                <th style="width: 130px">Is charge</th>
+                <th style="width: 130px">Start date</th>
+                <th style="width: 130px">End date</th>
+                <th>Note</th>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container
+                *ngFor="
+                  let item of billInfoList
+                    | paginate
+                      : {
+                          id: 'server',
+                          itemsPerPage: pageSize,
+                          currentPage: pageNumber,
+                          totalItems: totalItems
+                        };
+                  let i = index
+                "
+              >
+                <tr>
+                  <td
+                    [attr.rowspan]="item.projects.length + 1"
+                    class="text-center"
+                  >
+                    {{ i + 1 + pageSize * (pageNumber - 1) }}
+                  </td>
+                  <td
+                    [attr.rowspan]="item.projects.length + 1"
+                    class="text-center"
+                    style="width: 350px"
+                  >
+                    <app-user-info [userData]="item.userInfor"> </app-user-info>
+                  </td>
+                </tr>
+                <tr *ngFor="let project of item.projects; let j = index">
+                  <td style="width: 350px">
+                    <div class="d-flex flex-column">
+                      <div>
+                        <span
+                          *ngIf="checkTimeInFilterDate(project.startTime)"
+                          style="border-radius: 4px; padding: 2px 4px"
+                          class="badge-success"
+                          >Join</span
+                        >&nbsp;
+                        <span
+                          *ngIf="checkTimeInFilterDate(project.endTime)"
+                          style="border-radius: 4px; padding: 2px 4px"
+                          class="badge-danger"
+                          >Out</span
+                        >&nbsp;
+                        <strong>{{ project.projectName }}</strong> &nbsp;
+                        <span>{{ project.billRole }}</span
+                        >&nbsp;
+                      </div>
+                      <div style="margin-top: 8px; margin-left: 8px">
+                        <span
+                          *ngIf="
+                            checkTimeInFilterDate(project.startTime) &&
+                            !checkTimeInFilterDate(project.endTime)
+                          "
+                          >{{ project.startTime | date : "dd-MM-yyyy" }}</span
+                        >
+                        <span
+                          *ngIf="
+                            !checkTimeInFilterDate(project.startTime) &&
+                            checkTimeInFilterDate(project.endTime)
+                          "
+                          >{{ project.endTime | date : "dd-MM-yyyy" }}</span
+                        >
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="d-flex flex-column align-items-center">
+                      <mat-checkbox
+                        color="primary"
+                        [disabled]="true"
+                        [(ngModel)]="project.isActive"
+                      ></mat-checkbox>
+                    </span>
+                  </td>
+                  <td>
+                    <span
+                      class="d-flex flex-column align-items-center"
+                      [ngClass]="{
+                        redColor: checkTimeInFilterDate(project.startTime)
+                      }"
+                      >{{ project.startTime | date : "dd-MM-yyyy" }}</span
+                    >
+                  </td>
+                  <td>
+                    <span
+                      class="d-flex flex-column align-items-center"
+                      [ngClass]="{
+                        redColor: checkTimeInFilterDate(project.endTime)
+                      }"
+                      >{{ project.endTime | date : "dd-MM-yyyy" }}</span
+                    >
+                  </td>
+                  <td>
+                    <span>{{ project.note }}</span>
+                  </td>
+                </tr>
+              </ng-container>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div
+        style="padding-top: 20px !important"
+        class="bg-light border-top pt-2"
+      >
+        <div class="row">
+          <div class="col-sm-4 col-12 text-sm-left text-center">
+            <button class="btn btn-secondary mb-2" (click)="refresh()">
+              <i class="fas fa-redo-alt"></i>
+            </button>
+            <mat-form-field style="width: 20%; margin-left: 30px">
+              <mat-label>Number items</mat-label>
+              <mat-select
+                [(ngModel)]="pageSizeType"
+                (ngModelChange)="changePageSize()"
+              >
+                <mat-option [value]="5"> 5 </mat-option>
+                <mat-option [value]="10"> 10 </mat-option>
+                <mat-option [value]="20"> 20 </mat-option>
+                <mat-option [value]="50"> 50 </mat-option>
+                <mat-option [value]="100"> 100 </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col-sm-4 col-12 text-center">
+            <p class="mb-0 my-2">
+              {{ "TotalRecordsCount" | localize : totalItems }}
+            </p>
+          </div>
+          <div class="col-sm-4 col-12">
+            <div class="float-sm-right m-auto">
+              <abp-pagination-controls
+                id="server"
+                (pageChange)="getDataPage($event)"
+              >
+              </abp-pagination-controls>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

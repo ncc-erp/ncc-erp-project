@@ -745,7 +745,7 @@ namespace ProjectManagement.Services.ResourceManager
             SendKomu(sbKomuMessage, project.ProjectCode);
         }
 
-        public async Task<ProjectUserExt> GetPUExt(long id)
+        public async Task<ProjectUserExt> GetPUExt(long? id)
         {
             return await _workScope.GetAll<ProjectUser>()
                  .Where(s => s.Id == id)
@@ -778,8 +778,10 @@ namespace ProjectManagement.Services.ResourceManager
                  .FirstOrDefaultAsync();
         }
 
-        public async Task<ProjectUserExt> DeleteFuturePUAndNotify(long projectUserId)
+        public async Task<ProjectUserExt> DeleteFuturePUAndNotify(long? projectUserId)
         {
+            if (!projectUserId.HasValue)
+                return null;
             var puExt = await GetPUExt(projectUserId);
 
             if (puExt == null || puExt.PU == null)

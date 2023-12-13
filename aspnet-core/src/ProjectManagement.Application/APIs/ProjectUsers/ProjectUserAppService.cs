@@ -176,7 +176,7 @@ namespace ProjectManagement.APIs.ProjectUsers
 
         [HttpDelete]
         [AbpAuthorize()]
-        public async Task CancelResourcePlan(long projectUserId)
+        public async Task CancelResourcePlan(long? projectUserId)
         {
             await _resourceManager.DeleteFuturePUAndNotify(projectUserId);
         }

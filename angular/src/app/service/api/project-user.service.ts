@@ -86,9 +86,9 @@ export class ProjectUserService extends BaseApiService {
   }
 
 
-  CancelResourcePlan(id): Observable<any> {
+  CancelResourcePlan(id?): Observable<any> {
     return this.http.delete<any>(
-      this.rootUrl + `/CancelResourcePlan?projectUserId=${id}`,
+      this.rootUrl + `/CancelResourcePlan?` + (id == null ? `` : `projectUserId=${id}`),
     );
   }
 

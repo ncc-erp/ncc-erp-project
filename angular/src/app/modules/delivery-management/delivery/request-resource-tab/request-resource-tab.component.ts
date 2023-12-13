@@ -204,7 +204,7 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
     }
 
   cancelRequest(request: RequestResourceDto) {
-    const projectUserId = request.planUserInfo.projectUserId;
+    const projectUserId = request?.planUserInfo?.projectUserId;
     const cancelResourceRequest =  this.resourceRequestService.cancelResourceRequest(request.id);
     const cancelResourcePlan = this.projectUserService.CancelResourcePlan(projectUserId);
     const actions = [cancelResourceRequest, cancelResourcePlan];

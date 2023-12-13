@@ -49,14 +49,15 @@
                             <tr>
                               <th
                                 *ngFor="let thead of theadTable; let i = index"
+                                [style.width]="thead.width"
                                  class="text-center"
                               >
-                                <div class="row sortHeader" [ngStyle]="styleThead(thead)">
-                                  <div class="rsp-th-name text-left">
+                                <div class="row sortHeader justify-content-center" [ngStyle]="styleThead(thead)">
+                                  <div class="rsp-th-name">
                                     {{ thead.name }}
                                   </div>
                                   <div
-                                    class="rsp-th-sort text-right"
+                                    class="rsp-th-sort"
                                     *ngIf="i != 0 && thead.sortName"
                                     style="vertical-align: middle"
                                   >

@@ -30,13 +30,13 @@ export class BillAccountPlanComponent extends PagedListingComponentBase<any> imp
   public billInfoList = [];
   public projectList = [];
   public selectedIsPlanned: number;
-  public theadTable: THeadTable[] = [
+  public theadTable: THeadTable[] = [ 
     { name: '#' },
     { name: 'Bill Account', sortName: 'fullName', defaultSort: '' },
     { name: 'Projects', sortName: 'projectName', defaultSort: ''},
-    { name: 'Is charge', width: "15%" },
-    { name: 'Start date' },
-    { name: 'End date' },
+    { name: 'Is charge', width: "120px" },
+    { name: 'Start date', width: "120px" },
+    { name: 'End date', width: "120px" },
     { name: 'Note' },
   ]
   projectType = [

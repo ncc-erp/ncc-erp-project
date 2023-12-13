@@ -778,9 +778,9 @@ namespace ProjectManagement.Services.ResourceManager
                  .FirstOrDefaultAsync();
         }
 
-        public async Task<ProjectUserExt> DeleteFuturePUAndNotify(long? projectUserId)
+        public async Task<ProjectUserExt> DeleteFuturePUAndNotify(long projectUserId)
         {
-            if (!projectUserId.HasValue)
+            if (projectUserId == default)
                 return null;
             var puExt = await GetPUExt(projectUserId);
 

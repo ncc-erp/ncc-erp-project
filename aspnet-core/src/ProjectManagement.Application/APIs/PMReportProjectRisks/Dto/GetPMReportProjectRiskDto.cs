@@ -13,5 +13,6 @@ namespace ProjectManagement.APIs.PMReportProjectRisks.Dto
         public PMReportProjectRiskStatus Status { get; set; }
         public DateTime CreatedAt { get; set; }
         public Priority Priority { get; set; }
+        public int TotalWeekAgo { get; set; }
     }
 }

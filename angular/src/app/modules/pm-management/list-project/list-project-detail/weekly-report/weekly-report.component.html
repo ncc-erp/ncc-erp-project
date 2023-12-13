@@ -439,6 +439,13 @@
                                              style="border-radius: 99px; padding: 1px 7px;font-size: 12px; font-weight: 700;"
                                             [ngClass]="APP_CONST.priorityRisk[problem.priority] "
                                             >{{ priorityList[problem.priority] }}</span>
+                                            <div>
+                                                <div style="font-size: 15px;" *ngIf="problem.totalWeekAgo>1">
+                                                    <strong
+                                                        class="text-danger">{{(problem.totalWeekAgo/7).toFixed()}}
+                                                    </strong> weeks ago
+                                                </div>
+                                            </div>
                                     </td>
                                     <td class="text-center">
                                         <span

@@ -3,6 +3,7 @@ using Abp.UI;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NccCore.Extension;
+using NccCore.Uitls;
 using ProjectManagement.APIs.PMReportProjectRisks.Dto;
 using ProjectManagement.Authorization;
 using ProjectManagement.Entities;
@@ -35,6 +36,7 @@ namespace ProjectManagement.APIs.PMReportProjectRisks
                             Status = prpi.Status,
                             Priority = prpi.Priority,
                             CreatedAt = prpi.CreationTime,
+                            TotalWeekAgo = (DateTimeUtils.GetNow() - prpi.CreationTime).Days,
                         }).ToListAsync();
             return await query;
         }

@@ -223,13 +223,7 @@ namespace ProjectManagement.APIs.ProjectUserBills
                         UserInfor = group.First().UserInfor,
                         Projects = group.Select(g => g.Project).ToList()
                     })
-                    .Where(x => x.Projects.Any(x => (
-                        input.StartDate <= x.EndTime && x.EndTime <= input.EndDate
-                        || input.StartDate <= x.StartTime && x.StartTime <= input.EndDate)))
-                    .WhereIf(input.JoinOutStatus == JoinOutStatus.IsJoin,
-                        x => x.Projects.Any(x => (input.StartDate <= x.StartTime && x.StartTime <= input.EndDate)))
-                    .WhereIf(input.JoinOutStatus == JoinOutStatus.IsOut,
-                        x => x.Projects.Any(x => (input.StartDate <= x.EndTime && x.EndTime <= input.EndDate))).AsQueryable();
+                    .AsQueryable();
             return projectUserBills.GetGridResultSync(projectUserBills, input.GirdParam);
         }
 
@@ -286,17 +280,7 @@ namespace ProjectManagement.APIs.ProjectUserBills
                     {
                         UserInfor = group.First().UserInfor,
                         Projects = group.Select(g => g.Project).ToList()
-                    })
-                    .WhereIf(input.PlanStatus == PlanStatus.AllPlan, 
-                        x => x.Projects.Any(x => (input.StartDate <= x.EndTime && x.EndTime <= input.EndDate)
-                         || (input.StartDate <= x.StartTime && x.StartTime <= input.EndDate)))
-                    .WhereIf(input.PlanStatus == PlanStatus.PlanningJoin,
-                        x => x.Projects.Any(x => input.StartDate <= x.StartTime && x.StartTime <= input.EndDate))
-                    .WhereIf(input.PlanStatus == PlanStatus.PlanningOut,
-                        x => x.Projects.Any(x => input.StartDate <= x.EndTime && x.EndTime <= input.EndDate))
-                    .WhereIf(input.PlanStatus == PlanStatus.NoPlan,
-                        x => !x.Projects.Any(x => (input.StartDate <= x.EndTime && x.EndTime <= input.EndDate)
-                         || (input.StartDate <= x.StartTime && x.StartTime <= input.EndDate)))
+                    })                  
                     .AsQueryable();
             return projectUserBills.GetGridResultSync(projectUserBills, input.GirdParam);
         }

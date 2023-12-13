@@ -24,6 +24,8 @@ namespace ProjectManagement.APIs.ProjectUserBills.Dto
         public string AvatarPath { get; set; }
         [ApplySearchAttribute]
         public string FullName { get; set; }
+        public string AccountName { get; set; }
+        public string BillAccountName => string.IsNullOrEmpty(AccountName) ? FullName : AccountName;
         public Branch Branch { get; set; }
         public string BranchColor { get; set; }
         public string BranchDisplayName { get; set; }
@@ -50,6 +52,9 @@ namespace ProjectManagement.APIs.ProjectUserBills.Dto
         public string shadowNote { get; set; }
         public bool isActive { get; set; }
         public ChargeType? ChargeType { get; set; }
+        public string FullName { get; set; }
+        public string BillAccountName => string.IsNullOrEmpty(AccountName) ? FullName : AccountName;
+        public string ProjectCode { get; set; }
     }
 
     public class InputGetBillInfoDto
@@ -58,9 +63,6 @@ namespace ProjectManagement.APIs.ProjectUserBills.Dto
         public long? ProjectId { get; set; }
         public JoinOutStatus? JoinOutStatus { get; set; }
         public ChargeStatus? ChargeStatus { get; set; }
-        public PlanStatus? PlanStatus { get; set; }
-        public DateTime StartDate { get; set; }
-        public DateTime? EndDate { get; set; }
         public GridParam GirdParam { get; set; }
     }
 

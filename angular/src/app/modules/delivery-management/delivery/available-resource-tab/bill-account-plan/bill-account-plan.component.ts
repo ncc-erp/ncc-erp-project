@@ -7,6 +7,7 @@ import { APP_ENUMS } from '@shared/AppEnums';
 import { PagedListingComponentBase, PagedRequestDto } from '@shared/paged-listing-component-base';
 import { catchError } from 'rxjs/operators';
 import {PlanningBillInfoService} from '../../../../../service/api/bill-account-plan.service'
+import { THeadTable } from '../../request-resource-tab/request-resource-tab.component';
 
 
 @Component({
@@ -29,6 +30,15 @@ export class BillAccountPlanComponent extends PagedListingComponentBase<any> imp
   public billInfoList = [];
   public projectList = [];
   public selectedIsPlanned: number;
+  public theadTable: THeadTable[] = [
+    { name: '#' },
+    { name: 'Bill Account', sortName: 'fullName', defaultSort: '' },
+    { name: 'Projects', sortName: 'projectName', defaultSort: ''},
+    { name: 'Is charge', width: "15%" },
+    { name: 'Start date' },
+    { name: 'End date' },
+    { name: 'Note' },
+  ]
   projectType = [
     { text: "All", value: APP_ENUMS.PlanType.ALL },
     { text: "Join", value: APP_ENUMS.PlanType.JOIN },
@@ -64,10 +74,7 @@ export class BillAccountPlanComponent extends PagedListingComponentBase<any> imp
         this.projectList = data.result;
       });
     var date = new Date();
-    this.filterFromDate = new Date(date.getFullYear(), date.getMonth(), 1).toDateString();
-    this.filterToDate = new Date(date.getFullYear(), date.getMonth() + 1, 0).toDateString();
-    this.birthdayFromDate = this.filterFromDate;
-    this.birthdayToDate = this.filterToDate;
+    this.refresh();
   }
   public listDateOptions = [];
   public defaultValue = APP_ENUMS.DATE_TIME_OPTIONS.Month;
@@ -145,6 +152,57 @@ export class BillAccountPlanComponent extends PagedListingComponentBase<any> imp
     this.selectedIsPlanned = APP_ENUMS.PlanStatus.All;
     this.isFilterSelected = false;
     this.getDataPage(1);
+  }
+
+  sortTable(event: any) {
+    this.sortable = event
+    this.changeSortableByName(this.sortable.sort, this.sortable.typeSort,this.sortable.sortDirection)
+    this.refresh()
+  }
+
+  changeSortableByName(sort: string, sortType: string,sortDirection?:number) {
+    if(!sortType){
+      delete this.sortResource[sort]
+    }
+    else{
+      this.sortResource[sort] = sortDirection
+    }
+    this.ref.detectChanges()
+  }
+
+  styleThead(item: any) {
+    return {
+      width: item.width,
+      height: item.height
+    }
+  }
+
+  viewProjectDetail(project){
+    let routingToUrl: string = ''
+    if( project.projectType == 5 ){
+      routingToUrl = (this.permission.isGranted(this.Projects_TrainingProjects_ProjectDetail_TabWeeklyReport)
+      && this.permission.isGranted(this.Projects_TrainingProjects_ProjectDetail_TabWeeklyReport_View))
+     ? "/app/training-project-detail/training-weekly-report" : "/app/training-project-detail/training-project-general"
+    }
+
+    else if ( project.projectType == 3){
+      routingToUrl= (this.permission.isGranted(this.Projects_ProductProjects_ProjectDetail_TabWeeklyReport)
+     && this.permission.isGranted(this.Projects_ProductProjects_ProjectDetail_TabWeeklyReport_View))
+    ? "/app/product-project-detail/product-weekly-report" : "/app/product-project-detail/product-project-general"
+    }
+
+    else {
+      routingToUrl = "/app/list-project-detail/project-bill-tab"
+    }
+    const url = this.router.serializeUrl(this.router.createUrlTree([routingToUrl], {
+      queryParams: {
+        id: project.projectId,
+        type: project.projectType,
+        projectName: project.projectName,
+        projectCode: project.projectCode
+      }
+    }));
+    return url;
   }
 }
 

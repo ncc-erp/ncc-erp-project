@@ -1,22 +1,34 @@
-import { Component, EventEmitter, Injector, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Injector,
+  Input,
+  OnInit,
+  Output,
+} from "@angular/core";
 
-import * as _moment from 'moment';
-import { FormControl } from '@angular/forms';
-import * as moment from 'moment';
-import { APP_ENUMS } from '@shared/AppEnums';
-import { PagedListingComponentBase, PagedRequestDto } from '@shared/paged-listing-component-base';
-import { catchError } from 'rxjs/operators';
-import {PlanningBillInfoService} from '../../../../../service/api/bill-account-plan.service'
-
+import * as _moment from "moment";
+import { FormControl } from "@angular/forms";
+import * as moment from "moment";
+import { APP_ENUMS } from "@shared/AppEnums";
+import {
+  PagedListingComponentBase,
+  PagedRequestDto,
+} from "@shared/paged-listing-component-base";
+import { catchError } from "rxjs/operators";
+import { PlanningBillInfoService } from "../../../../../service/api/bill-account-plan.service";
 
 @Component({
-  selector: 'app-bill-account-plan',
-  templateUrl: './bill-account-plan.component.html',
-  styleUrls: ['./bill-account-plan.component.css'],
+  selector: "app-bill-account-plan",
+  templateUrl: "./bill-account-plan.component.html",
+  styleUrls: ["./bill-account-plan.component.css"],
 })
-export class BillAccountPlanComponent extends PagedListingComponentBase<any> implements OnInit {
-  APP_ENUM = APP_ENUMS
-  @Output() onDateSelectorChange = new EventEmitter()
+export class BillAccountPlanComponent
+  extends PagedListingComponentBase<any>
+  implements OnInit
+{
+  APP_ENUM = APP_ENUMS;
+  @Output() onDateSelectorChange = new EventEmitter();
 
   searchProject: string = "";
   date = new FormControl(moment());
@@ -30,15 +42,24 @@ export class BillAccountPlanComponent extends PagedListingComponentBase<any> imp
   public projectList = [];
   public selectedIsPlanned: number;
   projectType = [
-    { text: "All", value: APP_ENUMS.PlanType.ALL },
-    { text: "Join", value: APP_ENUMS.PlanType.JOIN },
-    { text: "Out", value: APP_ENUMS.PlanType.OUT },
+    {
+      label: "All",
+      value: this.APP_ENUM.FilterProjectType.All,
+    },
+    {
+      label: "Main",
+      value: false,
+    },
+    {
+      label: "Sub",
+      value: true,
+    },
   ];
 
   chargeStatusList = [
     { text: "All", value: APP_ENUMS.ChargeStatus.All },
-    { text: "IsCharge", value: APP_ENUMS.ChargeStatus.IsCharge },
-    { text: "IsNotCharge", value: APP_ENUMS.ChargeStatus.IsNotCharge },
+    { text: "Charge", value: APP_ENUMS.ChargeStatus.IsCharge },
+    { text: "NoCharge", value: APP_ENUMS.ChargeStatus.IsNotCharge },
   ];
 
   planStatusList = [
@@ -64,8 +85,16 @@ export class BillAccountPlanComponent extends PagedListingComponentBase<any> imp
         this.projectList = data.result;
       });
     var date = new Date();
-    this.filterFromDate = new Date(date.getFullYear(), date.getMonth(), 1).toDateString();
-    this.filterToDate = new Date(date.getFullYear(), date.getMonth() + 1, 0).toDateString();
+    this.filterFromDate = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      1
+    ).toDateString();
+    this.filterToDate = new Date(
+      date.getFullYear(),
+      date.getMonth() + 1,
+      0
+    ).toDateString();
     this.birthdayFromDate = this.filterFromDate;
     this.birthdayToDate = this.filterToDate;
   }
@@ -74,8 +103,12 @@ export class BillAccountPlanComponent extends PagedListingComponentBase<any> imp
   public birthdayFromDate: string;
   public birthdayToDate: string;
 
-  protected list(request: PagedRequestDto, pageNumber: number, finishedCallback: Function, skill?): void {
-
+  protected list(
+    request: PagedRequestDto,
+    pageNumber: number,
+    finishedCallback: Function,
+    skill?
+  ): void {
     const requestBody: any = {
       searchText: this.searchText,
       projectId: this.projectId,
@@ -128,7 +161,10 @@ export class BillAccountPlanComponent extends PagedListingComponentBase<any> imp
   }
 
   checkTimeInFilterDate(time) {
-    if ( time >= this.filterFromDate && Date.parse(time) <= Date.parse(this.filterToDate)) {
+    if (
+      time >= this.filterFromDate &&
+      Date.parse(time) <= Date.parse(this.filterToDate)
+    ) {
       return true;
     } else {
       return false;
@@ -147,4 +183,3 @@ export class BillAccountPlanComponent extends PagedListingComponentBase<any> imp
     this.getDataPage(1);
   }
 }
-

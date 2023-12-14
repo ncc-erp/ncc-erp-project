@@ -919,6 +919,13 @@
                                                     <span
                                                         [ngClass]="APP_CONST.PMReportProjectIssueStatusStyle[riskStatusList[problem.status]] ">{{
                                                         riskStatusList[problem.status] }}</span>
+                                                        <div>
+                                                            <div style="font-size: 15px;" *ngIf="problem.totalWeekAgo>1">
+                                                                <strong
+                                                                    class="text-danger">{{(problem.totalWeekAgo/7).toFixed()}}
+                                                                </strong> weeks ago
+                                                            </div>
+                                                        </div>
                                                 </td>
                                             </tr>
                                         </tbody>

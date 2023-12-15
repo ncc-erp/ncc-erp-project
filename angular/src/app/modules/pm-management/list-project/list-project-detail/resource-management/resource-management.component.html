@@ -75,8 +75,8 @@
                 <tr>
                   <th class="stt">#</th>
                   <th style="width: 340px">Employee</th>
-                  <th style="width: 600px">Note</th>
-                  <th style="width: 60px">Skills</th>
+                  <th style="width: 200px">Note</th>
+                  <th style="width: 400px">Skills</th>
                   <th style="width: 90px">Role</th>
                   <th style="width: 90px">Start time</th>
                   <th style="width: 90px">Work type</th>
@@ -249,10 +249,7 @@
                               ></i>
                             </strong>
                           </p>
-                          <div
-                            style="white-space: pre-line"
-                            *ngIf="IsSkillNoteExist(user)"
-                          >
+                          <div *ngIf="IsSkillNoteExist(user)">
                             <strong>Note:</strong> {{ GetUserSkillNote(user) }}
                           </div>
                         </div>
@@ -289,6 +286,13 @@
                           ></i>
                         </div>
                       </div>
+                      <i
+                      class="fa fa-ellipsis-h d-flex"
+                      aria-hidden="true"
+                      *ngIf="user.userSkills.length > 3"
+                      (click)="filterSkillInfo(user)"
+                      style="cursor: pointer"
+                      ></i>
                     </span>
                   </td>
 
@@ -677,10 +681,7 @@
                               ></i>
                             </strong>
                           </p>
-                          <div
-                            style="white-space: pre-line"
-                            *ngIf="IsSkillNoteExist(user)"
-                          >
+                          <div *ngIf="IsSkillNoteExist(user)">
                             <strong>Note:</strong> {{ GetUserSkillNote(user) }}
                           </div>
                         </div>

@@ -3,8 +3,8 @@
         <div class="">
             <div class="">
                 <div class="input-group" style="display: block;">
-                    <div style="width: 100%;" class="row justify-content-between">
-                        <div class="col-12 col-md-4 mt-1 d-flex align-items-center mb-3">
+                    <div style="width: 100%;" class="row">
+                        <div class="col-12 col-md-4 mt-1 d-flex align-items-center mb-3 ml-2">
                             <div class="input-group">
                                 <input type="text" class="form-control" name="keyword" placeholder="Search"
                                     [(ngModel)]="searchText" (keyup.enter)="getDataPage(1)" />
@@ -15,7 +15,7 @@
                                 </div>
                             </div>
                         </div>                       
-                        <div class="mt-1 d-flex align-items-center mb-3">
+                        <div class="mt-1 d-flex align-items-center mb-3 ml-2">
                             <mat-form-field appearance="outline" class="flex-grow-1" style="width: 180px;">
                                 <mat-label>Project</mat-label>
                                 <mat-select placeholder="Select user type" [(ngModel)]="projectId" (selectionChange)="filerByProject()">
@@ -30,7 +30,7 @@
                             </mat-form-field>
                             <i style="margin-top: 0 !important;" class="fas fa-times fa-lg ml-2 mt-2" *ngIf="!!projectId" (click)="applyPlanFilter()"></i>
                         </div>
-                        <div class=" mt-1 d-flex align-items-center mb-3">
+                        <div class=" mt-1 d-flex align-items-center mb-3 ml-2">
                             <mat-form-field appearance="outline" class="flex-grow-1" style="width: 180px;">
                                 <mat-label>Charge status</mat-label>
                                 <mat-select placeholder="Select user type" [(ngModel)]="chargeStatus" (selectionChange)="filerByChargeStatus()">
@@ -38,9 +38,19 @@
                                 </mat-select>
                             </mat-form-field>
                         </div>
+                        <div class=" mt-1 d-flex align-items-center mb-3 ml-2">
+                            <div style="margin-top: 10px;" class = "ml-2" >
+                                <mat-checkbox name="cbx-showLevel" [checked]="isHideLevel" (change)="showLevel($event.checked)" >Show Level</mat-checkbox>
+                            </div>
+                            <div style="margin-top: 10px;" class ="ml-2">
+                                <mat-checkbox name="cbx-showBillRate" [checked]="isHideBillRate" (change)="showBillRate($event.checked)" >Show Bill Rate</mat-checkbox>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+
+            
 
             <div class=" table-responsive py-4 all-resource-table">
                 <div class="fixTableHead">
@@ -87,7 +97,7 @@
                              }; let i= index">
                                 <tr>
                                     <td [attr.rowspan]="item.projects.length+1" class="text-center"> {{ i + 1 + pageSize * (pageNumber - 1 ) }} </td>
-                                    <td [attr.rowspan]="item.projects.length+1" class="text-center"  style="width: 350px;"> <app-user-info [userData]="item.userInfor"> </app-user-info></td>
+                                    <td [attr.rowspan]="item.projects.length+1" class="text-center"  style="width: 350px;"> <app-user-info [userData]="item.userInfor" [isHideLevel]="!isShowLevel" [isHideBillRate] = "!isShowBillRate"> </app-user-info></td>
                                 </tr>
                                 <tr *ngFor="let project of item.projects ; let j=index">
                                     <td style="width: 350px;">
@@ -99,7 +109,8 @@
                                                     <a href="{{viewProjectDetail(project)}}" class ="project-link">
                                                         <strong>{{project.projectName}}</strong>
                                                     </a>
-                                                    <span>Account Name: {{project.billAccountName}}</span>&nbsp;
+                                                    <span>Account Name: {{project.billAccountName}}</span>&nbsp;                                  
+                                                    <span *ngIf="isShowBillRate">Bill Rate: {{project.billRatePerChargeType}}</span>&nbsp;
                                                 </div>
 
                                             </div>
@@ -148,6 +159,12 @@
                                 </mat-option>
                                 <mat-option [value]="100">
                                     100
+                                </mat-option>
+                                <mat-option [value]="200">
+                                    200
+                                </mat-option>
+                                <mat-option [value]="300">
+                                    300
                                 </mat-option>
                             </mat-select>
                         </mat-form-field>

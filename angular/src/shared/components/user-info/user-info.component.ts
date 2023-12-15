@@ -20,6 +20,7 @@ export class UserInfoComponent extends AppComponentBase implements OnInit {
   @Input() isSmallerDiv: boolean = false;
   @Input() isChangeContentSize: boolean = false;
   @Input() isHideLevel: boolean = false;
+  @Input() isHideBillRate: boolean = false;
 
   public user: UserDto
   constructor(injector: Injector) {

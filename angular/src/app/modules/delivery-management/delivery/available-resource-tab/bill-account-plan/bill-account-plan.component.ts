@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Injector, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Injector, Input, OnInit, Output } from '@angular/core';
 
 import * as _moment from 'moment';
 import { FormControl } from '@angular/forms';
@@ -8,6 +8,7 @@ import { PagedListingComponentBase, PagedRequestDto } from '@shared/paged-listin
 import { catchError } from 'rxjs/operators';
 import {PlanningBillInfoService} from '../../../../../service/api/bill-account-plan.service'
 import { THeadTable } from '../../request-resource-tab/request-resource-tab.component';
+import { SortableModel } from '@shared/components/sortable/sortable.component';
 
 
 @Component({
@@ -24,6 +25,9 @@ export class BillAccountPlanComponent extends PagedListingComponentBase<any> imp
   dateYear = new FormControl(moment());
   planType = APP_ENUMS.PlanType.ALL;
   chargeStatus = APP_ENUMS.ChargeStatus.IsCharge;
+  public isShowLevel: boolean = false;
+  public isShowBillRate: boolean = false;
+
   public filterFromDate: string;
   public filterToDate: string;
   public projectId;
@@ -32,13 +36,16 @@ export class BillAccountPlanComponent extends PagedListingComponentBase<any> imp
   public selectedIsPlanned: number;
   public theadTable: THeadTable[] = [ 
     { name: '#' },
-    { name: 'Bill Account', sortName: 'fullName', defaultSort: '' },
-    { name: 'Projects', sortName: 'projectName', defaultSort: ''},
+    { name: 'Bill Account', sortName: 'UserInfor', defaultSort: '' },
+    { name: 'Projects', sortName: 'Project', defaultSort: ''},
     { name: 'Is charge', width: "120px" },
     { name: 'Start date', width: "120px" },
     { name: 'End date', width: "120px" },
     { name: 'Note' },
   ]
+  public sortable = new SortableModel('', 0, '')
+  public sortResource = { }
+
   projectType = [
     { text: "All", value: APP_ENUMS.PlanType.ALL },
     { text: "Join", value: APP_ENUMS.PlanType.JOIN },
@@ -60,7 +67,8 @@ export class BillAccountPlanComponent extends PagedListingComponentBase<any> imp
 
   constructor(
     injector: Injector,
-    private planningBillInfoService: PlanningBillInfoService
+    private planningBillInfoService: PlanningBillInfoService,
+    private ref: ChangeDetectorRef
   ) {
     super(injector);
   }
@@ -95,6 +103,7 @@ export class BillAccountPlanComponent extends PagedListingComponentBase<any> imp
         skipCount: (this.pageNumber - 1) * this.pageSize,
         maxResultCount: this.pageSize,
       },
+      sortParams : this.sortResource
     };
     this.planningBillInfoService
       .GetAllBillInfo(requestBody)
@@ -130,6 +139,7 @@ export class BillAccountPlanComponent extends PagedListingComponentBase<any> imp
   filerByChargeStatus() {
     this.getDataPage(1);
   }
+ 
   filerByProject() {
     this.getDataPage(1);
   }
@@ -203,6 +213,13 @@ export class BillAccountPlanComponent extends PagedListingComponentBase<any> imp
       }
     }));
     return url;
+  }
+  showLevel(checked:boolean){
+      this.isShowLevel = checked;
+  }
+
+  showBillRate(checked:boolean){
+    this.isShowBillRate = checked;
   }
 }
 

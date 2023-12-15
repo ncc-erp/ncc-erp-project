@@ -1,6 +1,7 @@
 ﻿using Abp.Authorization;
 using Abp.Collections.Extensions;
 using Abp.UI;
+using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NccCore.Extension;
@@ -15,15 +16,18 @@ using ProjectManagement.Entities;
 using ProjectManagement.Services.ProjectTimesheet;
 using ProjectManagement.Services.ProjectUserBill.Dto;
 using ProjectManagement.Services.ProjectUserBills;
+using ProjectManagement.Services.ResourceRequestService;
+using ProjectManagement.Services.ResourceRequestService.Dto;
 using ProjectManagement.Services.ResourceService.Dto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Dynamic.Core;
 using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using static ProjectManagement.Constants.Enum.ProjectEnum;
+using Expression = System.Linq.Expressions.Expression;
 
 namespace ProjectManagement.APIs.ProjectUserBills
 {
@@ -231,7 +235,7 @@ namespace ProjectManagement.APIs.ProjectUserBills
         [AbpAuthorize(PermissionNames.Resource_TabAllBillAccount)]
         public async Task<GridResult<BillInfoDto>> GetAllBillInfo(InputGetBillInfoDto input)
         {
-            // paging user id 
+            // paging user id
             var projectUserBills = WorkScope.All<ProjectUserBill>()
                 .Include(p => p.User).Include(p => p.Project)
                 .Select(x => new
@@ -258,31 +262,47 @@ namespace ProjectManagement.APIs.ProjectUserBills
                         ProjectName = x.Project.Name,
                         AccountName = x.AccountName,
                         //BillRole = x.BillRole,
-                        BillRate = float.NaN,
+                        BillRate = x.BillRate,
                         StartTime = x.StartTime,
                         EndTime = x.EndTime,
                         Note = x.Note,
                         shadowNote = x.shadowNote,
                         isActive = true,
                         ChargeType = x.ChargeType.HasValue ? x.ChargeType.Value : x.Project.ChargeType,
+                        FullName = x.User.FullName,
+                        CurrencyCode = x.Project.Currency.Code
                     }
-                })
-                    .WhereIf(input.ProjectId != null, x => x.Project.ProjectId == input.ProjectId)
-                    .WhereIf(!string.IsNullOrEmpty(input.SearchText), x =>
-                        (x.UserInfor.UserName.Trim().ToLower().Contains(input.SearchText.Trim().ToLower())) ||
-                        (x.UserInfor.FullName.Trim().ToLower().Contains(input.SearchText.Trim().ToLower())) ||
-                        (x.UserInfor.EmailAddress.Trim().ToLower().Contains(input.SearchText.Trim().ToLower())) ||
-                        (x.Project.ProjectName.Trim().ToLower().Contains(input.SearchText.Trim().ToLower())))
-                    .WhereIf(input.ChargeStatus == ChargeStatus.IsCharge, x => x.Project.isActive == true)
-                    .WhereIf(input.ChargeStatus == ChargeStatus.IsNotCharge, x => x.Project.isActive == false)
-                    .AsEnumerable().GroupBy(p => p.UserInfor.UserId)
-                    .Select(group => new BillInfoDto
-                    {
-                        UserInfor = group.First().UserInfor,
-                        Projects = group.Select(g => g.Project).ToList()
-                    })                  
-                    .AsQueryable();
-            return projectUserBills.GetGridResultSync(projectUserBills, input.GirdParam);
+                }).AsEnumerable();
+
+            if (input.SortParams.Any())
+            {
+                foreach (var item in input.SortParams)
+                {
+                    if(item.Key.Pascalize() == "UserInfor" )
+                            projectUserBills = projectUserBills.OrderBy(item.Value == SortDirection.ASC,
+                        x => x.UserInfor);
+                    if (item.Key.Pascalize() == "Project")
+                        projectUserBills = projectUserBills.OrderBy(item.Value == SortDirection.ASC,
+                        x => x.Project);
+                }
+            }
+
+            var result = projectUserBills.WhereIf(input.ProjectId != null, x => x.Project.ProjectId == input.ProjectId)
+                                         .WhereIf(!string.IsNullOrEmpty(input.SearchText), x =>
+                                             (x.UserInfor.UserName.Trim().ToLower().Contains(input.SearchText.Trim().ToLower())) ||
+                                             (x.UserInfor.FullName.Trim().ToLower().Contains(input.SearchText.Trim().ToLower())) ||
+                                             (x.UserInfor.EmailAddress.Trim().ToLower().Contains(input.SearchText.Trim().ToLower())) ||
+                                             (x.Project.ProjectName.Trim().ToLower().Contains(input.SearchText.Trim().ToLower())))
+                                         .WhereIf(input.ChargeStatus == ChargeStatus.IsCharge, x => x.Project.isActive == true)
+                                         .WhereIf(input.ChargeStatus == ChargeStatus.IsNotCharge, x => x.Project.isActive == false)
+                                         .GroupBy(p => p.UserInfor.UserId)
+                                         .Select(group => new BillInfoDto
+                                         {
+                                             UserInfor = group.First().UserInfor,
+                                             Projects = group.Select(g => g.Project).ToList()
+                                         })
+                                         .AsQueryable();
+            return result.GetGridResultSync(result, input.GirdParam);
         }
 
         /// <summary>

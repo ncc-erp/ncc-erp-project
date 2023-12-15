@@ -110,6 +110,7 @@ export class ResourceManagementComponent extends AppComponentBase implements OnI
   public listSkills: any[] = []
   public listLevels: any[] = []
   public listProjectUserRoles: IDNameDto[] = []
+  public isViewAllSkillInfo: boolean = false
 
   constructor(
     injector: Injector,
@@ -758,5 +759,22 @@ export class ResourceManagementComponent extends AppComponentBase implements OnI
   IsSkillNoteExist = (user) => user.userSkills && user.userSkills[0]?.skillNote ? true : false;
 
   GetUserSkillNote = (user) => user.userSkills[0]?.skillNote;
+
+  filterSkillInfo(user){
+    let skillInfoAfterFilter = []
+    if(user.userSkills){
+    if(user.isViewAllSkillInfo){
+      skillInfoAfterFilter = user.userSkills
+    }
+    else{
+      user.userSkills.forEach((skill, index)=>{
+        if(index < 2){
+          skillInfoAfterFilter.push(skill)
+        }
+      })
+    }
+  }
+    return skillInfoAfterFilter
+  }
 }
 

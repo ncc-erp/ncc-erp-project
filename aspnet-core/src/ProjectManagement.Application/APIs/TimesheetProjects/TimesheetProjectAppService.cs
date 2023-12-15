@@ -530,7 +530,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
             var timesheetProjectId = input.TimesheetProjectId;
             var timesheet = WorkScope.GetAll<TimesheetProject>()
               .Where(x => x.Id == timesheetProjectId)
-              .Where(s => s.Timesheet.IsActive)
+              .Where(s => s.IsActive)
               .Select(s => new
               {
                   s.Timesheet.Year,

@@ -292,7 +292,8 @@ namespace ProjectManagement.APIs.ProjectUserBills
                                              (x.UserInfor.UserName.Trim().ToLower().Contains(input.SearchText.Trim().ToLower())) ||
                                              (x.UserInfor.FullName.Trim().ToLower().Contains(input.SearchText.Trim().ToLower())) ||
                                              (x.UserInfor.EmailAddress.Trim().ToLower().Contains(input.SearchText.Trim().ToLower())) ||
-                                             (x.Project.ProjectName.Trim().ToLower().Contains(input.SearchText.Trim().ToLower())))
+                                             (x.Project.ProjectName.Trim().ToLower().Contains(input.SearchText.Trim().ToLower())) ||
+                                             (x.Project.BillAccountName.Trim().ToLower().Contains(input.SearchText.Trim().ToLower())))
                                          .WhereIf(input.ChargeStatus == ChargeStatus.IsCharge, x => x.Project.isActive == true)
                                          .WhereIf(input.ChargeStatus == ChargeStatus.IsNotCharge, x => x.Project.isActive == false)
                                          .GroupBy(p => p.UserInfor.UserId)

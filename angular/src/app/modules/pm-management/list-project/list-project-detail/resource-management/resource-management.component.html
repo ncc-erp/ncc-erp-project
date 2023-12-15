@@ -224,7 +224,7 @@
                         <div style="width: 90%; text-align: left">
                           <p
                             class="m-0 mr-1"
-                            *ngFor="let item of user.userSkills"
+                            *ngFor="let item of filterSkillInfo(user)"
                           >
                             - {{ item.skillName }}
                             <strong
@@ -286,12 +286,16 @@
                           ></i>
                         </div>
                       </div>
-                      <i
-                      class="fa fa-ellipsis-h d-flex"
-                      aria-hidden="true"
-                      *ngIf="user.userSkills.length > 3"
-                      (click)="filterSkillInfo(user)"
-                      style="cursor: pointer"
+                      <i [ngClass]="
+                          user.isViewAllSkillInfo
+                            ? 'fas fa-chevron-up'
+                            : 'fa fa-ellipsis-h'
+                        " class="d-flex"
+                        *ngIf="user.userSkills.length > 5"
+                        (click)="
+                          user.isViewAllSkillInfo = !user.isViewAllSkillInfo;
+                          filterSkillInfo(user)
+                        "
                       ></i>
                     </span>
                   </td>

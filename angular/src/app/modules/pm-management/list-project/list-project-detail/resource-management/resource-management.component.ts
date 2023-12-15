@@ -762,12 +762,12 @@ export class ResourceManagementComponent extends AppComponentBase implements OnI
 
   filterSkillInfo(user){
     let skillInfoAfterFilter = []
-    if(user.skillInfo){
+    if(user.userSkills){
     if(user.isViewAllSkillInfo){
-      skillInfoAfterFilter = user.skillInfo
+      skillInfoAfterFilter = user.userSkills
     }
     else{
-      user.skillInfo.forEach((skill, index)=>{
+      user.userSkills.forEach((skill, index)=>{
         if(index < 2){
           skillInfoAfterFilter.push(skill)
         }

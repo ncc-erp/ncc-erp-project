@@ -738,6 +738,18 @@ namespace ProjectManagement.APIs.Projects
             {
                 input.FilterItems.Remove(filterPmId);
             }
+            var resourceProject = WorkScope.GetAll<ProjectUser>()
+               .Where(s => s.User.UserType != UserType.FakeUser
+               && s.Status == ProjectUserStatus.Present && s.AllocatePercentage > 0)
+               .Select(pu => new ResourceInfo
+               {
+                   ProjectId = pu.ProjectId,
+                   FullName = pu.User.FullName,
+                   ProjectUserRole = pu.ProjectRole.ToString()
+               }).AsEnumerable()
+               .GroupBy(pu => pu.ProjectId, pu => pu)
+               .ToDictionary(group => group.Key, group => group.ToList());
+            
             var query = from p in WorkScope.GetAll<Project>().Include(x => x.Currency)
                         .Where(x => x.ProjectType == ProjectType.TRAINING)
                         .Where(x => filterStatus != null && valueStatus > -1 ? (valueStatus == 3 ? x.Status != ProjectStatus.Closed : x.Status == (ProjectStatus)valueStatus) : true)
@@ -771,7 +783,8 @@ namespace ProjectManagement.APIs.Projects
                             TimeSendReport = l.TimeSendReport,
                             DateSendReport = l.TimeSendReport.Value.Date,
                             Evaluation = l.Note,
-                            IsRequiredWeeklyReport = hasViewRequireWRPermission ? p.IsRequiredWeeklyReport : default(bool?)
+                            IsRequiredWeeklyReport = hasViewRequireWRPermission ? p.IsRequiredWeeklyReport : default(bool?),
+                            ResourceInfo = resourceProject.ContainsKey(p.Id) ? resourceProject[p.Id] : null,
                         };
             return await query.GetGridResult(query, input);
         }
@@ -925,6 +938,18 @@ namespace ProjectManagement.APIs.Projects
             {
                 input.FilterItems.Remove(filterPmId);
             }
+            var resourceProject = WorkScope.GetAll<ProjectUser>()
+               .Where(s => s.User.UserType != UserType.FakeUser
+               && s.Status == ProjectUserStatus.Present && s.AllocatePercentage > 0)
+               .Select(pu => new ResourceInfo
+               {
+                   ProjectId = pu.ProjectId,
+                   FullName = pu.User.FullName,
+                   ProjectUserRole = pu.ProjectRole.ToString()
+               }).AsEnumerable()
+               .GroupBy(pu => pu.ProjectId, pu => pu)
+               .ToDictionary(group => group.Key, group => group.ToList());
+            
             var query = from p in WorkScope.GetAll<Project>()
                         .Where(x => x.ProjectType == ProjectType.PRODUCT)
                         .Where(x => filterStatus != null && valueStatus > -1 ? (valueStatus == 3 ? x.Status != ProjectStatus.Closed : x.Status == (ProjectStatus)valueStatus) : true)
@@ -957,6 +982,7 @@ namespace ProjectManagement.APIs.Projects
                             TimeSendReport = l.TimeSendReport,
                             DateSendReport = l.TimeSendReport.Value.Date,
                             IsRequiredWeeklyReport = hasViewRequireWRPermission ? p.IsRequiredWeeklyReport : default(bool?),
+                            ResourceInfo = resourceProject.ContainsKey(p.Id) ? resourceProject[p.Id] : null,
                         };
             return await query.GetGridResult(query, input);
         }

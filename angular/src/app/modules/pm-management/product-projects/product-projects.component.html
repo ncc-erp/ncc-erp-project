@@ -109,8 +109,8 @@
                             <tr style="border: none;">
                                 <th style="width: 70px;">#</th>
                                 <th style="width: 250px;">Projects</th>
-                                <th style="width: 400px;">{{'PM' | localize}}</th>
-                                <th *ngIf="isShowResources">Resources</th>
+                                <th style="width: 300px;">{{'PM' | localize}}</th>
+                                <th *ngIf="isShowResources" style="width: 350px;">Resources</th>
                                 <th *ngIf="permission.isGranted(Projects_ProductProjects_ViewRequireWeeklyReport)" style="width: 50px;">RequireWR</th>
                                 <th style="width: 110px;">Time</th>
                                 <th style="width: 100px;">Status</th>
@@ -170,9 +170,7 @@
                                     <strong *ngIf="filterResourceInfo(project).length>0" style="color: red;">Total:{{project.resourceInfo.length}}</strong>
                                     <div *ngFor="let resource of filterResourceInfo(project) let j = index;">
                                         <strong>{{j+1}}. </strong><strong>{{resource.fullName}} </strong>
-                                        <span
-                                            >[{{resource.projectUserRole}}]
-                                        </span>
+
                                     </div>
                                     <span>
                                         <i [ngClass]="project.isViewAllResourceInfo ? 'fas fa-chevron-up' :'fa fa-ellipsis-h'"

@@ -112,7 +112,7 @@
                                 <th style="width: 200px;">{{'PM' | localize}}</th>
                                 <th *ngIf="isShowResources" style="width: 350px;">Resources</th>
                                 <th *ngIf="permission.isGranted(Projects_TrainingProjects_ViewRequireWeeklyReport)"  style="width: 50px;">RequireWR</th>
-                                <th>Đánh giá chung</th>
+                                <th style="width: 250px;">Đánh giá chung</th>
                                 <th style="width: 120px;">Trạng thái</th>
                                 <th style="width: 120px;">
                                     <div class="weekly-report-header-wrap d-flex align-items-center">
@@ -162,7 +162,7 @@
                                     </div>
                                 </td>
                                 <td *ngIf="isShowResources">
-                                    <strong *ngIf="filterResourceInfo(project).length>0" style="color: red;">Total:{{project.resourceInfo.length}}</strong>
+                                    <strong *ngIf="filterResourceInfo(project).length>0" style="color: red;">Total: {{project.resourceInfo.length}}</strong>
                                     <div *ngFor="let resource of filterResourceInfo(project) let j = index;">
                                         <strong>{{j+1}}. </strong><strong>{{resource.fullName}} </strong>
 

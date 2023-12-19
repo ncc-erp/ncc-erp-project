@@ -203,7 +203,7 @@
                                     </div>
                                 </td>
                                 <td *ngIf="isShowResources">
-                                    <strong *ngIf="filterResourceInfo(project).length>0" style="color: red;">Total:{{project.resourceInfo.length}}</strong>
+                                    <strong *ngIf="filterResourceInfo(project).length>0" style="color: red;">Total: {{project.resourceInfo.length}}</strong>
                                     <div *ngFor="let resource of filterResourceInfo(project) let j = index;">
                                         <strong>{{j+1}}. </strong><strong>{{resource.fullName}} </strong>
                                         <span

@@ -32,13 +32,13 @@ export class BillAccountPlanComponent
 
   public filterFromDate: string;
   public filterToDate: string;
-  public projectId;
+  public projectId; 
   public billInfoList = [];
   public projectList = [];
   public selectedIsPlanned: number;
   public theadTable: THeadTable[] = [ 
-    { name: '#' },
-    { name: 'Bill Account', sortName: 'UserInfor', defaultSort: '' },
+    { name: '#', width: "60px" },
+    { name: 'Bill Account', sortName: 'UserInfor', defaultSort: ''},
     { name: 'Projects', sortName: 'Project', defaultSort: ''},
     { name: 'Is charge', width: "120px" },
     { name: 'Start date', width: "120px" },

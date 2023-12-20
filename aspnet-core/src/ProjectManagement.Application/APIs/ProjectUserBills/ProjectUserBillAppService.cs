@@ -260,7 +260,7 @@ namespace ProjectManagement.APIs.ProjectUserBills
                     {
                         ProjectId = x.ProjectId,
                         ProjectName = x.Project.Name,
-                        AccountName = x.AccountName,
+                        AccountName = x.User.FullName,
                         //BillRole = x.BillRole,
                         BillRate = x.BillRate,
                         StartTime = x.StartTime,
@@ -269,7 +269,6 @@ namespace ProjectManagement.APIs.ProjectUserBills
                         shadowNote = x.shadowNote,
                         isActive = true,
                         ChargeType = x.ChargeType.HasValue ? x.ChargeType.Value : x.Project.ChargeType,
-                        FullName = x.User.FullName,
                         CurrencyCode = x.Project.Currency.Code
                     }
                 }).AsEnumerable();

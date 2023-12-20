@@ -62,17 +62,17 @@ namespace ProjectManagement.APIs.ProjectUserBills.Dto
         public string BillAccountName => string.IsNullOrEmpty(AccountName) ? FullName : AccountName;
         public string ProjectCode { get; set; }
 
-        public string BillRatePerChargeType => $"{this.BillRate} {this.CurrencyCode} / {ChargeTypeString()}";
+        public string BillRatePerChargeType => $"{this.BillRate} {this.CurrencyCode} /{ChargeTypeString()}";
         public string ChargeTypeString()
         {
             switch (this.ChargeType)
             {
                 case ProjectEnum.ChargeType.Daily:
-                    return "Daily";
+                    return "d";
                 case ProjectEnum.ChargeType.Hourly:
-                    return "Hourly";
+                    return "h";
                 case ProjectEnum.ChargeType.Monthly:
-                    return "Monthly";
+                    return "m";
                 default:
                     return "";
             }

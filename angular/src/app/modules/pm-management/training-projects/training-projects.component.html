@@ -167,11 +167,12 @@
                                         <strong>{{j+1}}. </strong><strong>{{resource.fullName}} </strong>
 
                                     </div>
-                                    <span>
-                                        <i [ngClass]="project.isViewAllResourceInfo ? 'fas fa-chevron-up' :'fa fa-ellipsis-h'"
-
-                                            (click)="project.isViewAllResourceInfo = !project.isViewAllResourceInfo; filterResourceInfo(project)"></i>
+                                    <span *ngIf="project.resourceInfo && project.resourceInfo.length > 5">
+                                        <i [ngClass]="project.isViewAllResourceInfo ? 'fas fa-chevron-up' : 'fa fa-ellipsis-h'"
+                                            (click)="project.isViewAllResourceInfo = !project.isViewAllResourceInfo; filterResourceInfo(project)">
+                                        </i>
                                     </span>
+
                                  </td>
                                 <td *ngIf="permission.isGranted(Projects_TrainingProjects_ViewRequireWeeklyReport)"  class="text-center">
                                     <mat-checkbox class="is-charged-checkbox" (click)="changeRequireWeeklyReport(project)" color="primary" [ngModel]="project.isRequiredWeeklyReport">

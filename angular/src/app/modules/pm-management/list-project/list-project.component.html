@@ -134,7 +134,7 @@
                             <tr style="border: none;">
                                 <th>#</th>
                                 <th style="max-width: 200px">Projects</th>
-                                <th style="width: 325px;">{{'PM' | localize}}</th>
+                                <th style="width: 250px;">{{'PM' | localize}}</th>
                                 <th *ngIf="isShowResources">Resources</th>
                                 <th *ngIf="isShowBillInfo || isShowAccount"> {{isShowBillInfo && isShowAccount ? 'Bill info/Bill account' : isShowBillInfo && !isShowAccount ? 'Bill info' : 'Bill account' }}</th>
                                 <th *ngIf="permission.isGranted(Projects_OutsourcingProjects_ViewRequireWeeklyReport)" style="width: 50px;">RequireWR</th>

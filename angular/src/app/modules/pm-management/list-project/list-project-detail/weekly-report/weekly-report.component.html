@@ -636,15 +636,14 @@
                                         <th style="vertical-align: middle;">Employee</th>
                                         <th style="vertical-align: middle;">Charge Name</th>
                                         <th style="vertical-align: middle;">Charge Role</th>
-                                        <th style="vertical-align: middle;">Start Date</th>
-                                        <th style="vertical-align: middle;">End Date</th>
+                                        <th style="vertical-align: middle;">Bill Date</th>
                                         <th style="vertical-align: middle;">Note</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr *ngFor="let user of projectInfo.projectUserBills; let i =index">
                                         <td class="d-flex justify-content-between" style="border: none;">
-                                            <div style="width: 80%;">
+                                            <div style="width: 320px">
                                                 <app-user-info [userData]="user" [isWeeklyReport]="true" [workType]="user.workType">
                                                 </app-user-info>
                                             </div>
@@ -680,8 +679,6 @@
                                                     class="mb-0 p-0  ml-2 max-line-content-2">{{user.startTime
                                                     |date:"dd/MM/yyyy"}}</p>
                                             </span>
-                                        </td>
-                                        <td class="text-center" style="white-space: break-spaces;">
                                             <span class="d-flex align-items-center justify-content-between">
                                                 <p PrjResizeContent [collapseLine]="2" style="flex: 1;"
                                                     class="mb-0 p-0  ml-2 max-line-content-2">{{user.endTime
@@ -689,7 +686,7 @@
                                             </span>
                                         </td>
                                         <td style="white-space: break-spaces;">
-                                            <span class="d-flex align-items-center justify-content-between">
+                                            <span class="d-flex align-items-center justify-content-between" style="width: 300px;">
                                                 <p PrjResizeContent [collapseLine]="2" style="flex: 1;"
                                                     class="mb-0 p-0  ml-2 max-line-content-2">{{user.note}}
                                                 </p>

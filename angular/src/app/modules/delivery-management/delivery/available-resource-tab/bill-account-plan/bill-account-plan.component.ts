@@ -37,7 +37,7 @@ export class BillAccountPlanComponent
   public projectList = [];
   public selectedIsPlanned: number;
   public theadTable: THeadTable[] = [ 
-    { name: '#', width: "60px" },
+    { name: '#', width: "60px"},
     { name: 'Bill Account', sortName: 'UserInfor', defaultSort: ''},
     { name: 'Projects', sortName: 'Project', defaultSort: ''},
     { name: 'Is charge', width: "120px" },

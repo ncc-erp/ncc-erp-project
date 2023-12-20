@@ -278,7 +278,7 @@ namespace ProjectManagement.APIs.ProjectUserBills
                 foreach (var item in input.SortParams)
                 {
                     if(item.Key.Pascalize() == "UserInfor" )
-                            projectUserBills = projectUserBills.OrderBy(item.Value == SortDirection.ASC,
+                        projectUserBills = projectUserBills.OrderBy(item.Value == SortDirection.ASC,
                         x => x.UserInfor);
                     if (item.Key.Pascalize() == "Project")
                         projectUserBills = projectUserBills.OrderBy(item.Value == SortDirection.ASC,

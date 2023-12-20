@@ -67,7 +67,7 @@ namespace ProjectManagement.APIs.ProjectUserBills.Dto
         {
             switch (this.ChargeType)
             {
-                case ProjectEnum.ChargeType.Daily:
+                case ProjectEnum.ChargeType.Daily: 
                     return "d";
                 case ProjectEnum.ChargeType.Hourly:
                     return "h";

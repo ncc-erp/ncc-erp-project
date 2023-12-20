@@ -100,7 +100,7 @@
                                   <td [attr.rowspan]="item.projects.length+1" class="text-center"  style="width: 280px;"> <app-user-info [userData]="item.userInfor" [isHideLevel]="!isShowLevel" [isHideBillRate] = "!isShowBillRate"> </app-user-info></td>
                               </tr>
                               <tr *ngFor="let project of item.projects ; let j=index">
-                                  <td style="width: 160px;">
+                                  <td style="width: 190px;">
                                       <div class="d-flex flex-column">
                                           <div>
                                               <span *ngIf="checkTimeInFilterDate(project.startTime )" style="border-radius: 4px;padding: 2px 4px;" class="badge-success">Join</span>

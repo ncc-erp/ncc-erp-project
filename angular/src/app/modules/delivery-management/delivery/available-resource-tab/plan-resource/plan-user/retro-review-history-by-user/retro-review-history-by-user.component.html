@@ -34,7 +34,7 @@
                     [maxStars]="1" [initialStars]="1" [readonly]="true"></ngx-stars>
                   </div>
                   <span style="width: 150px; text-align: left;" class="max-line-content-1" PrjResizeContent [collapseLine]="1">
-                    {{item.projectName}}
+                    {{ item.projectName | lineBreak }}
                   </span>
               </div>
           </td>
@@ -43,7 +43,7 @@
             [title]="item.note"style="overflow: hidden; text-overflow: ellipsis;" >
               {{item.note}}
             </div>
-          </td>  
+          </td>
         </tr>
       </tbody>
     </table>

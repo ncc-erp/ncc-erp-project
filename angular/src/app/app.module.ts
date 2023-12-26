@@ -505,7 +505,7 @@ export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
     CreateUserDialogComponent,
     EditUserDialogComponent,
     ResetPasswordDialogComponent,
-    BillAccountDialogNoteComponent,
+    BillAccountDialogNoteComponent, 
 
   ],
 })

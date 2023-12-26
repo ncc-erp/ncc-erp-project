@@ -23,5 +23,5 @@ namespace ProjectManagement.APIs.ProjectUserBills.Dto
         public bool isActive { get; set; }
         public string AccountName { get; set; }
         public ChargeType? ChargeType { get; set; }
-    }
+    } 
 }

@@ -656,4 +656,4 @@ export class SendRecruitmentModel {
   name: string;
   dmNote: string;
   pmNote: string;
-}
+} 

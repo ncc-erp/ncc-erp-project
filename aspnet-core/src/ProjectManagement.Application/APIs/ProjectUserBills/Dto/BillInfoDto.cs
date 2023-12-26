@@ -34,7 +34,6 @@ namespace ProjectManagement.APIs.ProjectUserBills.Dto
         public string PositionName { get; set; }
         public string PositionColor { get; set; }
         public string EmailAddress { get; set; }
-
         public string SimplizeEmailAddress => this.EmailAddress.Split('@')[0];
         public UserType UserType { get; set; }
         public UserLevel UserLevel { get; set; }
@@ -56,7 +55,6 @@ namespace ProjectManagement.APIs.ProjectUserBills.Dto
         public long? ClientId { get; set; }
         public string ClientCode  { get; set; }
         public string ClientName { get; set; }
-
         public string RateDisplay => $"{CommonUtil.FormatMoney(this.BillRate)} {this.CurrencyCode}/{CommonUtil.ChargeTypeShortName(this.ChargeType)}";
     }
 

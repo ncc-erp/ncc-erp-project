@@ -469,6 +469,5 @@ namespace ProjectManagement.Utils
 
             return resultList;
         }
-
     }
 }

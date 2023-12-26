@@ -4268,7 +4268,7 @@ export class UserDto implements IUserDto {
   name: string | undefined;
   surname: string | undefined;
   emailAddress: string | undefined;
-  simplizeEmailAddress:string| undefined;
+  simplizeEmailAddress: string| undefined;
   isActive: boolean;
   fullName: string | undefined;
   lastLoginTime: moment.Moment | undefined;

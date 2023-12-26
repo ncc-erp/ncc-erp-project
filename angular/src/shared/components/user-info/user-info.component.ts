@@ -10,6 +10,7 @@ import { AppConsts } from '@shared/AppConsts';
   templateUrl: './user-info.component.html',
   styleUrls: ['./user-info.component.css']
 })
+
 export class UserInfoComponent extends AppComponentBase implements OnInit {
   @Input() userData: UserDto
   @Input() workType:string;

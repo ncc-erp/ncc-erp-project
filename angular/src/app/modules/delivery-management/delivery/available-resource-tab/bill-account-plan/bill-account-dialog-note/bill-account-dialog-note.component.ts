@@ -18,6 +18,7 @@ import { finalize } from "rxjs/operators";
   templateUrl: './bill-account-dialog-note.component.html',
   styleUrls: ['./bill-account-dialog-note.component.css']
 })
+
 export class BillAccountDialogNoteComponent implements OnInit {
   billNote: string = "";
   userId: number;   

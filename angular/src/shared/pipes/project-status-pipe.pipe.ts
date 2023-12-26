@@ -1,5 +1,6 @@
 import { APP_ENUMS } from "../AppEnums";
 import { Pipe, PipeTransform } from "@angular/core";
+
 @Pipe({
   name: "projectStatusPipe",
 })

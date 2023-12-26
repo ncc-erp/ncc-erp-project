@@ -12,6 +12,7 @@ export class PlanningBillInfoService extends BaseApiService {
   changeUrl() {
     return 'ProjectUserBill'
   }
+  
   constructor(http: HttpClient) {
     super(http);
   }

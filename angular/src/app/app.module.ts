@@ -225,6 +225,7 @@ import { ShadowAccountDialogComponent } from './modules/pm-management/list-proje
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { BillAccountDialogComponent } from './modules/admin/configuration/bill-account-dialog/bill-account-dialog.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { BillAccountDialogNoteComponent } from "./modules/delivery-management/delivery/available-resource-tab/bill-account-plan/bill-account-dialog-note/bill-account-dialog-note.component";
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, "./assets/i18n/", ".json");
 }
@@ -276,7 +277,7 @@ export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
     ListProjectDetailComponent,
     ResourceManagementComponent,
     MilestoneComponent,
-    WeeklyReportComponent,
+    WeeklyReportComponent,   
     ProjectChecklistComponent,
     ImportFileTimesheetDetailComponent,
     CreateEditTimesheetDetailComponent,
@@ -433,6 +434,7 @@ export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
     LinkProjectTimesheetComponent,
     ShadowAccountDialogComponent,
     BillAccountDialogComponent,
+    BillAccountDialogNoteComponent,
   ],
   imports: [
     CommonModule,
@@ -503,6 +505,8 @@ export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
     CreateUserDialogComponent,
     EditUserDialogComponent,
     ResetPasswordDialogComponent,
+    BillAccountDialogNoteComponent,
+
   ],
 })
 export class AppModule {}

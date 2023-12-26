@@ -1,3 +1,4 @@
+import { ProjectStatusPipe } from './pipes/project-status-pipe.pipe';
 import { CommonModule } from '@angular/common';
 import { NgModule, ModuleWithProviders  } from '@angular/core';
 import { RouterModule } from '@angular/router';
@@ -135,6 +136,7 @@ import { CustomTimeComponent } from './date-selector/custom-time/custom-time.com
 
     ],
     declarations: [
+        ProjectStatusPipe,
         AbpPaginationControlsComponent,
         AbpValidationSummaryComponent,
         AbpModalHeaderComponent,
@@ -160,6 +162,7 @@ import { CustomTimeComponent } from './date-selector/custom-time/custom-time.com
 
     ],
     exports: [
+        ProjectStatusPipe,
         AbpPaginationControlsComponent,
         AbpValidationSummaryComponent,
         AbpModalHeaderComponent,

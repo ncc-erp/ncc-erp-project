@@ -1,14 +1,28 @@
-import { ChangeDetectorRef, Component, EventEmitter, Injector, Input, OnInit, Output } from '@angular/core';
+import { BillAccountDialogNoteComponent } from './bill-account-dialog-note/bill-account-dialog-note.component';
+import {
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Injector,
+  Input,
+  OnInit,
+  Output,
+} from "@angular/core";
 
-import * as _moment from 'moment';
-import { FormControl } from '@angular/forms';
-import * as moment from 'moment';
-import { APP_ENUMS } from '@shared/AppEnums';
-import { PagedListingComponentBase, PagedRequestDto } from '@shared/paged-listing-component-base';
-import { catchError } from 'rxjs/operators';
-import {PlanningBillInfoService} from '../../../../../service/api/bill-account-plan.service'
-import { THeadTable } from '../../request-resource-tab/request-resource-tab.component';
-import { SortableModel } from '@shared/components/sortable/sortable.component';
+import * as _moment from "moment";
+import { FormControl } from "@angular/forms";
+import * as moment from "moment";
+import { APP_ENUMS } from "@shared/AppEnums";
+import {
+  PagedListingComponentBase,
+  PagedRequestDto,
+} from "@shared/paged-listing-component-base";
+import { catchError } from "rxjs/operators";
+import { PlanningBillInfoService } from "../../../../../service/api/bill-account-plan.service";
+import { THeadTable } from "../../request-resource-tab/request-resource-tab.component";
+import { SortableModel } from "@shared/components/sortable/sortable.component";
+import { MatSelectChange } from "@angular/material/select";
+import { MatDialog } from "@angular/material/dialog";
 
 @Component({
   selector: "app-bill-account-plan",
@@ -23,30 +37,36 @@ export class BillAccountPlanComponent
   @Output() onDateSelectorChange = new EventEmitter();
 
   searchProject: string = "";
+  searchClient: string = "";
   date = new FormControl(moment());
   dateYear = new FormControl(moment());
   planType = APP_ENUMS.PlanType.ALL;
-  chargeStatus = APP_ENUMS.ChargeStatus.IsCharge;
+  public projectStatus;
   public isShowLevel: boolean = false;
   public isShowBillRate: boolean = false;
 
   public filterFromDate: string;
   public filterToDate: string;
-  public projectId; 
+  public projectId;
+  public clientId;
+  public selectedClientId: string = "";
   public billInfoList = [];
   public projectList = [];
+  public clientList = [];
   public selectedIsPlanned: number;
-  public theadTable: THeadTable[] = [ 
-    { name: '#', width: "60px"},
-    { name: 'Bill Account', sortName: 'UserInfor', defaultSort: ''},
-    { name: 'Projects', sortName: 'Project', defaultSort: ''},
-    { name: 'Is charge', width: "120px" },
-    { name: 'Start date', width: "120px" },
-    { name: 'End date', width: "120px" },
-    { name: 'Note' },
-  ]
-  public sortable = new SortableModel('', 0, '')
-  public sortResource = { }
+  
+  public theadTable: THeadTable[] = [
+    { name: "#", width: "30px" },
+    { name: "Bill Account"},
+    { name: "Client", width: "140px"},
+    { name: "Projects"},
+    { name: "Is Charge", width: "65px", padding : "12px 5px", whiteSpace: "nowrap" },
+    { name: "Bill Date", width: "100px" },
+    { name: "Note" },
+  ];
+
+  public sortable = new SortableModel("", 0, "");
+  public sortResource = {};
 
   projectType = [
     {
@@ -63,10 +83,10 @@ export class BillAccountPlanComponent
     },
   ];
 
-  chargeStatusList = [
-    { text: "All", value: APP_ENUMS.ChargeStatus.All },
-    { text: "Charge", value: APP_ENUMS.ChargeStatus.IsCharge },
-    { text: "NoCharge", value: APP_ENUMS.ChargeStatus.IsNotCharge },
+  projectStatusList = [
+    { text: "Potential", value: APP_ENUMS.ProjectStatus.Potential },
+    { text: "InProgress", value: APP_ENUMS.ProjectStatus.InProgress },
+    { text: "Closed", value: APP_ENUMS.ProjectStatus.Closed },
   ];
 
   planStatusList = [
@@ -79,7 +99,8 @@ export class BillAccountPlanComponent
   constructor(
     injector: Injector,
     private planningBillInfoService: PlanningBillInfoService,
-    private ref: ChangeDetectorRef
+    private ref: ChangeDetectorRef,
+    private dialog: MatDialog,
   ) {
     super(injector);
   }
@@ -92,9 +113,29 @@ export class BillAccountPlanComponent
       .subscribe((data) => {
         this.projectList = data.result;
       });
+      this.refresh();
+
+    this.planningBillInfoService
+      .GetAllProjectClientBill()
+      .pipe(catchError(this.planningBillInfoService.handleError))
+      .subscribe((data) => {
+        this.clientList = data.result;
+      });
     var date = new Date();
     this.refresh();
+
+    this.planningBillInfoService
+      .GetAllProjectClientBill()
+      .pipe(catchError(this.planningBillInfoService.handleError))
+      .subscribe((data) => {
+        this.clientList = data.result;
+      });
+    var date = new Date();
+    this.refresh();
+
+    
   }
+
   public listDateOptions = [];
   public defaultValue = APP_ENUMS.DATE_TIME_OPTIONS.Month;
   public birthdayFromDate: string;
@@ -109,22 +150,24 @@ export class BillAccountPlanComponent
     const requestBody: any = {
       searchText: this.searchText,
       projectId: this.projectId,
+      clientId: this.clientId,
       //joinOutStatus:this.planType,
       planStatus: this.selectedIsPlanned || APP_ENUMS.PlanStatus.All,
-      chargeStatus: this.chargeStatus,
+      projectStatus: this.projectStatus,
       startDate: this.filterFromDate,
       endDate: this.filterToDate,
       girdParam: {
         skipCount: (this.pageNumber - 1) * this.pageSize,
         maxResultCount: this.pageSize,
       },
-      sortParams : this.sortResource
+      sortParams: this.sortResource,
     };
     this.planningBillInfoService
       .GetAllBillInfo(requestBody)
       .pipe(catchError(this.planningBillInfoService.handleError))
       .subscribe(
         (data) => {
+          console.log(data);
           this.billInfoList = data.result.items;
           this.showPaging(data.result, pageNumber);
           this.isLoading = false;
@@ -151,11 +194,16 @@ export class BillAccountPlanComponent
   filerByPlanType() {
     this.getDataPage(1);
   }
-  filerByChargeStatus() {
+
+  filerByProjectStatus() {
     this.getDataPage(1);
   }
- 
+
   filerByProject() {
+    this.getDataPage(1);
+  }
+
+  filerByClient() {
     this.getDataPage(1);
   }
 
@@ -176,6 +224,12 @@ export class BillAccountPlanComponent
     this.getDataPage(1);
   }
 
+  applyClientFilter() {
+    this.clientId = "";
+    this.searchClient = "";
+    this.getDataPage(1);
+  }
+
   applyPlanTypeFilter() {
     this.selectedIsPlanned = APP_ENUMS.PlanStatus.All;
     this.isFilterSelected = false;
@@ -183,60 +237,89 @@ export class BillAccountPlanComponent
   }
 
   sortTable(event: any) {
-    this.sortable = event
-    this.changeSortableByName(this.sortable.sort, this.sortable.typeSort,this.sortable.sortDirection)
-    this.refresh()
+    this.sortable = event;
+    this.changeSortableByName(
+      this.sortable.sort,
+      this.sortable.typeSort,
+      this.sortable.sortDirection
+    );
+    this.refresh();
   }
 
-  changeSortableByName(sort: string, sortType: string,sortDirection?:number) {
-    if(!sortType){
-      delete this.sortResource[sort]
+  changeSortableByName(sort: string, sortType: string, sortDirection?: number) {
+    if (!sortType) {
+      delete this.sortResource[sort];
+    } else {
+      this.sortResource[sort] = sortDirection;
     }
-    else{
-      this.sortResource[sort] = sortDirection
-    }
-    this.ref.detectChanges()
+    this.ref.detectChanges();
   }
 
   styleThead(item: any) {
     return {
       width: item.width,
-      height: item.height
-    }
+      height: item.height,
+    };
   }
 
-  viewProjectDetail(project){
-    let routingToUrl: string = ''
-    if( project.projectType == 5 ){
-      routingToUrl = (this.permission.isGranted(this.Projects_TrainingProjects_ProjectDetail_TabWeeklyReport)
-      && this.permission.isGranted(this.Projects_TrainingProjects_ProjectDetail_TabWeeklyReport_View))
-     ? "/app/training-project-detail/training-weekly-report" : "/app/training-project-detail/training-project-general"
+  viewProjectDetail(project) {
+    let routingToUrl: string = "";
+    if (project.projectType == 5) {
+      routingToUrl =
+        this.permission.isGranted(
+          this.Projects_TrainingProjects_ProjectDetail_TabWeeklyReport
+        ) &&
+        this.permission.isGranted(
+          this.Projects_TrainingProjects_ProjectDetail_TabWeeklyReport_View
+        )
+          ? "/app/training-project-detail/training-weekly-report"
+          : "/app/training-project-detail/training-project-general";
+    } else if (project.projectType == 3) {
+      routingToUrl =
+        this.permission.isGranted(
+          this.Projects_ProductProjects_ProjectDetail_TabWeeklyReport
+        ) &&
+        this.permission.isGranted(
+          this.Projects_ProductProjects_ProjectDetail_TabWeeklyReport_View
+        )
+          ? "/app/product-project-detail/product-weekly-report"
+          : "/app/product-project-detail/product-project-general";
+    } else {
+      routingToUrl = "/app/list-project-detail/project-bill-tab";
     }
-
-    else if ( project.projectType == 3){
-      routingToUrl= (this.permission.isGranted(this.Projects_ProductProjects_ProjectDetail_TabWeeklyReport)
-     && this.permission.isGranted(this.Projects_ProductProjects_ProjectDetail_TabWeeklyReport_View))
-    ? "/app/product-project-detail/product-weekly-report" : "/app/product-project-detail/product-project-general"
-    }
-
-    else {
-      routingToUrl = "/app/list-project-detail/project-bill-tab"
-    }
-    const url = this.router.serializeUrl(this.router.createUrlTree([routingToUrl], {
-      queryParams: {
-        id: project.projectId,
-        type: project.projectType,
-        projectName: project.projectName,
-        projectCode: project.projectCode
-      }
-    }));
+    const url = this.router.serializeUrl(
+      this.router.createUrlTree([routingToUrl], {
+        queryParams: {
+          id: project.projectId,
+          type: project.projectType,
+          projectName: project.projectName,
+          projectCode: project.projectCode,
+        },
+      })
+    );
     return url;
   }
-  showLevel(checked:boolean){
-      this.isShowLevel = checked;
+  showLevel(checked: boolean) {
+    this.isShowLevel = checked;
   }
 
-  showBillRate(checked:boolean){
+  showBillRate(checked: boolean) {
     this.isShowBillRate = checked;
+  }
+
+  UpdateBillNote(userId,projectId, note) {
+    const addOrEditNoteDialog = this.dialog.open(BillAccountDialogNoteComponent, {
+      width: "40%",
+      height: "70%",
+      data: {
+        userId:userId,
+        projectId: projectId,
+        note: note,
+      },
+    });
+
+    addOrEditNoteDialog.afterClosed().subscribe(() => {
+      this.refresh();
+    });
   }
 }

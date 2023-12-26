@@ -12,3 +12,31 @@
 .redColor{
   color: #dc3545;
 }
+
+::ng-deep .badge-w-inprogress {
+  width: 70px;
+}
+
+::ng-deep .badge-w-close {
+  width: 50px;
+}
+
+::ng-deep .badge-w-potential {
+  width: 65px;
+}
+
+.project_link--wapper {
+  display: flex;
+  align-items: center;
+  gap: 0 5px;
+}
+
+.note-edit {
+  position: relative;
+}
+
+.note_edit--icon {
+  position: absolute;
+  top: 0;
+  right: 0;
+}

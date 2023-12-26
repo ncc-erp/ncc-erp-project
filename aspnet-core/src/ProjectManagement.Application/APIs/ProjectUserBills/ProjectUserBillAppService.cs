@@ -1,33 +1,27 @@
 ﻿using Abp.Authorization;
 using Abp.Collections.Extensions;
 using Abp.UI;
-using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NccCore.Extension;
-using NccCore.IoC;
 using NccCore.Paging;
 using NccCore.Uitls;
+using ProjectManagement.APIs.PMReportProjects.Dto;
 using ProjectManagement.APIs.ProjectUserBills.Dto;
 using ProjectManagement.APIs.Timesheets.Dto;
 using ProjectManagement.Authorization;
-using ProjectManagement.Authorization.Users;
 using ProjectManagement.Entities;
 using ProjectManagement.Services.ProjectTimesheet;
 using ProjectManagement.Services.ProjectUserBill.Dto;
 using ProjectManagement.Services.ProjectUserBills;
-using ProjectManagement.Services.ResourceRequestService;
-using ProjectManagement.Services.ResourceRequestService.Dto;
 using ProjectManagement.Services.ResourceService.Dto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using static ProjectManagement.Constants.Enum.ProjectEnum;
-using Expression = System.Linq.Expressions.Expression;
+using UpdateNoteDto = ProjectManagement.APIs.ProjectUserBills.Dto.UpdateNoteDto;
 
 namespace ProjectManagement.APIs.ProjectUserBills
 {
@@ -172,81 +166,36 @@ namespace ProjectManagement.APIs.ProjectUserBills
             return query;
         }
 
-        // duy - This method has been replaced by GetAllBillInfo in UI
-        [HttpPost]
-        //[AbpAuthorize(PermissionNames.Resource_TabPlanningBillAcccount)]
-        public async Task<GridResult<BillInfoDto>> GetAllPlanningBillInfo(InputGetBillInfoDto input)
+        [HttpGet]
+        public async Task<List<ProjectClientPlanningDto>> GetAllProjectClientBill()
         {
-            // paging user id 
-            var projectUserBills = WorkScope.All<ProjectUserBill>()
-                .Include(p => p.User).Include(p => p.Project)
-                .Select(x => new
+            var query = await WorkScope.GetAll<ProjectUserBill>()
+                .Select(x => new ProjectClientPlanningDto
                 {
-                    UserInfor = new GetUserBillDto
-                    {
-                        UserId = x.UserId,
-                        UserName = x.User.Name,
-                        AvatarPath = x.User.AvatarPath,
-                        FullName = x.User.FullName,
-                        Branch = x.User.BranchOld,
-                        BranchColor = x.User.Branch.Color,
-                        BranchDisplayName = x.User.Branch.DisplayName,
-                        PositionId = x.User.PositionId,
-                        PositionName = x.User.Position.ShortName,
-                        PositionColor = x.User.Position.Color,
-                        EmailAddress = x.User.EmailAddress,
-                        UserType = x.User.UserType,
-                        UserLevel = x.User.UserLevel,
-                    },
-                    Project = new GetProjectBillDto
-                    {
-                        ProjectId = x.ProjectId,
-                        ProjectName = x.Project.Name,
-                        AccountName = x.AccountName,
-                        //BillRole = x.BillRole,
-                        BillRate = float.NaN,
-                        StartTime = x.StartTime,
-                        EndTime = x.EndTime,
-                        Note = x.Note,
-                        shadowNote = x.shadowNote,
-                        isActive = x.isActive,
-                        ChargeType = x.ChargeType.HasValue ? x.ChargeType.Value : x.Project.ChargeType,
-                    }
+                    Id = x.Project.ClientId,
+                    Name = x.Project.Client.Name
                 })
-                    .WhereIf(input.ProjectId != null, x => x.Project.ProjectId == input.ProjectId)
-                    .WhereIf(!string.IsNullOrEmpty(input.SearchText), x =>
-                        (x.UserInfor.UserName.Trim().ToLower().Contains(input.SearchText.Trim().ToLower())) ||
-                        (x.UserInfor.FullName.Trim().ToLower().Contains(input.SearchText.Trim().ToLower())) ||
-                        (x.UserInfor.EmailAddress.Trim().ToLower().Contains(input.SearchText.Trim().ToLower())) ||
-                        (x.Project.ProjectName.Trim().ToLower().Contains(input.SearchText.Trim().ToLower())))
-                    .WhereIf(input.ChargeStatus == ChargeStatus.IsCharge, x => x.Project.isActive == true)
-                    .WhereIf(input.ChargeStatus == ChargeStatus.IsNotCharge, x => x.Project.isActive == false)
-                    .AsEnumerable().GroupBy(p => p.UserInfor.UserId)
-                    .Select(group => new BillInfoDto
-                    {
-                        UserInfor = group.First().UserInfor,
-                        Projects = group.Select(g => g.Project).ToList()
-                    })
-                    .AsQueryable();
-            return projectUserBills.GetGridResultSync(projectUserBills, input.GirdParam);
+                .Distinct()
+                .Where(x => x.Id != null)
+                .ToListAsync();
+            return query;
         }
 
         [HttpPost]
         [AbpAuthorize(PermissionNames.Resource_TabAllBillAccount)]
-        public async Task<GridResult<BillInfoDto>> GetAllBillInfo(InputGetBillInfoDto input)
+        //[AbpAllowAnonymous]
+        public GridResult<BillInfoDto> GetAllBillInfo(InputGetBillInfoDto input)
         {
             // paging user id
-            var projectUserBills = WorkScope.All<ProjectUserBill>()
-                .Include(p => p.User).Include(p => p.Project)
+            var result = WorkScope.All<ProjectUserBill>()               
                 .Select(x => new
                 {
                     UserInfor = new GetUserBillDto
                     {
                         UserId = x.UserId,
-                        UserName = x.User.Name,
+                        //UserName = x.User.Name,
                         AvatarPath = x.User.AvatarPath,
-                        FullName = x.User.FullName,
-                        Branch = x.User.BranchOld,
+                        FullName = x.User.FullName,                       
                         BranchColor = x.User.Branch.Color,
                         BranchDisplayName = x.User.Branch.DisplayName,
                         PositionId = x.User.PositionId,
@@ -258,6 +207,7 @@ namespace ProjectManagement.APIs.ProjectUserBills
                     },
                     Project = new GetProjectBillDto
                     {
+                        ProjectStatus = x.Project.Status,
                         ProjectId = x.ProjectId,
                         ProjectName = x.Project.Name,
                         AccountName = x.User.FullName,
@@ -265,44 +215,36 @@ namespace ProjectManagement.APIs.ProjectUserBills
                         BillRate = x.BillRate,
                         StartTime = x.StartTime,
                         EndTime = x.EndTime,
-                        Note = x.Note,
-                        shadowNote = x.shadowNote,
-                        isActive = true,
-                        ChargeType = x.ChargeType.HasValue ? x.ChargeType.Value : x.Project.ChargeType,
-                        CurrencyCode = x.Project.Currency.Code
-                    }
-                }).AsEnumerable();
-
-            if (input.SortParams.Any())
-            {
-                foreach (var item in input.SortParams)
+                        Note = x.Note,                      
+                        isActive = x.isActive,
+                        ChargeType = x.ChargeType,
+                        CurrencyCode = x.Project.Currency.Code,
+                        ClientId = x.Project.ClientId,
+                        ClientCode = x.Project.Client.Code,
+                        ClientName = x.Project.Client.Name                        
+                    }                   
+                })
+                .WhereIf(!string.IsNullOrEmpty(input.SearchText), s => s.UserInfor.EmailAddress.Contains(input.SearchText) 
+                || (s.Project.AccountName == null || s.Project.AccountName.ToLower().Contains(input.SearchText.ToLower())) ||
+                s.Project != null && (
+                    (s.Project.ProjectCode != null && s.Project.ProjectCode.ToLower().Contains(input.SearchText.ToLower())) ||
+                    (s.Project.ProjectName != null && s.Project.ProjectName.ToLower().Contains(input.SearchText.ToLower())) ||
+                    (s.Project.ClientCode != null && s.Project.ClientCode.ToLower().Contains(input.SearchText.ToLower()))   ||
+                    (s.Project.ClientName != null && s.Project.ClientName.ToLower().Contains(input.SearchText.ToLower()))   ||
+                    (s.Project.Note != null && s.Project.Note.ToLower().Contains(input.SearchText.ToLower()))
+                ))
+                .WhereIf(input.ProjectId.HasValue, s => s.Project.ProjectId == input.ProjectId.Value)
+                .WhereIf(input.ClientId.HasValue, s => s.Project.ClientId == input.ClientId.Value)
+                .WhereIf(input.ProjectStatus.HasValue, s => s.Project.ProjectStatus == input.ProjectStatus.Value)
+                .GroupBy(s => s.UserInfor)
+                .Select(s => new BillInfoDto
                 {
-                    if(item.Key.Pascalize() == "UserInfor" )
-                        projectUserBills = projectUserBills.OrderBy(item.Value == SortDirection.ASC,
-                        x => x.UserInfor);
-                    if (item.Key.Pascalize() == "Project")
-                        projectUserBills = projectUserBills.OrderBy(item.Value == SortDirection.ASC,
-                        x => x.Project);
-                }
-            }
+                    UserInfor = s.Key,
+                    Projects = s.Select(x => x.Project).OrderBy(x => x.ClientCode).ToList()
+                }).OrderBy(s => s.UserInfor.EmailAddress)
+                .AsQueryable();
 
-            var result = projectUserBills.WhereIf(input.ProjectId != null, x => x.Project.ProjectId == input.ProjectId)
-                                         .WhereIf(!string.IsNullOrEmpty(input.SearchText), x =>
-                                             (x.UserInfor.UserName.Trim().ToLower().Contains(input.SearchText.Trim().ToLower())) ||
-                                             (x.UserInfor.FullName.Trim().ToLower().Contains(input.SearchText.Trim().ToLower())) ||
-                                             (x.UserInfor.EmailAddress.Trim().ToLower().Contains(input.SearchText.Trim().ToLower())) ||
-                                             (x.Project.ProjectName.Trim().ToLower().Contains(input.SearchText.Trim().ToLower())) ||
-                                             (x.Project.BillAccountName.Trim().ToLower().Contains(input.SearchText.Trim().ToLower())))
-                                         .WhereIf(input.ChargeStatus == ChargeStatus.IsCharge, x => x.Project.isActive == true)
-                                         .WhereIf(input.ChargeStatus == ChargeStatus.IsNotCharge, x => x.Project.isActive == false)
-                                         .GroupBy(p => p.UserInfor.UserId)
-                                         .Select(group => new BillInfoDto
-                                         {
-                                             UserInfor = group.First().UserInfor,
-                                             Projects = group.Select(g => g.Project).ToList()
-                                         })
-                                         .AsQueryable();
-            return result.GetGridResultSync(result, input.GirdParam);
+            return result.GetGridResultSync(result, input);
         }
 
         /// <summary>
@@ -427,7 +369,7 @@ namespace ProjectManagement.APIs.ProjectUserBills
         [AbpAuthorize(PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Create,
             PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo_Create,
             PermissionNames.Projects_TrainingProjects_ProjectDetail_TabBillInfo_Create)]
-        public async Task<ProjectUserBillDto> Create(ProjectUserBillDto input)
+        public async Task<UpdateProjectUserBillDto> Create(UpdateProjectUserBillDto input)
         {
             if (input.EndTime.HasValue && input.StartTime.Date > input.EndTime.Value.Date)
                 throw new UserFriendlyException($"Start date cannot be greater than end date !");
@@ -465,7 +407,7 @@ namespace ProjectManagement.APIs.ProjectUserBills
         [AbpAuthorize(PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Edit,
             PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo_Edit,
             PermissionNames.Projects_TrainingProjects_ProjectDetail_TabBillInfo_Edit)]
-        public async Task<ProjectUserBillDto> Update(ProjectUserBillDto input)
+        public async Task<UpdateProjectUserBillDto> Update(UpdateProjectUserBillDto input)
         {
             var projectUserBill = await WorkScope.GetAsync<ProjectUserBill>(input.Id);
 
@@ -628,7 +570,6 @@ namespace ProjectManagement.APIs.ProjectUserBills
                         p.LastModifierUserId = AbpSession.UserId;
                     });
                 }
-
             }
             else
             {
@@ -637,11 +578,9 @@ namespace ProjectManagement.APIs.ProjectUserBills
                     throw new UserFriendlyException("You have to select Main Project!");
                 }
                 project.ParentInvoiceId = input.MainProjectId.Value;
-
             }
 
             CurrentUnitOfWork.SaveChanges();
-
         }
 
         [HttpGet]
@@ -672,13 +611,10 @@ namespace ProjectManagement.APIs.ProjectUserBills
                     }
 
                 }
-
             }
             return sb.ToString();
 
         }
-
-
 
         [HttpGet]
         public async Task OutParentInvoice(long subInvoiceId)
@@ -695,6 +631,55 @@ namespace ProjectManagement.APIs.ProjectUserBills
         {
             return await projectUserBillManager.GetAllBillAccount();
         }
+        [HttpGet]
+        public async Task<object> Get(long userId,long projectId )
+        {
+            return await WorkScope.GetAll<ProjectUserBill>().Select(x=>
+             new
+            {
+                UserInfor = new GetUserBillDto
+                {
+                    UserId = x.UserId,
+                    //UserName = x.User.Name,
+                    AvatarPath = x.User.AvatarPath,
+                    FullName = x.User.FullName,
+                    BranchColor = x.User.Branch.Color,
+                    BranchDisplayName = x.User.Branch.DisplayName,
+                    PositionId = x.User.PositionId,
+                    PositionName = x.User.Position.ShortName,
+                    PositionColor = x.User.Position.Color,
+                    EmailAddress = x.User.EmailAddress,
+                    UserType = x.User.UserType,
+                    UserLevel = x.User.UserLevel,
+                },
+                Project = new GetProjectBillDto
+                {
+                    ProjectStatus = x.Project.Status,
+                    ProjectId = x.ProjectId,
+                    ProjectName = x.Project.Name,
+                    AccountName = x.User.FullName,
+                    //BillRole = x.BillRole,
+                    BillRate = x.BillRate,
+                    StartTime = x.StartTime,
+                    EndTime = x.EndTime,
+                    Note = x.Note,
+                    isActive = x.isActive,
+                    ChargeType = x.ChargeType,
+                    CurrencyCode = x.Project.Currency.Code,
+                    ClientId = x.Project.ClientId,
+                    ClientCode = x.Project.Client.Code,
+                    ClientName = x.Project.Client.Name
+                }
+            }).FirstOrDefaultAsync(x => x.UserInfor.UserId == userId && x.Project.ProjectId == projectId);
+        }
 
+        [HttpPut]
+        public async Task UpdateBillNote(UpdateProjectUserBillNoteDto input)
+        {
+            var item = await WorkScope.GetAll<ProjectUserBill>()
+                .FirstOrDefaultAsync(x => x.UserId == input.UserId && x.ProjectId == input.ProjectId);
+            item.Note = input.Note;
+            await WorkScope.UpdateAsync(item);
+        }
     }
 }

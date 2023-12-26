@@ -647,6 +647,8 @@ export class THeadTable {
   backgroud_color?: string;
   sortName?: string;
   defaultSort?: string;
+  padding?: string;
+  whiteSpace?: string;
 }
 
 export class SendRecruitmentModel {

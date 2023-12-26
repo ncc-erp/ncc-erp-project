@@ -21,6 +21,7 @@ export class UserInfoComponent extends AppComponentBase implements OnInit {
   @Input() isChangeContentSize: boolean = false;
   @Input() isHideLevel: boolean = false;
   @Input() isHideBillRate: boolean = false;
+  @Input() isSimplizeEmailAddress: boolean = false;
 
   public user: UserDto
   constructor(injector: Injector) {

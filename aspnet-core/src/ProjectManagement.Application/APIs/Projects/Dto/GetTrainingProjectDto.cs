@@ -41,5 +41,8 @@ namespace ProjectManagement.APIs.Projects.Dto
         public string PositionColor { get; set; }
         public string PositionName { get; set; }
         public bool? IsRequiredWeeklyReport { get; set; }
+        public List<ResourceInfo> ResourceInfo { get; set; }
+
+
     }
 }

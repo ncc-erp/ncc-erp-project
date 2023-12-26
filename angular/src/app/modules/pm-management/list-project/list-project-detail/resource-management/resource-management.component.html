@@ -75,8 +75,8 @@
                 <tr>
                   <th class="stt">#</th>
                   <th style="width: 340px">Employee</th>
-                  <th style="width: 600px">Note</th>
-                  <th style="width: 60px">Skills</th>
+                  <th style="width: 200px">Note</th>
+                  <th style="width: 400px">Skills</th>
                   <th style="width: 90px">Role</th>
                   <th style="width: 90px">Start time</th>
                   <th style="width: 90px">Work type</th>
@@ -224,7 +224,7 @@
                         <div style="width: 90%; text-align: left">
                           <p
                             class="m-0 mr-1"
-                            *ngFor="let item of user.userSkills"
+                            *ngFor="let item of filterSkillInfo(user)"
                           >
                             - {{ item.skillName }}
                             <strong
@@ -249,10 +249,7 @@
                               ></i>
                             </strong>
                           </p>
-                          <div
-                            style="white-space: pre-line"
-                            *ngIf="IsSkillNoteExist(user)"
-                          >
+                          <div *ngIf="IsSkillNoteExist(user)">
                             <strong>Note:</strong> {{ GetUserSkillNote(user) }}
                           </div>
                         </div>
@@ -289,6 +286,17 @@
                           ></i>
                         </div>
                       </div>
+                      <i [ngClass]="
+                          user.isViewAllSkillInfo
+                            ? 'fas fa-chevron-up'
+                            : 'fa fa-ellipsis-h'
+                        " class="d-flex"
+                        *ngIf="user.userSkills.length > 5"
+                        (click)="
+                          user.isViewAllSkillInfo = !user.isViewAllSkillInfo;
+                          filterSkillInfo(user)
+                        "
+                      ></i>
                     </span>
                   </td>
 
@@ -677,10 +685,7 @@
                               ></i>
                             </strong>
                           </p>
-                          <div
-                            style="white-space: pre-line"
-                            *ngIf="IsSkillNoteExist(user)"
-                          >
+                          <div *ngIf="IsSkillNoteExist(user)">
                             <strong>Note:</strong> {{ GetUserSkillNote(user) }}
                           </div>
                         </div>

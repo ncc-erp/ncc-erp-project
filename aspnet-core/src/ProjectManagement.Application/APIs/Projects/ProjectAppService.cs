@@ -1,6 +1,7 @@
 ﻿using Abp.Application.Services.Dto;
 using Abp.Authorization;
 using Abp.Authorization.Users;
+using Abp.Collections.Extensions;
 using Abp.Configuration;
 using Abp.Domain.Repositories;
 using Abp.Linq.Extensions;
@@ -745,12 +746,12 @@ namespace ProjectManagement.APIs.Projects
                {
                    ProjectId = pu.ProjectId,
                    FullName = pu.User.FullName,
-                   ProjectUserRole = pu.ProjectRole.ToString()
+                   ProjectUserRole = pu.ProjectRole.ToString(),
                }).AsEnumerable()
                .GroupBy(pu => pu.ProjectId, pu => pu)
                .ToDictionary(group => group.Key, group => group.ToList());
-            
-            var query = from p in WorkScope.GetAll<Project>().Include(x => x.Currency)
+
+            var query = (from p in WorkScope.GetAll<Project>().Include(x => x.Currency)
                         .Where(x => x.ProjectType == ProjectType.TRAINING)
                         .Where(x => filterStatus != null && valueStatus > -1 ? (valueStatus == 3 ? x.Status != ProjectStatus.Closed : x.Status == (ProjectStatus)valueStatus) : true)
                         join rp in WorkScope.GetAll<PMReportProject>().Where(x => x.PMReport.IsActive) on p.Id equals rp.ProjectId into lst
@@ -785,8 +786,8 @@ namespace ProjectManagement.APIs.Projects
                             Evaluation = l.Note,
                             IsRequiredWeeklyReport = hasViewRequireWRPermission ? p.IsRequiredWeeklyReport : default(bool?),
                             ResourceInfo = resourceProject.ContainsKey(p.Id) ? resourceProject[p.Id] : null,
-                        };
-            return await query.GetGridResult(query, input);
+                        }).AsEnumerable().OrderByDescending(p => p.ResourceInfo?.Count).AsQueryable();
+            return  query.GetGridResultSync(query, input);
         }
 
         [HttpPost]

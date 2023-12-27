@@ -1,3 +1,4 @@
+import { ProjectStatusPipe } from './pipes/project-status-pipe.pipe';
 import { CommonModule } from '@angular/common';
 import { NgModule, ModuleWithProviders  } from '@angular/core';
 import { RouterModule } from '@angular/router';
@@ -41,6 +42,7 @@ import { MatPaginatorModule } from '@angular/material/paginator'
 import { MatProgressBarModule } from '@angular/material/progress-bar'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { MatRadioModule } from '@angular/material/radio'
+
 // import {MatSelectModule} from '@angular/material/select'
 import { MatSidenavModule } from '@angular/material/sidenav'
 import { MatSliderModule } from '@angular/material/slider'
@@ -135,6 +137,7 @@ import { CustomTimeComponent } from './date-selector/custom-time/custom-time.com
 
     ],
     declarations: [
+        ProjectStatusPipe,
         AbpPaginationControlsComponent,
         AbpValidationSummaryComponent,
         AbpModalHeaderComponent,
@@ -160,6 +163,7 @@ import { CustomTimeComponent } from './date-selector/custom-time/custom-time.com
 
     ],
     exports: [
+        ProjectStatusPipe,
         AbpPaginationControlsComponent,
         AbpValidationSummaryComponent,
         AbpModalHeaderComponent,

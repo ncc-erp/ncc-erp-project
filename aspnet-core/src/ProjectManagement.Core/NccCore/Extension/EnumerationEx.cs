@@ -57,5 +57,10 @@ namespace NccCore.Extension
             var list = o as ICollection<Newtonsoft.Json.Linq.JToken>;
             return list.Select(s => s.ToObject(innerType));
         }
+
+        public static IOrderedEnumerable<TItem> OrderBy<TItem, TKey>(this IEnumerable<TItem> source, bool asc, Func<TItem, TKey> keySelector)
+        {
+            return asc ? source.OrderBy(keySelector) : source.OrderByDescending(keySelector);
+        }
     }
 }

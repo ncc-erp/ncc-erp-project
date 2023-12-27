@@ -1135,11 +1135,18 @@
                                                     </td>
                                                     <td style="white-space: break-spaces;">
                                                         <span class="d-flex align-items-center justify-content-between" style="width: 300px;">
-                                                            <p PrjResizeContent [collapseLine]="2" style="flex: 1;"
-                                                                class="mb-0 p-0  ml-2 max-line-content-2">{{user.note}}
-                                                            </p>
+                                                          <p PrjResizeContent [collapseLine]="2" style="flex: 1;" class="mb-0 p-0 ml-2 max-line-content-2">{{ user.note }}</p>
+                                                          <i style="color: #585858;" class="fas fa-ellipsis-v ml-1" [matMenuTriggerFor]="menu3"></i>
+                                                          <mat-menu #menu3="matMenu">
+                                                            <button class="mat-menu-item w-100" (click)="editBillNote(user)">
+                                                              <i class="fas fa-edit mr-2 fa-lg"></i>
+                                                              Edit Note
+                                                            </button>
+                                                          </mat-menu>
                                                         </span>
-                                                    </td>
+                                                      </td>
+
+
                                                 </tr>
                                             </tbody>
                                         </table>

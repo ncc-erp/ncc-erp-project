@@ -1,7 +1,7 @@
 <form action="" autocomplete="off" (submit)="SaveAndClose()">
   <abp-modal-header
     [title]="'Edit bill account of user: ' + fullName | localize"
-    (onCloseClick)="bsModalRef.hide()"
+    (onCloseClick)="dialogRef.close()"
   ></abp-modal-header>
   <div class="modal-body">
     <label for="">Note:</label>
@@ -19,7 +19,7 @@
 
   <abp-modal-footer
     [cancelDisabled]="saving"
-    (onCancelClick)="bsModalRef.hide()"
+    (onCancelClick)="dialogRef.close()"
     [saveDisabled]="saving"
   ></abp-modal-footer>
 </form>

@@ -786,8 +786,11 @@ namespace ProjectManagement.APIs.Projects
                             Evaluation = l.Note,
                             IsRequiredWeeklyReport = hasViewRequireWRPermission ? p.IsRequiredWeeklyReport : default(bool?),
                             ResourceInfo = resourceProject.ContainsKey(p.Id) ? resourceProject[p.Id] : null,
-                        }).AsEnumerable().OrderByDescending(p => p.ResourceInfo?.Count).AsQueryable();
-            return  query.GetGridResultSync(query, input);
+                        }).AsEnumerable()
+                        .OrderByDescending(p => p.ResourceInfo?.Count)
+                        .AsQueryable();
+
+            return query.GetGridResultSync(query, input);
         }
 
         [HttpPost]

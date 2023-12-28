@@ -87,8 +87,8 @@
                                 <th class="stt">#</th>
                                 <th>Employee</th>
                                 <th style="width: 75px;">History</th>
-                                <th>Planned Projects</th>
-                                <th>Temp Project</th>
+                                <th style="width: 350px;">Planned Projects</th>
+                                <th style="width: 220px;">Temp Project</th>
                                 <th style="width: 200px;">Skills</th>
                                 <th style="min-width: 220px;">Note</th>
                                 <th style="width: 100px;">Start Pool</th>
@@ -129,12 +129,12 @@
                                     </div>
                                 </td>
 
-                                <td style="white-space: normal;">
+                                <td style="white-space: normal; width: 350px;">
                                     <div class="d-flex justify-content-between" style="width: 100%;">
                                         <div>
                                             <div *ngFor="let plan of item.plannedProjects"
                                                 (mouseenter)="plan.onHover = true;" (mouseleave)="plan.onHover = false"
-                                                style="white-space: nowrap;">
+                                                style="white-space: nowrap; width: 100%;">
                                                 <button class="btn p-0 text-left" style="white-space: normal;"
                                                         matTooltip="Description: {{plan.resourceRequestDes}} &#13;
                                                                     Note: {{plan.resourceRequestNote}}"
@@ -210,7 +210,7 @@
                                                     <button class="btn p-0 text-left text-nowrap"
                                                         [matMenuTriggerFor]="tempMenu">
                                                         <span [ngClass]="plan.onHover?'on-hover-plan':''">
-                                                            <strong>{{ plan.projectName }} </strong>&nbsp;{{
+                                                            <strong>{{ plan.projectName }} </strong>&nbsp;<br>{{
                                                             plan.startTime |
                                                             date:
                                                             'dd/MM/yyyy' }}

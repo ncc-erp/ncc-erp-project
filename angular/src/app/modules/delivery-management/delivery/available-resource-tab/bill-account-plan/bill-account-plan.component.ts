@@ -59,32 +59,10 @@ export class BillAccountPlanComponent
   public sortable = new SortableModel("", 0, "");
   public sortResource = {};
 
-  projectType = [
-    {
-      label: "All",
-      value: this.APP_ENUM.FilterProjectType.All,
-    },
-    {
-      label: "Main",
-      value: false,
-    },
-    {
-      label: "Sub",
-      value: true,
-    },
-  ];
-
   projectStatusList = [
     { text: "Potential", value: APP_ENUMS.ProjectStatus.Potential },
     { text: "InProgress", value: APP_ENUMS.ProjectStatus.InProgress },
     { text: "Closed", value: APP_ENUMS.ProjectStatus.Closed },
-  ];
-
-  planStatusList = [
-    { value: APP_ENUMS.PlanStatus.AllPlan, displayName: "Has plans" },
-    { value: APP_ENUMS.PlanStatus.PlanningJoin, displayName: "Planning join" },
-    { value: APP_ENUMS.PlanStatus.PlanningOut, displayName: "Planning out" },
-    { value: APP_ENUMS.PlanStatus.NoPlan, displayName: "No plan" },
   ];
 
   constructor(
@@ -123,8 +101,6 @@ export class BillAccountPlanComponent
       });
     var date = new Date();
     this.refresh();
-
-    
   }
 
   public listDateOptions = [];
@@ -218,6 +194,11 @@ export class BillAccountPlanComponent
   applyClientFilter() {
     this.clientId = "";
     this.searchClient = "";
+    this.getDataPage(1);
+  }
+
+  applyProjectStatusFilter() {
+    this.projectStatus = "";
     this.getDataPage(1);
   }
 

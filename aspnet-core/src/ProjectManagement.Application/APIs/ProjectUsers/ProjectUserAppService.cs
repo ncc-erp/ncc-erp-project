@@ -292,7 +292,7 @@ namespace ProjectManagement.APIs.ProjectUsers
         {
             var query = WorkScope.GetAll<ProjectUser>()
                                  .Where(x => x.UserId == UserId & x.Status != ProjectUserStatus.Future)
-                                 .OrderByDescending(x => x.HistoryTime)
+                                 .OrderByDescending(x => x.StartTime)
                                  .ThenByDescending(x => x.Id)
                                  .Select(x => new GetProjectUserDto
                                  {
@@ -303,7 +303,7 @@ namespace ProjectManagement.APIs.ProjectUsers
                                      ProjectName = x.Project.Name,
                                      ProjectRole = x.ProjectRole.ToString(),
                                      AllocatePercentage = x.AllocatePercentage,
-                                     StartTime = x.StartTime.Date,
+                                     StartTime = x.StartTime,
                                      Status = x.Status.ToString(),
                                      IsExpense = x.IsExpense,
                                      ResourceRequestId = x.ResourceRequestId,

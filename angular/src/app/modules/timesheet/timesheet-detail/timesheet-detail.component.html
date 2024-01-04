@@ -388,7 +388,13 @@
                       <i class="fas fa-edit"></i>
                       Update TS
                     </button>
-
+                    <button
+                    *ngIf="permission.isGranted(Timesheets_TimesheetDetail_ExportTSdetail)"
+                    (click)="exportQuickTSDetail(item, APP_ENUM.ExportInvoiceMode.Normal)"
+                    class="btn mat-menu-item w-100">
+                    <i class="fas fa-file-export mr-1"></i>
+                    Export TS Detail
+                  </button>
                     <div class="form-group form-float">
                       <button
                         class="btn mat-menu-item w-100 special"

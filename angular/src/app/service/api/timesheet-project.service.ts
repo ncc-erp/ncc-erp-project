@@ -112,6 +112,10 @@ export class TimesheetProjectService extends BaseApiService {
     return this.http.post(this.rootUrl + "/ExportInvoiceForTax", data);
   }
 
+  public exportTimesheetDetail(data: any): Observable<any> {
+    return this.http.post(this.rootUrl + "/ExportTSDetail", data);
+  }
+
   updateTimesheetProject(item: any): Observable<any> {
     //update invoice number and working day
     return this.http.put<any>(this.rootUrl + '/UpdateTimesheetProject', item);

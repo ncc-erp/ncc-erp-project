@@ -794,12 +794,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
                     Year = s.Timesheet.Year,
                     Month = s.Timesheet.Month,
                     InvoiceDateSetting = s.Project.Client.InvoiceDateSetting
-                }).FirstOrDefault();
-            
-                if (result.Info == default)
-                {
-                    throw new UserFriendlyException("You have to select at least 1 project is MAIN in Invoice Setting");
-                }
+                }).FirstOrDefault();      
             
             result.TimesheetUsers = await (from tpb in qtimesheetProjectBill
                                            from tp in qtimesheetProject.Select(s => new { s.ProjectId, s.WorkingDay })

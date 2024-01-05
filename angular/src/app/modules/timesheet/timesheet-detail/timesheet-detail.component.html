@@ -28,23 +28,12 @@
               <div class="mr-2">
                 <div class="form-group form-float" [matTooltip] ="!canExportInvoice?'Chưa chọn Project, không cùng Currency hoặc Client':''">
                   <button *ngIf="isShowBtnExportTsDetail()"
-                    [disabled]="listExportInvoice?.length <= 0 || !canExportInvoice" type="submit" class="btn bg-primary mr-2"
-                    [matMenuTriggerFor]="actionsExportTSDetail">
+                    [disabled]="listExportInvoice?.length <= 0" type="submit" class="btn bg-primary mr-2"
+                    (click)="exportTimesheetDetail(APP_ENUM.ExportInvoiceMode.Normal)"
+                    >
                     Export TS Detail
                   </button>
                 </div>
-                <mat-menu #actionsExportTSDetail="matMenu">
-                  <button mat-menu-item [disabled]="listExportInvoice?.length <= 0"
-                    (click)="exportTimesheetDetail(APP_ENUM.ExportInvoiceMode.Normal)">
-                    <i class="fa fa-file"></i>
-                    Normally
-                  </button>
-                  <button class="special" *ngIf="isMonthlyToDaily" mat-menu-item [disabled]="listExportInvoice?.length <= 0"
-                    (click)="exportTimesheetDetail(APP_ENUM.ExportInvoiceMode.MontlyToDaily)">
-                    <i class="fa fa-file-export"></i>
-                    Monthly to daily
-                  </button>
-                </mat-menu>
               </div>
               <div class=" mr-2">
                 <button class="btn btn-export-all-project"
@@ -199,7 +188,7 @@
                     <mat-option [value]="-1">All</mat-option>
                     <mat-option *ngFor="let data of clientList | listFilter:  'name' : searchClient" [value]="data.id">
                       {{data.name}}
-                    </mat-option>
+                    </mat-option> 
                   </mat-select>
                 </mat-form-field>
               </div>
@@ -388,6 +377,14 @@
                       <i class="fas fa-edit"></i>
                       Update TS
                     </button>
+                    
+                    <button
+                      *ngIf="permission.isGranted(Timesheets_TimesheetDetail_ExportTSdetail)"
+                      (click)="exportTimesheetDetail(item, APP_ENUM.ExportInvoiceMode.Normal)"
+                      class="btn mat-menu-item w-100">
+                      <i class="fas fa-file-export mr-1"></i>
+                      Export TS Detail
+                    </button>
 
                     <div class="form-group form-float">
                       <button
@@ -428,7 +425,6 @@
                           <i class="fa fa-file-pdf"></i> Export PDF
                         </button>
                       </mat-menu>
-
 
                     <button *ngIf="permission.isGranted(Timesheets_TimesheetDetail_ExportInvoiceForTax)"
                       (click)="exportQuickInvoiceForTax(item,APP_ENUM.ExportInvoiceMode.Normal)"

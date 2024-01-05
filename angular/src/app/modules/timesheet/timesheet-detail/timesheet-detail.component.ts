@@ -273,23 +273,30 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
   //     })
   // }
 
-  exportTimesheetDetail(exportInvoiceMode) {
-    let payloadDto = {
-      timesheetId: this.timesheetId,
-      projectIds: this.listExportInvoice,
-      mode: exportInvoiceMode
-    }
+  exportTimesheetDetail(item: any) {
+    let payloadDto;
+    if (item && item.projectId) {
+      payloadDto = {
+        timesheetId: this.timesheetId,
+        projectIds: [item.projectId],
+        mode: this.APP_ENUM.ExportInvoiceMode.Normal
+      };
+  } else {
+      payloadDto = {
+        timesheetId: this.timesheetId,
+        projectIds: this.listExportInvoice,
+        mode: this.APP_ENUM.ExportInvoiceMode.Normal
+    };
+  }
     this.timesheetProjectService.exportTimeSheetDetail(payloadDto).subscribe((res) => {
-      const file = new Blob([this.s2ab(atob(res.result.base64))], {
-        type: "application/vnd.ms-excel;charset=utf-8"
-      });
+    const file = new Blob([this.s2ab(atob(res.result.base64))], {
+      type: "application/vnd.ms-excel;charset=utf-8"
+    });
       this.refresh();
-      this.listExportInvoice=[];
       FileSaver.saveAs(file, res.result.fileName);
       abp.notify.success("Export Invoice For Tax Successfully!");
-    })
+    });
   }
-
 
   handleLinkProjectTS(item) {
    const dialogref = this.dialog.open(LinkProjectTimesheetComponent, {

@@ -1,21 +1,24 @@
-import { ProjectUserBillService } from '@app/service/api/project-user-bill.service'; 
+import { ProjectUserBillService } from '@app/service/api/project-user-bill.service';
 import {
   Component,
   EventEmitter,
+  Injector,
   OnDestroy,
   OnInit,
   Output,
+  Inject
 } from '@angular/core';
-import { BsModalRef } from 'ngx-bootstrap/modal';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
+import { AppComponentBase } from '@shared/app-component-base';
 
 @Component({
   selector: 'app-edit-note-dialog',
   templateUrl: './edit-note-dialog.component.html',
   styleUrls: ['./edit-note-dialog.component.css'],
 })
-export class EditNoteDialogComponent implements OnInit, OnDestroy {
+export class EditNoteDialogComponent extends AppComponentBase implements OnInit, OnDestroy {
   fullName: string;
   projectName: string;
   id: number;
@@ -24,11 +27,14 @@ export class EditNoteDialogComponent implements OnInit, OnDestroy {
   @Output() onSave = new EventEmitter<null>();
 
   subscription: Subscription[] = [];
-  constructor(public bsModalRef: BsModalRef, 
-     private projectUserBillService:ProjectUserBillService) {}
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any,
+      public injector: Injector,
+      private projectUserBillService:ProjectUserBillService,
+      public dialogRef: MatDialogRef<EditNoteDialogComponent>) {super(injector)}
 
   ngOnInit(): void {
-   
+   this.id =this.data.id;
+   this.note = this.data.note;
   }
 
   SaveAndClose() {
@@ -46,9 +52,9 @@ export class EditNoteDialogComponent implements OnInit, OnDestroy {
           })
         )
         .subscribe(() => {
-          this.bsModalRef.hide();
           this.onSave.emit();
           abp.notify.success("Updated Note")
+          this.dialogRef.close(this.note);
         })
     );
   }

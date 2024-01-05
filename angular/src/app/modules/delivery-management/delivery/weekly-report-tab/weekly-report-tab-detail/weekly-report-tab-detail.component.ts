@@ -43,6 +43,7 @@ import { map } from 'rxjs/operators';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { EditNoteResourceComponent } from './edit-note-resource/edit-note-resource.component';
 import { UpdateConfirmModalComponent } from './update-confirm-modal/update-confirm-modal.component';
+import { EditNoteDialogComponent } from '@app/modules/pm-management/list-project/list-project-detail/project-bill/add-note-dialog/edit-note-dialog.component';
 @Component({
   selector: 'app-weekly-report-tab-detail',
   templateUrl: './weekly-report-tab-detail.component.html',
@@ -1693,6 +1694,24 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
     })
 
   }
+
+  public editBillNote(user): any {
+    let ref = this.dialog.open(EditNoteDialogComponent, {
+      width: "600px",
+      data: {
+        id: user.id,
+        note:user.note
+      }
+    });
+
+    ref.afterClosed().subscribe(rs => {
+      if (rs) {
+       user.note =rs;
+      }
+    });
+  }
+
+
 
 
   isShowChangeDoneText(issue){

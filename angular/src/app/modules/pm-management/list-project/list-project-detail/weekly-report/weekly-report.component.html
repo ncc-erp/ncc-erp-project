@@ -644,7 +644,7 @@
                                     <tr *ngFor="let user of projectInfo.projectUserBills; let i =index">
                                         <td class="d-flex justify-content-between" style="border: none;">
                                             <div style="width: 80%">
-                                                <app-user-info [userData]="user" [isWeeklyReport]="true" [workType]="user.workType">
+                                                <app-user-info [userData]="user" [isWeeklyReport]="true" [workType]="user.workType" [isHideLevel]="true">
                                                 </app-user-info>
                                             </div>
                                             <div style="visibility: hidden; position: fixed" [style.left]="contextMenuPosition.x"

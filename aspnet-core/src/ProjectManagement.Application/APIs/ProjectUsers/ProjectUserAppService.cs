@@ -290,30 +290,30 @@ namespace ProjectManagement.APIs.ProjectUsers
         [HttpGet]
         public async Task<List<GetProjectUserDto>> GetProjectHistoryByUser(long UserId)
         {
-            var query = WorkScope
-                .GetAll<ProjectUser>()
-                .Where(x => x.UserId == UserId & x.Status != ProjectUserStatus.Future)
-                .OrderByDescending(x => x.HistoryTime)
-                                .Select(x => new GetProjectUserDto
-                                {
-                                    Id = x.Id,
-                                    UserId = x.UserId,
-                                    FullName = x.User.FullName,
-                                    ProjectId = x.ProjectId,
-                                    ProjectName = x.Project.Name,
-                                    ProjectRole = x.ProjectRole.ToString(),
-                                    AllocatePercentage = x.AllocatePercentage,
-                                    StartTime = x.StartTime.Date,
-                                    Status = x.Status.ToString(),
-                                    IsExpense = x.IsExpense,
-                                    ResourceRequestId = x.ResourceRequestId,
-                                    ResourceRequestName = x.ResourceRequest.Name,
-                                    PMReportId = x.PMReportId,
-                                    PMReportName = x.PMReport.Name,
-                                    IsFutureActive = x.IsFutureActive,
-                                    Note = x.Note,
-                                    PMName = x.Project.PM.FullName
-                                });
+            var query = WorkScope.GetAll<ProjectUser>()
+                                 .Where(x => x.UserId == UserId & x.Status != ProjectUserStatus.Future)
+                                 .OrderByDescending(x => x.StartTime)
+                                 .ThenByDescending(x => x.Id)
+                                 .Select(x => new GetProjectUserDto
+                                 {
+                                     Id = x.Id,
+                                     UserId = x.UserId,
+                                     FullName = x.User.FullName,
+                                     ProjectId = x.ProjectId,
+                                     ProjectName = x.Project.Name,
+                                     ProjectRole = x.ProjectRole.ToString(),
+                                     AllocatePercentage = x.AllocatePercentage,
+                                     StartTime = x.StartTime,
+                                     Status = x.Status.ToString(),
+                                     IsExpense = x.IsExpense,
+                                     ResourceRequestId = x.ResourceRequestId,
+                                     ResourceRequestName = x.ResourceRequest.Name,
+                                     PMReportId = x.PMReportId,
+                                     PMReportName = x.PMReport.Name,
+                                     IsFutureActive = x.IsFutureActive,
+                                     Note = x.Note,
+                                     PMName = x.Project.PM.FullName
+                                 });
             return await query.ToListAsync();
         }
 

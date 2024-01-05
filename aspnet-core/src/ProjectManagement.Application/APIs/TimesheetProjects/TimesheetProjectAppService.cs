@@ -753,15 +753,13 @@ namespace ProjectManagement.APIs.TimesheetProjects
             return await _timesheetService.GetTimesheetDetailForTax(input);
         }
 
-        
-
         private ExcelWorksheet CopySheet(ExcelWorkbook workbook, string existingWorksheetName, string newWorksheetName)
         {
             ExcelWorksheet worksheet = workbook.Worksheets.Copy(existingWorksheetName, newWorksheetName);
             return worksheet;
         }
 
-        private async Task<InvoiceData> GetInvoiceData(InputExportInvoiceDto input)
+        private async Task<InvoiceData> GetInvoiceData(InputExportInvoiceDto input, bool throwExceptionOnEmptyInfo = true)
         {
             var defaultWorkingHours = Convert.ToInt32(await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.DefaultWorkingHours));
             var result = new InvoiceData();
@@ -796,7 +794,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
                     InvoiceDateSetting = s.Project.Client.InvoiceDateSetting
                 }).FirstOrDefault();
             
-                if (result.Info == default)
+                if (throwExceptionOnEmptyInfo && result.Info == default)
                 {
                     throw new UserFriendlyException("You have to select at least 1 project is MAIN in Invoice Setting");
                 }
@@ -978,7 +976,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
         [AbpAuthorize(PermissionNames.Timesheets_TimesheetDetail_ExportTSdetail)]
         public async Task<FileBase64Dto> ExportTSdetail(InputExportInvoiceDto input)
         {
-            var dataInvoice = await GetInvoiceData(input);
+            var dataInvoice = await GetInvoiceData(input, throwExceptionOnEmptyInfo: false);
             List<TimesheetDetailUser> dataTimesheetDetail = await GetTimesheetDetailData(dataInvoice, false);
 
             var templateFilePath = Path.Combine(templateFolder, "TSDetail.xlsx");
@@ -990,7 +988,6 @@ namespace ProjectManagement.APIs.TimesheetProjects
                     FillDataToExcelFileTSDetail(excelPackageIn, dataInvoice);
                     FillDataToSheetTimesheetDetail(excelPackageIn, dataTimesheetDetail);
                     string fileBase64 = Convert.ToBase64String(excelPackageIn.GetAsByteArray());
-
 
                     return new FileBase64Dto
                     {

@@ -25,6 +25,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ActiveTimesheetProjectComponent } from './active-timesheet-project/active-timesheet-project.component';
 import { TimeSheetProjectBillService } from '@app/service/api/time-sheet-project-bill.service';
 import { LinkProjectTimesheetComponent } from './link-project-timesheet/link-project-timesheet.component';
+import { forkJoin } from 'rxjs/internal/observable/forkJoin';
 
 
 @Component({
@@ -125,6 +126,7 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
   public sending: boolean = false;
   public canExportInvoice = false;
   public listTimesheetProject = [];
+
   @ViewChild(MatMenuTrigger)
   menu: MatMenuTrigger
   contextMenuPosition = { x: '0', y: '0' }
@@ -242,8 +244,6 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
     })
   }
 
-
-
   public isEnablePMFilter(){
     return this.permission.isGranted(this.Timesheets_TimesheetDetail_ViewAll)
   }
@@ -255,42 +255,31 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
     this.refresh();
   }
 
-
-  // reloadTimesheetFile(id) {
-  //   this.timesheetProjectService.GetTimesheetDetail(this.timesheetId, this.requestBody).pipe(catchError(this.timesheetProjectService.handleError))
-  //     .subscribe((data: PagedResultResultDto) => {
-  //       this.TimesheetDetaiList = data.result.items;
-  //       if (!this.TimesheetDetaiList.filter(timesheet => timesheet.id == id)[0].file) {
-  //         setTimeout(() => {
-  //           this.reloadTimesheetFile(id)
-  //         }, 1000)
-  //       }
-  //       else {
-  //         this.showPaging(data.result, this.pageNum);
-  //         this.projectTimesheetDetailId = data.result.items.map(el => { return el.projectId })
-  //         abp.notify.success("import file successfull")
-  //       }
-  //     })
-  // }
-
-  exportTimesheetDetail(exportInvoiceMode) {
-    let payloadDto = {
-      timesheetId: this.timesheetId,
-      projectIds: this.listExportInvoice,
-      mode: exportInvoiceMode
-    }
+  exportTimesheetDetail(item: any) {
+    let payloadDto;
+    if (item && item.projectId) {
+      payloadDto = {
+        timesheetId: this.timesheetId,
+        projectIds: [item.projectId],
+        mode: this.APP_ENUM.ExportInvoiceMode.Normal
+      };
+  } else {
+      payloadDto = {
+        timesheetId: this.timesheetId,
+        projectIds: this.listExportInvoice,
+        mode: this.APP_ENUM.ExportInvoiceMode.Normal
+    };
+  }
     this.timesheetProjectService.exportTimeSheetDetail(payloadDto).subscribe((res) => {
-      const file = new Blob([this.s2ab(atob(res.result.base64))], {
-        type: "application/vnd.ms-excel;charset=utf-8"
-      });
+    const file = new Blob([this.s2ab(atob(res.result.base64))], {
+      type: "application/vnd.ms-excel;charset=utf-8"
+    });
       this.refresh();
-      this.listExportInvoice=[];
       FileSaver.saveAs(file, res.result.fileName);
       abp.notify.success("Export Invoice For Tax Successfully!");
-    })
+    });
   }
-
-
+        
   handleLinkProjectTS(item) {
    const dialogref = this.dialog.open(LinkProjectTimesheetComponent, {
       width: '600px',
@@ -481,22 +470,6 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
   });
   }
 
-
-  exportQuickInvoiceForTax(item: any,exportInvoiceMode) {
-    let invoiceExcelDto = {
-      timesheetId: this.timesheetId,
-      projectIds: [item.projectId],
-      mode: exportInvoiceMode
-    }
-    this.timesheetProjectService.exportInvoiceForTax(invoiceExcelDto).pipe(catchError(this.timesheetProjectService.handleError)).subscribe(data => {
-      const file = new Blob([this.s2ab(atob(data.result.base64))], {
-        type: "application/vnd.ms-excel;charset=utf-8"
-      });
-      FileSaver.saveAs(file, data.result.fileName);
-      abp.notify.success("Export Invoice For Tax Successfully!");
-    })
-  }
-
   addProjectToExport(event, item) {
     let chargeTypeProject = item.projectBillInfomation.find(s => s.chargeType == this.APP_ENUM.ChargeType.Monthly);
     if (!event.checked) {
@@ -528,7 +501,8 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
       this.isMonthlyToDaily = false;
     }
   }
-  checkExportInvoice(listTimesheetProject) {
+
+  checkExportInvoice(listTimesheetProject) { 
     if (listTimesheetProject.length > 0) {
       let countClient = listTimesheetProject.reduce((r: any, a: any) => {
         r[a.clientId] = r[a.clientId] || [];
@@ -541,7 +515,7 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
         return r;
       }, {});
       if (Object.keys(countClient).length > 1 || Object.keys(countCurrency).length) {
-        this.canExportInvoice = false;
+        this.canExportInvoice = true;
       }
       if (Object.keys(countClient).length == 1 && Object.keys(countCurrency).length == 1) { this.canExportInvoice = true }
     }
@@ -600,6 +574,21 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
       this.refresh();
       this.listExportInvoice=[];
       FileSaver.saveAs(file, res.result.fileName);
+      abp.notify.success("Export Invoice For Tax Successfully!");
+    })
+  }
+
+    exportQuickInvoiceForTax(item: any,exportInvoiceMode) {
+    let invoiceExcelDto = {
+      timesheetId: this.timesheetId,
+      projectIds: [item.projectId],
+      mode: exportInvoiceMode
+    }
+    this.timesheetProjectService.exportInvoiceForTax(invoiceExcelDto).pipe(catchError(this.timesheetProjectService.handleError)).subscribe(data => {
+      const file = new Blob([this.s2ab(atob(data.result.base64))], {
+        type: "application/vnd.ms-excel;charset=utf-8"
+      });
+      FileSaver.saveAs(file, data.result.fileName);
       abp.notify.success("Export Invoice For Tax Successfully!");
     })
   }

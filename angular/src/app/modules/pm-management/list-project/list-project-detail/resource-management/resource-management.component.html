@@ -218,6 +218,7 @@
                       </mat-menu>
                     </div>
                   </td>
+
                   <td style="vertical-align: middle">
                     <span style="white-space: normal; max-width: 200px">
                       <div class="d-flex">
@@ -286,11 +287,13 @@
                           ></i>
                         </div>
                       </div>
-                      <i [ngClass]="
+                      <i
+                        [ngClass]="
                           user.isViewAllSkillInfo
                             ? 'fas fa-chevron-up'
                             : 'fa fa-ellipsis-h'
-                        " class="d-flex"
+                        "
+                        class="d-flex"
                         *ngIf="user.userSkills.length > 5"
                         (click)="
                           user.isViewAllSkillInfo = !user.isViewAllSkillInfo;
@@ -562,12 +565,12 @@
                 <tr>
                   <th class="stt">#</th>
                   <th style="width: 340px">Employee</th>
-                  <th style="width: 200px">Skill</th>
+                  <th style="width: 290px">Skill</th>
                   <th style="width: 90px">Role</th>
                   <th style="width: 90px">Start time</th>
                   <th style="width: 90px">Work type</th>
                   <th style="width: 90px">Join/Out</th>
-                  <th style="width: 600px">Note</th>
+                  <th style="width: 510px">Note</th>
                   <th style="width: 90px">Actions</th>
                 </tr>
               </thead>
@@ -657,11 +660,15 @@
                       </div>
                     </div>
                   </td>
+
                   <td style="vertical-align: middle">
                     <span style="white-space: normal; max-width: 200px">
-                      <div class="d-flex" style="align-items: center">
+                      <div class="d-flex">
                         <div style="width: 90%; text-align: left">
-                          <p class="m-0" *ngFor="let item of user.userSkills">
+                          <p
+                            class="m-0 mr-1"
+                            *ngFor="let item of filterSkillInfo(user)"
+                          >
                             - {{ item.skillName }}
                             <strong
                               *ngIf="
@@ -689,9 +696,20 @@
                             <strong>Note:</strong> {{ GetUserSkillNote(user) }}
                           </div>
                         </div>
-                        <div style="width: 10%; text-align: right">
+                        <div
+                          style="width: 10%; text-align: right"
+                          *ngIf="
+                            !(
+                              user.workingStatus ==
+                                APP_ENUM.ProjectUserStatus.Past ||
+                              (user.workingStatus ==
+                                APP_ENUM.ProjectUserStatus.Present &&
+                                user.allocatePercentage == 0)
+                            )
+                          "
+                        >
                           <i
-                            class="fas fa-edit"
+                            class="fas fa-edit ml-1"
                             (click)="
                               updateUserSkill(
                                 user,
@@ -711,6 +729,19 @@
                           ></i>
                         </div>
                       </div>
+                      <i
+                        [ngClass]="
+                          user.isViewAllSkillInfo
+                            ? 'fas fa-chevron-up'
+                            : 'fa fa-ellipsis-h'
+                        "
+                        class="d-flex"
+                        *ngIf="user.userSkills.length > 5"
+                        (click)="
+                          user.isViewAllSkillInfo = !user.isViewAllSkillInfo;
+                          filterSkillInfo(user)
+                        "
+                      ></i>
                     </span>
                   </td>
 
@@ -861,14 +892,25 @@
                       </mat-radio-button>
                     </mat-radio-group>
                   </td>
-                  <td>
-                    <p
-                      class="table-vertical table-note"
-                      *ngIf="!user.createMode && !user.editMode"
-                    >
-                      {{ user.note }}
-                    </p>
 
+                  <td>
+                    <div class="row">
+                      <div class="col-md-10">
+                        <p
+                          class="mb-0 p-0 ml-2 max-line-content-3"
+                          PrjResizeContent
+                          [collapseLine]="3"
+                          style="
+                            white-space: pre-line;
+                            font-family: sans-serif;
+                            text-align: left;
+                            line-height: initial;
+                          "
+                        >
+                              {{ user.note }}
+                      </p>
+                      </div>
+                    </div>
                     <textarea
                       name="pmNotePlan"
                       [(ngModel)]="user.note"

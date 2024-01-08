@@ -293,7 +293,6 @@ namespace ProjectManagement.Services.ResourceManager
                     //release user from current project
                     pu.PMReportId = activeReportId;
                     pu.Status = ProjectUserStatus.Past;
-                    pu.HistoryTime = DateTime.Now;
                     await _workScope.UpdateAsync(pu);
                     var outPU = new ProjectUser
                     {
@@ -306,7 +305,6 @@ namespace ProjectManagement.Services.ResourceManager
                         PMReportId = activeReportId,
                         ProjectRole = pu.ProjectRole,
                         Note = $"added to project {projectToJoin.ProjectName} {CommonUtil.ProjectUserWorkType(pu.IsPool)} by {sessionUser.FullName}",
-                        HistoryTime = DateTime.Now
                     };
                     await _workScope.InsertAsync(outPU);
                     sbKomuMessage.AppendLine($"{DateTimeUtils.ToString(outPU.StartTime)}: {sessionUser.KomuAccountInfo} " +
@@ -347,6 +345,8 @@ namespace ProjectManagement.Services.ResourceManager
             //    .Where(pu => pu.UserId == input.UserId && pu.ProjectId == input.ProjectId
             //    && (pu.Status == ProjectUserStatus.Present && pu.AllocatePercentage < 100)
             //    || pu.Status == ProjectUserStatus.Past).OrderByDescending(pu => pu.HistoryTime);
+
+
             //get project user list: Future && Allocate > 0, Present
             var projectUsers = _workScope.All<ProjectUser>() // user 230885, project id = 130048
                .Where(p => p.UserId == input.UserId && p.ProjectId == input.ProjectId
@@ -358,9 +358,11 @@ namespace ProjectManagement.Services.ResourceManager
             var projectUser = _workScope.GetAll<ProjectUser>()
                 .Where(p => p.UserId == input.UserId && p.ProjectId == input.ProjectId
                 && (p.Status == ProjectUserStatus.Future || p.Status == ProjectUserStatus.Present && p.AllocatePercentage > 0)).OrderByDescending(pu => pu.Id).FirstOrDefault();
+
             //var currentWorking = _workScope.GetAll<ProjectUser>()
             //    .Where(p => p.UserId == input.UserId && p.ProjectId == input.ProjectId
             //    && p.Status == ProjectUserStatus.Present && p.AllocatePercentage > 0).OrderByDescending(pu => pu.Id).FirstOrDefault();
+
             if (projectUser != null)
             {
                 projectUser.IsPool = input.IsPool;
@@ -371,14 +373,12 @@ namespace ProjectManagement.Services.ResourceManager
                 projectUser.StartTime = input.StartTime;
                 projectUser.PMReportId = activeReportId;
                 projectUser.ProjectRole = input.ProjectRole;
-                projectUser.HistoryTime = DateTime.Now;
                 await _workScope.UpdateAsync(projectUser);
                 if (!projectUsers.IsNullOrEmpty())
                     projectUsers.Remove(projectUser);
             }
             else
             {
-                joinPU.HistoryTime = DateTime.Now;
                 await _workScope.InsertAsync(joinPU);
             }
             // set done all project user list
@@ -511,7 +511,6 @@ namespace ProjectManagement.Services.ResourceManager
             futurePU.AllocatePercentage = 100;
             futurePU.StartTime = startTime;
             futurePU.PMReportId = activeReportId;
-            futurePU.HistoryTime = DateTime.Now;
 
             await _workScope.UpdateAsync(confirmPUExt.PU);
 
@@ -612,14 +611,12 @@ namespace ProjectManagement.Services.ResourceManager
             foreach (var curentPU in curentPUs)
             {
                 curentPU.Status = ProjectUserStatus.Past;
-                curentPU.HistoryTime = DateTime.Now;
             }
             await _workScope.UpdateRangeAsync(curentPUs);
 
             outPU.Status = ProjectUserStatus.Present;
             outPU.PMReportId = activeReportId;
             outPU.StartTime = input.StartTime;
-            outPU.HistoryTime = DateTime.Now;
             await _workScope.UpdateAsync(outPU);
 
             var sessionUser = await getSessionKomuUserInfo();
@@ -678,8 +675,7 @@ namespace ProjectManagement.Services.ResourceManager
                 AllocatePercentage = 0,
                 StartTime = input.ReleaseDate,
                 IsFutureActive = false,
-                Note = input.Note,
-                HistoryTime = DateTime.Now
+                Note = input.Note
             };
             await _workScope.InsertAsync(releasePU);
 

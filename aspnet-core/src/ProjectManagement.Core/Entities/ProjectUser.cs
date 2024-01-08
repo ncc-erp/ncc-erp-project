@@ -38,6 +38,5 @@ namespace ProjectManagement.Entities
         public long PMReportId { get; set; }
         public string Note { get; set; }
         public bool IsFutureActive { get; set; }
-        public DateTime? HistoryTime { get; set; }
     }
 }

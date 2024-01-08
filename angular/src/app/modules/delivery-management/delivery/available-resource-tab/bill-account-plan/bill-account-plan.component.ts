@@ -51,7 +51,7 @@ export class BillAccountPlanComponent
     { name: "Bill Account"},
     { name: "Client", width: "140px"},
     { name: "Projects"},
-    { name: "Is Charge", width: "65px", padding : "12px 5px", whiteSpace: "nowrap" },
+    { name: "Is Charge", width: "70px", padding : "12px 10px", whiteSpace: "nowrap" },
     { name: "Bill Date", width: "100px" },
     { name: "Note" },
   ];

@@ -379,7 +379,7 @@
                     </button>
                     
                     <button
-                      *ngIf="permission.isGranted(Timesheets_TimesheetDetail_ExportTSdetail)"
+                      *ngIf="isShowBtnExportTsDetail()"
                       (click)="exportTimesheetDetail(item)"
                       class="btn mat-menu-item w-100">
                       <i class="fas fa-file-export mr-1"></i>

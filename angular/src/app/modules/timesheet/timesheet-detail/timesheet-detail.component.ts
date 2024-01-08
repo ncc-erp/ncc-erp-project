@@ -274,20 +274,12 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
   // }
 
   exportTimesheetDetail(item: any) {
-    let payloadDto;
-    if (item && item.projectId) {
-      payloadDto = {
-        timesheetId: this.timesheetId,
-        projectIds: [item.projectId],
-        mode: this.APP_ENUM.ExportInvoiceMode.Normal
-      };
-  } else {
-      payloadDto = {
-        timesheetId: this.timesheetId,
-        projectIds: this.listExportInvoice,
-        mode: this.APP_ENUM.ExportInvoiceMode.Normal
-    };
-  }
+    const projectIds = (item && item.projectId) ? [item.projectId] : this.listExportInvoice;
+    const payloadDto = {
+      timesheetId: this.timesheetId,
+      projectIds: projectIds,
+      mode: this.APP_ENUM.ExportInvoiceMode.Normal
+    }
     this.timesheetProjectService.exportTimeSheetDetail(payloadDto).subscribe((res) => {
     const file = new Blob([this.s2ab(atob(res.result.base64))], {
       type: "application/vnd.ms-excel;charset=utf-8"

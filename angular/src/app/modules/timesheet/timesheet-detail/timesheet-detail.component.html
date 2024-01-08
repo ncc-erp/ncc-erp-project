@@ -26,10 +26,10 @@
                 </button>
               </div>
               <div class="mr-2">
-                <div class="form-group form-float" [matTooltip] ="!canExportInvoice?'Chưa chọn Project, không cùng Currency hoặc Client':''">
+                <div class="form-group form-float" [matTooltip] ="!isShowBtnExportTsDetail() ? 'Chưa chọn Project, không cùng Currency hoặc Client' : '' ">
                   <button *ngIf="isShowBtnExportTsDetail()"
                     [disabled]="listExportInvoice?.length <= 0" type="submit" class="btn bg-primary mr-2"
-                    (click)="exportTimesheetDetail(APP_ENUM.ExportInvoiceMode.Normal)"
+                    (click)="exportTimesheetDetail()"
                     >
                     Export TS Detail
                   </button>
@@ -380,7 +380,7 @@
                     
                     <button
                       *ngIf="permission.isGranted(Timesheets_TimesheetDetail_ExportTSdetail)"
-                      (click)="exportTimesheetDetail(item, APP_ENUM.ExportInvoiceMode.Normal)"
+                      (click)="exportTimesheetDetail(item)"
                       class="btn mat-menu-item w-100">
                       <i class="fas fa-file-export mr-1"></i>
                       Export TS Detail

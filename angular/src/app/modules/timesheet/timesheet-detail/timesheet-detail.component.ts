@@ -294,7 +294,7 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
     });
       this.refresh();
       FileSaver.saveAs(file, res.result.fileName);
-      abp.notify.success("Export Invoice For Tax Successfully!");
+      abp.notify.success("Export TS Detail Successfully!");
     });
   }
 
@@ -535,6 +535,7 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
       this.isMonthlyToDaily = false;
     }
   }
+  
   checkExportInvoice(listTimesheetProject) {
     if (listTimesheetProject.length > 0) {
       let countClient = listTimesheetProject.reduce((r: any, a: any) => {

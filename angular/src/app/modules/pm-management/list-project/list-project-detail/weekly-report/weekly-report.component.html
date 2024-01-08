@@ -223,7 +223,6 @@
                                 </div>
                             </span>
                         </mat-panel-title>
-
                     </mat-expansion-panel-header>
 
                     <div class="fixTableHead px-4" style="max-height: 46vh;">
@@ -439,6 +438,11 @@
                                              style="border-radius: 99px; padding: 1px 7px;font-size: 12px; font-weight: 700;"
                                             [ngClass]="APP_CONST.priorityRisk[problem.priority] "
                                             >{{ priorityList[problem.priority] }}</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span
+                                            [ngClass]="APP_CONST.PMReportProjectIssueStatusStyle[riskStatusList[problem.status]] "
+                                            >{{ riskStatusList[problem.status] }}</span>
                                             <div>
                                                 <div style="font-size: 15px;" *ngIf="problem.totalWeekAgo>1">
                                                     <strong
@@ -446,11 +450,6 @@
                                                     </strong> weeks ago
                                                 </div>
                                             </div>
-                                    </td>
-                                    <td class="text-center">
-                                        <span
-                                            [ngClass]="APP_CONST.PMReportProjectIssueStatusStyle[riskStatusList[problem.status]] "
-                                            >{{ riskStatusList[problem.status] }}</span>
                                     </td>
                                     <td class="text-center" *ngIf="isShowActionRisk && selectedReport.isActive">
                                         <button [matMenuTriggerFor]="menurisk" *ngIf="isShowActionRisk && selectedReport.isActive"

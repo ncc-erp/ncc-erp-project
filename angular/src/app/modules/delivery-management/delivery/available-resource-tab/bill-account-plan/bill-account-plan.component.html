@@ -141,6 +141,12 @@
                   >
                 </mat-select>
               </mat-form-field>
+              <i
+                style="margin-top: 0 !important"
+                class="fas fa-times fa-lg ml-2 mt-2"
+                *ngIf="projectStatus !== undefined && projectStatus !== null && projectStatus !== ''"
+                (click)="applyProjectStatusFilter()"
+              ></i>
             </div>
             <div class="mt-1 d-flex align-items-center mb-3 ml-2">
               <div style="margin-top: 10px" class="ml-2">

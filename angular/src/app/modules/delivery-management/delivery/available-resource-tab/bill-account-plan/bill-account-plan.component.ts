@@ -51,7 +51,7 @@ export class BillAccountPlanComponent
     { name: "Bill Account"},
     { name: "Client", width: "140px"},
     { name: "Projects"},
-    { name: "Is Charge", width: "65px", padding : "12px 5px", whiteSpace: "nowrap" },
+    { name: "Is Charge", width: "70px", padding : "12px 10px", whiteSpace: "nowrap" },
     { name: "Bill Date", width: "100px" },
     { name: "Note" },
   ];
@@ -59,32 +59,10 @@ export class BillAccountPlanComponent
   public sortable = new SortableModel("", 0, "");
   public sortResource = {};
 
-  projectType = [
-    {
-      label: "All",
-      value: this.APP_ENUM.FilterProjectType.All,
-    },
-    {
-      label: "Main",
-      value: false,
-    },
-    {
-      label: "Sub",
-      value: true,
-    },
-  ];
-
   projectStatusList = [
     { text: "Potential", value: APP_ENUMS.ProjectStatus.Potential },
     { text: "InProgress", value: APP_ENUMS.ProjectStatus.InProgress },
     { text: "Closed", value: APP_ENUMS.ProjectStatus.Closed },
-  ];
-
-  planStatusList = [
-    { value: APP_ENUMS.PlanStatus.AllPlan, displayName: "Has plans" },
-    { value: APP_ENUMS.PlanStatus.PlanningJoin, displayName: "Planning join" },
-    { value: APP_ENUMS.PlanStatus.PlanningOut, displayName: "Planning out" },
-    { value: APP_ENUMS.PlanStatus.NoPlan, displayName: "No plan" },
   ];
 
   constructor(
@@ -123,8 +101,6 @@ export class BillAccountPlanComponent
       });
     var date = new Date();
     this.refresh();
-
-    
   }
 
   public listDateOptions = [];
@@ -218,6 +194,11 @@ export class BillAccountPlanComponent
   applyClientFilter() {
     this.clientId = "";
     this.searchClient = "";
+    this.getDataPage(1);
+  }
+
+  applyProjectStatusFilter() {
+    this.projectStatus = "";
     this.getDataPage(1);
   }
 

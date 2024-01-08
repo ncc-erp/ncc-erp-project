@@ -256,12 +256,12 @@ namespace ProjectManagement.Services.ResourceManager
         {
             var sbKomuMessage = new StringBuilder();
             var currentPUs = await _workScope.GetAll<ProjectUser>()
-             .Include(s => s.Project)
-             .Where(s => s.UserId == employee.UserId)
-             .Where(s => s.Status == ProjectUserStatus.Present)
-             .Where(s => s.Project.Status == ProjectStatus.InProgress)
-             .Where(s => s.AllocatePercentage > 0)
-             .ToListAsync();
+                                             .Include(s => s.Project)
+                                             .Where(s => s.UserId == employee.UserId)
+                                             .Where(s => s.Status == ProjectUserStatus.Present)
+                                             .Where(s => s.Project.Status == ProjectStatus.InProgress)
+                                             .Where(s => s.AllocatePercentage > 0)
+                                             .ToListAsync();
             if (!allowConfirmMoveEmployeeToOtherProject)
             {
                 foreach (var pu in currentPUs)
@@ -272,28 +272,30 @@ namespace ProjectManagement.Services.ResourceManager
                     }
                 }
             }
+
             if (!currentPUs.IsEmpty())
             {
                 var isPoolInProjectToJoin = currentPUs
-                .Where(s => s.ProjectId == projectToJoin.ProjectId)
-                .Where(s => s.AllocatePercentage > 0)
-                .Select(s => s.IsPool)
-                .FirstOrDefault();
+                                            .Where(s => s.ProjectId == projectToJoin.ProjectId)
+                                            .Where(s => s.AllocatePercentage > 0)
+                                            .Select(s => s.IsPool)
+                                            .FirstOrDefault();
 
                 if (isPoolInProjectToJoin != default && isPoolInProjectToJoin == isPresentPool)
                 {
                     throw new UserFriendlyException("This user is already working on this project!");
                 }
 
+                var projectUsersOut = new List<ProjectUser>();
                 foreach (var pu in currentPUs)
                 {
                     // if pu in this project, continue
                     if (pu.ProjectId == futureU.ProjectId && pu.Status == ProjectUserStatus.Present && pu.AllocatePercentage > 0)
                         continue;
+
                     //release user from current project
                     pu.PMReportId = activeReportId;
                     pu.Status = ProjectUserStatus.Past;
-                    await _workScope.UpdateAsync(pu);
                     var outPU = new ProjectUser
                     {
                         IsPool = pu.IsPool,
@@ -306,10 +308,12 @@ namespace ProjectManagement.Services.ResourceManager
                         ProjectRole = pu.ProjectRole,
                         Note = $"added to project {projectToJoin.ProjectName} {CommonUtil.ProjectUserWorkType(pu.IsPool)} by {sessionUser.FullName}",
                     };
-                    await _workScope.InsertAsync(outPU);
+                    projectUsersOut.Add(outPU);
                     sbKomuMessage.AppendLine($"{DateTimeUtils.ToString(outPU.StartTime)}: {sessionUser.KomuAccountInfo} " +
                         $"released {employee.KomuAccountInfo} from {pu.Project.Name} {CommonUtil.ProjectUserWorkTypeKomu(pu.IsPool)}");
                 }
+                await _workScope.UpdateRangeAsync(currentPUs);
+                await _workScope.InsertRangeAsync(projectUsersOut);
             }
             await CurrentUnitOfWork.SaveChangesAsync();
             return sbKomuMessage;
@@ -318,7 +322,6 @@ namespace ProjectManagement.Services.ResourceManager
         public async Task<ProjectUser> CreatePresentProjectUserAndNofity(AddResourceToProjectDto input, bool allowConfirmMoveEmployeeToOtherProject)
         {
             var activeReportId = await GetActiveReportId();
-
             var sessionUser = await getSessionKomuUserInfo();
             var employee = await getKomuUserInfo(input.UserId);
             var projectToJoin = await GetKomuProjectInfo(input.ProjectId);
@@ -328,6 +331,7 @@ namespace ProjectManagement.Services.ResourceManager
             {
                 throw new UserFriendlyException("You can not add user to closed project");
             }
+
             var joinPU = new ProjectUser
             {
                 IsPool = input.IsPool,
@@ -339,29 +343,20 @@ namespace ProjectManagement.Services.ResourceManager
                 PMReportId = activeReportId,
                 ProjectRole = input.ProjectRole,
             };
+
             var sbKomuMessage = await releaseUserFromAllWorkingProjects(sessionUser, employee, projectToJoin, activeReportId, input.IsPool, allowConfirmMoveEmployeeToOtherProject, joinPU);
 
-            //var projectUserHistory = _workScope.GetAll<ProjectUser>()
-            //    .Where(pu => pu.UserId == input.UserId && pu.ProjectId == input.ProjectId
-            //    && (pu.Status == ProjectUserStatus.Present && pu.AllocatePercentage < 100)
-            //    || pu.Status == ProjectUserStatus.Past).OrderByDescending(pu => pu.HistoryTime);
-
-
             //get project user list: Future && Allocate > 0, Present
-            var projectUsers = _workScope.All<ProjectUser>() // user 230885, project id = 130048
-               .Where(p => p.UserId == input.UserId && p.ProjectId == input.ProjectId
-               && (p.Status == ProjectUserStatus.Future && p.AllocatePercentage > 0)).ToList();
+            var matchingProjectUsers = _workScope.All<ProjectUser>().Where(p => p.UserId == input.UserId && p.ProjectId == input.ProjectId);
 
+            var projectUsers = matchingProjectUsers
+                              .Where(p => p.Status == ProjectUserStatus.Future && p.AllocatePercentage > 0).ToList();
 
             //// set done project user plan
-
-            var projectUser = _workScope.GetAll<ProjectUser>()
-                .Where(p => p.UserId == input.UserId && p.ProjectId == input.ProjectId
-                && (p.Status == ProjectUserStatus.Future || p.Status == ProjectUserStatus.Present && p.AllocatePercentage > 0)).OrderByDescending(pu => pu.Id).FirstOrDefault();
-
-            //var currentWorking = _workScope.GetAll<ProjectUser>()
-            //    .Where(p => p.UserId == input.UserId && p.ProjectId == input.ProjectId
-            //    && p.Status == ProjectUserStatus.Present && p.AllocatePercentage > 0).OrderByDescending(pu => pu.Id).FirstOrDefault();
+            var projectUser = matchingProjectUsers
+                             .Where(p => p.Status == ProjectUserStatus.Future || p.Status == ProjectUserStatus.Present && p.AllocatePercentage > 0)
+                             .OrderByDescending(pu => pu.Id)
+                             .FirstOrDefault();
 
             if (projectUser != null)
             {
@@ -381,6 +376,7 @@ namespace ProjectManagement.Services.ResourceManager
             {
                 await _workScope.InsertAsync(joinPU);
             }
+
             // set done all project user list
             if (!projectUsers.IsNullOrEmpty())
             {
@@ -399,7 +395,9 @@ namespace ProjectManagement.Services.ResourceManager
             {
                 await _userManager.DeactiveUser(employee.UserId);
             }
+
             nofityCreatePresentPU(joinPU, sbKomuMessage, sessionUser, employee, projectToJoin);
+
             if (projectTypeAndPMEmail.ProjectType == ProjectType.TRAINING)
             {
                 UserJoinProjectInTimesheetTool(projectToJoin.ProjectCode, employee.EmailAddress, joinPU.IsPool, joinPU.ProjectRole, input.StartTime, projectTypeAndPMEmail.PMEmail);
@@ -408,19 +406,20 @@ namespace ProjectManagement.Services.ResourceManager
             {
                 UserJoinProjectInTimesheetTool(projectToJoin.ProjectCode, employee.EmailAddress, joinPU.IsPool, joinPU.ProjectRole, input.StartTime);
             }
-            // if this user in Resource Request => set done 
 
+            // if this user in Resource Request => set done 
             if (projectUser != null && projectUser.ResourceRequestId != null)
             {
                 var resourceRequest = _workScope.GetAll<ResourceRequest>()
-             .Where(s => s.Id == projectUser.ResourceRequestId).FirstOrDefault();
+                                                 .Where(s => s.Id == projectUser.ResourceRequestId)
+                                                 .FirstOrDefault();
                 resourceRequest.Status = ResourceRequestStatus.DONE;
                 resourceRequest.TimeDone = DateTimeUtils.GetNow();
                 await _workScope.UpdateAsync(resourceRequest);
 
                 var listRequestDto = await _resourceRequestManager.IQGetResourceRequest()
-                 .Where(s => s.Id == resourceRequest.Id)
-                 .FirstOrDefaultAsync();
+                                                                  .Where(s => s.Id == resourceRequest.Id)
+                                                                  .FirstOrDefaultAsync();
 
                 nofityKomuDoneResourceRequest(listRequestDto, sessionUser, projectToJoin);
             }

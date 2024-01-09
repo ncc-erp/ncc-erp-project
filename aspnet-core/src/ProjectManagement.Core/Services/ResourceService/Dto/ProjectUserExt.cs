@@ -1,7 +1,5 @@
 ﻿using ProjectManagement.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using static ProjectManagement.Constants.Enum.ProjectEnum;
 
 namespace ProjectManagement.Services.ResourceService.Dto
 {
@@ -10,5 +8,7 @@ namespace ProjectManagement.Services.ResourceService.Dto
         public ProjectUser  PU { get; set; }
         public KomuProjectInfoDto Project { get; set; }
         public KomuUserInfoDto Employee { get; set; }
+        public ProjectType ProjectType { set; get; }
+        public string PMEmail { set; get; }
     }
 }

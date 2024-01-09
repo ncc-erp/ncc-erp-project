@@ -252,7 +252,7 @@ namespace ProjectManagement.Services.ResourceManager
         }
 
         private async Task<StringBuilder> releaseUserFromAllWorkingProjects(KomuUserInfoDto sessionUser, KomuUserInfoDto employee,
-            KomuProjectInfoDto projectToJoin, long activeReportId, bool isPresentPool, bool allowConfirmMoveEmployeeToOtherProject, ProjectUser futureU)
+            KomuProjectInfoDto projectToJoin, long activeReportId, bool isPresentPool, bool allowConfirmMoveEmployeeToOtherProject, ProjectUser planJoinPU)
         {
             var sbKomuMessage = new StringBuilder();
             var currentPUs = await _workScope.GetAll<ProjectUser>()
@@ -290,7 +290,7 @@ namespace ProjectManagement.Services.ResourceManager
                 foreach (var pu in currentPUs)
                 {
                     // if pu in this project, continue
-                    if (pu.ProjectId == futureU.ProjectId && pu.Status == ProjectUserStatus.Present && pu.AllocatePercentage > 0)
+                    if (pu.ProjectId == planJoinPU.ProjectId && pu.Status == ProjectUserStatus.Present && pu.AllocatePercentage > 0)
                         continue;
 
                     //release user from current project
@@ -303,7 +303,7 @@ namespace ProjectManagement.Services.ResourceManager
                         ProjectId = pu.ProjectId,
                         Status = ProjectUserStatus.Present,
                         AllocatePercentage = 0,
-                        StartTime = DateTimeUtils.MinDate(futureU.StartTime, DateTimeUtils.GetNow()),
+                        StartTime = DateTimeUtils.MinDate(planJoinPU.StartTime, DateTimeUtils.GetNow()),
                         PMReportId = activeReportId,
                         ProjectRole = pu.ProjectRole,
                         Note = $"added to project {projectToJoin.ProjectName} {CommonUtil.ProjectUserWorkType(pu.IsPool)} by {sessionUser.FullName}",
@@ -312,7 +312,6 @@ namespace ProjectManagement.Services.ResourceManager
                     sbKomuMessage.AppendLine($"{DateTimeUtils.ToString(outPU.StartTime)}: {sessionUser.KomuAccountInfo} " +
                         $"released {employee.KomuAccountInfo} from {pu.Project.Name} {CommonUtil.ProjectUserWorkTypeKomu(pu.IsPool)}");
                 }
-                await _workScope.UpdateRangeAsync(currentPUs);
                 await _workScope.InsertRangeAsync(projectUsersOut);
             }
             await CurrentUnitOfWork.SaveChangesAsync();
@@ -346,84 +345,27 @@ namespace ProjectManagement.Services.ResourceManager
 
             var sbKomuMessage = await releaseUserFromAllWorkingProjects(sessionUser, employee, projectToJoin, activeReportId, input.IsPool, allowConfirmMoveEmployeeToOtherProject, joinPU);
 
-            //get project user list: Future && Allocate > 0, Present
-            var matchingProjectUsers = _workScope.All<ProjectUser>().Where(p => p.UserId == input.UserId && p.ProjectId == input.ProjectId);
+            var qProjectUsers = _workScope.All<ProjectUser>().Where(p => p.UserId == input.UserId && p.ProjectId == input.ProjectId);
 
-            var projectUsers = matchingProjectUsers
-                              .Where(p => p.Status == ProjectUserStatus.Future && p.AllocatePercentage > 0).ToList();
+            var planJoinPUs = qProjectUsers
+                              .Where(p => p.Status == ProjectUserStatus.Future && p.AllocatePercentage > 0)
+                              .ToList();
 
-            //// set done project user plan
-            var projectUser = matchingProjectUsers
-                             .Where(p => p.Status == ProjectUserStatus.Future || p.Status == ProjectUserStatus.Present && p.AllocatePercentage > 0)
-                             .OrderByDescending(pu => pu.Id)
-                             .FirstOrDefault();
+            var currentPUs = qProjectUsers
+                             .Where(p => p.Status == ProjectUserStatus.Present && p.AllocatePercentage > 0)
+                             .ToList();
 
-            if (projectUser != null)
-            {
-                projectUser.IsPool = input.IsPool;
-                projectUser.UserId = input.UserId;
-                projectUser.ProjectId = input.ProjectId;
-                projectUser.Status = ProjectUserStatus.Present;
-                projectUser.AllocatePercentage = 100;
-                projectUser.StartTime = input.StartTime;
-                projectUser.PMReportId = activeReportId;
-                projectUser.ProjectRole = input.ProjectRole;
-                await _workScope.UpdateAsync(projectUser);
-                if (!projectUsers.IsNullOrEmpty())
-                    projectUsers.Remove(projectUser);
-            }
-            else
-            {
-                await _workScope.InsertAsync(joinPU);
-            }
+            currentPUs.ForEach(pu => pu.Status = ProjectUserStatus.Past);
+            await _workScope.InsertAsync(joinPU);
 
-            // set done all project user list
-            if (!projectUsers.IsNullOrEmpty())
-            {
-                foreach (var puq in projectUsers)
-                {
-                    puq.Status = ProjectUserStatus.Past;
-                    if (puq.ResourceRequestId.HasValue && puq.ResourceRequest != null)
-                    {
-                        puq.ResourceRequest.Status = ResourceRequestStatus.DONE;
-                        puq.ResourceRequest.TimeDone = DateTimeUtils.GetNow();
-                    }
-                }
-                _workScope.UpdateRange(projectUsers);
-            }
             if (projectToJoin.ProjectCode == AppConsts.CHO_NGHI_PROJECT_CODE)
             {
                 await _userManager.DeactiveUser(employee.UserId);
             }
 
             nofityCreatePresentPU(joinPU, sbKomuMessage, sessionUser, employee, projectToJoin);
-
-            if (projectTypeAndPMEmail.ProjectType == ProjectType.TRAINING)
-            {
-                UserJoinProjectInTimesheetTool(projectToJoin.ProjectCode, employee.EmailAddress, joinPU.IsPool, joinPU.ProjectRole, input.StartTime, projectTypeAndPMEmail.PMEmail);
-            }
-            else
-            {
-                UserJoinProjectInTimesheetTool(projectToJoin.ProjectCode, employee.EmailAddress, joinPU.IsPool, joinPU.ProjectRole, input.StartTime);
-            }
-
-            // if this user in Resource Request => set done 
-            if (projectUser != null && projectUser.ResourceRequestId != null)
-            {
-                var resourceRequest = _workScope.GetAll<ResourceRequest>()
-                                                 .Where(s => s.Id == projectUser.ResourceRequestId)
-                                                 .FirstOrDefault();
-                resourceRequest.Status = ResourceRequestStatus.DONE;
-                resourceRequest.TimeDone = DateTimeUtils.GetNow();
-                await _workScope.UpdateAsync(resourceRequest);
-
-                var listRequestDto = await _resourceRequestManager.IQGetResourceRequest()
-                                                                  .Where(s => s.Id == resourceRequest.Id)
-                                                                  .FirstOrDefaultAsync();
-
-                nofityKomuDoneResourceRequest(listRequestDto, sessionUser, projectToJoin);
-            }
-
+            var pmEmail = projectTypeAndPMEmail.ProjectType == ProjectType.TRAINING ? projectTypeAndPMEmail.PMEmail : string.Empty;
+            UserJoinProjectInTimesheetTool(projectToJoin.ProjectCode, employee.EmailAddress, joinPU.IsPool, joinPU.ProjectRole, input.StartTime, pmEmail);
             return joinPU;
         }
 
@@ -470,42 +412,39 @@ namespace ProjectManagement.Services.ResourceManager
                 throw new UserFriendlyException($"Invalid ProjectUser with Id {projectUserId}:  Status != FUTURE or AllocatePercentage <= 0");
             }
 
-            if (startTime.Date > DateTimeUtils.GetNow().Date)
+            if (startTime.Date > DateTimeUtils.GetNow().Date.AddDays(1))
             {
                 throw new UserFriendlyException($"Start Time must be less than or equal today");
             }
-            var employee = await getKomuUserInfo(futurePU.UserId);
-            var project = await GetKomuProjectInfo(futurePU.ProjectId);
+
             var activeReportId = await GetActiveReportId();
             var sessionUser = await getSessionKomuUserInfo();
-            var resourceRequest = _workScope.GetAll<ResourceRequest>()
-               .Where(s => s.Id == futurePU.ResourceRequestId)
-               .FirstOrDefault();
-            var projectTypeAndPMEmail = await GetProjectTypeAndPM(futurePU.ProjectId);
 
-            if (resourceRequest != null)
+            //var resourceRequest = _workScope.GetAll<ResourceRequest>()
+            //                                .Where(s => s.Id == futurePU.ResourceRequestId)
+            //                                .FirstOrDefault();
+
+            //var projectTypeAndPMEmail = await GetProjectTypeAndPM(futurePU.ProjectId);
+            //if (resourceRequest != null)
+            //{
+            //    resourceRequest.Status = ResourceRequestStatus.DONE;
+            //    resourceRequest.TimeDone = DateTimeUtils.GetNow();
+            //    await _workScope.UpdateAsync(resourceRequest);
+
+            //    var listRequestDto = await _resourceRequestManager.IQGetResourceRequest()
+            //     .Where(s => s.Id == resourceRequest.Id)
+            //     .FirstOrDefaultAsync();
+
+            //    nofityKomuDoneResourceRequest(listRequestDto, sessionUser, confirmPUExt.Project);
+            //}
+
+            var currentPU = GetUserWorkingInProject(futurePU.UserId, futurePU.ProjectId);
+            if (currentPU != null)
             {
-                resourceRequest.Status = ResourceRequestStatus.DONE;
-                resourceRequest.TimeDone = DateTimeUtils.GetNow();
-                await _workScope.UpdateAsync(resourceRequest);
-
-                var listRequestDto = await _resourceRequestManager.IQGetResourceRequest()
-                 .Where(s => s.Id == resourceRequest.Id)
-                 .FirstOrDefaultAsync();
-
-                nofityKomuDoneResourceRequest(listRequestDto, sessionUser, project);
+                currentPU.IsDeleted = true;
+                await _workScope.UpdateAsync(currentPU);
             }
-            // if user is working in current project, just update
-            var userWorking = GetUserWorkingInProject(futurePU.UserId, futurePU.ProjectId);
-            var sbKomuMessage = new StringBuilder();
-            if (userWorking != null)
-            {
-                userWorking.IsDeleted = true;
-                await _workScope.UpdateAsync(userWorking);
-            }
-            else
-                sbKomuMessage = await releaseUserFromAllWorkingProjects(sessionUser, employee, project, activeReportId, futurePU.IsPool, allowConfirmMoveEmployeeToOtherProject, futurePU);
-
+            var sbKomuMessage = await releaseUserFromAllWorkingProjects(sessionUser, confirmPUExt.Employee, confirmPUExt.Project, activeReportId, futurePU.IsPool, allowConfirmMoveEmployeeToOtherProject, futurePU);
             futurePU.Status = ProjectUserStatus.Present;
             futurePU.AllocatePercentage = 100;
             futurePU.StartTime = startTime;
@@ -513,22 +452,16 @@ namespace ProjectManagement.Services.ResourceManager
 
             await _workScope.UpdateAsync(confirmPUExt.PU);
 
-            if (project.ProjectCode == AppConsts.CHO_NGHI_PROJECT_CODE)
+            if (confirmPUExt.Project.ProjectCode == AppConsts.CHO_NGHI_PROJECT_CODE)
             {
-                await _userManager.DeactiveUser(employee.UserId);
-            }
-            if (userWorking != null)
-                nofityCreatePresentPU(futurePU, sbKomuMessage, sessionUser, employee, project);
-            if (projectTypeAndPMEmail.ProjectType == ProjectType.TRAINING)
-            {
-                UserJoinProjectInTimesheetTool(futurePU.Project.Code, futurePU.User.EmailAddress, futurePU.IsPool, futurePU.ProjectRole, startTime, projectTypeAndPMEmail.PMEmail);
-            }
-            else
-            {
-                UserJoinProjectInTimesheetTool(futurePU.Project.Code, futurePU.User.EmailAddress, futurePU.IsPool, futurePU.ProjectRole, startTime);
+                await _userManager.DeactiveUser(confirmPUExt.Employee.UserId);
             }
 
+            if (currentPU != null)
+                nofityCreatePresentPU(futurePU, sbKomuMessage, sessionUser, confirmPUExt.Employee, confirmPUExt.Project);
 
+            var pmEmail = confirmPUExt.ProjectType == ProjectType.TRAINING ? confirmPUExt.PMEmail : string.Empty;
+            UserJoinProjectInTimesheetTool(futurePU.Project.Code, futurePU.User.EmailAddress, futurePU.IsPool, futurePU.ProjectRole, startTime, pmEmail);
             return confirmPUExt;
         }
 
@@ -768,7 +701,9 @@ namespace ProjectManagement.Services.ResourceManager
                          KomuUserId = s.User.KomuUserId,
                          UserId = s.UserId,
                          UserName = s.User.UserName
-                     }
+                     },
+                     ProjectType = s.Project.ProjectType,
+                     PMEmail = s.Project.PM.EmailAddress
                  })
                  .FirstOrDefaultAsync();
         }
@@ -911,7 +846,7 @@ namespace ProjectManagement.Services.ResourceManager
                            SkillNote = x.UserSkills.Select(s => s.Note).FirstOrDefault() ?? ""
                        });
 
-            if(
+            if (
                 input.UserTypes.Count == 0 &&
                 input.BranchIds.Count == 0 &&
                 input.PositionIds.Count == 0 &&

@@ -1,6 +1,6 @@
 {
-  "remoteServiceBaseUrl": "http://localhost:21021",
-  "appBaseUrl": "http://localhost:4200",
+  "remoteServiceBaseUrl": "http://10.10.73.229:21021",
+  "appBaseUrl": "http://10.10.73.229:4200",
   "localeMappings": [
     {
       "from": "pt-BR",

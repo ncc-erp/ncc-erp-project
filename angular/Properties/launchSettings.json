@@ -3,7 +3,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://10.10.73.229:14424/",
+      "applicationUrl": "http://localhost:14424/",
       "sslPort": 0
     }
   },
@@ -18,7 +18,7 @@
     "ProjectManagement.AngularUI": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "http://10.10.73.229:5000",
+      "launchUrl": "http://localhost:5000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

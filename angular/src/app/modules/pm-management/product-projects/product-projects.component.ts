@@ -120,6 +120,7 @@ export class ProductProjectsComponent extends PagedListingComponentBase<any> imp
   public listProductProjects: ProductProjectDto[] = [];
   public projectStatus: any = 3;
   public pmList: any[] = [];
+  public isShowResources:boolean = false
   @ViewChild(MatMenuTrigger)
   menu: MatMenuTrigger
   contextMenuPosition = { x: '0', y: '0' }
@@ -144,7 +145,7 @@ export class ProductProjectsComponent extends PagedListingComponentBase<any> imp
     if (this.isEnablePMFilter() && this.searchText != ""){
       this.pmId = -1;
     }
-    this.getDataPage(1);    
+    this.getDataPage(1);
   }
   public isEnablePMFilter(){
     return this.permission.isGranted(this.Projects_ProductProjects_ViewAllProject)
@@ -234,7 +235,7 @@ export class ProductProjectsComponent extends PagedListingComponentBase<any> imp
 
   protected closeProject(project: any): void {
     let item = {
-      id: project.id    
+      id: project.id
     }
 
     this.projectService.getAllWorkingUserFromProject(project.id).pipe(catchError(this.projectService.handleError)).subscribe((res) => {
@@ -250,13 +251,13 @@ export class ProductProjectsComponent extends PagedListingComponentBase<any> imp
                 abp.notify.success("Update status project: "+ project.name);
               }
               else if(res.result == null || res.result == ""){
-                abp.message.success(`<p>Update status project name <b>${project.name}</b> in <b>PROJECT TOOL</b> successful!</p> 
-                <p style='color:#28a745'>Update status project name <b>${project.name}</b> in <b>TIMESHEET TOOL</b> successful!</p>`, 
+                abp.message.success(`<p>Update status project name <b>${project.name}</b> in <b>PROJECT TOOL</b> successful!</p>
+                <p style='color:#28a745'>Update status project name <b>${project.name}</b> in <b>TIMESHEET TOOL</b> successful!</p>`,
                'Update status project result',true);
               }
               else{
-                abp.message.error(`<p>Update status project <b>${project.name}</b> in <b>PROJECT TOOL</b> successful!</p> 
-                <p style='color:#dc3545'>${res.result}</p>`, 
+                abp.message.error(`<p>Update status project <b>${project.name}</b> in <b>PROJECT TOOL</b> successful!</p>
+                <p style='color:#dc3545'>${res.result}</p>`,
                 'Update status project result',true);
               }
               this.refresh()
@@ -273,8 +274,8 @@ export class ProductProjectsComponent extends PagedListingComponentBase<any> imp
     ? "/app/product-project-detail/product-weekly-report" : "/app/product-project-detail/product-project-general"
     const url = this.router.serializeUrl(this.router.createUrlTree([routingToUrl], { queryParams: {
       id: project.id,
-      type: project.projectType, 
-      projectName: project.name, 
+      type: project.projectType,
+      projectName: project.name,
       projectCode: project.code} }));
       window.open(url, '_blank');
   }
@@ -284,4 +285,39 @@ export class ProductProjectsComponent extends PagedListingComponentBase<any> imp
       abp.notify.success("Change require weekly report sucessful!")
     });
   }
+  filterResource(project){
+    let resourceAfterFilter = []
+    if(project.isViewAllResource){
+      resourceAfterFilter  = project.currentResources
+    }
+    else{
+      project.currentResources.forEach((bill, index)=>{
+        if(index < 5){
+          resourceAfterFilter.push(bill)
+        }
+      })
+    }
+    return resourceAfterFilter
+  }
+
+  filterResourceInfo(project){
+    let resourceInfoAfterFilter = []
+    if(project.resourceInfo){
+    if(project.isViewAllResourceInfo){
+      resourceInfoAfterFilter = project.resourceInfo
+    }
+    else{
+      project.resourceInfo.forEach((resource, index)=>{
+        if(index < 5){
+          resourceInfoAfterFilter.push(resource)
+        }
+      })
+    }
+  }
+    return resourceInfoAfterFilter
+  }
+
+  changeShowResource(checked :boolean) {
+    this.isShowResources=checked;
+      }
 }

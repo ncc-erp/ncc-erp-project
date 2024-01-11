@@ -10,6 +10,7 @@ import { AppConsts } from '@shared/AppConsts';
   templateUrl: './user-info.component.html',
   styleUrls: ['./user-info.component.css']
 })
+
 export class UserInfoComponent extends AppComponentBase implements OnInit {
   @Input() userData: UserDto
   @Input() workType:string;
@@ -20,6 +21,8 @@ export class UserInfoComponent extends AppComponentBase implements OnInit {
   @Input() isSmallerDiv: boolean = false;
   @Input() isChangeContentSize: boolean = false;
   @Input() isHideLevel: boolean = false;
+  @Input() isHideBillRate: boolean = false;
+  @Input() isSimplizeEmailAddress: boolean = false;
 
   public user: UserDto
   constructor(injector: Injector) {

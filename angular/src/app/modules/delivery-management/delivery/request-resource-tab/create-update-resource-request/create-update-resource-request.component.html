@@ -94,12 +94,26 @@
                 </mat-icon>
               </ngx-mat-select-search>
             </mat-option>
-            <mat-option
+            <div style="
+                  min-width: 480px;
+                  max-width: auto;
+                  position: fixed;
+                  top: 45px;
+                  z-index: 2;
+                  background-color: white;
+                  padding: 15px 7px;
+            ">
+            <button class="btn bg-primary" mat-button (click)="selectAllSkills()">Select All</button>
+            <button class="btn bg-secondary ml-4" mat-button (click)="clearAllSkills()">Clear All</button>
+            </div>
+            <div style="margin-top: 60px;">
+            <mat-option style="position: relative;"
               *ngFor="let skill of filteredSkillList"
               [value]="skill.id"
             >
               {{ skill.name }}
             </mat-option>
+          </div>
           </mat-select>
         </mat-form-field>
         <mat-error

@@ -2,10 +2,13 @@ import { Component, Inject, Injector, Input, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { PERMISSIONS_CONSTANT } from '@app/constant/permission.constant';
 import { DeliveryResourceRequestService } from '@app/service/api/delivery-request-resource.service';
+import { ProjectUserBillService } from "@app/service/api/project-user-bill.service";
 import { ProjectUserService } from '@app/service/api/project-user.service';
 import { AppComponentBase } from '@shared/app-component-base';
 import * as moment from 'moment';
 import { catchError } from 'rxjs/operators';
+import { result } from 'lodash-es';
+import { concat, forkJoin, throwError, timer } from "rxjs";
 
 @Component({
   selector: 'app-form-set-done',
@@ -22,10 +25,11 @@ export class FormSetDoneComponent extends AppComponentBase implements OnInit {
   // PmManager_ProjectUser_ConfirmPickUserFromPoolToProject = PERMISSIONS_CONSTANT.PmManager_ProjectUser_ConfirmPickUserFromPoolToProject
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private _resourceRequestService: DeliveryResourceRequestService, 
+    private _resourceRequestService: DeliveryResourceRequestService,
     public injector: Injector,
     public dialogRef: MatDialogRef<FormSetDoneComponent>,
-    private projectUserService: ProjectUserService, 
+    private projectUserService: ProjectUserService,
+    private projectUserBillService: ProjectUserBillService
   ) {
     super(injector);
   }
@@ -51,19 +55,51 @@ export class FormSetDoneComponent extends AppComponentBase implements OnInit {
       billStartTime: this.planUserInfo.billUserInfo ? moment(this.planUserInfo.billUserInfo.plannedDate).format("YYYY-MM-DD") : null,
     }
 
+    const addedLinkResource = {
+      billAccountId: this.planUserInfo.billUserInfo ? this.planUserInfo.billUserInfo.employee.id : 0,
+      projectId: this.planUserInfo.projectId,
+      userId: this.planUserInfo.employee.id
+    }
+
+    const requestObservable = this._resourceRequestService.setDoneRequest(request);
+    const linkUserToBillAccountObservable = this.projectUserBillService.LinkOneProjectUserBillAccount(addedLinkResource);
+
     if (this.plannedUserList.length > 0) {
-        this._resourceRequestService.setDoneRequest(request).pipe(catchError(this.projectUserService.handleError)).subscribe(rs => {
+
+      if(this.planUserInfo.billUserInfo == null){
+        requestObservable.pipe(catchError(this.projectUserService.handleError)).subscribe(rs => {
           abp.notify.success(`Confirmed for user ${this.planUserInfo.employee.fullName} join project`)
-          this.dialogRef.close(true)
+          this.dialogRef.close(true);
         })
+      } else {
+        concat(requestObservable, linkUserToBillAccountObservable)
+        .subscribe(() => {
+          abp.notify.success(`Confirmed for user ${this.planUserInfo.employee.fullName} join project`);
+          setTimeout(rs => {
+            abp.notify.success(`Resource ${this.planUserInfo.employee.fullName} has been added to Bill Account ${this.planUserInfo.billUserInfo.employee.fullName}`,"",  { timer: 6000 });
+          }, 5000);
+          this.dialogRef.close(true);
+        });
+      }
     }
     else {
       abp.message.confirm(`Confirm user <strong>${this.planUserInfo.employee.fullName}</strong> <strong class="text-success">join</strong> Project`, "", rs => {
         if (rs) {
-            this._resourceRequestService.setDoneRequest(request).pipe(catchError(this.projectUserService.handleError)).subscribe(rs => {
-              this.dialogRef.close(true)
+          if(this.planUserInfo.billUserInfo == null){
+            requestObservable.pipe(catchError(this.projectUserService.handleError)).subscribe(rs => {
               abp.notify.success(`Confirmed for user ${this.planUserInfo.employee.fullName} join project`)
+              this.dialogRef.close(true);
             })
+          } else {
+            concat(requestObservable, linkUserToBillAccountObservable)
+            .subscribe(() => {
+              abp.notify.success(`Confirmed for user ${this.planUserInfo.employee.fullName} join project`);
+              setTimeout(rs => {
+                abp.notify.success(`Resource ${this.planUserInfo.employee.fullName} has been added to Bill Account ${this.planUserInfo.billUserInfo.employee.fullName}`,"",  { timer: 6000 });
+              }, 5000);
+              this.dialogRef.close(true);
+            });
+          }
         }
       }, {isHtml:true})
     }
@@ -74,7 +110,7 @@ export class FormSetDoneComponent extends AppComponentBase implements OnInit {
   //     this.plannedUserList.forEach(pu => {
   //       if (pu.isPool == false) {
   //         this.allowConfirm = false
-  //         return 
+  //         return
   //       }
   //     }
   //     )

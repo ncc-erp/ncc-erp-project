@@ -34,6 +34,7 @@ namespace ProjectManagement.Configuration.Dto
         public string MaxCountHistory { get; set; }
         public string InformPm { get; set; }
         public string ActiveTimesheetProjectPeriod { get; set; }
+        public string CloseTimesheetNotification { get; set; }
     }
 
     public class ProjectSetting
@@ -85,5 +86,18 @@ namespace ProjectManagement.Configuration.Dto
         public bool IsCheck { get; set; }
         public string Time { get; set; }
         public int Day { get; set; }
+    }
+
+    public class ChargeBillAccountDto
+    {
+        public CheckDateTime AutoUpdateBillAccount { get; set; }
+        public List<long> UserIds { get; set; }
+        public InformPmDto NotiUsers { get; set; }
+    }
+
+    public class EmailProjectDto
+    {
+        public string EmailAddress { get; set; }
+        public List<string> Projects { get; set; }
     }
 }

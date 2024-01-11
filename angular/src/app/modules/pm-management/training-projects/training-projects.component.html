@@ -38,7 +38,7 @@
                     <div class="col-6 ">
                         <div class="row filter-wrap">
 
-                            <div class="col-6 search-pm text-right">
+                            <div class="col-4 search-pm text-right">
                                 <!-- <label class="label-pm pr-2 mt-3 ">PM:</label> -->
                                 <mat-form-field appearance="outline">
                                     <mat-label>PM</mat-label>
@@ -59,7 +59,7 @@
                                     </mat-select>
                                 </mat-form-field>
                             </div>
-                            <div class="col-6 pr-2 search-status">
+                            <div class="col-4 pr-2 search-status">
                                 <!-- <label class="mt-3 label-status"><span class="pr-2">Trạng thái:</span></label> -->
                                 <mat-form-field appearance="outline" class="listStatus">
                                     <mat-label>Trạng thái</mat-label>
@@ -71,6 +71,11 @@
 
                                     </mat-select>
                                 </mat-form-field>
+                            </div>
+                            <div class="col-4 row justify-content-between">
+                                <div style="margin-top: 10px;">
+                                    <mat-checkbox name="cbx-showResource" [checked] ="isShowResources" (change)="changeShowResource($event.checked)">Show resources</mat-checkbox>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -99,16 +104,15 @@
             </div>
             <div class="card-body table-responsive px-4 pb-2">
                 <div class="fixTableHead">
-
-
                     <table name="tbl_listProject" style="border-collapse: collapse;" class="table table-hover text-nowrap w-100">
                         <thead class="bg-light">
                             <tr style="border: none;">
                                 <th style="width: 70px;">#</th>
-                                <th style="width: 250px;">Projects</th>
-                                <th style="width: 400px;">{{'PM' | localize}}</th>
+                                <th style="width: 200px;">Projects</th>
+                                <th style="width: 200px;">{{'PM' | localize}}</th>
+                                <th *ngIf="isShowResources" style="width: 350px;">Resources</th>
                                 <th *ngIf="permission.isGranted(Projects_TrainingProjects_ViewRequireWeeklyReport)"  style="width: 50px;">RequireWR</th>
-                                <th>Đánh giá chung</th>
+                                <th style="width: 250px;">Đánh giá chung</th>
                                 <th style="width: 120px;">Trạng thái</th>
                                 <th style="width: 120px;">
                                     <div class="weekly-report-header-wrap d-flex align-items-center">
@@ -157,12 +161,24 @@
                                         </app-user-info>
                                     </div>
                                 </td>
+                                <td *ngIf="isShowResources">
+                                    <strong *ngIf="filterResourceInfo(project).length>0" style="color: red;">Total: {{project.resourceInfo.length}}</strong>
+                                    <div *ngFor="let resource of filterResourceInfo(project) let j = index;">
+                                        <strong>{{j+1}}. </strong><strong>{{resource.fullName}} </strong>
 
+                                    </div>
+                                    <span *ngIf="project.resourceInfo && project.resourceInfo.length > 5">
+                                        <i [ngClass]="project.isViewAllResourceInfo ? 'fas fa-chevron-up' : 'fa fa-ellipsis-h'"
+                                            (click)="project.isViewAllResourceInfo = !project.isViewAllResourceInfo; filterResourceInfo(project)">
+                                        </i>
+                                    </span>
+
+                                 </td>
                                 <td *ngIf="permission.isGranted(Projects_TrainingProjects_ViewRequireWeeklyReport)"  class="text-center">
                                     <mat-checkbox class="is-charged-checkbox" (click)="changeRequireWeeklyReport(project)" color="primary" [ngModel]="project.isRequiredWeeklyReport">
                                     </mat-checkbox>
                                 </td>
-                                
+
                                 <td style="word-break: break-word;
                                     white-space: normal;">
                                     <pre class="projectEvaluation mb-0 p-0 mt-3">
@@ -214,7 +230,6 @@
                                         </button>
                                     </mat-menu>
                                 </td>
-
 
                             </tr>
 

@@ -170,7 +170,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
             paggingProjects = GetClosedTimeTimesheetProject(paggingProjects);
             var total = await queryFilter.CountAsync();
             var gridResult = new GridResult<GetTimesheetDetailDto>(paggingProjects, total);
-            
+
 
             var listTotalAmountByCurrency = allProjectFilters.GroupBy(x => x.Currency)
                                     .Select(x => new TotalMoneyByCurrencyDto
@@ -530,7 +530,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
             var timesheetProjectId = input.TimesheetProjectId;
             var timesheet = WorkScope.GetAll<TimesheetProject>()
               .Where(x => x.Id == timesheetProjectId)
-              .Where(s => s.Timesheet.IsActive)
+              .Where(s => s.IsActive)
               .Select(s => new
               {
                   s.Timesheet.Year,
@@ -753,15 +753,13 @@ namespace ProjectManagement.APIs.TimesheetProjects
             return await _timesheetService.GetTimesheetDetailForTax(input);
         }
 
-        
-
         private ExcelWorksheet CopySheet(ExcelWorkbook workbook, string existingWorksheetName, string newWorksheetName)
         {
             ExcelWorksheet worksheet = workbook.Worksheets.Copy(existingWorksheetName, newWorksheetName);
             return worksheet;
         }
 
-        private async Task<InvoiceData> GetInvoiceData(InputExportInvoiceDto input)
+        private async Task<InvoiceData> GetInvoiceData(InputExportInvoiceDto input, bool throwExceptionOnEmptyInfo = true)
         {
             var defaultWorkingHours = Convert.ToInt32(await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.DefaultWorkingHours));
             var result = new InvoiceData();
@@ -769,11 +767,11 @@ namespace ProjectManagement.APIs.TimesheetProjects
                 .Where(s => input.ProjectIds.Contains(s.Id)).Select(x => x.ListProjectCodes).ToList()
                 .Where(x => !string.IsNullOrEmpty(x))
                 .SelectMany(x => x.Split(',').Select(code => code.Trim()));
-            
+
             var qtimesheetProject = WorkScope.All<TimesheetProject>()
                 .Where(s => s.TimesheetId == input.TimesheetId)
                 .Where(s => input.ProjectIds.Contains(s.ProjectId));
-            
+
             var qtimesheetProjectBill = WorkScope.All<TimesheetProjectBill>()
                 .Where(s => s.TimesheetId == input.TimesheetId)
                 .Where(s => s.IsActive)
@@ -781,7 +779,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
                 .Where(s => input.ProjectIds.Contains(s.ProjectId));
 
             result.Info = qtimesheetProject
-                .Where(s => !s.ParentInvoiceId.HasValue)
+                //.Where(s => !s.ParentInvoiceId.HasValue)
                 .Select(s => new InvoiceGeneralInfo
                 {
                     ClientAddress = s.Project.Client.Address,
@@ -795,12 +793,12 @@ namespace ProjectManagement.APIs.TimesheetProjects
                     Month = s.Timesheet.Month,
                     InvoiceDateSetting = s.Project.Client.InvoiceDateSetting
                 }).FirstOrDefault();
-            
-                if (result.Info == default)
-                {
-                    throw new UserFriendlyException("You have to select at least 1 project is MAIN in Invoice Setting");
-                }
-            
+
+            if (throwExceptionOnEmptyInfo && result.Info == default)
+            {
+                throw new UserFriendlyException("You have to select at least 1 project is MAIN in Invoice Setting");
+            }
+
             result.TimesheetUsers = await (from tpb in qtimesheetProjectBill
                                            from tp in qtimesheetProject.Select(s => new { s.ProjectId, s.WorkingDay })
                                            where tpb.ProjectId == tp.ProjectId
@@ -825,7 +823,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
             result.ProjectCodes = result.TimesheetUsers.Select(x => x.ProjectCode).Union(listTSProjectCode).ToList();
             return result;
         }
-        
+
 
         private void FillDataToExcelFileInvoiceSheet(ExcelPackage excelPackageIn, InvoiceData data)
         {
@@ -978,7 +976,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
         [AbpAuthorize(PermissionNames.Timesheets_TimesheetDetail_ExportTSdetail)]
         public async Task<FileBase64Dto> ExportTSdetail(InputExportInvoiceDto input)
         {
-            var dataInvoice = await GetInvoiceData(input);
+            var dataInvoice = await GetInvoiceData(input, throwExceptionOnEmptyInfo: false);
             List<TimesheetDetailUser> dataTimesheetDetail = await GetTimesheetDetailData(dataInvoice, false);
 
             var templateFilePath = Path.Combine(templateFolder, "TSDetail.xlsx");
@@ -990,7 +988,6 @@ namespace ProjectManagement.APIs.TimesheetProjects
                     FillDataToExcelFileTSDetail(excelPackageIn, dataInvoice);
                     FillDataToSheetTimesheetDetail(excelPackageIn, dataTimesheetDetail);
                     string fileBase64 = Convert.ToBase64String(excelPackageIn.GetAsByteArray());
-
 
                     return new FileBase64Dto
                     {
@@ -1015,7 +1012,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
                 ProjectCodes = invoiceData.ProjectCodes
             };
             var timesheetDetailForTax = await GetTimesheetDetailForTaxInTimesheetTool(timesheetDetailForTaxDto);
-            
+
             var listTimesheet = timesheetDetailForTax.ListTimesheet;
             var listWorkingDay = timesheetDetailForTax.ListWorkingDay;
 
@@ -1054,7 +1051,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
             return resultList;
         }
 
-       
+
         private void AddMoreBillDate(List<DateTime> listBillDate, double totalWorkingDay)
         {
             var maxBillDay = listBillDate.Count;

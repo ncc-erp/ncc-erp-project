@@ -167,128 +167,145 @@ namespace ProjectManagement.APIs.PMReports
         [AbpAuthorize(PermissionNames.WeeklyReport_CloseAndAddNew)]
         public async Task<CreatePMReportDto> Create(CreatePMReportDto input)
         {
-            var isExist = await WorkScope.GetAll<PMReport>()
-                .AnyAsync(x => x.Name == input.Name && x.Type == input.Type && x.Year == input.Year);
-
-            if (isExist)
-                throw new UserFriendlyException("PM Report already exist!");
-
-            var activeReport = await WorkScope.GetAll<PMReport>().Where(x => x.IsActive).FirstOrDefaultAsync();
-            long lastReportId = 0;
-            if (activeReport != null)
+            using (var unitOfWork = UnitOfWorkManager.Begin())
             {
-                activeReport.IsActive = false;
-                await WorkScope.UpdateAsync(activeReport);
-                lastReportId = activeReport.Id;
-            }
-
-            var pmReport = ObjectMapper.Map<PMReport>(input);
-            input.Id = await WorkScope.InsertAndGetIdAsync(pmReport);
-            pmReport.Id = input.Id;
-
-            var userInFuture = WorkScope.GetAll<ProjectUser>()
-                .Where(x => x.PMReportId == lastReportId && x.Status == ProjectUserStatus.Future);
-
-            foreach (var pu in userInFuture)
-            {
-                pu.PMReportId = input.Id;
-                pu.IsFutureActive = true;
-                pu.Id = 0;
-                await WorkScope.InsertAsync(pu);
-            }
-
-            var mapInprogressIssues = (await WorkScope.GetAll<PMReportProjectIssue>()
-                .Where(x => x.Status == PMReportProjectIssueStatus.InProgress)
-                .Where(s => s.PMReportProject.PMReportId == lastReportId)
-                .Select(s => new
+                try
                 {
-                    s.PMReportProject.ProjectId,
-                    Issues = s
-                }).ToListAsync())
-                .GroupBy(s => s.ProjectId)
-                .ToDictionary(s => s.Key, s => s.Select(s => s.Issues).ToList());
+                    var isExist = await WorkScope.GetAll<PMReport>()
+                        .AnyAsync(x => x.Name == input.Name && x.Type == input.Type && x.Year == input.Year);
 
-            var mapImprogressRisks = (await WorkScope.GetAll<PMReportProjectRisk>()
-                .Where(x => x.Status == PMReportProjectRiskStatus.InProgress)
-                .Where(s => s.PMReportProject.PMReportId == lastReportId)
-                .Select(s => new
-                {
-                    s.PMReportProject.ProjectId,
-                    Risks = s
-                }).ToListAsync())
-                .GroupBy(s => s.ProjectId)
-                .ToDictionary(s => s.Key, s => s.Select(s => s.Risks).ToList());
+                    if (isExist)
+                        throw new UserFriendlyException("PM Report already exist!");
 
-            var mapPMNote = (await WorkScope.GetAll<PMReportProject>()
-                .Where(s => s.PMReportId == lastReportId)
-                .Where(s => s.Project.ProjectType == ProjectType.TRAINING)
-                .Select(s => new
-                {
-                    s.ProjectId,
-                    Note = s.Note
-                }).ToListAsync())
-                .GroupBy(s => s.ProjectId)
-                .ToDictionary(s => s.Key, s => s.Select(s => new { Note = s.Note }
-                ).FirstOrDefault());
-
-            var mapPMLastPreviewDate = (await WorkScope.GetAll<PMReportProject>()
-                .Where(s => s.PMReportId == lastReportId)
-                .Select(s => new
-                {
-                    s.ProjectId,
-                    LastReviewDate = s.LastReviewDate
-                }).ToListAsync())
-                .GroupBy(s => s.ProjectId)
-                .ToDictionary(s => s.Key, s => s.Select(s => new { LastReviewDate = s.LastReviewDate }
-                ).FirstOrDefault());
-
-            var activeProjects = await WorkScope.GetAll<Project>()
-                .Where(x => x.Status == ProjectStatus.InProgress)
-                .ToListAsync();
-
-            foreach (var project in activeProjects)
-            {
-                var pmReportProject = new PMReportProject
-                {
-                    PMReportId = input.Id,
-                    ProjectId = project.Id,
-                    Status = PMReportProjectStatus.Draft,
-                    //ProjectHealth = mapInprogressIssues.ContainsKey(project.Id) ? ProjectHealth.Yellow : ProjectHealth.Green,
-                    PMId = project.PMId,
-                    Note = project.ProjectType == ProjectType.TRAINING && mapPMNote.ContainsKey(project.Id) ? mapPMNote[project.Id].Note : null,
-                    LastReviewDate = mapPMLastPreviewDate.ContainsKey(project.Id) ? mapPMLastPreviewDate[project.Id].LastReviewDate : null,
-                };
-                pmReportProject.Id = await WorkScope.InsertAndGetIdAsync(pmReportProject);
-
-                if (mapInprogressIssues.ContainsKey(project.Id))
-                {
-                    var issues = mapInprogressIssues[project.Id];
-                    if (issues != null && !issues.IsEmpty())
+                    var activeReport = await WorkScope.GetAll<PMReport>().Where(x => x.IsActive).FirstOrDefaultAsync();
+                    long lastReportId = 0;
+                    if (activeReport != null)
                     {
-                        issues.ForEach(x =>
-                        {
-                            x.Id = 0;
-                            x.PMReportProjectId = pmReportProject.Id;
-                        });
-                        await WorkScope.InsertRangeAsync(issues);
+                        activeReport.IsActive = false;
+                        await WorkScope.UpdateAsync(activeReport);
+                        lastReportId = activeReport.Id;
                     }
-                }
 
-                if (mapImprogressRisks.ContainsKey(project.Id))
-                {
-                    var risks = mapImprogressRisks[project.Id];
-                    if (risks != null && !risks.IsEmpty())
+                    var pmReport = ObjectMapper.Map<PMReport>(input);
+                    if (pmReport == null)
+                        throw new UserFriendlyException("Pm Report null!");
+                    var id = await WorkScope.InsertAndGetIdAsync(pmReport);
+                    if (id == 0)
+                        throw new UserFriendlyException("Id null!");
+                    input.Id = id;
+                    pmReport.Id = input.Id;
+
+                    var userInFuture = WorkScope.GetAll<ProjectUser>()
+                        .Where(x => x.PMReportId == lastReportId && x.Status == ProjectUserStatus.Future);
+
+                    foreach (var pu in userInFuture)
                     {
-                        risks.ForEach(x =>
-                        {
-                            x.Id = 0;
-                            x.PMReportProjectId = pmReportProject.Id;
-                        });
-                        await WorkScope.InsertRangeAsync(risks);
+                        pu.PMReportId = input.Id;
+                        pu.IsFutureActive = true;
+                        pu.Id = 0;
+                        await WorkScope.InsertAsync(pu);
                     }
+
+                    var mapInprogressIssues = (await WorkScope.GetAll<PMReportProjectIssue>()
+                        .Where(x => x.Status == PMReportProjectIssueStatus.InProgress)
+                        .Where(s => s.PMReportProject.PMReportId == lastReportId)
+                        .Select(s => new
+                        {
+                            s.PMReportProject.ProjectId,
+                            Issues = s
+                        }).ToListAsync())
+                        .GroupBy(s => s.ProjectId)
+                        .ToDictionary(s => s.Key, s => s.Select(s => s.Issues).ToList());
+
+                    var mapImprogressRisks = (await WorkScope.GetAll<PMReportProjectRisk>()
+                        .Where(x => x.Status == PMReportProjectRiskStatus.InProgress)
+                        .Where(s => s.PMReportProject.PMReportId == lastReportId)
+                        .Select(s => new
+                        {
+                            s.PMReportProject.ProjectId,
+                            Risks = s
+                        }).ToListAsync())
+                        .GroupBy(s => s.ProjectId)
+                        .ToDictionary(s => s.Key, s => s.Select(s => s.Risks).ToList());
+
+                    var mapPMNote = (await WorkScope.GetAll<PMReportProject>()
+                        .Where(s => s.PMReportId == lastReportId)
+                        .Where(s => s.Project.ProjectType == ProjectType.TRAINING)
+                        .Select(s => new
+                        {
+                            s.ProjectId,
+                            Note = s.Note
+                        }).ToListAsync())
+                        .GroupBy(s => s.ProjectId)
+                        .ToDictionary(s => s.Key, s => s.Select(s => new { Note = s.Note }
+                        ).FirstOrDefault());
+
+                    var mapPMLastPreviewDate = (await WorkScope.GetAll<PMReportProject>()
+                        .Where(s => s.PMReportId == lastReportId)
+                        .Select(s => new
+                        {
+                            s.ProjectId,
+                            LastReviewDate = s.LastReviewDate
+                        }).ToListAsync())
+                        .GroupBy(s => s.ProjectId)
+                        .ToDictionary(s => s.Key, s => s.Select(s => new { LastReviewDate = s.LastReviewDate }
+                        ).FirstOrDefault());
+
+                    var activeProjects = await WorkScope.GetAll<Project>()
+                        .Where(x => x.Status == ProjectStatus.InProgress)
+                        .ToListAsync();
+
+                    foreach (var project in activeProjects)
+                    {
+                        var pmReportProject = new PMReportProject
+                        {
+                            PMReportId = input.Id,
+                            ProjectId = project.Id,
+                            Status = PMReportProjectStatus.Draft,
+                            //ProjectHealth = mapInprogressIssues.ContainsKey(project.Id) ? ProjectHealth.Yellow : ProjectHealth.Green,
+                            PMId = project.PMId,
+                            Note = project.ProjectType == ProjectType.TRAINING && mapPMNote.ContainsKey(project.Id) ? mapPMNote[project.Id].Note : null,
+                            LastReviewDate = mapPMLastPreviewDate.ContainsKey(project.Id) ? mapPMLastPreviewDate[project.Id].LastReviewDate : null,
+                        };
+                        pmReportProject.Id = await WorkScope.InsertAndGetIdAsync(pmReportProject);
+
+                        if (mapInprogressIssues.ContainsKey(project.Id))
+                        {
+                            var issues = mapInprogressIssues[project.Id];
+                            if (issues != null && !issues.IsEmpty())
+                            {
+                                issues.ForEach(x =>
+                                {
+                                    x.Id = 0;
+                                    x.PMReportProjectId = pmReportProject.Id;
+                                });
+                                await WorkScope.InsertRangeAsync(issues);
+                            }
+                        }
+
+                        if (mapImprogressRisks.ContainsKey(project.Id))
+                        {
+                            var risks = mapImprogressRisks[project.Id];
+                            if (risks != null && !risks.IsEmpty())
+                            {
+                                risks.ForEach(x =>
+                                {
+                                    x.Id = 0;
+                                    x.PMReportProjectId = pmReportProject.Id;
+                                });
+                                await WorkScope.InsertRangeAsync(risks);
+                            }
+                        }
+                    }
+                    unitOfWork.Complete();
+                    return input;
+                }
+                catch (Exception ex)
+                {
+
+                    throw new UserFriendlyException(ex.Message);
                 }
             }
-            return input;
         }
 
         private DateTime SettingToDate(int day, int hour, DateTime timeline)

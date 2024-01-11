@@ -169,6 +169,9 @@ export class HeaderLeftNavbarComponent extends AppComponentBase implements OnIni
       width: "700px",
     })
   }
+  backWeeklyReport(){
+    this.router.navigate(['app/weekly-report'])
+  }
   routingReportDetail() {
     this.router.navigateByUrl('', { skipLocationChange: true }).then(() => {
       this.router.navigate(['/app/weeklyReportTabDetail'], {

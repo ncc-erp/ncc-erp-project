@@ -89,7 +89,7 @@
                                 <th style="width: 75px;">History</th>
                                 <th>Planned Projects</th>
                                 <th>Temp Project</th>
-                                <th style="width: 200px;">Skills</th>
+                                <th style="width: 250px;">Skills</th>
                                 <th style="min-width: 220px;">Note</th>
                                 <th style="width: 100px;">Start Pool</th>
                             </tr>
@@ -130,11 +130,11 @@
                                 </td>
 
                                 <td style="white-space: normal;">
-                                    <div class="d-flex justify-content-between">
+                                    <div class="d-flex justify-content-between" style="width: 350px;">
                                         <div>
                                             <div *ngFor="let plan of item.plannedProjects"
                                                 (mouseenter)="plan.onHover = true;" (mouseleave)="plan.onHover = false"
-                                                style="white-space: nowrap;">
+                                                style="white-space: nowrap; width: 100%;">
                                                 <button class="btn p-0 text-left" style="white-space: normal;"
                                                         matTooltip="Description: {{plan.resourceRequestDes}} &#13;
                                                                     Note: {{plan.resourceRequestNote}}"
@@ -206,11 +206,11 @@
                                             <div class="d-flex justify-content-between" style="width: 100%;"
                                                 *ngFor="let plan of item.poolProjects"
                                                 (mouseenter)="plan.onHover = true;" (mouseleave)="plan.onHover = false">
-                                                <div style="width: 100%;">
+                                                <div style="width: 100%; white-space: nowrap;">
                                                     <button class="btn p-0 text-left text-nowrap"
                                                         [matMenuTriggerFor]="tempMenu">
                                                         <span [ngClass]="plan.onHover?'on-hover-plan':''">
-                                                            <strong>{{ plan.projectName }} </strong>&nbsp;{{
+                                                            <strong>{{ plan.projectName }} </strong>&nbsp;<br>{{
                                                             plan.startTime |
                                                             date:
                                                             'dd/MM/yyyy' }}
@@ -240,6 +240,7 @@
                                                 </div>
 
                                             </div>
+                                            <br />
                                         </div>
                                         <div *ngIf="permission.isGranted(Resource_TabPool_AddTempProject)">
                                             <i style="color: #007bff;"
@@ -251,8 +252,8 @@
                                     </div>
 
                                 </td>
-                                <td style="white-space: normal; max-width: 200px">
-                                    <div class="d-flex">
+                                <td style="white-space: normal; max-width: 250px">
+                                    <div class="d-flex" style="width: 200px">
                                         <div style="width: 200px">
                                             <p class="m-0" *ngFor="let skill of item.userSkills">
                                                 - {{skill.skillName}}

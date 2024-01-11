@@ -153,7 +153,6 @@ export class CreateUpdateResourceRequestComponent extends AppComponentBase imple
     this.resourceRequestDto.skillIds = this.listSkill.map(skill => skill.id);
   }
 
-  // Function to clear all selected skills
   clearAllSkills() {
     this.resourceRequestDto.skillIds = [];
   }

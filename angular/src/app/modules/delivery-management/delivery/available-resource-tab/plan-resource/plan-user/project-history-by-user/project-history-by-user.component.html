@@ -10,6 +10,7 @@
           <th>Project Name</th>
           <th>PM Name</th>
           <th style="width: 100px;">Join/Out</th>
+          <th style="width: 100px">Work type</th>
           <th style="width: 120px;">Start time</th>
         </tr>
       </thead>
@@ -20,6 +21,13 @@
           <td><strong>{{ item.pmName }}</strong></td>
           <td class="text-center"><span [ngClass]="item.allocatePercentage > 0 ? 'text-success' : 'text-danger' "> {{
               item.allocatePercentage > 0?'Join':'Out'}}</span>
+          </td>
+          <td>
+            <div class="text-center">
+              <strong [ngClass]="item.isPool ? 'text-secondary' : 'text-primary'"> 
+                {{ item.workType }} 
+              </strong>
+            </div>
           </td>
           <td class="text-center">
             {{ item.startTime | date: 'dd/MM/yyyy' }}

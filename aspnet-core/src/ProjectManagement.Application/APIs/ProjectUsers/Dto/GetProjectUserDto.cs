@@ -31,5 +31,13 @@ namespace ProjectManagement.APIs.ProjectUsers.Dto
         public Branch Branch { get; set; }
         public string Note { get; set; }
         public string PMName { get; set; }
+        public bool IsPool { get; set; }
+        public string WorkType
+        {
+            get
+            {
+                return CommonUtil.ProjectUserWorkType(this.IsPool);
+            }
+        }
     }
 }

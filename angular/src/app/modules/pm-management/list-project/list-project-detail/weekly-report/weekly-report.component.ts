@@ -52,6 +52,7 @@ import { ReportGuidelineDetailComponent } from '@app/modules/delivery-management
 import { EditNoteResourceComponent } from '@app/modules/delivery-management/delivery/weekly-report-tab/weekly-report-tab-detail/edit-note-resource/edit-note-resource.component';
 import { AppConfigurationService } from '@app/service/api/app-configuration.service';
 import { AddEditIssuseComponent } from './add-edit-issuse/add-edit-issuse.component';
+import { EditNoteDialogComponent } from '../project-bill/add-note-dialog/edit-note-dialog.component';
 
 @Component({
   selector: 'app-weekly-report',
@@ -1814,6 +1815,22 @@ export class WeeklyReportComponent extends PagedListingComponentBase<WeeklyRepor
   validateContent(string): boolean{
     if(!string){return true}
     return string.trim()==""
+  }
+
+  public editBillNote(user): any {
+    let ref = this.dialog.open(EditNoteDialogComponent, {
+      width: "600px",
+      data: {
+        id: user.id,
+        note:user.note
+      }
+    });
+
+    ref.afterClosed().subscribe(rs => {
+      if (rs) {
+       user.note =rs;
+      }
+    });
   }
 
 }

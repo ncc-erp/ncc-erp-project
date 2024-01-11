@@ -288,18 +288,17 @@
                         </div>
                       </div>
                       <i
-                        [ngClass]="
-                          user.isViewAllSkillInfo
-                            ? 'fas fa-chevron-up'
-                            : 'fa fa-ellipsis-h'
-                        "
-                        class="d-flex"
-                        *ngIf="user.userSkills.length > 5"
-                        (click)="
-                          user.isViewAllSkillInfo = !user.isViewAllSkillInfo;
-                          filterSkillInfo(user)
-                        "
-                      ></i>
+                         [ngClass]="
+                           user.isViewAllSkillInfo
+                             ? 'fas fa-chevron-up'
+                             : 'fa fa-ellipsis-h'
+                         " class="d-flex"
+                         *ngIf="user.userSkills && user.userSkills.length > 5"
+                         (click)="
+                           user.isViewAllSkillInfo = !user.isViewAllSkillInfo;
+                           filterSkillInfo(user)
+                         "
+                       ></i>
                     </span>
                   </td>
 

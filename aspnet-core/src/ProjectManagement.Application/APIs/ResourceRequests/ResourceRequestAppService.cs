@@ -342,7 +342,9 @@ namespace ProjectManagement.APIs.ResourceRequests
                 .Select(s => new
                 {
                     Request = s,
-                    PlanUserInfo = s.ProjectUsers.OrderByDescending(x => x.CreationTime).FirstOrDefault()
+                    PlanUserInfo = s.ProjectUsers
+                                    .Where(s => !s.IsDeleted && s.Status == ProjectUserStatus.Future && s.AllocatePercentage > 0)
+                                    .OrderByDescending(x => x.CreationTime).FirstOrDefault()
                 }).FirstOrDefaultAsync();
 
             if (request == default)

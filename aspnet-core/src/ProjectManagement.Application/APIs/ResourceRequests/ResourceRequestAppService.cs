@@ -342,7 +342,9 @@ namespace ProjectManagement.APIs.ResourceRequests
                 .Select(s => new
                 {
                     Request = s,
-                    PlanUserInfo = s.ProjectUsers.OrderByDescending(x => x.CreationTime).FirstOrDefault()
+                    PlanUserInfo = s.ProjectUsers
+                                    .Where(s => !s.IsDeleted && s.Status == ProjectUserStatus.Future && s.AllocatePercentage > 0)
+                                    .OrderByDescending(x => x.CreationTime).FirstOrDefault()
                 }).FirstOrDefaultAsync();
 
             if (request == default)
@@ -350,10 +352,6 @@ namespace ProjectManagement.APIs.ResourceRequests
                 throw new UserFriendlyException("Not found Request with Id " + input.RequestId);
             }
 
-            if (request.PlanUserInfo == null && request.Request.IsRequiredPlanResource)
-            {
-                throw new UserFriendlyException("You have to plan resource for this request first");
-            }
             if (request.PlanUserInfo != null)
                 await _resourceManager.ConfirmJoinProject(request.PlanUserInfo.Id, input.StartTime, true);
 
@@ -531,6 +529,7 @@ namespace ProjectManagement.APIs.ResourceRequests
             projectUser.UserId = input.UserId ?? default;
             projectUser.StartTime = input.StartTime;
             projectUser.ProjectRole = input.ProjectRole;
+            projectUser.Status = ProjectUserStatus.Future;
 
             await WorkScope.UpdateAsync(projectUser);
             CurrentUnitOfWork.SaveChanges();

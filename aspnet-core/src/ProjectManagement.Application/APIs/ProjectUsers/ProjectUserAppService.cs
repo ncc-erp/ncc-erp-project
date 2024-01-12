@@ -312,7 +312,8 @@ namespace ProjectManagement.APIs.ProjectUsers
                                      PMReportName = x.PMReport.Name,
                                      IsFutureActive = x.IsFutureActive,
                                      Note = x.Note,
-                                     PMName = x.Project.PM.FullName
+                                     PMName = x.Project.PM.FullName,
+                                     IsPool = x.IsPool,
                                  });
             return await query.ToListAsync();
         }

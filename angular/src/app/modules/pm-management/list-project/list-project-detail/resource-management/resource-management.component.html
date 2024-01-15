@@ -291,7 +291,7 @@
                             ? 'fas fa-chevron-up'
                             : 'fa fa-ellipsis-h'
                         " class="d-flex"
-                        *ngIf="user.userSkills.length > 5"
+                        *ngIf="user.userSkills.length > 2"
                         (click)="
                           user.isViewAllSkillInfo = !user.isViewAllSkillInfo;
                           filterSkillInfo(user)

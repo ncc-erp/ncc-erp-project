@@ -3,7 +3,7 @@
     <div class="">
       <div class="">
         <div class="input-group" style="display: block">
-          <div style="width: 100%; margin-bottom: -30px" class="row" >
+          <div style="width: 100%; margin-bottom: -30px" class="row">
             <div
               class="col-12 col-md-4 mt-1 d-flex align-items-center mb-3 ml-2"
             >
@@ -34,7 +34,6 @@
                 style="width: 180px"
               >
                 <mat-label>Client</mat-label>
-
                 <mat-select
                   placeholder="Select client"
                   [(ngModel)]="clientId"
@@ -64,7 +63,8 @@
                         | listFilter : 'name' : searchClient
                     "
                     [value]="item.id"
-                    >{{ item.name }}
+                  >
+                    {{ item.name }}
                   </mat-option>
                 </mat-select>
               </mat-form-field>
@@ -73,7 +73,8 @@
                 class="fas fa-times fa-lg ml-2 mt-2"
                 *ngIf="!!clientId"
                 (click)="applyClientFilter()"
-              ></i>
+              >
+              </i>
             </div>
             <div class="mt-1 d-flex align-items-center mb-3 ml-2">
               <mat-form-field
@@ -119,7 +120,7 @@
                 style="margin-top: 0 !important"
                 class="fas fa-times fa-lg ml-2 mt-2"
                 *ngIf="!!projectId"
-                (click)="applyPlanFilter()"
+                (click)="applyProjectFilter()"
               ></i>
             </div>
             <div class="mt-1 d-flex align-items-center mb-3 ml-2">
@@ -144,7 +145,11 @@
               <i
                 style="margin-top: 0 !important"
                 class="fas fa-times fa-lg ml-2 mt-2"
-                *ngIf="projectStatus !== undefined && projectStatus !== null && projectStatus !== ''"
+                *ngIf="
+                  projectStatus !== undefined &&
+                  projectStatus !== null &&
+                  projectStatus !== ''
+                "
                 (click)="applyProjectStatusFilter()"
               ></i>
             </div>
@@ -183,32 +188,17 @@
                   class="text-center"
                 >
                   <div
-                    class="row sortHeader justify-content-center"
+                    class="row justify-content-center"
                     [ngStyle]="styleThead(thead)"
                   >
                     <div class="rsp-th-name">
                       {{ thead.name }}
                     </div>
-                    <div
-                      class="rsp-th-sort"
-                      *ngIf="i != 0 && thead.sortName"
-                      style="vertical-align: middle"
-                    >
-                      <ng-container>
-                        <app-sortable
-                          #sortThead
-                          [data]="{
-                            sort: thead.sortName,
-                            typeSort: thead.defaultSort
-                          }"
-                          (sortEvent)="sortTable($event)"
-                        ></app-sortable>
-                      </ng-container>
-                    </div>
                   </div>
                 </th>
               </tr>
             </thead>
+
             <tbody>
               <ng-container
                 *ngFor="
@@ -245,59 +235,36 @@
                     </app-user-info>
                   </td>
                 </tr>
+                
                 <tr *ngFor="let project of item.projects; let j = index">
                   <td>
                     <span>{{ project.clientName }}</span>
                   </td>
-                  <td style="width: 180px ; padding: 3px ">
+
+                  <td style="width: 180px; padding: 3px">
                     <div class="d-flex flex-column">
                       <div>
-                        <span
-                          *ngIf="checkTimeInFilterDate(project.startTime)"
-                          style="border-radius: 4px; padding: 2px 4px"
-                          class="badge-success"
-                          >Join</span
-                        >
-                        <span
-                          *ngIf="checkTimeInFilterDate(project.endTime)"
-                          style="border-radius: 4px; padding: 2px 4px"
-                          class="badge-danger"
-                          >Out</span
-                        >
                         <div class="d-flex flex-column">
                           <div class="project_link--wapper">
                             <a
-                            href="{{ viewProjectDetail(project) }}"
-                            class="project-link"
-                          >
-                            <strong>{{ project.projectName }}</strong>
-                          </a>
-                          <span [outerHTML]=" project.projectStatus | projectStatusPipe "></span>
+                              href="{{ viewProjectDetail(project) }}"
+                              class="project-link"
+                            >
+                              <strong>{{ project.projectName }}</strong>
+                            </a>
+                            <span
+                              [outerHTML]="
+                                project.projectStatus | projectStatusPipe
+                              "
+                            ></span>
                           </div>
                           <span>{{ project.accountName }}</span>
-                          <span *ngIf="isShowBillRate">{{
-                            project.rateDisplay 
-                          }}</span>
+                          <span *ngIf="isShowBillRate">{{project.rateDisplay}}</span>
                         </div>
-                      </div>
-                      <div style="margin-left: 8px">
-                        <span
-                          *ngIf="
-                            checkTimeInFilterDate(project.startTime) &&
-                            !checkTimeInFilterDate(project.endTime)
-                          "
-                          >{{ project.startTime | date : "dd-MM-yyyy" }}</span
-                        >
-                        <span
-                          *ngIf="
-                            !checkTimeInFilterDate(project.startTime) &&
-                            checkTimeInFilterDate(project.endTime)
-                          "
-                          >{{ project.endTime | date : "dd-MM-yyyy" }}</span
-                        >
-                      </div>
+                      </div> 
                     </div>
                   </td>
+
                   <td>
                     <span class="d-flex flex-column align-items-center">
                       <mat-checkbox
@@ -308,31 +275,36 @@
                     </span>
                   </td>
 
-                    <td>
-                      <span
-                        class="d-flex flex-column align-items-center"
-                        [ngClass]="{
-                          redColor: checkTimeInFilterDate(project.startTime)
-                        }"
-                        >{{ project.startTime | date : "dd-MM-yyyy" }}</span
-                      >
-                      <span
-                        class="d-flex flex-column align-items-center"
-                        [ngClass]="{
-                          redColor: checkTimeInFilterDate(project.endTime)
-                        }"
-                        >{{ project.endTime | date : "dd-MM-yyyy" }}</span
-                      >
-                    </td>
+                  <td>
+                    <span
+                      class="d-flex flex-column align-items-center"
+                      [ngClass]="{
+                        redColor: checkTimeInFilterDate(project.startTime)
+                      }"
+                      >{{ project.startTime | date : "dd-MM-yyyy" }}</span
+                    >
+                    <span
+                      class="d-flex flex-column align-items-center"
+                      [ngClass]="{
+                        redColor: checkTimeInFilterDate(project.endTime)
+                      }"
+                      >{{ project.endTime | date : "dd-MM-yyyy" }}</span
+                    >
+                  </td>
 
                   <td class="note-edit" style="padding: 3px">
                     <div class="d-flex">
                       <span>{{ project.note }}</span>
                       <i
                         class="fas fa-edit note_edit--icon"
-                        (click)="UpdateBillNote(item.userInfor.userId,project.projectId, project.note)"
-                        ></i
-                      >
+                        (click)="
+                          UpdateBillNote(
+                            item.userInfor.userId,
+                            project.projectId,
+                            project.note
+                          )
+                        "
+                      ></i>
                     </div>
                   </td>
                 </tr>
@@ -372,7 +344,7 @@
             </p>
           </div>
           <div class="col-sm-4 col-12">
-            <div class="float-sm-right m-auto"> 
+            <div class="float-sm-right m-auto">
               <abp-pagination-controls
                 id="server"
                 (pageChange)="getDataPage($event)"

@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { BillAccountPlanComponent } from './bill-account-plan.component';
+import { BillAccountPlanComponent } from './bill-account-plan.component'; 
 
 describe('BillAccountPlanComponent', () => {
   let component: BillAccountPlanComponent;

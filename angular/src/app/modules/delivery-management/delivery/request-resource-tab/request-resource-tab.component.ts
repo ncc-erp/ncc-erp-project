@@ -1,153 +1,196 @@
-import { FormSendRecruitmentComponent } from './form-send-recruitment/form-send-recruitment.component';
-import { ResourceRequestDto } from './../../../../service/model/resource-request.dto';
-import { isEmpty, isNull, result } from 'lodash-es';
-import { FormSetDoneComponent } from './form-set-done/form-set-done.component';
-import { SortableComponent, SortableModel } from './../../../../../shared/components/sortable/sortable.component';
-import { AppComponentBase } from 'shared/app-component-base';
-import { ResourcePlanDto } from './../../../../service/model/resource-plan.dto';
-import { PERMISSIONS_CONSTANT } from './../../../../constant/permission.constant';
-import { RESOURCE_REQUEST_STATUS } from './../../../../constant/resource-request-status.constant';
-import { CreateUpdateResourceRequestComponent } from './create-update-resource-request/create-update-resource-request.component';
-import { MatDialog } from '@angular/material/dialog';
-import { DeliveryResourceRequestService } from './../../../../service/api/delivery-request-resource.service';
-import { finalize, catchError } from 'rxjs/operators';
-import { PagedListingComponentBase, PagedRequestDto } from '@shared/paged-listing-component-base';
-import { RequestResourceDto } from './../../../../service/model/delivery-management.dto';
-import { Component, OnInit, Injector, ChangeDetectorRef, ViewChild, ViewChildren, QueryList } from '@angular/core';
-import { InputFilterDto } from '@shared/filter/filter.component';
-import { SkillDto } from '@app/service/model/list-project.dto';
-import { FormPlanUserComponent } from './form-plan-user/form-plan-user.component';
-import * as moment from 'moment';
-import { IDNameDto } from '@app/service/model/id-name.dto';
-import { ProjectDescriptionPopupComponent } from './project-description-popup/project-description-popup.component';
-import { FormCvUserComponent } from './form-cv-user/form-cv-user.component';
-import { ListProjectService } from '@app/service/api/list-project.service';
-import { DescriptionPopupComponent } from './description-popup/description-popup.component';
-import { ProjectUserService } from './../../../../service/api/project-user.service';
-import { concat, forkJoin, empty  } from 'rxjs';
-import { UpdateUserSkillDialogComponent } from '@app/users/update-user-skill-dialog/update-user-skill-dialog.component';
+import { FormSendRecruitmentComponent } from "./form-send-recruitment/form-send-recruitment.component";
+import { ResourceRequestDto } from "./../../../../service/model/resource-request.dto";
+import { isEmpty, isNull, result } from "lodash-es";
+import { FormSetDoneComponent } from "./form-set-done/form-set-done.component";
+import {
+  SortableComponent,
+  SortableModel,
+} from "./../../../../../shared/components/sortable/sortable.component";
+import { AppComponentBase } from "shared/app-component-base";
+import { ResourcePlanDto } from "./../../../../service/model/resource-plan.dto";
+import { PERMISSIONS_CONSTANT } from "./../../../../constant/permission.constant";
+import { RESOURCE_REQUEST_STATUS } from "./../../../../constant/resource-request-status.constant";
+import { CreateUpdateResourceRequestComponent } from "./create-update-resource-request/create-update-resource-request.component";
+import { MatDialog } from "@angular/material/dialog";
+import { DeliveryResourceRequestService } from "./../../../../service/api/delivery-request-resource.service";
+import { finalize, catchError } from "rxjs/operators";
+import {
+  PagedListingComponentBase,
+  PagedRequestDto,
+} from "@shared/paged-listing-component-base";
+import { RequestResourceDto } from "./../../../../service/model/delivery-management.dto";
+import {
+  Component,
+  OnInit,
+  Injector,
+  ChangeDetectorRef,
+  ViewChild,
+  ViewChildren,
+  QueryList,
+} from "@angular/core";
+import { InputFilterDto } from "@shared/filter/filter.component";
+import { SkillDto } from "@app/service/model/list-project.dto";
+import { FormPlanUserComponent } from "./form-plan-user/form-plan-user.component";
+import * as moment from "moment";
+import { IDNameDto } from "@app/service/model/id-name.dto";
+import { ProjectDescriptionPopupComponent } from "./project-description-popup/project-description-popup.component";
+import { FormCvUserComponent } from "./form-cv-user/form-cv-user.component";
+import { ListProjectService } from "@app/service/api/list-project.service";
+import { DescriptionPopupComponent } from "./description-popup/description-popup.component";
+import { ProjectUserService } from "./../../../../service/api/project-user.service";
+import { concat, forkJoin, empty } from "rxjs";
+import { UpdateUserSkillDialogComponent } from "@app/users/update-user-skill-dialog/update-user-skill-dialog.component";
 
 @Component({
-  selector: 'app-request-resource-tab',
-  templateUrl: './request-resource-tab.component.html',
-  styleUrls: ['./request-resource-tab.component.css']
+  selector: "app-request-resource-tab",
+  templateUrl: "./request-resource-tab.component.html",
+  styleUrls: ["./request-resource-tab.component.css"],
 })
-export class RequestResourceTabComponent extends PagedListingComponentBase<RequestResourceDto> implements OnInit {
+export class RequestResourceTabComponent
+  extends PagedListingComponentBase<RequestResourceDto>
+  implements OnInit
+{
   public readonly FILTER_CONFIG: InputFilterDto[] = [
-    { propertyName: 'name', comparisions: [0, 6, 7, 8], displayName: "Name" },
-    { propertyName: 'projectName', comparisions: [0, 6, 7, 8], displayName: "Project Name" },
-    { propertyName: 'timeNeed', comparisions: [0, 1, 2, 3, 4], displayName: "Time Need", filterType: 1 },
-    { propertyName: 'timeDone', comparisions: [0, 1, 2, 3, 4], displayName: "Time Done", filterType: 1 },
+    { propertyName: "name", comparisions: [0, 6, 7, 8], displayName: "Name" },
+    {
+      propertyName: "projectName",
+      comparisions: [0, 6, 7, 8],
+      displayName: "Project Name",
+    },
+    {
+      propertyName: "timeNeed",
+      comparisions: [0, 1, 2, 3, 4],
+      displayName: "Time Need",
+      filterType: 1,
+    },
+    {
+      propertyName: "timeDone",
+      comparisions: [0, 1, 2, 3, 4],
+      displayName: "Time Done",
+      filterType: 1,
+    },
   ];
   public projectId = -1;
-  public selectedOption: string = "PROJECT"
-  public selectedStatus: any = 0
+  public selectedOption: string = "PROJECT";
+  public selectedStatus: any = 0;
   public listRequest: RequestResourceDto[] = [];
   public tempListRequest: RequestResourceDto[] = [];
-  public listStatuses: any[] = []
-  public listLevels: any[] = []
+  public listStatuses: any[] = [];
+  public listLevels: any[] = [];
   public listSkills: SkillDto[] = [];
-  public listProjectUserRoles: IDNameDto[] = []
-  public listProject = []
-  public searchProject:string = "";
+  public listProjectUserRoles: IDNameDto[] = [];
+  public listProject = [];
+  public searchProject: string = "";
   public listRequestCode = [];
-  public requestCode:any = -1;
-  public searchCode:string = "";
-  public listPriorities: any[] = []
+  public requestCode: any = -1;
+  public searchCode: string = "";
+  public listPriorities: any[] = [];
   public isAndCondition: boolean = false;
-  public sortResource = { }
+  public sortResource = {};
   public theadTable: THeadTable[] = [
-    { name: '#' },
-    { name: 'Request Info', sortName: 'projectName', defaultSort: '' },
-    { name: 'Skill need' },
-    { name: 'Code', sortName: 'code', defaultSort: '' },
-    { name: 'Bill Account', sortName: 'billCVEmail', defaultSort: '' },
-    { name: 'Resource'},
-    { name: 'Description'},
-    { name: 'Note' },
-    { name: 'Action' },
-  ]
-  public isShowModal: string = 'none'
-  public modal_title: string
-  public strNote: string
-  public typePM: string
-  public resourceRequestId: number
-  public sortable = new SortableModel('', 0, '')
+    { name: "#" },
+    { name: "Request Info", sortName: "projectName", defaultSort: "" },
+    { name: "Skill need" },
+    { name: "Code", sortName: "code", defaultSort: "" },
+    { name: "Bill Account", sortName: "billCVEmail", defaultSort: "" },
+    { name: "Resource" },
+    { name: "Description" },
+    { name: "Note" },
+    { name: "Action" },
+  ];
+  public isShowModal: string = "none";
+  public modal_title: string;
+  public strNote: string;
+  public typePM: string;
+  public resourceRequestId: number;
+  public sortable = new SortableModel("", 0, "");
 
   ResourceRequest_View = PERMISSIONS_CONSTANT.ResourceRequest_View;
-  ResourceRequest_PlanNewResourceForRequest = PERMISSIONS_CONSTANT.ResourceRequest_PlanNewResourceForRequest;
-  ResourceRequest_UpdateResourceRequestPlan = PERMISSIONS_CONSTANT.ResourceRequest_UpdateResourceRequestPlan;
-  ResourceRequest_CreateBillResourceForRequest = PERMISSIONS_CONSTANT.ResourceRequest_CreateBillResourceForRequest;
-  ResourceRequest_RemoveResouceRequestPlan = PERMISSIONS_CONSTANT.ResourceRequest_RemoveResouceRequestPlan;
-  ResourceRequest_UpdateUserBillResourceSkill = PERMISSIONS_CONSTANT.ResourceRequest_UpdateUserBillResourceSkill;
-  ResourceRequest_ViewUserResourceStarSkill = PERMISSIONS_CONSTANT.ResourceRequest_ViewUserResourceStarSkill;
+  ResourceRequest_PlanNewResourceForRequest =
+    PERMISSIONS_CONSTANT.ResourceRequest_PlanNewResourceForRequest;
+  ResourceRequest_UpdateResourceRequestPlan =
+    PERMISSIONS_CONSTANT.ResourceRequest_UpdateResourceRequestPlan;
+  ResourceRequest_CreateBillResourceForRequest =
+    PERMISSIONS_CONSTANT.ResourceRequest_CreateBillResourceForRequest;
+  ResourceRequest_RemoveResouceRequestPlan =
+    PERMISSIONS_CONSTANT.ResourceRequest_RemoveResouceRequestPlan;
+  ResourceRequest_UpdateUserBillResourceSkill =
+    PERMISSIONS_CONSTANT.ResourceRequest_UpdateUserBillResourceSkill;
+  ResourceRequest_ViewUserResourceStarSkill =
+    PERMISSIONS_CONSTANT.ResourceRequest_ViewUserResourceStarSkill;
   ResourceRequest_SetDone = PERMISSIONS_CONSTANT.ResourceRequest_SetDone;
-  ResourceRequest_CancelAllRequest = PERMISSIONS_CONSTANT.ResourceRequest_CancelAllRequest;
-  ResourceRequest_CancelMyRequest = PERMISSIONS_CONSTANT.ResourceRequest_CancelMyRequest;
+  ResourceRequest_CancelAllRequest =
+    PERMISSIONS_CONSTANT.ResourceRequest_CancelAllRequest;
+  ResourceRequest_CancelMyRequest =
+    PERMISSIONS_CONSTANT.ResourceRequest_CancelMyRequest;
   ResourceRequest_EditPmNote = PERMISSIONS_CONSTANT.ResourceRequest_EditPmNote;
   ResourceRequest_EditDmNote = PERMISSIONS_CONSTANT.ResourceRequest_EditDmNote;
   ResourceRequest_Edit = PERMISSIONS_CONSTANT.ResourceRequest_Edit;
   ResourceRequest_Delete = PERMISSIONS_CONSTANT.ResourceRequest_Delete;
-  ResourceRequest_SendRecruitment = PERMISSIONS_CONSTANT.ResourceRequest_SendRecruitment;
+  ResourceRequest_SendRecruitment =
+    PERMISSIONS_CONSTANT.ResourceRequest_SendRecruitment;
 
-
-  @ViewChildren('sortThead') private elementRefSortable: QueryList<any>;
+  @ViewChildren("sortThead") private elementRefSortable: QueryList<any>;
   constructor(
     private injector: Injector,
     private resourceRequestService: DeliveryResourceRequestService,
     private ref: ChangeDetectorRef,
     private dialog: MatDialog,
     private listProjectService: ListProjectService,
-    private projectUserService: ProjectUserService,
+    private projectUserService: ProjectUserService
   ) {
-    super(injector)
+    super(injector);
   }
 
   ngOnInit(): void {
-    this.getAllSkills()
-    this.getLevels()
-    this.getPriorities()
-    this.getStatuses()
+    this.getAllSkills();
+    this.getLevels();
+    this.getPriorities();
+    this.getStatuses();
     this.getProjectUserRoles();
-    this.getAllProject()
+    this.getAllProject();
     this.getAllRequestCode();
     this.refresh();
   }
 
   ngAfterContentInit(): void {
-    this.ref.detectChanges()
+    this.ref.detectChanges();
   }
 
   showDetail(item: any) {
-    if (this.permission.isGranted(this.DeliveryManagement_ResourceRequest_ViewDetailResourceRequest)) {
-      this.router.navigate(['app/resourceRequestDetail'], {
+    if (
+      this.permission.isGranted(
+        this.DeliveryManagement_ResourceRequest_ViewDetailResourceRequest
+      )
+    ) {
+      this.router.navigate(["app/resourceRequestDetail"], {
         queryParams: {
           id: item.id,
-          timeNeed: item.timeNeed
-        }
-      })
+          timeNeed: item.timeNeed,
+        },
+      });
     }
   }
   showDialog(command: string, request: any) {
     let resourceRequest = {
       id: request.id ? request.id : null,
-      projectId: 0
-    }
+      projectId: 0,
+    };
     const show = this.dialog.open(CreateUpdateResourceRequestComponent, {
       data: {
         command: command,
         item: resourceRequest,
         skills: this.listSkills,
         levels: this.listLevels,
-        typeControl: 'request',
-        listRequestCode: this.listRequestCode
+        typeControl: "request",
+        listRequestCode: this.listRequestCode,
       },
       width: "700px",
-      maxHeight: '90vh',
-    })
-    show.afterClosed().subscribe(rs => {
-      if (rs){
-        this.refresh()
+      maxHeight: "90vh",
+    });
+    show.afterClosed().subscribe((rs) => {
+      if (rs) {
+        this.refresh();
         this.getAllRequestCode();
       }
     });
@@ -159,51 +202,65 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
     this.showDialog("edit", item);
   }
   public setDoneRequest(item) {
-    let data = {
-      ...item.planUserInfo,
-      billUserInfo: item.billUserInfo,
-      requestName: item.name,
-      resourceRequestId: item.id
-    }
-    const showModal = this.dialog.open(FormSetDoneComponent, {
-      data,
-      width: "700px",
-      maxHeight: "90vh"
-    })
-    showModal.afterClosed().subscribe((rs) => {
-      if (rs)
-        this.refresh()
-    })
-  }
-
-  showProject(item){
-      const show = this.dialog.open(ProjectDescriptionPopupComponent , {
-        width: "800px",
-        maxHeight: '90vh',
-        data:item
-      })
-      show.afterClosed().subscribe(rs => {
-
+    if (!item.planUserInfo && !item.billUserInfo) {
+      const request = {
+        requestId: item.id,
+        startTime: moment().format("YYYY-MM-DD"),
+        billStartTime: null,
+      };
+      this.resourceRequestService.setDoneRequest(request).subscribe((rs) => {
+        if (rs) {
+          abp.notify.success(`Set done success`);
+          this.refresh();
+        }
+      });
+    } else {
+      let data = {
+        ...item.planUserInfo,
+        billUserInfo: item.billUserInfo,
+        requestName: item.name,
+        resourceRequestId: item.id,
+        projectId: item.projectId,
+      };
+      const showModal = this.dialog.open(FormSetDoneComponent, {
+        data,
+        width: "700px",
+        maxHeight: "90vh",
+      });
+      showModal.afterClosed().subscribe((rs) => {
+        if (rs) this.refresh();
       });
     }
+  }
+
+  showProject(item) {
+    const show = this.dialog.open(ProjectDescriptionPopupComponent, {
+      width: "800px",
+      maxHeight: "90vh",
+      data: item,
+    });
+    show.afterClosed().subscribe((rs) => {});
+  }
 
   cancelRequest(request: RequestResourceDto) {
-    const projectUserId = request.planUserInfo.projectUserId;
-    const cancelResourceRequest =  this.resourceRequestService.cancelResourceRequest(request.id);
-    const cancelResourcePlan = this.projectUserService.CancelResourcePlan(projectUserId);
-    const actions = [cancelResourceRequest, cancelResourcePlan];
+    const cancelResourceRequest =
+      this.resourceRequestService.cancelResourceRequest(request.id);
+    const actions = [cancelResourceRequest];
     abp.message.confirm(
-      'Are you sure cancel request for project: ' + request.projectName,
-      '',
+      "Are you sure you want to cancel the request for project: " +
+        request.projectName,
+      "",
       (result) => {
         if (result) {
           concat(...actions)
-            .pipe(catchError((error) => {
-              abp.notify.error(error);
-              return empty(); // Return an empty observable to continue
-            }))
+            .pipe(
+              catchError((error) => {
+                abp.notify.error(error);
+                return empty(); // Return an empty observable to continue
+              })
+            )
             .subscribe(() => {
-              abp.notify.success('Cancel Request and its Resource Plan successfully!');
+              abp.notify.success("Request canceled successfully!");
               this.refresh();
             });
         }
@@ -216,31 +273,32 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
     const show = this.dialog.open(FormPlanUserComponent, {
       data: { ...data, projectUserRoles: this.listProjectUserRoles },
       width: "700px",
-      maxHeight: "90vh"
-    })
-    show.afterClosed().subscribe(rs => {
-      if (!rs) return
-      if (rs.type == 'delete') {
-        this.refresh()
+      maxHeight: "90vh",
+    });
+    show.afterClosed().subscribe((rs) => {
+      if (!rs) return;
+      if (rs.type == "delete") {
+        this.refresh();
+      } else {
+        let index = this.listRequest.findIndex(
+          (x) => x.id == rs.data.resourceRequestId
+        );
+        if (index >= 0) this.listRequest[index].planUserInfo = rs.data.result;
       }
-      else {
-        let index = this.listRequest.findIndex(x => x.id == rs.data.resourceRequestId)
-        if (index >= 0)
-          this.listRequest[index].planUserInfo = rs.data.result
-      }
-
     });
   }
 
   async getPlanResource(item) {
     let data = new ResourcePlanDto(item.id, 0);
-    if (!item.planUserInfo)
-      return data;
-    let res = await this.resourceRequestService.getPlanResource(item.planUserInfo.projectUserId, item.id)
-    return res.result
+    if (!item.planUserInfo) return data;
+    let res = await this.resourceRequestService.getPlanResource(
+      item.planUserInfo.projectUserId,
+      item.id
+    );
+    return res.result;
   }
 
-  async showModalCvUser(item:any){
+  async showModalCvUser(item: any) {
     const isHasResource = item.planUserInfo !== null;
     const planUser = await this.getPlanResource(item);
 
@@ -248,23 +306,28 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
       data: {
         item: item,
         planUser: { ...planUser, projectUserRoles: this.listProjectUserRoles },
-        isHasResource: isHasResource
+        isHasResource: isHasResource,
       },
       width: "700px",
-      maxHeight: "90vh"
-    })
-    show.afterClosed().subscribe(rs => {
-      if (rs) this.refresh()
+      maxHeight: "90vh",
+    });
+    show.afterClosed().subscribe((rs) => {
+      if (rs) this.refresh();
     });
   }
 
   sendRecruitment(item: ResourceRequestDto) {
     const show = this.dialog.open(FormSendRecruitmentComponent, {
-      data: { id: item.id, name: item.name, dmNote: item.dmNote, pmNote: item.pmNote } as SendRecruitmentModel,
+      data: {
+        id: item.id,
+        name: item.name,
+        dmNote: item.dmNote,
+        pmNote: item.pmNote,
+      } as SendRecruitmentModel,
       width: "700px",
-      maxHeight: "90vh"
-    })
-    show.afterClosed().subscribe(rs => {
+      maxHeight: "90vh",
+    });
+    show.afterClosed().subscribe((rs) => {
       if (!rs) return;
       item.isRecruitmentSend = rs.isRecruitmentSend;
       item.recruitmentUrl = rs.recruitmentUrl;
@@ -273,148 +336,172 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
 
   // #region update note for pm, dmPm
   public openModal(name, typePM, content, id) {
-    this.typePM = typePM
-    this.modal_title = name
-    this.strNote = content
-    this.resourceRequestId = id
-    this.isShowModal = 'block'
+    this.typePM = typePM;
+    this.modal_title = name;
+    this.strNote = content;
+    this.resourceRequestId = id;
+    this.isShowModal = "block";
   }
 
   public closeModal() {
-    this.isShowModal = 'none'
+    this.isShowModal = "none";
   }
 
   openPopupSkill(user, userSkill) {
     let ref = this.dialog.open(UpdateUserSkillDialogComponent, {
       width: "700px",
       data: {
-        isNotUpdate: !this.permission.isGranted(this.ResourceRequest_UpdateUserBillResourceSkill),
+        isNotUpdate: !this.permission.isGranted(
+          this.ResourceRequest_UpdateUserBillResourceSkill
+        ),
         userSkills: userSkill ? userSkill : [],
-        viewStarSkillUser: this.permission.isGranted(this.ResourceRequest_ViewUserResourceStarSkill),
+        viewStarSkillUser: this.permission.isGranted(
+          this.ResourceRequest_ViewUserResourceStarSkill
+        ),
         id: user.id,
         fullName: user.fullName,
-        note: userSkill ? userSkill[0].skillNote : ''
-      }
-
+        note: userSkill ? userSkill[0].skillNote : "",
+      },
     });
-    ref.afterClosed().subscribe(rs => {
+    ref.afterClosed().subscribe((rs) => {
       if (rs) {
-        this.refresh()
+        this.refresh();
       }
-    })
+    });
   }
 
   public updateNote() {
     let request = {
       resourceRequestId: this.resourceRequestId,
       note: this.strNote,
-    }
-    this.resourceRequestService.updateNote(request, this.typePM).subscribe(rs => {
-      if (rs.success) {
-        abp.notify.success('Update Note Successfully!')
-        let index = this.listRequest.findIndex(x => x.id == request.resourceRequestId);
-        if (index >= 0) {
-          if (this.typePM == 'Description')
-            this.listRequest[index].pmNote = request.note;
-          else
-            this.listRequest[index].dmNote = request.note;
+    };
+    this.resourceRequestService
+      .updateNote(request, this.typePM)
+      .subscribe((rs) => {
+        if (rs.success) {
+          abp.notify.success("Update Note Successfully!");
+          let index = this.listRequest.findIndex(
+            (x) => x.id == request.resourceRequestId
+          );
+          if (index >= 0) {
+            if (this.typePM == "Description")
+              this.listRequest[index].pmNote = request.note;
+            else this.listRequest[index].dmNote = request.note;
+          }
+          this.closeModal();
+        } else {
+          abp.notify.error(rs.result);
         }
-        this.closeModal()
-      }
-      else {
-        abp.notify.error(rs.result)
-      }
-    })
+      });
   }
   // #endregion
 
   // #region paging, search, sortable, filter
-  protected list(request: any, pageNumber: number, finishedCallback: Function): void {
-    let requestBody: any = request
-    requestBody.isAndCondition = this.isAndCondition
+  protected list(
+    request: any,
+    pageNumber: number,
+    finishedCallback: Function
+  ): void {
+    let requestBody: any = request;
+    requestBody.isAndCondition = this.isAndCondition;
     let objFilter = [
-      { name: 'status', isTrue: false, value: this.selectedStatus },
-      {name:'projectId',isTrue:false, value:this.projectId},
-      {name:'code',isTrue:false,value: this.requestCode}
+      { name: "status", isTrue: false, value: this.selectedStatus },
+      { name: "projectId", isTrue: false, value: this.projectId },
+      { name: "code", isTrue: false, value: this.requestCode },
     ];
 
     objFilter.forEach((item) => {
       if (!item.isTrue) {
-        requestBody.filterItems = this.AddFilterItem(requestBody, item.name, item.value)
+        requestBody.filterItems = this.AddFilterItem(
+          requestBody,
+          item.name,
+          item.value
+        );
       }
       if (item.value == -1) {
-        requestBody.filterItems = this.clearFilter(requestBody, item.name, "")
-        item.isTrue = true
+        requestBody.filterItems = this.clearFilter(requestBody, item.name, "");
+        item.isTrue = true;
       }
-    })
+    });
 
     requestBody.isTraining = false;
-    requestBody.sortParams = this.sortResource
-    this.resourceRequestService.getResourcePaging(requestBody, this.selectedOption).pipe(finalize(() => {
-      finishedCallback();
-    }), catchError(this.resourceRequestService.handleError)).subscribe(data => {
-      this.listRequest = this.tempListRequest = data.result.items;
-      this.showPaging(data.result, pageNumber);
-    },
-      (error) => {
-        abp.notify.error(error)
-      })
-    let rsFilter = this.resetDataSearch(requestBody, request, objFilter)
-    request = rsFilter.request
-    requestBody = rsFilter.requestBody
+    requestBody.sortParams = this.sortResource;
+    this.resourceRequestService
+      .getResourcePaging(requestBody, this.selectedOption)
+      .pipe(
+        finalize(() => {
+          finishedCallback();
+        }),
+        catchError(this.resourceRequestService.handleError)
+      )
+      .subscribe(
+        (data) => {
+          this.listRequest = this.tempListRequest = data.result.items;
+          this.showPaging(data.result, pageNumber);
+        },
+        (error) => {
+          abp.notify.error(error);
+        }
+      );
+    let rsFilter = this.resetDataSearch(requestBody, request, objFilter);
+    request = rsFilter.request;
+    requestBody = rsFilter.requestBody;
   }
 
   resetDataSearch(requestBody: any, request: any, objFilter: any) {
     objFilter.forEach((item) => {
       if (!item.isTrue) {
-        request.filterItems = this.clearFilter(request, item.name, '')
+        request.filterItems = this.clearFilter(request, item.name, "");
       }
-    })
-    requestBody.sort = null
-    requestBody.sortDirection = null
+    });
+    requestBody.sort = null;
+    requestBody.sortDirection = null;
     this.isLoading = false;
 
     return {
       request,
       requestBody,
-      objFilter
-    }
+      objFilter,
+    };
   }
 
   clearAllFilter() {
-    this.filterItems = []
-    this.searchText = ''
-    this.projectId = -1
-    this.requestCode = -1
-    this.selectedStatus = 0
-    this.changeSortableByName('priority', 'DESC')
-    this.sortable = new SortableModel('', 1, '')
-    this.refresh()
+    this.filterItems = [];
+    this.searchText = "";
+    this.projectId = -1;
+    this.requestCode = -1;
+    this.selectedStatus = 0;
+    this.changeSortableByName("priority", "DESC");
+    this.sortable = new SortableModel("", 1, "");
+    this.refresh();
   }
 
   onChangeStatus() {
-    let status = this.listStatuses.find(x => x.id == this.selectedStatus)
-    if (status && status.name == 'DONE') {
-      this.sortable = new SortableModel('timeDone', 1, 'DESC')
-      this.changeSortableByName('', '')
+    let status = this.listStatuses.find((x) => x.id == this.selectedStatus);
+    if (status && status.name == "DONE") {
+      this.sortable = new SortableModel("timeDone", 1, "DESC");
+      this.changeSortableByName("", "");
     }
     this.getDataPage(1);
   }
 
   sortTable(event: any) {
-    this.sortable = event
-    this.changeSortableByName(this.sortable.sort, this.sortable.typeSort,this.sortable.sortDirection)
-    this.refresh()
+    this.sortable = event;
+    this.changeSortableByName(
+      this.sortable.sort,
+      this.sortable.typeSort,
+      this.sortable.sortDirection
+    );
+    this.refresh();
   }
 
-  changeSortableByName(sort: string, sortType: string,sortDirection?:number) {
-    if(!sortType){
-      delete this.sortResource[sort]
+  changeSortableByName(sort: string, sortType: string, sortDirection?: number) {
+    if (!sortType) {
+      delete this.sortResource[sort];
+    } else {
+      this.sortResource[sort] = sortDirection;
     }
-    else{
-      this.sortResource[sort] = sortDirection
-    }
-    this.ref.detectChanges()
+    this.ref.detectChanges();
   }
   // #endregion
 
@@ -422,46 +509,46 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
   getAllSkills() {
     this.resourceRequestService.getSkills().subscribe((data) => {
       this.listSkills = data.result;
-    })
+    });
   }
   getLevels() {
-    this.resourceRequestService.getLevels().subscribe(res => {
-      this.listLevels = res.result
-    })
+    this.resourceRequestService.getLevels().subscribe((res) => {
+      this.listLevels = res.result;
+    });
   }
   getPriorities() {
-    this.resourceRequestService.getPriorities().subscribe(res => {
-      this.listPriorities = res.result
-    })
+    this.resourceRequestService.getPriorities().subscribe((res) => {
+      this.listPriorities = res.result;
+    });
   }
   getStatuses() {
-    this.resourceRequestService.getStatuses().subscribe(res => {
-      this.listStatuses = res.result
-    })
+    this.resourceRequestService.getStatuses().subscribe((res) => {
+      this.listStatuses = res.result;
+    });
   }
   getProjectUserRoles() {
     this.resourceRequestService.getProjectUserRoles().subscribe((rs: any) => {
-      this.listProjectUserRoles = rs.result
-    })
+      this.listProjectUserRoles = rs.result;
+    });
   }
 
   getAllProject() {
-    this.listProjectService.getMyProjects().subscribe(data => {
+    this.listProjectService.getMyProjects().subscribe((data) => {
       this.listProject = data.result;
-    })
+    });
   }
-  getAllRequestCode(){
-    this.resourceRequestService.getListRequestCode().subscribe(data=>{
-      this.listRequestCode = data.result
-    })
+  getAllRequestCode() {
+    this.resourceRequestService.getListRequestCode().subscribe((data) => {
+      this.listRequestCode = data.result;
+    });
   }
   // #endregion
 
   styleThead(item: any) {
     return {
       width: item.width,
-      height: item.height
-    }
+      height: item.height,
+    };
   }
   public getValueByEnum(enumValue: number, enumObject) {
     for (const key in enumObject) {
@@ -471,86 +558,97 @@ export class RequestResourceTabComponent extends PagedListingComponentBase<Reque
     }
   }
   viewRecruitment(url) {
-    window.open(url, '_blank')
+    window.open(url, "_blank");
   }
-  showDescription(note){
+  showDescription(note) {
     const show = this.dialog.open(DescriptionPopupComponent, {
       width: "1100px",
-      maxHeight: '90vh',
-      data: note
-    })
+      maxHeight: "90vh",
+      data: note,
+    });
   }
   protected delete(item: RequestResourceDto): void {
-    abp.message.confirm(
-      "Delete this request?",
-      "",
-      (result: boolean) => {
-        if (result) {
-          this.resourceRequestService.delete(item.id).pipe(catchError(this.resourceRequestService.handleError)).subscribe(() => {
+    abp.message.confirm("Delete this request?", "", (result: boolean) => {
+      if (result) {
+        this.resourceRequestService
+          .delete(item.id)
+          .pipe(catchError(this.resourceRequestService.handleError))
+          .subscribe(() => {
             abp.notify.success(" Delete request successfully");
             this.refresh();
             this.getAllRequestCode();
           });
-
-        }
       }
-
-    );
+    });
   }
   isShowButtonMenuAction(item) {
-    return (item.statusName != 'DONE'
+    return (
+      item.statusName != "DONE" ||
       //&& !item.isRecruitmentSend
-    )
-      || item.statusName != 'CANCELLED'
+      item.statusName != "CANCELLED"
+    );
   }
 
   isShowBtnCreate() {
-    return this.isGranted(PERMISSIONS_CONSTANT.ResourceRequest_CreateNewRequest)
-      || this.isGranted(PERMISSIONS_CONSTANT.ResourceRequest_CreateNewRequestByPM)
+    return (
+      this.isGranted(PERMISSIONS_CONSTANT.ResourceRequest_CreateNewRequest) ||
+      this.isGranted(PERMISSIONS_CONSTANT.ResourceRequest_CreateNewRequestByPM)
+    );
   }
 
   isShowBtnCancel(item) {
-    return item.status == RESOURCE_REQUEST_STATUS.PENDING
-      && (this.isGranted(PERMISSIONS_CONSTANT.ResourceRequest_CancelAllRequest)
-        || this.isGranted(PERMISSIONS_CONSTANT.ResourceRequest_CancelMyRequest))
+    return (
+      item.status == RESOURCE_REQUEST_STATUS.PENDING &&
+      (this.isGranted(PERMISSIONS_CONSTANT.ResourceRequest_CancelAllRequest) ||
+        this.isGranted(PERMISSIONS_CONSTANT.ResourceRequest_CancelMyRequest))
+    );
   }
 
   isShowBtnEdit(item) {
-    return item.status == RESOURCE_REQUEST_STATUS.PENDING
-      && this.isGranted(PERMISSIONS_CONSTANT.ResourceRequest_Edit)
+    return (
+      item.status == RESOURCE_REQUEST_STATUS.PENDING &&
+      this.isGranted(PERMISSIONS_CONSTANT.ResourceRequest_Edit)
+    );
   }
 
   isShowBtnSetDone(item) {
-    return item.status == RESOURCE_REQUEST_STATUS.PENDING
-      && item.planUserInfo
-      && this.isGranted(PERMISSIONS_CONSTANT.ResourceRequest_SetDone)
+    return (
+      item.status == RESOURCE_REQUEST_STATUS.PENDING &&
+      ((item.isRequiredPlanResource && item.planUserInfo) ||
+        !item.isRequiredPlanResource) &&
+      this.isGranted(PERMISSIONS_CONSTANT.ResourceRequest_SetDone)
+    );
   }
 
   isShowBtnSendRecruitment(item) {
-    return item.status == RESOURCE_REQUEST_STATUS.PENDING
-      && (!item.isRecruitmentSend || !item.recruitmentUrl)
-      && this.isGranted(PERMISSIONS_CONSTANT.ResourceRequest_SendRecruitment)
+    return (
+      item.status == RESOURCE_REQUEST_STATUS.PENDING &&
+      (!item.isRecruitmentSend || !item.recruitmentUrl) &&
+      this.isGranted(PERMISSIONS_CONSTANT.ResourceRequest_SendRecruitment)
+    );
   }
 
   isShowBtnDelete(item) {
-    return this.isGranted(PERMISSIONS_CONSTANT.ResourceRequest_Delete)
+    return this.isGranted(PERMISSIONS_CONSTANT.ResourceRequest_Delete);
   }
-  public sliceUrl(url: string): string{
-    if (isNull(url)||isEmpty(url)) {
+  public sliceUrl(url: string): string {
+    if (isNull(url) || isEmpty(url)) {
       return "";
     }
-    var regexp = new RegExp(/\/[\d]\d{0,}/g)
+    var regexp = new RegExp(/\/[\d]\d{0,}/g);
     return regexp.exec(url).toString().slice(1);
   }
 }
 
 export class THeadTable {
   name: string;
-  width?: string = 'auto';
-  height?: string = 'auto';
+  width?: string = "auto";
+  height?: string = "auto";
   backgroud_color?: string;
-  sortName?: string;;
+  sortName?: string;
   defaultSort?: string;
+  padding?: string;
+  whiteSpace?: string;
 }
 
 export class SendRecruitmentModel {
@@ -558,5 +656,4 @@ export class SendRecruitmentModel {
   name: string;
   dmNote: string;
   pmNote: string;
-}
-
+} 

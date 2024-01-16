@@ -172,6 +172,29 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
       this.userForUserBill = data.result;
     })
   }
+  public removeLinkResource(projectId, billAccountId, userId, id){
+    // this.isLoading = true
+    const req = {
+      billAccountId: billAccountId,
+      projectId: projectId,
+      userIds: [userId]
+    }
+    const status = this.userBillList.find(item => item.id === id).createMode
+    abp.message.confirm(
+      "Remove linked resource?",
+      "",
+      (result: boolean) => {
+        if (result) {
+          this.isLoading = true;
+          this.projectUserBillService.RemoveUserFromBillAccount(req).pipe(catchError(this.projectUserBillService.handleError)).subscribe(data => {
+             this.getUserBill(id, status);
+          }, () => {
+            this.isLoading = false
+          })
+        }
+      }
+    )
+  }
   public addUserBill(): void {
     this.getAllFakeUser('')
     let newUserBill = {} as projectUserBillDto
@@ -218,6 +241,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
           isActive: userBill.isActive,
           accountName: userBill.accountName,
           chargeType: userBill.chargeType,
+          linkedResources: userBill.linkedResources,
           id: userBill.id
         }
         this.projectUserBillService.update(userBillToUpdate).pipe(catchError(this.projectUserBillService.handleError)).subscribe(()=>{
@@ -283,7 +307,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     this.isLoading = true
     this.projectUserBillService.getAllUserBill(this.projectId).pipe(catchError(this.projectUserBillService.handleError)).subscribe(data => {
       this.userBillList = data.result.map(item=> {
-      if(item.id === id){
+      if(item.id === id && userIdNew){
         return {...item,createMode:status,userId:userIdNew}
       }
       return {...item, createMode:false}

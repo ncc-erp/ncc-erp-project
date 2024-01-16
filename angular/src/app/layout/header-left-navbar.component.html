@@ -4,6 +4,12 @@
             <i class="fas fa-bars fa-lg"></i>
         </a>
     </li>
+    
+    <li class="nav-item" *ngIf="isShowReportBar" style="width: 20px;"  matTooltip="Back weekly report tab">
+        <a style="padding-left: 5px;" class="nav-link" href="javascript:;" (click)="backWeeklyReport()">
+            <i class="fa fa-arrow-left"></i>
+        </a>
+    </li>
 
     <li *ngIf="isShowReportBar" class="ml-4 mt-1" style="margin-left: auto;">
         <button class="btn btn-info text-nowrap" (click)="showDialog()">

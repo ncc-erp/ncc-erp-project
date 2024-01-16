@@ -3614,6 +3614,9 @@ namespace ProjectManagement.Migrations
                     b.Property<bool>("IsRecruitmentSend")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsRequiredPlanResource")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime?>("LastModificationTime")
                         .HasColumnType("datetime2");
 

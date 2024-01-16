@@ -23,7 +23,8 @@ export class RequestResourceDto {
   planUserInfo: any;
   code:string;
   isNewBillAccount?:boolean;
-  billUserInfo:any
+  billUserInfo:any;
+  isRequiredPlanResource?: boolean;
 }
 
 export class TrainingRequestDto {
@@ -49,6 +50,7 @@ export class TrainingRequestDto {
   priority?: any;
   quantity: number;
   planUserInfo: any;
+  isRequiredPlanResource: boolean;
 }
 export class ResourceRequestDetailDto {
   userId: number;

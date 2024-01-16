@@ -41,6 +41,8 @@ export interface IProjectHistoryUser {
   note: string;
   id: number;
   pMName: string;
+  workType: boolean;
+  isPool?: boolean;
 }
 
 export class projectUserDto {

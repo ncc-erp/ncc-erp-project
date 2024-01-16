@@ -75,7 +75,7 @@ export class CreateUpdateResourceRequestComponent extends AppComponentBase imple
       }),
     );
   }
-  
+
    _filter(name: string) {
     const filterValue = name.toLowerCase();
     return this.listRequestCode.filter(option => option.code.toLowerCase().includes(filterValue));
@@ -116,6 +116,7 @@ export class CreateUpdateResourceRequestComponent extends AppComponentBase imple
       id: this.resourceRequestDto.id,
       skillIds: this.resourceRequestDto.skillIds,
       isNewBillAccount: this.resourceRequestDto.isNewBillAccount,
+      isRequiredPlanResource: this.resourceRequestDto.isRequiredPlanResource,
       code: this.myControl.value
     }
 
@@ -146,6 +147,14 @@ export class CreateUpdateResourceRequestComponent extends AppComponentBase imple
       this.temp =data.result
       this.getSkillDetail();
     })
+  }
+
+  selectAllSkills() {
+    this.resourceRequestDto.skillIds = this.listSkill.map(skill => skill.id);
+  }
+
+  clearAllSkills() {
+    this.resourceRequestDto.skillIds = [];
   }
 
   temp

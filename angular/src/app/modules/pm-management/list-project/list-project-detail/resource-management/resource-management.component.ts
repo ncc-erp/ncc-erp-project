@@ -110,6 +110,7 @@ export class ResourceManagementComponent extends AppComponentBase implements OnI
   public listSkills: any[] = []
   public listLevels: any[] = []
   public listProjectUserRoles: IDNameDto[] = []
+  public isViewAllSkillInfo: boolean = false
 
   constructor(
     injector: Injector,
@@ -593,6 +594,22 @@ export class ResourceManagementComponent extends AppComponentBase implements OnI
   }
 
   public setDoneRequest(item){
+    if(!item.planUserInfo){
+      const request = {
+        requestId: item.id,
+        startTime: moment().format("YYYY-MM-DD"),
+        billStartTime: null,
+      }
+      this.resourceRequestService.setDoneRequest(request).subscribe(rs => {
+        if(rs){
+          abp.notify.success(`Set done success`);
+          this.getResourceRequestList()
+          this.getPlannedtUser()
+          this.getProjectUser()
+        }
+      })
+    }
+    else{
     let data = {
       ...item.planUserInfo,
       requestName: item.name,
@@ -610,6 +627,7 @@ export class ResourceManagementComponent extends AppComponentBase implements OnI
         this.getProjectUser()
     })
   }
+}
 
   cancelRequest(id){
     abp.message.confirm(
@@ -741,5 +759,22 @@ export class ResourceManagementComponent extends AppComponentBase implements OnI
   IsSkillNoteExist = (user) => user.userSkills && user.userSkills[0]?.skillNote ? true : false;
 
   GetUserSkillNote = (user) => user.userSkills[0]?.skillNote;
+
+  filterSkillInfo(user){
+    let skillInfoAfterFilter = []
+    if(user.userSkills){
+    if(user.isViewAllSkillInfo){
+      skillInfoAfterFilter = user.userSkills
+    }
+    else{
+      user.userSkills.forEach((skill, index)=>{
+        if(index < 2){
+          skillInfoAfterFilter.push(skill)
+        }
+      })
+    }
+  }
+    return skillInfoAfterFilter
+  }
 }
 

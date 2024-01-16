@@ -97,7 +97,8 @@ export class CreateUpdateTrainingRequestComponent extends AppComponentBase imple
       priority: this.trainingRequestDto.priority,
       id: this.trainingRequestDto.id,
       skillIds: this.trainingRequestDto.skillIds,
-      quantity: this.trainingRequestDto.quantity
+      quantity: this.trainingRequestDto.quantity,
+      isRequiredPlanResource : this.trainingRequestDto.isRequiredPlanResource
     }
 
     if (this.data.command == "create") {

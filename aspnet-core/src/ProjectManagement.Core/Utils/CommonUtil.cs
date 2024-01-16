@@ -2,6 +2,7 @@
 using ProjectManagement.Constants;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -239,6 +240,25 @@ namespace ProjectManagement.Utils
             return Enum.GetName(typeof(ChargeType), chargeType);
         }
 
+        public static string ChargeTypeShortName(ChargeType? chargeType)
+        {
+            if (!chargeType.HasValue)
+            {
+                return "null";
+            }
+
+            switch (chargeType.Value)
+            {
+                case ChargeType.Daily:
+                    return "d";
+                case ChargeType.Monthly:
+                    return "m";
+                case ChargeType.Hourly: return "h";
+
+            }
+            return "";
+        }
+
         public static string UserTypeName(UserType? type)
         {
             if (!type.HasValue)
@@ -325,7 +345,10 @@ namespace ProjectManagement.Utils
 
         public static int LastDateNextThan2Month = 102;
 
-
+        public static string FormatMoney(float money)
+        {
+            return string.Format("{0:#,##0}", money);
+        }
         public static double Round(double value)
         {
             return Math.Round(value);
@@ -446,6 +469,5 @@ namespace ProjectManagement.Utils
 
             return resultList;
         }
-
     }
 }

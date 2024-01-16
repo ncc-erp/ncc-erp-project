@@ -121,9 +121,9 @@
                                         *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Rate_View)">
                                         Rate <br>({{rateInfo.currencyName}})</th>
                                     <th>Charge Type</th>
-                                    <th>Start charge</th>
-                                    <th>End charge</th>
-                                    <th style="width:20px;">Is Charge</th>
+                                    <th>Is Charge</th>
+                                    <!-- <th>End charge</th>
+                                    <th style="width:20px;">Is Charge</th> -->
                                     <th style="width:300px;">Note</th>
                                     <th>Action</th>
                                 </tr>
@@ -141,7 +141,7 @@
                                     </td>
                                     <td class="text-left" style="min-width: 250px;">
                                         <span *ngIf="!bill.createMode">
-                                            <app-user-info [userData]="bill" [isSmallerDiv]="true">
+                                            <app-user-info [userData]="bill" [isHideLevel]="true">
                                             </app-user-info>
                                         </span>
                                         <div *ngIf="bill.createMode">
@@ -202,7 +202,7 @@
                                     <td>
                                         <div class="d-flex align-items-start justify-content-end">
                                             <div class="d-flex" style="flex-direction: column;">
-                                                <div *ngFor="let resource of bill.linkedResources" class="mb-2">
+                                                <div *ngFor="let resource of bill.linkedResources" class="mb-2 position-relative">
                                                     <app-user-info
                                                         [userData]="resource"
                                                         [isHideEmail] = "true"
@@ -210,6 +210,8 @@
                                                         [isSmallerDiv]="true"
                                                         [isChangeContentSize]="true">
                                                     </app-user-info>
+                                                    <i (click) = "removeLinkResource(bill.projectId, bill.userId, resource.id, bill.id)"
+                                                     class="fa fa-times position-absolute" style="top:32px; right: -28px;"></i>
                                                 </div>
                                             </div>
                                         <i *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount)"
@@ -248,7 +250,12 @@
                                         </div>
                                     </td>
                                     <td class="text-center">
-                                        <span *ngIf="!bill.createMode">{{bill.startTime |date:"dd/MM/yyyy"}}</span>
+                                        <span class="text-center">
+                                            <mat-checkbox [disabled]="!bill.createMode" [(ngModel)]="bill.isActive">
+                                            </mat-checkbox>
+                                        </span>
+                                        <br>
+                                        <span *ngIf="!bill.createMode && bill.startTime">{{bill.startTime | date:"dd/MM/yyyy"}}</span>
                                         <div *ngIf="bill.createMode">
                                             <mat-form-field appearance="outline" style="width: 125px;">
                                                 <input matInput [matDatepicker]="billStarttimePicker"
@@ -265,9 +272,8 @@
                                                 This field is required
                                             </mat-error>
                                         </div>
-                                    </td>
-                                    <td class="text-center">
-                                        <span class="text-center" *ngIf="!bill.createMode">{{bill.endTime
+                                        <br *ngIf="bill.createMode || bill.startTime">
+                                        <span class="text-center" *ngIf="!bill.createMode && bill.endTime">{{bill.endTime
                                             |date:"dd/MM/yyyy"}}</span>
                                         <div *ngIf="bill.createMode">
                                             <mat-form-field appearance="outline" style="width: 125px;">
@@ -280,11 +286,25 @@
                                             </mat-form-field>
                                         </div>
                                     </td>
-                                    <td class="text-center">
+                                    <!-- <td class="text-center">
+                                        <span class="text-center" *ngIf="!bill.createMode">{{bill.endTime
+                                            |date:"dd/MM/yyyy"}}</span>
+                                        <div *ngIf="bill.createMode">
+                                            <mat-form-field appearance="outline" style="width: 125px;">
+                                                <input matInput [matDatepicker]="billEndtimepicker"
+                                                    placeholder="chose a date" [(ngModel)]="bill.endTime"
+                                                    name="billEndtime">
+                                                <mat-datepicker-toggle matSuffix [for]="billEndtimepicker">
+                                                </mat-datepicker-toggle>
+                                                <mat-datepicker #billEndtimepicker></mat-datepicker>
+                                            </mat-form-field>
+                                        </div>
+                                    </td> -->
+                                    <!-- <td class="text-center">
                                         <mat-checkbox [disabled]="!bill.createMode" class="mt-1"
                                             [(ngModel)]="bill.isActive">
                                         </mat-checkbox>
-                                    </td>
+                                    </td> -->
                                     <td style="white-space: pre-line;
                                                 word-break: break-all;
                                                 min-width: 30px;

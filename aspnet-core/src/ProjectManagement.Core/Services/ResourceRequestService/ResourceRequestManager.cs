@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
+using static ProjectManagement.Constants.Enum.ProjectEnum;
 using Expression = System.Linq.Expressions.Expression;
 
 namespace ProjectManagement.Services.ResourceRequestService
@@ -79,7 +80,7 @@ namespace ProjectManagement.Services.ResourceRequestService
                             IsRecruitmentSend = request.IsRecruitmentSend,
                             ProjectName = request.Project.Name,
                             ProjectId = request.ProjectId,
-                            ProjectType = null,
+                            ProjectType = request.Project.ProjectType,
                             ProjectStatus = request.Project.Status,
 
                             Name = request.Name,
@@ -98,7 +99,9 @@ namespace ProjectManagement.Services.ResourceRequestService
                             ProjectCode = request.Project.Code,
 
                             Skills = request.ResourceRequestSkills.Select(p => new ResourceRequestSkillDto() { Id = p.SkillId, Name = p.Skill.Name }).ToList(),
-                            PlanUserInfo = request.ProjectUsers.OrderByDescending(q => q.CreationTime).Select(s => new PlanUserInfoDto
+                            PlanUserInfo = request.ProjectUsers
+                            .Where(x => x.Status == ProjectUserStatus.Future)
+                            .OrderByDescending(q => q.CreationTime).Select(s => new PlanUserInfoDto
                             {
                                 ProjectUserId = s.Id,
                                 Employee = new UserBaseDto
@@ -152,6 +155,7 @@ namespace ProjectManagement.Services.ResourceRequestService
                             UserRequestName = _workScope.Get<User>((long)request.CreatorUserId).Name,
                             CreateAt = request.CreationTime,
                             IsNewBillAccount = request.IsNewBillAccount,
+                            IsRequiredPlanResource = request.IsRequiredPlanResource
                         };
             return query;
         }

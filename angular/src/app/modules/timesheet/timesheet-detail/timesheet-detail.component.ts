@@ -273,23 +273,22 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
   //     })
   // }
 
-  exportTimesheetDetail(exportInvoiceMode) {
-    let payloadDto = {
+  exportTimesheetDetail(item: any) {
+    const projectIds = (item && item.projectId) ? [item.projectId] : this.listExportInvoice;
+    const payloadDto = {
       timesheetId: this.timesheetId,
-      projectIds: this.listExportInvoice,
-      mode: exportInvoiceMode
+      projectIds: projectIds,
+      mode: this.APP_ENUM.ExportInvoiceMode.Normal
     }
     this.timesheetProjectService.exportTimeSheetDetail(payloadDto).subscribe((res) => {
-      const file = new Blob([this.s2ab(atob(res.result.base64))], {
-        type: "application/vnd.ms-excel;charset=utf-8"
-      });
+    const file = new Blob([this.s2ab(atob(res.result.base64))], {
+      type: "application/vnd.ms-excel;charset=utf-8"
+    });
       this.refresh();
-      this.listExportInvoice=[];
       FileSaver.saveAs(file, res.result.fileName);
-      abp.notify.success("Export Invoice For Tax Successfully!");
-    })
+      abp.notify.success("Export TS Detail Successfully!");
+    });
   }
-
 
   handleLinkProjectTS(item) {
    const dialogref = this.dialog.open(LinkProjectTimesheetComponent, {
@@ -528,6 +527,7 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
       this.isMonthlyToDaily = false;
     }
   }
+  
   checkExportInvoice(listTimesheetProject) {
     if (listTimesheetProject.length > 0) {
       let countClient = listTimesheetProject.reduce((r: any, a: any) => {

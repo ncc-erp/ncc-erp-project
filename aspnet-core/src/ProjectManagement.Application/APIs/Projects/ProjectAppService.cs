@@ -1,6 +1,7 @@
 ﻿using Abp.Application.Services.Dto;
 using Abp.Authorization;
 using Abp.Authorization.Users;
+using Abp.Collections.Extensions;
 using Abp.Configuration;
 using Abp.Domain.Repositories;
 using Abp.Linq.Extensions;
@@ -20,6 +21,7 @@ using ProjectManagement.Configuration;
 using ProjectManagement.Entities;
 using ProjectManagement.Services.ResourceManager;
 using ProjectManagement.Services.ResourceManager.Dto;
+using ProjectManagement.Services.ResourceService.Dto;
 using ProjectManagement.Services.Timesheet;
 using ProjectManagement.Utils;
 using System;
@@ -76,11 +78,35 @@ namespace ProjectManagement.APIs.Projects
             {
                 input.FilterItems.Remove(filterPmId);
             }
-            var query = from p in WorkScope.GetAll<Project>().Include(x => x.Currency)
+            var resourceProject = WorkScope.GetAll<ProjectUser>()
+               .Where(s => s.User.UserType != UserType.FakeUser
+               && s.Status == ProjectUserStatus.Present && s.AllocatePercentage > 0)
+               .Select(pu => new ResourceInfo
+               {
+                   ProjectId = pu.ProjectId,
+                   FullName = pu.User.FullName,
+                   ProjectUserRole = pu.ProjectRole.ToString()
+               }).AsEnumerable()
+               .GroupBy(pu => pu.ProjectId, pu => pu)
+               .ToDictionary(group => group.Key, group => group.ToList());
+            var queryAllProjects = WorkScope.GetAll<Project>();
+
+            var projects = queryAllProjects.Include(x => x.Currency)
                         .Where(x => isViewAll || x.PMId == AbpSession.UserId.Value)
                         .Where(x => x.ProjectType != ProjectType.TRAINING && x.ProjectType != ProjectType.PRODUCT)
-                        .Where(x => filterStatus != null && valueStatus > -1 ? (valueStatus == 3 ? x.Status != ProjectStatus.Closed : x.Status == (ProjectStatus)valueStatus) : true)
-                        join rp in WorkScope.GetAll<PMReportProject>().Where(x => x.PMReport.IsActive) on p.Id equals rp.ProjectId into lst
+                        .Where(x => filterStatus != null && valueStatus > -1 ? (valueStatus == 3 ? x.Status != ProjectStatus.Closed : x.Status == (ProjectStatus)valueStatus) : true);
+
+            var qActivePUB = WorkScope.GetAll<ProjectUserBill>()
+                            .Where(b => b.isActive);
+
+            var qActivePMReport = WorkScope.GetAll<PMReportProject>().Where(x => x.PMReport.IsActive);
+
+            var qProjectUser = WorkScope.GetAll<ProjectUser>()
+                .Where(s => s.User.UserType != UserType.FakeUser)
+                .Where(s => s.Status == ProjectUserStatus.Present && s.AllocatePercentage > 0);
+
+            var query = from p in projects
+                        join rp in qActivePMReport on p.Id equals rp.ProjectId into lst
                         from l in lst.DefaultIfEmpty()
                         select new GetProjectDto
                         {
@@ -119,22 +145,21 @@ namespace ProjectManagement.APIs.Projects
                             IsRequiredWeeklyReport = p.IsRequiredWeeklyReport,
                             ParentInvoiceId = p.ParentInvoiceId,
                             IsParentInvoiceIdExist = p.ParentInvoiceId != null,
-                            ParentInvoices = p.ParentInvoiceId != null ? WorkScope.GetAll<Project>().Where(u => u.Id == p.ParentInvoiceId).Select(u => new SubProjectInvoiceDto
+                            ParentInvoices = p.ParentInvoiceId != null ? queryAllProjects.Where(u => u.Id == p.ParentInvoiceId).Select(u => new SubProjectInvoiceDto
                             {
                                 Id = u.Id,
                                 Name = u.Name,
                                 Code = u.Code,
                                 ProjectType = u.ProjectType
-                            }).ToList() : WorkScope.GetAll<Project>().Where(u => u.ParentInvoiceId == p.Id).Select(u => new SubProjectInvoiceDto
+                            }).ToList() : queryAllProjects.Where(u => u.ParentInvoiceId == p.Id).Select(u => new SubProjectInvoiceDto
                             {
                                 Id = u.Id,
                                 Name = u.Name,
                                 Code = u.Code,
                                 ProjectType = u.ProjectType
                             }).ToList(),
-                            BillInfo = hasViewBillPermission || hasViewBillAccountPermission ? WorkScope.GetAll<ProjectUserBill>()
+                            BillInfo = hasViewBillPermission || hasViewBillAccountPermission ? qActivePUB
                             .Where(b => b.ProjectId == p.Id)
-                            .Where(b => b.isActive)
                             .OrderByDescending(b => b.CreationTime)
                                     .Select(b => new GetBillInfoDto
                                     {
@@ -144,12 +169,49 @@ namespace ProjectManagement.APIs.Projects
                                         EndTime = b.EndTime.Value,
                                         isActive = b.isActive,
                                         FullName = b.User.FullName,
-                                    }).ToList() : null
+                                    }).ToList() : null,
+
+                            CurrentResources = qProjectUser
+                                .Where(s => s.ProjectId == p.Id)
+                                .Select(s => new UserJoinProjectDto
+                                {
+                                    ProjectId = s.ProjectId,
+                                    UserId = s.UserId,
+                                    AvatarPath = s.User.AvatarPath,
+                                    FullName = s.User.FullName,
+                                    EmailAddress = s.User.EmailAddress,
+                                    Branch = s.User.BranchOld,
+                                    UserLevel = s.User.UserLevel,
+                                    UserType = s.User.UserType,
+                                    AllocatePercentage = s.AllocatePercentage,
+                                    IsPool = s.IsPool,
+                                    ProjectRole = s.ProjectRole,
+                                    StartTime = s.StartTime,
+                                    StarRate = s.User.StarRate,
+                                    PositionId = s.User.PositionId,
+                                    PositionName = s.User.Position.ShortName,
+                                    PositionColor = s.User.Position.Color,
+                                    Note = s.Note,
+                                    PUStatus = s.Status,
+                                    PMReportId = s.PMReportId,
+                                    BranchColor = s.User.Branch.Color,
+                                    BranchDisplayName = s.User.Branch.DisplayName,
+                                    UserSkills = s.User.UserSkills.Select(s => new UserSkillDto
+                                    {
+                                        SkillId = s.SkillId,
+                                        SkillName = s.Skill.Name,
+                                        SkillRank = s.SkillRank,
+                                        SkillNote = s.Note
+                                    }).ToList()
+                                })
+                                .OrderByDescending(s => s.PUStatus == ProjectUserStatus.Present && s.AllocatePercentage > 0)
+                                .ThenByDescending(s => s.StartTime)
+                                .Distinct()
+                                .ToList(),
+                            ResourceInfo = resourceProject.ContainsKey(p.Id) ? resourceProject[p.Id] : null,
                         };
 
-
             return await query.GetGridResult(query, input);
-
         }
 
         public async Task<IActionResult> GetOutsourcingPMs()
@@ -170,7 +232,7 @@ namespace ProjectManagement.APIs.Projects
                 .ToListAsync();
             return new OkObjectResult(pms);
         }
-      
+
         public async Task<IActionResult> GetProductPMs()
         {
             var pms = await WorkScope.GetAll<Project>()
@@ -677,42 +739,70 @@ namespace ProjectManagement.APIs.Projects
             {
                 input.FilterItems.Remove(filterPmId);
             }
-            var query = from p in WorkScope.GetAll<Project>().Include(x => x.Currency)
+
+            var resourceProject = WorkScope.GetAll<ProjectUser>()
+                                           .Select(s => new
+                                           {
+                                               s.User,
+                                               s.User.UserType,
+                                               s.ProjectId,
+                                               s.ProjectRole,
+                                               ProjectStatus = s.Project.Status,
+                                               s.Status,
+                                               s.Project.ProjectType,
+                                               s.AllocatePercentage
+                                           }).Where(s => s.UserType != UserType.FakeUser && s.Status == ProjectUserStatus.Present && s.AllocatePercentage > 0)
+                                             .Where(x => x.ProjectType == ProjectType.TRAINING)
+                                             .Where(x => filterStatus != null && valueStatus > -1 ? (valueStatus == 3 ? x.ProjectStatus != ProjectStatus.Closed : x.ProjectStatus == (ProjectStatus)valueStatus) : true)
+                                             .Select(pu => new ResourceInfo
+                                             {
+                                                 ProjectId = pu.ProjectId,
+                                                 FullName = pu.User.FullName,
+                                                 ProjectUserRole = pu.ProjectRole.ToString(),
+                                             }).AsEnumerable()
+                                             .GroupBy(pu => pu.ProjectId, pu => pu)
+                                             .ToDictionary(group => group.Key, group => group.ToList());
+
+            var query = (from p in WorkScope.GetAll<Project>().Include(x => x.Currency)
                         .Where(x => x.ProjectType == ProjectType.TRAINING)
                         .Where(x => filterStatus != null && valueStatus > -1 ? (valueStatus == 3 ? x.Status != ProjectStatus.Closed : x.Status == (ProjectStatus)valueStatus) : true)
-                        join rp in WorkScope.GetAll<PMReportProject>().Where(x => x.PMReport.IsActive) on p.Id equals rp.ProjectId into lst
-                        from l in lst.DefaultIfEmpty()
-                        orderby l.PM.Branch
-                        select new GetTrainingProjectDto
-                        {
-                            Id = p.Id,
-                            Name = p.Name,
-                            Code = p.Code,
-                            StartTime = p.StartTime.Date,
-                            EndTime = p.EndTime.Value.Date,
-                            Status = p.Status,
-                            PmId = p.PMId,
-                            PmName = p.PM.Name,
-                            ClientId = p.ClientId,
-                            PmFullName = p.PM.FullName,
-                            PmAvatarPath = p.PM.AvatarPath,
-                            PmEmailAddress = p.PM.EmailAddress,
-                            PmUserName = p.PM.UserName,
-                            PmUserType = p.PM.UserType,
-                            PmUserLevel = p.PM.UserLevel,
-                            PmBranch = p.PM.BranchOld,
-                            PmBranchColor = p.PM.Branch.Color,
-                            PmBranchDisplayName = p.PM.Branch.DisplayName,
-                            PositionId = p.PM.PositionId,
-                            PositionName = p.PM.Position.ShortName,
-                            PositionColor = p.PM.Position.Color,
-                            IsSent = l.Status,
-                            TimeSendReport = l.TimeSendReport,
-                            DateSendReport = l.TimeSendReport.Value.Date,
-                            Evaluation = l.Note,
-                            IsRequiredWeeklyReport = hasViewRequireWRPermission ? p.IsRequiredWeeklyReport : default(bool?)
-                        };
-            return await query.GetGridResult(query, input);
+                         join rp in WorkScope.GetAll<PMReportProject>().Where(x => x.PMReport.IsActive) on p.Id equals rp.ProjectId into lst
+                         from l in lst.DefaultIfEmpty()
+                         orderby l.PM.Branch
+                         select new GetTrainingProjectDto
+                         {
+                             Id = p.Id,
+                             Name = p.Name,
+                             Code = p.Code,
+                             StartTime = p.StartTime.Date,
+                             EndTime = p.EndTime.Value.Date,
+                             Status = p.Status,
+                             PmId = p.PMId,
+                             PmName = p.PM.Name,
+                             ClientId = p.ClientId,
+                             PmFullName = p.PM.FullName,
+                             PmAvatarPath = p.PM.AvatarPath,
+                             PmEmailAddress = p.PM.EmailAddress,
+                             PmUserName = p.PM.UserName,
+                             PmUserType = p.PM.UserType,
+                             PmUserLevel = p.PM.UserLevel,
+                             PmBranch = p.PM.BranchOld,
+                             PmBranchColor = p.PM.Branch.Color,
+                             PmBranchDisplayName = p.PM.Branch.DisplayName,
+                             PositionId = p.PM.PositionId,
+                             PositionName = p.PM.Position.ShortName,
+                             PositionColor = p.PM.Position.Color,
+                             IsSent = l.Status,
+                             TimeSendReport = l.TimeSendReport,
+                             DateSendReport = l.TimeSendReport.Value.Date,
+                             Evaluation = l.Note,
+                             IsRequiredWeeklyReport = hasViewRequireWRPermission ? p.IsRequiredWeeklyReport : default(bool?),
+                             ResourceInfo = resourceProject.ContainsKey(p.Id) ? resourceProject[p.Id] : null,
+                         }).AsEnumerable()
+                        .OrderByDescending(p => p.ResourceInfo?.Count)
+                        .AsQueryable();
+
+            return query.GetGridResultSync(query, input);
         }
 
         [HttpPost]
@@ -864,6 +954,18 @@ namespace ProjectManagement.APIs.Projects
             {
                 input.FilterItems.Remove(filterPmId);
             }
+            var resourceProject = WorkScope.GetAll<ProjectUser>()
+               .Where(s => s.User.UserType != UserType.FakeUser
+               && s.Status == ProjectUserStatus.Present && s.AllocatePercentage > 0)
+               .Select(pu => new ResourceInfo
+               {
+                   ProjectId = pu.ProjectId,
+                   FullName = pu.User.FullName,
+                   ProjectUserRole = pu.ProjectRole.ToString()
+               }).AsEnumerable()
+               .GroupBy(pu => pu.ProjectId, pu => pu)
+               .ToDictionary(group => group.Key, group => group.ToList());
+
             var query = from p in WorkScope.GetAll<Project>()
                         .Where(x => x.ProjectType == ProjectType.PRODUCT)
                         .Where(x => filterStatus != null && valueStatus > -1 ? (valueStatus == 3 ? x.Status != ProjectStatus.Closed : x.Status == (ProjectStatus)valueStatus) : true)
@@ -896,6 +998,7 @@ namespace ProjectManagement.APIs.Projects
                             TimeSendReport = l.TimeSendReport,
                             DateSendReport = l.TimeSendReport.Value.Date,
                             IsRequiredWeeklyReport = hasViewRequireWRPermission ? p.IsRequiredWeeklyReport : default(bool?),
+                            ResourceInfo = resourceProject.ContainsKey(p.Id) ? resourceProject[p.Id] : null,
                         };
             return await query.GetGridResult(query, input);
         }

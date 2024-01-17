@@ -241,9 +241,11 @@ export class ListProjectComponent extends PagedListingComponentBase<any> impleme
   createProject() {
     this.showDialogListProject('create');
   }
+  
   editProject(project: ProjectDto) {
     this.showDialogListProject('edit', project);
   }
+
   showDialogListProject(command: string, item?: ProjectDto): void {
     let project = {} as ProjectDto
     if (command == 'edit') {
@@ -264,6 +266,7 @@ export class ListProjectComponent extends PagedListingComponentBase<any> impleme
         isRequiredWeeklyReport: item.isRequiredWeeklyReport
       }
     }
+
     const dialogRef = this.dialog.open(CreateEditListProjectComponent, {
       data: {
         command: command,
@@ -279,17 +282,6 @@ export class ListProjectComponent extends PagedListingComponentBase<any> impleme
       }
     });
   }
-  // showDetail(project: any) {
-  //   if (this.permission.isGranted(this.PmManager_Project_ViewDetail)) {
-  //     this.router.navigate(['app/list-project-detail/list-project-general'], {
-  //       queryParams: {
-  //         id: project.id,
-  //         type: project.projectType
-  //       }
-  //     })
-  //   }
-
-  // }
 
   showActions(e , item){
     e.preventDefault();
@@ -297,14 +289,17 @@ export class ListProjectComponent extends PagedListingComponentBase<any> impleme
     this.contextMenuPosition.y = e.clientY + 'px';
     this.menu.openMenu();
   }
+
   getAllUser() {
     this.userService.GetAllUserActive(false).subscribe(data => {
       this.userList = data.result
     })
   }
+
   public filterUser(userId: number) {
     return this.userList.filter(item => item.id == userId)[0];
   }
+
   public getByEnum(enumValue: number, enumObject: any) {
     for (const key in enumObject) {
       if (enumObject[key] == enumValue) {
@@ -321,6 +316,7 @@ export class ListProjectComponent extends PagedListingComponentBase<any> impleme
     this.projectStatus = "";
     this.refresh();
   }
+
   isReportLate(time: string | null) {
     if(!time) return false;
     const timeSendReport = moment(new Date(time))
@@ -383,27 +379,17 @@ export class ListProjectComponent extends PagedListingComponentBase<any> impleme
     });
   }
 
-
   viewProjectDetail(project){
     let routingToUrl:string = (this.permission.isGranted(this.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport)
      && this.permission.isGranted(this.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_View))
     ? "/app/list-project-detail/weeklyreport" : "/app/list-project-detail/list-project-general"
-    // this.router.navigate([routingToUrl],{queryParams:{
-    //   id: project.id,
-    //   type: project.projectType,
-    //   projectName: project.name,
-    //   projectCode: project.code}
-    // })
-
     const url = this.router.serializeUrl(this.router.createUrlTree([routingToUrl], { queryParams: {
       id: project.id,
       type: project.projectType,
       projectName: project.name,
       projectCode: project.code} }));
-window.open(url, '_blank');
+      window.open(url, '_blank');
   }
-
-
 
   filterBillInfo(project){
     let billInfoAfterFilter = []
@@ -412,7 +398,7 @@ window.open(url, '_blank');
     }
     else{
       project.billInfo.forEach((bill, index)=>{
-        if(index < 5){
+        if(index < 3){
           billInfoAfterFilter.push(bill)
         }
       })
@@ -435,8 +421,6 @@ window.open(url, '_blank');
     return resourceAfterFilter
   }
 
-
-
   filterResourceInfo(project){
     let resourceInfoAfterFilter = []
     if(project.resourceInfo){
@@ -445,7 +429,7 @@ window.open(url, '_blank');
     }
     else{
       project.resourceInfo.forEach((resource, index)=>{
-        if(index < 5){
+        if(index < 3){
           resourceInfoAfterFilter.push(resource)
         }
       })
@@ -478,6 +462,7 @@ window.open(url, '_blank');
       }
     }
   }
+
   changeRequireWeeklyReport(item) {
     this.listProjectService.changeRequireWeeklyReport(item.id).subscribe((res) => {
       item.isRequiredWeeklyReport = res.result;

@@ -402,6 +402,7 @@
                       </app-user-info>
                     </div>
                   </td>
+
                   <td *ngIf="isShowResources">
                     <strong
                       *ngIf="filterResourceInfo(project).length > 0"
@@ -425,7 +426,7 @@
                             ? 'fas fa-chevron-up'
                             : 'fa fa-ellipsis-h'
                         "
-                        *ngIf="project.billInfo.length > 5"
+                        *ngIf="project.resourceInfo.length > 3"
                         (click)="
                           project.isViewAllResourceInfo =
                             !project.isViewAllResourceInfo;
@@ -434,6 +435,7 @@
                       ></i>
                     </span>
                   </td>
+
                   <td *ngIf="isShowBillInfo || isShowAccount">
                     <strong
                       *ngIf="filterBillInfo(project).length > 0"
@@ -465,7 +467,7 @@
                             ? 'fas fa-chevron-up'
                             : 'fa fa-ellipsis-h'
                         "
-                        *ngIf="project.billInfo.length > 5"
+                        *ngIf="project.billInfo.length > 3"
                         (click)="
                           project.isViewAllBillInfo =
                             !project.isViewAllBillInfo;

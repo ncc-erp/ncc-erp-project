@@ -565,7 +565,6 @@ export class PlanResourceComponent
     });
   }
   public GetRetroAndReviewInternHistories(emails: string[]) {
-    this.isLoading = true;
     this.availableRerourceService
       .GetTimesheetOfRetroReviewInternHistories({
         emails: emails,
@@ -578,10 +577,8 @@ export class PlanResourceComponent
               (s) => s.email == x.emailAddress
             )?.averagePoint;
           });
-          this.isLoading = false;
         },
         (error) => {
-          this.isLoading = false;
         }
       );
   }

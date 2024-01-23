@@ -154,6 +154,32 @@
               ></i>
             </div>
             <div class="mt-1 d-flex align-items-center mb-3 ml-2">
+              <mat-form-field
+                appearance="outline"
+                class="flex-grow-1"
+                style="width: 180px"
+              >
+                <mat-label>Is Charge</mat-label>
+                <mat-select
+                  placeholder="Select charge"
+                  [(ngModel)]="isChargeText"
+                  (selectionChange)="filerByIsCharge()"
+                >
+                  <mat-option
+                    *ngFor="let item of isChargeList"
+                    [value]="item.text"
+                    >{{ item.text }}</mat-option
+                  >
+                </mat-select>
+              </mat-form-field>
+              <i
+                style="margin-top: 0 !important"
+                class="fas fa-times fa-lg ml-2 mt-2"
+                *ngIf="showClearIcon"
+                (click)="applyIsChargeFilter()"
+              ></i>
+            </div>
+            <div class="mt-1 d-flex align-items-center mb-3 ml-2">
               <div style="margin-top: 10px" class="ml-2">
                 <mat-checkbox
                   name="cbx-showLevel"
@@ -167,7 +193,7 @@
                   name="cbx-showBillRate"
                   [checked]="isHideBillRate"
                   (change)="showBillRate($event.checked)"
-                  >Show Bill Rate</mat-checkbox
+                  >Show Rate</mat-checkbox
                 >
               </div>
             </div>

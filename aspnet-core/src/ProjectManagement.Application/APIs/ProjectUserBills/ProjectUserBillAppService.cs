@@ -185,14 +185,12 @@ namespace ProjectManagement.APIs.ProjectUserBills
         //[AbpAllowAnonymous]
         public GridResult<BillInfoDto> GetAllBillInfo(InputGetBillInfoDto input)
         {
-            // paging user id
             var result = WorkScope.All<ProjectUserBill>()               
                 .Select(x => new
                 {
                     UserInfor = new GetUserBillDto
                     {
                         UserId = x.UserId,
-                        //UserName = x.User.Name,
                         AvatarPath = x.User.AvatarPath,
                         FullName = x.User.FullName,                       
                         BranchColor = x.User.Branch.Color,
@@ -210,7 +208,6 @@ namespace ProjectManagement.APIs.ProjectUserBills
                         ProjectId = x.ProjectId,
                         ProjectName = x.Project.Name,
                         AccountName = x.User.FullName,
-                        //BillRole = x.BillRole,
                         BillRate = x.BillRate,
                         StartTime = x.StartTime,
                         EndTime = x.EndTime,
@@ -235,6 +232,7 @@ namespace ProjectManagement.APIs.ProjectUserBills
                 .WhereIf(input.ProjectId.HasValue, s => s.Project.ProjectId == input.ProjectId.Value)
                 .WhereIf(input.ClientId.HasValue, s => s.Project.ClientId == input.ClientId.Value)
                 .WhereIf(input.ProjectStatus.HasValue, s => s.Project.ProjectStatus == input.ProjectStatus.Value)
+                .WhereIf(input.IsActive.HasValue, s => s.Project.isActive == input.IsActive.Value)
                 .GroupBy(s => s.UserInfor)
                 .Select(s => new BillInfoDto
                 {

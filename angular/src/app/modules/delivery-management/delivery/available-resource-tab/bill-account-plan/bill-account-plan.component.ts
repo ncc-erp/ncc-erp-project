@@ -23,6 +23,9 @@ export class BillAccountPlanComponent
   public searchProject: string = "";
   public searchClient: string = "";
   public projectStatus;
+  public isCharge: boolean = true;
+  public showClearIcon: boolean = false;
+  public isActive: boolean;
   public isShowLevel: boolean = false;
   public isShowBillRate: boolean = false;
   public filterFromDate: string;
@@ -49,6 +52,11 @@ export class BillAccountPlanComponent
     { text: "Closed", value: APP_ENUMS.ProjectStatus.Closed },
   ];
 
+  public isChargeList = [
+    { text: "Charged", value: true },
+    { text: "UnCharged", value: false },
+  ];
+
   constructor(
     injector: Injector,
     private planningBillInfoService: PlanningBillInfoService,
@@ -60,6 +68,7 @@ export class BillAccountPlanComponent
   ngOnInit(): void {
     this.getProjectUserBill();
     this.getProjectClientBill();
+    this.getIsCharge()
     this.refresh();
   }
 
@@ -81,6 +90,16 @@ export class BillAccountPlanComponent
         });
   } 
 
+  getIsCharge(): void {
+    this.planningBillInfoService
+      .GetAllProjectClientBill()
+      .pipe(catchError(this.planningBillInfoService.handleError))
+      .subscribe((data) => {
+        this.isCharge = data.result;
+        this.isChargeText = this.isCharge ? "Charged" : "UnCharged";
+      });
+  }
+  
   protected list(
     request: PagedRequestDto,
     pageNumber: number,
@@ -90,6 +109,7 @@ export class BillAccountPlanComponent
       projectId: this.projectId,
       clientId: this.clientId,
       projectStatus: this.projectStatus,
+      isActive: this.isCharge,
       sortParams: this.sortResource};
 
     this.planningBillInfoService
@@ -108,6 +128,13 @@ export class BillAccountPlanComponent
   protected delete(entity: BillAccountPlanComponent): void {}
 
   filerByProjectStatus() {
+    this.getDataPage(1);
+  }
+
+  filerByIsCharge() {
+    this.isCharge = this.isChargeText === "Charged";
+    this.isActive = this.isCharge;
+    this.showClearIcon = true;
     this.getDataPage(1);
   }
 
@@ -144,6 +171,14 @@ export class BillAccountPlanComponent
 
   applyProjectStatusFilter() {
     this.projectStatus = "";
+    this.getDataPage(1);
+  }
+
+  applyIsChargeFilter() {
+    this.isCharge = null;
+    this.isChargeText = null;
+    this.isActive = null;
+    this.showClearIcon = false;
     this.getDataPage(1);
   }
 

@@ -24,8 +24,6 @@ export class BillAccountPlanComponent
   public searchClient: string = "";
   public projectStatus;
   public isCharge: boolean = true;
-  public showClearIcon: boolean = false;
-  public isActive: boolean;
   public isShowLevel: boolean = false;
   public isShowBillRate: boolean = false;
   public filterFromDate: string;
@@ -68,7 +66,6 @@ export class BillAccountPlanComponent
   ngOnInit(): void {
     this.getProjectUserBill();
     this.getProjectClientBill();
-    this.getIsCharge()
     this.refresh();
   }
 
@@ -90,16 +87,6 @@ export class BillAccountPlanComponent
         });
   } 
 
-  getIsCharge(): void {
-    this.planningBillInfoService
-      .GetAllProjectClientBill()
-      .pipe(catchError(this.planningBillInfoService.handleError))
-      .subscribe((data) => {
-        this.isCharge = data.result;
-        this.isChargeText = this.isCharge ? "Charged" : "UnCharged";
-      });
-  }
-  
   protected list(
     request: PagedRequestDto,
     pageNumber: number,
@@ -109,7 +96,7 @@ export class BillAccountPlanComponent
       projectId: this.projectId,
       clientId: this.clientId,
       projectStatus: this.projectStatus,
-      isActive: this.isCharge,
+      isCharge: this.isCharge,
       sortParams: this.sortResource};
 
     this.planningBillInfoService
@@ -131,10 +118,8 @@ export class BillAccountPlanComponent
     this.getDataPage(1);
   }
 
-  filerByIsCharge() {
+  onIsChargeFilter() {
     this.isCharge = this.isChargeText === "Charged";
-    this.isActive = this.isCharge;
-    this.showClearIcon = true;
     this.getDataPage(1);
   }
 
@@ -177,8 +162,6 @@ export class BillAccountPlanComponent
   applyIsChargeFilter() {
     this.isCharge = null;
     this.isChargeText = null;
-    this.isActive = null;
-    this.showClearIcon = false;
     this.getDataPage(1);
   }
 

@@ -62,7 +62,7 @@ namespace ProjectManagement.APIs.ProjectUserBills.Dto
     {
         public long? ProjectId { get; set; }
         public long? ClientId { get; set; }
-        public bool? IsActive { get; set; }
+        public bool? IsCharge { get; set; }
         public ProjectStatus? ProjectStatus { get; set; }
     }
 

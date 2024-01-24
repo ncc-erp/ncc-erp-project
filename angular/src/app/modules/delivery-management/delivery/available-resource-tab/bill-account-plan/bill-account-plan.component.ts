@@ -23,6 +23,7 @@ export class BillAccountPlanComponent
   public searchProject: string = "";
   public searchClient: string = "";
   public projectStatus;
+  public isCharge: boolean = true;
   public isShowLevel: boolean = false;
   public isShowBillRate: boolean = false;
   public filterFromDate: string;
@@ -47,6 +48,11 @@ export class BillAccountPlanComponent
     { text: "Potential", value: APP_ENUMS.ProjectStatus.Potential },
     { text: "InProgress", value: APP_ENUMS.ProjectStatus.InProgress },
     { text: "Closed", value: APP_ENUMS.ProjectStatus.Closed },
+  ];
+
+  public isChargeList = [
+    { text: "Charged", value: true },
+    { text: "UnCharged", value: false },
   ];
 
   constructor(
@@ -90,6 +96,7 @@ export class BillAccountPlanComponent
       projectId: this.projectId,
       clientId: this.clientId,
       projectStatus: this.projectStatus,
+      isCharge: this.isCharge,
       sortParams: this.sortResource};
 
     this.planningBillInfoService
@@ -108,6 +115,10 @@ export class BillAccountPlanComponent
   protected delete(entity: BillAccountPlanComponent): void {}
 
   filerByProjectStatus() {
+    this.getDataPage(1);
+  }
+
+  onSelectedChargeFilter() {
     this.getDataPage(1);
   }
 
@@ -145,6 +156,15 @@ export class BillAccountPlanComponent
   applyProjectStatusFilter() {
     this.projectStatus = "";
     this.getDataPage(1);
+  }
+
+  clearChargeFilter() {
+    this.isCharge = null;
+    this.getDataPage(1);
+  }
+
+  isShowBtnClearChargeFilter() {
+    return this.isCharge !== null;
   }
 
   styleThead(item: any) {

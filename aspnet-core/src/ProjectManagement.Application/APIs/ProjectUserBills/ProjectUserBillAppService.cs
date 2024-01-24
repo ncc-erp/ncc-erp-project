@@ -185,14 +185,12 @@ namespace ProjectManagement.APIs.ProjectUserBills
         //[AbpAllowAnonymous]
         public GridResult<BillInfoDto> GetAllBillInfo(InputGetBillInfoDto input)
         {
-            // paging user id
             var result = WorkScope.All<ProjectUserBill>()               
                 .Select(x => new
                 {
                     UserInfor = new GetUserBillDto
                     {
                         UserId = x.UserId,
-                        //UserName = x.User.Name,
                         AvatarPath = x.User.AvatarPath,
                         FullName = x.User.FullName,                       
                         BranchColor = x.User.Branch.Color,
@@ -209,19 +207,19 @@ namespace ProjectManagement.APIs.ProjectUserBills
                         ProjectStatus = x.Project.Status,
                         ProjectId = x.ProjectId,
                         ProjectName = x.Project.Name,
-                        AccountName = x.User.FullName,
-                        //BillRole = x.BillRole,
+                        AccountName = x.AccountName,
                         BillRate = x.BillRate,
                         StartTime = x.StartTime,
                         EndTime = x.EndTime,
-                        Note = x.Note,                      
+                        Note = x.Note,
                         isActive = x.isActive,
                         ChargeType = x.ChargeType,
                         CurrencyCode = x.Project.Currency.Code,
                         ClientId = x.Project.ClientId,
                         ClientCode = x.Project.Client.Code,
                         ClientName = x.Project.Client.Name                        
-                    }                   
+                    },
+                    IsCharge = x.isActive
                 })
                 .WhereIf(!string.IsNullOrEmpty(input.SearchText), s => s.UserInfor.EmailAddress.Contains(input.SearchText) 
                 || (s.Project.AccountName == null || s.Project.AccountName.ToLower().Contains(input.SearchText.ToLower())) ||
@@ -235,6 +233,7 @@ namespace ProjectManagement.APIs.ProjectUserBills
                 .WhereIf(input.ProjectId.HasValue, s => s.Project.ProjectId == input.ProjectId.Value)
                 .WhereIf(input.ClientId.HasValue, s => s.Project.ClientId == input.ClientId.Value)
                 .WhereIf(input.ProjectStatus.HasValue, s => s.Project.ProjectStatus == input.ProjectStatus.Value)
+                .WhereIf(input.IsCharge.HasValue, s => s.IsCharge == input.IsCharge.Value)
                 .GroupBy(s => s.UserInfor)
                 .Select(s => new BillInfoDto
                 {

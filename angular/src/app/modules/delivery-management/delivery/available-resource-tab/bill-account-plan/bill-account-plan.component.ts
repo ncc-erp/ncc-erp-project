@@ -24,6 +24,7 @@ export class BillAccountPlanComponent
   public searchClient: string = "";
   public projectStatus;
   public isCharge: boolean = true;
+  public isChargeSelected: boolean = false;
   public isShowLevel: boolean = false;
   public isShowBillRate: boolean = false;
   public filterFromDate: string;
@@ -118,8 +119,8 @@ export class BillAccountPlanComponent
     this.getDataPage(1);
   }
 
-  onIsChargeFilter() {
-    this.isCharge = this.isChargeText === "Charged";
+  onSelectedChargeFilter() {
+    this.isChargeSelected = true;
     this.getDataPage(1);
   }
 
@@ -159,10 +160,14 @@ export class BillAccountPlanComponent
     this.getDataPage(1);
   }
 
-  applyIsChargeFilter() {
+  clearChargeFilter() {
     this.isCharge = null;
-    this.isChargeText = null;
+    this.isChargeSelected = false;
     this.getDataPage(1);
+  }
+
+  isShowBtnClearChargeFilter() {
+    return this.isCharge !== null && this.isChargeSelected;
   }
 
   styleThead(item: any) {

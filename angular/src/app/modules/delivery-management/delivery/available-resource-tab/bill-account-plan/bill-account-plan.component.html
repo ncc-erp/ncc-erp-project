@@ -162,12 +162,12 @@
                 <mat-label>Charge Filter</mat-label>
                 <mat-select
                   placeholder="Select charge"
-                  [(ngModel)]="isChargeText"
-                  (selectionChange)="onIsChargeFilter()"
+                  [(ngModel)]="isCharge"
+                  (selectionChange)="onSelectedChargeFilter()"
                 >
                   <mat-option
                     *ngFor="let item of isChargeList"
-                    [value]="item.text"
+                    [value]="item.value"
                     >{{ item.text }}</mat-option
                   >
                 </mat-select>
@@ -175,8 +175,8 @@
               <i
                 style="margin-top: 0 !important"
                 class="fas fa-times fa-lg ml-2 mt-2"
-                *ngIf="isChargeText"
-                (click)="applyIsChargeFilter()"
+                *ngIf="isShowBtnClearChargeFilter()"
+                (click)="clearChargeFilter()"
               ></i>
             </div>
             <div class="mt-1 d-flex align-items-center mb-3 ml-2">

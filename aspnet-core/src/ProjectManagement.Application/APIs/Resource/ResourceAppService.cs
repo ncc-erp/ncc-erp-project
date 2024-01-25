@@ -3,6 +3,7 @@ using Abp.Configuration;
 using Abp.UI;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NccCore.IoC;
 using NccCore.Paging;
 using NccCore.Uitls;
 using ProjectManagement.APIs.PMReportProjectIssues;
@@ -35,6 +36,7 @@ namespace ProjectManagement.APIs.Resource
         private readonly PMReportProjectIssueAppService _pMReportProjectIssueAppService;
         private readonly IUserAppService _userAppService;
         private readonly ResourceManager _resourceManager;
+        private readonly IWorkScope _workScope;
 
         private readonly UserManager _userManager;
         private ISettingManager _settingManager;
@@ -47,7 +49,8 @@ namespace ProjectManagement.APIs.Resource
             UserManager userManager,
             ResourceManager resourceManager,
             ISettingManager settingManager,
-            IUserAppService userAppService)
+            IUserAppService userAppService,
+            IWorkScope workScope)
         {
             _projectUserAppService = projectUserAppService;
             _pMReportProjectIssueAppService = pMReportProjectIssueAppService;
@@ -56,6 +59,7 @@ namespace ProjectManagement.APIs.Resource
             _settingManager = settingManager;
             _userAppService = userAppService;
             _userManager = userManager;
+            _workScope = workScope;
         }
 
 
@@ -250,11 +254,16 @@ namespace ProjectManagement.APIs.Resource
         }
 
         [HttpPost]
-        [AbpAuthorize(PermissionNames.Resource_TabPool_AddTempProject, PermissionNames.Resource_TabPool_EditTempProject)]
-        public async Task UpdateTempProjectForUser(AddResourceToProjectDto input)
+        public async Task UpdateTempProjectForUser(UpdateTempProjectForUserDto input)
         {
-            var allowUpdateTempProjectForUser = await PermissionChecker.IsGrantedAsync(PermissionNames.Resource_TabPool_EditTempProject);
-            await _resourceManager.CreatePresentProjectUserAndNofity(input, allowUpdateTempProjectForUser);
+            var currentPU = _workScope.GetAll<ProjectUser>()
+                                      .FirstOrDefault(p => p.UserId == input.UserId && p.ProjectId == input.ProjectId);
+
+            currentPU.IsPool = input.IsPool;
+            currentPU.StartTime = input.StartTime;
+            currentPU.ProjectRole = input.ProjectRole;
+
+            await _workScope.UpdateAsync<ProjectUser>(currentPU);
         }
     }
 }

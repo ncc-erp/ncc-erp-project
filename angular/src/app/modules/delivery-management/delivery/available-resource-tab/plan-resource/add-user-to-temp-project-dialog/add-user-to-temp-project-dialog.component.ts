@@ -11,6 +11,7 @@ import { ListProjectService } from '@app/service/api/list-project.service';
   templateUrl: './add-user-to-temp-project-dialog.component.html',
   styleUrls: ['./add-user-to-temp-project-dialog.component.css']
 })
+
 export class AddUserToTempProjectDialogComponent extends AppComponentBase implements OnInit {
   public projectRoleList = Object.keys(this.APP_ENUM.ProjectUserRole);
   public searchProject: string = ""
@@ -29,12 +30,14 @@ export class AddUserToTempProjectDialogComponent extends AppComponentBase implem
     this.user.fullName = this.data.fullName
     this.getAllProject()
   }
+
   public getAllProject() {
     this.listProjectService.getAll().subscribe(data => {
       this.listProject = data.result;
 
     })
   }
+
   SaveAndClose() {
     let requestBody = {
       userId: this.data.userId,
@@ -43,8 +46,7 @@ export class AddUserToTempProjectDialogComponent extends AppComponentBase implem
       isPool: true,
       projectRole: this.user.projectRole
     }
-    console.log(this.user)
-    this.resourceService.AddUserToTempProject(requestBody).pipe(catchError(this.resourceService.handleError)).subscribe(rs=>{
+    this.resourceService.updateTempProjectForUser(requestBody).pipe(catchError(this.resourceService.handleError)).subscribe(rs=>{
       abp.notify.success("Add successful")
       this.dialogRef.close(true)
     })

@@ -248,5 +248,13 @@ namespace ProjectManagement.APIs.Resource
         {
             return await _resourceManager.GetRetroReviewInternHistories(input.Emails);
         }
+
+        [HttpPost]
+        [AbpAuthorize(PermissionNames.Resource_TabPool_AddTempProject, PermissionNames.Resource_TabPool_EditTempProject)]
+        public async Task UpdateTempProjectForUser(AddResourceToProjectDto input)
+        {
+            var allowUpdateTempProjectForUser = await PermissionChecker.IsGrantedAsync(PermissionNames.Resource_TabPool_EditTempProject);
+            await _resourceManager.CreatePresentProjectUserAndNofity(input, allowUpdateTempProjectForUser);
+        }
     }
 }

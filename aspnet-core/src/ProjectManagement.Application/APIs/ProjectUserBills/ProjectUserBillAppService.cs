@@ -221,9 +221,9 @@ namespace ProjectManagement.APIs.ProjectUserBills
                     },
                     IsCharge = x.isActive
                 })
-                .WhereIf(!string.IsNullOrEmpty(input.SearchText), s => s.UserInfor.EmailAddress.Contains(input.SearchText) 
-                || (s.Project.AccountName == null || s.Project.AccountName.ToLower().Contains(input.SearchText.ToLower())) ||
-                s.Project != null && (
+                .WhereIf(!string.IsNullOrEmpty(input.SearchText), s => s.UserInfor.EmailAddress.Contains(input.SearchText) ||
+                    s.Project != null && (
+                    (s.Project.AccountName != null && s.Project.AccountName.ToLower().Contains(input.SearchText.ToLower())) ||
                     (s.Project.ProjectCode != null && s.Project.ProjectCode.ToLower().Contains(input.SearchText.ToLower())) ||
                     (s.Project.ProjectName != null && s.Project.ProjectName.ToLower().Contains(input.SearchText.ToLower())) ||
                     (s.Project.ClientCode != null && s.Project.ClientCode.ToLower().Contains(input.SearchText.ToLower()))   ||

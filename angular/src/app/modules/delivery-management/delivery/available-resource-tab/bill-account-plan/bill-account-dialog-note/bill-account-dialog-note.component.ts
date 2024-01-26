@@ -23,7 +23,8 @@ export class BillAccountDialogNoteComponent implements OnInit {
   billNote: string = "";
   userId: number;   
   projectId: number;          
-
+  fullName: string;
+  projectName: string;
   saving = false;
   @Output() onSave = new EventEmitter<null>();
 
@@ -32,7 +33,7 @@ export class BillAccountDialogNoteComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<BillAccountDialogNoteComponent>,
-    private planningBillInfoService: PlanningBillInfoService
+    private planningBillInfoService: PlanningBillInfoService,
   ) {}
 
   ngOnInit(): void {
@@ -41,6 +42,8 @@ export class BillAccountDialogNoteComponent implements OnInit {
           this.billNote = response.result.project.note;
           this.userId = response.result.userInfor.userId;
           this.projectId =response.result.project.projectId;
+          this.fullName = response.result.userInfor.fullName;
+          this.projectName = response.result.project.projectName;
         })
       );
   }

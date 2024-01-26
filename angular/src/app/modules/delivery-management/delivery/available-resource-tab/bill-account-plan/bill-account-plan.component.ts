@@ -223,10 +223,9 @@ export class BillAccountPlanComponent
 
   UpdateBillNote(userId, projectId, note) {
     const addOrEditNoteDialog = this.dialog.open(BillAccountDialogNoteComponent, {
-      width: "40%",
-      height: "70%",
+      width: "580px",
       data: {
-        userId:userId,
+        userId: userId,
         projectId: projectId,
         note: note,
       },

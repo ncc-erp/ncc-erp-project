@@ -530,12 +530,13 @@ namespace ProjectManagement.APIs.TimesheetProjects
             var timesheetProjectId = input.TimesheetProjectId;
             var timesheet = WorkScope.GetAll<TimesheetProject>()
               .Where(x => x.Id == timesheetProjectId)
-              .Where(s => s.IsActive)
               .Select(s => new
               {
                   s.Timesheet.Year,
                   s.Timesheet.Month,
                   s.Project.Code,
+                  IsTimesheetActive = s.Timesheet.IsActive, 
+                  IsTimesheetProjectActive = s.IsActive,
                   s.Project.Name,
                   s.ProjectId,
                   TimsheetProject = s
@@ -543,7 +544,12 @@ namespace ProjectManagement.APIs.TimesheetProjects
 
             if (timesheet == default)
             {
-                throw new UserFriendlyException($"TimesheetProjectId {timesheetProjectId} is NOT exist or Inactive");
+                throw new UserFriendlyException($"TimesheetProjectId {timesheetProjectId} is NOT exist");
+            }
+
+            if (!timesheet.IsTimesheetActive && !timesheet.IsTimesheetProjectActive)
+            {
+                throw new UserFriendlyException($"TimesheetProjectId{timesheetProjectId} is NOT active -> contact sale to active");
             }
 
             if (input.File == null)

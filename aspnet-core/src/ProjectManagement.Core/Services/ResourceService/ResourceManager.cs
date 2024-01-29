@@ -127,7 +127,7 @@ namespace ProjectManagement.Services.ResourceManager
                 .Where(s => s.UserId == userId)
                 .Where(s => s.Status == ProjectUserStatus.Present)
                 .Where(s => s.AllocatePercentage > 0)
-                .Where(s => s.Project.Status == ProjectStatus.InProgress)
+                .Where(s => s.Project.Status != ProjectStatus.Closed)
                 .OrderBy(s => s.ProjectRole)
                 .ThenByDescending(s => s.StartTime)
                 .Select(x => new ProjectOfUserDto

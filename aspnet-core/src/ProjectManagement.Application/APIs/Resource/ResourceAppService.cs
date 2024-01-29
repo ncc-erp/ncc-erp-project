@@ -249,5 +249,11 @@ namespace ProjectManagement.APIs.Resource
         {
             return await _resourceManager.GetRetroReviewInternHistories(input.Emails);
         }
+
+        [HttpPost]
+        public async Task UpdateTempProjectForUser(UpdateTempProjectForUserDto input)
+        {
+            await _resourceManager.UpdateTempProjectForUser(input);
+        }
     }
 }

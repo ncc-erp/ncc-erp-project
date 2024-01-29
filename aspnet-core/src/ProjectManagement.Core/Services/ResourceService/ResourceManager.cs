@@ -1292,9 +1292,8 @@ namespace ProjectManagement.Services.ResourceManager
         public async Task UpdateTempProjectForUser(UpdateTempProjectForUserDto input)
         {
             var currentPU = _workScope.GetAll<ProjectUser>()
-                                      .FirstOrDefault(p => p.UserId == input.UserId && p.ProjectId == input.ProjectId);
+                                      .FirstOrDefault(pu => pu.Id == input.Id);
 
-            currentPU.IsPool = input.IsPool;
             currentPU.StartTime = input.StartTime;
             currentPU.ProjectRole = input.ProjectRole;
 

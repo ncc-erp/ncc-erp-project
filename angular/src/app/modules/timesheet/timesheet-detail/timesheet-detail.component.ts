@@ -36,6 +36,8 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
   Projects_OutsourcingProjects_ProjectDetail = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail;
   requestBody: PagedRequestDto
   pageNum: number;
+  indeterminate = false;
+  checkSelectAllBox = false;
   protected list(request: PagedRequestDto, pageNumber: number, finishedCallback: Function): void {
     this.requestBody = request
     this.pageNum = pageNumber
@@ -302,7 +304,6 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
       }
     })
 
-
     dialogref.afterClosed().subscribe((rs)=> {
       if(rs) {
         this.refresh()
@@ -418,6 +419,39 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
     this.contextMenuPosition.y = e.clientY + 'px';
     this.menu.openMenu();
   }
+
+  SelectAllChanged(event){
+    if(event.checked){
+      this.TimesheetDetaiList = this.TimesheetDetaiList.map((item) => {
+        item.isChecked = true;
+        return item;
+      });
+    }
+    else{
+      this.TimesheetDetaiList = this.TimesheetDetaiList.map((item) => {
+        item.isChecked = false;
+        return item;
+      });
+    }
+  }
+
+  SelectChanged(event){
+    if(this.TimesheetDetaiList.every((item) => item.isChecked === true)){
+      this.indeterminate = false;
+      this.checkSelectAllBox = true;
+    }
+    else {
+      if(this.TimesheetDetaiList.filter((item) => item.isChecked).length >0 ){
+        this.indeterminate = true;
+      }
+      else{
+        this.indeterminate = false;
+      }
+      this.checkSelectAllBox = false;
+    }
+  }
+  
+
   public reloadComponent() {
     this.router.navigate(['app/timesheetDetail'], {
       queryParams: {

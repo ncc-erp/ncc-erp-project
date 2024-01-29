@@ -237,7 +237,15 @@
                 <th>Invoice Info</th>
                 <th class="p-custom">Timesheet File</th>
                 <th class="p-custom">Done</th>
-                <th style="width: 100px;" class="p-custom">Action</th>
+                <th style="width: 100px;" class="p-custom text-center">
+                  <span>Action</span>
+                  <div class="align-items-center justify-content-center">
+                    <mat-checkbox 
+                    [(ngModel)] ="CheckAllSelectBox"
+                    [indeterminate]="indeterminate"
+                    (change)="SelectAllChanged($event)"></mat-checkbox>                      
+                  </div>
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -359,7 +367,8 @@
                   <mat-checkbox
                     *ngIf="permission.isGranted(Timesheets_TimesheetDetail_ExportInvoice) || permission.isGranted(Timesheets_TimesheetDetail_ExportInvoiceForTax)"
                     #checkboxExportInvoice class="checkbox-exportInvoice" [(ngModel)]="item.isChecked"  [value]="item"
-                    (change)="addProjectToExport($event, item)"></mat-checkbox>
+                    (change)="addProjectToExport($event, item)"
+                    (ngModelChange) = "SelectChanged($event)"></mat-checkbox>
 
                   <button mat-button [matMenuTriggerFor]="menu">
                     <i class="fas fa-bars fa-lg" style="margin-top:1px"></i>

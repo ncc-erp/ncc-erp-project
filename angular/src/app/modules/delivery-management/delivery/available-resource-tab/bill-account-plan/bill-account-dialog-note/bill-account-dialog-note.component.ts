@@ -27,7 +27,7 @@ export class BillAccountDialogNoteComponent implements OnInit {
   projectName: string;
   saving = false;
   @Output() onSave = new EventEmitter<null>();
-
+  
   subscription: Subscription[] = [];
 
   constructor(
@@ -37,15 +37,11 @@ export class BillAccountDialogNoteComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-      this.subscription.push(
-        this.planningBillInfoService.Get(this.data.userId,this.data.projectId).subscribe((response) => {
-          this.billNote = response.result.project.note;
-          this.userId = response.result.userInfor.userId;
-          this.projectId =response.result.project.projectId;
-          this.fullName = response.result.userInfor.fullName;
-          this.projectName = response.result.project.projectName;
-        })
-      );
+    this.billNote = this.data.note;
+    this.userId = this.data.userInfor.userId;
+    this.projectId = this.data.projectId;
+    this.fullName = this.data.userInfor.fullName;
+    this.projectName = this.data.projectName;
   }
 
   SaveAndClose() {

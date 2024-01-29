@@ -36,7 +36,6 @@ namespace ProjectManagement.APIs.Resource
         private readonly PMReportProjectIssueAppService _pMReportProjectIssueAppService;
         private readonly IUserAppService _userAppService;
         private readonly ResourceManager _resourceManager;
-        private readonly IWorkScope _workScope;
 
         private readonly UserManager _userManager;
         private ISettingManager _settingManager;
@@ -49,8 +48,7 @@ namespace ProjectManagement.APIs.Resource
             UserManager userManager,
             ResourceManager resourceManager,
             ISettingManager settingManager,
-            IUserAppService userAppService,
-            IWorkScope workScope)
+            IUserAppService userAppService)
         {
             _projectUserAppService = projectUserAppService;
             _pMReportProjectIssueAppService = pMReportProjectIssueAppService;
@@ -59,7 +57,6 @@ namespace ProjectManagement.APIs.Resource
             _settingManager = settingManager;
             _userAppService = userAppService;
             _userManager = userManager;
-            _workScope = workScope;
         }
 
 
@@ -251,19 +248,6 @@ namespace ProjectManagement.APIs.Resource
         public async Task<List<RetroReviewInternHistoriesDto>> GetRetroReviewInternHistories(InputRetroReviewInternHistoriesDto input)
         {
             return await _resourceManager.GetRetroReviewInternHistories(input.Emails);
-        }
-
-        [HttpPost]
-        public async Task UpdateTempProjectForUser(UpdateTempProjectForUserDto input)
-        {
-            var currentPU = _workScope.GetAll<ProjectUser>()
-                                      .FirstOrDefault(p => p.UserId == input.UserId && p.ProjectId == input.ProjectId);
-
-            currentPU.IsPool = input.IsPool;
-            currentPU.StartTime = input.StartTime;
-            currentPU.ProjectRole = input.ProjectRole;
-
-            await _workScope.UpdateAsync<ProjectUser>(currentPU);
         }
     }
 }

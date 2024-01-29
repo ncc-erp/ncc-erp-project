@@ -47,7 +47,7 @@ export class AddUserToTempProjectDialogComponent extends AppComponentBase implem
       projectRole: this.user.projectRole
     }
     this.resourceService.updateTempProjectForUser(requestBody).pipe(catchError(this.resourceService.handleError)).subscribe(rs=>{
-      abp.notify.success("Add successful")
+      abp.notify.success("Update successful")
       this.dialogRef.close(true)
     })
   }

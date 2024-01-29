@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using static ProjectManagement.Constants.Enum.ProjectEnum;
+﻿using static ProjectManagement.Constants.Enum.ProjectEnum;
+using System;
 
-namespace ProjectManagement.APIs.ResourceRequests.Dto
+namespace ProjectManagement.Services.ResourceManager
 {
     public class UpdateTempProjectForUserDto
     {

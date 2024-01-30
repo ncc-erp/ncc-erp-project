@@ -602,7 +602,7 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
         type: "application/vnd.ms-excel;charset=utf-8"
       });
       this.refresh();
-      this.listExportInvoice=[];
+      // this.listExportInvoice=[];
       FileSaver.saveAs(file, res.result.fileName);
       abp.notify.success("Export Invoice For Tax Successfully!");
     })

@@ -1296,8 +1296,9 @@ namespace ProjectManagement.Services.ResourceManager
 
             currentPU.StartTime = input.StartTime;
             currentPU.ProjectRole = input.ProjectRole;
+            currentPU.ProjectId = input.ProjectId;
 
-            await _workScope.UpdateAsync<ProjectUser>(currentPU);
+            await _workScope.UpdateAsync(currentPU);
         }
     }
 }

@@ -40,12 +40,10 @@ export class AddUserToTempProjectDialogComponent extends AppComponentBase implem
 
   SaveAndClose() {
     let requestBody = {
-      userId: this.data.userId,
       projectId: this.user.projectId,
       startTime: this.formatDateYMD(this.user.startTime),
-      isPool: true,
       projectRole: this.user.projectRole,
-      id:this.data.project.id,
+      id: this.data.project.id,
     }
     this.resourceService.updateTempProjectForUser(requestBody).pipe(catchError(this.resourceService.handleError)).subscribe(rs=>{
       abp.notify.success("Update successful")

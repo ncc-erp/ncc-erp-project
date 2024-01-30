@@ -124,7 +124,7 @@
                                     <th>Is Charge</th>
                                     <!-- <th>End charge</th>
                                     <th style="width:20px;">Is Charge</th> -->
-                                    <th style="width:300px;">Note</th>
+                                    <th style="width:200px;">Note</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -305,22 +305,17 @@
                                             [(ngModel)]="bill.isActive">
                                         </mat-checkbox>
                                     </td> -->
-                                    <td style="white-space: pre-line;
-                                                word-break: break-all;
-                                                min-width: 30px;
-                                                text-align: left;">
-                                        <div class="d-flex" style="align-items: center">
-                                            <div style="width: 90%">
-                                                <span>
-                                                    {{bill.note}}
-                                                </span>
-                                            </div>
-                                            <div *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Note_Edit)"
-                                                style="width: 10%; text-align: right;" class="ml-1">
-                                                <i class="fas fa-edit "
-                                                    (click)="updateNote(bill.id, bill.fullName,bill.projectName,bill.note)"
-                                                    matTooltip="Edit note"></i>
-                                            </div>
+                                    <td style="white-space: break-spaces;">
+                                        <div class="d-flex align-items-center" style="width: 100%;">
+                                            <p PrjResizeContent [collapseLine]="2" style="flex: 1; min-width: 150px; max-width: 100%;"
+                                            class="mb-0 p-0 ml-2 max-line-content-2">{{ bill.note }}</p>
+                                            <i style="color: #585858;" class="fas fa-ellipsis-v ml-1" [matMenuTriggerFor]="menu3"></i>
+                                            <mat-menu #menu3="matMenu">
+                                                <button class="mat-menu-item" (click)="editBillNote(bill)">
+                                                    <i class="fas fa-edit mr-2 fa-lg"></i>
+                                                    Edit Note
+                                                </button>
+                                            </mat-menu>
                                         </div>
                                     </td>
                                     <td style="min-width: 156px;">

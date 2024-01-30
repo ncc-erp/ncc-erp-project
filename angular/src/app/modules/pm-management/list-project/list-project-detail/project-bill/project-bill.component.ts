@@ -368,21 +368,19 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     this.isEditDiscount = false;
   }
 
-  updateNote(id, fullName, projectName, note) {
-    let editNoteDialog: BsModalRef;
-    editNoteDialog = this._modalService.show(EditNoteDialogComponent, {
-      class: 'modal',
-      initialState: {
-        id: id,
-        fullName: fullName,
-        projectName: projectName,
-        note: note,
-      },
+  public editBillNote(bill): any {
+    let ref = this.dialog.open(EditNoteDialogComponent, {
+      width: "600px",
+      data: {
+        id: bill.id,
+        note:bill.note
+      }
     });
 
-    const status = this.userBillList.find(item => item.id === id).createMode
-    editNoteDialog.content.onSave.subscribe(() => {
-      this.getUserBill(id, status);
+    ref.afterClosed().subscribe(rs => {
+      if (rs) {
+       bill.note =rs;
+      }
     });
   }
 

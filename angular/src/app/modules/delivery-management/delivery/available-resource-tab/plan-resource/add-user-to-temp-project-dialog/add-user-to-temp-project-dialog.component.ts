@@ -11,7 +11,6 @@ import { ListProjectService } from '@app/service/api/list-project.service';
   templateUrl: './add-user-to-temp-project-dialog.component.html',
   styleUrls: ['./add-user-to-temp-project-dialog.component.css']
 })
-
 export class AddUserToTempProjectDialogComponent extends AppComponentBase implements OnInit {
   public projectRoleList = Object.keys(this.APP_ENUM.ProjectUserRole);
   public searchProject: string = ""
@@ -30,7 +29,6 @@ export class AddUserToTempProjectDialogComponent extends AppComponentBase implem
     this.user.fullName = this.data.fullName
     this.getAllProject()
   }
-
   public getAllProject() {
     this.listProjectService.getAll().subscribe(data => {
       this.listProject = data.result;
@@ -39,15 +37,25 @@ export class AddUserToTempProjectDialogComponent extends AppComponentBase implem
   }
 
   SaveAndClose() {
-    let requestBody = {
-      projectId: this.user.projectId,
-      startTime: this.formatDateYMD(this.user.startTime),
-      projectRole: this.user.projectRole,
-      id: this.data.project.id,
+    let requestBody: any = {
+        projectId: this.user.projectId,
+        startTime: this.formatDateYMD(this.user.startTime),
+        projectRole: this.user.projectRole,
+        isPool: true,
     }
-    this.resourceService.updateTempProjectForUser(requestBody).pipe(catchError(this.resourceService.handleError)).subscribe(rs=>{
-      abp.notify.success("Update successful")
-      this.dialogRef.close(true)
+
+    let result;
+    if (this.data.project && this.data.project.id) {
+        requestBody.id = this.data.project.id;
+        result = this.resourceService.updateTempProjectForUser(requestBody);
+    } else {
+        requestBody.userId = this.data.userId;
+        result = this.resourceService.AddUserToTempProject(requestBody);
+    }
+
+    result.pipe(catchError(this.resourceService.handleError)).subscribe(rs => {
+        abp.notify.success(this.data.project && this.data.project.id ? "Update successful" : "Add successful");
+        this.dialogRef.close(true);
     })
   }
 }

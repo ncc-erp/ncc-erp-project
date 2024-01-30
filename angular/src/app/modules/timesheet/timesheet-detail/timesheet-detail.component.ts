@@ -420,38 +420,31 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
     this.menu.openMenu();
   }
 
-  SelectAllChanged(event){
-    if(event.checked){
-      this.TimesheetDetaiList = this.TimesheetDetaiList.map((item) => {
-        item.isChecked = true;
-        return item;
-      });
-    }
-    else{
-      this.TimesheetDetaiList = this.TimesheetDetaiList.map((item) => {
-        item.isChecked = false;
-        return item;
-      });
-    }
-  }
-
-  SelectChanged(event){
-    if(this.TimesheetDetaiList.every((item) => item.isChecked === true)){
-      this.indeterminate = false;
-      this.checkSelectAllBox = true;
-    }
-    else {
-      if(this.TimesheetDetaiList.filter((item) => item.isChecked).length >0 ){
-        this.indeterminate = true;
-      }
-      else{
-        this.indeterminate = false;
-      }
-      this.checkSelectAllBox = false;
-    }
+  SelectAllChanged(event) {
+    const isChecked = event.checked;
+    this.TimesheetDetaiList.forEach(item => (item.isChecked = isChecked));
+    this.updateCheckboxState();
   }
   
-
+  SelectChanged(event) {
+    if (this.TimesheetDetaiList.length === 0) {
+      this.indeterminate = false;
+      this.CheckAllSelectBox = false;
+      return;
+    }
+  
+    this.updateCheckboxState();
+  }
+  
+  private updateCheckboxState() {
+    const allChecked = this.TimesheetDetaiList.every(item => item.isChecked);
+    const someChecked = this.TimesheetDetaiList.some(item => item.isChecked);
+  
+    this.indeterminate = someChecked && !allChecked;
+    this.CheckAllSelectBox = allChecked ? true : false;
+    if (!allChecked && !someChecked) this.indeterminate = false;
+  }
+    
   public reloadComponent() {
     this.router.navigate(['app/timesheetDetail'], {
       queryParams: {

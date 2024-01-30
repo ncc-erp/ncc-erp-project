@@ -1,6 +1,6 @@
 <form action="" autocomplete="off" (submit)="SaveAndClose()">
-  <!-- [title]="'Edit user: ' + data.fullName | localize" -->
   <abp-modal-header
+    title="Edit Note: {{fullName}} - {{projectName}}"
     (onCloseClick)="dialogRef.close()"
   ></abp-modal-header>
   <div class="modal-body">

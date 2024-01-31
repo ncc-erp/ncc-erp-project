@@ -37,7 +37,7 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
   requestBody: PagedRequestDto
   pageNum: number;
   indeterminate = false;
-  checkSelectAllBox = false;
+  CheckAllSelectBox = false;
   protected list(request: PagedRequestDto, pageNumber: number, finishedCallback: Function): void {
     this.requestBody = request
     this.pageNum = pageNumber
@@ -435,6 +435,7 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
   
     this.updateCheckboxState();
   }
+  
   
   private updateCheckboxState() {
     const allChecked = this.TimesheetDetaiList.every(item => item.isChecked);

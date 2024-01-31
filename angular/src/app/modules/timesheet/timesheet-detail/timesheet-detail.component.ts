@@ -70,6 +70,7 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
           })
          return {...el,isChecked: this.listTimesheetProject.some(a=> a.id ==el.id)}
         });
+
         this.listTotalAmountByCurrency = res.result.listTotalAmountByCurrency;
         this.pageNumber = timesheetDetaiList.totalCount;
         this.showPaging(timesheetDetaiList, pageNumber);
@@ -79,7 +80,10 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
             request.filterItems = this.clearFilter(request, item.name, '')
           }
         })
+
+        this.onCheckUncheckOneRow();
       })
+
   }
   protected delete(item: TimesheetDetailDto): void {
     this.menu.closeMenu();
@@ -418,34 +422,25 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
     this.contextMenuPosition.x = e.clientX + 'px';
     this.contextMenuPosition.y = e.clientY + 'px';
     this.menu.openMenu();
+  
   }
 
-  SelectAllChanged(event) {
-    const isChecked = event.checked;
-    this.TimesheetDetaiList.forEach(item => (item.isChecked = isChecked));
-    this.updateCheckboxState();
+  onCheckUncheckAllRow(event) {
+    this.TimesheetDetaiList.forEach(item => (item.isChecked = event.checked));
+    this.indeterminate = false;
+    this.CheckAllSelectBox = event.checked;
   }
+ 
   
-  SelectChanged(event) {
-    if (this.TimesheetDetaiList.length === 0) {
-      this.indeterminate = false;
-      this.CheckAllSelectBox = false;
-      return;
-    }
-  
-    this.updateCheckboxState();
-  }
-  
-  
-  private updateCheckboxState() {
+  onCheckUncheckOneRow() {
     const allChecked = this.TimesheetDetaiList.every(item => item.isChecked);
     const someChecked = this.TimesheetDetaiList.some(item => item.isChecked);
   
     this.indeterminate = someChecked && !allChecked;
-    this.CheckAllSelectBox = allChecked ? true : false;
-    if (!allChecked && !someChecked) this.indeterminate = false;
+    this.CheckAllSelectBox = allChecked;
+
   }
-    
+  
   public reloadComponent() {
     this.router.navigate(['app/timesheetDetail'], {
       queryParams: {

@@ -243,7 +243,7 @@
                     <mat-checkbox 
                     [(ngModel)] ="CheckAllSelectBox"
                     [indeterminate]="indeterminate"
-                    (change)="SelectAllChanged($event)"></mat-checkbox>                      
+                    (change)="onCheckUncheckAllRow($event)"></mat-checkbox>                      
                   </div>
                 </th>
               </tr>
@@ -365,10 +365,9 @@
                 </td>
                 <td class="text-center td-action" style="vertical-align: middle">
                   <mat-checkbox
-                    *ngIf="permission.isGranted(Timesheets_TimesheetDetail_ExportInvoice) || permission.isGranted(Timesheets_TimesheetDetail_ExportInvoiceForTax)"
                     #checkboxExportInvoice class="checkbox-exportInvoice" [(ngModel)]="item.isChecked"  [value]="item"
                     (change)="addProjectToExport($event, item)"
-                    (ngModelChange) = "SelectChanged($event)"></mat-checkbox>
+                    (ngModelChange) = "onCheckUncheckOneRow()"></mat-checkbox>
 
                   <button mat-button [matMenuTriggerFor]="menu">
                     <i class="fas fa-bars fa-lg" style="margin-top:1px"></i>

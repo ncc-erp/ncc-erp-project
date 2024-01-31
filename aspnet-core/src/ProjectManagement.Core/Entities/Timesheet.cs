@@ -21,5 +21,12 @@ namespace ProjectManagement.Entities
         [DefaultValue(false)]
         public bool CreatedInvoice { get; set; }
         public float? TotalWorkingDay { get; set; }
+        public DateTime TimeSheetDate
+        {
+            get
+            {
+                return new DateTime(Year, Month, 1);
+            }
+        }
     }
 }

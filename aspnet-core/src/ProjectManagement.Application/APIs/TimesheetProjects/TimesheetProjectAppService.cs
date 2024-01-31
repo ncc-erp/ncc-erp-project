@@ -1360,10 +1360,9 @@ namespace ProjectManagement.APIs.TimesheetProjects
         {
             var current = WorkScope.Get<Timesheet>(timeSheetId);
             var beforeTimeSheetId = WorkScope.GetAll<Timesheet>()
-                .OrderByDescending(x => x.Year)
-                .ThenByDescending(x => x.Month)
-                .Where(x => x.Year <= current.Year && x.Month <= current.Month && x.Id != current.Id)
-                .Select(x => x)
+                .AsEnumerable()
+                .Where(x => x.TimeSheetDate <= current.TimeSheetDate && x.Id != current.Id)
+                .OrderByDescending(x => x.TimeSheetDate)
                 .FirstOrDefault();
 
             var result = new NewAndStopProjectDto();
@@ -1420,6 +1419,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
                     }).ToList();
             }
             return result;
+          
         }
 
         private async Task<FileBase64Dto> WriteAllProjectInvoiceToExcel(List<ExportAllProjectInvoiceDto> result, TimesheetInfoDto currencyTables, NewAndStopProjectDto stopAndNew)

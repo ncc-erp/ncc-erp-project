@@ -37,13 +37,13 @@ namespace ProjectManagement.APIs.ProjectUserBills
             this.projectUserBillManager = projectUserBillManager;
         }
 
-        [HttpGet]
+        [HttpPost]
         [AbpAuthorize(PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo,
           PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo,
           PermissionNames.Projects_TrainingProjects_ProjectDetail_TabBillInfo)]
-        public async Task<List<Services.ProjectUserBill.Dto.GetProjectUserBillDto>> GetAllByProject(long projectId)
+        public async Task<List<Services.ProjectUserBill.Dto.GetProjectUserBillDto>> GetAllByProject(GetAllProjectUserBillDto input)
         {
-            return await projectUserBillManager.GetAllByProject(projectId);
+            return await projectUserBillManager.GetAllByProject(input);
         }
 
         [HttpPost]

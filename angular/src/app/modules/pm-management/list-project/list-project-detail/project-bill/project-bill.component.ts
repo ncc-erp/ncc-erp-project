@@ -29,33 +29,18 @@ import { SortableModel } from '@shared/components/sortable/sortable.component';
   templateUrl: './project-bill.component.html',
   styleUrls: ['./project-bill.component.css']
 })
-/**
- * <th style="border-left: 10px solid #fff" class="stt">#</th>
-                                    <th>Employee</th>
-                                    <th>Charge Name</th>
-                                    <th>Charge Role</th>
-                                    <th>Linked resources</th>
-                                    <th
-                                        *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Rate_View)">
-                                        Rate <br>({{rateInfo.currencyName}})</th>
-                                    <th>Charge Type</th>
-                                    <th>Is Charge</th>
-                                    <!-- <th>End charge</th>
-                                    <th style="width:20px;">Is Charge</th> -->
-                                    <th style="width:200px;">Note</th>
-                                    <th>Action</th>
- */
+
 export class ProjectBillComponent extends AppComponentBase implements OnInit {
   public theadTable: THeadTable[] = [
     { name: "#" },
-    { name: "Employee", sortName: "fullName", defaultSort: "" },
+    { name: "Employee", sortName: "emailAddress", defaultSort: "" },
     { name: "Charge Name" },
     { name: "Charge Role", sortName: "billRole", defaultSort: "" },
-    { name: "Linked resources"},
-    { name: "Rate", sortName: "rate", defaultSort: "" },
+    { name: "Linked resources" },
+    { name: "Rate", sortName: "billRate", defaultSort: "" },
     { name: "Charge Type" },
-    { name: "Is Charge", sortName: "billCharge", defaultSort: "" },
-    { name: "Note" },
+    { name: "Is Charge", width: "20px" },
+    { name: "Note", width: "200px" },
     { name: "Action" },
   ];
   public userBillList: projectUserBillDto[] = [];
@@ -338,7 +323,11 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   }
   private getUserBill( id?: number,status?: boolean, userIdNew?: number): void {
     this.isLoading = true
-    this.projectUserBillService.getAllUserBill(this.projectId).pipe(catchError(this.projectUserBillService.handleError)).subscribe(data => {
+    const body = {
+      projectId: this.projectId,
+      sortParams: this.sortResource
+    }
+    this.projectUserBillService.getAllUserBill(body).pipe(catchError(this.projectUserBillService.handleError)).subscribe(data => {
       this.userBillList = data.result.map(item=> {
       if(item.id === id && userIdNew){
         return {...item,createMode:status,userId:userIdNew}
@@ -521,14 +510,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
       this.sortable.typeSort,
       this.sortable.sortDirection
     );
-
-    // Call the ProjectUserBillService to fetch data based on sorting parameters
-    this.projectUserBillService.getAllUserBill(this.projectId).subscribe((data) => {
-      // Assuming your data property is named 'result'
-      this.userBillList = data.result;
-
-      // Handle any additional logic needed after fetching data, e.g., updating the table
-    });
+    this.getUserBill();
   }
 
 

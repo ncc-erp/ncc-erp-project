@@ -8,7 +8,7 @@ import { AppComponentBase } from '@shared/app-component-base';
 import { UserDto } from '@shared/service-proxies/service-proxies';
 import { projectUserBillDto, ProjectRateDto } from './../../../../../service/model/project.dto';
 import { ProjectUserBillService } from './../../../../../service/api/project-user-bill.service';
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit, Injector, ViewChildren, QueryList, ChangeDetectorRef } from '@angular/core';
 import * as moment from 'moment';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { EditNoteDialogComponent } from './add-note-dialog/edit-note-dialog.component';
@@ -20,7 +20,8 @@ import { ProjectInvoiceSettingDto } from '@app/service/model/project-invoice-set
 import { UpdateInvoiceDto } from '@app/service/model/updateInvoice.dto';
 import { MatDialog } from '@angular/material/dialog';
 import { ShadowAccountDialogComponent } from './shadow-account-dialog/shadow-account-dialog.component';
-import { concat } from 'rxjs';
+import { Observable, concat } from 'rxjs';
+import { SortableModel } from '@shared/components/sortable/sortable.component';
 
 
 @Component({
@@ -28,7 +29,35 @@ import { concat } from 'rxjs';
   templateUrl: './project-bill.component.html',
   styleUrls: ['./project-bill.component.css']
 })
+/**
+ * <th style="border-left: 10px solid #fff" class="stt">#</th>
+                                    <th>Employee</th>
+                                    <th>Charge Name</th>
+                                    <th>Charge Role</th>
+                                    <th>Linked resources</th>
+                                    <th
+                                        *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Rate_View)">
+                                        Rate <br>({{rateInfo.currencyName}})</th>
+                                    <th>Charge Type</th>
+                                    <th>Is Charge</th>
+                                    <!-- <th>End charge</th>
+                                    <th style="width:20px;">Is Charge</th> -->
+                                    <th style="width:200px;">Note</th>
+                                    <th>Action</th>
+ */
 export class ProjectBillComponent extends AppComponentBase implements OnInit {
+  public theadTable: THeadTable[] = [
+    { name: "#" },
+    { name: "Employee", sortName: "fullName", defaultSort: "" },
+    { name: "Charge Name" },
+    { name: "Charge Role", sortName: "billRole", defaultSort: "" },
+    { name: "Linked resources"},
+    { name: "Rate", sortName: "rate", defaultSort: "" },
+    { name: "Charge Type" },
+    { name: "Is Charge", sortName: "billCharge", defaultSort: "" },
+    { name: "Note" },
+    { name: "Action" },
+  ];
   public userBillList: projectUserBillDto[] = [];
   private filteredUserBillList: projectUserBillDto[] = [];
   public userForUserBill: UserDto[] = [];
@@ -50,6 +79,9 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   public isEditDiscount: boolean = false;
   public maxBillUserCurrentPage = 10;
   public totalBillList: number;
+  public sortable = new SortableModel("", 0, "");
+  @ViewChildren("sortThead") private elementRefSortable: QueryList<any>;
+  public sortResource = {};
   public invoiceSettingOptions = Object.entries(this.APP_ENUM.InvoiceSetting).map((item) => ({
     key: item[0],
     value: item[1]
@@ -72,6 +104,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount
   constructor(private router: Router,
     private projectUserBillService: ProjectUserBillService,
+    private ref: ChangeDetectorRef,
     private route: ActivatedRoute,
     injector: Injector,
     private userService: UserService,
@@ -474,11 +507,60 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
      projectCode: projectCode} }));
       window.open(url, '_blank');
   }
+  styleThead(item: any) {
+    return {
+      width: item.width,
+      height: item.height,
+    };
+  }
+
+  sortTable(event: any) {
+    this.sortable = event;
+    this.changeSortableByName(
+      this.sortable.sort,
+      this.sortable.typeSort,
+      this.sortable.sortDirection
+    );
+
+    // Call the ProjectUserBillService to fetch data based on sorting parameters
+    this.projectUserBillService.getAllUserBill(this.projectId).subscribe((data) => {
+      // Assuming your data property is named 'result'
+      this.userBillList = data.result;
+
+      // Handle any additional logic needed after fetching data, e.g., updating the table
+    });
+  }
 
 
+  changeSortableByName(sort: string, sortType: string, sortDirection?: number) {
+    if (!sortType) {
+      delete this.sortResource[sort];
+    } else {
+      this.sortResource[sort] = sortDirection;
+    }
+    this.ref.detectChanges();
+  }
 }
 
 export interface AddSubInvoicesDto {
   parentInvoiceId: number,
   subInvoiceIds: number[]
+}
+
+export class THeadTable {
+  name: string;
+  width?: string = "auto";
+  height?: string = "auto";
+  backgroud_color?: string;
+  sortName?: string;
+  defaultSort?: string;
+  padding?: string;
+  whiteSpace?: string;
+}
+
+export class SendRecruitmentModel {
+  id: number;
+  name: string;
+  dmNote: string;
+  pmNote: string;
 }

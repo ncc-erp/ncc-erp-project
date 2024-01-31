@@ -1,5 +1,6 @@
 ﻿using Abp.Application.Services.Dto;
 using NccCore.Anotations;
+using NccCore.Paging;
 using ProjectManagement.Utils;
 using System;
 using System.Collections.Generic;
@@ -44,5 +45,6 @@ namespace ProjectManagement.Services.ProjectUserBill.Dto
         public string PositionColor { get; set; }
         public DateTime CreationTime { get; set; }
         public List<GetAllUserDto> LinkedResources { get; set; }
+        public GridParam GridParam { get; set; }
     }
 }

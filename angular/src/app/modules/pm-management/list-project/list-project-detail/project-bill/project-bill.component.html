@@ -110,25 +110,37 @@
                 <div class="mb-1 fixTableHead">
                         <table name="tbl-UserBill" style="border-collapse: collapse;"
                             class="table table-hover text-nowrap" [busy]="isLoading">
-                            <thead class="bg-light">
+                            <thead>
                                 <tr>
-                                    <th style="border-left: 10px solid #fff" class="stt">#</th>
-                                    <th>Employee</th>
-                                    <th>Charge Name</th>
-                                    <th>Charge Role</th>
-                                    <th>Linked resources</th>
-                                    <th
-                                        *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Rate_View)">
-                                        Rate <br>({{rateInfo.currencyName}})</th>
-                                    <th>Charge Type</th>
-                                    <th>Is Charge</th>
-                                    <!-- <th>End charge</th>
-                                    <th style="width:20px;">Is Charge</th> -->
-                                    <th style="width:200px;">Note</th>
-                                    <th>Action</th>
+                                  <th
+                                    *ngFor="let thead of theadTable; let i = index"
+                                    class="text-center"
+                                  >
+                                    <div class="row sortHeader" [ngStyle]="styleThead(thead)">
+                                      <div class="rsp-th-name text-center">
+                                        {{ thead.name }}
+                                      </div>
+                                      <div
+                                        class="rsp-th-sort text-right"
+                                        *ngIf="i != 0 && thead.sortName"
+                                        style="vertical-align: middle"
+                                      >
+                                        <ng-container>
+                                          <app-sortable
+                                            #sortThead
+                                            [data]="{
+                                              sort: thead.sortName,
+                                              typeSort: thead.defaultSort
+                                            }"
+                                            (sortEvent)="sortTable($event)"
+                                          ></app-sortable>
+                                        </ng-container>
+                                      </div>
+                                    </div>
+                                  </th>
                                 </tr>
-                            </thead>
-                            <tbody>
+                              </thead>
+                                            <tbody>
                                 <tr *ngFor="let bill of filteredUserBillList |paginate:{
                                     id: 'billUserInfo',
                                     itemsPerPage: maxBillUserCurrentPage,
@@ -318,19 +330,20 @@
                                             </mat-menu>
                                         </div>
                                     </td>
-                                    <td style="min-width: 156px;">
+                                    <td style="min-width: 156px;" class="text-center">
                                         <div *ngIf="!bill.createMode">
-                                            <button
-                                                *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Edit)"
-                                                [disabled]="userBillProcess" class="btn btn-sm bg-secondary mr-1"
-                                                (click)="editUserBill(bill)"><i
-                                                    class="fas fa-pencil-alt"></i>Edit</button>
-                                            <button
-                                                *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Delete)"
-                                                [disabled]="userBillProcess" class="btn btn-sm bg-danger ml-1"
-                                                (click)="removeUserBill(bill)"><i
-                                                    class="fas fa-trash"></i>Delete</button>
-                                        </div>
+                                            <button *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Edit)"
+                                              [disabled]="userBillProcess" mat-button [matMenuTriggerFor]="actionMenu"><i class="fas fa-bars fa-lg"></i></button>
+                                            <!-- Define the mat-menu and its content -->
+                                            <mat-menu #actionMenu="matMenu">
+                                              <button mat-menu-item (click)="editUserBill(bill)">
+                                                <i class="fas fa-pencil-alt"></i> Edit
+                                              </button>
+                                              <button mat-menu-item (click)="removeUserBill(bill)">
+                                                <i class="fas fa-trash"></i> Delete
+                                              </button>
+                                            </mat-menu>
+                                          </div>
 
                                         <div *ngIf="bill.createMode" class="pt-1">
                                             <button
@@ -368,6 +381,12 @@
                                     </mat-option>
                                     <mat-option [value]="100">
                                         100
+                                    </mat-option>
+                                    <mat-option [value]="200">
+                                        200
+                                    </mat-option>
+                                    <mat-option [value]="300">
+                                        300
                                     </mat-option>
                                 </mat-select>
                             </mat-form-field>

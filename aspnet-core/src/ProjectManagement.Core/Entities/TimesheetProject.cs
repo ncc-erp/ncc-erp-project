@@ -26,6 +26,12 @@ namespace ProjectManagement.Entities
         public float TransferFee { get; set; }
         public float Discount { get; set; }
         public float WorkingDay { get; set; }
+
+        /// <summary>
+        /// Null is main project 
+        /// Not Null is sub project
+        /// ParentInvoiceId is TimeSheetProject.Id
+        /// </summary>
         public long? ParentInvoiceId { get; set; }
         public bool IsActive { get; set; }
     }

@@ -765,7 +765,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
             return worksheet;
         }
 
-        private async Task<InvoiceData> GetInvoiceData(InputExportInvoiceDto input, bool throwExceptionOnEmptyInfo = true)
+        private async Task<InvoiceData> GetInvoiceData(InputExportInvoiceDto input, bool throwExceptionIfEmpty = true)
         {
             var defaultWorkingHours = Convert.ToInt32(await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.DefaultWorkingHours));
             var result = new InvoiceData();
@@ -785,7 +785,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
                 .Where(s => input.ProjectIds.Contains(s.ProjectId));
 
             result.Info = qtimesheetProject
-                .WhereIf(throwExceptionOnEmptyInfo, s => !s.ParentInvoiceId.HasValue)
+                .Where(s => !s.ParentInvoiceId.HasValue)
                 .Select(s => new InvoiceGeneralInfo
                 {
                     ClientAddress = s.Project.Client.Address,
@@ -800,7 +800,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
                     InvoiceDateSetting = s.Project.Client.InvoiceDateSetting
                 }).FirstOrDefault();
 
-            if (throwExceptionOnEmptyInfo && result.Info == default)
+            if (throwExceptionIfEmpty && result.Info == default)
             {
                 throw new UserFriendlyException("You have to select at least 1 project is MAIN in Invoice Setting");
             }
@@ -982,7 +982,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
         [AbpAuthorize(PermissionNames.Timesheets_TimesheetDetail_ExportTSdetail)]
         public async Task<FileBase64Dto> ExportTSdetail(InputExportInvoiceDto input)
         {
-            var dataInvoice = await GetInvoiceData(input, throwExceptionOnEmptyInfo: false);
+            var dataInvoice = await GetInvoiceData(input, throwExceptionIfEmpty: false);
             List<TimesheetDetailUser> dataTimesheetDetail = await GetTimesheetDetailData(dataInvoice, false);
 
             var templateFilePath = Path.Combine(templateFolder, "TSDetail.xlsx");

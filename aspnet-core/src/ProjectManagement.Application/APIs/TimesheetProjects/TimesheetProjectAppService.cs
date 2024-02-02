@@ -775,6 +775,10 @@ namespace ProjectManagement.APIs.TimesheetProjects
                 .SelectMany(x => x.Split(',').Select(code => code.Trim()));
 
             var qtimesheetProject = WorkScope.All<TimesheetProject>()
+                .Include(x => x.Project)
+                .ThenInclude(p => p.Client)
+                .Include(x => x.Project.Currency)
+                .Include(x => x.Timesheet)
                 .Where(s => s.TimesheetId == input.TimesheetId)
                 .Where(s => input.ProjectIds.Contains(s.ProjectId));
 

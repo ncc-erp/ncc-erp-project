@@ -7,6 +7,7 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
   animations: [appModuleAnimation()],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
+
 export class HomeComponent extends AppComponentBase {
   constructor(injector: Injector) {
     super(injector);

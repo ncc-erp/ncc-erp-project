@@ -221,14 +221,14 @@ export class BillAccountPlanComponent
     this.isShowBillRate = checked;
   }
 
-  UpdateBillNote(userId, projectId, note) {
+  UpdateBillNote(userInfor, projectId, note, projectName) {
     const addOrEditNoteDialog = this.dialog.open(BillAccountDialogNoteComponent, {
-      width: "40%",
-      height: "70%",
+      width: "580px",
       data: {
-        userId:userId,
+        userInfor: userInfor,
         projectId: projectId,
         note: note,
+        projectName: projectName
       },
     });
     addOrEditNoteDialog.afterClosed().subscribe(() => {

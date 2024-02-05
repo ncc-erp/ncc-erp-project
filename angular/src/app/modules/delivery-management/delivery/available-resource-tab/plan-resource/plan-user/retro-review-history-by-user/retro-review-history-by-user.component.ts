@@ -14,17 +14,6 @@ import { Subscription } from 'rxjs';
 import { OnDestroy, Injector } from '@angular/core';
 import { AppComponentBase } from '@shared/app-component-base';
 import { Component, OnInit } from '@angular/core';
-import { Pipe, PipeTransform } from '@angular/core';
-
-@Pipe({ name: 'lineBreak' })
-export class LineBreakPipe implements PipeTransform {
-  transform(value: string): string {
-    if (value) {
-      return value.replace(/\\n/g, '<br>');
-    }
-    return value;
-  }
-}
 @Component({
   selector: 'app-retro-review-history-by-user',
   templateUrl: './retro-review-history-by-user.component.html',

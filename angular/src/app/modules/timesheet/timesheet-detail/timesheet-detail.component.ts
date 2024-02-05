@@ -36,6 +36,8 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
   Projects_OutsourcingProjects_ProjectDetail = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail;
   requestBody: PagedRequestDto
   pageNum: number;
+  indeterminate = false;
+  CheckAllSelectBox = false;
   protected list(request: PagedRequestDto, pageNumber: number, finishedCallback: Function): void {
     this.requestBody = request
     this.pageNum = pageNumber
@@ -68,6 +70,7 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
           })
          return {...el,isChecked: this.listTimesheetProject.some(a=> a.id ==el.id)}
         });
+
         this.listTotalAmountByCurrency = res.result.listTotalAmountByCurrency;
         this.pageNumber = timesheetDetaiList.totalCount;
         this.showPaging(timesheetDetaiList, pageNumber);
@@ -77,7 +80,10 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
             request.filterItems = this.clearFilter(request, item.name, '')
           }
         })
+
+        this.onCheckUncheckOneRow();
       })
+
   }
   protected delete(item: TimesheetDetailDto): void {
     this.menu.closeMenu();
@@ -302,7 +308,6 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
       }
     })
 
-
     dialogref.afterClosed().subscribe((rs)=> {
       if(rs) {
         this.refresh()
@@ -417,7 +422,25 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
     this.contextMenuPosition.x = e.clientX + 'px';
     this.contextMenuPosition.y = e.clientY + 'px';
     this.menu.openMenu();
+  
   }
+
+  onCheckUncheckAllRow(event) {
+    this.TimesheetDetaiList.forEach(item => (item.isChecked = event.checked));
+    this.indeterminate = false;
+    this.CheckAllSelectBox = event.checked;
+  }
+ 
+  
+  onCheckUncheckOneRow() {
+    const allChecked = this.TimesheetDetaiList.every(item => item.isChecked);
+    const someChecked = this.TimesheetDetaiList.some(item => item.isChecked);
+  
+    this.indeterminate = someChecked && !allChecked;
+    this.CheckAllSelectBox = allChecked;
+
+  }
+  
   public reloadComponent() {
     this.router.navigate(['app/timesheetDetail'], {
       queryParams: {
@@ -456,14 +479,16 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
     item.showIcon = false
   }
 
-  exportInvocie(item: any,exportInvoiceMode) {
-    this.timesheetProjectService.exportInvoice(this.timesheetId, item.projectId,exportInvoiceMode).pipe(catchError(this.timesheetProjectService.handleError)).subscribe(data => {
+  exportInvocie(item: any, exportInvoiceMode) {
+    this.timesheetProjectService.exportInvoice(this.timesheetId, item.projectId, exportInvoiceMode).pipe(
+      catchError(this.timesheetProjectService.handleError)
+    ).subscribe(data => {
       const file = new Blob([this.s2ab(atob(data.result.base64))], {
         type: "application/vnd.ms-excel;charset=utf-8"
       });
       FileSaver.saveAs(file, data.result.fileName);
       abp.notify.success("Export Invoice Successfully!");
-    })
+    });
   }
 
   exportInvocieAsPDF(item: any,exportInvoiceMode) : void {
@@ -527,7 +552,7 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
       this.isMonthlyToDaily = false;
     }
   }
-  
+
   checkExportInvoice(listTimesheetProject) {
     if (listTimesheetProject.length > 0) {
       let countClient = listTimesheetProject.reduce((r: any, a: any) => {
@@ -555,16 +580,18 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
       timesheetId: this.timesheetId,
       projectIds: this.listExportInvoice,
       mode: exportInvoiceMode
-    }
+    };
+
     this.timesheetProjectService.exportInvoiceClient(invoiceExcelDto).subscribe((res) => {
       const file = new Blob([this.s2ab(atob(res.result.base64))], {
         type: "application/vnd.ms-excel;charset=utf-8"
       });
       this.refresh();
-      this.listExportInvoice=[];
+      // Do not clear the listExportInvoice to maintain selected projects
+      // this.listExportInvoice = [];
       FileSaver.saveAs(file, res.result.fileName);
       abp.notify.success("Export Invoice Successfully!");
-    })
+    });
   }
 
   // Use this function when you want to preview or edit template
@@ -598,7 +625,7 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
         type: "application/vnd.ms-excel;charset=utf-8"
       });
       this.refresh();
-      this.listExportInvoice=[];
+      // this.listExportInvoice=[];
       FileSaver.saveAs(file, res.result.fileName);
       abp.notify.success("Export Invoice For Tax Successfully!");
     })

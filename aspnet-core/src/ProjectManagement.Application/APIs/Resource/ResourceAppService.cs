@@ -3,6 +3,7 @@ using Abp.Configuration;
 using Abp.UI;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NccCore.IoC;
 using NccCore.Paging;
 using NccCore.Uitls;
 using ProjectManagement.APIs.PMReportProjectIssues;
@@ -247,6 +248,12 @@ namespace ProjectManagement.APIs.Resource
         public async Task<List<RetroReviewInternHistoriesDto>> GetRetroReviewInternHistories(InputRetroReviewInternHistoriesDto input)
         {
             return await _resourceManager.GetRetroReviewInternHistories(input.Emails);
+        }
+
+        [HttpPost]
+        public async Task UpdateTempProjectForUser(UpdateTempProjectForUserDto input)
+        {
+            await _resourceManager.UpdateTempProjectForUser(input);
         }
     }
 }

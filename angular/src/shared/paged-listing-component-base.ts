@@ -103,6 +103,7 @@ export abstract class PagedListingComponentBase<TEntityDto> extends AppComponent
             queryParams: { pageNumber: this.pageNumber, pageSize: this.pageSize, searchText: this.searchText, filterItems: JSON.stringify(this.filterItems) }
         })
             .then(_ => this.list(req, page, () => {
+                this.CheckAllSelectBox = false;
                 this.isLoading = false;
             }));
     }

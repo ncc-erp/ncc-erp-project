@@ -23,26 +23,25 @@ export class BillAccountDialogNoteComponent implements OnInit {
   billNote: string = "";
   userId: number;   
   projectId: number;          
-
+  fullName: string;
+  projectName: string;
   saving = false;
   @Output() onSave = new EventEmitter<null>();
-
+  
   subscription: Subscription[] = [];
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<BillAccountDialogNoteComponent>,
-    private planningBillInfoService: PlanningBillInfoService
+    private planningBillInfoService: PlanningBillInfoService,
   ) {}
 
   ngOnInit(): void {
-      this.subscription.push(
-        this.planningBillInfoService.Get(this.data.userId,this.data.projectId).subscribe((response) => {
-          this.billNote = response.result.project.note;
-          this.userId = response.result.userInfor.userId;
-          this.projectId =response.result.project.projectId;
-        })
-      );
+    this.billNote = this.data.note;
+    this.userId = this.data.userInfor.userId;
+    this.projectId = this.data.projectId;
+    this.fullName = this.data.userInfor.fullName;
+    this.projectName = this.data.projectName;
   }
 
   SaveAndClose() {

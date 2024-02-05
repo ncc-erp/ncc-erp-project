@@ -124,19 +124,19 @@ namespace ProjectManagement.Services.ResourceManager
         public IQueryable<ProjectOfUserDto> QueryWorkingProjectsOfUser(long userId)
         {
             return _workScope.GetAll<ProjectUser>()
-                 .Where(s => s.UserId == userId)
-                 .Where(s => s.Status == ProjectUserStatus.Present)
-                 .Where(s => s.AllocatePercentage > 0)
-                 .Where(s => s.Project.Status != ProjectStatus.Closed)
-                 .OrderBy(s => s.ProjectRole)
-                 .ThenByDescending(s => s.StartTime)
-                 .Select(x => new ProjectOfUserDto
-                 {
-                     ProjectName = x.Project.Name,
-                     PmName = x.Project.PM.FullName,
-                     StartTime = x.StartTime,
-                     IsPool = x.IsPool
-                 });
+                .Where(s => s.UserId == userId)
+                .Where(s => s.Status == ProjectUserStatus.Present)
+                .Where(s => s.AllocatePercentage > 0)
+                .Where(s => s.Project.Status != ProjectStatus.Closed)
+                .OrderBy(s => s.ProjectRole)
+                .ThenByDescending(s => s.StartTime)
+                .Select(x => new ProjectOfUserDto
+                {
+                    ProjectName = x.Project.Name,
+                    PmName = x.Project.PM.FullName,
+                    StartTime = x.StartTime,
+                    IsPool = x.IsPool
+                });
         }
 
         public List<PMOfUserDto> QueryPMOfUser(long userId)
@@ -1286,6 +1286,19 @@ namespace ProjectManagement.Services.ResourceManager
                 }).ToList()
             });
             return currentResources.OrderBy(c => c.ProjectName).ThenBy(c => c.EmailAddress);
+        }
+
+        [HttpPost]
+        public async Task UpdateTempProjectForUser(UpdateTempProjectForUserDto input)
+        {
+            var currentPU = _workScope.GetAll<ProjectUser>()
+                                      .FirstOrDefault(pu => pu.Id == input.Id);
+
+            currentPU.StartTime = input.StartTime;
+            currentPU.ProjectRole = input.ProjectRole;
+            currentPU.ProjectId = input.ProjectId;
+
+            await _workScope.UpdateAsync(currentPU);
         }
     }
 }

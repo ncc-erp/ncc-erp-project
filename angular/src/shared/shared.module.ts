@@ -1,3 +1,4 @@
+import { LineBreakPipe } from './pipes/line-break.pipe';
 import { ProjectStatusPipe } from './pipes/project-status-pipe.pipe';
 import { CommonModule } from '@angular/common';
 import { NgModule, ModuleWithProviders  } from '@angular/core';
@@ -79,7 +80,6 @@ import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
 import { DateSelectorComponent } from './date-selector/date-selector/date-selector.component';
 import { CustomTimeComponent } from './date-selector/custom-time/custom-time.component';
 
-
 // import {DialogComponentModule} from './dialog-component/dialog-component.module';
 // import { ErrorPermissionComponent } from './interceptor-errors/error-permission/error-permission.component'
 
@@ -133,7 +133,7 @@ import { CustomTimeComponent } from './date-selector/custom-time/custom-time.com
         EditorModule,
         OwlDateTimeModule,
         OwlNativeDateTimeModule,
-        
+
 
     ],
     declarations: [
@@ -159,7 +159,8 @@ import { CustomTimeComponent } from './date-selector/custom-time/custom-time.com
         ResizableDirective,
         DateSelectorComponent,
         CustomTimeComponent,
-        SelectClearOptionComponent
+        SelectClearOptionComponent,
+        LineBreakPipe
 
     ],
     exports: [
@@ -225,7 +226,8 @@ import { CustomTimeComponent } from './date-selector/custom-time/custom-time.com
         OwlNativeDateTimeModule,
         DateSelectorComponent,
         CustomTimeComponent,
-        SelectClearOptionComponent
+        SelectClearOptionComponent,
+        LineBreakPipe
 
     ],
     providers: [

@@ -1287,5 +1287,18 @@ namespace ProjectManagement.Services.ResourceManager
             });
             return currentResources.OrderBy(c => c.ProjectName).ThenBy(c => c.EmailAddress);
         }
+
+        [HttpPost]
+        public async Task UpdateTempProjectForUser(UpdateTempProjectForUserDto input)
+        {
+            var currentPU = _workScope.GetAll<ProjectUser>()
+                                      .FirstOrDefault(pu => pu.Id == input.Id);
+
+            currentPU.StartTime = input.StartTime;
+            currentPU.ProjectRole = input.ProjectRole;
+            currentPU.ProjectId = input.ProjectId;
+
+            await _workScope.UpdateAsync(currentPU);
+        }
     }
 }

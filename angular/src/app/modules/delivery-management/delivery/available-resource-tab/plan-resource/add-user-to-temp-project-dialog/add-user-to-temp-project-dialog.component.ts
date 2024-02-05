@@ -35,18 +35,27 @@ export class AddUserToTempProjectDialogComponent extends AppComponentBase implem
 
     })
   }
+
   SaveAndClose() {
-    let requestBody = {
-      userId: this.data.userId,
-      projectId: this.user.projectId,
-      startTime: this.formatDateYMD(this.user.startTime),
-      isPool: true,
-      projectRole: this.user.projectRole
+    let requestBody: any = {
+        projectId: this.user.projectId,
+        startTime: this.formatDateYMD(this.user.startTime),
+        projectRole: this.user.projectRole,
+        isPool: true,
     }
-    console.log(this.user)
-    this.resourceService.AddUserToTempProject(requestBody).pipe(catchError(this.resourceService.handleError)).subscribe(rs=>{
-      abp.notify.success("Add successful")
-      this.dialogRef.close(true)
+
+    let result;
+    if (this.data.project && this.data.project.id) {
+        requestBody.id = this.data.project.id;
+        result = this.resourceService.updateTempProjectForUser(requestBody);
+    } else {
+        requestBody.userId = this.data.userId;
+        result = this.resourceService.AddUserToTempProject(requestBody);
+    }
+
+    result.pipe(catchError(this.resourceService.handleError)).subscribe(rs => {
+        abp.notify.success(this.data.project && this.data.project.id ? "Update successful" : "Add successful");
+        this.dialogRef.close(true);
     })
   }
 }

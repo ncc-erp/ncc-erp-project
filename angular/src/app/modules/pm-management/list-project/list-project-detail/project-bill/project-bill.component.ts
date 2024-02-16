@@ -39,9 +39,9 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     { name: "Linked resources" },
     { name: "Rate", sortName: "billRate", defaultSort: "" },
     { name: "Charge Type" },
-    { name: "Is Charge", width: "20px" },
+    { name: "Is Charge", sortName: "startTime", defaultSort: "" },
     { name: "Note", width: "200px" },
-    { name: "Action" },
+    { name: "Action", width: "100px" },
   ];
   public userBillList: projectUserBillDto[] = [];
   private filteredUserBillList: projectUserBillDto[] = [];

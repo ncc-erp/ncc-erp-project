@@ -169,14 +169,6 @@ namespace ProjectManagement.Services.ProjectUserBills
         {
             var isViewRate = await IsGrantedAsync(PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Rate_View);
 
-            var existedPUBLUIds = await _workScope.GetAll<ProjectUserBillAccount>()
-              .Where(x => x.ProjectId == input.ProjectId)
-              .Select(x => x.UserId)
-              .ToListAsync();
-
-            var listPUBAs = _workScope.GetAll<ProjectUserBillAccount>();
-            var listUsers = _workScope.GetAll<User>();
-
             var query = _workScope.GetAll<ProjectManagement.Entities.ProjectUserBill>()
                  .Where(x => x.ProjectId == input.ProjectId)
                  .Select(x => new GetProjectUserBillDto
@@ -191,7 +183,6 @@ namespace ProjectManagement.Services.ProjectUserBills
                      BillRate = isViewRate ? x.BillRate : 0,
                      StartTime = x.StartTime.Date,
                      EndTime = x.EndTime.Value.Date,
-                     //CurrencyName = x.Project.Currency.Name,
                      Note = x.Note,
                      shadowNote = x.shadowNote,
                      isActive = x.isActive,
@@ -209,46 +200,49 @@ namespace ProjectManagement.Services.ProjectUserBills
                      ChargeType = x.ChargeType.HasValue ? x.ChargeType : x.Project.ChargeType,
                      CreationTime = x.CreationTime,
 
-                     LinkedResources = (from pu in listPUBAs
-                                        join us in listUsers on pu.UserId equals us.Id
-                                        where pu.UserBillAccountId == x.UserId && existedPUBLUIds.Contains(pu.UserId)
-                                        select new GetAllUserDto
-                                        {
-                                            Id = us.Id, // Set the appropriate properties you want from us
-                                            EmailAddress = us.EmailAddress,
-                                            UserName = us.UserName,
-                                            AvatarPath = us.AvatarPath == null ? "" : us.AvatarPath,
-                                            UserType = us.UserType,
-                                            PositionId = us.PositionId,
-                                            PositionColor = us.Position.Color,
-                                            PositionName = us.Position.ShortName,
-                                            UserLevel = us.UserLevel,
-                                            Branch = us.BranchOld,
-                                            BranchColor = us.Branch.Color,
-                                            BranchDisplayName = us.Branch.DisplayName,
-                                            IsActive = us.IsActive,
-                                            FullName = us.Name + " " + us.Surname,
-                                            CreationTime = us.CreationTime,
-                                            UserSkills = us.UserSkills.Select(s => new UserSkillDto
-                                            {
-                                                UserId = us.Id,
-                                                SkillId = s.SkillId,
-                                                SkillName = s.Skill.Name
-                                            }).ToList(),
-                                            WorkingProjects = us.ProjectUsers
-                                                .Where(s => s.Status == ProjectUserStatus.Present && s.AllocatePercentage > 0)
-                                                .Where(x => x.Project.Status != ProjectStatus.Potential && x.Project.Status != ProjectStatus.Closed)
-                                                .Select(p => new WorkingProjectDto
-                                                {
-                                                    ProjectName = p.Project.Name,
-                                                    ProjectRole = p.ProjectRole,
-                                                    StartTime = p.StartTime,
-                                                    IsPool = p.IsPool
-                                                }).ToList(),
-                                        })
-                                        .Distinct()
-                                        .ToList()
+                     LinkedResources = _workScope.GetAll<LinkedResource>()
+                        .Where(lr => lr.UserBillAccountId == x.UserId) // Lọc Linked Resources cho user hiện tại
+                        .Join(_workScope.GetAll<User>(), // Gộp với bảng User để lấy thông tin User
+                              lr => lr.UserId,
+                              u => u.Id,
+                              (lr, u) => new GetAllUserDto
+                              {
+                                  Id = u.Id,
+                                  EmailAddress = u.EmailAddress,
+                                  UserName = u.UserName,
+                                  AvatarPath = u.AvatarPath == null ? "" : u.AvatarPath,
+                                  UserType = u.UserType,
+                                  PositionId = u.PositionId,
+                                  PositionColor = u.Position.Color,
+                                  PositionName = u.Position.ShortName,
+                                  UserLevel = u.UserLevel,
+                                  Branch = u.BranchOld,
+                                  BranchColor = u.Branch.Color,
+                                  BranchDisplayName = u.Branch.DisplayName,
+                                  IsActive = u.IsActive,
+                                  FullName = u.Name + " " + u.Surname,
+                                  CreationTime = u.CreationTime,
+                                  UserSkills = u.UserSkills.Select(s => new UserSkillDto
+                                  {
+                                      UserId = u.Id,
+                                      SkillId = s.SkillId,
+                                      SkillName = s.Skill.Name
+                                  }).ToList(),
+                                  WorkingProjects = u.ProjectUsers
+                                      .Where(s => s.Status == ProjectUserStatus.Present && s.AllocatePercentage > 0)
+                                      .Where(p => p.Project.Status != ProjectStatus.Potential && p.Project.Status != ProjectStatus.Closed)
+                                      .Select(p => new WorkingProjectDto
+                                      {
+                                          ProjectName = p.Project.Name,
+                                          ProjectRole = p.ProjectRole,
+                                          StartTime = p.StartTime,
+                                          IsPool = p.IsPool
+                                      }).ToList(),
+                              })
+                        .Distinct()
+                        .ToList()
                  });
+
             query = ApplyOrders(query, input.SortParams);
             return await query.ToListAsync();
         }

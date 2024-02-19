@@ -5,6 +5,7 @@ using ProjectManagement.Authorization.Users;
 using System;
 using System.Collections.Generic;
 using System.Text;
+
 namespace ProjectManagement.Entities
 {
     public class LinkedResource : FullAuditedEntity<long>, IMayHaveTenant
@@ -15,8 +16,8 @@ namespace ProjectManagement.Entities
         public User User { get; set; }
         public long UserId { get; set; }
 
-        //[ForeignKey(nameof(UserBillAccountId))]
-        public ProjectUserBillAccount ProjectUserBillAccount { get; set; }
-        public long UserBillAccountId { get; set; }
+        //[ForeignKey(nameof(ProjectUserBillId))]
+        public ProjectUserBill ProjectUserBill { get; set; }
+        public long ProjectUserBillId { get; set; }
     }
 }

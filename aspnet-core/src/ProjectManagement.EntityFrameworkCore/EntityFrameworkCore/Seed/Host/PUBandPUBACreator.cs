@@ -30,7 +30,6 @@ namespace ProjectManagement.EntityFrameworkCore.Seed.Host
         public void Create()
         {
             CreateProjectUserBillAccounts();
-            CreateProjectUserBills();
             CreateLinkedResources(); // Thêm phương thức này để tạo dữ liệu cho linked resource
         }
 
@@ -42,28 +41,20 @@ namespace ProjectManagement.EntityFrameworkCore.Seed.Host
             }
         }
 
-        private void CreateProjectUserBills()
+        private void CreateLinkedResources()
         {
             foreach (var projectUserBill in ProjectUserBills)
             {
-                AddProjectUserBill(projectUserBill);
-            }
-        }
-
-        private void CreateLinkedResources()
-        {
-            foreach (var projectUserBillAccount in ProjectUserBillAccounts)
-            {
                 var existingLinkedResource = _context.LinkedResources
-                    .FirstOrDefault(p => p.UserId == projectUserBillAccount.UserId
-                                         && p.UserBillAccountId == projectUserBillAccount.UserBillAccountId);
+                    .FirstOrDefault(p => p.UserId == projectUserBill.UserId
+                                         && p.ProjectUserBillId == projectUserBill.Id); // Sửa lại thành ProjectUserBillId
 
                 if (existingLinkedResource == null)
                 {
                     var linkedResource = new LinkedResource
                     {
-                        UserId = projectUserBillAccount.UserId,
-                        UserBillAccountId = projectUserBillAccount.UserBillAccountId
+                        UserId = projectUserBill.UserId,
+                        ProjectUserBillId = projectUserBill.Id // Sửa lại thành ProjectUserBillId
                     };
 
                     _context.LinkedResources.Add(linkedResource);
@@ -72,7 +63,6 @@ namespace ProjectManagement.EntityFrameworkCore.Seed.Host
 
             _context.SaveChanges(); // Đặt lệnh SaveChanges ngoài vòng lặp để chỉ cần gọi một lần sau khi tạo tất cả linked resources.
         }
-
 
         private void AddProjectUserBillAccount(ProjectUserBillAccount projectUserBillAccount)
         {

@@ -10,7 +10,7 @@ using ProjectManagement.EntityFrameworkCore;
 namespace ProjectManagement.Migrations
 {
     [DbContext(typeof(ProjectManagementDbContext))]
-    [Migration("20240216060908_PUBandPUBA")]
+    [Migration("20240219083048_PUBandPUBA")]
     partial class PUBandPUBA
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -2384,21 +2384,18 @@ namespace ProjectManagement.Migrations
                     b.Property<long?>("LastModifierUserId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("ProjectUserBillAccountId")
+                    b.Property<long>("ProjectUserBillId")
                         .HasColumnType("bigint");
 
                     b.Property<int?>("TenantId")
                         .HasColumnType("int");
-
-                    b.Property<long>("UserBillAccountId")
-                        .HasColumnType("bigint");
 
                     b.Property<long>("UserId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProjectUserBillAccountId");
+                    b.HasIndex("ProjectUserBillId");
 
                     b.HasIndex("UserId");
 
@@ -4574,9 +4571,11 @@ namespace ProjectManagement.Migrations
 
             modelBuilder.Entity("ProjectManagement.Entities.LinkedResource", b =>
                 {
-                    b.HasOne("ProjectManagement.Entities.ProjectUserBillAccount", "ProjectUserBillAccount")
-                        .WithMany()
-                        .HasForeignKey("ProjectUserBillAccountId");
+                    b.HasOne("ProjectManagement.Entities.ProjectUserBill", "ProjectUserBill")
+                        .WithMany("LinkedResources")
+                        .HasForeignKey("ProjectUserBillId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("ProjectManagement.Authorization.Users.User", "User")
                         .WithMany()

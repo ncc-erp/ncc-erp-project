@@ -201,8 +201,8 @@ namespace ProjectManagement.Services.ProjectUserBills
                      CreationTime = x.CreationTime,
 
                      LinkedResources = _workScope.GetAll<LinkedResource>()
-                        .Where(lr => lr.UserBillAccountId == x.UserId) // Lọc Linked Resources cho user hiện tại
-                        .Join(_workScope.GetAll<User>(), // Gộp với bảng User để lấy thông tin User
+                        .Where(lr => lr.ProjectUserBillId == x.Id) // Lọc Linked Resources cho project user bill hiện tại
+                        .Join(_workScope.GetAll<User>(),
                               lr => lr.UserId,
                               u => u.Id,
                               (lr, u) => new GetAllUserDto
@@ -210,7 +210,7 @@ namespace ProjectManagement.Services.ProjectUserBills
                                   Id = u.Id,
                                   EmailAddress = u.EmailAddress,
                                   UserName = u.UserName,
-                                  AvatarPath = u.AvatarPath == null ? "" : u.AvatarPath,
+                                  AvatarPath = u.AvatarPath ?? "", // Sử dụng toán tử null coalescing để tránh lỗi null
                                   UserType = u.UserType,
                                   PositionId = u.PositionId,
                                   PositionColor = u.Position.Color,
@@ -239,7 +239,6 @@ namespace ProjectManagement.Services.ProjectUserBills
                                           IsPool = p.IsPool
                                       }).ToList(),
                               })
-                        .Distinct()
                         .ToList()
                  });
 

@@ -22,18 +22,17 @@ namespace ProjectManagement.Migrations
                     DeletionTime = table.Column<DateTime>(nullable: true),
                     TenantId = table.Column<int>(nullable: true),
                     UserId = table.Column<long>(nullable: false),
-                    ProjectUserBillAccountId = table.Column<long>(nullable: true),
-                    UserBillAccountId = table.Column<long>(nullable: false)
+                    ProjectUserBillId = table.Column<long>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_LinkedResources", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_LinkedResources_ProjectUserBillAccounts_ProjectUserBillAccountId",
-                        column: x => x.ProjectUserBillAccountId,
-                        principalTable: "ProjectUserBillAccounts",
+                        name: "FK_LinkedResources_ProjectUserBills_ProjectUserBillId",
+                        column: x => x.ProjectUserBillId,
+                        principalTable: "ProjectUserBills",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_LinkedResources_AbpUsers_UserId",
                         column: x => x.UserId,
@@ -43,9 +42,9 @@ namespace ProjectManagement.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_LinkedResources_ProjectUserBillAccountId",
+                name: "IX_LinkedResources_ProjectUserBillId",
                 table: "LinkedResources",
-                column: "ProjectUserBillAccountId");
+                column: "ProjectUserBillId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_LinkedResources_UserId",

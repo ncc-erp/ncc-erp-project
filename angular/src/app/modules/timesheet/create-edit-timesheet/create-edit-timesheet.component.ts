@@ -57,7 +57,7 @@ export class CreateEditTimesheetComponent extends AppComponentBase implements On
   }
   SaveAndClose() {
     this.isDisable = true
-    this.timesheet.closeTime = (this.submitDate && this.submitDate !== "Invalid date") ? this.submitDate : '';
+    this.submitDate = (this.submitDate && this.submitDate !== "Invalid date") ? this.submitDate : '';
     if (this.data.command == "create") {
       this.timesheet.isActive = true;
       this.timesheetService.create(this.timesheet).pipe(catchError(this.timesheetService.handleError)).subscribe((res) => {

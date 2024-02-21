@@ -267,6 +267,8 @@ namespace ProjectManagement.APIs.TimesheetProjects
                                                     {
                                                         BillRate = x.BillRate,
                                                         WorkingTime = x.WorkingTime,
+                                                        StartTime = x.StartTime,
+                                                        EndTime = x.EndTime,
                                                         Currency = x.Currency.Code,
                                                         ChargeType = x.ChargeType.HasValue ? x.ChargeType : x.Project.ChargeType,
                                                         DefaultWorkingHours = defaultWorkingHours,
@@ -318,6 +320,8 @@ namespace ProjectManagement.APIs.TimesheetProjects
                                                         BillRate = allowViewBillRate ? x.BillRate : 0,
                                                         BillRole = x.BillRole,
                                                         WorkingTime = x.WorkingTime,
+                                                        StartTime = x.StartTime,
+                                                        EndTime = x.EndTime,
                                                         Description = x.Note,
                                                         Currency = x.Currency.Name,
                                                         ChargeType = x.ChargeType.HasValue ? x.ChargeType : x.Project.ChargeType,
@@ -1344,7 +1348,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
             var currentTimeSheet = await GetAllProjectTimesheetByTimesheet(new GridParam { MaxResultCount = int.MaxValue }, input.TimesheetId);
             var accountsNotWorkingFull = await GetAccountsNotWorkingFull(currentTimeSheet);
             var stopAndNew = await GetStopNewProjects(input.TimesheetId, currentTimeSheet);
-            var increasedAndReduced = await GetAccountsChange(currentTimeSheet);
+            var increasedAndReduced = await GetAccountsChange(input.TimesheetId, currentTimeSheet);
             var result = currentTimeSheet.ListTimesheetDetail.Items.GroupBy(x => x.Currency).Select(x => new ExportAllProjectInvoiceDto
             {
                 Currency = x.Key,
@@ -1359,7 +1363,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
                     }).ToList()
                 }).ToList(),
             }).ToList();
-            return await WriteAllProjectInvoiceToExcel(result, input, accountsNotWorkingFull, stopAndNew, increasedAndReduced);
+            return await WriteAllProjectInvoiceToExcel(input.TimesheetId, result, input, accountsNotWorkingFull, stopAndNew, increasedAndReduced);
         }
 
         private async Task<List<ClientAccountsNotWorkingFullDto>> GetAccountsNotWorkingFull(ResultTimesheetDetail currentTimeSheet)
@@ -1449,6 +1453,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
                             EndDate = t.ProjectInfor.EndDate
                         }).ToList()
                     }).ToList();
+
                 var listCurrentTimesheetId = currentTimeSheet.ListTimesheetDetail.Items.Select(y => y.ProjectId).ToList();
                 result.StopProject = beforeTimeSheet.ListTimesheetDetail.Items
                     .Where(x => !listCurrentTimesheetId.Contains(x.ProjectId))
@@ -1477,8 +1482,10 @@ namespace ProjectManagement.APIs.TimesheetProjects
             return result;
         }
 
-        private async Task<List<ClientAccountsChangeInforDto>> GetAccountsChange(ResultTimesheetDetail currentTimeSheet)
+        private async Task<List<ClientAccountsChangeInforDto>> GetAccountsChange(long timeSheetId, ResultTimesheetDetail currentTimeSheet)
         {
+            var current = WorkScope.Get<Timesheet>(timeSheetId);
+
             var result = new List<ClientAccountsChangeInforDto>();
 
             var clients = currentTimeSheet.ListTimesheetDetail.Items.GroupBy(x => x.ClientName);
@@ -1505,15 +1512,20 @@ namespace ProjectManagement.APIs.TimesheetProjects
                     {
                         foreach (var billInfo in timesheetDetail.ProjectBillInfomation)
                         {
-                            if (billInfo.WorkingTime < timesheetDetail.WorkingDay)
-                            {
-                                var accountChange = new AccountsChangeInforDto
-                                {
-                                    AccountName = billInfo.AccountName,
-                                    StartTime = billInfo.StartTime,
-                                    EndTime = billInfo.EndTime
-                                };
 
+                            var accountChange = new AccountsChangeInforDto
+                            {
+                                AccountName = billInfo.AccountName,
+                                StartTime = billInfo.StartTime,
+                                EndTime = billInfo.EndTime
+                            };
+
+                            if (billInfo.EndTime.HasValue && billInfo.EndTime.Value.Month == current.Month && billInfo.EndTime.Value.Year == current.Year)
+                            {
+                                projectAccountChange.AccountsChangeInfor.Add(accountChange);
+                            }
+                            else if (billInfo.StartTime.Month == current.Month && billInfo.StartTime.Year == current.Year)
+                            {
                                 projectAccountChange.AccountsChangeInfor.Add(accountChange);
                             }
                         }
@@ -1528,74 +1540,9 @@ namespace ProjectManagement.APIs.TimesheetProjects
             return result;
         }
 
-        //private async Task<AccountsChangeDto> GetAccountsChange(long timeSheetId, ResultTimesheetDetail currentTimeSheet)
-        //{
-        //    var current = WorkScope.Get<Timesheet>(timeSheetId);
-        //    var beforeTimeSheetId = WorkScope.GetAll<Timesheet>()
-        //        .OrderByDescending(x => x.Year)
-        //        .ThenByDescending(x => x.Month)
-        //        .Where(x => x.Year <= current.Year && x.Month <= current.Month && x.Id != current.Id)
-        //        .Select(x => x)
-        //        .FirstOrDefault();
-
-        //    var result = new AccountsChangeDto();
-        //    if (beforeTimeSheetId != null)
-        //    {
-        //        var beforeTimeSheet = await GetAllProjectTimesheetByTimesheet(new GridParam { MaxResultCount = int.MaxValue }, beforeTimeSheetId.Id);
-        //        var listBeforeTimesheetProjectId = beforeTimeSheet.ListTimesheetDetail.Items.Select(y => y.ProjectId).ToList();
-        //        result.AccountIncreased = currentTimeSheet.ListTimesheetDetail.Items
-        //            .Where(x => !listBeforeTimesheetProjectId.Contains(x.ProjectId))
-        //            .Select(x => new
-        //            {
-        //                ClientName = x.ClientName,
-        //                AccountsChargeInfo = new
-        //                {
-        //                    ProjectName = x.ProjectName,
-        //                    StartDate = x.StartDate,
-        //                    EndDate = x.EndDate
-        //                }
-        //            })
-        //            .GroupBy(x => x.ClientName)
-        //            .Select(x => new ClientAccountsChangeInforDto
-        //            {
-        //                ClientName = x.Key,
-        //                AccountsChangeInfors = x.Select(t => new AccountsChangeInforDto
-        //                {
-        //                    ProjectName = t.AccountsChargeInfo.ProjectName,
-        //                    StartDate = t.AccountsChargeInfo.StartDate,
-        //                    EndDate = t.AccountsChargeInfo.EndDate
-        //                }).ToList()
-        //            }).ToList();
-        //        var listCurrentTimesheetId = currentTimeSheet.ListTimesheetDetail.Items.Select(y => y.ProjectId).ToList();
-        //        result.AccountReduced = beforeTimeSheet.ListTimesheetDetail.Items
-        //            .Where(x => !listCurrentTimesheetId.Contains(x.ProjectId))
-        //            .Select(x => new
-        //            {
-        //                ClientName = x.ClientName,
-        //                AccountsChargeInfo = new
-        //                {
-        //                    ProjectName = x.ProjectName,
-        //                    StartDate = x.StartDate,
-        //                    EndDate = x.EndDate
-        //                }
-        //            })
-        //            .GroupBy(x => x.ClientName)
-        //            .Select(x => new ClientAccountsChangeInforDto
-        //            {
-        //                ClientName = x.Key,
-        //                AccountsChangeInfors = x.Select(t => new AccountsChangeInforDto
-        //                {
-        //                    ProjectName = t.AccountsChargeInfo.ProjectName,
-        //                    StartDate = t.AccountsChargeInfo.StartDate,
-        //                    EndDate = t.AccountsChargeInfo.EndDate
-        //                }).ToList()
-        //            }).ToList();
-        //    }
-        //    return result;
-        //}
-
-        private async Task<FileBase64Dto> WriteAllProjectInvoiceToExcel(List<ExportAllProjectInvoiceDto> result, TimesheetInfoDto currencyTables, List<ClientAccountsNotWorkingFullDto> accountsNotWorkingFull, NewAndStopProjectDto stopAndNew, List<ClientAccountsChangeInforDto> increasedAndReduced)
+        private async Task<FileBase64Dto> WriteAllProjectInvoiceToExcel(long TimesheetId, List<ExportAllProjectInvoiceDto> result, TimesheetInfoDto currencyTables, List<ClientAccountsNotWorkingFullDto> accountsNotWorkingFull, NewAndStopProjectDto stopAndNew, List<ClientAccountsChangeInforDto> increasedAndReduced)
         {
+            var current = WorkScope.Get<Timesheet>(TimesheetId);
             using (var wb = new ExcelPackage())
             {
                 var sheetInvoice = wb.Workbook.Worksheets.Add("Invoice");
@@ -1749,6 +1696,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
                 sheetAccountsNotWorkingFull.Cells[$"A1:E{startRow - 1}"].AutoFitColumns();
 
                 //Sheet Projects Change
+                //Table Stop Projects
                 var sheetProject = wb.Workbook.Worksheets.Add("Projects Change");
                 sheetProject.Cells.Style.Font.Name = "Times New Roman";
                 sheetProject.Cells.Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
@@ -1802,7 +1750,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
                 sheetProject.Cells[$"A1:E{startStopProject - 1}"].Style.Border.Right.Style = ExcelBorderStyle.Thin;
                 sheetProject.Cells[$"A1:E{startStopProject - 1}"].AutoFitColumns();
 
-                //Bảng 2
+                //Table New Projects
                 sheetProject.Cells["G1:K1"].Merge = true;
                 sheetProject.Cells["G1"].Value = "CÁC DỰ ÁN MỚI";
                 sheetProject.Cells["G1"].Style.Font.Size = 14;
@@ -1854,6 +1802,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
                 sheetProject.Cells[$"G1:K{startNewProject - 1}"].AutoFitColumns();
 
                 //Sheet Accounts Change
+                //Table Account Tăng
                 var sheetAccountsChange = wb.Workbook.Worksheets.Add("Accounts Change");
                 sheetAccountsChange.Cells.Style.Font.Name = "Times New Roman";
                 sheetAccountsChange.Cells.Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
@@ -1870,6 +1819,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
                 sheetAccountsChange.Cells["D2"].Value = "Account";
                 sheetAccountsChange.Cells["E2"].Value = "Ngày Start";
                 sheetAccountsChange.Cells["F2"].Value = "Ngày Stop";
+
                 var startAccountIncreased = sheetAccountsChange.Cells["A3"].Start.Row;
                 var startRow1 = startAccountIncreased;
                 var indexAccountIncreased = 1;
@@ -1880,12 +1830,17 @@ namespace ProjectManagement.APIs.TimesheetProjects
                         sheetAccountsChange.Cells[$"B{startRow1}"].Value = client.ClientName;
                         sheetAccountsChange.Cells[$"C{startRow1}"].Value = project.ProjectName;
                         int accountStartRow = startRow1;
+
                         foreach (var account in project.AccountsChangeInfor)
                         {
-                            sheetAccountsChange.Cells[$"A{accountStartRow}"].Value = indexAccountIncreased++;
-                            sheetAccountsChange.Cells[$"D{accountStartRow}"].Value = account.AccountName;
-                            sheetAccountsChange.Cells[$"E{accountStartRow}"].Value = account.StartTime;
-                            accountStartRow++;
+                            if (account.StartTime.Month == current.Month && account.StartTime.Year == current.Year)
+                            {
+                                sheetAccountsChange.Cells[$"A{accountStartRow}"].Value = indexAccountIncreased++;
+                                sheetAccountsChange.Cells[$"D{accountStartRow}"].Value = account.AccountName;
+                                sheetAccountsChange.Cells[$"E{accountStartRow}"].Value = $"{account.StartTime.ToString("dd/MM/yyyy")}";
+                                sheetAccountsChange.Cells[$"F{accountStartRow}"].Value = $"{(account.EndTime.HasValue ? account.EndTime.Value.ToString("dd/MM/yyyy") : "")}";
+                                accountStartRow++;
+                            }
                         }
 
                         if (project.AccountsChangeInfor.Count > 1)
@@ -1896,67 +1851,62 @@ namespace ProjectManagement.APIs.TimesheetProjects
                         startRow1 += project.AccountsChangeInfor.Count;
                     }
                 }
-                sheetAccountsChange.Cells[$"A1:F{startAccountIncreased - 1}"].Style.Border.Top.Style = ExcelBorderStyle.Thin;
-                sheetAccountsChange.Cells[$"A1:F{startAccountIncreased - 1}"].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
-                sheetAccountsChange.Cells[$"A1:F{startAccountIncreased - 1}"].Style.Border.Left.Style = ExcelBorderStyle.Thin;
-                sheetAccountsChange.Cells[$"A1:F{startAccountIncreased - 1}"].Style.Border.Right.Style = ExcelBorderStyle.Thin;
-                sheetAccountsChange.Cells[$"A1:F{startAccountIncreased - 1}"].AutoFitColumns();
+                sheetAccountsChange.Cells[$"A1:F{startRow1 - 1}"].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                sheetAccountsChange.Cells[$"A1:F{startRow1 - 1}"].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+                sheetAccountsChange.Cells[$"A1:F{startRow1 - 1}"].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                sheetAccountsChange.Cells[$"A1:F{startRow1 - 1}"].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                sheetAccountsChange.Cells[$"A1:F{startRow1 - 1}"].AutoFitColumns();
 
-                ////Bảng 2
-                //sheetAccountsChange.Cells["H1:M1"].Merge = true;
-                //sheetAccountsChange.Cells["H1"].Value = "CÁC ACC GIẢM";
-                //sheetAccountsChange.Cells["H1"].Style.Font.Size = 14;
-                //sheetAccountsChange.Cells["H1"].Style.Font.Bold = true;
-                //sheetAccountsChange.Cells["H1"].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                //sheetAccountsChange.Cells["H1"].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
-                //sheetAccountsChange.Cells["H2"].Value = "STT";
-                //sheetAccountsChange.Cells["I2"].Value = "CT/KH";
-                //sheetAccountsChange.Cells["J2"].Value = "Project";
-                //sheetAccountsChange.Cells["K2"].Value = "Account";
-                //sheetAccountsChange.Cells["L2"].Value = "Ngày Start";
-                //sheetAccountsChange.Cells["M2"].Value = "Ngày Stop";
+                //Table Account giảm
+                sheetAccountsChange.Cells["H1:M1"].Merge = true;
+                sheetAccountsChange.Cells["H1"].Value = "CÁC ACC GIẢM";
+                sheetAccountsChange.Cells["H1"].Style.Font.Size = 14;
+                sheetAccountsChange.Cells["H1"].Style.Font.Bold = true;
+                sheetAccountsChange.Cells["H1"].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                sheetAccountsChange.Cells["H1"].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
+                sheetAccountsChange.Cells["H2"].Value = "STT";
+                sheetAccountsChange.Cells["I2"].Value = "CT/KH";
+                sheetAccountsChange.Cells["J2"].Value = "Project";
+                sheetAccountsChange.Cells["K2"].Value = "Account";
+                sheetAccountsChange.Cells["L2"].Value = "Ngày Start";
+                sheetAccountsChange.Cells["M2"].Value = "Ngày Stop";
 
-                //var startAccountReduced = sheetAccountsChange.Cells["H3"].Start.Row;
-                //var indexAccountReduced = 1;
-                //if (increasedAndReduced.AccountReduced != null)
-                //{
-                //    foreach (var item in increasedAndReduced.AccountReduced)
-                //    {
-                //        if (item.AccountsChangeInfors.Count > 1)
-                //        {
-                //            sheetAccountsChange.Cells[$"I{startAccountReduced}:I{startAccountReduced + item.AccountsChangeInfors.Count - 1}"].Merge = true;
-                //            sheetAccountsChange.Cells[$"I{startAccountReduced}"].Value = item.ClientName;
-                //            foreach (var accountReduced in item.AccountsChangeInfors)
-                //            {
-                //                sheetAccountsChange.Cells[$"H{startAccountReduced}"].Value = indexAccountReduced;
-                //                sheetAccountsChange.Cells[$"I{startAccountReduced}"].Value = accountReduced.ProjectName;
+                var startAccountReduced = sheetAccountsChange.Cells["H3"].Start.Row;
+                var startRow2 = startAccountReduced;
+                var indexAccountReduced = 1;
+                foreach (var client in increasedAndReduced)
+                {
+                    foreach (var project in client.ProjectsInfor)
+                    {
+                        sheetAccountsChange.Cells[$"I{startRow2}"].Value = client.ClientName;
+                        sheetAccountsChange.Cells[$"J{startRow2}"].Value = project.ProjectName;
+                        int accountReducedStartRow = startRow2;
+                        foreach (var account in project.AccountsChangeInfor)
+                        {
+                            if (account.EndTime.HasValue && account.EndTime.Value.Month == current.Month && account.EndTime.Value.Year == current.Year)
+                            {
+                                sheetAccountsChange.Cells[$"H{accountReducedStartRow}"].Value = indexAccountReduced++;
+                                sheetAccountsChange.Cells[$"K{accountReducedStartRow}"].Value = account.AccountName;
+                                sheetAccountsChange.Cells[$"L{accountReducedStartRow}"].Value = $"{account.StartTime.ToString("dd/MM/yyyy")}";
+                                sheetAccountsChange.Cells[$"M{accountReducedStartRow}"].Value = $"{account.EndTime.Value.ToString("dd/MM/yyyy")}";
+                                accountReducedStartRow++;
+                            }
+                        }
 
-                //                sheetAccountsChange.Cells[$"L{startAccountReduced}"].Value = $"{accountReduced.StartTime.ToString("dd/MM/yyyy")}";
-                //                sheetAccountsChange.Cells[$"M{startAccountReduced}"].Value = $"{(accountReduced.EndTime.HasValue ? accountReduced.EndTime.Value.ToString("dd/MM/yyyy") : "")}";
-                //                startAccountReduced++;
-                //                indexAccountReduced++;
-                //            }
-                //        }
-                //        else
-                //        {
-                //            sheetAccountsChange.Cells[$"H{startAccountReduced}"].Value = indexAccountReduced;
-                //            sheetAccountsChange.Cells[$"I{startAccountReduced}"].Value = item.ClientName;
-                //            sheetAccountsChange.Cells[$"J{startAccountReduced}"].Value = item.AccountsChangeInfors.Select(x => x.ProjectName).First();
+                        if (project.AccountsChangeInfor.Count > 1)
+                        {
+                            sheetAccountsChange.Cells[$"I{startRow2}:I{startRow2 + project.AccountsChangeInfor.Count - 1}"].Merge = true;
+                            sheetAccountsChange.Cells[$"J{startRow2}:J{startRow2 + project.AccountsChangeInfor.Count - 1}"].Merge = true;
+                        }
+                        startRow2 += project.AccountsChangeInfor.Count;
+                    }
+                }
+                sheetAccountsChange.Cells[$"H1:M{startRow2 - 1}"].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                sheetAccountsChange.Cells[$"H1:M{startRow2 - 1}"].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+                sheetAccountsChange.Cells[$"H1:M{startRow2 - 1}"].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                sheetAccountsChange.Cells[$"H1:M{startRow2 - 1}"].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                sheetAccountsChange.Cells[$"H1:M{startRow2 - 1}"].AutoFitColumns();
 
-                //            sheetAccountsChange.Cells[$"L{startAccountReduced}"].Value = $"{item.AccountsChangeInfors.Select(x => x.StartTime.ToString("dd/MM/yyyy")).First()}";
-                //            sheetAccountsChange.Cells[$"M{startAccountReduced}"].Value = $"{item.AccountsChangeInfors.Select(x => x.EndTime.HasValue ? x.EndTime.Value.ToString("dd/MM/yyyy") : "").First()}";
-                //            startNewProject++;
-                //            indexNewProject++;
-                //        }
-                //    }
-                //}
-                //sheetAccountsChange.Cells[$"H1:M{startAccountReduced - 1}"].Style.Border.Top.Style = ExcelBorderStyle.Thin;
-                //sheetAccountsChange.Cells[$"H1:M{startAccountReduced - 1}"].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
-                //sheetAccountsChange.Cells[$"H1:M{startAccountReduced - 1}"].Style.Border.Left.Style = ExcelBorderStyle.Thin;
-                //sheetAccountsChange.Cells[$"H1:M{startAccountReduced - 1}"].Style.Border.Right.Style = ExcelBorderStyle.Thin;
-                //sheetAccountsChange.Cells[$"H1:M{startAccountReduced - 1}"].AutoFitColumns();
-
-                //
                 return new FileBase64Dto
                 {
                     FileName = $"INV_{currencyTables.TimesheetName}.xlsx",

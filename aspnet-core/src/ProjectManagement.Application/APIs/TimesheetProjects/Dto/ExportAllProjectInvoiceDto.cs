@@ -66,7 +66,7 @@ namespace ProjectManagement.APIs.TimesheetProjects.Dto
     {
         public string AccountName { get; set; }
 
-        public DateTime? StartTime { get; set; }
+        public DateTime StartTime { get; set; }
 
         public DateTime? EndTime { get; set; }
     }
@@ -78,13 +78,6 @@ namespace ProjectManagement.APIs.TimesheetProjects.Dto
         public List<ProjectAccountsChange> ProjectsInfor { get; set; }
 
 
-    }
-
-    public class IncreasedReducedAccountDto
-    {
-        public List<ProjectAccountsChange> AccountIncreased { get; set; }
-
-        public List<ProjectAccountsChange> AccountReduced { get; set; }
     }
 
     public class ProjectAccountsChange

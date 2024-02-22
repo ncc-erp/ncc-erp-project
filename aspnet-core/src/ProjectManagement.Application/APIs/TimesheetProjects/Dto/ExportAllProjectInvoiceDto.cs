@@ -16,6 +16,7 @@ namespace ProjectManagement.APIs.TimesheetProjects.Dto
         public double Total => Clients.Sum(s => s.Total);
     }
 
+    //Sheet Accounts Not Working Full
     public class AccountsNotWorkingFullDto
     {
         public float WorkingTime { get; set; }
@@ -37,7 +38,7 @@ namespace ProjectManagement.APIs.TimesheetProjects.Dto
         public List<AccountsNotWorkingFullDto> AccountsInfo { get; set; }
     }
 
-    //Sheet Project
+    //Sheet Projects Change
     public class NewStopProJectInforDto
     {
         public string ProjectName { get; set; }
@@ -75,12 +76,10 @@ namespace ProjectManagement.APIs.TimesheetProjects.Dto
     {
         public string ClientName { get; set; }
 
-        public List<ProjectAccountsChange> ProjectsInfor { get; set; }
-
-
+        public List<ProjectAccountsChangeInforDto> ProjectsInfor { get; set; }
     }
 
-    public class ProjectAccountsChange
+    public class ProjectAccountsChangeInforDto
     {
         public string ProjectName { get; set; }
 

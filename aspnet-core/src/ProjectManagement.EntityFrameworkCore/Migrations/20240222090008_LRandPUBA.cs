@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ProjectManagement.Migrations
 {
-    public partial class PUBandPUBA : Migration
+    public partial class LRandPUBA : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

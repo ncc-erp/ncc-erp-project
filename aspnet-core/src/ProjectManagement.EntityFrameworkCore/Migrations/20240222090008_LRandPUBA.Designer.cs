@@ -10,8 +10,8 @@ using ProjectManagement.EntityFrameworkCore;
 namespace ProjectManagement.Migrations
 {
     [DbContext(typeof(ProjectManagementDbContext))]
-    [Migration("20240219083048_PUBandPUBA")]
-    partial class PUBandPUBA
+    [Migration("20240222090008_LRandPUBA")]
+    partial class LRandPUBA
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -4578,7 +4578,7 @@ namespace ProjectManagement.Migrations
                         .IsRequired();
 
                     b.HasOne("ProjectManagement.Authorization.Users.User", "User")
-                        .WithMany()
+                        .WithMany("LinkedResources")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

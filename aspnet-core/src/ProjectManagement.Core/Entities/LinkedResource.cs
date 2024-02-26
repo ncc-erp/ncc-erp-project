@@ -12,11 +12,11 @@ namespace ProjectManagement.Entities
     {
         public int? TenantId { get; set; }
 
-        //[ForeignKey(nameof(UserId))]
+        [ForeignKey(nameof(UserId))]
         public User User { get; set; }
         public long UserId { get; set; }
 
-        //[ForeignKey(nameof(ProjectUserBillId))]
+        [ForeignKey(nameof(ProjectUserBillId))]
         public ProjectUserBill ProjectUserBill { get; set; }
         public long ProjectUserBillId { get; set; }
     }

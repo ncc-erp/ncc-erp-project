@@ -31,7 +31,7 @@ namespace ProjectManagement.Entities
         public bool isActive { get; set; }
         public ChargeType? ChargeType { get; set; }
 
-        public ICollection<LinkedResource> LinkedResources { get; set; }
+        public virtual ICollection<LinkedResource> LinkedResources { get; set; }
 
     }
 }

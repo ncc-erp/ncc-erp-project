@@ -4576,7 +4576,7 @@ namespace ProjectManagement.Migrations
                         .IsRequired();
 
                     b.HasOne("ProjectManagement.Authorization.Users.User", "User")
-                        .WithMany()
+                        .WithMany("LinkedResources")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

@@ -21,7 +21,7 @@ namespace ProjectManagement.APIs.TimesheetProjects.Dto
     {
         public float WorkingTime { get; set; }
 
-        public string AccountName { get; set; }
+        public string FullName { get; set; }
     }
 
     public class ClientAccountsNotWorkingFullDto
@@ -65,7 +65,7 @@ namespace ProjectManagement.APIs.TimesheetProjects.Dto
     //Sheet Accounts Change
     public class AccountsChangeInforDto
     {
-        public string AccountName { get; set; }
+        public string FullName { get; set; }
 
         public DateTime StartTime { get; set; }
 

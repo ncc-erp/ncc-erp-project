@@ -14,6 +14,8 @@ namespace ProjectManagement.APIs.TimeSheetProjectBills.Dto
         public string BillRole { get; set; }
         public float BillRate { get; set; }
         public float WorkingTime { get; set; }
+        public DateTime StartTime { get; set; }
+        public DateTime? EndTime { get; set; }
         public string Description { get; set; }
         public string Currency { get; set; }
         public ChargeType? ChargeType { get; set; }

@@ -1383,7 +1383,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
                                 .Where(billInfo => billInfo.WorkingTime < projects.First().WorkingDay)
                                 .Select(billInfo => new AccountsNotWorkingFullDto
                                 {
-                                    AccountName = billInfo.AccountName,
+                                    FullName = billInfo.FullName,
                                     WorkingTime = billInfo.WorkingTime
                                 }).ToList()
                         }).ToList()
@@ -1481,7 +1481,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
                                                     billInfo.StartTime.Year == current.Year))
                                 .Select(billInfo => new AccountsChangeInforDto
                                 {
-                                    AccountName = billInfo.AccountName,
+                                    FullName = billInfo.FullName,
                                     StartTime = billInfo.StartTime,
                                     EndTime = billInfo.EndTime
                                 }).ToList()
@@ -1629,7 +1629,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
                             foreach (var account in project.AccountsInfo)
                             {
                                 sheetAccountsNotWorkingFull.Cells[$"A{accountStartRow}"].Value = indexAccountsNotWorkingFull++;
-                                sheetAccountsNotWorkingFull.Cells[$"D{accountStartRow}"].Value = account.AccountName;
+                                sheetAccountsNotWorkingFull.Cells[$"D{accountStartRow}"].Value = account.FullName;
                                 sheetAccountsNotWorkingFull.Cells[$"E{accountStartRow}"].Value = account.WorkingTime;
                                 accountStartRow++;
                             }
@@ -1806,7 +1806,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
                             foreach (var account in accountStartTime)
                             {
                                 sheetAccountsChange.Cells[$"A{accountDataRowIncrease}"].Value = indexAccountIncrease++;
-                                sheetAccountsChange.Cells[$"D{accountDataRowIncrease}"].Value = account.AccountName;
+                                sheetAccountsChange.Cells[$"D{accountDataRowIncrease}"].Value = account.FullName;
                                 sheetAccountsChange.Cells[$"E{accountDataRowIncrease}"].Value = $"{account.StartTime.ToString("dd/MM/yyyy")}";
                                 sheetAccountsChange.Cells[$"F{accountDataRowIncrease}"].Value = $"{(account.EndTime.HasValue ? account.EndTime.Value.ToString("dd/MM/yyyy") : "")}";
                                 accountDataRowIncrease++;
@@ -1878,7 +1878,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
                                 if (account.EndTime.Value.Month == current.Month && account.EndTime.Value.Year == current.Year)
                                 {
                                     sheetAccountsChange.Cells[$"H{accountDataRowDecrease}"].Value = indexAccountDecrease++;
-                                    sheetAccountsChange.Cells[$"K{accountDataRowDecrease}"].Value = account.AccountName;
+                                    sheetAccountsChange.Cells[$"K{accountDataRowDecrease}"].Value = account.FullName;
                                     sheetAccountsChange.Cells[$"L{accountDataRowDecrease}"].Value = $"{account.StartTime.ToString("dd/MM/yyyy")}";
                                     sheetAccountsChange.Cells[$"M{accountDataRowDecrease}"].Value = $"{account.EndTime.Value.ToString("dd/MM/yyyy")}";
                                     accountDataRowDecrease++;

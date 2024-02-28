@@ -1644,7 +1644,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
                     if(clientStartRow < startRow)
                     {
                         sheetAccountsNotWorkingFull.Cells[$"B{clientStartRow}:B{startRow - 1}"].Merge = true;
-                    }     
+                    }    
                 }
                 sheetAccountsNotWorkingFull.Cells[$"A1:E{startRow - 1}"].Style.Border.Top.Style = ExcelBorderStyle.Thin;
                 sheetAccountsNotWorkingFull.Cells[$"A1:E{startRow - 1}"].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;

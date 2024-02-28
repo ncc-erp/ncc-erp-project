@@ -39,7 +39,7 @@ namespace ProjectManagement.APIs.TimesheetProjects.Dto
     }
 
     //Sheet Projects Change
-    public class NewStopProJectInforDto
+    public class ProjectsChangeInforDto
     {
         public string ProjectName { get; set; }
 
@@ -48,18 +48,18 @@ namespace ProjectManagement.APIs.TimesheetProjects.Dto
         public DateTime? EndDate { get; set; }
     }
 
-    public class ClientNewStopProJectInforDto
+    public class ClientProjectsChangeInforDto
     {
         public string ClientName { get; set; }
 
-        public List<NewStopProJectInforDto> ProjectInfors { get; set; }
+        public List<ProjectsChangeInforDto> ProjectInfors { get; set; }
     }
 
-    public class NewAndStopProjectDto
+    public class ProjectsChangeDto
     {
-        public List<ClientNewStopProJectInforDto> NewProject { get; set; }
+        public List<ClientProjectsChangeInforDto> NewProject { get; set; }
 
-        public List<ClientNewStopProJectInforDto> StopProject { get; set; }
+        public List<ClientProjectsChangeInforDto> StopProject { get; set; }
     }
 
     //Sheet Accounts Change
@@ -83,6 +83,7 @@ namespace ProjectManagement.APIs.TimesheetProjects.Dto
     {
         public string ProjectName { get; set; }
 
-        public List<AccountsChangeInforDto> AccountsChangeInfor { get; set; }
+        public List<AccountsChangeInforDto> AccountsIncrease { get; set; }
+        public List<AccountsChangeInforDto> AccountsDecrease { get; set; }
     }
 }

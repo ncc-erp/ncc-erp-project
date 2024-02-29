@@ -37,13 +37,13 @@ namespace ProjectManagement.APIs.ProjectUserBills
             this.projectUserBillManager = projectUserBillManager;
         }
 
-        [HttpGet]
+        [HttpPost]
         [AbpAuthorize(PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo,
           PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo,
           PermissionNames.Projects_TrainingProjects_ProjectDetail_TabBillInfo)]
-        public async Task<List<Services.ProjectUserBill.Dto.GetProjectUserBillDto>> GetAllByProject(long projectId)
+        public async Task<List<Services.ProjectUserBill.Dto.GetProjectUserBillDto>> GetAllByProject(GetAllProjectUserBillDto input)
         {
-            return await projectUserBillManager.GetAllByProject(projectId);
+            return await projectUserBillManager.GetAllByProject(input);
         }
 
         [HttpPost]
@@ -59,7 +59,7 @@ namespace ProjectManagement.APIs.ProjectUserBills
             }
             catch (Exception ex)
             {
-                 throw new UserFriendlyException(ex.Message);
+                throw new UserFriendlyException(ex.Message);
             }
         }
 
@@ -102,35 +102,35 @@ namespace ProjectManagement.APIs.ProjectUserBills
         [HttpPost]
         public async Task<List<SubProjectBillDto>> GetSubProjectBills(InputSubProjectBillDto input)
         {
-                var query = projectUserBillManager.GetSubProjectBills(input.ParentProjectId)
-                    .Select(x => new SubProjectBillDto
-                    {
-                        ProjectBillId = x.Id,
-                        UserId = x.UserId,
-                        UserName = x.User.Name,
-                        ProjectId = x.ProjectId,
-                        ProjectName = x.Project.Name,
-                        ProjectCode = x.Project.Code,
-                        AccountName = x.AccountName,
-                        BillRole = x.BillRole,
-                        BillRate = x.BillRate,
-                        StartTime = x.StartTime.Date,
-                        EndTime = x.EndTime.Value.Date,
-                        isActive = x.isActive,
-                        AvatarPath = x.User.AvatarPath,
-                        FullName = x.User.FullName,
-                        Branch = x.User.BranchOld,
-                        BranchColor = x.User.Branch.Color,
-                        BranchDisplayName = x.User.Branch.DisplayName,
-                        PositionId = x.User.PositionId,
-                        PositionName = x.User.Position.ShortName,
-                        PositionColor = x.User.Position.Color,
-                        EmailAddress = x.User.EmailAddress,
-                        UserType = x.User.UserType,
-                        UserLevel = x.User.UserLevel,
-                        ChargeType = x.ChargeType.HasValue ? x.ChargeType : x.Project.ChargeType,
-                    });
-                return await query.ToListAsync();
+            var query = projectUserBillManager.GetSubProjectBills(input.ParentProjectId)
+                .Select(x => new SubProjectBillDto
+                {
+                    ProjectBillId = x.Id,
+                    UserId = x.UserId,
+                    UserName = x.User.Name,
+                    ProjectId = x.ProjectId,
+                    ProjectName = x.Project.Name,
+                    ProjectCode = x.Project.Code,
+                    AccountName = x.AccountName,
+                    BillRole = x.BillRole,
+                    BillRate = x.BillRate,
+                    StartTime = x.StartTime.Date,
+                    EndTime = x.EndTime.Value.Date,
+                    isActive = x.isActive,
+                    AvatarPath = x.User.AvatarPath,
+                    FullName = x.User.FullName,
+                    Branch = x.User.BranchOld,
+                    BranchColor = x.User.Branch.Color,
+                    BranchDisplayName = x.User.Branch.DisplayName,
+                    PositionId = x.User.PositionId,
+                    PositionName = x.User.Position.ShortName,
+                    PositionColor = x.User.Position.Color,
+                    EmailAddress = x.User.EmailAddress,
+                    UserType = x.User.UserType,
+                    UserLevel = x.User.UserLevel,
+                    ChargeType = x.ChargeType.HasValue ? x.ChargeType : x.Project.ChargeType,
+                });
+            return await query.ToListAsync();
         }
 
         [HttpGet]
@@ -185,14 +185,14 @@ namespace ProjectManagement.APIs.ProjectUserBills
         //[AbpAllowAnonymous]
         public GridResult<BillInfoDto> GetAllBillInfo(InputGetBillInfoDto input)
         {
-            var result = WorkScope.All<ProjectUserBill>()               
+            var result = WorkScope.All<ProjectUserBill>()
                 .Select(x => new
                 {
                     UserInfor = new GetUserBillDto
                     {
                         UserId = x.UserId,
                         AvatarPath = x.User.AvatarPath,
-                        FullName = x.User.FullName,                       
+                        FullName = x.User.FullName,
                         BranchColor = x.User.Branch.Color,
                         BranchDisplayName = x.User.Branch.DisplayName,
                         PositionId = x.User.PositionId,
@@ -217,7 +217,7 @@ namespace ProjectManagement.APIs.ProjectUserBills
                         CurrencyCode = x.Project.Currency.Code,
                         ClientId = x.Project.ClientId,
                         ClientCode = x.Project.Client.Code,
-                        ClientName = x.Project.Client.Name                        
+                        ClientName = x.Project.Client.Name
                     },
                     IsCharge = x.isActive
                 })
@@ -226,8 +226,8 @@ namespace ProjectManagement.APIs.ProjectUserBills
                     (s.Project.AccountName != null && s.Project.AccountName.ToLower().Contains(input.SearchText.ToLower())) ||
                     (s.Project.ProjectCode != null && s.Project.ProjectCode.ToLower().Contains(input.SearchText.ToLower())) ||
                     (s.Project.ProjectName != null && s.Project.ProjectName.ToLower().Contains(input.SearchText.ToLower())) ||
-                    (s.Project.ClientCode != null && s.Project.ClientCode.ToLower().Contains(input.SearchText.ToLower()))   ||
-                    (s.Project.ClientName != null && s.Project.ClientName.ToLower().Contains(input.SearchText.ToLower()))   ||
+                    (s.Project.ClientCode != null && s.Project.ClientCode.ToLower().Contains(input.SearchText.ToLower())) ||
+                    (s.Project.ClientName != null && s.Project.ClientName.ToLower().Contains(input.SearchText.ToLower())) ||
                     (s.Project.Note != null && s.Project.Note.ToLower().Contains(input.SearchText.ToLower()))
                 ))
                 .WhereIf(input.ProjectId.HasValue, s => s.Project.ProjectId == input.ProjectId.Value)
@@ -630,45 +630,45 @@ namespace ProjectManagement.APIs.ProjectUserBills
             return await projectUserBillManager.GetAllBillAccount();
         }
         [HttpGet]
-        public async Task<object> Get(long userId,long projectId )
+        public async Task<object> Get(long userId, long projectId)
         {
-            return await WorkScope.GetAll<ProjectUserBill>().Select(x=>
+            return await WorkScope.GetAll<ProjectUserBill>().Select(x =>
              new
-            {
-                UserInfor = new GetUserBillDto
-                {
-                    UserId = x.UserId,
-                    //UserName = x.User.Name,
-                    AvatarPath = x.User.AvatarPath,
-                    FullName = x.User.FullName,
-                    BranchColor = x.User.Branch.Color,
-                    BranchDisplayName = x.User.Branch.DisplayName,
-                    PositionId = x.User.PositionId,
-                    PositionName = x.User.Position.ShortName,
-                    PositionColor = x.User.Position.Color,
-                    EmailAddress = x.User.EmailAddress,
-                    UserType = x.User.UserType,
-                    UserLevel = x.User.UserLevel,
-                },
-                Project = new GetProjectBillDto
-                {
-                    ProjectStatus = x.Project.Status,
-                    ProjectId = x.ProjectId,
-                    ProjectName = x.Project.Name,
-                    AccountName = x.User.FullName,
-                    //BillRole = x.BillRole,
-                    BillRate = x.BillRate,
-                    StartTime = x.StartTime,
-                    EndTime = x.EndTime,
-                    Note = x.Note,
-                    isActive = x.isActive,
-                    ChargeType = x.ChargeType,
-                    CurrencyCode = x.Project.Currency.Code,
-                    ClientId = x.Project.ClientId,
-                    ClientCode = x.Project.Client.Code,
-                    ClientName = x.Project.Client.Name
-                }
-            }).FirstOrDefaultAsync(x => x.UserInfor.UserId == userId && x.Project.ProjectId == projectId);
+             {
+                 UserInfor = new GetUserBillDto
+                 {
+                     UserId = x.UserId,
+                     //UserName = x.User.Name,
+                     AvatarPath = x.User.AvatarPath,
+                     FullName = x.User.FullName,
+                     BranchColor = x.User.Branch.Color,
+                     BranchDisplayName = x.User.Branch.DisplayName,
+                     PositionId = x.User.PositionId,
+                     PositionName = x.User.Position.ShortName,
+                     PositionColor = x.User.Position.Color,
+                     EmailAddress = x.User.EmailAddress,
+                     UserType = x.User.UserType,
+                     UserLevel = x.User.UserLevel,
+                 },
+                 Project = new GetProjectBillDto
+                 {
+                     ProjectStatus = x.Project.Status,
+                     ProjectId = x.ProjectId,
+                     ProjectName = x.Project.Name,
+                     AccountName = x.User.FullName,
+                     //BillRole = x.BillRole,
+                     BillRate = x.BillRate,
+                     StartTime = x.StartTime,
+                     EndTime = x.EndTime,
+                     Note = x.Note,
+                     isActive = x.isActive,
+                     ChargeType = x.ChargeType,
+                     CurrencyCode = x.Project.Currency.Code,
+                     ClientId = x.Project.ClientId,
+                     ClientCode = x.Project.Client.Code,
+                     ClientName = x.Project.Client.Name
+                 }
+             }).FirstOrDefaultAsync(x => x.UserInfor.UserId == userId && x.Project.ProjectId == projectId);
         }
 
         [HttpPut]

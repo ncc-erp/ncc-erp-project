@@ -19,6 +19,7 @@ using Abp.UI;
 using Abp.Domain.Uow;
 using Abp;
 using System.Linq.Dynamic.Core;
+using System.Linq.Expressions;
 
 namespace ProjectManagement.Services.ProjectUserBills
 {
@@ -40,6 +41,7 @@ namespace ProjectManagement.Services.ProjectUserBills
                         select pub;
             return query.OrderBy(p => p.Project.Name).ThenBy(p => p.User.EmailAddress);
         }
+
         public async Task<List<GetAllResourceDto>> QueryAllResource(bool isVendor)
         {
             // get current user and view user level permission
@@ -121,10 +123,9 @@ namespace ProjectManagement.Services.ProjectUserBills
                                 ProjectCode = pu.Project.Code
                             })
                            .ToList(),
-
                        }).ToListAsync();
 
-            return quser ;
+            return quser;
         }
 
         public async Task<long> GetActiveReportId()
@@ -135,20 +136,49 @@ namespace ProjectManagement.Services.ProjectUserBills
                 .Select(s => s.Id).FirstOrDefaultAsync();
         }
 
-        public async Task<List<GetProjectUserBillDto>> GetAllByProject(long projectId)
+        public IQueryable<T> ApplyOrders<T>(IQueryable<T> query, IDictionary<string, SortDirection> sortParams)
+        {
+            if (query == null || sortParams == null) return query;
+            var isOrder = true;
+            var queryOrder = (IOrderedQueryable<T>)query;
+            foreach (var param in sortParams)
+            {
+                queryOrder = OrderByProperty(queryOrder, param.Key, param.Value, isOrder);
+                isOrder = false;
+            }
+            return queryOrder;
+        }
+
+        private IOrderedQueryable<T> OrderByProperty<T>(IQueryable<T> query, string propertyName, SortDirection sortDirection, bool anotherLevel)
+        {
+            ParameterExpression parameterExpression = Expression.Parameter(typeof(T), string.Empty);
+            MemberExpression memberExpression = Expression.PropertyOrField(parameterExpression, propertyName);
+            LambdaExpression lambdaExpression = Expression.Lambda(memberExpression, parameterExpression);
+            MethodCallExpression methodCallExpression = Expression.Call(
+                typeof(Queryable),
+                (anotherLevel ? "OrderBy" : "ThenBy") + (sortDirection == SortDirection.DESC ? "Descending" : string.Empty),
+                new[] { typeof(T), memberExpression.Type },
+                query.Expression,
+                Expression.Quote(lambdaExpression)
+            );
+            var result = (IOrderedQueryable<T>)query.Provider.CreateQuery(methodCallExpression);
+            return result;
+        }
+
+        public async Task<List<GetProjectUserBillDto>> GetAllByProject(GetAllProjectUserBillDto input)
         {
             var isViewRate = await IsGrantedAsync(PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Rate_View);
 
             var existedPUBLUIds = await _workScope.GetAll<ProjectUserBillAccount>()
-              .Where(x => x.ProjectId == projectId)
+              .Where(x => x.ProjectId == input.ProjectId)
               .Select(x => x.UserId)
               .ToListAsync();
 
             var listPUBAs = _workScope.GetAll<ProjectUserBillAccount>();
             var listUsers = _workScope.GetAll<User>();
 
-            var query = await _workScope.GetAll<ProjectManagement.Entities.ProjectUserBill>()
-                 .Where(x => x.ProjectId == projectId)
+            var query = _workScope.GetAll<ProjectManagement.Entities.ProjectUserBill>()
+                 .Where(x => x.ProjectId == input.ProjectId)
                  .Select(x => new GetProjectUserBillDto
                  {
                      Id = x.Id,
@@ -218,12 +248,9 @@ namespace ProjectManagement.Services.ProjectUserBills
                                         })
                                         .Distinct()
                                         .ToList()
-
-                 })
-                 .OrderByDescending(x => x.CreationTime)
-                 .ToListAsync();
-
-            return query;
+                 });
+            query = ApplyOrders(query, input.SortParams);
+            return await query.ToListAsync();
         }
 
         public async Task<List<UserDto>> GetAllUserActive(bool onlyStaff, long projectId, long? currentUserId)
@@ -384,6 +411,5 @@ namespace ProjectManagement.Services.ProjectUserBills
                 .Distinct()
                 .ToListAsync();
         }
-
     }
 }

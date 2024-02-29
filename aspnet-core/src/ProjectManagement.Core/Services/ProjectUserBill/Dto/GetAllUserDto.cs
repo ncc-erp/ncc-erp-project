@@ -29,7 +29,7 @@ namespace ProjectManagement.Services.ProjectUserBill.Dto
 
         public string UserName { get; set; }
 
-        public List<WorkingProjectDto> WorkingProjects { get; set; }
+        public ICollection<WorkingProjectDto> WorkingProjects { get; set; }
         public string BranchColor { get; set; }
         public string BranchDisplayName { get; set; }
 

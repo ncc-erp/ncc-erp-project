@@ -47,15 +47,17 @@ namespace ProjectManagement.APIs.ProjectUserBills
         }
 
         [HttpPost]
-        [AbpAuthorize(PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount,
-            PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount,
-            PermissionNames.Projects_TrainingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount)]
-        public async Task<bool> LinkUserToBillAccount(ProjectUserBillAccountsDto input)
+        [AbpAuthorize(
+          PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount,
+          PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount,
+          PermissionNames.Projects_TrainingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount
+)]
+        public async Task<bool> LinkUserToBillAccount(LinkedResourcesDto input)
         {
             try
             {
-                await projectUserBillManager.AddProjectUserBillAccounts(input);
-                return true;
+                var linkedResources = await projectUserBillManager.AddLinkedResources(input);
+                return linkedResources.Any();
             }
             catch (Exception ex)
             {
@@ -67,11 +69,11 @@ namespace ProjectManagement.APIs.ProjectUserBills
         [AbpAuthorize(PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount,
             PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount,
             PermissionNames.Projects_TrainingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount)]
-        public async Task<bool> RemoveUserFromBillAccount(ProjectUserBillAccountsDto input)
+        public async Task<bool> RemoveUserFromBillAccount(LinkedResourcesDto input)
         {
             try
             {
-                await projectUserBillManager.RemoveProjectUserBillAccount(input);
+                await projectUserBillManager.RemoveLinkedResource(input);
                 return true;
             }
             catch (Exception ex)
@@ -81,11 +83,11 @@ namespace ProjectManagement.APIs.ProjectUserBills
         }
 
         [HttpPost]
-        public async Task LinkOneProjectUserBillAccount(ProjectUserBillAccountDto input)
+        public async Task LinkOneProjectUserBillAccount(LinkedResourceDto input)
         {
             try
             {
-                await projectUserBillManager.LinkOneProjectUserBillAccount(input);
+                await projectUserBillManager.LinkOneLinkedResource(input);
             }
             catch (Exception ex)
             {

@@ -55,6 +55,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   public searchUserBill: string = ""
   public searchBillCharge: number
   private projectId: number
+  public projectUserBillId: number
   public userBillCurrentPage: number = 1
   public rateInfo = {} as ProjectRateDto;
   public lastInvoiceNumber;
@@ -190,10 +191,10 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
       this.userForUserBill = data.result;
     })
   }
-  public removeLinkResource(projectId, billAccountId, userId, id){
+  public removeLinkResource(projectId, projectUserBillId, userId, id){
     // this.isLoading = true
     const req = {
-      billAccountId: billAccountId,
+      projectUserBillId: id,
       userIds: [userId]
     }
     const status = this.userBillList.find(item => item.id === id).createMode
@@ -276,11 +277,11 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
       }
       else {
         const reqAdd = {
-          billAccountId:userBill.id,
+          projectUserBillId: userBill.id,
           userIds: userBill.linkedResources ? userBill.linkedResources.map(item => item.id): []
         }
         const reqDelete = {
-          billAccountId: this.userIdOld,
+          projectUserBillId: this.userIdOld,
           userIds: userBill.linkedResources ? userBill.linkedResources.map(item => item.id) : []
         }
         concat(this.projectUserBillService.RemoveUserFromBillAccount(reqDelete),this.projectUserBillService.update(userBill),this.projectUserBillService.LinkUserToBillAccount(reqAdd))
@@ -359,7 +360,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
 
   public removeUserBill(userBill: projectUserBillDto): void {
     const reqDelete = {
-      billAccountId: userBill.id,
+      projectUserBillId: userBill.id,
       userIds: userBill.linkedResources.map(item => item.id)
     }
     abp.message.confirm(
@@ -446,7 +447,8 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
         projectId: projectId,
         userId: this.userIdOld != userId && this.isEditUserBill ? this.userIdOld : userId,
         listResource: listResource ? listResource.map(item=> item.id) : [],
-        userIdNew: userId
+        userIdNew: userId,
+        projectUserBillId: id
       },
       width: "700px",
     })
@@ -521,6 +523,8 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     this.ref.detectChanges();
   }
 }
+
+
 
 export interface AddSubInvoicesDto {
   parentInvoiceId: number,

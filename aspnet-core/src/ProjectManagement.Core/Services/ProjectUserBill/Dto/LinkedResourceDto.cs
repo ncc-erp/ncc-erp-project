@@ -7,7 +7,7 @@ namespace ProjectManagement.Services.ProjectUserBill.Dto
     public class LinkedResourcesDto
     {
         [Required]
-        public long BillAccountId { get; set; }
+        public long ProjectUserBillId { get; set; }
 
         [Required]
         public List<long> UserIds { get; set; }
@@ -19,6 +19,6 @@ namespace ProjectManagement.Services.ProjectUserBill.Dto
         public long UserId { get; set; }
 
         [Required]
-        public long BillAccountId { get; set; }
+        public long ProjectUserBillId { get; set; }
     }
 }

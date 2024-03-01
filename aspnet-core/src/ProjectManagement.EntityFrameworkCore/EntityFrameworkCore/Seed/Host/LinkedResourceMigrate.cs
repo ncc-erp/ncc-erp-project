@@ -28,11 +28,11 @@ namespace ProjectManagement.EntityFrameworkCore.Seed.Host
             {
                 var linkedResourcesFromProjectUserBillAccount = projectUserBillAccount
                     .Join(_context.ProjectUserBills,
-                          account => new { account.UserId, account.ProjectId },
+                          account => new { UserId = account.UserBillAccountId, account.ProjectId },
                           bill => new { bill.UserId, bill.ProjectId },
                           (account, bill) => new LinkedResource
                           {
-                              UserId = account.UserBillAccountId,
+                              UserId = account.UserId,
                               ProjectUserBillId = bill.Id,
                           })
                     .ToList();

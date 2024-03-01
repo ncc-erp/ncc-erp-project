@@ -201,9 +201,8 @@ namespace ProjectManagement.Services.ProjectUserBills
                      ChargeType = x.ChargeType ?? x.Project.ChargeType,
                      CreationTime = x.CreationTime,
 
-                     LinkedResources = _workScope.GetAll<LinkedResource>()
-                        .Where(lr => lr.ProjectUserBillId == x.Id)
-                        .Select(lr => new GetAllUserDto
+                     LinkedResources = x.LinkedResources
+                        .Select(lr => new GetUserInfo
                         {
                             Id = lr.UserId,
                             EmailAddress = lr.User.EmailAddress,
@@ -219,27 +218,9 @@ namespace ProjectManagement.Services.ProjectUserBills
                             BranchDisplayName = lr.User.Branch.DisplayName,
                             IsActive = lr.User.IsActive,
                             FullName = lr.User.Name + " " + lr.User.Surname,
-                            CreationTime = lr.User.CreationTime,
-                            UserSkills = lr.User.UserSkills.Select(s => new UserSkillDto
-                            {
-                                UserId = lr.UserId,
-                                SkillId = s.SkillId,
-                                SkillName = s.Skill.Name
-                            }).ToList(),
-                            WorkingProjects = lr.User.ProjectUsers
-                                .Where(s => s.Status == ProjectUserStatus.Present && s.AllocatePercentage > 0)
-                                .Where(p => p.Project.Status != ProjectStatus.Potential && p.Project.Status != ProjectStatus.Closed)
-                                .Select(p => new WorkingProjectDto
-                                {
-                                    ProjectName = p.Project.Name,
-                                    ProjectRole = p.ProjectRole,
-                                    StartTime = p.StartTime,
-                                    IsPool = p.IsPool
-                                }).ToList(),
                         }).ToList()
-                 });
-
-            query = ApplyOrders(query, input.SortParams);
+                 })
+                 .OrderByDescending(x => x.CreationTime);
             return await query.ToListAsync();
         }
 

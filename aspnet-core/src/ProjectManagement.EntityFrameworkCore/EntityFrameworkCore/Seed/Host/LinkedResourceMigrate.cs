@@ -21,25 +21,26 @@ namespace ProjectManagement.EntityFrameworkCore.Seed.Host
 
         private void SeedLinkedResources()
         {
-            var linkResources = _context.LinkedResources.FirstOrDefault();
-            var projectUserBillAccount = _context.ProjectUserBillAccounts.ToList();
+            var isLinkResourcesNull = !_context.LinkedResources.Any();
 
-            if (linkResources == null && projectUserBillAccount != null)
+            if (isLinkResourcesNull)
             {
-                var linkedResourcesFromProjectUserBillAccount = projectUserBillAccount
-                    .Join(_context.ProjectUserBills,
-                          account => new { UserId = account.UserBillAccountId, account.ProjectId },
-                          bill => new { bill.UserId, bill.ProjectId },
-                          (account, bill) => new LinkedResource
-                          {
-                              UserId = account.UserId,
-                              ProjectUserBillId = bill.Id,
-                          })
+                var projectUserBillAccount = _context.ProjectUserBillAccounts
+                    .Select(s => new { s.TenantId, s.UserId, s.ProjectId, s.UserBillAccountId })
                     .ToList();
-                foreach (var linkedResource in linkedResourcesFromProjectUserBillAccount)
-                {
-                    _context.LinkedResources.Add(linkedResource);
-                }
+
+
+                var linkedResources = (from puba in projectUserBillAccount
+                        from pub in _context.ProjectUserBills
+                        where puba.TenantId == pub.TenantId && puba.UserBillAccountId == pub.UserId && puba.ProjectId == puba.ProjectId
+                        select new LinkedResource
+                        {
+                            TenantId = puba.TenantId,
+                            UserId = puba.UserId,
+                            ProjectUserBillId = pub.Id,
+                        }).ToList();
+
+                _context.LinkedResources.AddRange(linkedResources);
                 _context.SaveChanges();
             }
 

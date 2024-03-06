@@ -83,27 +83,53 @@
         </div>
         <div class="card mt-2" [busy] = isLoading>
             <mat-expansion-panel [expanded]="!isShowUserBill">
-                <mat-expansion-panel-header name="pannel-userBill" class="mt-2 mb-2"
-                    (click)="isShowUserBill=!isShowUserBill">
-                    <h4 class="d-inline">Bill accounts ({{ filteredUserBillList.length }}):</h4>
-                    <button name="btn-createUserBill"
-                        *ngIf="!userBillProcess && permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Create)"
-                        [hidden]="isShowUserBill" style="border: none; height: fit-content;"
-                        class="btn bg-blue ml-3 btn-sm mb-2"
-                        (click)="addUserBill();userBillCurrentPage=1; $event.stopPropagation()">
-                        <i class="fa fa-plus m-0"></i>
-                    </button>
-
-                    <div class="col-lg-2" (click)="$event.stopPropagation()" style="padding-left: 10%;">
-                        <div class="input-group">
-                            <mat-form-field appearance="outline">
-                                <mat-label>Charge Status</mat-label>
-                                <mat-select [(ngModel)]="selectedIsCharge" (selectionChange)="filterByIsCharge()">
-                                    <mat-option value="All">All</mat-option>
-                                    <mat-option value="Charge">Charge</mat-option>
-                                    <mat-option value="Not Charge">No Charge</mat-option>
-                                </mat-select>
-                            </mat-form-field>
+                <mat-expansion-panel-header name="pannel-userBill" class="mt-2 mb-2 d-flex align-items-center flex-wrap" (click)="isShowUserBill=!isShowUserBill">
+                    <h4 class="d-inline" style="margin-top: 5px;">Bill accounts ({{ filteredUserBillList.length }}):</h4>
+                    <div class="d-flex flex-wrap justify-content-start align-items-center" style="flex-grow: 1;">
+                        <button name="btn-createUserBill" *ngIf="!userBillProcess && permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Create)" [hidden]="isShowUserBill" style="border: none; height: fit-content;" class="btn bg-blue ml-3 btn-sm mb-2" (click)="addUserBill();userBillCurrentPage=1; $event.stopPropagation()">
+                            <i class="fa fa-plus m-0"></i>
+                        </button>
+                        <div class="col-lg-3 mb-2" style="margin-left: 30px;">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <button name="btn-search" type="button" class="btn bg-blue" (click)="searchEmail(); $event.stopPropagation()">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                                <input type="text" class="form-control" name="keyword" placeholder="Enter email" [(ngModel)]="searchByEmail" (click)="$event.stopPropagation()" (keydown.enter)="searchEmail(); $event.stopPropagation()" />
+                            </div>
+                        </div>
+                        <div class="col-lg-2 mb-2" (click)="$event.stopPropagation()">
+                            <div class="input-group">
+                                <mat-form-field appearance="outline" style="width: 100%;">
+                                    <mat-label>Charge Status</mat-label>
+                                    <mat-select [(ngModel)]="selectedIsCharge" (selectionChange)="filterByIsCharge()">
+                                        <mat-option [value]="ChargeStatus.All">All</mat-option>
+                                        <mat-option [value]="ChargeStatus.IsCharge">Charge</mat-option>
+                                        <mat-option [value]="ChargeStatus.IsNotCharge">No Charge</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 mb-2" (click)="$event.stopPropagation()">
+                            <div class="input-group">
+                                <mat-form-field appearance="outline" style="width: 100%;">
+                                    <mat-label>Charge Name</mat-label>
+                                    <mat-select #chargeNameSelect [(ngModel)]="selectedChargeName" (selectionChange)="filterChargeName()" multiple>
+                                        <mat-option *ngFor="let accountName of listSelectChargeName" [value]="accountName">{{ accountName }}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 mb-2" (click)="$event.stopPropagation()">
+                            <div class="input-group">
+                                <mat-form-field appearance="outline" style="width: 100%;">
+                                    <mat-label>Charge Role</mat-label>
+                                    <mat-select #chargeRoleSelect [(ngModel)]="selectedChargeRole" (selectionChange)="filterChargeRole()" multiple>
+                                        <mat-option *ngFor="let billRole of listSelectChargeRole" [value]="billRole">{{ billRole }}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
                         </div>
                     </div>
                 </mat-expansion-panel-header>
@@ -112,32 +138,34 @@
                             class="table table-hover text-nowrap" [busy]="isLoading">
                             <thead>
                                 <tr>
-                                  <th
-                                    *ngFor="let thead of theadTable; let i = index"
-                                    class="text-center"
-                                  >
-                                    <div class="row sortHeader" [ngStyle]="styleThead(thead)">
-                                      <div class="rsp-th-name text-center">
-                                        {{ thead.name }}
-                                      </div>
-                                      <div
-                                        class="rsp-th-sort text-right"
-                                        *ngIf="i != 0 && thead.sortName"
-                                        style="vertical-align: middle"
-                                      >
-                                        <ng-container>
-                                          <app-sortable
-                                            #sortThead
-                                            [data]="{
-                                              sort: thead.sortName,
-                                              typeSort: thead.defaultSort
-                                            }"
-                                            (sortEvent)="sortTable($event)"
-                                          ></app-sortable>
-                                        </ng-container>
-                                      </div>
-                                    </div>
-                                  </th>
+                                  <th style="border-left: 10px solid #fff" class="stt">#</th>
+                                    <th class="align" (click)="sortData('emailAddress')" style="cursor: pointer;">{{ "Employee" | localize }}
+                                        <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'emailAddress'"></i>
+                                        <i *ngIf="sortColumn !== 'emailAddress'" class="fas fa-sort"></i>
+                                    </th>
+                                    <th class="align" (click)="sortData('accountName')" style="cursor: pointer;">{{ "Charge Name" | localize }}
+                                        <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'accountName'"></i>
+                                        <i *ngIf="sortColumn !== 'accountName'" class="fas fa-sort"></i>
+                                    </th>
+                                    <th class="align" (click)="sortData('billRole')" style="cursor: pointer;">{{ "Charge Role" | localize }}
+                                        <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'billRole'"></i>
+                                        <i *ngIf="sortColumn !== 'billRole'" class="fas fa-sort"></i>
+                                    </th>
+                                    <th>Linked resources</th>
+                                    <th class="align" (click)="sortData('billRate')" style="cursor: pointer;"
+                                        *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Rate_View)">
+                                        {{ "Rate" | localize }}
+                                        <br>({{rateInfo.currencyName}})
+                                        <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'billRate'"></i>
+                                        <i *ngIf="sortColumn !== 'billRate'" class="fas fa-sort"></i>
+                                    </th>
+                                    <th>Charge Type</th>
+                                    <th class="align" (click)="sortData('startTime')" style="cursor: pointer;">{{ "Is Charge" | localize }}
+                                        <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'startTime'"></i>
+                                        <i *ngIf="sortColumn !== 'startTime'" class="fas fa-sort"></i>
+                                    </th>
+                                    <th style="width:200px;">Note</th>
+                                    <th>Action</th>
                                 </tr>
                               </thead>
                                             <tbody>

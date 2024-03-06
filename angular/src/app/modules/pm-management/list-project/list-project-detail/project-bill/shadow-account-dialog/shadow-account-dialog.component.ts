@@ -70,27 +70,38 @@ export class ShadowAccountDialogComponent
     const reqAdd = {
       projectUserBillId: this.data.projectUserBillId,
       userIds: this.listResourceSelect.filter(item => !this.listResourceSelected.includes(item))
-    }
+    };
 
     const reqDelete = {
       projectUserBillId: this.data.projectUserBillId,
       userIds: this.listResourceSelected.filter(item => !this.listResourceSelect.includes(item))
+    };
+
+    let linkedResourceUpdate;
+
+    if (reqAdd.userIds.length > 0) {
+      linkedResourceUpdate = this.projectUserBillService.LinkUserToBillAccount(reqAdd);
+    } else if (reqDelete.userIds.length > 0) {
+      linkedResourceUpdate = this.projectUserBillService.RemoveUserFromBillAccount(reqDelete);
+    } else {
+      abp.notify.success("Linked resources updated successfully");
+      this.dialogRef.close({
+        userIdNew: this.data.userIdNew,
+        isSave: true
+      });
     }
 
-    forkJoin(
-      this.projectUserBillService.LinkUserToBillAccount(reqAdd),
-      this.projectUserBillService.RemoveUserFromBillAccount(reqDelete)
-    ).pipe(
-      catchError(this.projectUserBillService.handleError)
-    ).subscribe(([rsAdd, rsRemove]) => {
-      if (rsAdd.result && rsRemove.result) {
-        abp.notify.success("Update successfully")
+    linkedResourceUpdate
+      .pipe(
+        catchError(this.projectUserBillService.handleError)
+      )
+      .subscribe(result => {
+        abp.notify.success("Linked resources updated successfully");
         this.dialogRef.close({
           userIdNew: this.data.userIdNew,
           isSave: true
-        })
-      }
-    })
+        });
+      });
   }
 
   clear(){

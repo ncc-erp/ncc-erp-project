@@ -342,9 +342,9 @@
         
         public enum ChargeStatus
         {
-            All = 1,
-            IsCharge = 2,
-            IsNotCharge = 3
+            All = 0,
+            IsCharge = 1,
+            IsNotCharge = 2
         }
     }
 }

@@ -28,3 +28,10 @@ export class GetProcessCriteriaDto{
     level: number;
     isLeaf: boolean;
 }
+
+export enum ChargeStatus
+{
+    All = 0,
+    IsCharge = 1,
+    IsNotCharge = 2
+}

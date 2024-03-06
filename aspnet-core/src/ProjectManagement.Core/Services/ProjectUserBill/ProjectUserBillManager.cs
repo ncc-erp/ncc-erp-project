@@ -213,17 +213,17 @@ namespace ProjectManagement.Services.ProjectUserBills
                             PositionColor = lr.User.Position.Color,
                             PositionName = lr.User.Position.ShortName,
                             UserLevel = lr.User.UserLevel,
-                            Branch = lr.User.BranchOld,
                             BranchColor = lr.User.Branch.Color,
                             BranchDisplayName = lr.User.Branch.DisplayName,
                             IsActive = lr.User.IsActive,
-                            FullName = lr.User.Name + " " + lr.User.Surname,
+                            FullName = lr.User.FullName,
                         }).ToList()
-                 });
-                 //.OrderByDescending(x => x.CreationTime);
-            query = ApplyOrders(query, input.SortParams);
+                 })
+                 .WhereIf(input.ChargeStatus == ChargeStatus.IsCharge, x => x.isActive == true)
+                 .WhereIf(input.ChargeStatus == ChargeStatus.IsNotCharge, x => x.isActive == false)
+                 .OrderByDescending(x => x.CreationTime);
 
-            return await query.ToListAsync();
+            return  query.ToList();
         }
 
         public async Task<List<UserDto>> GetAllUserActive(bool onlyStaff, long projectId, long? currentUserId)
@@ -294,6 +294,7 @@ namespace ProjectManagement.Services.ProjectUserBills
                 }
                 else if (pUBA == null)
                 {
+
                     var newBA = new ProjectUserBillAccount
                     {
                         UserId = userId,
@@ -389,12 +390,11 @@ namespace ProjectManagement.Services.ProjectUserBills
         {
             var listLinkedResources = new List<LinkedResource>();
 
-            await ValidateProjectUserBill(input.ProjectUserBillId);
+            ValidateProjectUserBill(input.ProjectUserBillId);
 
             foreach (var userId in input.UserIds)
             {
-                //await ValidateLinkedResource(userId, input.ProjectUserBillId);
-                await ValidateUser(userId);
+                ValidateUser(userId);
 
                 var existingLinkedResource = await _workScope.GetAll<LinkedResource>()
                     .Where(lr => lr.UserId == userId && lr.ProjectUserBillId == input.ProjectUserBillId)
@@ -424,44 +424,27 @@ namespace ProjectManagement.Services.ProjectUserBills
 
         public async Task LinkOneLinkedResource(LinkedResourceDto input)
         {
-            //await ValidateLinkedResource(input.UserId, input.ProjectUserBillId);
-            await ValidateProjectUserBill(input.ProjectUserBillId);
+            ValidateProjectUserBill(input.ProjectUserBillId);
 
-            await ValidateUser(input.UserId);
+            ValidateUser(input.UserId);
 
-            var existingLinkedResource = await _workScope.GetAll<LinkedResource>()
-                .Where(lr => lr.UserId == input.UserId && lr.ProjectUserBillId == input.ProjectUserBillId)
-                .FirstOrDefaultAsync();
 
-            if (existingLinkedResource != null && !existingLinkedResource.IsDeleted)
+            var newLinkedResource = new LinkedResource
             {
-                throw new UserFriendlyException($"LinkedResource for UserId {input.UserId} already exists!");
-            }
-            else if (existingLinkedResource != null && existingLinkedResource.IsDeleted)
-            {
-                existingLinkedResource.IsDeleted = false;
-                await _workScope.UpdateAsync(existingLinkedResource);
-            }
-            else if (existingLinkedResource == null)
-            {
-                var newLinkedResource = new LinkedResource
-                {
-                    UserId = input.UserId,
-                    ProjectUserBillId = input.ProjectUserBillId,
-                };
+                UserId = input.UserId,
+                ProjectUserBillId = input.ProjectUserBillId,
+            };
 
-                await _workScope.InsertAsync(newLinkedResource);
-            }
+            await _workScope.InsertAsync(newLinkedResource);
         }
 
         public async Task RemoveLinkedResource(LinkedResourcesDto input)
         {
-            await ValidateProjectUserBill(input.ProjectUserBillId);
+            ValidateProjectUserBill(input.ProjectUserBillId);
 
             foreach (var userId in input.UserIds)
             {
-                //await ValidateLinkedResource(userId, input.ProjectUserBillId);
-                await ValidateUser(userId);
+                ValidateUser(userId);
 
                 var existingLinkedResource = await _workScope.GetAll<LinkedResource>()
                     .Where(lr => lr.UserId == userId && lr.ProjectUserBillId == input.ProjectUserBillId)
@@ -472,28 +455,24 @@ namespace ProjectManagement.Services.ProjectUserBills
             }
         }
 
-        private async Task ValidateUser(long userId)
+        private void ValidateUser(long userId)
         {
+            var existedUser = _workScope.GetAll<User>()
+                .Where(s => s.Id == userId)
+                .Any();
 
-            var existedUser = await _workScope.GetAll<User>()
-                .FirstOrDefaultAsync(s => s.Id == userId);
-
-            if (existedUser == null)
+            if (!existedUser)
                 throw new UserFriendlyException($"User with Id {userId} does not exist!");
-
         }
 
-        private async Task ValidateProjectUserBill(long projectUserBillId)
+        private void ValidateProjectUserBill(long projectUserBillId)
         {
-
-            var projectUserBillIds = await _workScope.GetAll<ProjectManagement.Entities.ProjectUserBill>()
+            var isExist = _workScope.GetAll<Entities.ProjectUserBill>()
                 .Where(s => s.Id == projectUserBillId)
-                .Select(s => s.Id)
-                .ToListAsync();
+                .Any();
 
-            if (!projectUserBillIds.Contains(projectUserBillId))
+            if (!isExist)
                 throw new UserFriendlyException($"ProjectUserBill with Id {projectUserBillId} does not exist!");
-
         }
 
     }

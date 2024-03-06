@@ -13,6 +13,13 @@ namespace ProjectManagement.Services.ProjectUserBill.Dto
         public List<long> UserIds { get; set; }
     }
 
+    public class RemoveLinkResource
+    {
+        [Required]
+        public long Id { get; set; }
+
+    }
+
     public class LinkedResourceDto
     {
         [Required]

@@ -47,9 +47,7 @@ namespace ProjectManagement.Services.ProjectUserBill.Dto
         public string AvatarFullPath => FileUtils.FullFilePath(AvatarPath);
         public UserType UserType { get; set; }
         public UserLevel UserLevel { get; set; }
-        public ProjectManagement.Constants.Enum.ProjectEnum.Branch Branch { get; set; }
         public bool IsActive { get; set; }
-
         public string FullName { get; set; }
 
         public string UserName { get; set; }

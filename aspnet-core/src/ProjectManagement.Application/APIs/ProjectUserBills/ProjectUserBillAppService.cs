@@ -48,52 +48,34 @@ namespace ProjectManagement.APIs.ProjectUserBills
 
         [HttpPost]
         [AbpAuthorize(
-          PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount,
-          PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount,
-          PermissionNames.Projects_TrainingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount
-)]
+            PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount,
+            PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount,
+            PermissionNames.Projects_TrainingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount
+        )]
         public async Task<bool> LinkUserToBillAccount(LinkedResourcesDto input)
         {
-            try
-            {
-                var linkedResources = await projectUserBillManager.AddLinkedResources(input);
-                return linkedResources.Any();
-            }
-            catch (Exception ex)
-            {
-                throw new UserFriendlyException(ex.Message);
-            }
+            var linkedResources = await projectUserBillManager.AddLinkedResources(input);
+            return linkedResources.Any();
         }
 
         [HttpPost]
-        [AbpAuthorize(PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount,
+        [AbpAuthorize(
+            PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount,
             PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount,
-            PermissionNames.Projects_TrainingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount)]
+            PermissionNames.Projects_TrainingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount
+        )]
         public async Task<bool> RemoveUserFromBillAccount(LinkedResourcesDto input)
         {
-            try
-            {
-                await projectUserBillManager.RemoveLinkedResource(input);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw new UserFriendlyException(ex.Message);
-            }
+            await projectUserBillManager.RemoveLinkedResource(input);
+            return true;
         }
 
         [HttpPost]
         public async Task LinkOneProjectUserBillAccount(LinkedResourceDto input)
         {
-            try
-            {
-                await projectUserBillManager.LinkOneLinkedResource(input);
-            }
-            catch (Exception ex)
-            {
-                throw new UserFriendlyException(ex.Message);
-            }
+            await projectUserBillManager.LinkOneLinkedResource(input);
         }
+
 
         [HttpGet]
         public async Task<List<UserDto>> GetAllUserActive(bool onlyStaff, long projectId, long? currentUserId)
@@ -465,7 +447,7 @@ namespace ProjectManagement.APIs.ProjectUserBills
         }
 
         [HttpGet]
-        public async Task<List<SubInvoiceDto>> GetAllProjectCanUsing(long projectId)
+        public List<SubInvoiceDto> GetAllProjectCanUsing(long projectId)
         {
             var clientId = WorkScope.Get<Project>(projectId).ClientId;
             var listProjectAll = GetAllProject();
@@ -482,7 +464,7 @@ namespace ProjectManagement.APIs.ProjectUserBills
                 }).ToList();
         }
         [HttpGet]
-        public async Task<ParentInvoiceDto> GetParentInvoiceByProject(long projectId)
+        public ParentInvoiceDto GetParentInvoiceByProject(long projectId)
         {
             var listProjectAll = GetAllProject();
             return listProjectAll

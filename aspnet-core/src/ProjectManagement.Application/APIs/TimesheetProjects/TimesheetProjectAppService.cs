@@ -158,25 +158,25 @@ namespace ProjectManagement.APIs.TimesheetProjects
             var allowViewAllTSProject = PermissionChecker.IsGranted(PermissionNames.Timesheets_TimesheetDetail_ViewAll);
 
             var timeSheetDeTails = GetTimesheetDetail(timesheetId, allowViewBillRate, allowViewAllTSProject);
+            var queryFilter = timeSheetDeTails.ApplySearchAndFilter(input);
+            var totalProject = await queryFilter.CountAsync();
 
-            var filterAndSearchProjects = timeSheetDeTails.ApplySearchAndFilter(input);
+            var paggingProjects = await queryFilter.TakePage(input).ToListAsync();
 
-            var paggingProjects = filterAndSearchProjects.TakePage(input).ToList();
+            var allProjects = await timeSheetDeTails.ToListAsync();
+            allProjects = GetClosedTimesheetProject(allProjects);
 
-            paggingProjects = GetClosedTimeTimesheetProject(paggingProjects);
+            var dicProjectIdToInvoiceInfo = GetDicMainProjectIdToInvoiceInfo(allProjects);
+            UpdateInvoiceSetting(paggingProjects, dicProjectIdToInvoiceInfo);
 
-            var allProjectFilters = filterAndSearchProjects.ToList();
+            var listTotalAmountByCurrency = allProjects.GroupBy(x => x.Currency)
+                                    .Select(x => new TotalMoneyByCurrencyDto
+                                    {
+                                        CurrencyName = x.Key,
+                                        Amount = x.Sum(x => x.TotalAmountProjectBillInfomation)
+                                    }).ToList();
 
-            var total = await filterAndSearchProjects.CountAsync();
-
-            var gridResult = new GridResult<GetTimesheetDetailDto>(paggingProjects, total);
-
-            var listTotalAmountByCurrency = allProjectFilters.GroupBy(x => x.Currency)
-                                        .Select(x => new TotalMoneyByCurrencyDto
-                                        {
-                                            CurrencyName = x.Key,
-                                            Amount = x.Sum(x => x.TotalAmountProjectBillInfomation)
-                                        }).ToList();
+            var gridResult = new GridResult<GetTimesheetDetailDto>(paggingProjects, totalProject);
 
             var result = new ResultTimesheetDetail
             {
@@ -187,7 +187,6 @@ namespace ProjectManagement.APIs.TimesheetProjects
             return result;
         }
 
-        //lưu trữ thông tin hóa đơn(InvoiceSettingDto) của các dự án chính
         private Dictionary<long, InvoiceSettingDto> GetDicMainProjectIdToInvoiceInfo(List<GetTimesheetDetailDto> listProject)
         {
             var listMainProjectInfo = listProject.Where(s => s.IsMainProjectInvoice)
@@ -242,23 +241,33 @@ namespace ProjectManagement.APIs.TimesheetProjects
 
         private IOrderedQueryable<GetTimesheetDetailDto> GetTimesheetDetail(long timesheetId, bool allowViewBillRate = false, bool allowViewAllTSProject = false, bool isShortInfo = false)
         {
-            var defaultWorkingHours = Convert.ToInt32(SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.DefaultWorkingHours).Result);
-
             var query = WorkScope.GetAll<TimesheetProject>()
                 .Where(x => x.TimesheetId == timesheetId)
                 .Where(x => allowViewAllTSProject || x.Project.PMId == AbpSession.UserId);
 
             if (isShortInfo)
             {
-                return query.Select(tsp => new GetTimesheetDetailDto
-                {
-                    Id = tsp.Id,
-                    ProjectId = tsp.ProjectId,
-                    TimesheetId = tsp.TimesheetId,
-                    ProjectName = tsp.Project.Name,
-                    ClientId = tsp.Project.ClientId,
-                    ClientCode = tsp.Project.Client != null ? tsp.Project.Client.Code : default,
-                    ProjectBillInfomation = WorkScope.GetAll<TimesheetProjectBill>()
+                return GetShortTimesheetProjectInfo(query);
+            }
+            else
+            {
+                return GetFullTimesheetProjectInfo(query, allowViewBillRate);
+            }
+        }
+
+        private IOrderedQueryable<GetTimesheetDetailDto> GetShortTimesheetProjectInfo(IQueryable<TimesheetProject> timesheetProjectsInfo)
+        {
+            var defaultWorkingHours = Convert.ToInt32(SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.DefaultWorkingHours).Result);
+
+            return timesheetProjectsInfo.Select(tsp => new GetTimesheetDetailDto
+            {
+                Id = tsp.Id,
+                ProjectId = tsp.ProjectId,
+                TimesheetId = tsp.TimesheetId,
+                ProjectName = tsp.Project.Name,
+                ClientId = tsp.Project.ClientId,
+                ClientCode = tsp.Project.Client != null ? tsp.Project.Client.Code : default,
+                ProjectBillInfomation = WorkScope.GetAll<TimesheetProjectBill>()
                                                     .Where(x => x.TimesheetId == tsp.TimesheetId && x.ProjectId == tsp.ProjectId && x.IsActive)
                                                     .OrderBy(x => x.User.EmailAddress)
                                                     .Select(x => new TimesheetProjectBillInfoDto
@@ -272,43 +281,46 @@ namespace ProjectManagement.APIs.TimesheetProjects
                                                         DefaultWorkingHours = defaultWorkingHours,
                                                         TimeSheetWorkingDay = tsp.WorkingDay,
                                                     }).ToList(),
-                    ProjectCurrency = tsp.Project.Currency.Code,
-                    ProjectChargeType = tsp.Project.ChargeType,
-                    InvoiceNumber = tsp.InvoiceNumber,
-                    WorkingDay = tsp.WorkingDay,
-                    Discount = tsp.Discount,
-                    TransferFee = tsp.TransferFee,
-                    MainProjectId = tsp.ParentInvoiceId,
-                    PaymentDueBy = tsp.Project.Client.PaymentDueBy,
-                    StartDate = tsp.Project.StartTime,
-                    EndDate = tsp.Project.EndTime,
-                    IsActive = tsp.IsActive,
-                    ProjectType = tsp.Project.ProjectType,
-                    ProjectStatus = tsp.Project.Status
-                }).OrderByDescending(x => x.ClientId);
-            }
-            else
+                ProjectCurrency = tsp.Project.Currency.Code,
+                ProjectChargeType = tsp.Project.ChargeType,
+                InvoiceNumber = tsp.InvoiceNumber,
+                WorkingDay = tsp.WorkingDay,
+                Discount = tsp.Discount,
+                TransferFee = tsp.TransferFee,
+                MainProjectId = tsp.ParentInvoiceId,
+                PaymentDueBy = tsp.Project.Client.PaymentDueBy,
+                StartDate = tsp.Project.StartTime,
+                EndDate = tsp.Project.EndTime,
+                IsActive = tsp.IsActive,
+                ProjectType = tsp.Project.ProjectType,
+                ProjectStatus = tsp.Project.Status
+            }).OrderByDescending(x => x.ClientId);
+        }
+
+        private IOrderedQueryable<GetTimesheetDetailDto> GetFullTimesheetProjectInfo(IQueryable<TimesheetProject> timesheetProjectsInfo, bool allowViewBillRate = false)
+        {
+            var defaultWorkingHours = Convert.ToInt32(SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.DefaultWorkingHours).Result);
+
+            return timesheetProjectsInfo.Select(tsp => new GetTimesheetDetailDto
             {
-                return query.Select(tsp => new GetTimesheetDetailDto
-                {
-                    Id = tsp.Id,
-                    ProjectId = tsp.ProjectId,
-                    TimesheetId = tsp.TimesheetId,
-                    ProjectName = tsp.Project.Name,
-                    ProjectCode = tsp.Project.Code,
-                    PmId = tsp.Project.PMId,
-                    PmUserType = tsp.Project.PM.UserType,
-                    PmAvatarPath = tsp.Project.PM.AvatarPath,
-                    PmBranch = tsp.Project.PM.BranchOld,
-                    PmBranchColor = tsp.Project.PM.Branch.Color,
-                    PmBranchDisplayName = tsp.Project.PM.Branch.DisplayName,
-                    PmEmailAddress = tsp.Project.PM.EmailAddress,
-                    PmFullName = tsp.Project.PM.Name + " " + tsp.Project.PM.Surname,
-                    ClientId = tsp.Project.ClientId,
-                    ClientName = tsp.Project.Client != null ? tsp.Project.Client.Name : default,
-                    ClientCode = tsp.Project.Client != null ? tsp.Project.Client.Code : default,
-                    FilePath = tsp.FilePath,
-                    ProjectBillInfomation = WorkScope.GetAll<TimesheetProjectBill>()
+                Id = tsp.Id,
+                ProjectId = tsp.ProjectId,
+                TimesheetId = tsp.TimesheetId,
+                ProjectName = tsp.Project.Name,
+                ProjectCode = tsp.Project.Code,
+                PmId = tsp.Project.PMId,
+                PmUserType = tsp.Project.PM.UserType,
+                PmAvatarPath = tsp.Project.PM.AvatarPath,
+                PmBranch = tsp.Project.PM.BranchOld,
+                PmBranchColor = tsp.Project.PM.Branch.Color,
+                PmBranchDisplayName = tsp.Project.PM.Branch.DisplayName,
+                PmEmailAddress = tsp.Project.PM.EmailAddress,
+                PmFullName = tsp.Project.PM.Name + " " + tsp.Project.PM.Surname,
+                ClientId = tsp.Project.ClientId,
+                ClientName = tsp.Project.Client != null ? tsp.Project.Client.Name : default,
+                ClientCode = tsp.Project.Client != null ? tsp.Project.Client.Code : default,
+                FilePath = tsp.FilePath,
+                ProjectBillInfomation = WorkScope.GetAll<TimesheetProjectBill>()
                                                     .Where(x => x.TimesheetId == tsp.TimesheetId && x.ProjectId == tsp.ProjectId && x.IsActive)
                                                     .OrderBy(x => x.User.EmailAddress)
                                                     .Select(x => new TimesheetProjectBillInfoDto
@@ -326,29 +338,28 @@ namespace ProjectManagement.APIs.TimesheetProjects
                                                         DefaultWorkingHours = defaultWorkingHours,
                                                         TimeSheetWorkingDay = tsp.WorkingDay,
                                                     }).ToList(),
-                    Note = tsp.Note,
-                    HistoryFile = tsp.HistoryFile,
-                    HasFile = !string.IsNullOrEmpty(tsp.FilePath),
-                    IsComplete = tsp.IsComplete.Value == true ? true : false,
-                    RequireTimesheetFile = tsp.Project.RequireTimesheetFile,
-                    ProjectCurrency = tsp.Project.Currency.Name,
-                    ProjectChargeType = tsp.Project.ChargeType,
-                    InvoiceNumber = tsp.InvoiceNumber,
-                    WorkingDay = tsp.WorkingDay,
-                    Discount = tsp.Discount,
-                    TransferFee = tsp.TransferFee,
-                    MainProjectId = tsp.ParentInvoiceId,
-                    StartDate = tsp.Project.StartTime,
-                    EndDate = tsp.Project.EndTime,
-                    IsActive = tsp.IsActive,
-                    ProjectType = tsp.Project.ProjectType,
-                    ProjectStatus = tsp.Project.Status,
-                    ListProjectCodes = tsp.Project.ListProjectCodes
-                }).OrderByDescending(x => x.ClientId);
-            }
+                Note = tsp.Note,
+                HistoryFile = tsp.HistoryFile,
+                HasFile = !string.IsNullOrEmpty(tsp.FilePath),
+                IsComplete = tsp.IsComplete.Value == true ? true : false,
+                RequireTimesheetFile = tsp.Project.RequireTimesheetFile,
+                ProjectCurrency = tsp.Project.Currency.Name,
+                ProjectChargeType = tsp.Project.ChargeType,
+                InvoiceNumber = tsp.InvoiceNumber,
+                WorkingDay = tsp.WorkingDay,
+                Discount = tsp.Discount,
+                TransferFee = tsp.TransferFee,
+                MainProjectId = tsp.ParentInvoiceId,
+                StartDate = tsp.Project.StartTime,
+                EndDate = tsp.Project.EndTime,
+                IsActive = tsp.IsActive,
+                ProjectType = tsp.Project.ProjectType,
+                ProjectStatus = tsp.Project.Status,
+                ListProjectCodes = tsp.Project.ListProjectCodes
+            }).OrderByDescending(x => x.ClientId);
         }
 
-        private List<GetTimesheetDetailDto> GetClosedTimeTimesheetProject(List<GetTimesheetDetailDto> listTimesheetDetail)
+        private List<GetTimesheetDetailDto> GetClosedTimesheetProject(List<GetTimesheetDetailDto> listTimesheetDetail)
         {
             var tsProjectBackgroudJobName = typeof(ReactivetimesheetProjectBackgroudJob).FullName;
             var tsProjectId = "TimesheetProjectId";
@@ -1061,7 +1072,6 @@ namespace ProjectManagement.APIs.TimesheetProjects
             return resultList;
         }
 
-
         private void AddMoreBillDate(List<DateTime> listBillDate, double totalWorkingDay)
         {
             var maxBillDay = listBillDate.Count;
@@ -1160,6 +1170,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
 
             return excelPackageIn;
         }
+
         [HttpPut]
         [AbpAuthorize(PermissionNames.Timesheets_TimesheetDetail_UpdateProjectCodes)]
         public async Task<string> UpdateProjectCodes(long projectId, string ListProjectCodes)
@@ -1262,6 +1273,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
                     }
                 }
             }
+
             return sb.ToString();
         }
 
@@ -1325,6 +1337,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
 
             rs.SentInvoices = listInvoices;
             rs.ListTotalMoneyByCurrency = listTotalAmountByCurrency;
+
             return rs;
         }
 
@@ -1332,7 +1345,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
 
         [HttpPost]
         [AbpAuthorize(PermissionNames.Timesheets_TimesheetDetail_ExportInvoiceAllProject)]
-        public async Task<FileBase64Dto> ExportAllTimeSheetProjectToExcel(TimesheetInfoDto input)
+        public async Task<FileBase64Dto> ExportInvoiceAllProject(TimesheetInfoDto input)
         {
             var currentTimeSheet = await GetAllProjectTimesheetByTimesheet(new GridParam { MaxResultCount = int.MaxValue }, input.TimesheetId);
             var invoice = await GetInvoice(currentTimeSheet);
@@ -1406,6 +1419,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
         private async Task<ProjectsChangeDto> GetProjectsChange(long timeSheetId, ResultTimesheetDetail currentTimeSheet)
         {
             var current = WorkScope.Get<Timesheet>(timeSheetId);
+
             var beforeTimeSheetId = WorkScope.GetAll<Timesheet>()
                 .AsEnumerable()
                 .Where(x => x.TimeSheetDate <= current.TimeSheetDate && x.Id != current.Id)
@@ -1416,58 +1430,67 @@ namespace ProjectManagement.APIs.TimesheetProjects
             if (beforeTimeSheetId != null)
             {
                 var beforeTimeSheet = await GetAllProjectTimesheetByTimesheet(new GridParam { MaxResultCount = int.MaxValue }, beforeTimeSheetId.Id);
-                var listBeforeTimesheetProjectId = beforeTimeSheet.ListTimesheetDetail.Items.Select(y => y.ProjectId).ToList();
-                result.NewProject = currentTimeSheet.ListTimesheetDetail.Items
-                    .Where(x => !listBeforeTimesheetProjectId.Contains(x.ProjectId))
-                    .Select(x => new
-                    {
-                        ClientName = x.ClientName,
-                        ProjectInfor = new
-                        {
-                            ProjectName = x.ProjectName,
-                            StartDate = x.StartDate,
-                            EndDate = x.EndDate
-                        }
-                    })
-                    .GroupBy(x => x.ClientName)
-                    .Select(x => new ClientProjectsChangeInforDto
-                    {
-                        ClientName = x.Key,
-                        ProjectInfors = x.Select(t => new ProjectsChangeInforDto
-                        {
-                            ProjectName = t.ProjectInfor.ProjectName,
-                            StartDate = t.ProjectInfor.StartDate,
-                            EndDate = t.ProjectInfor.EndDate
-                        }).ToList()
-                    }).ToList();
-
-                var listCurrentTimesheetId = currentTimeSheet.ListTimesheetDetail.Items.Select(y => y.ProjectId).ToList();
-                result.StopProject = beforeTimeSheet.ListTimesheetDetail.Items
-                    .Where(x => !listCurrentTimesheetId.Contains(x.ProjectId))
-                    .Select(x => new
-                    {
-                        ClientName = x.ClientName,
-                        ProjectInfor = new
-                        {
-                            ProjectName = x.ProjectName,
-                            StartDate = x.StartDate,
-                            EndDate = x.EndDate
-                        }
-                    })
-                    .GroupBy(x => x.ClientName)
-                    .Select(x => new ClientProjectsChangeInforDto
-                    {
-                        ClientName = x.Key,
-                        ProjectInfors = x.Select(t => new ProjectsChangeInforDto
-                        {
-                            ProjectName = t.ProjectInfor.ProjectName,
-                            StartDate = t.ProjectInfor.StartDate,
-                            EndDate = t.ProjectInfor.EndDate
-                        }).ToList()
-                    }).ToList();
+                result.NewProject = GetNewProjects(beforeTimeSheet, currentTimeSheet);
+                result.StopProject = GetStopProjects(beforeTimeSheet, currentTimeSheet);
             }
 
             return result;
+        }
+
+        private List<ClientProjectsChangeInforDto> GetNewProjects(ResultTimesheetDetail beforeTimeSheet, ResultTimesheetDetail currentTimeSheet)
+        {
+            var listBeforeTimesheetProjectId = beforeTimeSheet.ListTimesheetDetail.Items.Select(y => y.ProjectId).ToList();
+            return currentTimeSheet.ListTimesheetDetail.Items
+                .Where(x => !listBeforeTimesheetProjectId.Contains(x.ProjectId))
+                .Select(x => new
+                {
+                    ClientName = x.ClientName,
+                    ProjectInfor = new
+                    {
+                        ProjectName = x.ProjectName,
+                        StartDate = x.StartDate,
+                        EndDate = x.EndDate
+                    }
+                })
+                .GroupBy(x => x.ClientName)
+                .Select(x => new ClientProjectsChangeInforDto
+                {
+                    ClientName = x.Key,
+                    ProjectInfors = x.Select(t => new ProjectsChangeInforDto
+                    {
+                        ProjectName = t.ProjectInfor.ProjectName,
+                        StartDate = t.ProjectInfor.StartDate,
+                        EndDate = t.ProjectInfor.EndDate
+                    }).ToList()
+                }).ToList();
+        }
+
+        private List<ClientProjectsChangeInforDto> GetStopProjects(ResultTimesheetDetail beforeTimeSheet, ResultTimesheetDetail currentTimeSheet)
+        {
+            var listCurrentTimesheetId = currentTimeSheet.ListTimesheetDetail.Items.Select(y => y.ProjectId).ToList();
+            return beforeTimeSheet.ListTimesheetDetail.Items
+                .Where(x => !listCurrentTimesheetId.Contains(x.ProjectId))
+                .Select(x => new
+                {
+                    ClientName = x.ClientName,
+                    ProjectInfor = new
+                    {
+                        ProjectName = x.ProjectName,
+                        StartDate = x.StartDate,
+                        EndDate = x.EndDate
+                    }
+                })
+                .GroupBy(x => x.ClientName)
+                .Select(x => new ClientProjectsChangeInforDto
+                {
+                    ClientName = x.Key,
+                    ProjectInfors = x.Select(t => new ProjectsChangeInforDto
+                    {
+                        ProjectName = t.ProjectInfor.ProjectName,
+                        StartDate = t.ProjectInfor.StartDate,
+                        EndDate = t.ProjectInfor.EndDate
+                    }).ToList()
+                }).ToList();
         }
 
         private async Task<List<ClientAccountsChangeInforDto>> GetAccountsChange(long timeSheetId, ResultTimesheetDetail currentTimeSheet)

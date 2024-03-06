@@ -127,8 +127,8 @@ export class TimesheetProjectService extends BaseApiService {
   getExchangeRate(date: string, baseCurrency: string, symbols: string, places: number): Observable<ApiResponse<any>>{
     return this.http.get<ApiResponse<any>>(this.rootUrl + `/GetExchangeRate?date=${date}&baseCurrency=${baseCurrency}&symbols=${symbols}&places=${places}`);
   }
-  exportAllTimeSheetProjectToExcel( currencies: TimesheetInfoDto): Observable<any>{
-    return this.http.post(this.rootUrl + `/ExportAllTimeSheetProjectToExcel`, currencies);
+  exportInvoiceAllProject( currencies: TimesheetInfoDto): Observable<any>{
+    return this.http.post(this.rootUrl + `/ExportInvoiceAllProject`, currencies);
   }
   reAcTiveTimesheet(timesheetProjectIds): Observable<any>{
     return this.http.post<any>(this.rootUrl + `/ReActiveTimesheetProject`, timesheetProjectIds);

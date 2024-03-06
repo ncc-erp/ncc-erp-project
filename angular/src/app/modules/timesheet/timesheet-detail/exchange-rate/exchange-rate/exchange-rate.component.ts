@@ -53,12 +53,12 @@ export class ExchangeRateComponent extends AppComponentBase implements OnInit {
     input.timesheetName = this.data.timesheetName;
     input.date = moment(this.startDate.toISOString()).format('DD/MM/YYYY');
     input.currencies = this.listCurrencies;
-    this.timeSheetProjectService.exportAllTimeSheetProjectToExcel(input).subscribe((res) => {
+    this.timeSheetProjectService.exportInvoiceAllProject(input).subscribe((res) => {
       const file = new Blob([this.s2ab(atob(res.result.base64))], {
         type: "application/vnd.ms-excel;charset=utf-8"
       });
       FileSaver.saveAs(file, res.result.fileName);
-      abp.notify.success("Export Invoice Successfully!");
+      abp.notify.success("Export Invoice All Project Successfully!");
       this.dialogRef.close();
     })
   }

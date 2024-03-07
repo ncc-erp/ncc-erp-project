@@ -90,7 +90,6 @@ namespace ProjectManagement.APIs.TimesheetProjects
             _storeJob = storeJob;
         }
 
-
         [HttpGet]
         [AbpAuthorize]
         public async Task<List<GetTimesheetProjectDto>> GetAllByProject(long projectId)

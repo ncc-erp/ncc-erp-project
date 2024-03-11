@@ -17,6 +17,7 @@ import { UpdateAction } from '../timesheet-detail.component';
   templateUrl: './view-bill.component.html',
   styleUrls: ['./view-bill.component.css']
 })
+
 export class ViewBillComponent extends AppComponentBase implements OnInit {
   billDetail: TimesheetProjectBill[] = []
   userForUserBill: UserDto[] = []
@@ -27,12 +28,13 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
   tempUserList = []
   public chargeTypeList = [{name:'Daily', value: 0}, {name:'Monthly', value: 1}, {name:'Hourly', value: 2}];
   public updateAction = UpdateAction
+
   Timesheets_TimesheetDetail_UpdateBill_Edit = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_UpdateBill_Edit
   Timesheets_TimesheetDetail_UpdateBill_SetDone = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_UpdateBill_SetDone
   Timesheets_TimesheetDetail_ViewBillRate = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_ViewBillRate
   Timesheets_TimesheetDetail_UpdateBill = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_UpdateBill
   Timesheets_TimesheetDetail_UpdateTimsheet = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_UpdateTimsheet
-  Timesheets_TimesheetDetail_RemoveAccount = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_RemoveAccount
+  Timesheets_TimesheetDetail_RemoveAccount = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_RemoveAccount  
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any, public dialogRef: MatDialogRef<ViewBillComponent>, private userService: UserService,
     private timesheetProjectService: TimesheetProjectService,
@@ -43,6 +45,7 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
   ngOnInit(): void {
     this.billDetail = this.data.billDetail
   }
+
   public getProjectBill() {
     this.isLoading = true
     this.timesheetProjectBillService.getProjectBill(this.data.billInfo.projectId, this.data.billInfo.timesheetId)
@@ -50,9 +53,8 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
       this.billDetail = data.result
       this.isLoading = false
     },
-      () => {  this.dialogRef.close(); this.isLoading = false})
+      () => { this.dialogRef.close(); this.isLoading = false })
   }
-
 
   public saveUserBill(tpb: TimesheetProjectBill): void {
     delete tpb["isEditing"];
@@ -103,8 +105,6 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
           tpb.isEditing = true;
         })
     }
-
-
   }
 
   isComplete(e) {
@@ -149,8 +149,14 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
       this.searchUserBill = "";
       this.isEdittingRows = false;
     })
-
   }
+
+  updateAllWorkingTime(value: number) {
+    this.billDetail.forEach(tpb => {
+      tpb.workingTime = value;
+    });
+  }
+
   public cancelUpdateAll(): void {
     this.getProjectBill();
     this.searchUserBill = "";
@@ -164,6 +170,7 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
     bill.userList = this.tempUserList.filter(item =>
       (this.removeAccents(item?.fullName.toLowerCase().replace(/\s/g, "")).includes(this.removeAccents(bill.searchText.toLowerCase().replace(/\s/g, ""))) || this.removeAccents(item.email?.toLowerCase().replace(/\s/g, "")).includes(this.removeAccents(bill.searchText.toLowerCase().replace(/\s/g, "")))))
   }
+
   removeAccents(str) {
     var AccentsMap = [
       "aàảãáạăằẳẵắặâầẩẫấậ",
@@ -236,7 +243,6 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
     })
   }
 
-
   protected removeAccountTS(tpb:TimesheetProjectBill): void {
     abp.message.confirm(
       "Remove account " + tpb.fullName + "?",
@@ -259,7 +265,6 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
     );
   }
 
-
   saveAllUpdateTS(){
     let arr = this.billDetail.map((tpb) => {
       return {
@@ -281,7 +286,6 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
     })
   }
 
-
   public isShowRate(){
     return this.isGranted(PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_ViewBillRate)
      && this.data.action == this.updateAction.UpdateBillInfo
@@ -294,7 +298,6 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
   public isTSPopUp(){
     return this.data.action == this.updateAction.UpdateTimesheet;
   }
-
 
   public isEditingAllRow(){
     return this.billDetail.find(s => !s.isEditing) == undefined;
@@ -319,5 +322,4 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
   public getCurrencyName(){
     return this.billDetail && this.billDetail.length > 0 ? this.billDetail[0].currency : '';
   }
-
 }

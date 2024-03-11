@@ -452,25 +452,27 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
     this.isActive = false;
     this.createdInvoice = true;
   }
-  public viewBillDetail(bill,action) {
-    this.menu.closeMenu()
-    this.timesheetProjectBillService.getProjectBill(bill.projectId,bill.timesheetId).subscribe(data=>{
 
+  public viewBillDetail(bill, action) {
+    this.menu.closeMenu()
+    this.timesheetProjectBillService.getProjectBill(bill.projectId, bill.timesheetId).subscribe(data=>{
         const show = this.dialog.open(ViewBillComponent, {
           width: "95%",
+          disableClose: true,
           data: {
-            billInfo:bill,
+            billInfo: bill,
             action: action,
-            billDetail:data.result
+            billDetail: data.result
           },
-
         })
+
         show.afterClosed().subscribe((res) => {
           this.refresh();
         })
 
     },()=>{this.refresh()});
   }
+
   mouseEnter(item) {
     item.showIcon = true
 

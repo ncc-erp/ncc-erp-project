@@ -6,12 +6,11 @@
 >
   <abp-modal-header
     title="{{data.action == updateAction.UpdateBillInfo ? 'Update Bill Info:' : 'Update Timesheet:'}} {{ data.billInfo.projectName }}"
-    (onCloseClick)="dialogRef.close()"
-  >
+    (onCloseClick)="dialogRef.close()">
   </abp-modal-header>
-  <div class="modal-body row" id="modal-bill-info" style="justify-content: end;">
-    <div class="col-11 row mb-1" *ngIf="billDetail.length != 0 &&  billDetail.length != 1">
 
+  <div class="modal-body row" id="modal-bill-info" style="justify-content: end;">
+    <div class="col-10 row mb-1" *ngIf="billDetail.length != 0 &&  billDetail.length != 1">
       <button
         class="btn btn-editall-neutral ml-2"
         *ngIf="isShowEditAllBtn()"
@@ -24,7 +23,7 @@
       <div *ngIf="isEditingAllRow()" class="pt-1 ml-4">
         <button *ngIf="isTSPopUp()"
           [disabled]="!timesheetDetailForm.valid"
-          class="mr-3 submit-btn"
+          class="mr-3 submit-btn"  
           style="background: none; border: none"
           (click)="saveAllUpdateTS()"
         >
@@ -46,15 +45,25 @@
           (click)="cancelUpdateAll()"
         ></i>
       </div>
+
+      <div *ngIf="isEditingAllRow() && billDetail.length >= 20" class="pt-1 ml-4">
+        <input
+          type="number"
+          (input)="updateAllWorkingTime($event.target.value)"
+          placeholder="Working Time For All"
+          style="min-width: 80px; margin-left: 800px"
+        >
+      </div>
     </div>
 
-    <section class="example-section col-1 text-center" *ngIf="isGranted(Timesheets_TimesheetDetail_UpdateBill_SetDone)">
-          <mat-checkbox id="done"
+    <section class="example-section col-2 text-center" *ngIf="isGranted(Timesheets_TimesheetDetail_UpdateBill_SetDone)">
+      <mat-checkbox id="done"
         class="example-margin"
         (change)="isComplete($event)"
         [disabled]="isEditingAnyRow()"
         [checked]="data.billInfo.isComplete"
-        >Done</mat-checkbox>
+        >PM Confirm Timesheet Done
+      </mat-checkbox>
     </section>
 
     <div class="table-responsive mb-1 p-2">

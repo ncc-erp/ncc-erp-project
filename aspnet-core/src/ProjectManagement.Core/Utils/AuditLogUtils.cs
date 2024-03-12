@@ -181,6 +181,7 @@ namespace ProjectManagement.Utils
             {"ProjectManagement.APIs.Resource.ResourceAppService GetVendorResource", "Trang Resources"},
             {"ProjectManagement.APIs.Resource.ResourceAppService PlanEmployeeJoinOrOutProject", "Trang Resources"},
             {"ProjectManagement.APIs.Resource.ResourceAppService updateUserPoolNote", "Trang Resources"},
+            {"ProjectManagement.APIs.Resource.ResourceAppService updateUserAllResourceNote", "Trang Resources"},
             {"ProjectManagement.APIs.ResourceRequests.ResourceRequestAppService Cancel", "Trang Resource Requests"},
             {"ProjectManagement.APIs.ResourceRequests.ResourceRequestAppService CancelRequest", "Trang Resource Requests"},
             {"ProjectManagement.APIs.ResourceRequests.ResourceRequestAppService Create", "Trang Resource Requests"},

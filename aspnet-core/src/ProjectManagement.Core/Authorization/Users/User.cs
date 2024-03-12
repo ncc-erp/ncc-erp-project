@@ -48,6 +48,8 @@ namespace ProjectManagement.Authorization.Users
 
         [MaxLength(3000)]
         public string PoolNote { get; set; }
+        [MaxLength(3000)]
+        public string AllResourceNote { get; set; }
         public virtual ICollection<ProjectUser> ProjectUsers { get; set; }
         public virtual ICollection<UserSkill> UserSkills { get; set; }
         public virtual ICollection<ProjectUserBillAccount> ProjectUserBillAccounts { get; set; }

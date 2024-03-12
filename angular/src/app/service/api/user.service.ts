@@ -90,6 +90,10 @@ export class UserService extends BaseApiService {
     return this.http.put<IUser>(this.rootUrl + '/Update', user);
   }
 
+  updateAllResourceNote(user: IUser) {
+    return this.http.put<IUser>(this.rootUrl + '/Update', user);
+  }
+
   updateUserActive(userId:number, isActive:boolean): Observable<any> {
     return this.http.put<any>(this.rootUrl + `/updateUserActive?userId=${userId}&&isActive=${isActive}`,{});
   }

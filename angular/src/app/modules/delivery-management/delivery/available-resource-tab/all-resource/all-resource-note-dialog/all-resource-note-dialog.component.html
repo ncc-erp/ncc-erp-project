@@ -1,0 +1,25 @@
+<form action="" autocomplete="off" (submit)="SaveAndClose()">
+  <abp-modal-header
+    [title]="'Edit user: ' + data.fullName | localize"
+    (onCloseClick)="dialogRef.close()"
+  ></abp-modal-header>
+  <div class="modal-body">
+    <label for="">Note:</label>
+    <mat-form-field appearance="outline" class="w-100">
+      <textarea
+        matInput
+        name="allResourceNote"
+        maxlength="3000"
+        rows="5"
+        placeholder="Leave a comment..."
+        [(ngModel)]="allResourceNote"
+      ></textarea>
+    </mat-form-field>
+  </div>
+
+  <abp-modal-footer
+    [cancelDisabled]="saving"
+    (onCancelClick)="dialogRef.close()"
+    [saveDisabled]="saving"
+  ></abp-modal-footer>
+</form>

@@ -167,6 +167,7 @@ import { ProductApprovedDialogComponent } from './modules/pm-management/product-
 import { CreateEditProductProjectChecklistComponent } from './modules/pm-management/product-projects/product-project-detail/product-project-checklist/create-edit-product-project-checklist/create-edit-product-project-checklist.component';
 import { ProjectHistoryByUserComponent } from './modules/delivery-management/delivery/available-resource-tab/plan-resource/plan-user/project-history-by-user/project-history-by-user.component';
 import { AddNoteDialogComponent } from '@app/modules/delivery-management/delivery/available-resource-tab/plan-resource/add-note-dialog/add-note-dialog.component';
+import { AllResourceNoteDialog } from "./modules/delivery-management/delivery/available-resource-tab/all-resource/all-resource-note-dialog/all-resource-note-dialog.component";
 import { ProjectFileComponent } from './modules/pm-management/list-project/list-project-detail/project-file/project-file.component';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
@@ -362,6 +363,7 @@ export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
     CreateEditProductProjectChecklistComponent,
     ProjectHistoryByUserComponent,
     AddNoteDialogComponent,
+    AllResourceNoteDialog,
     ProjectFileComponent,
     CollectTimesheetDialogComponent,
     ListTimesheetByProjectCodeDialogComponent,
@@ -505,7 +507,8 @@ export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
     CreateUserDialogComponent,
     EditUserDialogComponent,
     ResetPasswordDialogComponent,
-    BillAccountDialogNoteComponent, 
+    BillAccountDialogNoteComponent,
+    AllResourceNoteDialog 
 
   ],
 })

@@ -244,6 +244,16 @@ namespace ProjectManagement.APIs.Resource
             user.PoolNote = input.Note;
             await WorkScope.UpdateAsync<User>(user);
         }
+
+        [HttpPut]
+        [AbpAuthorize(PermissionNames.Resource_TabAllResource_EditNote)]
+        public async Task updateUserAllResourceNote(UpdateUserAllResourceNoteDto input)
+        {
+            var user = await _userManager.GetUserByIdAsync(input.UserId);
+            user.AllResourceNote = input.Note;
+            await WorkScope.UpdateAsync<User>(user);
+        }
+
         [HttpPost]
         public async Task<List<RetroReviewInternHistoriesDto>> GetRetroReviewInternHistories(InputRetroReviewInternHistoriesDto input)
         {

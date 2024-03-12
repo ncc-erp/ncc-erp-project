@@ -42,6 +42,8 @@ namespace ProjectManagement.Users.Dto
 
         [MaxLength(3000)]
         public string PoolNote { get; set; }
+        [MaxLength(3000)]
+        public string AllResourceNote { get; set; }
 
         [Required]
         [StringLength(AbpUserBase.MaxPlainPasswordLength)]

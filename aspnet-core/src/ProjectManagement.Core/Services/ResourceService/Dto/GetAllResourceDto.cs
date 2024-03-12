@@ -24,6 +24,7 @@ namespace ProjectManagement.Services.ResourceService.Dto
         public UserLevel? UserLevel { get; set; }
         public Branch Branch { get; set; }
         public int Used { get; set; }
+        public string AllResourceNote { get; set; }
         public List<ProjectOfUserDto> PlanProjects { get; set; }
         public List<UserSkillDto> UserSkills { get; set; }
         public int? StarRate { get; set; }

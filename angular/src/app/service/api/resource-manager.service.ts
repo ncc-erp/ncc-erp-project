@@ -78,6 +78,15 @@ export class ResourceManagerService extends BaseApiService{
     );
   }
 
+  public updateAllResourceNote(
+    allResourceNote: any
+  ): Observable<any> {
+    return this.http.put<any>(
+      this.rootUrl + '/UpdateUserAllResourceNote', allResourceNote
+
+    );
+  }
+
   public ConfirmOutProject(input: any) {
     return this.http.post(this.rootUrl + `/ConfirmOutProject`, input)
 

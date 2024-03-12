@@ -31,6 +31,7 @@ import { RetroReviewHistoryByUserComponent } from "./../plan-resource/plan-user/
 import { ProjectHistoryByUserComponent } from "./../plan-resource/plan-user/project-history-by-user/project-history-by-user.component";
 import { result } from 'lodash-es';
 import { APP_ENUMS } from '@shared/AppEnums';
+import { AllResourceNoteDialog } from './all-resource-note-dialog/all-resource-note-dialog.component';
 
 @Component({
   selector: 'app-all-resource',
@@ -56,6 +57,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
   public skillsParam = [];
   public selectedSkillId: number[] = [];
   public selectedSkillIdCr: number[] = [];
+  public isViewAllSkillInfo: boolean = false
   public selectedSkillIdOld: number[]= [];
   public selectedBranchIds: number[] = [];
   public selectedBranchIdsCr: number[] = [];
@@ -87,6 +89,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
   Resource_TabAllResource_CancelAnyPlan = PERMISSIONS_CONSTANT.Resource_TabAllResource_CancelAnyPlan
   Resource_TabAllResource_UpdateSkill = PERMISSIONS_CONSTANT.Resource_TabAllResource_UpdateSkill
   Resource_TabAllResource_ViewUserStarSkill = PERMISSIONS_CONSTANT.Resource_TabAllResource_ViewUserStarSkill
+  Resource_TabAllResource_EditNote = PERMISSIONS_CONSTANT.Resource_TabAllResource_EditNote
   Resource_TabAllResource_ProjectDetail = PERMISSIONS_CONSTANT.Resource_TabAllResource_ProjectDetail
 
   protected list(request: PagedRequestDto, pageNumber: number, finishedCallback: Function, skill?): void {
@@ -231,6 +234,20 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
         this.selectedUserTypesCr = typeSelect.data
         break;
     }
+  }
+
+  updateNote(id, fullName) {
+    const addOrEditNoteDialog = this.dialog.open(AllResourceNoteDialog, {
+      width: "40%",
+      data: {
+        id: id,
+        fullName: fullName,
+      },
+    });
+
+    addOrEditNoteDialog.afterClosed().subscribe(() => {
+      this.refresh();
+    });
   }
 
   onSelectChange(listSelect,id){
@@ -418,11 +435,9 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
       }
 
     });
-    ref.afterClosed().subscribe(rs => {
-      if (rs) {
-        this.refresh()
-      }
-    })
+    ref.afterClosed().subscribe(() => {
+      this.refresh();
+    });
   }
 
 
@@ -645,4 +660,21 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     this.showDialogRetroReviewHistoryUser(user);
   }
 
-}
+  filterSkillInfo(item) {
+    let skillInfoAfterFilter = [];
+    if (item.userSkills) {
+      if (item.isViewAllSkillInfo) {
+        skillInfoAfterFilter = item.userSkills;
+      } else {
+        item.userSkills.forEach((skill, index)=>{
+          if(index < 5){
+            skillInfoAfterFilter.push(skill)
+          }
+        })
+      }
+    }
+    return skillInfoAfterFilter;
+  }
+  
+
+  }

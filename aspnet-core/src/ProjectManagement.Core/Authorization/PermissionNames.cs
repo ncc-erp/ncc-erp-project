@@ -593,6 +593,7 @@ namespace ProjectManagement.Authorization
         public const string Resource_TabAllResource_CancelMyPlan = "Resource.TabAllResource.CancelMyPlan";
         public const string Resource_TabAllResource_CancelAnyPlan = "Resource.TabAllResource.CancelAnyPlan";
         public const string Resource_TabAllResource_UpdateSkill = "Resource.TabAllResource.UpdateSkill";
+        public const string Resource_TabAllResource_EditNote = "Resource.TabAllResource.EditNote";
         public const string Resource_TabAllResource_ViewUserStarSkill = "Resource.TabAllResource.ViewUserStarSkill";
         public const string Resource_TabAllResource_ProjectDetail = "Resource.TabAllResource.ProjectDetail";
 
@@ -1295,6 +1296,7 @@ namespace ProjectManagement.Authorization
                     PermissionNames.Resource_TabAllResource_CancelMyPlan ,
                     PermissionNames.Resource_TabAllResource_CancelAnyPlan ,
                     PermissionNames.Resource_TabAllResource_UpdateSkill ,
+                    PermissionNames.Resource_TabAllResource_EditNote,
                     PermissionNames.Resource_TabAllResource_ViewUserStarSkill ,
                     PermissionNames.Resource_TabAllResource_ProjectDetail,
 
@@ -2018,6 +2020,7 @@ namespace ProjectManagement.Authorization
                  new SystemPermission{ Name =  PermissionNames.Resource_TabAllResource_CancelMyPlan ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Cancel My Plan Only"},
                  new SystemPermission{ Name =  PermissionNames.Resource_TabAllResource_CancelAnyPlan ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Cancel Any Plan"},
                  new SystemPermission{ Name =  PermissionNames.Resource_TabAllResource_UpdateSkill ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Update Skill"},
+                 new SystemPermission{ Name =  PermissionNames.Resource_TabAllResource_EditNote ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit Note"},
                  new SystemPermission{ Name =  PermissionNames.Resource_TabAllResource_ViewUserStarSkill ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View User Star Skill"},
                  new SystemPermission{ Name =  PermissionNames.Resource_TabAllResource_ProjectDetail, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Project Detail"},
 
@@ -3706,6 +3709,10 @@ namespace ProjectManagement.Authorization
 
                                         new SystemPermission {
                                             Name = PermissionNames.Resource_TabAllResource_UpdateSkill, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Update skill"
+                                        },
+
+                                        new SystemPermission {
+                                            Name = PermissionNames.Resource_TabAllResource_EditNote, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit Note"
                                         },
 
                                         new SystemPermission {

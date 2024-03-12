@@ -53,6 +53,7 @@ namespace ProjectManagement.Users.Dto
         public string[] RoleNames { get; set; }
 
         public string PoolNote { get; set; }
+        public string AllResourceNote { get; set; }
 
         public List<WorkingProjectDto> WorkingProjects { get; set; }
         public List<WorkingProjectDto> ProjectHistory { get; set; }

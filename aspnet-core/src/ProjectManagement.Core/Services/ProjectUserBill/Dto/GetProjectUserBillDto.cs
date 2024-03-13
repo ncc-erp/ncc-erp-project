@@ -12,10 +12,8 @@ namespace ProjectManagement.Services.ProjectUserBill.Dto
     public class GetProjectUserBillDto : EntityDto<long>
     {
         public long UserId { get; set; }
-        [ApplySearchAttribute]
         public string UserName { get; set; }
         public long ProjectId { get; set; }
-        [ApplySearchAttribute]
         public string ProjectName { get; set; }
         public string AccountName { get; set; }
         public string BillRole { get; set; }
@@ -23,11 +21,12 @@ namespace ProjectManagement.Services.ProjectUserBill.Dto
         public DateTime StartTime { get; set; }
         public DateTime? EndTime { get; set; }
         public string CurrencyName { get; set; }
+        [ApplySearchAttribute]
         public string Note { get; set; }
         public string shadowNote { get; set; }
         public bool isActive { get; set; }
-        public string EmailAddress { get; set; }
         [ApplySearchAttribute]
+        public string EmailAddress { get; set; }
         public string FullName { get; set; }
         public string AvatarPath { get; set; }
         public string AvatarFullPath => FileUtils.FullFilePath(AvatarPath);

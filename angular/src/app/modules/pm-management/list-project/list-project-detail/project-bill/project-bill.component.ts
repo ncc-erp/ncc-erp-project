@@ -352,7 +352,8 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
         chargeStatus: this.selectedIsCharge,
         chargeNameFilter: this.selectedChargeName,
         chargeRoleFilter: this.selectedChargeRole,
-        chargeType: this.selectedChargeType
+        chargeType: this.selectedChargeType,
+        searchText: this.searchText
     };
 
     this.projectUserBillService.getAllUserBill(body).pipe(
@@ -625,16 +626,16 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   }
 
   searchEmailorNote() {
-    const searchValue = this.searchText.toLowerCase().trim();
-    if (!searchValue) {
-      this.filteredUserBillList = this.userBillList.slice();
-      return;
-    }
+    this.getUserBill();
+    // if (!searchValue) {
+    //   this.filteredUserBillList = this.userBillList.slice();
+    //   return;
+    // }
 
-    this.filteredUserBillList = this.userBillList.filter(item =>
-      (item.emailAddress.toLowerCase().includes(searchValue)) ||
-      (item.note && item.note.toLowerCase().includes(searchValue))
-    );
+    // this.filteredUserBillList = this.userBillList.filter(item =>
+    //   (item.emailAddress.toLowerCase().includes(searchValue)) ||
+    //   (item.note && item.note.toLowerCase().includes(searchValue))
+    // );
   }
 
   onChangeListChargeNameSelected(selectedChargeName: string[]) {

@@ -103,7 +103,8 @@
         {
             Daily = 0,
             Monthly = 1,
-            Hourly = 2
+            Hourly = 2,
+            All = 3
         }
 
         public enum ResourceRequestStatus

@@ -277,7 +277,7 @@ export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
     ListProjectDetailComponent,
     ResourceManagementComponent,
     MilestoneComponent,
-    WeeklyReportComponent,   
+    WeeklyReportComponent,
     ProjectChecklistComponent,
     ImportFileTimesheetDetailComponent,
     CreateEditTimesheetDetailComponent,
@@ -505,7 +505,7 @@ export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
     CreateUserDialogComponent,
     EditUserDialogComponent,
     ResetPasswordDialogComponent,
-    BillAccountDialogNoteComponent, 
+    BillAccountDialogNoteComponent,
 
   ],
 })

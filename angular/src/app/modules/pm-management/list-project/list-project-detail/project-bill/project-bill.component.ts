@@ -9,7 +9,7 @@ import { AppComponentBase } from '@shared/app-component-base';
 import { UserDto } from '@shared/service-proxies/service-proxies';
 import { projectUserBillDto, ProjectRateDto } from './../../../../../service/model/project.dto';
 import { ProjectUserBillService } from './../../../../../service/api/project-user-bill.service';
-import { Component, OnInit, Injector, ViewChildren, QueryList, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Injector, ViewChildren, QueryList, ChangeDetectorRef, ViewChild } from '@angular/core';
 import * as moment from 'moment';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { EditNoteDialogComponent } from './add-note-dialog/edit-note-dialog.component';
@@ -23,8 +23,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { ShadowAccountDialogComponent } from './shadow-account-dialog/shadow-account-dialog.component';
 import { Observable, concat } from 'rxjs';
 import { SortableModel } from '@shared/components/sortable/sortable.component';
-import { ChargeStatus } from '@app/service/model/project-process-criteria-result.dto';
+import { ChargeStatus, ChargeType } from '@app/service/model/project-process-criteria-result.dto';
 import { MatSelect } from '@angular/material/select';
+import { Pipe, PipeTransform } from '@angular/core';
+import { MultiSelectComponent } from '@shared/components/multi-select/multi-select.component';
 
 
 @Component({
@@ -48,6 +50,8 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   // ];
   public userBillList: projectUserBillDto[] = [];
   private filteredUserBillList: projectUserBillDto[] = [];
+
+  public filteredChargeRoles: any;
   public userForUserBill: UserDto[] = [];
   public userIdOld: number;
   sortColumn: string;
@@ -59,15 +63,15 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   public panelOpenState: boolean = false;
   public isShowUserBill: boolean = false;
   public searchUserBill: string = "";
-  public searchByEmail: string = "";
-  public searchBillCharge: number
+  public searchText: string = "";
+  public accountName;
+  public billRole;
   private projectId: number
   public projectUserBillId: number
   public userBillCurrentPage: number = 1
   public rateInfo = {} as ProjectRateDto;
   public lastInvoiceNumber;
   public discount;
-  public chargeTypeList = [{ name: 'Daily', value: 0 }, { name: 'Monthly', value: 1 }, { name: 'Hourly', value: 2 }];
   public isEditLastInvoiceNumber: boolean = false;
   public isEditDiscount: boolean = false;
   public maxBillUserCurrentPage = 10;
@@ -82,16 +86,20 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   public expandInvoiceSetting: true;
   public ChargeStatus = ChargeStatus;
   public selectedIsCharge: ChargeStatus = ChargeStatus.IsCharge;
+  public ChargeType = ChargeType;
+  public chargeTypeList = [{ name: 'Daily', value: 0 }, { name: 'Monthly', value: 1 }, { name: 'Hourly', value: 2 }];
+  public selectedChargeType: ChargeType = ChargeType.All;
+
   public listProjectOfClient: SubInvoice[] = []
   public listSelectProject: DropDownDataDto[] = []
   public currentProjectInfo: ProjectDto
   public projectInvoiceSetting: ProjectInvoiceSettingDto;
   public updateInvoiceDto: UpdateInvoiceDto = {} as UpdateInvoiceDto;
 
-  public selectedChargeName: any;
-  public selectedChargeRole: any;
-  public listSelectChargeName: any;
-  public listSelectChargeRole: any;
+  public selectedChargeName: string[] = [];
+  public selectedChargeRole: string[] = [];
+  public listSelectChargeName: string[] = [];
+  public listSelectChargeRole: string[] = [];
 
   Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_View = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_View;
   Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Create = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Create;
@@ -102,6 +110,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport;
   Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_View = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_View;
   Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount
+
   constructor(private router: Router,
     private projectUserBillService: ProjectUserBillService,
     private ref: ChangeDetectorRef,
@@ -116,13 +125,15 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getUserBill();
+    this.getUserBill(true);
+    this.getSelectedData();
     this.getParentInvoice();
     this.getAllProject();
     this.getCurrentProjectInfo();
     this.getProjectBillInfo();
-    this.searchEmail();
+    this.searchEmailorNote();
   }
+
   isShowInvoiceSetting(){
     return this.isGranted(PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_InvoiceSetting_View)
   }
@@ -221,7 +232,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
           this.isLoading = true;
           this.projectUserBillService.RemoveUserFromBillAccount(req).pipe(catchError(this.projectUserBillService.handleError)).subscribe(data => {
             abp.notify.success(`Linked Resource Removed Successfully!`)
-             this.getUserBill(id, status);
+             this.getUserBill(false, id, status);
           }, () => {
             this.isLoading = false
           })
@@ -239,7 +250,6 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     if( newUserBill.createMode == true){
       this.filteredUserBillList.length = this.filteredUserBillList.length;
     }
-
   }
   public saveUserBill(userBill: projectUserBillDto): void {
     delete userBill["createMode"]
@@ -335,32 +345,52 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     this.isEditUserBill = true;
     // userBill.billRole = this.APP_ENUM.ProjectUserRole[userBill.billRole];
   }
-  private getUserBill( id?: number,status?: boolean, userIdNew?: number): void {
-    this.isLoading = true
+  private getUserBill(initialization: boolean = false, id?: number, status?: boolean, userIdNew?: number): void {
+    this.isLoading = true;
     const body = {
-      projectId: this.projectId,
-      chargeStatus: this.selectedIsCharge
-    }
-    this.projectUserBillService.getAllUserBill(body).pipe(catchError(this.projectUserBillService.handleError)).subscribe(data => {
-      this.userBillList = data.result.map(item=> {
-      if(item.id === id && userIdNew){
-        return {...item,createMode:status,userId:userIdNew}
-      }
-      return {...item, createMode:false}
-      })
-      const distinctSelectChargeName = new Set(data.result.map(item => item.accountName));
-      const distinctSelectChargeRole = new Set(data.result.map(item => item.billRole));
-      this.listSelectChargeName =  Array.from(distinctSelectChargeName).sort(this.customSort);
-      this.listSelectChargeRole = Array.from(distinctSelectChargeRole).sort(this.customSort);
+        projectId: this.projectId,
+        chargeStatus: this.selectedIsCharge,
+        chargeNameFilter: this.selectedChargeName,
+        chargeRoleFilter: this.selectedChargeRole,
+        chargeType: this.selectedChargeType
+    };
 
-      this.filteredUserBillList = this.userBillList.slice();
-      this.isLoading = false
-    }, ()=>{ this.isLoading = false })
+    this.projectUserBillService.getAllUserBill(body).pipe(
+        catchError(this.projectUserBillService.handleError)
+    ).subscribe(data => {
+        this.userBillList = data.result.items.map(item => {
+            if (item.id === id && userIdNew) {
+                return { ...item, createMode: status, userId: userIdNew };
+            }
+            return { ...item, createMode: false };
+        });
+
+        this.filteredUserBillList = this.userBillList.slice();
+        this.isLoading = false;
+
+        if (initialization) {
+          this.getSelectedData();
+      }
+    }, () => { this.isLoading = false; });
+  }
+
+  getSelectedData(){
+    const distinctSelectChargeName = new Set<string>();
+    const distinctSelectChargeRole = new Set<string>();
+
+    this.userBillList.forEach(item => {
+        distinctSelectChargeName.add(item.billAccountName);
+        distinctSelectChargeRole.add(item.billRole);
+    });
+
+    this.listSelectChargeName = Array.from(distinctSelectChargeName).sort(this.customSort);
+    this.listSelectChargeRole = Array.from(distinctSelectChargeRole).sort(this.customSort);
   }
 
   customSort(a: string, b: string): number {
     return a.localeCompare(b, 'en', { sensitivity: 'accent' });
   }
+
   filterByIsCharge() {
     this.getUserBill()
     this.userBillProcess = false;
@@ -369,12 +399,8 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     this.sortColumn = "";
   }
 
-  filterChargeName() {
-    this.filteredUserBillList = this.userBillList.filter(item => this.selectedChargeName.includes(item.accountName) || this.selectedChargeName.length === 0);
-  }
-
-  filterChargeRole() {
-      this.filteredUserBillList = this.userBillList.filter(item => this.selectedChargeRole.includes(item.billRole) || this.selectedChargeRole.length === 0);
+  filterByChargeType() {
+    this.getUserBill();
   }
 
   selectAll(select: MatSelect) {
@@ -503,7 +529,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
 
     show.afterClosed().subscribe((res) => {
       if (res.isSave) {
-        this.getUserBill(id,status,res.userIdNew);
+        this.getUserBill(false, id,status,res.userIdNew);
       }
     })
   }
@@ -598,24 +624,47 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     this.filteredUserBillList.sort((a,b) => (typeof a[sortColumn] === "number") ? b[sortColumn]-a[sortColumn] : (b[sortColumn] ?? "").localeCompare(a[sortColumn] ?? ""));
   }
 
-  searchEmail() {
-    // Chuyển đổi giá trị nhập vào thành chữ thường để so sánh không phân biệt chữ hoa chữ thường
-    const searchValue = this.searchByEmail.toLowerCase().trim();
-
-    // Nếu giá trị tìm kiếm không tồn tại hoặc rỗng, hiển thị lại danh sách đầy đủ
+  searchEmailorNote() {
+    const searchValue = this.searchText.toLowerCase().trim();
     if (!searchValue) {
       this.filteredUserBillList = this.userBillList.slice();
       return;
     }
 
-    // Lọc danh sách userBillList theo email nhập vào
     this.filteredUserBillList = this.userBillList.filter(item =>
-      item.emailAddress.toLowerCase().includes(searchValue)
+      (item.emailAddress.toLowerCase().includes(searchValue)) ||
+      (item.note && item.note.toLowerCase().includes(searchValue))
     );
   }
+
+  onChangeListChargeNameSelected(selectedChargeName: string[]) {
+    this.selectedChargeName = selectedChargeName;
+    this.getUserBill();
+  }
+
+  onChangeListChargeRoleSelected(selectedChargeRole: string[]) {
+    this.selectedChargeRole = selectedChargeRole;
+    this.getUserBill();
+  }
+
+  onCancelFilterChargeName() {
+    this.selectedChargeName = []
+    this.getUserBill()
+  }
+
+  onCancelFilterChargeRole() {
+    this.selectedChargeRole = []
+    this.getUserBill();
+  }
+  refresh(){
+    this.searchText = "";
+    this.selectedIsCharge = ChargeStatus.IsCharge;
+    this.selectedChargeName = [];
+    this.selectedChargeRole = [];
+    this.selectedChargeType = ChargeType.All;
+    this.getUserBill();
+  }
 }
-
-
 
 export interface AddSubInvoicesDto {
   parentInvoiceId: number,

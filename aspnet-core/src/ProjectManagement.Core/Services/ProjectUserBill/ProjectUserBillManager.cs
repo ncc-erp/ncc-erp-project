@@ -21,6 +21,7 @@ using Abp;
 using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
 using Microsoft.AspNetCore.SignalR;
+using System;
 
 namespace ProjectManagement.Services.ProjectUserBills
 {
@@ -43,7 +44,7 @@ namespace ProjectManagement.Services.ProjectUserBills
             return query.OrderBy(p => p.Project.Name).ThenBy(p => p.User.EmailAddress);
         }
 
-        public async Task<List<GetAllResourceDto>> QueryAllResource(bool isVendor)
+        public async Task<List<GetAllResourceDto>> QueryAllResource(bool isVendor, List<long> existResourceIds = null)
         {
             // get current user and view user level permission
             // if user level = intern => all show no matter the permission
@@ -55,7 +56,8 @@ namespace ProjectManagement.Services.ProjectUserBills
                     ).Select(pu => pu.Id);
 
             var activeReportId = await GetActiveReportId();
-            var quser = await _workScope.GetAll<User>()
+
+            var quser = _workScope.GetAll<User>()
                        .Where(x => x.IsActive)
                        .Where(x => x.UserType != UserType.FakeUser)
                        .Where(u => isVendor ? u.UserType == UserType.Vendor : u.UserType != UserType.Vendor)
@@ -124,7 +126,9 @@ namespace ProjectManagement.Services.ProjectUserBills
                                 ProjectCode = pu.Project.Code
                             })
                            .ToList(),
-                       }).ToListAsync();
+                       })
+                       .WhereIf(existResourceIds != null && existResourceIds.Any(), s => !existResourceIds.Contains(s.UserId))
+                       .ToList();
 
             return quser;
         }
@@ -166,42 +170,50 @@ namespace ProjectManagement.Services.ProjectUserBills
             return result;
         }
 
-        public async Task<List<GetProjectUserBillDto>> GetAllByProject(GetAllProjectUserBillDto input)
+        public async Task<GridResult<GetProjectUserBillDto>> GetAllByProject(GetAllProjectUserBillDto input)
         {
             var isViewRate = await IsGrantedAsync(PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Rate_View);
 
-            var query = _workScope.GetAll<ProjectManagement.Entities.ProjectUserBill>()
-                 .Where(x => x.ProjectId == input.ProjectId)
-                 .Select(x => new GetProjectUserBillDto
-                 {
-                     Id = x.Id,
-                     UserId = x.UserId,
-                     UserName = x.User.Name,
-                     ProjectId = x.ProjectId,
-                     ProjectName = x.Project.Name,
-                     AccountName = x.AccountName,
-                     BillRole = x.BillRole,
-                     BillRate = isViewRate ? x.BillRate : 0,
-                     StartTime = x.StartTime.Date,
-                     EndTime = x.EndTime.Value.Date,
-                     Note = x.Note,
-                     shadowNote = x.shadowNote,
-                     isActive = x.isActive,
-                     AvatarPath = x.User.AvatarPath,
-                     FullName = x.User.FullName,
-                     Branch = x.User.BranchOld,
-                     BranchColor = x.User.Branch.Color,
-                     BranchDisplayName = x.User.Branch.DisplayName,
-                     PositionId = x.User.PositionId,
-                     PositionName = x.User.Position.ShortName,
-                     PositionColor = x.User.Position.Color,
-                     EmailAddress = x.User.EmailAddress,
-                     UserType = x.User.UserType,
-                     UserLevel = x.User.UserLevel,
-                     ChargeType = x.ChargeType ?? x.Project.ChargeType,
-                     CreationTime = x.CreationTime,
+            Expression<Func<ProjectManagement.Entities.ProjectUserBill, bool>> predicate = x =>
+                x.ProjectId == input.ProjectId &&
+                (input.ChargeStatus != null && (x.isActive == (input.ChargeStatus == ChargeStatus.IsCharge))) &&
+                (input.ChargeNameFilter == null || !input.ChargeNameFilter.Any() || input.ChargeNameFilter.Contains(x.AccountName)) &&
+                (input.ChargeRoleFilter == null || !input.ChargeRoleFilter.Any() || input.ChargeRoleFilter.Contains(x.BillRole)) &&
+                (input.ChargeType == ChargeType.All || x.ChargeType == input.ChargeType);
 
-                     LinkedResources = x.LinkedResources
+
+            var query = _workScope.GetAll<ProjectManagement.Entities.ProjectUserBill>()
+                .Where(predicate)
+                .Select(x => new GetProjectUserBillDto
+                {
+                Id = x.Id,
+                UserId = x.UserId,
+                UserName = x.User.Name,
+                ProjectId = x.ProjectId,
+                ProjectName = x.Project.Name,
+                AccountName = x.AccountName,
+                BillRole = x.BillRole,
+                BillRate = isViewRate ? x.BillRate : 0,
+                StartTime = x.StartTime.Date,
+                EndTime = x.EndTime.Value.Date,
+                Note = x.Note,
+                shadowNote = x.shadowNote,
+                isActive = x.isActive,
+                AvatarPath = x.User.AvatarPath,
+                FullName = x.User.FullName,
+                Branch = x.User.BranchOld,
+                BranchColor = x.User.Branch.Color,
+                BranchDisplayName = x.User.Branch.DisplayName,
+                PositionId = x.User.PositionId,
+                PositionName = x.User.Position.ShortName,
+                PositionColor = x.User.Position.Color,
+                EmailAddress = x.User.EmailAddress,
+                UserType = x.User.UserType,
+                UserLevel = x.User.UserLevel,
+                ChargeType = x.ChargeType ?? x.Project.ChargeType,
+                CreationTime = x.CreationTime,
+
+                LinkedResources = x.LinkedResources
                         .Select(lr => new GetUserInfo
                         {
                             Id = lr.UserId,
@@ -218,12 +230,9 @@ namespace ProjectManagement.Services.ProjectUserBills
                             IsActive = lr.User.IsActive,
                             FullName = lr.User.FullName,
                         }).ToList()
-                 })
-                 .WhereIf(input.ChargeStatus == ChargeStatus.IsCharge, x => x.isActive == true)
-                 .WhereIf(input.ChargeStatus == ChargeStatus.IsNotCharge, x => x.isActive == false)
-                 .OrderByDescending(x => x.CreationTime);
+                });
 
-            return  query.ToList();
+            return await query.GetGridResult(query, input);
         }
 
         public async Task<List<UserDto>> GetAllUserActive(bool onlyStaff, long projectId, long? currentUserId)

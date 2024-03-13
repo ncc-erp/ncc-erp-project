@@ -35,3 +35,11 @@ export enum ChargeStatus
     IsCharge = 1,
     IsNotCharge = 2
 }
+
+export enum ChargeType
+{
+    Daily = 0,
+    Monthly = 1,
+    Hourly = 2,
+    All = 3,
+}

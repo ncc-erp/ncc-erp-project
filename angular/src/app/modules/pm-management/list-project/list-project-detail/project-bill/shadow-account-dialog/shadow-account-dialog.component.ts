@@ -33,16 +33,17 @@ export class ShadowAccountDialogComponent
   }
   @ViewChild("select") select;
   ngOnInit() {
-    this.listResourceSelect = this.data.listResource
-    this.listResourceSelected = [...this.data.listResource]
-    this.listResourceSelectCurrent = [...this.listResourceSelect]
+    this.listResourceSelect = this.data.listResource;
+    this.listResourceSelected = [...this.data.listResource];
+    this.listResourceSelectCurrent = [...this.listResourceSelect];
     this.isLoading = true;
-    this.projectUserBillService.GetAllResource().subscribe(res=> {
-      this.listAllResource = res.result;
-      this.orderListResource()
-      this.isLoading = false
-    }, () => { this.isLoading = false })
+    this.projectUserBillService.GetAllResource().subscribe(res => {
+      // Chỉ gán các tài nguyên chưa được chọn vào listAllResource
+      this.listAllResource = res.result.filter(item => !this.listResourceSelect.includes(item.userId));
+      this.isLoading = false;
+    }, () => { this.isLoading = false; });
   }
+
   openedChange(event){
     if(!event){
       this.searchUser = ''
@@ -72,17 +73,10 @@ export class ShadowAccountDialogComponent
       userIds: this.listResourceSelect.filter(item => !this.listResourceSelected.includes(item))
     };
 
-    const reqDelete = {
-      projectUserBillId: this.data.projectUserBillId,
-      userIds: this.listResourceSelected.filter(item => !this.listResourceSelect.includes(item))
-    };
-
     let linkedResourceUpdate;
 
     if (reqAdd.userIds.length > 0) {
       linkedResourceUpdate = this.projectUserBillService.LinkUserToBillAccount(reqAdd);
-    } else if (reqDelete.userIds.length > 0) {
-      linkedResourceUpdate = this.projectUserBillService.RemoveUserFromBillAccount(reqDelete);
     } else {
       abp.notify.success("Linked resources updated successfully");
       this.dialogRef.close({
@@ -91,18 +85,17 @@ export class ShadowAccountDialogComponent
       });
     }
 
-    linkedResourceUpdate
-      .pipe(
-        catchError(this.projectUserBillService.handleError)
-      )
-      .subscribe(result => {
-        abp.notify.success("Linked resources updated successfully");
-        this.dialogRef.close({
-          userIdNew: this.data.userIdNew,
-          isSave: true
-        });
+    linkedResourceUpdate.pipe(
+      catchError(this.projectUserBillService.handleError)
+    ).subscribe(result => {
+      abp.notify.success("Linked resources updated successfully");
+      this.dialogRef.close({
+        userIdNew: this.data.userIdNew,
+        isSave: true
       });
+    });
   }
+
 
   clear(){
     this.listResourceSelect = [];

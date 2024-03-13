@@ -86,17 +86,22 @@
                 <mat-expansion-panel-header name="pannel-userBill" class="mt-2 mb-2 d-flex align-items-center flex-wrap" (click)="isShowUserBill=!isShowUserBill">
                     <h4 class="d-inline" style="margin-top: 5px;">Bill accounts ({{ filteredUserBillList.length }}):</h4>
                     <div class="d-flex flex-wrap justify-content-start align-items-center" style="flex-grow: 1;">
-                        <button name="btn-createUserBill" *ngIf="!userBillProcess && permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Create)" [hidden]="isShowUserBill" style="border: none; height: fit-content;" class="btn bg-blue ml-3 btn-sm mb-2" (click)="addUserBill();userBillCurrentPage=1; $event.stopPropagation()">
+                        <button name="btn-createUserBill" *ngIf="!userBillProcess && permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Create)"
+                        [hidden]="isShowUserBill" style="border: none; height: fit-content;"
+                        class="btn bg-blue ml-3 btn-sm mb-2" (click)="addUserBill();userBillCurrentPage=1; $event.stopPropagation()">
                             <i class="fa fa-plus m-0"></i>
                         </button>
-                        <div class="col-lg-3 mb-2" style="margin-left: 30px;">
+                        <div class="col-lg-3 mb-2" style="margin-left: 40px; width: 100%;" (click)="$event.stopPropagation()">
                             <div class="input-group">
                                 <div class="input-group-prepend">
-                                    <button name="btn-search" type="button" class="btn bg-blue" (click)="searchEmail(); $event.stopPropagation()">
+                                    <button name="btn-search" type="button" class="btn bg-blue" (click)="searchEmailorNote(); $event.stopPropagation()">
                                         <i class="fas fa-search"></i>
                                     </button>
                                 </div>
-                                <input type="text" class="form-control" name="keyword" placeholder="Enter email" [(ngModel)]="searchByEmail" (click)="$event.stopPropagation()" (keydown.enter)="searchEmail(); $event.stopPropagation()" />
+                                <input type="text" class="form-control" name="keyword" placeholder="Search by Email, Note"
+                                [(ngModel)]="searchText"
+                                (keydown.space)="$event.stopPropagation()"
+                                (keydown.enter)="searchEmailorNote(); $event.stopPropagation()" />
                             </div>
                         </div>
                         <div class="col-lg-2 mb-2" (click)="$event.stopPropagation()">
@@ -111,25 +116,60 @@
                                 </mat-form-field>
                             </div>
                         </div>
-                        <div class="col-lg-2 mb-2" (click)="$event.stopPropagation()">
+
+                        <div class="col-lg-2 mb-2" (click)="$event.stopPropagation()" style="display: flex; align-items: center;">
+                            <app-multi-select
+                            #chargeName
+                            [ngClass]="selectedChargeName.length > 0? 'col-11' : 'col-12'"
+                            name="filterChargeName"
+                            placeholder="Tất cả"
+                            labelName="Charge Name"
+                            [listOption]="listSelectChargeName"
+                            [defaultValue]="selectedChargeName"
+                            (onChange)="onChangeListChargeNameSelected($event)">
+                            </app-multi-select>
+                            <i
+                            class="fas fa-times fa-lg pointer"
+                            *ngIf="selectedChargeName.length > 0"
+                            (click)="onCancelFilterChargeName()"
+                            ></i>
+                        </div>
+
+                        <div class="col-lg-2 mb-2" (click)="$event.stopPropagation()" style="display: flex; align-items: center;">
+                            <app-multi-select
+                            #chargeRole
+                            [ngClass]="selectedChargeRole.length > 0? 'col-11' : 'col-12'"
+                            name="filterChargeRole"
+                            placeholder="Tất cả"
+                            labelName="Charge Role"
+                            [listOption]="listSelectChargeRole"
+                            [defaultValue]="selectedChargeRole"
+                            (onChange)="onChangeListChargeRoleSelected($event)">
+                            </app-multi-select>
+                            <i
+                            class="fas fa-times fa-lg pointer"
+                            *ngIf="selectedChargeRole.length > 0"
+                            (click)="onCancelFilterChargeRole()"
+                            ></i>
+                        </div>
+
+                        <div class="col-lg-1 mb-2" (click)="$event.stopPropagation()">
                             <div class="input-group">
                                 <mat-form-field appearance="outline" style="width: 100%;">
-                                    <mat-label>Charge Name</mat-label>
-                                    <mat-select #chargeNameSelect [(ngModel)]="selectedChargeName" (selectionChange)="filterChargeName()" multiple>
-                                        <mat-option *ngFor="let accountName of listSelectChargeName" [value]="accountName">{{ accountName }}</mat-option>
+                                    <mat-label>Charge Type</mat-label>
+                                    <mat-select [(ngModel)]="selectedChargeType" (selectionChange)="filterByChargeType()">
+                                        <mat-option [value]="ChargeType.All">All</mat-option>
+                                        <mat-option [value]="ChargeType.Daily">Daily</mat-option>
+                                        <mat-option [value]="ChargeType.Monthly">Monthly</mat-option>
+                                        <mat-option [value]="ChargeType.Hourly">Hourly</mat-option>
                                     </mat-select>
                                 </mat-form-field>
                             </div>
                         </div>
-                        <div class="col-lg-2 mb-2" (click)="$event.stopPropagation()">
-                            <div class="input-group">
-                                <mat-form-field appearance="outline" style="width: 100%;">
-                                    <mat-label>Charge Role</mat-label>
-                                    <mat-select #chargeRoleSelect [(ngModel)]="selectedChargeRole" (selectionChange)="filterChargeRole()" multiple>
-                                        <mat-option *ngFor="let billRole of listSelectChargeRole" [value]="billRole">{{ billRole }}</mat-option>
-                                    </mat-select>
-                                </mat-form-field>
-                            </div>
+                        <div class="col-lg-1 mb-2" (click)="$event.stopPropagation()">
+                            <button class="btn btn-primary" (click)="refresh()">
+                                <i class="fas fa-redo-alt"></i>
+                            </button>
                         </div>
                     </div>
                 </mat-expansion-panel-header>
@@ -139,13 +179,13 @@
                             <thead>
                                 <tr>
                                   <th style="border-left: 10px solid #fff" class="stt">#</th>
-                                    <th class="align" (click)="sortData('emailAddress')" style="cursor: pointer;">{{ "Employee" | localize }}
-                                        <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'emailAddress'"></i>
-                                        <i *ngIf="sortColumn !== 'emailAddress'" class="fas fa-sort"></i>
+                                    <th class="align" (click)="sortData('fullName')" style="cursor: pointer;">{{ "Employee" | localize }}
+                                        <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'fullName'"></i>
+                                        <i *ngIf="sortColumn !== 'fullName'" class="fas fa-sort"></i>
                                     </th>
-                                    <th class="align" (click)="sortData('accountName')" style="cursor: pointer;">{{ "Charge Name" | localize }}
-                                        <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'accountName'"></i>
-                                        <i *ngIf="sortColumn !== 'accountName'" class="fas fa-sort"></i>
+                                    <th class="align" (click)="sortData('billAccountName')" style="cursor: pointer;">{{ "Charge Name" | localize }}
+                                        <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'billAccountName'"></i>
+                                        <i *ngIf="sortColumn !== 'billAccountName'" class="fas fa-sort"></i>
                                     </th>
                                     <th class="align" (click)="sortData('billRole')" style="cursor: pointer;">{{ "Charge Role" | localize }}
                                         <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'billRole'"></i>

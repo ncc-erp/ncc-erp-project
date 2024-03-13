@@ -79,6 +79,7 @@ import { ResizableDirective } from './directives/resizable.directive'
 import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
 import { DateSelectorComponent } from './date-selector/date-selector/date-selector.component';
 import { CustomTimeComponent } from './date-selector/custom-time/custom-time.component';
+import { MultiSelectComponent } from './components/multi-select/multi-select.component';
 
 // import {DialogComponentModule} from './dialog-component/dialog-component.module';
 // import { ErrorPermissionComponent } from './interceptor-errors/error-permission/error-permission.component'
@@ -160,7 +161,8 @@ import { CustomTimeComponent } from './date-selector/custom-time/custom-time.com
         DateSelectorComponent,
         CustomTimeComponent,
         SelectClearOptionComponent,
-        LineBreakPipe
+        LineBreakPipe,
+        MultiSelectComponent
 
     ],
     exports: [
@@ -227,8 +229,8 @@ import { CustomTimeComponent } from './date-selector/custom-time/custom-time.com
         DateSelectorComponent,
         CustomTimeComponent,
         SelectClearOptionComponent,
-        LineBreakPipe
-
+        LineBreakPipe,
+        MultiSelectComponent,
     ],
     providers: [
         { provide: TINYMCE_SCRIPT_SRC, useValue: 'tinymce/tinymce.min.js' }

@@ -1695,7 +1695,7 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
       }
     })
     ref.afterClosed().subscribe(rs => {
-      if (rs) {
+      if (rs !== undefined) {
         user.note = rs
       }
     })
@@ -1711,7 +1711,7 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
     });
 
     ref.afterClosed().subscribe(rs => {
-      if (rs) {
+      if (rs !== undefined) {
        user.note = rs;
       }
     });

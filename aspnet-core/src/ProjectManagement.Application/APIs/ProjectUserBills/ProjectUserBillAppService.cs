@@ -259,13 +259,6 @@ namespace ProjectManagement.APIs.ProjectUserBills
             return await projectUserBillManager.QueryAllResource(false);
         }
 
-        [HttpGet]
-        [AbpAuthorize()]
-        public async Task<List<GetAllResourceDto>> GetAllResource1(long projectUserBillId)
-        {
-            return await projectUserBillManager.QueryAllResource(false);
-        }
-
         [HttpPut]
         [AbpAuthorize(PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_InvoiceSetting_Edit)]
         public async Task<long> UpdateLastInvoiceNumber(UpdateLastInvoiceNumberDto input)

@@ -47,7 +47,7 @@ namespace ProjectManagement.Services.ProjectUserBills
             return query.OrderBy(p => p.Project.Name).ThenBy(p => p.User.EmailAddress);
         }
 
-        public async Task<List<GetAllResourceDto>> QueryAllResource(bool isVendor, List<long> existResourceIds = null)
+        public async Task<List<GetAllResourceDto>> QueryAllResource(bool isVendor)
         {
             // get current user and view user level permission
             // if user level = intern => all show no matter the permission
@@ -130,7 +130,6 @@ namespace ProjectManagement.Services.ProjectUserBills
                             })
                            .ToList(),
                        })
-                       .WhereIf(existResourceIds != null && existResourceIds.Any(), s => !existResourceIds.Contains(s.UserId))
                        .ToList();
 
             return quser;

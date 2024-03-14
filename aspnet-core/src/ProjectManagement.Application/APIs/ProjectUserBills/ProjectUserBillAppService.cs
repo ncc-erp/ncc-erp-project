@@ -41,7 +41,7 @@ namespace ProjectManagement.APIs.ProjectUserBills
         [AbpAuthorize(PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo,
           PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo,
           PermissionNames.Projects_TrainingProjects_ProjectDetail_TabBillInfo)]
-        public async Task<GridResult<Services.ProjectUserBill.Dto.GetProjectUserBillDto>> GetAllByProject(GetAllProjectUserBillDto input)
+        public async Task<List<Services.ProjectUserBill.Dto.GetProjectUserBillDto>> GetAllByProject(GetAllProjectUserBillDto input)
         {
             return await projectUserBillManager.GetAllByProject(input);
         }

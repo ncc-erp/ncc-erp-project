@@ -23,6 +23,7 @@ using System.Linq.Expressions;
 using Microsoft.AspNetCore.SignalR;
 using System;
 using Abp.Linq.Expressions;
+using ProjectManagement.Services.ProjectUserBill;
 
 namespace ProjectManagement.Services.ProjectUserBills
 {
@@ -171,22 +172,16 @@ namespace ProjectManagement.Services.ProjectUserBills
             return result;
         }
 
-        public async Task<GridResult<GetProjectUserBillDto>> GetAllByProject(GetAllProjectUserBillDto input)
+        public async Task<List<GetProjectUserBillDto>> GetAllByProject(GetAllProjectUserBillDto input)
         {
             var isViewRate = await IsGrantedAsync(PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Rate_View);
 
-            var predicate = PredicateBuilder.New<ProjectManagement.Entities.ProjectUserBill>();
-            if (input.ChargeStatus != ChargeStatus.All)
-            {
-                predicate.And(x => x.isActive == (input.ChargeStatus == ChargeStatus.IsCharge));
-            }
-            predicate.And(x => input.ChargeNameFilter == null || !input.ChargeNameFilter.Any() || input.ChargeNameFilter.Contains(x.AccountName));
-            predicate.And(x => input.ChargeRoleFilter == null || !input.ChargeRoleFilter.Any() || input.ChargeRoleFilter.Contains(x.BillRole));
-            predicate.And(x => input.ChargeType == ChargeType.All || x.ChargeType == input.ChargeType);
-
-            var query = _workScope.GetAll<ProjectManagement.Entities.ProjectUserBill>()
+            var query = await _workScope.GetAll<ProjectManagement.Entities.ProjectUserBill>()
                 .Where(x => x.ProjectId == input.ProjectId)
-                .Where(predicate)
+                .FilterByChargeStatus(input.ChargeStatus)
+                .FilterByChargeName(input.ChargeNameFilter)
+                .FilterByChargeRole(input.ChargeRoleFilter)
+                .FilterByChargeType(input.ChargeType)
                 .Select(x => new GetProjectUserBillDto
                 {
                 Id = x.Id,
@@ -233,10 +228,11 @@ namespace ProjectManagement.Services.ProjectUserBills
                             IsActive = lr.User.IsActive,
                             FullName = lr.User.FullName,
                         }).ToList()
-                });
-
-            var result = await query.GetGridResult(query, input);
-            return result;
+                })
+                .ApplySearch(input)
+                .OrderByDescending(x => x.CreationTime)
+                .ToListAsync();
+            return query;
         }
 
         public async Task<List<UserDto>> GetAllUserActive(bool onlyStaff, long projectId, long? currentUserId)

@@ -348,13 +348,13 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
         chargeNameFilter: this.selectedChargeName,
         chargeRoleFilter: this.selectedChargeRole,
         chargeType: this.selectedChargeType,
-        searchText: this.searchText
+        searchText: this.searchText,
     };
 
     this.projectUserBillService.getAllUserBill(body).pipe(
         catchError(this.projectUserBillService.handleError)
     ).subscribe(data => {
-        this.userBillList = data.result.items.map(item => {
+        this.userBillList = data.result.map(item => {
             if (item.id === id && userIdNew) {
                 return { ...item, createMode: status, userId: userIdNew };
             }
@@ -388,7 +388,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   }
 
   filterByIsCharge() {
-    this.getUserBill()
+    this.getUserBill(true)
     this.userBillProcess = false;
     this.isEditUserBill = false;
     this.searchUserBill = "";

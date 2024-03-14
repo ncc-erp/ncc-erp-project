@@ -232,7 +232,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
           this.isLoading = true;
           this.projectUserBillService.RemoveUserFromBillAccount(req).pipe(catchError(this.projectUserBillService.handleError)).subscribe(data => {
             abp.notify.success(`Linked Resource Removed Successfully!`)
-             this.getUserBill(false, id, status);
+             this.getUserBill(true, id, status);
           }, () => {
             this.isLoading = false
           })
@@ -263,7 +263,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
       userBill.projectId = this.projectId
       this.projectUserBillService.create(userBill).pipe(catchError(this.projectUserBillService.handleError)).subscribe(res => {
         abp.notify.success(`Created new user bill`)
-        this.getUserBill()
+        this.getUserBill(true)
         this.userBillProcess = false;
         this.searchUserBill = ""
       }, () => {
@@ -290,7 +290,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
         }
         this.projectUserBillService.update(userBillToUpdate).pipe(catchError(this.projectUserBillService.handleError)).subscribe(()=>{
           abp.notify.success("Update successfully")
-          this.getUserBill()
+          this.getUserBill(true)
           this.userBillProcess = false;
           this.isEditUserBill = false;
           this.searchUserBill = ""
@@ -314,7 +314,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
         .pipe(catchError(this.projectUserBillService.handleError))
         .subscribe(() => {
             abp.notify.success("Update successfully")
-            this.getUserBill()
+            this.getUserBill(true)
             this.userBillProcess = false;
             this.isEditUserBill = false;
             this.searchUserBill = ""
@@ -327,7 +327,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     }
   }
   public cancelUserBill(): void {
-    this.getUserBill();
+    this.getUserBill(true);
     this.userBillProcess = false;
     this.isEditUserBill = false;
     this.searchUserBill = ""
@@ -440,7 +440,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
           concat(this.projectUserBillService.RemoveUserFromBillAccount(reqDelete),this.projectUserBillService.deleteUserBill(userBill.id))
           .pipe(catchError(this.projectUserBillService.handleError)).subscribe(()=>{
                 abp.notify.success("Delete Bill account success")
-                this.getUserBill()
+                this.getUserBill(true)
           })
         }
       }
@@ -525,7 +525,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
 
     show.afterClosed().subscribe((res) => {
       if (res.isSave) {
-        this.getUserBill(false, id,status,res.userIdNew);
+        this.getUserBill(true, id,status,res.userIdNew);
       }
     })
   }
@@ -569,26 +569,6 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
       width: item.width,
       height: item.height,
     };
-  }
-
-  sortTable(event: any) {
-    this.sortable = event;
-    this.changeSortableByName(
-      this.sortable.sort,
-      this.sortable.typeSort,
-      this.sortable.sortDirection
-    );
-    this.getUserBill();
-  }
-
-
-  changeSortableByName(sort: string, sortType: string, sortDirection?: number) {
-    if (!sortType) {
-      delete this.sortResource[sort];
-    } else {
-      this.sortResource[sort] = sortDirection;
-    }
-    this.ref.detectChanges();
   }
 
   sortData(data) {

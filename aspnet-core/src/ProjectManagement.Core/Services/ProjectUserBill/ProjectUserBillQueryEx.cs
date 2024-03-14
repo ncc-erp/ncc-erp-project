@@ -42,28 +42,5 @@ namespace ProjectManagement.Services.ProjectUserBill
                 return qProjectUserBill;
             return qProjectUserBill.Where(x => x.ChargeType == chargeType);
         }
-
-        public static IQueryable<T> ApplySearch<T>(this IQueryable<T> query, GridParam gridParam)
-        {
-            var searchTerm = gridParam.SearchText.EmptyIfNull().Trim().ToLower();
-            var newQuery = query;
-            if (!string.IsNullOrEmpty(searchTerm))
-            {
-                var searchFilter = typeof(T).GetAllProperties().Where(s => s.GetCustomAttributes(typeof(ApplySearchAttribute), true).Any()).Select(s => new ExpressionFilter
-                {
-                    PropertyName = s.Name,
-                    Value = searchTerm,
-                    PropertyType = s.PropertyType,
-                    Comparision = ComparisionOperator.Contains
-                }).ToList();
-
-                var searchExp = ExpressionEx.CombineExpressions<T>(searchFilter, false);
-                if (searchExp != null)
-                {
-                    newQuery = newQuery.Where(searchExp) as IQueryable<T>;
-                }
-            }
-            return newQuery;
-        }
     }
 }

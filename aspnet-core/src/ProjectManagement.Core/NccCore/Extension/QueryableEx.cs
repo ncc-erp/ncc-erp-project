@@ -86,7 +86,7 @@ namespace NccCore.Extension
 
         public static IQueryable<T> ApplySearchAndFilter<T>(this IQueryable<T> query, GridParam gridParam)
         {
-            var newQuery = query.ApplySearch(gridParam);
+            var newQuery = query.ApplySearch(gridParam.SearchText);
             //var orExpression = ExpressionEx.CombineExpressions<T>(gridParam.SearchItems, false);
             var andExpression = ExpressionEx.CombineExpressions<T>(gridParam.FilterItems, true);
 
@@ -101,13 +101,15 @@ namespace NccCore.Extension
             }
             return newQuery;
         }
-        public static IQueryable<T> ApplySearch<T>(this IQueryable<T> query, GridParam gridParam)
+        public static IQueryable<T> ApplySearch<T>(this IQueryable<T> query, string searchText)
         {
-            var searchTerm = gridParam.SearchText.EmptyIfNull().Trim().ToLower();
+            var searchTerm = searchText.EmptyIfNull().Trim().ToLower();
             var newQuery = query;
             if (!string.IsNullOrEmpty(searchTerm))
             {
-                var searchFilter = typeof(T).GetAllProperties().Where(s => s.GetCustomAttributes(typeof(ApplySearchAttribute), true).Any()).Select(s => new ExpressionFilter
+                var searchFilter = typeof(T).GetAllProperties()
+                    .Where(s => s.GetCustomAttributes(typeof(ApplySearchAttribute), true).Any())
+                    .Select(s => new ExpressionFilter
                 {
                     PropertyName = s.Name,
                     Value = searchTerm,

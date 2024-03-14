@@ -649,7 +649,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     this.selectedChargeName = [];
     this.selectedChargeRole = [];
     this.selectedChargeType = ChargeType.All;
-    this.getUserBill();
+    this.getUserBill(true);
   }
 }
 

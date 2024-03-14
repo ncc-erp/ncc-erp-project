@@ -24,6 +24,7 @@ using Microsoft.AspNetCore.SignalR;
 using System;
 using Abp.Linq.Expressions;
 using ProjectManagement.Services.ProjectUserBill;
+using Abp.Linq.Extensions;
 
 namespace ProjectManagement.Services.ProjectUserBills
 {
@@ -176,42 +177,38 @@ namespace ProjectManagement.Services.ProjectUserBills
         {
             var isViewRate = await IsGrantedAsync(PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Rate_View);
 
-            var query = await _workScope.GetAll<ProjectManagement.Entities.ProjectUserBill>()
+            var query = _workScope.GetAll<Entities.ProjectUserBill>()
                 .Where(x => x.ProjectId == input.ProjectId)
-                .FilterByChargeStatus(input.ChargeStatus)
-                .FilterByChargeName(input.ChargeNameFilter)
-                .FilterByChargeRole(input.ChargeRoleFilter)
-                .FilterByChargeType(input.ChargeType)
                 .Select(x => new GetProjectUserBillDto
                 {
-                Id = x.Id,
-                UserId = x.UserId,
-                UserName = x.User.Name,
-                ProjectId = x.ProjectId,
-                ProjectName = x.Project.Name,
-                AccountName = x.AccountName,
-                BillRole = x.BillRole,
-                BillRate = isViewRate ? x.BillRate : 0,
-                StartTime = x.StartTime.Date,
-                EndTime = x.EndTime.Value.Date,
-                Note = x.Note,
-                shadowNote = x.shadowNote,
-                isActive = x.isActive,
-                AvatarPath = x.User.AvatarPath,
-                FullName = x.User.FullName,
-                Branch = x.User.BranchOld,
-                BranchColor = x.User.Branch.Color,
-                BranchDisplayName = x.User.Branch.DisplayName,
-                PositionId = x.User.PositionId,
-                PositionName = x.User.Position.ShortName,
-                PositionColor = x.User.Position.Color,
-                EmailAddress = x.User.EmailAddress,
-                UserType = x.User.UserType,
-                UserLevel = x.User.UserLevel,
-                ChargeType = x.ChargeType ?? x.Project.ChargeType,
-                CreationTime = x.CreationTime,
+                    Id = x.Id,
+                    UserId = x.UserId,
+                    UserName = x.User.Name,
+                    ProjectId = x.ProjectId,
+                    ProjectName = x.Project.Name,
+                    AccountName = x.AccountName,
+                    BillRole = x.BillRole,
+                    BillRate = isViewRate ? x.BillRate : 0,
+                    StartTime = x.StartTime.Date,
+                    EndTime = x.EndTime.Value.Date,
+                    Note = x.Note,
+                    shadowNote = x.shadowNote,
+                    isActive = x.isActive,
+                    AvatarPath = x.User.AvatarPath,
+                    FullName = x.User.FullName,
+                    Branch = x.User.BranchOld,
+                    BranchColor = x.User.Branch.Color,
+                    BranchDisplayName = x.User.Branch.DisplayName,
+                    PositionId = x.User.PositionId,
+                    PositionName = x.User.Position.ShortName,
+                    PositionColor = x.User.Position.Color,
+                    EmailAddress = x.User.EmailAddress,
+                    UserType = x.User.UserType,
+                    UserLevel = x.User.UserLevel,
+                    ChargeType = x.ChargeType ?? x.Project.ChargeType,
+                    CreationTime = x.CreationTime,
 
-                LinkedResources = x.LinkedResources
+                    LinkedResources = x.LinkedResources
                         .Select(lr => new GetUserInfo
                         {
                             Id = lr.UserId,
@@ -229,9 +226,13 @@ namespace ProjectManagement.Services.ProjectUserBills
                             FullName = lr.User.FullName,
                         }).ToList()
                 })
-                .ApplySearch(input)
+                .WhereIf(input.ChargeStatus != ChargeStatus.All, x => x.isActive == (input.ChargeStatus == ChargeStatus.IsCharge))
+                .WhereIf(input.ChargeNameFilter != null && input.ChargeNameFilter.Any(), x => input.ChargeNameFilter.Contains(x.BillAccountName))
+                .WhereIf(input.ChargeRoleFilter != null && input.ChargeRoleFilter.Any(), x => input.ChargeRoleFilter.Contains(x.BillRole))
+                .WhereIf(input.ChargeType != ChargeType.All, x => x.ChargeType == input.ChargeType)
+                .ApplySearch(input.SearchText)
                 .OrderByDescending(x => x.CreationTime)
-                .ToListAsync();
+                .ToList();
             return query;
         }
 

@@ -326,11 +326,6 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
       }
     }
   }
-  // private filterProjectUserDropDown() {
-
-  //   let userProjectList = this.projectUserList.map(item => item.userId)
-  //   this.userForProjectUser = this.userForUserBill.filter(user => userProjectList.indexOf(user.id) == -1)
-  // }
   public cancelUserBill(): void {
     this.getUserBill();
     this.userBillProcess = false;
@@ -627,15 +622,6 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
 
   searchEmailorNote() {
     this.getUserBill();
-    // if (!searchValue) {
-    //   this.filteredUserBillList = this.userBillList.slice();
-    //   return;
-    // }
-
-    // this.filteredUserBillList = this.userBillList.filter(item =>
-    //   (item.emailAddress.toLowerCase().includes(searchValue)) ||
-    //   (item.note && item.note.toLowerCase().includes(searchValue))
-    // );
   }
 
   onChangeListChargeNameSelected(selectedChargeName: string[]) {

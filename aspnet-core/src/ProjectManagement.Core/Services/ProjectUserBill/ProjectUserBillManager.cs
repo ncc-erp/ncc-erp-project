@@ -22,7 +22,6 @@ using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
 using Microsoft.AspNetCore.SignalR;
 using System;
-using Abp.Linq.Expressions;
 using ProjectManagement.Services.ProjectUserBill;
 using Abp.Linq.Extensions;
 
@@ -224,15 +223,20 @@ namespace ProjectManagement.Services.ProjectUserBills
                             IsActive = lr.User.IsActive,
                             FullName = lr.User.FullName,
                         }).ToList()
-                })
-                .WhereIf(input.ChargeStatus != ChargeStatus.All, x => x.isActive == (input.ChargeStatus == ChargeStatus.IsCharge))
-                .WhereIf(input.ChargeNameFilter != null && input.ChargeNameFilter.Any(), x => input.ChargeNameFilter.Contains(x.BillAccountName))
-                .WhereIf(input.ChargeRoleFilter != null && input.ChargeRoleFilter.Any(), x => input.ChargeRoleFilter.Contains(x.BillRole))
-                .WhereIf(input.ChargeType != ChargeType.All, x => x.ChargeType == input.ChargeType)
-                .ApplySearch(input.SearchText)
-                .OrderByDescending(x => x.CreationTime)
-                .ToList();
-            return query;
+                });
+
+            var result = query.WhereIf(input.ChargeStatus != ChargeStatus.All, x => x.isActive == (input.ChargeStatus == ChargeStatus.IsCharge))
+                        .WhereIf(input.ChargeRoleFilter != null && input.ChargeRoleFilter.Any(), x => input.ChargeRoleFilter.Contains(x.BillRole))
+                        .WhereIf(input.ChargeType != ChargeType.All, x => x.ChargeType == input.ChargeType)
+                        .ApplySearch(input.SearchText).OrderByDescending(x => x.CreationTime)
+                        .ToList(); //ToList để getData => lấy được BillAccountName => filter được
+
+            if (input.ChargeNameFilter != null && input.ChargeNameFilter.Any())
+            {
+                result = result.Where(x => input.ChargeNameFilter.Contains(x.BillAccountName)).ToList();
+            }
+
+            return result;
         }
 
         public async Task<List<UserDto>> GetAllUserActive(bool onlyStaff, long projectId, long? currentUserId)

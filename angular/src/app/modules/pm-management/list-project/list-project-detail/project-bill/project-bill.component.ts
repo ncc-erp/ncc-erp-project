@@ -582,10 +582,10 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
         this.sortDirect = -1;
     }
     if (this.sortDirect == 1) {
-        this.iconSort = "fas fa-sort-amount-down";  // Descending sort
+        this.iconSort = "fas fa-sort-amount-down";
         this.sortDesc(this.sortColumn);
     } else if (this.sortDirect == 0) {
-        this.iconSort = "fas fa-sort-amount-up";    // Ascending sort
+        this.iconSort = "fas fa-sort-amount-up";
         this.sortAsc(this.sortColumn);
     } else {
         this.iconSort = "fas fa-sort";
@@ -599,6 +599,42 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   sortDesc(sortColumn: string){
     this.filteredUserBillList.sort((a,b) => (typeof a[sortColumn] === "number") ? b[sortColumn]-a[sortColumn] : (b[sortColumn] ?? "").localeCompare(a[sortColumn] ?? ""));
   }
+
+  orderLinkedResourcesOnTop(data: string) {
+    if (this.sortColumn !== data) {
+        this.sortDirect = -1;
+    }
+    this.sortColumn = data;
+    this.sortDirect++;
+    if (this.sortDirect > 1) {
+        this.iconSort = "";
+        this.sortDirect = -1;
+    }
+    if (this.sortDirect == 1) {
+        this.iconSort = "fas fa-sort-amount-down";
+        this.sortLinkedResourcesDesc();
+    } else if (this.sortDirect == 0) {
+        this.iconSort = "fas fa-sort-amount-up";
+        this.sortLinkedResourcesAsc();
+    } else {
+        this.iconSort = "fas fa-sort";
+        this.filteredUserBillList = this.userBillList.slice();
+    }
+  }
+
+  sortLinkedResourcesDesc() {
+      this.filteredUserBillList.sort((a, b) => {
+          return b.linkedResources.length - a.linkedResources.length;
+      });
+  }
+
+  sortLinkedResourcesAsc() {
+      this.filteredUserBillList.sort((a, b) => {
+          return a.linkedResources.length - b.linkedResources.length;
+      });
+  }
+
+
 
   searchContext() {
     this.getUserBill();

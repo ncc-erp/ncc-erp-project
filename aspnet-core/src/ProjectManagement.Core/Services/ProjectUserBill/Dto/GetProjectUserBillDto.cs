@@ -15,7 +15,9 @@ namespace ProjectManagement.Services.ProjectUserBill.Dto
         public string UserName { get; set; }
         public long ProjectId { get; set; }
         public string ProjectName { get; set; }
+        [ApplySearchAttribute]
         public string AccountName { get; set; }
+        [ApplySearchAttribute]
         public string BillRole { get; set; }
         public float BillRate { get; set; }
         public DateTime StartTime { get; set; }

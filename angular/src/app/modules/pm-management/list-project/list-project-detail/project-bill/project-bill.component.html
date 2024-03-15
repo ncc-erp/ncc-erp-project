@@ -191,7 +191,10 @@
                                         <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'billRole'"></i>
                                         <i *ngIf="sortColumn !== 'billRole'" class="fas fa-sort"></i>
                                     </th>
-                                    <th>Linked resources</th>
+                                    <th class="align" (click)="orderLinkedResourcesOnTop('linkedResources')" style="cursor: pointer;">{{ "Linked Resources" | localize }}
+                                        <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'linkedResources'"></i>
+                                        <i *ngIf="sortColumn !== 'linkedResources'" class="fas fa-sort"></i>
+                                    </th>        
                                     <th class="align" (click)="sortData('billRate')" style="cursor: pointer;"
                                         *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Rate_View)">
                                         {{ "Rate" | localize }}

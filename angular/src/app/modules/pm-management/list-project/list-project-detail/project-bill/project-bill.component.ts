@@ -131,7 +131,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     this.getAllProject();
     this.getCurrentProjectInfo();
     this.getProjectBillInfo();
-    this.searchEmailorNote();
+    this.searchContext();
   }
 
   isShowInvoiceSetting(){
@@ -600,7 +600,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     this.filteredUserBillList.sort((a,b) => (typeof a[sortColumn] === "number") ? b[sortColumn]-a[sortColumn] : (b[sortColumn] ?? "").localeCompare(a[sortColumn] ?? ""));
   }
 
-  searchEmailorNote() {
+  searchContext() {
     this.getUserBill();
   }
 

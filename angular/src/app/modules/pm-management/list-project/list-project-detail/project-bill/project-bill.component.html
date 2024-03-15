@@ -91,17 +91,17 @@
                         class="btn bg-blue ml-3 btn-sm mb-2" (click)="addUserBill(); userBillCurrentPage=1; $event.stopPropagation()">
                             <i class="fa fa-plus m-0"></i>
                         </button>
-                        <div class="col-lg-3 mb-2" style="margin-left: 40px; width: 100%;" (click)="$event.stopPropagation()" [hidden]="isShowUserBill">
+                        <div class="col-lg-3 mb-2" style="margin-left: 10px; width: 100%;" (click)="$event.stopPropagation()" [hidden]="isShowUserBill">
                             <div class="input-group">
                                 <div class="input-group-prepend">
-                                    <button name="btn-search" type="button" class="btn bg-blue" (click)="searchEmailorNote(); $event.stopPropagation()">
+                                    <button name="btn-search" type="button" class="btn bg-blue" (click)="searchContext(); $event.stopPropagation()">
                                         <i class="fas fa-search"></i>
                                     </button>
                                 </div>
-                                <input type="text" class="form-control" name="keyword" placeholder="Search by Email, Note"
+                                <input type="text" class="form-control" name="keyword" placeholder="Search by Email, Note, Charge Name/Role"
                                 [(ngModel)]="searchText"
                                 (keydown.space)="$event.stopPropagation()"
-                                (keydown.enter)="searchEmailorNote(); $event.stopPropagation()" />
+                                (keydown.enter)="searchContext(); $event.stopPropagation()" />
                             </div>
                         </div>
                         <div class="col-lg-2 mb-2" (click)="$event.stopPropagation()" [hidden]="isShowUserBill">
@@ -294,9 +294,12 @@
                                                      class="fa fa-times position-absolute" style="top:32px; right: -28px;"></i>
                                                 </div>
                                             </div>
-                                        <i *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount)"
-                                        (click)="handleOpenDialogShadowAccount(bill.projectId, bill.userId, bill.linkedResources, bill.id)"
-                                         class="fas fa-plus ml-3"></i>
+                                            <i *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount)"
+                                            (click)="handleOpenDialogShadowAccount(bill.projectId, bill.userId, bill.linkedResources, bill.id)"
+                                            class="btn bg-blue ml-3 btn-sm mb-2"
+                                            style="cursor: pointer; font-size: 10px; margin-left: 3px; margin-bottom: 6px;">
+                                            <i class="fa fa-plus fa-s m-0"></i>
+                                            </i>
                                         </div>
                                     </td>
                                     <td class="text-center"
@@ -420,7 +423,7 @@
                                                 (click)="saveUserBill(bill)">
                                                 <i style="color: green;" class="fas fa-check fa-2x "></i>
                                             </button>
-                                            <i style="color: red;" class="fas fa-times fa-2x"
+                                            <i style="color: grey;" class="fas fa-undo fa-2x"
                                                 (click)="cancelUserBill()"></i>
                                         </div>
                                     </td>

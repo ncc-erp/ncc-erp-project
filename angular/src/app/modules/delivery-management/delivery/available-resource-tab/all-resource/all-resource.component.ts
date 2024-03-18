@@ -57,6 +57,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
   public skillsParam = [];
   public selectedSkillId: number[] = [];
   public selectedSkillIdCr: number[] = [];
+  public isViewAllSkillInfo: boolean = false
   public selectedSkillIdOld: number[]= [];
   public selectedBranchIds: number[] = [];
   public selectedBranchIdsCr: number[] = [];
@@ -90,6 +91,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
   Resource_TabAllResource_UpdateSkill = PERMISSIONS_CONSTANT.Resource_TabAllResource_UpdateSkill
   Resource_TabAllResource_EditNote = PERMISSIONS_CONSTANT.Resource_TabAllResource_EditNote;
   Resource_TabAllResource_ViewUserStarSkill = PERMISSIONS_CONSTANT.Resource_TabAllResource_ViewUserStarSkill
+  Resource_TabAllResource_EditNote = PERMISSIONS_CONSTANT.Resource_TabAllResource_EditNote
   Resource_TabAllResource_ProjectDetail = PERMISSIONS_CONSTANT.Resource_TabAllResource_ProjectDetail
 
   protected list(request: PagedRequestDto, pageNumber: number, finishedCallback: Function, skill?): void {
@@ -235,6 +237,20 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
         this.selectedUserTypesCr = typeSelect.data
         break;
     }
+  }
+
+  updateNote(id, fullName) {
+    const addOrEditNoteDialog = this.dialog.open(AllResourceNoteDialog, {
+      width: "40%",
+      data: {
+        id: id,
+        fullName: fullName,
+      },
+    });
+
+    addOrEditNoteDialog.afterClosed().subscribe(() => {
+      this.refresh();
+    });
   }
 
   onSelectChange(listSelect,id){
@@ -422,11 +438,9 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
       }
 
     });
-    ref.afterClosed().subscribe(rs => {
-      if (rs) {
-        this.refresh()
-      }
-    })
+    ref.afterClosed().subscribe(() => {
+      this.refresh();
+    });
   }
 
 

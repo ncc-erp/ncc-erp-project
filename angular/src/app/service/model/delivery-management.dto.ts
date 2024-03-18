@@ -94,7 +94,8 @@ export class availableResourceDto {
   listSkills: any[];
   totalFreeDay: any;
   starRate: number;
-  avgPoint:number
+  avgPoint:number;
+  isViewAll: boolean;
 }
 export class planUserDto {
   projectId: number;

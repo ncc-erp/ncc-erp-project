@@ -49,7 +49,9 @@ export class AddNoteDialogComponent implements OnInit, OnDestroy {
       userId: this.userId,
       note: this.poolNote,
     };
-    this.saving = true;
+  
+    this.saving = true; 
+  
     this.subscription.push(
       this.resourceService
         .updatePoolNote(requestBody)
@@ -58,13 +60,15 @@ export class AddNoteDialogComponent implements OnInit, OnDestroy {
             this.saving = false;
           })
         )
-        .subscribe(() => {
+        .subscribe((response) => {
+          this.poolNote = response.note;
           this.dialogRef.close();
           this.onSave.emit();
           abp.notify.success("Update Note");
         })
     );
   }
+  
 
   ngOnDestroy() {
     this.subscription.forEach((sub) => {

@@ -36,5 +36,6 @@ namespace ProjectManagement.Services.ResourceService.Dto
         public string PositionName { get; set; }
         [ApplySearchAttribute]
         public string SkillNote { get; set; }
+        public string PoolNote { get; set; }
     }
 }

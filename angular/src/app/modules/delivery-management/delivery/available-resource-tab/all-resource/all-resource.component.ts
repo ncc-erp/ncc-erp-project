@@ -31,6 +31,7 @@ import { RetroReviewHistoryByUserComponent } from "./../plan-resource/plan-user/
 import { ProjectHistoryByUserComponent } from "./../plan-resource/plan-user/project-history-by-user/project-history-by-user.component";
 import { result } from 'lodash-es';
 import { APP_ENUMS } from '@shared/AppEnums';
+import { AddNoteDialogComponent } from '../plan-resource/add-note-dialog/add-note-dialog.component';
 
 @Component({
   selector: 'app-all-resource',
@@ -69,6 +70,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
   public isAndCondition: boolean = false;
   public selectedIsPlanned: number;
   public listPlans: string[] = [];
+  public isViewAll: boolean = false;
 
   Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport;
   Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_View = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_View;
@@ -86,6 +88,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
   Resource_TabAllResource_CancelMyPlan = PERMISSIONS_CONSTANT.Resource_TabAllResource_CancelMyPlan
   Resource_TabAllResource_CancelAnyPlan = PERMISSIONS_CONSTANT.Resource_TabAllResource_CancelAnyPlan
   Resource_TabAllResource_UpdateSkill = PERMISSIONS_CONSTANT.Resource_TabAllResource_UpdateSkill
+  Resource_TabAllResource_EditNote = PERMISSIONS_CONSTANT.Resource_TabAllResource_EditNote;
   Resource_TabAllResource_ViewUserStarSkill = PERMISSIONS_CONSTANT.Resource_TabAllResource_ViewUserStarSkill
   Resource_TabAllResource_ProjectDetail = PERMISSIONS_CONSTANT.Resource_TabAllResource_ProjectDetail
 
@@ -108,6 +111,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
         )
         .subscribe(data => {
           this.availableResourceList = data.result.items;
+          this.availableResourceList.forEach(item => item.isViewAll = false);
           this.showPaging(data.result, pageNumber);
           this.isLoading = false;
         })
@@ -645,4 +649,20 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     this.showDialogRetroReviewHistoryUser(user);
   }
 
+  updateNote(id, fullName) {
+    const addOrEditNoteDialog = this.dialog.open(AddNoteDialogComponent, {
+      width: "40%",
+      data: {
+        id: id,
+        fullName: fullName,
+      },
+    });
+
+    addOrEditNoteDialog.afterClosed().subscribe(() => {
+      this.refresh();
+    });
+  }
+  toggle(item){    
+    item.isViewAll = !item.isViewAll
+  }
 }

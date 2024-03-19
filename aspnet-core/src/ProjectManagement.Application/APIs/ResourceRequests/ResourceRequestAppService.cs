@@ -84,6 +84,10 @@ namespace ProjectManagement.APIs.ResourceRequests
             {
                 query = query.Where(s => input.FilterRequestCode.Contains(s.Code)); 
             }
+            if (input.FilterRequestStatus != null && input.FilterRequestStatus.Any())
+            {
+                query = query.Where(s => input.FilterRequestStatus.Contains(s.Status));
+            }
 
             query = _resourceRequestManager.ApplyOrders(query, input.SortParams);
             if (input.SkillIds == null || input.SkillIds.IsEmpty())
@@ -117,7 +121,8 @@ namespace ProjectManagement.APIs.ResourceRequests
                 .ToList()
                 .GroupBy(r => new { r.Code, r.Status })
                 .Select(group => group.First())
-                .OrderBy(group => group.Code)
+                .OrderBy(group => group.Status)
+                .ThenBy(group => group.Code)
                 .ToList();
 
             return result;

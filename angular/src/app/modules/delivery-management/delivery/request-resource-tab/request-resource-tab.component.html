@@ -75,7 +75,7 @@
                     <div class="col-md-8 col-xl-8">
                       <mat-form-field
                         appearance="outline"
-                        class="rsp-form-field"
+                        class="w-100"
                       >
                         <mat-select
                           [(ngModel)]="selectedStatus"
@@ -103,7 +103,7 @@
                     </div>
                     <div class="col-md-8 col-xl-8">
                       <mat-form-field
-                        class="rsp-form-field"
+                        class="w-100"
                         appearance="outline"
                       >
                         <mat-select
@@ -175,19 +175,18 @@
                     </div>
                     <div class="col-md-8 col-xl-8">
                       <div class="row align-items-center">
-                        <!-- <app-multiple-select-string-value
-                        [ngClass]="selectedListRequestCode.length > 0? 'col-11' : 'col-12'"
-                        [placeholder] = "All"
+                        <app-multiple-select-resource-request-code
+                        [ngClass]="selectedListRequestCode.length > 0? 'col-10' : 'col-12'"
                         [listOption]="listRequestCode"
                         [defaultValue]="selectedListRequestCode"
                         (onChange)="filterRequestCode($event)"
                         >
-                        </app-multiple-select-string-value>
+                        </app-multiple-select-resource-request-code>
                         <i
                         class="fas fa-times fa-lg pointer"
                         *ngIf="selectedListRequestCode.length > 0"
                         (click)="onCancelFilterListRequestCode()"
-                        ></i> -->
+                        ></i>
                       </div>
                     </div>
                   </div>  

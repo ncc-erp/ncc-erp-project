@@ -41,6 +41,7 @@ import { DescriptionPopupComponent } from "./description-popup/description-popup
 import { ProjectUserService } from "./../../../../service/api/project-user.service";
 import { concat, forkJoin, empty } from "rxjs";
 import { UpdateUserSkillDialogComponent } from "@app/users/update-user-skill-dialog/update-user-skill-dialog.component";
+import { resourceRequestCodeDto } from './multiple-select-resource-request-code/multiple-select-resource-request-code.component';
 
 @Component({
   selector: "app-request-resource-tab",
@@ -85,8 +86,8 @@ export class RequestResourceTabComponent
   public listProject = [];
   public searchProject: string = "";
 
-  public listRequestCode: string[] =[];
-  public selectedListRequestCode: string[] =[];
+  public listRequestCode: resourceRequestCodeDto[] =[];
+  public selectedListRequestCode: resourceRequestCodeDto[] =[];
 
   public listPriorities: any[] = [];
   public isAndCondition: boolean = false;
@@ -422,7 +423,6 @@ export class RequestResourceTabComponent
 
     objFilter.forEach((item) => {
       if (!item.isTrue) {  
-        console.log( item.value);
         requestBody.filterItems = this.AddFilterItem(
           requestBody,
           item.name,
@@ -434,7 +434,8 @@ export class RequestResourceTabComponent
         item.isTrue = true;
       }
     });
-    requestBody.filterRequestCode = this.selectedListRequestCode;
+    requestBody.filterRequestCode = this.selectedListRequestCode.map(item => item.code);
+    requestBody.filterRequestStatus = this.selectedListRequestCode.map(item => item.status);
     requestBody.isTraining = false;
     requestBody.sortParams = this.sortResource;
     this.resourceRequestService
@@ -480,8 +481,8 @@ export class RequestResourceTabComponent
     this.filterItems = [];
     this.searchText = "";
     this.projectId = -1;
-    this.requestCode = -1;
     this.selectedStatus = 0;
+    this.selectedListRequestCode = [];
     this.changeSortableByName("priority", "DESC");
     this.sortable = new SortableModel("", 1, "");
     this.refresh();
@@ -555,7 +556,7 @@ export class RequestResourceTabComponent
 
   getAllRequestCode() {
     this.resourceRequestService.getListRequestCode().subscribe((data) => {
-      this.listRequestCode = data.result.map((r) => r.code)
+      this.listRequestCode = data.result;
     });
   }
 
@@ -568,7 +569,7 @@ export class RequestResourceTabComponent
     this.getDataPage(1);
   }
 
-  filterRequestCode(selectedRequestCode: string[]) {
+  filterRequestCode(selectedRequestCode: resourceRequestCodeDto[]) {
     this.selectedListRequestCode = selectedRequestCode;
     this.getDataPage(1);
   }

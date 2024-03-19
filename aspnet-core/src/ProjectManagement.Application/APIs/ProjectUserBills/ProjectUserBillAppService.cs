@@ -96,9 +96,9 @@ namespace ProjectManagement.APIs.ProjectUserBills
 
 
         [HttpGet]
-        public async Task<List<UserDto>> GetAllUserActive(bool onlyStaff, long projectId, long? currentUserId)
+        public async Task<List<UserDto>> GetAllUser(bool onlyStaff, long projectId, long? currentUserId)
         {
-            return await projectUserBillManager.GetAllUserActive(onlyStaff, projectId, currentUserId);
+            return await projectUserBillManager.GetAllUser(onlyStaff, projectId, currentUserId);
         }
 
         [HttpPost]

@@ -26,11 +26,11 @@ export class ProjectUserBillService extends BaseApiService {
     if (isFake) {
       return this.http.get<any>(
         this.rootUrl +
-          `/GetAllUserActive?onlyStaff=${onlyStaff}&projectId=${projectId}&currentUserId=${userId}&isFake=${isFake}`
+          `/GetAllUser?onlyStaff=${onlyStaff}&projectId=${projectId}&currentUserId=${userId}&isFake=${isFake}`
       );
     } else {
       return this.http.get<any>(
-        this.rootUrl + `/GetAllUserActive?onlyStaff=${onlyStaff}`
+        this.rootUrl + `/GetAllUser?onlyStaff=${onlyStaff}`
       );
     }
   }

@@ -270,7 +270,7 @@ namespace ProjectManagement.Services.ProjectUserBills
             return await result;
         }
 
-        public async Task<List<UserDto>> GetAllUserActive(bool onlyStaff, long projectId, long? currentUserId)
+        public async Task<List<UserDto>> GetAllUser(bool onlyStaff, long projectId, long? currentUserId)
         {
             var listPUBIds = await _workScope.GetAll<ProjectManagement.Entities.ProjectUserBill>()
                 .Where(x => x.ProjectId == projectId)

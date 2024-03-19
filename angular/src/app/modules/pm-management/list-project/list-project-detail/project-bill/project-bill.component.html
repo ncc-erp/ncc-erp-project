@@ -88,23 +88,24 @@
                     <div class="d-flex flex-wrap justify-content-start align-items-center" style="flex-grow: 1;">
                         <button name="btn-createUserBill" *ngIf="!userBillProcess && permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Create)"
                         [hidden]="isShowUserBill" style="border: none; height: fit-content;"
-                        class="btn bg-blue ml-3 btn-sm mb-2" (click)="addUserBill(); userBillCurrentPage=1; $event.stopPropagation()">
+                        class="btn bg-blue ml-3 btn-s mb-2" (click)="addUserBill(); userBillCurrentPage=1; $event.stopPropagation()">
                             <i class="fa fa-plus m-0"></i>
                         </button>
                         <div class="col-lg-4 mb-2" style="margin-left: 10px; width: 100%;" (click)="$event.stopPropagation()" [hidden]="isShowUserBill">
                             <div class="input-group">
                                 <div class="input-group-prepend">
-                                    <button name="btn-search" type="button" class="btn bg-blue" (click)="searchContext(); $event.stopPropagation()">
+                                    <button name="btn-search" type="button" class="btn bg-blue" (click)="searchContext(); $event.stopPropagation()" [hidden]="!showSearchAndFilter">
                                         <i class="fas fa-search"></i>
                                     </button>
                                 </div>
                                 <input type="text" class="form-control" name="keyword" placeholder="Search by Email, Charge Name/Role, Note,..."
+                                [hidden]="!showSearchAndFilter"
                                 [(ngModel)]="searchText"
                                 (keydown.space)="$event.stopPropagation()"
                                 (keydown.enter)="searchContext(); $event.stopPropagation()" />
                             </div>
                         </div>
-                        <div class="col-lg-2 mb-2" (click)="$event.stopPropagation()" [hidden]="isShowUserBill">
+                        <div class="col-lg-2 mb-2" (click)="$event.stopPropagation()" [hidden]="!showSearchAndFilter">
                             <div class="input-group">
                                 <mat-form-field appearance="outline" style="width: 100%;">
                                     <mat-label>Charge Status</mat-label>
@@ -116,11 +117,11 @@
                                 </mat-form-field>
                             </div>
                         </div>
-                        
-                        <div class="col-lg-3 mb-2" (click)="$event.stopPropagation()" style="display: flex; align-items: center;" [hidden]="isShowUserBill">
+
+                        <div class="col-lg-3 mb-2" (click)="$event.stopPropagation()" style="display: flex; align-items: center;" [hidden]="!showSearchAndFilter">
                             <app-multiple-select
                             #linkedResources
-                            [ngClass]="selectedLinkedResources.length > 0? 'col-11' : 'col-12'"               
+                            [ngClass]="selectedLinkedResources.length > 0? 'col-11' : 'col-12'"
                             name="filterLinkedResources"
                             placeholder="Tất cả"
                             labelName="Linked Resources"
@@ -135,7 +136,7 @@
                             ></i>
                         </div>
 
-                        <div class="col-lg-2 mb-2" (click)="$event.stopPropagation()" style="display: flex; align-items: center;" [hidden]="isShowUserBill">
+                        <div class="col-lg-2 mb-2" (click)="$event.stopPropagation()" style="display: flex; align-items: center;" [hidden]="!showSearchAndFilter">
                             <app-multiple-select-string-value
                             #chargeRole
                             [ngClass]="selectedChargeRole.length > 0? 'col-11' : 'col-12'"
@@ -152,7 +153,7 @@
                             (click)="onCancelFilterChargeRole()"
                             ></i>
                         </div>
-                        <div class="mb-2" (click)="$event.stopPropagation()" [hidden]="isShowUserBill">
+                        <div class="mb-2" (click)="$event.stopPropagation()" [hidden]="!showSearchAndFilter">
                             <button class="btn btn-primary" (click)="refresh()">
                                 <i class="fas fa-redo-alt"></i>
                             </button>
@@ -180,7 +181,7 @@
                                     <th class="align" (click)="orderLinkedResourcesOnTop('linkedResources')" style="cursor: pointer;">{{ "Linked Resources" | localize }}
                                         <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'linkedResources'"></i>
                                         <i *ngIf="sortColumn !== 'linkedResources'" class="fas fa-sort"></i>
-                                    </th>        
+                                    </th>
                                     <th class="align" (click)="sortData('billRate')" style="cursor: pointer;"
                                         *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Rate_View)">
                                         {{ "Rate" | localize }}
@@ -208,35 +209,34 @@
                                         'highLightOne': bill.linkedResources && bill.linkedResources.length == 1  }">
                                         <span>{{ i + 1 + maxBillUserCurrentPage * (userBillCurrentPage - 1) }}</span>
                                     </td>
-                                    <td class="text-left" style="min-width: 250px;">
+                                    <td class="text-left" style="min-width: 350px; max-width: 100%;">
                                         <span *ngIf="!bill.createMode">
                                             <app-user-info [userData]="bill" [isHideLevel]="true">
                                             </app-user-info>
                                         </span>
                                         <div *ngIf="bill.createMode">
-
-                                            <mat-form-field style="width: 200px" class="w-100" appearance="outline">
-                                                <mat-select (closed)="focusOut()" [(ngModel)]="bill.userId"
-                                                    name="userBill" placeholder="select an user *" required
+                                            <mat-form-field style="min-width: 300px; max-width: 100%;" class="w-100" appearance="outline">
+                                                <mat-select panelClass="custom-panel-class" (closed)="focusOut()"
+                                                    [(ngModel)]="bill.userId"
+                                                    name="userBill"
+                                                    placeholder="select an user *"
+                                                    required
                                                     #userBill="ngModel">
-                                                    <mat-form-field class="w-100 px-3 "
-                                                        style="position: sticky; top: 0; z-index: 2; background-color: white;">
+                                                    <mat-form-field class="w-100 px-3" style="position: sticky; top: 0; z-index: 2; background-color: white;">
                                                         <input matInput [(ngModel)]="searchUserBill"
-                                                            placeholder="search" (keydown)="$event.stopPropagation()"
-                                                            name="searchBillUser" #search>{{search.focus()}}
+                                                            placeholder="search"
+                                                            (keydown)="$event.stopPropagation()"
+                                                            name="searchBillUser"
+                                                            #search>{{search.focus()}}
                                                     </mat-form-field>
-                                                    <mat-option
-                                                        *ngFor="let user of userForUserBill | listFilter: 'fullName' : searchUserBill : 'emailAddress' : 'surname' : 'name'"
-                                                        [value]="user.id">
-                                                        {{user.fullName}} - ({{user.emailAddress}})</mat-option>
+                                                    <mat-option *ngFor="let user of userForUserBill | listFilter: 'fullName' : searchUserBill : 'emailAddress' : 'surname' : 'name'" [value]="user.id">
+                                                        {{user.fullName}} - ({{user.emailAddress}})
+                                                    </mat-option>
                                                 </mat-select>
                                             </mat-form-field>
-                                            <mat-error class="mt-1"
-                                                *ngIf="userBill.hasError('required') && userBill.touched"
-                                                style="font-size: 13px;">
+                                            <mat-error class="mt-1" *ngIf="userBill.hasError('required') && userBill.touched" style="font-size: 13px;">
                                                 This field is required
                                             </mat-error>
-
                                         </div>
                                     </td>
                                     <td>
@@ -396,7 +396,7 @@
                                               [disabled]="userBillProcess" mat-button [matMenuTriggerFor]="actionMenu"><i class="fas fa-bars fa-lg"></i></button>
                                             <!-- Define the mat-menu and its content -->
                                             <mat-menu #actionMenu="matMenu">
-                                              <button mat-menu-item (click)="editUserBill(bill)">
+                                              <button mat-menu-item (click)="editUserBill(bill)" [hidden]="!showSearchAndFilter">
                                                 <i class="fas fa-pencil-alt"></i> Edit
                                               </button>
                                               <button mat-menu-item (click)="removeUserBill(bill)">
@@ -409,10 +409,12 @@
                                             <button
                                                 [disabled]="!bill?.userId || !bill?.billRole || !bill?.startTime  || bill?.billRate<0 || !bill?.billRate "
                                                 class=" mr-3 submit-btn" style="background: none; border: none;"
+                                                [hidden]="showSearchAndFilter"
                                                 (click)="saveUserBill(bill)">
                                                 <i style="color: green;" class="fas fa-check fa-2x "></i>
                                             </button>
                                             <i style="color: red;" class="fas fa-undo fa-2x"
+                                                [hidden]="showSearchAndFilter"
                                                 (click)="cancelUserBill()"></i>
                                         </div>
                                     </td>

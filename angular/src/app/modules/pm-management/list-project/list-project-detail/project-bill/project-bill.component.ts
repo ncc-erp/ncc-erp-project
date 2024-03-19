@@ -62,6 +62,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   public userBillProcess: boolean = false;
   public panelOpenState: boolean = false;
   public isShowUserBill: boolean = false;
+  public showSearchAndFilter: boolean = true;
   public searchUserBill: string = "";
   public searchText: string = "";
   public accountName;
@@ -249,9 +250,11 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     newUserBill.createMode = true;
     newUserBill.isActive = true;
     this.userBillProcess = true;
-    this.filteredUserBillList.unshift(newUserBill)
+    this.filteredUserBillList.unshift(newUserBill);
+    this.showSearchAndFilter = false;
   }
   public saveUserBill(userBill: projectUserBillDto): void {
+    this.showSearchAndFilter = true;
     delete userBill["createMode"]
     userBill.startTime = moment(userBill.startTime).format("YYYY-MM-DD");
     if (userBill.endTime) {
@@ -351,13 +354,15 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     this.getUserBill();
     this.userBillProcess = false;
     this.isEditUserBill = false;
-    this.searchUserBill = ""
+    this.searchUserBill = "";
+    this.showSearchAndFilter = true;
   }
   public editUserBill(userBill: projectUserBillDto): void {
     this.userIdOld = userBill.userId
     userBill.createMode = true;
     this.userBillProcess = true;
     this.isEditUserBill = true;
+    this.showSearchAndFilter = false;
     // userBill.billRole = this.APP_ENUM.ProjectUserRole[userBill.billRole];
   }
   private getUserBill(id?: number, status?: boolean, userIdNew?: number): void {

@@ -58,7 +58,8 @@ export class AddNoteDialogComponent implements OnInit, OnDestroy {
             this.saving = false;
           })
         )
-        .subscribe(() => {
+        .subscribe((response) => {
+          this.poolNote = response.note;
           this.dialogRef.close();
           this.onSave.emit();
           abp.notify.success("Update Note");

@@ -237,7 +237,7 @@ namespace ProjectManagement.APIs.Resource
         }
 
         [HttpPut]
-        [AbpAuthorize(PermissionNames.Resource_TabPool_EditNote)]
+        [AbpAuthorize(PermissionNames.Resource_TabPool_EditNote, PermissionNames.Resource_TabAllResource_EditNote)]
         public async Task updateUserPoolNote(UpdateUserPoolNoteDto input)
         {
             var user = await _userManager.GetUserByIdAsync(input.UserId);

@@ -567,6 +567,7 @@ export const PERMISSIONS_CONSTANT = {
        Resource_TabAllResource_CancelMyPlan: "Resource.TabAllResource.CancelMyPlan",
        Resource_TabAllResource_CancelAnyPlan: "Resource.TabAllResource.CancelAnyPlan",
        Resource_TabAllResource_UpdateSkill: "Resource.TabAllResource.UpdateSkill",
+       Resource_TabAllResource_EditNote: "Resource.TabAllResource.EditNote",
        Resource_TabAllResource_ViewUserStarSkill: "Resource.TabAllResource.ViewUserStarSkill",
        Resource_TabAllResource_ProjectDetail: "Resource.TabAllResource.ProjectDetail",
 

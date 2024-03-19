@@ -23,10 +23,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { ShadowAccountDialogComponent } from './shadow-account-dialog/shadow-account-dialog.component';
 import { Observable, concat } from 'rxjs';
 import { SortableModel } from '@shared/components/sortable/sortable.component';
-import { ChargeStatus, ChargeType } from '@app/service/model/project-process-criteria-result.dto';
+import { ChargeStatusFilter } from '@app/service/model/project-process-criteria-result.dto';
 import { MatSelect } from '@angular/material/select';
 import { Pipe, PipeTransform } from '@angular/core';
-import { MultiSelectComponent } from '@shared/components/multi-select/multi-select.component';
+import { optionDto } from '@shared/components/multiple-select/multiple-select.component';
 
 
 @Component({
@@ -84,11 +84,9 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     value: item[1]
   }))
   public expandInvoiceSetting: true;
-  public ChargeStatus = ChargeStatus;
-  public selectedIsCharge: ChargeStatus = ChargeStatus.IsCharge;
-  public ChargeType = ChargeType;
+  public ChargeStatusFilter = ChargeStatusFilter;
+  public selectedIsCharge: ChargeStatusFilter = ChargeStatusFilter.IsCharge;
   public chargeTypeList = [{ name: 'Daily', value: 0 }, { name: 'Monthly', value: 1 }, { name: 'Hourly', value: 2 }];
-  public selectedChargeType: ChargeType = ChargeType.All;
 
   public listProjectOfClient: SubInvoice[] = []
   public listSelectProject: DropDownDataDto[] = []
@@ -96,10 +94,13 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   public projectInvoiceSetting: ProjectInvoiceSettingDto;
   public updateInvoiceDto: UpdateInvoiceDto = {} as UpdateInvoiceDto;
 
-  public selectedChargeName: string[] = [];
   public selectedChargeRole: string[] = [];
-  public listSelectChargeName: string[] = [];
   public listSelectChargeRole: string[] = [];
+
+  public selectedLinkedResources: number[] = [];
+  public listSelectLinkedResources: optionDto[] = [];
+
+  public listAllResource = []
 
   Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_View = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_View;
   Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Create = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Create;
@@ -125,14 +126,16 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getUserBill(true);
-    this.getSelectedData();
+    this.getUserBill();
+    this.GetChargeRoleData();
+    this.GetLinkedResourcesData();
     this.getParentInvoice();
     this.getAllProject();
     this.getCurrentProjectInfo();
     this.getProjectBillInfo();
     this.searchContext();
     this.getAllFakeUser('');
+    this.getAllLinkResource();
   }
 
   isShowInvoiceSetting(){
@@ -218,7 +221,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
       this.userForUserBill = data.result;
     })
   }
-  public removeLinkResource(projectId, projectUserBillId, userId, id){
+  public removeLinkResource(userId, id){
     // this.isLoading = true
     const req = {
       projectUserBillId: id,
@@ -233,7 +236,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
           this.isLoading = true;
           this.projectUserBillService.RemoveUserFromBillAccount(req).pipe(catchError(this.projectUserBillService.handleError)).subscribe(data => {
             abp.notify.success(`Linked Resource Removed Successfully!`)
-             this.getUserBill(true, id, status);
+             this.getUserBill(id, status);
           }, () => {
             this.isLoading = false
           })
@@ -246,10 +249,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     newUserBill.createMode = true;
     newUserBill.isActive = true;
     this.userBillProcess = true;
-    this.filteredUserBillList.unshift(newUserBill);
-    if (newUserBill.createMode) {
-      this.filteredUserBillList.length = this.filteredUserBillList.length;
-    }
+    this.filteredUserBillList.unshift(newUserBill)
   }
   public saveUserBill(userBill: projectUserBillDto): void {
     delete userBill["createMode"]
@@ -296,7 +296,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
         }
         this.projectUserBillService.update(userBillToUpdate).pipe(catchError(this.projectUserBillService.handleError)).subscribe(()=>{
           abp.notify.success("Update successfully")
-          this.getUserBill(true)
+          this.getUserBill()
           this.userBillProcess = false;
           this.isEditUserBill = false;
           this.searchUserBill = ""
@@ -321,7 +321,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
         .pipe(catchError(this.projectUserBillService.handleError))
         .subscribe(() => {
             abp.notify.success("Update successfully")
-            this.getUserBill(true)
+            this.getUserBill()
             this.userBillProcess = false;
             this.isEditUserBill = false;
             this.searchUserBill = ""
@@ -338,7 +338,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     userBill.projectId = this.projectId;
     this.projectUserBillService.create(userBill).pipe(catchError(this.projectUserBillService.handleError)).subscribe(res => {
       abp.notify.success(`Created new user bill`);
-      this.getUserBill(true);
+      this.getUserBill();
       this.userBillProcess = false;
       this.searchUserBill = "";
     }, () => {
@@ -348,7 +348,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   }
 
   public cancelUserBill(): void {
-    this.getUserBill(true);
+    this.getUserBill();
     this.userBillProcess = false;
     this.isEditUserBill = false;
     this.searchUserBill = ""
@@ -360,15 +360,13 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     this.isEditUserBill = true;
     // userBill.billRole = this.APP_ENUM.ProjectUserRole[userBill.billRole];
   }
-
-  private getUserBill(initialization: boolean = false, id?: number, status?: boolean, userIdNew?: number): void {
+  private getUserBill(id?: number, status?: boolean, userIdNew?: number): void {
     this.isLoading = true;
     const body = {
         projectId: this.projectId,
-        chargeStatus: this.selectedIsCharge,
-        chargeNameFilter: this.selectedChargeName,
+        chargeStatusFilter: this.selectedIsCharge,
+        linkedResourcesFilter: this.selectedLinkedResources,
         chargeRoleFilter: this.selectedChargeRole,
-        chargeType: this.selectedChargeType,
         searchText: this.searchText,
     };
 
@@ -384,32 +382,35 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
 
         this.filteredUserBillList = this.userBillList.slice();
         this.isLoading = false;
-
-        if (initialization) {
-          this.getSelectedData();
-      }
     }, () => { this.isLoading = false; });
   }
 
-  getSelectedData(){
-    const distinctSelectChargeName = new Set<string>();
-    const distinctSelectChargeRole = new Set<string>();
-
-    this.userBillList.forEach(item => {
-        distinctSelectChargeName.add(item.billAccountName);
-        distinctSelectChargeRole.add(item.billRole);
-    });
-
-    this.listSelectChargeName = Array.from(distinctSelectChargeName).sort(this.customSort);
-    this.listSelectChargeRole = Array.from(distinctSelectChargeRole).sort(this.customSort);
+  GetChargeRoleData(){
+    this.projectUserBillService.GetAllChargeRoleByProject(this.projectId).subscribe(data => {
+      this.listSelectChargeRole = data.result;
+    })
   }
 
-  customSort(a: string, b: string): number {
-    return a.localeCompare(b, 'en', { sensitivity: 'accent' });
+  GetLinkedResourcesData(){
+    this.projectUserBillService.GetAllLinkedResourcesByProject(this.projectId).subscribe(data => {
+      this.listSelectLinkedResources = data.result.map(item => {
+        return {
+          id: item.id,
+          name: `${item.fullName} (${item.emailAddress})`
+        };
+      });
+    })
+  }
+
+  getAllLinkResource(){
+    this.projectUserBillService.GetAllResource().subscribe(res => {
+      this.listAllResource = res.result;
+      this.isLoading = false;
+    }, () => { this.isLoading = false; });
   }
 
   filterByIsCharge() {
-    this.getUserBill(true)
+    this.getUserBill()
     this.userBillProcess = false;
     this.isEditUserBill = false;
     this.searchUserBill = "";
@@ -461,7 +462,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
           concat(this.projectUserBillService.RemoveUserFromBillAccount(reqDelete),this.projectUserBillService.deleteUserBill(userBill.id))
           .pipe(catchError(this.projectUserBillService.handleError)).subscribe(()=>{
                 abp.notify.success("Delete Bill account success")
-                this.getUserBill(true)
+                this.getUserBill()
           })
         }
       }
@@ -536,6 +537,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
         projectId: projectId,
         userId: this.userIdOld != userId && this.isEditUserBill ? this.userIdOld : userId,
         listResource: listResource ? listResource.map(item=> item.id) : [],
+        listAllResource: this.listAllResource,
         userIdNew: userId,
         projectUserBillId: id
       },
@@ -546,7 +548,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
 
     show.afterClosed().subscribe((res) => {
       if (res.isSave) {
-        this.getUserBill(true, id,status,res.userIdNew);
+        this.getUserBill(id,status,res.userIdNew);
       }
     })
   }
@@ -661,8 +663,8 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     this.getUserBill();
   }
 
-  onChangeListChargeNameSelected(selectedChargeName: string[]) {
-    this.selectedChargeName = selectedChargeName;
+  onChangeListLinkedResourcesSelected(selectedLinkedResources: number[]) {
+    this.selectedLinkedResources = selectedLinkedResources;
     this.getUserBill();
   }
 
@@ -671,9 +673,9 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     this.getUserBill();
   }
 
-  onCancelFilterChargeName() {
-    this.selectedChargeName = []
-    this.getUserBill()
+  onCancelFilterLinkedResources() {
+    this.selectedLinkedResources = [];
+    this.getUserBill();
   }
 
   onCancelFilterChargeRole() {
@@ -682,11 +684,10 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   }
   refresh(){
     this.searchText = "";
-    this.selectedIsCharge = ChargeStatus.IsCharge;
-    this.selectedChargeName = [];
+    this.selectedIsCharge = ChargeStatusFilter.IsCharge;
+    this.selectedLinkedResources = [];
     this.selectedChargeRole = [];
-    this.selectedChargeType = ChargeType.All;
-    this.getUserBill(true);
+    this.getUserBill();
   }
 }
 

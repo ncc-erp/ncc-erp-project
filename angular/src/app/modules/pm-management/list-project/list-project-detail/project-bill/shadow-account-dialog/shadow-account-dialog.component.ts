@@ -36,12 +36,7 @@ export class ShadowAccountDialogComponent
     this.listResourceSelect = this.data.listResource;
     this.listResourceSelected = [...this.data.listResource];
     this.listResourceSelectCurrent = [...this.listResourceSelect];
-    this.isLoading = true;
-    this.projectUserBillService.GetAllResource().subscribe(res => {
-      // Chỉ gán các tài nguyên chưa được chọn vào listAllResource
-      this.listAllResource = res.result.filter(item => !this.listResourceSelect.includes(item.userId));
-      this.isLoading = false;
-    }, () => { this.isLoading = false; });
+    this.listAllResource = this.data.listAllResource.filter(item => !this.listResourceSelect.includes(item.userId));
   }
 
   openedChange(event){

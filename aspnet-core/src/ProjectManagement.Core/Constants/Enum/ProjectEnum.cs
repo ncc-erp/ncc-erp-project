@@ -341,7 +341,7 @@
             IsOut = 3
         }
         
-        public enum ChargeStatus
+        public enum ChargeStatusFilter
         {
             All = 0,
             IsCharge = 1,

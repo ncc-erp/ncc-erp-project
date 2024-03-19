@@ -29,17 +29,9 @@ export class GetProcessCriteriaDto{
     isLeaf: boolean;
 }
 
-export enum ChargeStatus
+export enum ChargeStatusFilter
 {
     All = 0,
     IsCharge = 1,
     IsNotCharge = 2
-}
-
-export enum ChargeType
-{
-    Daily = 0,
-    Monthly = 1,
-    Hourly = 2,
-    All = 3,
 }

@@ -61,4 +61,11 @@ namespace ProjectManagement.Services.ProjectUserBill.Dto
 
         public string PositionName { get; set; }
     }
+
+    public class LinkedResourceInfoDto
+    {
+        public long Id { get; set; }
+        public string EmailAddress { get; set; }
+        public string FullName { get; set; }
+    }
 }

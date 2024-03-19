@@ -96,5 +96,13 @@ export class ProjectUserBillService extends BaseApiService {
   getAllBillAccount(){
     return this.http.get<any>(this.rootUrl + '/GetAllBillAccount');
   }
+
+  GetAllChargeRoleByProject(projectId: number): Observable<any>{
+    return this.http.get<any>(this.rootUrl + `/GetAllChargeRoleByProject?projectId=${projectId}`);
+  }
+  GetAllLinkedResourcesByProject(projectId: number): Observable<any>{
+    return this.http.get<any>(this.rootUrl + `/GetAllLinkedResourcesByProject?projectId=${projectId}`);
+  }
+
   //#endregion
 }

@@ -47,5 +47,5 @@
 }
 ::ng-deep .custom-panel {
     min-width: 350px !important;
-    max-height: 40vh !important;
+    max-height: 40vh !important; 
 }

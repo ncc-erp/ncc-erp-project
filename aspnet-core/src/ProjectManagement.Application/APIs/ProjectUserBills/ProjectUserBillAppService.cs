@@ -46,6 +46,24 @@ namespace ProjectManagement.APIs.ProjectUserBills
             return await projectUserBillManager.GetAllByProject(input);
         }
 
+        [HttpGet]
+        [AbpAuthorize(PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo,
+          PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo,
+          PermissionNames.Projects_TrainingProjects_ProjectDetail_TabBillInfo)]
+        public async Task<List<LinkedResourceInfoDto>> GetAllLinkedResourcesByProject(long projectId)
+        {
+            return await projectUserBillManager.GetAllLinkedResourcesByProject(projectId);
+        }
+
+        [HttpGet]
+        [AbpAuthorize(PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo,
+          PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo,
+          PermissionNames.Projects_TrainingProjects_ProjectDetail_TabBillInfo)]
+        public async Task<List<string>> GetAllChargeRoleByProject(long projectId)
+        {
+            return await projectUserBillManager.GetAllChargeRoleByProject(projectId);
+        }
+
         [HttpPost]
         [AbpAuthorize(
             PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount,

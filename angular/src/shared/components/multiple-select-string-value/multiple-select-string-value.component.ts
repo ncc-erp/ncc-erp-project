@@ -11,16 +11,17 @@ import { MatSelect } from "@angular/material/select";
 import * as _ from "lodash";
 
 @Component({
-  selector: 'app-multi-select',
-  templateUrl: './multi-select.component.html',
-  styleUrls: ['./multi-select.component.css']
+  selector: 'app-multiple-select-string-value',
+  templateUrl: './multiple-select-string-value.component.html',
+  styleUrls: ['./multiple-select-string-value.component.css']
 })
-export class MultiSelectComponent implements OnInit, OnChanges {
+export class MultipleSelectStringValueComponent implements OnInit, OnChanges {
   @ViewChild("matSelect") matSelect: MatSelect;
   @Input() labelName: string;
   @Input() listOption: string[] = [];
   @Input() defaultValue?: string[] = [];
   @Input() classCustom?: string;
+  @Input() disabled?: boolean;
 
   @Output() onChange = new EventEmitter<any>();
 

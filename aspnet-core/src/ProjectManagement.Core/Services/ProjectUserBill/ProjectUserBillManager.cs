@@ -24,6 +24,7 @@ using Microsoft.AspNetCore.SignalR;
 using System;
 using ProjectManagement.Services.ProjectUserBill;
 using Abp.Linq.Extensions;
+using Abp.Extensions;
 
 namespace ProjectManagement.Services.ProjectUserBills
 {
@@ -225,18 +226,48 @@ namespace ProjectManagement.Services.ProjectUserBills
                         }).ToList()
                 });
 
-            var result = query.WhereIf(input.ChargeStatus != ChargeStatus.All, x => x.isActive == (input.ChargeStatus == ChargeStatus.IsCharge))
-                        .WhereIf(input.ChargeRoleFilter != null && input.ChargeRoleFilter.Any(), x => input.ChargeRoleFilter.Contains(x.BillRole))
-                        .WhereIf(input.ChargeType != ChargeType.All, x => x.ChargeType == input.ChargeType)
-                        .ApplySearch(input.SearchText).OrderByDescending(x => x.CreationTime)
-                        .ToList(); //ToList để getData => lấy được BillAccountName => filter được
 
-            if (input.ChargeNameFilter != null && input.ChargeNameFilter.Any())
+            var result = query.WhereIf(input.ChargeStatusFilter != ChargeStatusFilter.All, x => x.isActive == (input.ChargeStatusFilter == ChargeStatusFilter.IsCharge))
+                        .WhereIf(input.ChargeRoleFilter != null && input.ChargeRoleFilter.Any(), x => input.ChargeRoleFilter.Contains(x.BillRole))
+                        .ApplySearch(input.SearchText).OrderByDescending(x => x.CreationTime)
+                        .ToList();
+
+            if (input.LinkedResourcesFilter != null && input.LinkedResourcesFilter.Any())
             {
-                result = result.Where(x => input.ChargeNameFilter.Contains(x.BillAccountName)).ToList();
+                result = result.Where(x => x.LinkedResources.Any(lr => input.LinkedResourcesFilter.Contains(lr.Id))).ToList();
             }
 
             return result;
+        }
+
+        public async Task<List<LinkedResourceInfoDto>> GetAllLinkedResourcesByProject(long projectId)
+        {
+            var result = await _workScope.GetAll<LinkedResource>()
+                .Where(x => x.ProjectUserBill.ProjectId == projectId)
+                .Where(x => x.User != null)
+                .Select(x => new LinkedResourceInfoDto
+                {
+                    Id = x.User.Id,
+                    EmailAddress = x.User.EmailAddress,
+                    FullName = x.User.FullName
+                })
+                .Distinct()
+                .ToListAsync();
+
+            result = result.OrderBy(x => x.EmailAddress).ToList();
+
+            return result;
+        }
+
+        public async Task<List<string>> GetAllChargeRoleByProject(long projectId)
+        {
+            var result = _workScope.GetAll<Entities.ProjectUserBill>()
+                .Where(x => x.ProjectId == projectId)
+                .Select(x => x.BillRole)
+                .Distinct()
+                .ToListAsync();
+
+            return await result;
         }
 
         public async Task<List<UserDto>> GetAllUserActive(bool onlyStaff, long projectId, long? currentUserId)

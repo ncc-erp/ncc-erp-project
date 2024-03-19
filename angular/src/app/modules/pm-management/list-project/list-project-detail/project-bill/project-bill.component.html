@@ -91,14 +91,14 @@
                         class="btn bg-blue ml-3 btn-sm mb-2" (click)="addUserBill(); userBillCurrentPage=1; $event.stopPropagation()">
                             <i class="fa fa-plus m-0"></i>
                         </button>
-                        <div class="col-lg-3 mb-2" style="margin-left: 10px; width: 100%;" (click)="$event.stopPropagation()" [hidden]="isShowUserBill">
+                        <div class="col-lg-4 mb-2" style="margin-left: 10px; width: 100%;" (click)="$event.stopPropagation()" [hidden]="isShowUserBill">
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <button name="btn-search" type="button" class="btn bg-blue" (click)="searchContext(); $event.stopPropagation()">
                                         <i class="fas fa-search"></i>
                                     </button>
                                 </div>
-                                <input type="text" class="form-control" name="keyword" placeholder="Search by Email, Note, Charge Name/Role"
+                                <input type="text" class="form-control" name="keyword" placeholder="Search by Email, Charge Name/Role, Note,..."
                                 [(ngModel)]="searchText"
                                 (keydown.space)="$event.stopPropagation()"
                                 (keydown.enter)="searchContext(); $event.stopPropagation()" />
@@ -109,34 +109,34 @@
                                 <mat-form-field appearance="outline" style="width: 100%;">
                                     <mat-label>Charge Status</mat-label>
                                     <mat-select [(ngModel)]="selectedIsCharge" (selectionChange)="filterByIsCharge()">
-                                        <mat-option [value]="ChargeStatus.All">All</mat-option>
-                                        <mat-option [value]="ChargeStatus.IsCharge">Charge</mat-option>
-                                        <mat-option [value]="ChargeStatus.IsNotCharge">No Charge</mat-option>
+                                        <mat-option [value]="ChargeStatusFilter.All">All</mat-option>
+                                        <mat-option [value]="ChargeStatusFilter.IsCharge">Charge</mat-option>
+                                        <mat-option [value]="ChargeStatusFilter.IsNotCharge">No Charge</mat-option>
                                     </mat-select>
                                 </mat-form-field>
                             </div>
                         </div>
-
-                        <div class="col-lg-2 mb-2" (click)="$event.stopPropagation()" style="display: flex; align-items: center;" [hidden]="isShowUserBill">
-                            <app-multi-select
-                            #chargeName
-                            [ngClass]="selectedChargeName.length > 0? 'col-11' : 'col-12'"
-                            name="filterChargeName"
+                        
+                        <div class="col-lg-3 mb-2" (click)="$event.stopPropagation()" style="display: flex; align-items: center;" [hidden]="isShowUserBill">
+                            <app-multiple-select
+                            #linkedResources
+                            [ngClass]="selectedLinkedResources.length > 0? 'col-11' : 'col-12'"               
+                            name="filterLinkedResources"
                             placeholder="Tất cả"
-                            labelName="Charge Name"
-                            [listOption]="listSelectChargeName"
-                            [defaultValue]="selectedChargeName"
-                            (onChange)="onChangeListChargeNameSelected($event)">
-                            </app-multi-select>
+                            labelName="Linked Resources"
+                            [listOption]="listSelectLinkedResources"
+                            [defaultValue]="selectedLinkedResources"
+                            (onChange)="onChangeListLinkedResourcesSelected($event)">
+                            </app-multiple-select>
                             <i
                             class="fas fa-times fa-lg pointer"
-                            *ngIf="selectedChargeName.length > 0"
-                            (click)="onCancelFilterChargeName()"
+                            *ngIf="selectedLinkedResources.length > 0"
+                            (click)="onCancelFilterLinkedResources()"
                             ></i>
                         </div>
 
                         <div class="col-lg-2 mb-2" (click)="$event.stopPropagation()" style="display: flex; align-items: center;" [hidden]="isShowUserBill">
-                            <app-multi-select
+                            <app-multiple-select-string-value
                             #chargeRole
                             [ngClass]="selectedChargeRole.length > 0? 'col-11' : 'col-12'"
                             name="filterChargeRole"
@@ -145,28 +145,14 @@
                             [listOption]="listSelectChargeRole"
                             [defaultValue]="selectedChargeRole"
                             (onChange)="onChangeListChargeRoleSelected($event)">
-                            </app-multi-select>
+                            </app-multiple-select-string-value>
                             <i
                             class="fas fa-times fa-lg pointer"
                             *ngIf="selectedChargeRole.length > 0"
                             (click)="onCancelFilterChargeRole()"
                             ></i>
                         </div>
-
-                        <div class="col-lg-1 mb-2" (click)="$event.stopPropagation()" [hidden]="isShowUserBill">
-                            <div class="input-group">
-                                <mat-form-field appearance="outline" style="width: 100%;">
-                                    <mat-label>Charge Type</mat-label>
-                                    <mat-select [(ngModel)]="selectedChargeType" (selectionChange)="filterByChargeType()">
-                                        <mat-option [value]="ChargeType.All">All</mat-option>
-                                        <mat-option [value]="ChargeType.Daily">Daily</mat-option>
-                                        <mat-option [value]="ChargeType.Monthly">Monthly</mat-option>
-                                        <mat-option [value]="ChargeType.Hourly">Hourly</mat-option>
-                                    </mat-select>
-                                </mat-form-field>
-                            </div>
-                        </div>
-                        <div class="col-lg-1 mb-2" (click)="$event.stopPropagation()" [hidden]="isShowUserBill">
+                        <div class="mb-2" (click)="$event.stopPropagation()" [hidden]="isShowUserBill">
                             <button class="btn btn-primary" (click)="refresh()">
                                 <i class="fas fa-redo-alt"></i>
                             </button>
@@ -178,7 +164,7 @@
                             class="table table-hover text-nowrap" [busy]="isLoading">
                             <thead>
                                 <tr>
-                                  <th style="border-left: 10px solid #fff" class="stt">#</th>
+                                    <th style="border-left: 10px solid #fff" class="stt">#</th>
                                     <th class="align" (click)="sortData('fullName')" style="cursor: pointer;">{{ "Employee" | localize }}
                                         <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'fullName'"></i>
                                         <i *ngIf="sortColumn !== 'fullName'" class="fas fa-sort"></i>
@@ -207,8 +193,8 @@
                                         <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'startTime'"></i>
                                         <i *ngIf="sortColumn !== 'startTime'" class="fas fa-sort"></i>
                                     </th>
-                                    <th style="width:200px;">Note</th>
-                                    <th>Action</th>
+                                    <th class="align" style="width:200px;">Note</th>
+                                    <th class="align">Action</th>
                                 </tr>
                               </thead>
                                             <tbody>
@@ -288,19 +274,19 @@
                                                 <div *ngFor="let resource of bill.linkedResources" class="mb-2 position-relative">
                                                     <app-user-info
                                                         [userData]="resource"
-                                                        [isHideEmail] = "true"
+                                                        [isHideEmail]="bill.createMode"
                                                         [isWeeklyReport] = "false"
                                                         [isSmallerDiv]="true"
                                                         [isChangeContentSize]="true">
                                                     </app-user-info>
-                                                    <i (click) = "removeLinkResource(bill.projectId, bill.userId, resource.id, bill.id)"
+                                                    <i (click)="removeLinkResource(resource.id, bill.id)"
                                                      class="fa fa-times position-absolute" style="top:32px; right: -28px;"></i>
                                                 </div>
                                             </div>
                                             <i *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount)"
                                             (click)="handleOpenDialogShadowAccount(bill.projectId, bill.userId, bill.linkedResources, bill.id)"
-                                            class="btn bg-blue ml-3 btn-sm mb-2"
-                                            style="cursor: pointer; font-size: 10px; margin-left: 3px; margin-bottom: 6px;">
+                                            class="btn bg-blue ml-2 btn-sm mb-2"
+                                            style="cursor: pointer; font-size: 10px;">
                                             <i class="fa fa-plus fa-s m-0"></i>
                                             </i>
                                         </div>
@@ -426,7 +412,7 @@
                                                 (click)="saveUserBill(bill)">
                                                 <i style="color: green;" class="fas fa-check fa-2x "></i>
                                             </button>
-                                            <i style="color: grey;" class="fas fa-undo fa-2x"
+                                            <i style="color: red;" class="fas fa-undo fa-2x"
                                                 (click)="cancelUserBill()"></i>
                                         </div>
                                     </td>

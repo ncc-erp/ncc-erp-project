@@ -250,7 +250,6 @@ namespace ProjectManagement.Services.ProjectUserBills
                 listPUBIds = listPUBIds.Where(x => x != currentUserId).ToList();
 
             var query = _workScope.GetAll<User>()
-                .Where(u => u.IsActive)
                 .Where(x => x.UserType != UserType.Vendor)
                 .Where(x => x.UserType != UserType.FakeUser)
                 .Where(x => onlyStaff ? x.UserType != UserType.Internship : true)

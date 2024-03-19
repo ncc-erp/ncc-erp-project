@@ -132,6 +132,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     this.getCurrentProjectInfo();
     this.getProjectBillInfo();
     this.searchContext();
+    this.getAllFakeUser('');
   }
 
   isShowInvoiceSetting(){
@@ -241,13 +242,12 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     )
   }
   public addUserBill(): void {
-    this.getAllFakeUser('')
     let newUserBill = {} as projectUserBillDto
     newUserBill.createMode = true;
     newUserBill.isActive = true;
     this.userBillProcess = true;
-    this.filteredUserBillList.unshift(newUserBill)
-    if( newUserBill.createMode == true){
+    this.filteredUserBillList.unshift(newUserBill);
+    if (newUserBill.createMode) {
       this.filteredUserBillList.length = this.filteredUserBillList.length;
     }
   }
@@ -260,16 +260,22 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     this.isLoading = true
 
     if (!this.isEditUserBill) {
-      userBill.projectId = this.projectId
-      this.projectUserBillService.create(userBill).pipe(catchError(this.projectUserBillService.handleError)).subscribe(res => {
-        abp.notify.success(`Created new user bill`)
-        this.getUserBill(true)
-        this.userBillProcess = false;
-        this.searchUserBill = ""
-      }, () => {
-        userBill.createMode = true;
-        this.isLoading = false
-      })
+      const existingUserBill = this.userBillList.find(item => item.userId === userBill.userId);
+      if (existingUserBill) {
+        abp.message.confirm(
+          "This user bill already exists. Do you want to create a new one?",
+          "",
+          (result: boolean) => {
+            if (result) {
+              this.createUserBill(userBill);
+            } else {
+              this.isLoading = false;
+            }
+          }
+        );
+      } else {
+        this.createUserBill(userBill);
+      }
     }
     else {
       if(this.userIdOld == userBill.userId){
@@ -310,7 +316,8 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
           projectUserBillId: this.userIdOld,
           userIds: userBill.linkedResources ? userBill.linkedResources.map(item => item.id) : []
         }
-        concat(this.projectUserBillService.RemoveUserFromBillAccount(reqDelete),this.projectUserBillService.update(userBill),this.projectUserBillService.LinkUserToBillAccount(reqAdd))
+        concat(this.projectUserBillService.RemoveUserFromBillAccount(reqDelete),
+        this.projectUserBillService.update(userBill),this.projectUserBillService.LinkUserToBillAccount(reqAdd))
         .pipe(catchError(this.projectUserBillService.handleError))
         .subscribe(() => {
             abp.notify.success("Update successfully")
@@ -326,6 +333,20 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
       }
     }
   }
+
+  createUserBill(userBill: projectUserBillDto): void {
+    userBill.projectId = this.projectId;
+    this.projectUserBillService.create(userBill).pipe(catchError(this.projectUserBillService.handleError)).subscribe(res => {
+      abp.notify.success(`Created new user bill`);
+      this.getUserBill(true);
+      this.userBillProcess = false;
+      this.searchUserBill = "";
+    }, () => {
+      userBill.createMode = true;
+      this.isLoading = false;
+    });
+  }
+
   public cancelUserBill(): void {
     this.getUserBill(true);
     this.userBillProcess = false;
@@ -333,13 +354,13 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     this.searchUserBill = ""
   }
   public editUserBill(userBill: projectUserBillDto): void {
-    this.getAllFakeUser(userBill.userId)
     this.userIdOld = userBill.userId
     userBill.createMode = true;
     this.userBillProcess = true;
     this.isEditUserBill = true;
     // userBill.billRole = this.APP_ENUM.ProjectUserRole[userBill.billRole];
   }
+
   private getUserBill(initialization: boolean = false, id?: number, status?: boolean, userIdNew?: number): void {
     this.isLoading = true;
     const body = {

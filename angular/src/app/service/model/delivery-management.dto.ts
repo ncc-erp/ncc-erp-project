@@ -96,6 +96,7 @@ export class availableResourceDto {
   starRate: number;
   avgPoint:number;
   isViewAll: boolean;
+  poolNote: string;
 }
 export class planUserDto {
   projectId: number;

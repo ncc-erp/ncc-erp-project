@@ -657,8 +657,14 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
       },
     });
 
-    addOrEditNoteDialog.afterClosed().subscribe(() => {
-      this.refresh();
+    addOrEditNoteDialog.afterClosed().subscribe((data) => {
+      const userId = data.id;
+      const updateNote = data.note;
+      const index = this.availableResourceList.findIndex(item => item.userId == userId);
+      if (index !== -1) {
+        this.availableResourceList[index].poolNote = updateNote;
+      }
+   
     });
   }
   toggle(item){    

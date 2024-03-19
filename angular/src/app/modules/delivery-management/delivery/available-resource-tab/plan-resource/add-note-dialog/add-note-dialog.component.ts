@@ -30,7 +30,6 @@ export class AddNoteDialogComponent implements OnInit, OnDestroy {
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<AddNoteDialogComponent>,
     public userService: UserService,
-    private resourceService: ResourceManagerService
   ) {}
 
   ngOnInit(): void {
@@ -38,11 +37,12 @@ export class AddNoteDialogComponent implements OnInit, OnDestroy {
       this.subscription.push(
         this.userService.getOne(this.data.id).subscribe((response) => {
           this.userId = response.result.id;
-          this.poolNote = response.result.poolNote;
+          this.poolNote = response.result.poolNote; 
         })
       );
     }
   }
+  
 
   SaveAndClose() {
     let requestBody = {
@@ -58,11 +58,13 @@ export class AddNoteDialogComponent implements OnInit, OnDestroy {
             this.saving = false;
           })
         )
-        .subscribe((response) => {
-          this.poolNote = response.note;
-          this.dialogRef.close();
-          this.onSave.emit();
-          abp.notify.success("Update Note");
+        .subscribe(() => {
+          this.userService.getOne(this.userId).subscribe((response) => {
+            this.poolNote = response.result.poolNote;
+            this.dialogRef.close({ id: this.userId, note: this.poolNote});
+            this.onSave.emit();
+            abp.notify.success("Update Note");
+          });
         })
     );
   }

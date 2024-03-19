@@ -20,7 +20,7 @@
 .highLightOne{
     border-left: 10px solid #ffc107 !important;
 }
-.custom-panel-class {
-    width: 100% !important;
-    max-width: none !important;
+::ng-deep .custom-panel-class {
+    min-width: 500px !important;
+    max-height: 400px !important;
 }

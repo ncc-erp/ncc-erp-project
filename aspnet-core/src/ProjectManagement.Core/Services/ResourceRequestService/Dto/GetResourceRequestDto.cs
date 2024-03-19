@@ -144,5 +144,6 @@ namespace ProjectManagement.Services.ResourceRequestService.Dto
     public class RequestCodeDto
     {
         public string Code { get; set; }
+        public ResourceRequestStatus Status { get; set; }
     }
 }

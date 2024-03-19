@@ -11,5 +11,7 @@ namespace ProjectManagement.APIs.ResourceRequests.Dto
         public bool IsAndCondition { get; set; }
         public bool IsTraining { get; set; }
         public IDictionary<string, SortDirection> SortParams { get; set; }
+        public List<string> FilterRequestCode { get; set; }
+      
     }
 }

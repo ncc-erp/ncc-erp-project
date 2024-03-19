@@ -18,6 +18,7 @@
       </div>
     </div>
   </section>
+
   <section class="content px-2">
     <div class="container-fluid">
       <div class="card">
@@ -61,19 +62,17 @@
                 </div>
               </div>
             </div>
-            <div
-              class="col-xl-7 col-lg-12 select-search"
-              style="text-align: end"
-            >
+
+            <div class="col-xl-7 col-lg-12 select-search">
               <div class="row">
-                <div class="col-xl-4 col-lg-4" style="margin-left: -20px">
-                  <div class="row">
+                <div class="col-xl-3 col-lg-3">
+                  <div class="row align-items-center">
                     <div
-                      class="col-md-2 col-xl-4 d-flex rsp-label justify-content-end align-items-center"
+                      class="col-md-4 col-xl-4 d-flex rsp-label justify-content-end align-items-center"
                     >
                       <label class="mb-0">Status:</label>
                     </div>
-                    <div class="col-md-10 col-xl-8 rsp-group-form-field">
+                    <div class="col-md-8 col-xl-8">
                       <mat-form-field
                         appearance="outline"
                         class="rsp-form-field"
@@ -94,14 +93,15 @@
                     </div>
                   </div>
                 </div>
-                <div class="col-xl-4 col-lg-4" style="margin-left: 10px">
+
+                <div class="col-xl-3 col-lg-3">
                   <div class="row">
                     <div
-                      class="col-md-2 col-xl-4 d-flex rsp-label justify-content-end align-items-center"
+                      class="col-md-4 col-xl-4 d-flex rsp-label justify-content-end align-items-center"
                     >
                       <label class="mb-0"> Project: </label>
                     </div>
-                    <div class="col-md-10 col-xl-8 rsp-group-form-field">
+                    <div class="col-md-8 col-xl-8">
                       <mat-form-field
                         class="rsp-form-field"
                         appearance="outline"
@@ -145,59 +145,56 @@
                     </div>
                   </div>
                 </div>
-                <div class="col-xl-4 col-lg-4" style="margin-left: 10px">
-                  <div class="row">
-                    <div
-                      class="col-md-2 col-xl-4 d-flex rsp-label justify-content-end align-items-center"
-                    >
-                      <label class="mb-0"> Code: </label>
+
+                <div class="col-xl-3 col-lg-3">
+                  <div class="row align-items-center">
+                    <div class="col-md-4 col-xl-4 d-flex rsp-label justify-content-end align-items-center">
+                      <label class="mb-0">Bill Acc:</label>
                     </div>
-                    <div class="col-md-10 col-xl-8 rsp-group-form-field">
-                      <mat-form-field
-                        class="rsp-form-field"
-                        appearance="outline"
-                      >
+                    <div class="col-md-8 col-xl-8">
+                      <mat-form-field appearance="outline" class="w-100">
                         <mat-select
-                          name="requestCode"
-                          placeholder="Select code"
-                          [(ngModel)]="requestCode"
-                          (selectionChange)="getDataPage(1)"
-                        >
-                          <mat-form-field
-                            class="w-100 px-3"
-                            style="
-                              position: sticky;
-                              top: 0;
-                              z-index: 2;
-                              background-color: white;
-                            "
-                          >
-                            <input
-                              matInput
-                              [(ngModel)]="searchCode"
-                              name="searchCode"
-                              (keydown)="$event.stopPropagation()"
-                              placeholder="Search"
-                              #search
-                            />{{ search.focus() }}
-                          </mat-form-field>
-                          <mat-option [value]="-1"> All </mat-option>
+                          [(ngModel)]="isNewBillAccount"
+                          (selectionChange)="onSelectedBillAccountFilter()">
                           <mat-option
-                            *ngFor="
-                              let code of listRequestCode
-                                | listFilter : 'code' : searchCode
-                            "
-                            [value]="code.code"
-                          >
-                            {{ code.code }}
-                          </mat-option>
+                            *ngFor="let bill of isBillAccountList"
+                            [value]="bill.value"
+                            >{{ bill.text }}</mat-option>
                         </mat-select>
                       </mat-form-field>
                     </div>
                   </div>
                 </div>
+
+                <div class="col-xl-3 col-lg-3">
+                  <div class="row align-items-center">
+                    <div
+                      class="col-md-4 col-xl-4 d-flex rsp-label justify-content-end align-items-center"
+                    >
+                      <label class="mb-0">Code:</label>
+                    </div>
+                    <div class="col-md-8 col-xl-8">
+                      <div class="row align-items-center">
+                        <!-- <app-multiple-select-string-value
+                        [ngClass]="selectedListRequestCode.length > 0? 'col-11' : 'col-12'"
+                        [placeholder] = "All"
+                        [listOption]="listRequestCode"
+                        [defaultValue]="selectedListRequestCode"
+                        (onChange)="filterRequestCode($event)"
+                        >
+                        </app-multiple-select-string-value>
+                        <i
+                        class="fas fa-times fa-lg pointer"
+                        *ngIf="selectedListRequestCode.length > 0"
+                        (click)="onCancelFilterListRequestCode()"
+                        ></i> -->
+                      </div>
+                    </div>
+                  </div>  
+                </div>
               </div>
             </div>
+
             <div class="col-xl-1 pt-1 clear" style="text-align: end">
               <div class="row">
                 <div class="rsp-total-rows" style="display: none">

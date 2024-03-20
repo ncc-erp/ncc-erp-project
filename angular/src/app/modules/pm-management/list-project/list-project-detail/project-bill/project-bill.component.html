@@ -138,8 +138,8 @@
                         </div>
 
                         <div class="col-lg-2 mb-2" (click)="$event.stopPropagation()" style="display: flex; align-items: center; margin-left: -20px;" [hidden]="!showSearchAndFilter">
-                            <div [hidden]="isShowUserBill">
                             <app-multiple-select-string-value
+                            [hidden]="isShowUserBill"
                             #chargeRole
                             [ngClass]="selectedChargeRole.length > 0? 'col-11' : 'col-12'"
                             name="filterChargeRole"
@@ -149,11 +149,11 @@
                             [defaultValue]="selectedChargeRole"
                             (onChange)="onChangeListChargeRoleSelected($event)">
                             </app-multiple-select-string-value>
-                            <i
+                            <i [hidden]="isShowUserBill"
                             class="fas fa-times fa-lg pointer"
                             *ngIf="selectedChargeRole.length > 0"
                             (click)="onCancelFilterChargeRole()"
-                            ></i></div>
+                            ></i>
                         </div>
                         <div class="mb-2 ml-3" style="display: flex; align-items: center;" (click)="$event.stopPropagation()" [hidden]="!showSearchAndFilter">
                             <button class="btn btn-primary" (click)="refresh()" [hidden]="isShowUserBill">
@@ -168,9 +168,9 @@
                             <thead>
                                 <tr>
                                     <th style="border-left: 10px solid #fff" class="stt">#</th>
-                                    <th class="align" (click)="sortData('fullName')" style="cursor: pointer;">{{ "Employee" | localize }}
-                                        <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'fullName'"></i>
-                                        <i *ngIf="sortColumn !== 'fullName'" class="fas fa-sort"></i>
+                                    <th class="align" (click)="sortData('emailAddress')" style="cursor: pointer;">{{ "Employee" | localize }}
+                                        <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'emailAddress'"></i>
+                                        <i *ngIf="sortColumn !== 'emailAddress'" class="fas fa-sort"></i>
                                     </th>
                                     <th class="align" (click)="sortData('billAccountName')" style="cursor: pointer;">{{ "Charge Name" | localize }}
                                         <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'billAccountName'"></i>

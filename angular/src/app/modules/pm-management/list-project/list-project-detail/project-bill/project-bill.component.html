@@ -88,7 +88,7 @@
                     <div class="d-flex flex-wrap justify-content-start align-items-center" style="flex-grow: 1;">
                         <button name="btn-createUserBill" *ngIf="!userBillProcess && permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Create)"
                         [hidden]="isShowUserBill" style="border: none; height: fit-content;"
-                        class="btn bg-blue ml-3 btn-s mb-2" (click)="addUserBill(); userBillCurrentPage=1; $event.stopPropagation()">
+                        class="btn bg-blue ml-2 btn-s mb-2" (click)="addUserBill(); userBillCurrentPage=1; $event.stopPropagation()">
                             <i class="fa fa-plus m-0"></i>
                         </button>
                         <div class="col-lg-4 mb-2" style="margin-left: 10px; width: 100%;" (click)="$event.stopPropagation()" [hidden]="isShowUserBill">
@@ -118,7 +118,7 @@
                             </div>
                         </div>
 
-                        <div class="col-lg-3 mb-2" (click)="$event.stopPropagation()" style="display: flex; align-items: center;" [hidden]="!showSearchAndFilter">
+                        <div class="col-lg-3 mb-2" (click)="$event.stopPropagation()" style="display: flex; align-items: center; margin-left: -10px;" [hidden]="!showSearchAndFilter">
                             <app-multiple-select
                             [hidden]="isShowUserBill"
                             #linkedResources
@@ -137,7 +137,7 @@
                             ></i>
                         </div>
 
-                        <div class="col-lg-2 mb-2" (click)="$event.stopPropagation()" style="display: flex; align-items: center;" [hidden]="!showSearchAndFilter">
+                        <div class="col-lg-2 mb-2" (click)="$event.stopPropagation()" style="display: flex; align-items: center; margin-left: -20px;" [hidden]="!showSearchAndFilter">
                             <div [hidden]="isShowUserBill">
                             <app-multiple-select-string-value
                             #chargeRole
@@ -155,7 +155,7 @@
                             (click)="onCancelFilterChargeRole()"
                             ></i></div>
                         </div>
-                        <div class="mb-2" (click)="$event.stopPropagation()" [hidden]="!showSearchAndFilter">
+                        <div class="mb-2 ml-3" style="display: flex; align-items: center;" (click)="$event.stopPropagation()" [hidden]="!showSearchAndFilter">
                             <button class="btn btn-primary" (click)="refresh()" [hidden]="isShowUserBill">
                                 <i class="fas fa-redo-alt"></i>
                             </button>
@@ -232,7 +232,15 @@
                                                             #search>{{search.focus()}}
                                                     </mat-form-field>
                                                     <mat-option *ngFor="let user of userForUserBill | listFilter: 'fullName' : searchUserBill : 'emailAddress' : 'surname' : 'name'" [value]="user.id">
-                                                        {{user.fullName}} - ({{user.emailAddress}})
+                                                        <div class="mat-option-text">
+                                                            <span class="data-name">
+                                                                {{user.fullName}} - ({{user.emailAddress}})
+                                                            </span>
+                                                            <span class="data-type-label"
+                                                                [ngClass]="getStyleStatusUser(user.isActive)">
+                                                                {{ getValueStatusUser(user.isActive) }}
+                                                            </span>
+                                                          </div>
                                                     </mat-option>
                                                 </mat-select>
                                             </mat-form-field>

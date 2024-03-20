@@ -218,7 +218,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   //#endregion
 
   private getAllFakeUser(userId?) {
-    this.projectUserBillService.GetAllUserActive(this.projectId, userId, false, true).pipe(catchError(this.userService.handleError)).subscribe(data => {
+    this.projectUserBillService.GetAllUser(this.projectId, userId, false, true).pipe(catchError(this.userService.handleError)).subscribe(data => {
       // this.userForProjectUser = data.result;
       this.userForUserBill = data.result;
     })
@@ -699,6 +699,14 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     this.selectedLinkedResources = [];
     this.selectedChargeRole = [];
     this.getUserBill();
+  }
+
+  getStyleStatusUser(isActive: boolean){
+    return isActive?"badge badge-pill badge-success":"badge badge-pill badge-danger"
+  }
+
+  getValueStatusUser(isActive: boolean){
+    return isActive?"Active":"InActive"
   }
 }
 

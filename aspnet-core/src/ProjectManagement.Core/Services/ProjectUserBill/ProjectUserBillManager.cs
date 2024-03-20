@@ -298,6 +298,7 @@ namespace ProjectManagement.Services.ProjectUserBills
                     UserLevel = u.UserLevel,
                     Branch = u.BranchOld,
                     PositionId = u.PositionId,
+                    IsActive = u.IsActive,
                     UserSkills = u.UserSkills.Select(x => new UserSkillDto
                     {
                         SkillId = x.SkillId,
@@ -305,8 +306,10 @@ namespace ProjectManagement.Services.ProjectUserBills
                     }).ToList()
                 })
                 .Distinct()
-                .ToListAsync();
-            return await query;
+                .ToList();
+
+            query = query.OrderByDescending(x => x.IsActive).ToList();
+            return query;
         }
 
         public async Task<List<ProjectUserBillAccount>> AddProjectUserBillAccounts(ProjectUserBillAccountsDto input)

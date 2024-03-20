@@ -30,6 +30,7 @@ export class AddNoteDialogComponent implements OnInit, OnDestroy {
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<AddNoteDialogComponent>,
     public userService: UserService,
+    private resourceService: ResourceManagerService
   ) {}
 
   ngOnInit(): void {

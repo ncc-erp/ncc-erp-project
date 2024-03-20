@@ -849,7 +849,6 @@ namespace ProjectManagement.Services.ResourceManager
                        });
 
             if (
-                input.UserTypes.Count == 0 &&
                 input.BranchIds.Count == 0 &&
                 input.PositionIds.Count == 0 &&
                 input.SkillIds.Count == 0 &&

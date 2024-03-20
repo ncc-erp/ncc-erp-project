@@ -357,7 +357,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
       this.selectedBranchIds = data.result.map(item => item.id)
       this.selectedBranchIdsOld = [...this.selectedBranchIds]
       this.selectedBranchIdsCr = this.selectedBranchIds
-      this.refresh();
+      //this.refresh();
     })
   }
 
@@ -368,7 +368,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
       this.selectedPositions = data.result.map(item => item.id)
       this.selectedPositionsOld = [...this.selectedPositions]
       this.selectedPositionsCr = this.selectedPositions
-      this.refresh();
+      //this.refresh();
     })
   }
 
@@ -383,7 +383,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     this.selectedUserTypes = this.listUserTypes.map(item => item.value);
     this.selectedUserTypesOld = [...this.selectedUserTypes];
     this.selectedUserTypesCr = this.selectedUserTypes;
-    this.refresh();
+    //this.refresh();
   }
 
   skillsCommas(arr) {
@@ -616,11 +616,11 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
         item: userInfo,
       },
     });
-    show.afterClosed().subscribe((result) => {
+    /*show.afterClosed().subscribe((result) => {
       if (result) {
         this.refresh();
       }
-    });
+    });*/
   }
   projectHistorUser(user: availableResourceDto) {
     this.showDialogProjectHistoryUser(user);
@@ -638,11 +638,11 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
         item: userInfo,
       },
     });
-    show.afterClosed().subscribe((result) => {
+    /*show.afterClosed().subscribe((result) => {
       if (result) {
         this.refresh();
       }
-    });
+    });*/
   }
   RetroReviewHistoryUser(user: availableResourceDto) {
     this.showDialogRetroReviewHistoryUser(user);

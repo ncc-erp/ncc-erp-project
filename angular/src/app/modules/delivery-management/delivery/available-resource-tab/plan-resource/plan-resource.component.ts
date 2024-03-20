@@ -399,17 +399,22 @@ export class PlanResourceComponent
     return moment(date).format("DD/MM/YYYY");
   }
 
-  updateNote(id, fullName) {
+  updateNote(user: availableResourceDto) {
     const addOrEditNoteDialog = this.dialog.open(AddNoteDialogComponent, {
       width: "40%",
       data: {
-        id: id,
-        fullName: fullName,
+        userId: user.userId,
+        fullName: user.fullName,
+        poolNote: user.poolNote
       },
     });
 
-    addOrEditNoteDialog.afterClosed().subscribe(() => {
-      this.refresh();
+    addOrEditNoteDialog.afterClosed().subscribe((data) => {
+      console.log("subscribe", data)
+      const item = this.availableResourceList.find(item => item.userId == data.userId);
+      if (item != null){
+        item.poolNote = data.note;
+      }
     });
   }
 

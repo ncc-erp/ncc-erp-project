@@ -648,23 +648,21 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     this.showDialogRetroReviewHistoryUser(user);
   }
 
-  updateNote(id, fullName) {
+  updateNote(user: availableResourceDto) {
     const addOrEditNoteDialog = this.dialog.open(AddNoteDialogComponent, {
       width: "40%",
       data: {
-        id: id,
-        fullName: fullName,
+        userId: user.userId,
+        fullName: user.fullName,
+        poolNote: user.poolNote
       },
     });
 
     addOrEditNoteDialog.afterClosed().subscribe((data) => {
-      const userId = data.id;
-      const updateNote = data.note;
-      const index = this.availableResourceList.findIndex(item => item.userId == userId);
-      if (index !== -1) {
-        this.availableResourceList[index].poolNote = updateNote;
+      const item = this.availableResourceList.find(item => item.userId == data.userId);
+      if (item != null){
+        item.poolNote = data.note;
       }
-   
     });
   }
   toggle(item){    

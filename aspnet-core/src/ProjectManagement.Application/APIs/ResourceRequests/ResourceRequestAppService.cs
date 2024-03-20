@@ -80,6 +80,15 @@ namespace ProjectManagement.APIs.ResourceRequests
                 query = query.Where(s => s.ProjectType == ProjectType.TRAINING);
             }
 
+            if(input.FilterRequestCode != null && input.FilterRequestCode.Any()) 
+            {
+                query = query.Where(s => input.FilterRequestCode.Contains(s.Code)); 
+            }
+            if (input.FilterRequestStatus != null && input.FilterRequestStatus.Any())
+            {
+                query = query.Where(s => input.FilterRequestStatus.Contains(s.Status));
+            }
+
             query = _resourceRequestManager.ApplyOrders(query, input.SortParams);
             if (input.SkillIds == null || input.SkillIds.IsEmpty())
             {
@@ -96,6 +105,7 @@ namespace ProjectManagement.APIs.ResourceRequests
             }
 
             var requestIds = await QetResourceRequestIdsHaveAllSkill(input.SkillIds);
+
             query = query.Where(s => requestIds.Contains(s.Id));
 
             return await query.GetGridResult(query, input);
@@ -103,11 +113,19 @@ namespace ProjectManagement.APIs.ResourceRequests
 
         [HttpGet]
         [AbpAuthorize]
-        public async Task<List<RequestCodeDto>> GetResourceRequestCode()
+        public async Task<List<RequestCodeDto>> GetResourceRequestCode() 
         {
-            return await WorkScope.GetAll<ResourceRequest>()
-                .Where(r => r.Code != null)
-                .Select(r => new RequestCodeDto { Code = r.Code }).Distinct().ToListAsync();
+            var result = WorkScope.GetAll<ResourceRequest>()
+                                  .Where(r => r.Code != null)
+                                  .Select(r => new RequestCodeDto { Code = r.Code, Status = r.Status })
+                                  .ToList()
+                                    .GroupBy(r => new { r.Code, r.Status })
+                                    .Select(group => group.First())
+                                    .OrderBy(group => group.Status)
+                                    .ThenBy(group => group.Code)
+                                    .ToList();
+
+            return result;
         }
 
         [HttpGet]

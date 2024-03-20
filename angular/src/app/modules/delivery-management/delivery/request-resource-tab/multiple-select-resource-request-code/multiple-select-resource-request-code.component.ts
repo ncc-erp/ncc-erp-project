@@ -158,7 +158,7 @@ export class MultipleSelectResourceRequestCodeComponent implements OnInit {
     this.handleSearch(this.textSearch);
   }
 
-  compareFn(option1: any, option2: any): boolean {
+  compareObject(option1: any, option2: any): boolean {
     return option1 && option2 ? option1.code === option2.code && option1.status === option2.status : option1 === option2;
   }
 

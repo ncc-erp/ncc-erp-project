@@ -22,4 +22,5 @@ describe('MultipleSelectResourceRequestCodeComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+  
 });

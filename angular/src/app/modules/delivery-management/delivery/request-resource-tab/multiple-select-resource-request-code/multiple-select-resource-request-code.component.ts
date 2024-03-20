@@ -27,12 +27,11 @@ export class MultipleSelectResourceRequestCodeComponent implements OnInit {
   @Output() onChange = new EventEmitter<any>();
 
   listFilteredOption: resourceRequestCodeDto[] = [];
-
   listSelected: resourceRequestCodeDto[] = [];
   listSelectedByListOption: resourceRequestCodeDto[] = [];
   listSelectedBySearch: resourceRequestCodeDto[] = [];
   listSelectedTemp: resourceRequestCodeDto[] = [];
-
+  
   textSearch: string = "";
   isSearch: boolean = false;
 

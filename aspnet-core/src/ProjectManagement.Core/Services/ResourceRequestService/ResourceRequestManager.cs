@@ -121,26 +121,26 @@ namespace ProjectManagement.Services.ResourceRequestService
                                                                 }).FirstOrDefault(),
 
                             BillUserInfo = request.User != null ? new PlanUserInfoDto
-                                                                  {
-                                                                      Employee = new UserBaseDto
-                                                                      {
-                                                                          PositionId = request.User.PositionId,
-                                                                          PositionName = request.User.Position.ShortName,
-                                                                          PositionColor = request.User.Position.Color,
-                                                                          Branch = request.User.BranchOld,
-                                                                          BranchColor = request.User.Branch.Color,
-                                                                          BranchDisplayName = request.User.Branch.DisplayName,
-                                                                          UserLevel = request.User.UserLevel,
-                                                                          UserType = request.User.UserType,
-                                                                          FullName = request.User.FullName,
-                                                                          EmailAddress = request.User.EmailAddress,
-                                                                          Id = request.BillAccountId ?? default,
-                                                                          AvatarPath = request.User.AvatarPath
-                                                                      },
-                                                                      PlannedDate = request.BillStartDate ?? null,
-                                                                      UserSkill = request.BillAccountId.HasValue &&
-                                                                      userSkills.ContainsKey(request.BillAccountId.Value) ? userSkills[request.BillAccountId.Value] : null
-                                                                  } : null,
+                                                                   {
+                                                                       Employee = new UserBaseDto
+                                                                       {
+                                                                           PositionId = request.User.PositionId,
+                                                                           PositionName = request.User.Position.ShortName,
+                                                                           PositionColor = request.User.Position.Color,
+                                                                           Branch = request.User.BranchOld,
+                                                                           BranchColor = request.User.Branch.Color,
+                                                                           BranchDisplayName = request.User.Branch.DisplayName,
+                                                                           UserLevel = request.User.UserLevel,
+                                                                           UserType = request.User.UserType,
+                                                                           FullName = request.User.FullName,
+                                                                           EmailAddress = request.User.EmailAddress,
+                                                                           Id = request.BillAccountId ?? default,
+                                                                           AvatarPath = request.User.AvatarPath
+                                                                       },
+                                                                       PlannedDate = request.BillStartDate ?? null,
+                                                                       UserSkill = request.BillAccountId.HasValue &&
+                                                                       userSkills.ContainsKey(request.BillAccountId.Value) ? userSkills[request.BillAccountId.Value] : null
+                                                                   } : null,
 
                             BillCVEmail = request.User.EmailAddress,
                             PlanUserEmail = request.ProjectUsers.FirstOrDefault() != null ? request.ProjectUsers.FirstOrDefault().User.EmailAddress : null,

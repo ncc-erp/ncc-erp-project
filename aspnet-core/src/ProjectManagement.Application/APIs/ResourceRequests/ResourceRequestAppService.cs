@@ -80,7 +80,7 @@ namespace ProjectManagement.APIs.ResourceRequests
                 query = query.Where(s => s.ProjectType == ProjectType.TRAINING);
             }
 
-            if(input.FilterRequestCode != null && input.FilterRequestCode.Any())
+            if(input.FilterRequestCode != null && input.FilterRequestCode.Any()) 
             {
                 query = query.Where(s => input.FilterRequestCode.Contains(s.Code)); 
             }
@@ -113,17 +113,17 @@ namespace ProjectManagement.APIs.ResourceRequests
 
         [HttpGet]
         [AbpAuthorize]
-        public async Task<List<RequestCodeDto>> GetResourceRequestCode()
+        public async Task<List<RequestCodeDto>> GetResourceRequestCode() 
         {
             var result = WorkScope.GetAll<ResourceRequest>()
-                .Where(r => r.Code != null)
-                .Select(r => new RequestCodeDto { Code = r.Code, Status = r.Status })
-                .ToList()
-                .GroupBy(r => new { r.Code, r.Status })
-                .Select(group => group.First())
-                .OrderBy(group => group.Status)
-                .ThenBy(group => group.Code)
-                .ToList();
+                                  .Where(r => r.Code != null)
+                                  .Select(r => new RequestCodeDto { Code = r.Code, Status = r.Status })
+                                  .ToList()
+                                    .GroupBy(r => new { r.Code, r.Status })
+                                    .Select(group => group.First())
+                                    .OrderBy(group => group.Status)
+                                    .ThenBy(group => group.Code)
+                                    .ToList();
 
             return result;
         }

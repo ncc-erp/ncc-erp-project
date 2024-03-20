@@ -110,11 +110,11 @@ export class RequestResourceTabComponent
   public resourceRequestId: number;
   public sortable = new SortableModel("", 0, "");
 
-  public isNewBillAccount: boolean | number = -1;
+  public isNewBillAccount: number = -1;
   public isBillAccountList = [
     { text: "All", value: -1 },
-    { text: "Bill", value: true },
-    { text: "No Bill", value: false },
+    { text: "Bill", value: 1 },
+    { text: "No Bill", value: 0 },
   ];
 
   ResourceRequest_View = PERMISSIONS_CONSTANT.ResourceRequest_View;
@@ -482,6 +482,7 @@ export class RequestResourceTabComponent
     this.searchText = "";
     this.projectId = -1;
     this.selectedStatus = 0;
+    this.isNewBillAccount = -1
     this.selectedListRequestCode = [];
     this.changeSortableByName("priority", "DESC");
     this.sortable = new SortableModel("", 1, "");

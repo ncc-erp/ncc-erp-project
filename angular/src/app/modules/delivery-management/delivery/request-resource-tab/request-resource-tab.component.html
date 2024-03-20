@@ -107,6 +107,7 @@
                         appearance="outline"
                       >
                         <mat-select
+                          panelClass="project-panel"
                           name="projectId"
                           placeholder="Select project"
                           [(ngModel)]="projectId"
@@ -177,6 +178,7 @@
                       <div class="row align-items-center">
                         <app-multiple-select-resource-request-code
                         [ngClass]="selectedListRequestCode.length > 0? 'col-10' : 'col-12'"
+                        labelName = "Code"
                         [listOption]="listRequestCode"
                         [defaultValue]="selectedListRequestCode"
                         (onChange)="filterRequestCode($event)"

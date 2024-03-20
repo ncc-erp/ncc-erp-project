@@ -14,6 +14,5 @@ namespace ProjectManagement.APIs.ResourceRequests.Dto
         public IDictionary<string, SortDirection> SortParams { get; set; }
         public List<string> FilterRequestCode { get; set; }
         public List<ResourceRequestStatus> FilterRequestStatus { get; set; }
-      
     }
 }

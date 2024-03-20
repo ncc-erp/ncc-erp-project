@@ -201,12 +201,12 @@
                         <thead class="bg-light">
                             <tr style="border: none;">
                                 <th>#</th>
-                                <th style="width: 220px;">Employee</th>
+                                <th>Employee</th>
                                 <th style="width: 75px;">History</th>
-                                <th style="width: 340px;">Project</th>
-                                <th style="width: 340px;">Plan</th>
-                                <th>Note</th>
-                                <th>Skills</th>
+                                <th >Project</th>
+                                <th >Plan</th>
+                                <th >Note</th>
+                                <th >Skills</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -219,7 +219,7 @@
                                 totalItems: totalItems
                                 }; let i= index">
                                 <td class="text-center"><span>{{ i + 1 + pageSize * (pageNumber - 1 ) }}</span></td>
-                                <td style="width: 300px;">
+                                <td style="width: 200px;">
                                     <div style="width: 90%;">
                                         <app-user-info [userData]="item">
                                         </app-user-info>
@@ -239,7 +239,7 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td>
+                                <td style="width: 300px;">
                                     <p *ngFor="let project of
                                         item.workingProjects" class="mb-1">
                                         <span matTooltip="Potential project"
@@ -300,8 +300,8 @@
                                         && item.showMoreHistory"
                                         (click)="showMoreHistory(item);getHistoryProjectsByUserId(item)"></i>
                                 </td>
-                                <td>
-                                    <div class="d-flex justify-content-between">
+                                <td style="width: 450px;">
+                                    <div class="d-flex justify-content-between" style="width: 450px;">
                                         <div>
                                             <div *ngFor="let plan of
                                                 item.planProjects" (mouseenter)="plan.onHover=
@@ -381,8 +381,7 @@
                                 <td style="
                                     white-space: pre-line;
                                     word-break: break-all;
-                                    max-width: 200px;
-                                    min-width: 150px;">
+                                    min-width: 200px;">
                                     <div class="d-flex">
                                         <div style="width: 90%;word-break:break-word">{{ item.poolNote }}
                                         </div>
@@ -395,7 +394,7 @@
                                 </td>
 
                                 <td style="white-space: normal; max-width:
-                                    150px;">
+                                    200px;">
                                     <div class="d-flex justify-content-between" style="align-items: center;">
                                         <div style="width: 200px">
                                             <div (click)="toggle(item)">

@@ -363,7 +363,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
 
   getAllPositions() {
     this.positionService.getAllNotPagging().subscribe((data) => {
-      this.listPositions = data.result
+      this.listPositions = data.result  
       this.listPositionsId = data.result.map(item => item.id)
       this.selectedPositions = data.result.map(item => item.id)
       this.selectedPositionsOld = [...this.selectedPositions]

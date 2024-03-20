@@ -89,8 +89,8 @@
                                 <th style="width: 75px;">History</th>
                                 <th>Planned Projects</th>
                                 <th>Temp Project</th>
-                                <th style="width: 250px;">Skills</th>
-                                <th style="min-width: 220px;">Note</th>
+                                <th style="width: 220px;">Skills</th>
+                                <th style="width: 220px;">Note</th>
                                 <th style="width: 100px;">Start Pool</th>
                             </tr>
                         </thead>
@@ -108,8 +108,8 @@
                                 <td class="text-center">
                                     <span>{{ i + 1 + pageSize * (pageNumber - 1) }}</span>
                                 </td>
-                                <td style="width: 350px;">
-                                    <div style="width: 100%; display: flex; flex-direction: row; align-items: center;">
+                                <td style="width: 200px;">
+                                    <div style="width: 90%; display: flex; flex-direction: row; align-items: center;">
                                         <app-user-info class="w-100" [userData]="item" [averagePoint]="item.avgPoint">
                                         </app-user-info>
                                     </div>
@@ -129,8 +129,8 @@
                                     </div>
                                 </td>
 
-                                <td style="white-space: normal;">
-                                    <div class="d-flex justify-content-between" style="width: 350px;">
+                                <td style="white-space: normal;" style="width: 280px;">
+                                    <div class="d-flex justify-content-between" style="width: 280px;">
                                         <div>
                                             <div *ngFor="let plan of item.plannedProjects"
                                                 (mouseenter)="plan.onHover = true;" (mouseleave)="plan.onHover = false"
@@ -199,14 +199,14 @@
                                     </div>
 
                                 </td>
-                                <td style="white-space: normal;">
+                                <td style="white-space: normal;" style="width: 200px;">
                                     <div class="d-flex justify-content-between"
-                                        style="width: 100%;">
-                                        <div style="width: 100%;" class="d-flex justify-content-between flex-column">
-                                            <div class="d-flex justify-content-between" style="width: 100%;"
+                                      style="width: 200px;">
+                                        <div style="width: 250px;" class="d-flex justify-content-between flex-column">
+                                            <div class="d-flex justify-content-between" style="width: 200px;"
                                                 *ngFor="let plan of item.poolProjects"
                                                 (mouseenter)="plan.onHover = true;" (mouseleave)="plan.onHover = false">
-                                                <div style="width: 100%; white-space: nowrap;">
+                                                <div style="width: 200px; white-space: nowrap;">
                                                     <button class="btn p-0 text-left text-nowrap"
                                                         [matMenuTriggerFor]="tempMenu">
                                                         <span [ngClass]="plan.onHover?'on-hover-plan':''">

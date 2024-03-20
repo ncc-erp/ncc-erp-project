@@ -106,7 +106,7 @@
                             </div>
                         </div>
                         <div class="col-lg-2 mb-2" (click)="$event.stopPropagation()" [hidden]="!showSearchAndFilter">
-                            <div class="input-group">
+                            <div class="input-group" [hidden]="isShowUserBill">
                                 <mat-form-field appearance="outline" style="width: 100%;">
                                     <mat-label>Charge Status</mat-label>
                                     <mat-select [(ngModel)]="selectedIsCharge" (selectionChange)="filterByIsCharge()">
@@ -120,6 +120,7 @@
 
                         <div class="col-lg-3 mb-2" (click)="$event.stopPropagation()" style="display: flex; align-items: center;" [hidden]="!showSearchAndFilter">
                             <app-multiple-select
+                            [hidden]="isShowUserBill"
                             #linkedResources
                             [ngClass]="selectedLinkedResources.length > 0? 'col-11' : 'col-12'"
                             name="filterLinkedResources"
@@ -129,7 +130,7 @@
                             [defaultValue]="selectedLinkedResources"
                             (onChange)="onChangeListLinkedResourcesSelected($event)">
                             </app-multiple-select>
-                            <i
+                            <i [hidden]="isShowUserBill"
                             class="fas fa-times fa-lg pointer"
                             *ngIf="selectedLinkedResources.length > 0"
                             (click)="onCancelFilterLinkedResources()"
@@ -137,6 +138,7 @@
                         </div>
 
                         <div class="col-lg-2 mb-2" (click)="$event.stopPropagation()" style="display: flex; align-items: center;" [hidden]="!showSearchAndFilter">
+                            <div [hidden]="isShowUserBill">
                             <app-multiple-select-string-value
                             #chargeRole
                             [ngClass]="selectedChargeRole.length > 0? 'col-11' : 'col-12'"
@@ -151,10 +153,10 @@
                             class="fas fa-times fa-lg pointer"
                             *ngIf="selectedChargeRole.length > 0"
                             (click)="onCancelFilterChargeRole()"
-                            ></i>
+                            ></i></div>
                         </div>
                         <div class="mb-2" (click)="$event.stopPropagation()" [hidden]="!showSearchAndFilter">
-                            <button class="btn btn-primary" (click)="refresh()">
+                            <button class="btn btn-primary" (click)="refresh()" [hidden]="isShowUserBill">
                                 <i class="fas fa-redo-alt"></i>
                             </button>
                         </div>
@@ -279,7 +281,7 @@
                                                         [isSmallerDiv]="true"
                                                         [isChangeContentSize]="true">
                                                     </app-user-info>
-                                                    <i (click)="removeLinkResource(resource.id, bill.id)"
+                                                    <i *ngIf="!isAddingOrEditingUserBill" (click)="removeLinkResource(resource.id, bill.id)"
                                                      class="fa fa-times position-absolute" style="top:32px; right: -28px;"></i>
                                                 </div>
                                             </div>

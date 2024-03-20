@@ -226,6 +226,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { BillAccountDialogComponent } from './modules/admin/configuration/bill-account-dialog/bill-account-dialog.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { BillAccountDialogNoteComponent } from "./modules/delivery-management/delivery/available-resource-tab/bill-account-plan/bill-account-dialog-note/bill-account-dialog-note.component";
+import { MultipleSelectResourceRequestCodeComponent } from './modules/delivery-management/delivery/request-resource-tab/multiple-select-resource-request-code/multiple-select-resource-request-code.component';
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, "./assets/i18n/", ".json");
 }
@@ -435,6 +436,7 @@ export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
     ShadowAccountDialogComponent,
     BillAccountDialogComponent,
     BillAccountDialogNoteComponent,
+    MultipleSelectResourceRequestCodeComponent,
   ],
   imports: [
     CommonModule,

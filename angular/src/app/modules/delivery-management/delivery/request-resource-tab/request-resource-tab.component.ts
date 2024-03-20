@@ -1,3 +1,4 @@
+import { ProjectStatusPipe } from './../../../../../shared/pipes/project-status-pipe.pipe';
 import { FormSendRecruitmentComponent } from "./form-send-recruitment/form-send-recruitment.component";
 import { ResourceRequestDto } from "./../../../../service/model/resource-request.dto";
 import { isEmpty, isNull, result } from "lodash-es";
@@ -40,6 +41,7 @@ import { DescriptionPopupComponent } from "./description-popup/description-popup
 import { ProjectUserService } from "./../../../../service/api/project-user.service";
 import { concat, forkJoin, empty } from "rxjs";
 import { UpdateUserSkillDialogComponent } from "@app/users/update-user-skill-dialog/update-user-skill-dialog.component";
+import { resourceRequestCodeDto } from './multiple-select-resource-request-code/multiple-select-resource-request-code.component';
 
 @Component({
   selector: "app-request-resource-tab",
@@ -75,15 +77,18 @@ export class RequestResourceTabComponent
   public selectedStatus: any = 0;
   public listRequest: RequestResourceDto[] = [];
   public tempListRequest: RequestResourceDto[] = [];
+
   public listStatuses: any[] = [];
   public listLevels: any[] = [];
+  
   public listSkills: SkillDto[] = [];
   public listProjectUserRoles: IDNameDto[] = [];
   public listProject = [];
   public searchProject: string = "";
-  public listRequestCode = [];
-  public requestCode: any = -1;
-  public searchCode: string = "";
+
+  public listRequestCode: resourceRequestCodeDto[] =[];
+  public selectedListRequestCode: resourceRequestCodeDto[] =[];
+
   public listPriorities: any[] = [];
   public isAndCondition: boolean = false;
   public sortResource = {};
@@ -105,30 +110,28 @@ export class RequestResourceTabComponent
   public resourceRequestId: number;
   public sortable = new SortableModel("", 0, "");
 
+  public isNewBillAccount: number = -1;
+  public isBillAccountList = [
+    { text: "All", value: -1 },
+    { text: "Bill", value: 1 },
+    { text: "No Bill", value: 0 },
+  ];
+
   ResourceRequest_View = PERMISSIONS_CONSTANT.ResourceRequest_View;
-  ResourceRequest_PlanNewResourceForRequest =
-    PERMISSIONS_CONSTANT.ResourceRequest_PlanNewResourceForRequest;
-  ResourceRequest_UpdateResourceRequestPlan =
-    PERMISSIONS_CONSTANT.ResourceRequest_UpdateResourceRequestPlan;
-  ResourceRequest_CreateBillResourceForRequest =
-    PERMISSIONS_CONSTANT.ResourceRequest_CreateBillResourceForRequest;
-  ResourceRequest_RemoveResouceRequestPlan =
-    PERMISSIONS_CONSTANT.ResourceRequest_RemoveResouceRequestPlan;
-  ResourceRequest_UpdateUserBillResourceSkill =
-    PERMISSIONS_CONSTANT.ResourceRequest_UpdateUserBillResourceSkill;
-  ResourceRequest_ViewUserResourceStarSkill =
-    PERMISSIONS_CONSTANT.ResourceRequest_ViewUserResourceStarSkill;
+  ResourceRequest_PlanNewResourceForRequest = PERMISSIONS_CONSTANT.ResourceRequest_PlanNewResourceForRequest;
+  ResourceRequest_UpdateResourceRequestPlan = PERMISSIONS_CONSTANT.ResourceRequest_UpdateResourceRequestPlan;
+  ResourceRequest_CreateBillResourceForRequest = PERMISSIONS_CONSTANT.ResourceRequest_CreateBillResourceForRequest;
+  ResourceRequest_RemoveResouceRequestPlan = PERMISSIONS_CONSTANT.ResourceRequest_RemoveResouceRequestPlan;
+  ResourceRequest_UpdateUserBillResourceSkill = PERMISSIONS_CONSTANT.ResourceRequest_UpdateUserBillResourceSkill;
+  ResourceRequest_ViewUserResourceStarSkill = PERMISSIONS_CONSTANT.ResourceRequest_ViewUserResourceStarSkill;
   ResourceRequest_SetDone = PERMISSIONS_CONSTANT.ResourceRequest_SetDone;
-  ResourceRequest_CancelAllRequest =
-    PERMISSIONS_CONSTANT.ResourceRequest_CancelAllRequest;
-  ResourceRequest_CancelMyRequest =
-    PERMISSIONS_CONSTANT.ResourceRequest_CancelMyRequest;
+  ResourceRequest_CancelAllRequest = PERMISSIONS_CONSTANT.ResourceRequest_CancelAllRequest;
+  ResourceRequest_CancelMyRequest = PERMISSIONS_CONSTANT.ResourceRequest_CancelMyRequest;
   ResourceRequest_EditPmNote = PERMISSIONS_CONSTANT.ResourceRequest_EditPmNote;
   ResourceRequest_EditDmNote = PERMISSIONS_CONSTANT.ResourceRequest_EditDmNote;
   ResourceRequest_Edit = PERMISSIONS_CONSTANT.ResourceRequest_Edit;
   ResourceRequest_Delete = PERMISSIONS_CONSTANT.ResourceRequest_Delete;
-  ResourceRequest_SendRecruitment =
-    PERMISSIONS_CONSTANT.ResourceRequest_SendRecruitment;
+  ResourceRequest_SendRecruitment = PERMISSIONS_CONSTANT.ResourceRequest_SendRecruitment;
 
   @ViewChildren("sortThead") private elementRefSortable: QueryList<any>;
   constructor(
@@ -137,7 +140,7 @@ export class RequestResourceTabComponent
     private ref: ChangeDetectorRef,
     private dialog: MatDialog,
     private listProjectService: ListProjectService,
-    private projectUserService: ProjectUserService
+    private projectUserService: ProjectUserService,
   ) {
     super(injector);
   }
@@ -171,11 +174,13 @@ export class RequestResourceTabComponent
       });
     }
   }
+
   showDialog(command: string, request: any) {
     let resourceRequest = {
       id: request.id ? request.id : null,
       projectId: 0,
     };
+    
     const show = this.dialog.open(CreateUpdateResourceRequestComponent, {
       data: {
         command: command,
@@ -195,12 +200,15 @@ export class RequestResourceTabComponent
       }
     });
   }
+
   public createRequest() {
     this.showDialog("create", {});
   }
+
   public editRequest(item: any) {
     this.showDialog("edit", item);
   }
+
   public setDoneRequest(item) {
     if (!item.planUserInfo && !item.billUserInfo) {
       const request = {
@@ -404,18 +412,21 @@ export class RequestResourceTabComponent
   ): void {
     let requestBody: any = request;
     requestBody.isAndCondition = this.isAndCondition;
+
     let objFilter = [
       { name: "status", isTrue: false, value: this.selectedStatus },
       { name: "projectId", isTrue: false, value: this.projectId },
-      { name: "code", isTrue: false, value: this.requestCode },
+      { name: "isNewBillAccount", isTrue: false, value: this.isNewBillAccount },
     ];
 
+    this.isNewBillAccount = this.isNewBillAccount;
+
     objFilter.forEach((item) => {
-      if (!item.isTrue) {
+      if (!item.isTrue) {  
         requestBody.filterItems = this.AddFilterItem(
           requestBody,
           item.name,
-          item.value
+          item.value,
         );
       }
       if (item.value == -1) {
@@ -423,7 +434,8 @@ export class RequestResourceTabComponent
         item.isTrue = true;
       }
     });
-
+    requestBody.filterRequestCode = this.selectedListRequestCode.map(item => item.code);
+    requestBody.filterRequestStatus = this.selectedListRequestCode.map(item => item.status);
     requestBody.isTraining = false;
     requestBody.sortParams = this.sortResource;
     this.resourceRequestService
@@ -469,8 +481,9 @@ export class RequestResourceTabComponent
     this.filterItems = [];
     this.searchText = "";
     this.projectId = -1;
-    this.requestCode = -1;
     this.selectedStatus = 0;
+    this.isNewBillAccount = -1
+    this.selectedListRequestCode = [];
     this.changeSortableByName("priority", "DESC");
     this.sortable = new SortableModel("", 1, "");
     this.refresh();
@@ -511,21 +524,25 @@ export class RequestResourceTabComponent
       this.listSkills = data.result;
     });
   }
+
   getLevels() {
     this.resourceRequestService.getLevels().subscribe((res) => {
       this.listLevels = res.result;
     });
   }
+
   getPriorities() {
     this.resourceRequestService.getPriorities().subscribe((res) => {
       this.listPriorities = res.result;
     });
   }
+
   getStatuses() {
     this.resourceRequestService.getStatuses().subscribe((res) => {
       this.listStatuses = res.result;
     });
   }
+
   getProjectUserRoles() {
     this.resourceRequestService.getProjectUserRoles().subscribe((rs: any) => {
       this.listProjectUserRoles = rs.result;
@@ -537,19 +554,35 @@ export class RequestResourceTabComponent
       this.listProject = data.result;
     });
   }
+
   getAllRequestCode() {
     this.resourceRequestService.getListRequestCode().subscribe((data) => {
       this.listRequestCode = data.result;
     });
   }
-  // #endregion
 
+  onCancelFilterListRequestCode() {
+    this.selectedListRequestCode = [];
+    this.getDataPage(1);
+  }
+
+  onSelectedBillAccountFilter() {
+    this.getDataPage(1);
+  }
+
+  filterRequestCode(selectedRequestCode: resourceRequestCodeDto[]) {
+    this.selectedListRequestCode = selectedRequestCode;
+    this.getDataPage(1);
+  }
+
+  // #endregion
   styleThead(item: any) {
     return {
       width: item.width,
       height: item.height,
     };
   }
+  
   public getValueByEnum(enumValue: number, enumObject) {
     for (const key in enumObject) {
       if (enumObject[key] == enumValue) {
@@ -557,9 +590,11 @@ export class RequestResourceTabComponent
       }
     }
   }
+
   viewRecruitment(url) {
     window.open(url, "_blank");
   }
+
   showDescription(note) {
     const show = this.dialog.open(DescriptionPopupComponent, {
       width: "1100px",
@@ -567,6 +602,7 @@ export class RequestResourceTabComponent
       data: note,
     });
   }
+
   protected delete(item: RequestResourceDto): void {
     abp.message.confirm("Delete this request?", "", (result: boolean) => {
       if (result) {
@@ -581,6 +617,7 @@ export class RequestResourceTabComponent
       }
     });
   }
+
   isShowButtonMenuAction(item) {
     return (
       item.statusName != "DONE" ||
@@ -631,6 +668,7 @@ export class RequestResourceTabComponent
   isShowBtnDelete(item) {
     return this.isGranted(PERMISSIONS_CONSTANT.ResourceRequest_Delete);
   }
+  
   public sliceUrl(url: string): string {
     if (isNull(url) || isEmpty(url)) {
       return "";

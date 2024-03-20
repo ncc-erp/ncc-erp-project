@@ -80,3 +80,8 @@ table td {
 :host ::ng-deep .mat-button {
     min-width: 48px;
 }
+
+::ng-deep .project-panel {
+    min-width: 400px !important;
+    max-height: 60vh !important; 
+}

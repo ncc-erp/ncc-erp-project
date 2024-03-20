@@ -212,5 +212,4 @@ export class CreateUpdateResourceRequestComponent extends AppComponentBase imple
       )
     );
   }
-
 }

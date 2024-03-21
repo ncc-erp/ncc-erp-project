@@ -273,8 +273,6 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
           (result: boolean) => {
             if (result) {
               this.createUserBill(userBill);
-              this.showSearchAndFilter = false;
-              this.isAddingOrEditingUserBill = true;
             } else {
               this.userBillProcess = true;
               this.showSearchAndFilter = false;
@@ -320,7 +318,6 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
       }
       else {
         const existingUserBill = this.userBillList.find(item => item.userId === userBill.userId);
-        console.log(existingUserBill);
         if (existingUserBill) {
           abp.message.confirm(
             "This user bill already exists. Do you want to continue?",
@@ -344,18 +341,28 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   }
 
   createUserBill(userBill: projectUserBillDto): void {
-    this.isLoading = true
+    this.isLoading = true;
     userBill.projectId = this.projectId;
-    this.projectUserBillService.create(userBill).pipe(catchError(this.projectUserBillService.handleError)).subscribe(res => {
-      abp.notify.success(`Created new user bill`);
-      this.getUserBill();
-      this.userBillProcess = false;
-      this.searchUserBill = "";
-      delete userBill["createMode"];
-    }, () => {
-      userBill.createMode = true;
-      this.isLoading = false;
-    });
+    this.projectUserBillService.create(userBill).pipe(
+      catchError(error => {
+      this.userBillProcess = true;
+      this.showSearchAndFilter = false;
+      this.isAddingOrEditingUserBill = true;
+        return this.projectUserBillService.handleError(error);
+      })
+    ).subscribe(
+        () => {
+            abp.notify.success(`Created new user bill`);
+            this.getUserBill();
+            this.userBillProcess = false;
+            this.searchUserBill = "";
+            delete userBill["createMode"];
+        },
+        () => {
+            userBill.createMode = true;
+            this.isLoading = false;
+        }
+    );
   }
 
   updateUserBill(userBill: projectUserBillDto): void {

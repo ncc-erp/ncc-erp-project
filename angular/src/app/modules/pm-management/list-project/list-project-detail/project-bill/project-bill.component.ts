@@ -273,6 +273,8 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
           (result: boolean) => {
             if (result) {
               this.createUserBill(userBill);
+              this.showSearchAndFilter = false;
+              this.isAddingOrEditingUserBill = true;
             } else {
               this.userBillProcess = true;
               this.showSearchAndFilter = false;

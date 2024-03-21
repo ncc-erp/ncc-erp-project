@@ -270,7 +270,7 @@ namespace ProjectManagement.Services.ProjectUserBills
             return await result;
         }
 
-        public async Task<List<UserDto>> GetAllUser(bool onlyStaff, long projectId, long? currentUserId)
+        public async Task<List<UserDto>> GetAllUser(bool onlyStaff, long projectId, long? currentUserId, bool isIncludedUserInPUB)
         {
             var listPUBIds = await _workScope.GetAll<ProjectManagement.Entities.ProjectUserBill>()
                 .Where(x => x.ProjectId == projectId)
@@ -284,7 +284,7 @@ namespace ProjectManagement.Services.ProjectUserBills
                 .Where(x => x.UserType != UserType.Vendor)
                 .Where(x => x.UserType != UserType.FakeUser)
                 .Where(x => onlyStaff ? x.UserType != UserType.Internship : true)
-                .Where(x => !listPUBIds.Contains(x.Id))
+                .Where(x => !isIncludedUserInPUB? !listPUBIds.Contains(x.Id) : true)
                 .Select(u => new UserDto
                 {
                     Id = u.Id,

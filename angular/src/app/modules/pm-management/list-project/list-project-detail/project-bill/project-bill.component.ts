@@ -218,7 +218,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   //#endregion
 
   private getAllFakeUser(userId?) {
-    this.projectUserBillService.GetAllUser(this.projectId, userId, false, true).pipe(catchError(this.userService.handleError)).subscribe(data => {
+    this.projectUserBillService.GetAllUser(this.projectId, userId, false, true, true).pipe(catchError(this.userService.handleError)).subscribe(data => {
       // this.userForProjectUser = data.result;
       this.userForUserBill = data.result;
     })
@@ -270,7 +270,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
       const existingUserBill = this.userBillList.find(item => item.userId === userBill.userId);
       if (existingUserBill) {
         abp.message.confirm(
-          "This user bill already exists. Do you want to create a new one?",
+          "This user bill already exists. Do you want to continue?",
           "",
           (result: boolean) => {
             if (result) {
@@ -320,7 +320,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
           userIds: userBill.linkedResources ? userBill.linkedResources.map(item => item.id): []
         }
         const reqDelete = {
-          projectUserBillId: this.userIdOld,
+          projectUserBillId: userBill.id,
           userIds: userBill.linkedResources ? userBill.linkedResources.map(item => item.id) : []
         }
         concat(this.projectUserBillService.RemoveUserFromBillAccount(reqDelete),

@@ -22,11 +22,11 @@ export class ProjectUserBillService extends BaseApiService {
   getAllUserBill(input): Observable<any> {
     return this.http.post<any>(this.rootUrl + `/GetAllByProject`,input);
   }
-  public GetAllUser(projectId, userId, onlyStaff: boolean, isFake?: any): Observable<any> {
+  public GetAllUser(projectId, userId, onlyStaff: boolean, isIncludedUserInPUB: boolean, isFake?: any): Observable<any> {
     if (isFake) {
       return this.http.get<any>(
         this.rootUrl +
-          `/GetAllUser?onlyStaff=${onlyStaff}&projectId=${projectId}&currentUserId=${userId}&isFake=${isFake}`
+          `/GetAllUser?onlyStaff=${onlyStaff}&projectId=${projectId}&currentUserId=${userId}&isFake=${isFake}&isIncludedUserInPUB=${isIncludedUserInPUB}`
       );
     } else {
       return this.http.get<any>(

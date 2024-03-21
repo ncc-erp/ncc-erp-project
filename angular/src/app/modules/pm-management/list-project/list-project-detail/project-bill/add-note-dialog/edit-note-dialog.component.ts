@@ -59,6 +59,18 @@ export class EditNoteDialogComponent extends AppComponentBase implements OnInit,
     );
   }
 
+  autoResize(textarea) {
+    textarea.style.height = 'auto';
+    textarea.style.height = (textarea.scrollHeight) + 'px';
+
+    if (textarea.scrollHeight > 600) {
+      textarea.style.overflowY = 'scroll';
+    } else {
+      textarea.style.overflowY = 'hidden';
+    }
+  }
+
+
   ngOnDestroy() {
     this.subscription.forEach((sub) => {
       sub.unsubscribe();

@@ -237,7 +237,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
       (result: boolean) => {
         if (result) {
           this.isLoading = true;
-          this.projectUserBillService.RemoveUserFromBillAccount(req).pipe(catchError(this.projectUserBillService.handleError)).subscribe(data => {
+          this.projectUserBillService.RemoveLinkedResource(req).pipe(catchError(this.projectUserBillService.handleError)).subscribe(data => {
             abp.notify.success(`Linked Resource Removed Successfully!`)
              this.getUserBill(id, status);
           }, () => {
@@ -345,9 +345,9 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     userBill.projectId = this.projectId;
     this.projectUserBillService.create(userBill).pipe(
       catchError(error => {
-      this.userBillProcess = true;
-      this.showSearchAndFilter = false;
-      this.isAddingOrEditingUserBill = true;
+        this.userBillProcess = true;
+        this.showSearchAndFilter = false;
+        this.isAddingOrEditingUserBill = true;
         return this.projectUserBillService.handleError(error);
       })
     ).subscribe(
@@ -367,18 +367,15 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
 
   updateUserBill(userBill: projectUserBillDto): void {
     this.isLoading = true
-    const reqAdd = {
-      projectUserBillId: userBill.id,
-      userIds: userBill.linkedResources ? userBill.linkedResources.map(item => item.id): []
-    }
-    const reqDelete = {
-      projectUserBillId: userBill.id,
-      userIds: userBill.linkedResources ? userBill.linkedResources.map(item => item.id) : []
-    }
-    concat(this.projectUserBillService.RemoveUserFromBillAccount(reqDelete),
-    this.projectUserBillService.update(userBill),this.projectUserBillService.LinkUserToBillAccount(reqAdd))
-    .pipe(catchError(this.projectUserBillService.handleError))
-    .subscribe(() => {
+    this.projectUserBillService.update(userBill).pipe(
+        catchError(error => {
+        this.userBillProcess = true;
+        this.isEditUserBill = true;
+        this.showSearchAndFilter = false;
+        this.isAddingOrEditingUserBill = true;
+        return this.projectUserBillService.handleError(error);
+      })
+    ).subscribe(() => {
         abp.notify.success("Update successfully")
         this.getUserBill()
         this.userBillProcess = false;
@@ -508,7 +505,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
       (result: boolean) => {
         if (result) {
           this.isLoading = true
-          concat(this.projectUserBillService.RemoveUserFromBillAccount(reqDelete),this.projectUserBillService.deleteUserBill(userBill.id))
+          this.projectUserBillService.deleteUserBill(userBill.id)
           .pipe(catchError(this.projectUserBillService.handleError)).subscribe(()=>{
                 abp.notify.success("Delete Bill account success")
                 this.getUserBill()

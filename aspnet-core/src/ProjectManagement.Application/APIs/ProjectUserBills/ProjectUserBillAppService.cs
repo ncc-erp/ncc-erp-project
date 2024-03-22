@@ -82,7 +82,7 @@ namespace ProjectManagement.APIs.ProjectUserBills
             PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount,
             PermissionNames.Projects_TrainingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount
         )]
-        public async Task<bool> RemoveUserFromBillAccount(LinkedResourcesDto input)
+        public async Task<bool> RemoveLinkedResource(LinkedResourcesDto input)
         {
             await projectUserBillManager.RemoveLinkedResource(input);
             return true;
@@ -433,8 +433,18 @@ namespace ProjectManagement.APIs.ProjectUserBills
             PermissionNames.Projects_TrainingProjects_ProjectDetail_TabBillInfo_Delete)]
         public async Task Delete(long projectUserBillId)
         {
-            var projectUserBill = await WorkScope.GetAsync<ProjectUserBill>(projectUserBillId);
-
+            var projectUserBill = await WorkScope.GetAll<ProjectUserBill>()
+                .Include(s => s.LinkedResources)
+                .Where(s => s.Id == projectUserBillId)
+                .FirstOrDefaultAsync();
+            var linkedResources = projectUserBill.LinkedResources?.ToList();
+            if (linkedResources != null)
+            {
+                foreach (var linkedResource in linkedResources)
+                {
+                    await WorkScope.DeleteAsync(linkedResource);
+                }
+            }
             await WorkScope.DeleteAsync(projectUserBill);
         }
 

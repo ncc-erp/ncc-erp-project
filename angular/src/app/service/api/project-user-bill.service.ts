@@ -61,8 +61,8 @@ export class ProjectUserBillService extends BaseApiService {
   LinkUserToBillAccount(input): Observable<any>{
     return this.http.post<any>(this.rootUrl + '/LinkUserToBillAccount',input);
   }
-  RemoveUserFromBillAccount(input): Observable<any>{
-    return this.http.post<any>(this.rootUrl + '/RemoveUserFromBillAccount',input);
+  RemoveLinkedResource(input): Observable<any>{
+    return this.http.post<any>(this.rootUrl + '/RemoveLinkedResource',input);
   }
   LinkOneProjectUserBillAccount(input): Observable<any>{
     return this.http.post<any>(this.rootUrl + '/LinkOneProjectUserBillAccount',input);

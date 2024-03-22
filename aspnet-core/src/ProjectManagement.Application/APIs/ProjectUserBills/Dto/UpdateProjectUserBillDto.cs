@@ -22,8 +22,6 @@ namespace ProjectManagement.APIs.ProjectUserBills.Dto
         public string shadowNote { get; set; }
         public bool isActive { get; set; }
         public string AccountName { get; set; }
-        //public string BillAccountName => string.IsNullOrEmpty(AccountName) ? FullName : AccountName;
-        //public string FullName { get; set; }
         public ChargeType? ChargeType { get; set; }
     } 
 }

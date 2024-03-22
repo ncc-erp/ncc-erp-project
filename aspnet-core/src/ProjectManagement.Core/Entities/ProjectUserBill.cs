@@ -30,5 +30,7 @@ namespace ProjectManagement.Entities
         public string shadowNote { get; set; }
         public bool isActive { get; set; }
         public ChargeType? ChargeType { get; set; }
+
+        public virtual ICollection<LinkedResource> LinkedResources { get; set; }
     }
 }

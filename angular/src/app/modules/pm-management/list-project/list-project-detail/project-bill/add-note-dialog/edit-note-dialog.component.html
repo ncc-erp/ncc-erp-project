@@ -13,10 +13,11 @@
         rows="5"
         placeholder="Leave a comment..."
         [(ngModel)]="note"
-      ></textarea>
+        class="custom-textarea"
+        (input)="autoResize($event.target)"
+        ></textarea>
     </mat-form-field>
   </div>
-
   <abp-modal-footer
     [cancelDisabled]="saving"
     (onCancelClick)="dialogRef.close()"

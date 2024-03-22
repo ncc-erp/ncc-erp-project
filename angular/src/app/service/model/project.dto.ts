@@ -87,6 +87,7 @@ export class projectResourceRequestDto {
 export class projectUserBillDto {
   userId: number;
   userName: string;
+  emailAddress: string;
   projectId: number;
   projectName: string;
   billAccountName: string;
@@ -106,7 +107,7 @@ export class projectUserBillDto {
   userList?: any[];
   chargeType?: number;
   chargeTypeName: string;
-  linkedResources: any[]
+  linkedResources: any[];
 }
 
 export class ProjectRateDto {

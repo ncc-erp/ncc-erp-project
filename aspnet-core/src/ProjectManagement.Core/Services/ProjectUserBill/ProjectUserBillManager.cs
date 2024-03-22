@@ -19,6 +19,12 @@ using Abp.UI;
 using Abp.Domain.Uow;
 using Abp;
 using System.Linq.Dynamic.Core;
+using System.Linq.Expressions;
+using Microsoft.AspNetCore.SignalR;
+using System;
+using ProjectManagement.Services.ProjectUserBill;
+using Abp.Linq.Extensions;
+using Abp.Extensions;
 
 namespace ProjectManagement.Services.ProjectUserBills
 {
@@ -40,6 +46,7 @@ namespace ProjectManagement.Services.ProjectUserBills
                         select pub;
             return query.OrderBy(p => p.Project.Name).ThenBy(p => p.User.EmailAddress);
         }
+
         public async Task<List<GetAllResourceDto>> QueryAllResource(bool isVendor)
         {
             // get current user and view user level permission
@@ -52,7 +59,8 @@ namespace ProjectManagement.Services.ProjectUserBills
                     ).Select(pu => pu.Id);
 
             var activeReportId = await GetActiveReportId();
-            var quser = await _workScope.GetAll<User>()
+
+            var quser = _workScope.GetAll<User>()
                        .Where(x => x.IsActive)
                        .Where(x => x.UserType != UserType.FakeUser)
                        .Where(u => isVendor ? u.UserType == UserType.Vendor : u.UserType != UserType.Vendor)
@@ -121,10 +129,10 @@ namespace ProjectManagement.Services.ProjectUserBills
                                 ProjectCode = pu.Project.Code
                             })
                            .ToList(),
+                       })
+                       .ToList();
 
-                       }).ToListAsync();
-
-            return quser ;
+            return quser;
         }
 
         public async Task<long> GetActiveReportId()
@@ -135,98 +143,105 @@ namespace ProjectManagement.Services.ProjectUserBills
                 .Select(s => s.Id).FirstOrDefaultAsync();
         }
 
-        public async Task<List<GetProjectUserBillDto>> GetAllByProject(long projectId)
+        public async Task<List<GetProjectUserBillDto>> GetAllByProject(GetAllProjectUserBillDto input)
         {
             var isViewRate = await IsGrantedAsync(PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Rate_View);
 
-            var existedPUBLUIds = await _workScope.GetAll<ProjectUserBillAccount>()
-              .Where(x => x.ProjectId == projectId)
-              .Select(x => x.UserId)
-              .ToListAsync();
+            var query = _workScope.GetAll<Entities.ProjectUserBill>()
+                .Where(x => x.ProjectId == input.ProjectId)
+                .Select(x => new GetProjectUserBillDto
+                {
+                    Id = x.Id,
+                    UserId = x.UserId,
+                    UserName = x.User.Name,
+                    ProjectId = x.ProjectId,
+                    ProjectName = x.Project.Name,
+                    AccountName = x.AccountName,
+                    BillRole = x.BillRole,
+                    BillRate = isViewRate ? x.BillRate : 0,
+                    StartTime = x.StartTime.Date,
+                    EndTime = x.EndTime.Value.Date,
+                    Note = x.Note,
+                    shadowNote = x.shadowNote,
+                    isActive = x.isActive,
+                    AvatarPath = x.User.AvatarPath,
+                    FullName = x.User.FullName,
+                    Branch = x.User.BranchOld,
+                    BranchColor = x.User.Branch.Color,
+                    BranchDisplayName = x.User.Branch.DisplayName,
+                    PositionId = x.User.PositionId,
+                    PositionName = x.User.Position.ShortName,
+                    PositionColor = x.User.Position.Color,
+                    EmailAddress = x.User.EmailAddress,
+                    UserType = x.User.UserType,
+                    UserLevel = x.User.UserLevel,
+                    ChargeType = x.ChargeType ?? x.Project.ChargeType,
+                    CreationTime = x.CreationTime,
 
-            var listPUBAs = _workScope.GetAll<ProjectUserBillAccount>();
-            var listUsers = _workScope.GetAll<User>();
+                    LinkedResources = x.LinkedResources
+                        .Select(lr => new GetUserInfo
+                        {
+                            Id = lr.UserId,
+                            EmailAddress = lr.User.EmailAddress,
+                            UserName = lr.User.UserName,
+                            AvatarPath = lr.User.AvatarPath ?? "",
+                            UserType = lr.User.UserType,
+                            PositionId = lr.User.PositionId,
+                            PositionColor = lr.User.Position.Color,
+                            PositionName = lr.User.Position.ShortName,
+                            UserLevel = lr.User.UserLevel,
+                            BranchColor = lr.User.Branch.Color,
+                            BranchDisplayName = lr.User.Branch.DisplayName,
+                            IsActive = lr.User.IsActive,
+                            FullName = lr.User.FullName,
+                        }).ToList()
+                });
 
-            var query = await _workScope.GetAll<ProjectManagement.Entities.ProjectUserBill>()
-                 .Where(x => x.ProjectId == projectId)
-                 .Select(x => new GetProjectUserBillDto
-                 {
-                     Id = x.Id,
-                     UserId = x.UserId,
-                     UserName = x.User.Name,
-                     ProjectId = x.ProjectId,
-                     ProjectName = x.Project.Name,
-                     AccountName = x.AccountName,
-                     BillRole = x.BillRole,
-                     BillRate = isViewRate ? x.BillRate : 0,
-                     StartTime = x.StartTime.Date,
-                     EndTime = x.EndTime.Value.Date,
-                     //CurrencyName = x.Project.Currency.Name,
-                     Note = x.Note,
-                     shadowNote = x.shadowNote,
-                     isActive = x.isActive,
-                     AvatarPath = x.User.AvatarPath,
-                     FullName = x.User.FullName,
-                     Branch = x.User.BranchOld,
-                     BranchColor = x.User.Branch.Color,
-                     BranchDisplayName = x.User.Branch.DisplayName,
-                     PositionId = x.User.PositionId,
-                     PositionName = x.User.Position.ShortName,
-                     PositionColor = x.User.Position.Color,
-                     EmailAddress = x.User.EmailAddress,
-                     UserType = x.User.UserType,
-                     UserLevel = x.User.UserLevel,
-                     ChargeType = x.ChargeType.HasValue ? x.ChargeType : x.Project.ChargeType,
-                     CreationTime = x.CreationTime,
 
-                     LinkedResources = (from pu in listPUBAs
-                                        join us in listUsers on pu.UserId equals us.Id
-                                        where pu.UserBillAccountId == x.UserId && existedPUBLUIds.Contains(pu.UserId)
-                                        select new GetAllUserDto
-                                        {
-                                            Id = us.Id, // Set the appropriate properties you want from us
-                                            EmailAddress = us.EmailAddress,
-                                            UserName = us.UserName,
-                                            AvatarPath = us.AvatarPath == null ? "" : us.AvatarPath,
-                                            UserType = us.UserType,
-                                            PositionId = us.PositionId,
-                                            PositionColor = us.Position.Color,
-                                            PositionName = us.Position.ShortName,
-                                            UserLevel = us.UserLevel,
-                                            Branch = us.BranchOld,
-                                            BranchColor = us.Branch.Color,
-                                            BranchDisplayName = us.Branch.DisplayName,
-                                            IsActive = us.IsActive,
-                                            FullName = us.Name + " " + us.Surname,
-                                            CreationTime = us.CreationTime,
-                                            UserSkills = us.UserSkills.Select(s => new UserSkillDto
-                                            {
-                                                UserId = us.Id,
-                                                SkillId = s.SkillId,
-                                                SkillName = s.Skill.Name
-                                            }).ToList(),
-                                            WorkingProjects = us.ProjectUsers
-                                                .Where(s => s.Status == ProjectUserStatus.Present && s.AllocatePercentage > 0)
-                                                .Where(x => x.Project.Status != ProjectStatus.Potential && x.Project.Status != ProjectStatus.Closed)
-                                                .Select(p => new WorkingProjectDto
-                                                {
-                                                    ProjectName = p.Project.Name,
-                                                    ProjectRole = p.ProjectRole,
-                                                    StartTime = p.StartTime,
-                                                    IsPool = p.IsPool
-                                                }).ToList(),
-                                        })
-                                        .Distinct()
-                                        .ToList()
+            var result = query.WhereIf(input.ChargeStatusFilter != ChargeStatusFilter.All, x => x.isActive == (input.ChargeStatusFilter == ChargeStatusFilter.IsCharge))
+                        .WhereIf(input.ChargeRoleFilter != null && input.ChargeRoleFilter.Any(), x => input.ChargeRoleFilter.Contains(x.BillRole))
+                        .ApplySearch(input.SearchText).OrderByDescending(x => x.CreationTime)
+                        .ToList();
 
-                 })
-                 .OrderByDescending(x => x.CreationTime)
-                 .ToListAsync();
+            if (input.LinkedResourcesFilter != null && input.LinkedResourcesFilter.Any())
+            {
+                result = result.Where(x => x.LinkedResources.Any(lr => input.LinkedResourcesFilter.Contains(lr.Id))).ToList();
+            }
 
-            return query;
+            return result;
         }
 
-        public async Task<List<UserDto>> GetAllUserActive(bool onlyStaff, long projectId, long? currentUserId)
+        public async Task<List<LinkedResourceInfoDto>> GetAllLinkedResourcesByProject(long projectId)
+        {
+            var result = await _workScope.GetAll<LinkedResource>()
+                .Where(x => x.ProjectUserBill.ProjectId == projectId)
+                .Where(x => x.User != null)
+                .Select(x => new LinkedResourceInfoDto
+                {
+                    Id = x.User.Id,
+                    EmailAddress = x.User.EmailAddress,
+                    FullName = x.User.FullName
+                })
+                .Distinct()
+                .ToListAsync();
+
+            result = result.OrderBy(x => x.EmailAddress).ToList();
+
+            return result;
+        }
+
+        public async Task<List<string>> GetAllChargeRoleByProject(long projectId)
+        {
+            var result = _workScope.GetAll<Entities.ProjectUserBill>()
+                .Where(x => x.ProjectId == projectId)
+                .Select(x => x.BillRole)
+                .Distinct()
+                .ToListAsync();
+
+            return await result;
+        }
+
+        public async Task<List<UserDto>> GetAllUser(bool onlyStaff, long projectId, long? currentUserId, bool isIncludedUserInPUB)
         {
             var listPUBIds = await _workScope.GetAll<ProjectManagement.Entities.ProjectUserBill>()
                 .Where(x => x.ProjectId == projectId)
@@ -237,11 +252,10 @@ namespace ProjectManagement.Services.ProjectUserBills
                 listPUBIds = listPUBIds.Where(x => x != currentUserId).ToList();
 
             var query = _workScope.GetAll<User>()
-                .Where(u => u.IsActive)
                 .Where(x => x.UserType != UserType.Vendor)
                 .Where(x => x.UserType != UserType.FakeUser)
                 .Where(x => onlyStaff ? x.UserType != UserType.Internship : true)
-                .Where(x => !listPUBIds.Contains(x.Id))
+                .Where(x => !isIncludedUserInPUB? !listPUBIds.Contains(x.Id) : true)
                 .Select(u => new UserDto
                 {
                     Id = u.Id,
@@ -255,6 +269,7 @@ namespace ProjectManagement.Services.ProjectUserBills
                     UserLevel = u.UserLevel,
                     Branch = u.BranchOld,
                     PositionId = u.PositionId,
+                    IsActive = u.IsActive,
                     UserSkills = u.UserSkills.Select(x => new UserSkillDto
                     {
                         SkillId = x.SkillId,
@@ -262,115 +277,10 @@ namespace ProjectManagement.Services.ProjectUserBills
                     }).ToList()
                 })
                 .Distinct()
-                .ToListAsync();
-            return await query;
-        }
+                .ToList();
 
-        public async Task<List<ProjectUserBillAccount>> AddProjectUserBillAccounts(ProjectUserBillAccountsDto input)
-        {
-            var listPUBA = new List<ProjectUserBillAccount>();
-            foreach (var userId in input.UserIds)
-            {
-                await ValidateProjectUserBillAccount(userId, input.ProjectId, input.BillAccountId);
-
-                var pUBA = new ProjectUserBillAccount();
-
-                using (UnitOfWorkManager.Current.DisableFilter(AbpDataFilters.SoftDelete))
-                {
-                    pUBA = await _workScope.GetAll<ProjectUserBillAccount>()
-                     .Where(s => s.UserBillAccountId == input.BillAccountId && s.UserId == userId && s.ProjectId == input.ProjectId)
-                     .FirstOrDefaultAsync();
-                }
-
-                if (pUBA != null && !pUBA.IsDeleted)
-                {
-                    throw new UserFriendlyException($"UserBillAccount {pUBA.Id} already exists!");
-                }
-                else if (pUBA != null && pUBA.IsDeleted)
-                {
-                    pUBA.IsDeleted = false;
-                    await _workScope.UpdateAsync(pUBA);
-                    listPUBA.Add(pUBA);
-                }
-                else if (pUBA == null)
-                {
-                    var newBA = new ProjectUserBillAccount
-                    {
-                        UserId = userId,
-                        ProjectId = input.ProjectId,
-                        UserBillAccountId = input.BillAccountId,
-                    };
-
-                    await _workScope.InsertAsync(newBA);
-                    listPUBA.Add(newBA);
-                }
-            }
-
-            return listPUBA;
-        }
-
-        public async Task LinkOneProjectUserBillAccount(ProjectUserBillAccountDto input)
-        {
-            await ValidateProjectUserBillAccount(input.UserId, input.ProjectId, input.BillAccountId);
-
-            var pUBA = new ProjectUserBillAccount();
-
-            using (UnitOfWorkManager.Current.DisableFilter(AbpDataFilters.SoftDelete))
-            {
-                pUBA = await _workScope.GetAll<ProjectUserBillAccount>()
-                    .Where(s => s.UserBillAccountId == input.BillAccountId && s.ProjectId == input.ProjectId && s.UserId == input.UserId)
-                    .FirstOrDefaultAsync();
-            }
-            if (pUBA != null && !pUBA.IsDeleted)
-            {
-                throw new UserFriendlyException($"UserBillAccount {pUBA.Id} already exists in project {pUBA.Project.Name}!");
-            }
-            else if (pUBA != null && pUBA.IsDeleted)
-            {
-                pUBA.IsDeleted = false;
-                await _workScope.UpdateAsync(pUBA);
-            }
-            else if (pUBA == null)
-            {
-                var newBA = new ProjectUserBillAccount
-                {
-                    UserId = input.UserId,
-                    ProjectId = input.ProjectId,
-                    UserBillAccountId = input.BillAccountId,
-                };
-
-                await _workScope.InsertAsync(newBA);
-            }
-        }
-
-        public async Task RemoveProjectUserBillAccount(ProjectUserBillAccountsDto input)
-        {
-            foreach (var userId in input.UserIds)
-            {
-                await ValidateProjectUserBillAccount(userId, input.ProjectId, input.BillAccountId);
-
-                var pUBA = await _workScope.GetAll<ProjectUserBillAccount>()
-                   .Where(s => s.UserBillAccountId == input.BillAccountId && s.UserId == userId && s.ProjectId == input.ProjectId)
-                   .FirstOrDefaultAsync();
-
-                if (pUBA != null)
-                    await _workScope.DeleteAsync(pUBA);
-            }
-        }
-
-        private async Task ValidateProjectUserBillAccount(long userId, long projectId, long billAccountId)
-        {
-            var existedUser = await _workScope.GetAll<User>()
-              .Where(s => s.Id == userId)
-              .FirstOrDefaultAsync();
-            if (existedUser == null)
-                throw new UserFriendlyException($"User with Id {userId} does not exist!");
-
-            var existedPUB = await _workScope.GetAll<ProjectManagement.Entities.ProjectUserBill>()
-               .Where(x => x.UserId == billAccountId && x.ProjectId == projectId)
-               .FirstOrDefaultAsync();
-            if (existedPUB == null)
-                throw new UserFriendlyException($"BillAccount(User) {billAccountId} is not working in Project {projectId}!");
+            query = query.OrderByDescending(x => x.IsActive).ToList();
+            return query;
         }
 
         public async Task<List<BillAccountDto>> GetAllBillAccount()
@@ -383,6 +293,95 @@ namespace ProjectManagement.Services.ProjectUserBills
                 })
                 .Distinct()
                 .ToListAsync();
+        }
+
+        public async Task<List<LinkedResource>> AddLinkedResources(LinkedResourcesDto input)
+        {
+            var listLinkedResources = new List<LinkedResource>();
+
+            ValidateProjectUserBill(input.ProjectUserBillId);
+
+            foreach (var userId in input.UserIds)
+            {
+                ValidateUser(userId);
+
+                var existingLinkedResource = await _workScope.GetAll<LinkedResource>()
+                    .Where(lr => lr.UserId == userId && lr.ProjectUserBillId == input.ProjectUserBillId)
+                    .FirstOrDefaultAsync();
+
+                if (existingLinkedResource != null)
+                {
+                    existingLinkedResource.IsDeleted = false;
+                    await _workScope.UpdateAsync(existingLinkedResource);
+                    listLinkedResources.Add(existingLinkedResource);
+                }
+                else
+                {
+                    var newLinkedResource = new LinkedResource
+                    {
+                        UserId = userId,
+                        ProjectUserBillId = input.ProjectUserBillId,
+                    };
+
+                    await _workScope.InsertAsync(newLinkedResource);
+                    listLinkedResources.Add(newLinkedResource);
+                }
+            }
+
+            return listLinkedResources;
+        }
+
+        public async Task LinkOneLinkedResource(LinkedResourceDto input)
+        {
+            ValidateProjectUserBill(input.ProjectUserBillId);
+
+            ValidateUser(input.UserId);
+
+
+            var newLinkedResource = new LinkedResource
+            {
+                UserId = input.UserId,
+                ProjectUserBillId = input.ProjectUserBillId,
+            };
+
+            await _workScope.InsertAsync(newLinkedResource);
+        }
+
+        public async Task RemoveLinkedResource(LinkedResourcesDto input)
+        {
+            ValidateProjectUserBill(input.ProjectUserBillId);
+
+            foreach (var userId in input.UserIds)
+            {
+                ValidateUser(userId);
+
+                var existingLinkedResource = await _workScope.GetAll<LinkedResource>()
+                    .Where(lr => lr.UserId == userId && lr.ProjectUserBillId == input.ProjectUserBillId)
+                    .FirstOrDefaultAsync();
+
+                if (existingLinkedResource != null)
+                    await _workScope.DeleteAsync(existingLinkedResource);
+            }
+        }
+
+        private void ValidateUser(long userId)
+        {
+            var existedUser = _workScope.GetAll<User>()
+                .Where(s => s.Id == userId)
+                .Any();
+
+            if (!existedUser)
+                throw new UserFriendlyException($"User with Id {userId} does not exist!");
+        }
+
+        private void ValidateProjectUserBill(long projectUserBillId)
+        {
+            var isExist = _workScope.GetAll<Entities.ProjectUserBill>()
+                .Where(s => s.Id == projectUserBillId)
+                .Any();
+
+            if (!isExist)
+                throw new UserFriendlyException($"ProjectUserBill with Id {projectUserBillId} does not exist!");
         }
 
     }

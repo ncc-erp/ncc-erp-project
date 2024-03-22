@@ -1840,4 +1840,3 @@ export class WeeklyReportComponent extends PagedListingComponentBase<WeeklyRepor
     }
 
 }
-

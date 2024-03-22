@@ -750,7 +750,8 @@ namespace ProjectManagement.APIs.Projects
                                                ProjectStatus = s.Project.Status,
                                                s.Status,
                                                s.Project.ProjectType,
-                                               s.AllocatePercentage
+                                               s.AllocatePercentage,
+                                               s.StartTime
                                            }).Where(s => s.UserType != UserType.FakeUser && s.Status == ProjectUserStatus.Present && s.AllocatePercentage > 0)
                                              .Where(x => x.ProjectType == ProjectType.TRAINING)
                                              .Where(x => filterStatus != null && valueStatus > -1 ? (valueStatus == 3 ? x.ProjectStatus != ProjectStatus.Closed : x.ProjectStatus == (ProjectStatus)valueStatus) : true)
@@ -759,6 +760,7 @@ namespace ProjectManagement.APIs.Projects
                                                  ProjectId = pu.ProjectId,
                                                  FullName = pu.User.FullName,
                                                  ProjectUserRole = pu.ProjectRole.ToString(),
+                                                 StartTime = pu.StartTime
                                              }).AsEnumerable()
                                              .GroupBy(pu => pu.ProjectId, pu => pu)
                                              .ToDictionary(group => group.Key, group => group.ToList());

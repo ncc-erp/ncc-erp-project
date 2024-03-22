@@ -13,12 +13,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { Component, OnInit, Injector, ViewChild } from '@angular/core';
 import * as moment from 'moment';
 
-
 @Component({
   selector: 'app-training-projects',
   templateUrl: './training-projects.component.html',
   styleUrls: ['./training-projects.component.css']
 })
+
 export class TrainingProjectsComponent extends PagedListingComponentBase<TrainingProjectsComponent> implements OnInit {
   Projects_TrainingProjects_ViewAllProject = PERMISSIONS_CONSTANT.Projects_TrainingProjects_ViewAllProject;
   Projects_TrainingProjects_ViewMyProjectOnly = PERMISSIONS_CONSTANT.Projects_TrainingProjects_ViewMyProjectOnly;
@@ -32,33 +32,59 @@ export class TrainingProjectsComponent extends PagedListingComponentBase<Trainin
   Projects_TrainingProjects_ViewRequireWeeklyReport = PERMISSIONS_CONSTANT.Projects_TrainingProjects_ViewRequireWeeklyReport
 
   public readonly FILTER_CONFIG: InputFilterDto[] = [
-    { propertyName: 'name', comparisions: [0, 6, 7, 8], displayName: "Tên dự án", },
+    { propertyName: 'name', comparisions: [0, 6, 7, 8], displayName: "Tên dự án" },
     // { propertyName: 'status', comparisions: [0], displayName: "Trạng thái", filterType: 3, dropdownData: this.statusFilterList },
     { propertyName: 'isSent', comparisions: [0], displayName: "Đã gửi weekly", filterType: 2 },
     { propertyName: 'dateSendReport', comparisions: [0, 1, 2, 3, 4], displayName: "Thời gian gửi report", filterType: 1 },
     { propertyName: 'startTime', comparisions: [0, 1, 2, 3, 4], displayName: "Thời gian bắt đầu", filterType: 1 },
     { propertyName: 'endTime', comparisions: [0, 1, 2, 3, 4], displayName: "Thời gian kết thúc", filterType: 1 },
   ];
-  statusFilterList = [{ displayName: "Not Closed", value: 3 },
-  { displayName: "InProgress", value: 1 }, { displayName: "Potential", value: 0 },
-  { displayName: "Closed", value: 2 },
-  ]
+
+  statusFilterList = [
+    { displayName: "Potential", value: 0 },
+    { displayName: "InProgress", value: 1 }, 
+    { displayName: "Closed", value: 2 },
+    { displayName: "Not Closed", value: 3 }
+  ];  
 
   public sortWeeklyReport: number = 0;
-
-  public pmId =  -1;
+  public pmId = -1;
   public searchPM: string = "";
-  public isShowResources:boolean = false
+  public isShowResources: boolean = false
+  public listTrainingProjects: TrainingProjectDto[] = [];
+  public searchText: string = "";
+  public projectStatus: any = 3;
+  public pmList: any[] = [];
+
   @ViewChild(MatMenuTrigger)
   menu: MatMenuTrigger
   contextMenuPosition = {x: '0', y: '0'}
+
+  constructor(public dialog: MatDialog,
+    public sessionService: AppSessionService,
+    public injector: Injector,
+    public router: Router,
+    private projectService: ListProjectService,
+    private userService: UserService,) {
+    super(injector);
+    this.pmId = Number(this.sessionService.userId);
+  }
+
+  ngOnInit(): void {
+    if(!this.isEnablePMFilter()){
+      this.pmId = Number(this.sessionService.userId);
+    }
+    this.refresh();
+    this.getAllPM();
+  }
+  
   protected list(request: PagedRequestDto, pageNumber: number, finishedCallback: Function): void {
     let check = false
     let checkFilterPM = false;
-
     if(this.permission.isGranted( this.Projects_TrainingProjects_ViewMyProjectOnly) && !this.permission.isGranted(this.Projects_TrainingProjects_ViewAllProject)){
       this.pmId = Number(this.sessionService.userId);
-    }else{
+    }
+    else {
       if(request.searchText){
         this.pmId = -1;
       }
@@ -87,17 +113,13 @@ export class TrainingProjectsComponent extends PagedListingComponentBase<Trainin
     if (this.projectStatus === -1) {
       request.filterItems = this.clearFilter(request, "status", "")
       check = true
-
     }
-
-
     if (this.pmId == -1) {
       request.filterItems = this.clearFilter(request, "pmId", "")
       checkFilterPM = true
 
     }
-    this.projectService.GetAllTrainingPaging(request).pipe(finalize(() => {
-      finishedCallback()
+    this.projectService.GetAllTrainingPaging(request).pipe(finalize(() => { finishedCallback()
     })).subscribe(data => {
       this.listTrainingProjects = data.result.items;
       if (check == false) {
@@ -109,6 +131,7 @@ export class TrainingProjectsComponent extends PagedListingComponentBase<Trainin
       this.showPaging(data.result, pageNumber);
     })
   }
+
   protected delete(project: any): void {
     abp.message.confirm(
       "Delete project: " + project.name + "?",
@@ -122,39 +145,18 @@ export class TrainingProjectsComponent extends PagedListingComponentBase<Trainin
         }
       }
     );
-  }
-  public listTrainingProjects: TrainingProjectDto[] = [];
-  public searchText: string = "";
-  public projectStatus: any = 3;
-  public pmList: any[] = [];
+  } 
 
-  constructor(public dialog: MatDialog,
-    public sessionService: AppSessionService,
-    public injector: Injector,
-    public router: Router,
-    private projectService: ListProjectService,
-    private userService: UserService,) {
-    super(injector);
-    this.pmId = Number(this.sessionService.userId);
-  }
-
-  ngOnInit(): void {
-    if(!this.isEnablePMFilter()){
-      this.pmId = Number(this.sessionService.userId);
-    }
-    this.refresh();
-    this.getAllPM();
-  }
   public searchInfoProject(){
     if (this.isEnablePMFilter() && this.searchText != ""){
       this.pmId = -1;
     }
     this.getDataPage(1);
   }
+
   public isEnablePMFilter(){
     return this.permission.isGranted(this.Projects_TrainingProjects_ViewAllProject)
   }
-
 
   public getAllPM(): void {
     this.projectService.GetTrainingPMs().pipe(catchError(this.userService.handleError))
@@ -162,6 +164,7 @@ export class TrainingProjectsComponent extends PagedListingComponentBase<Trainin
         this.pmList = data.result;
       })
   }
+
   showDialog(command: string, item?: TrainingProjectDto): void {
     let project = {} as TrainingProjectDto
     if (command == 'edit') {
@@ -177,6 +180,7 @@ export class TrainingProjectsComponent extends PagedListingComponentBase<Trainin
         isRequiredWeeklyReport: item.isRequiredWeeklyReport
       }
     }
+
     const dialogRef = this.dialog.open(CreateEditTrainingProjectComponent, {
       data: {
         command: command,
@@ -193,6 +197,7 @@ export class TrainingProjectsComponent extends PagedListingComponentBase<Trainin
       }
     });
   }
+
   showDetail(id) {
     if (this.permission.isGranted(this.PmManager_Project_ViewDetail)){
       this.router.navigate(['/app/training-project-detail/training-project-general'], {
@@ -202,16 +207,18 @@ export class TrainingProjectsComponent extends PagedListingComponentBase<Trainin
       })
     }
   }
+
   showActions(e){
     e.preventDefault();
     this.contextMenuPosition.x = e.clientX + 'px';
     this.contextMenuPosition.y = e.clientY + 'px';
     this.menu.openMenu();
-
   }
+
   create() {
     this.showDialog('create',);
   }
+
   edit(project: TrainingProjectDto) {
     this.showDialog('edit', project)
   }
@@ -223,7 +230,7 @@ export class TrainingProjectsComponent extends PagedListingComponentBase<Trainin
     return timeSendReport.isAfter(penaltyTime)
   }
 
-  handleSortWeeklyReportClick () {
+  handleSortWeeklyReportClick() {
     this.sortWeeklyReport = (this.sortWeeklyReport + 1) % 3;
     this.refresh();
   }
@@ -272,6 +279,7 @@ export class TrainingProjectsComponent extends PagedListingComponentBase<Trainin
       );
     });
   }
+
   filterResource(project){
     let resourceAfterFilter = []
     if(project.isViewAllResource){
@@ -284,44 +292,63 @@ export class TrainingProjectsComponent extends PagedListingComponentBase<Trainin
         }
       })
     }
+
     return resourceAfterFilter
   }
 
   filterResourceInfo(project){
     let resourceInfoAfterFilter = []
     if(project.resourceInfo){
-    if(project.isViewAllResourceInfo){
-      resourceInfoAfterFilter = project.resourceInfo
+      if(project.isViewAllResourceInfo){
+        resourceInfoAfterFilter = project.resourceInfo
+      }
+      else{
+        project.resourceInfo.forEach((resource, index)=>{
+          if(index < 5){
+            resourceInfoAfterFilter.push(resource)
+          }
+        })
+      }
     }
-    else{
-      project.resourceInfo.forEach((resource, index)=>{
-        if(index < 5){
-          resourceInfoAfterFilter.push(resource)
-        }
-      })
-    }
-  }
+      
     return resourceInfoAfterFilter
   }
 
+  getTotalResource(){
+    let totalResource = 0;
+    this.listTrainingProjects.forEach((resource) => {
+      if(resource.resourceInfo){
+        totalResource += resource.resourceInfo.length
+      }
+    }) 
+
+    return totalResource;
+  }
+
   viewProjectDetail(project){
-    let routingToUrl:string = (this.permission.isGranted(this.Projects_TrainingProjects_ProjectDetail_TabWeeklyReport)
-     && this.permission.isGranted(this.Projects_TrainingProjects_ProjectDetail_TabWeeklyReport_View))
-    ? "/app/training-project-detail/training-weekly-report" : "/app/training-project-detail/training-project-general"
+    let routingToUrl: string = (this.permission.isGranted(this.Projects_TrainingProjects_ProjectDetail_TabWeeklyReport) && 
+                                this.permission.isGranted(this.Projects_TrainingProjects_ProjectDetail_TabWeeklyReport_View))
+                                ? "/app/training-project-detail/training-weekly-report" 
+                                : "/app/training-project-detail/training-project-general"
+
     const url = this.router.serializeUrl(this.router.createUrlTree([routingToUrl], { queryParams: {
       id: project.id,
       type: project.projectType,
       projectName: project.name,
-      projectCode: project.code} }));
+      projectCode: project.code } 
+    }));
+
     window.open(url, '_blank');
   }
+
   changeRequireWeeklyReport(item) {
     this.projectService.changeRequireWeeklyReport(item.id).subscribe((res) => {
       item.isRequiredWeeklyReport = res.result;
       abp.notify.success("Change require weekly report sucessful!")
     });
   }
-  changeShowResource(checked :boolean) {
-this.isShowResources=checked;
+
+  changeShowResource(checked: boolean) {
+    this.isShowResources = checked;
   }
 }

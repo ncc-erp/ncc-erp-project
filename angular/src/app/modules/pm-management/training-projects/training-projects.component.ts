@@ -145,7 +145,7 @@ export class TrainingProjectsComponent extends PagedListingComponentBase<Trainin
         }
       }
     );
-  }
+  } 
 
   public searchInfoProject(){
     if (this.isEnablePMFilter() && this.searchText != ""){

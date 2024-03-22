@@ -21,6 +21,6 @@ namespace ProjectManagement.APIs.Projects.Dto
         public long ProjectId { get; set; }
         public string ProjectUserRole { get; set; }
         public string FullName { get; set; }
-        public DateTime StartTime { get; set; }
+        public DateTime StartTime { get; set; } 
     }
 }

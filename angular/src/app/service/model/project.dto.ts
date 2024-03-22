@@ -168,7 +168,7 @@ export class TrainingProjectDto {
   evaluation?: string;
   id: number;
   isRequiredWeeklyReport:boolean;
-  resourceInfo?: any;
+  resourceInfo?: any; 
 }
 
 export class ProductProjectDto {

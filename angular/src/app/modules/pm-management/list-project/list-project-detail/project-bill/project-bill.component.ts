@@ -37,18 +37,6 @@ import * as _ from 'lodash';
 })
 
 export class ProjectBillComponent extends AppComponentBase implements OnInit {
-  // public theadTable: THeadTable[] = [
-  //   { name: "#" },
-  //   { name: "Employee", sortName: "emailAddress", defaultSort: "" },
-  //   { name: "Charge Name" },
-  //   { name: "Charge Role", sortName: "billRole", defaultSort: "" },
-  //   { name: "Linked resources" },
-  //   { name: "Rate", sortName: "billRate", defaultSort: "" },
-  //   { name: "Charge Type" },
-  //   { name: "Is Charge", sortName: "startTime", defaultSort: "" },
-  //   { name: "Note", width: "200px" },
-  //   { name: "Action", width: "100px" },
-  // ];
   public userBillList: projectUserBillDto[] = [];
   private filteredUserBillList: projectUserBillDto[] = [];
 
@@ -117,7 +105,6 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
 
   constructor(private router: Router,
     private projectUserBillService: ProjectUserBillService,
-    private ref: ChangeDetectorRef,
     private route: ActivatedRoute,
     injector: Injector,
     private userService: UserService,
@@ -220,12 +207,10 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
 
   private getAllFakeUser(userId?) {
     this.projectUserBillService.GetAllUser(this.projectId, userId, false, true, true).pipe(catchError(this.userService.handleError)).subscribe(data => {
-      // this.userForProjectUser = data.result;
       this.userForUserBill = data.result;
     })
   }
   public removeLinkResource(userId, id){
-    // this.isLoading = true
     const req = {
       projectUserBillId: id,
       userIds: [userId]
@@ -264,8 +249,8 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     if (userBill.endTime) {
       userBill.endTime = moment(userBill.endTime).format("YYYY-MM-DD");
     }
+    const existingUserBill = this.userBillList.find(item => item.userId === userBill.userId);
     if (!this.isEditUserBill) {
-      const existingUserBill = this.userBillList.find(item => item.userId === userBill.userId);
       if (existingUserBill) {
         abp.message.confirm(
           "This user bill already exists. Do you want to continue?",
@@ -317,7 +302,6 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
         )
       }
       else {
-        const existingUserBill = this.userBillList.find(item => item.userId === userBill.userId);
         if (existingUserBill) {
           abp.message.confirm(
             "This user bill already exists. Do you want to continue?",
@@ -404,7 +388,6 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     this.isEditUserBill = true;
     this.showSearchAndFilter = false;
     this.isAddingOrEditingUserBill = true;
-    // userBill.billRole = this.APP_ENUM.ProjectUserRole[userBill.billRole];
   }
   private getUserBill(id?: number, status?: boolean, userIdNew?: number): void {
     this.isLoading = true;
@@ -495,10 +478,6 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   }
 
   public removeUserBill(userBill: projectUserBillDto): void {
-    const reqDelete = {
-      projectUserBillId: userBill.id,
-      userIds: userBill.linkedResources.map(item => item.id)
-    }
     abp.message.confirm(
       "Delete user bill?",
       "",
@@ -633,12 +612,6 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
      projectCode: projectCode} }));
       window.open(url, '_blank');
   }
-  styleThead(item: any) {
-    return {
-      width: item.width,
-      height: item.height,
-    };
-  }
 
   sortData(data) {
     if (!this.showSearchAndFilter) {
@@ -754,22 +727,4 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
 export interface AddSubInvoicesDto {
   parentInvoiceId: number,
   subInvoiceIds: number[]
-}
-
-export class THeadTable {
-  name: string;
-  width?: string = "auto";
-  height?: string = "auto";
-  backgroud_color?: string;
-  sortName?: string;
-  defaultSort?: string;
-  padding?: string;
-  whiteSpace?: string;
-}
-
-export class SendRecruitmentModel {
-  id: number;
-  name: string;
-  dmNote: string;
-  pmNote: string;
 }

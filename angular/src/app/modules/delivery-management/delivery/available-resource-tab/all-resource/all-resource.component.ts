@@ -31,6 +31,7 @@ import { RetroReviewHistoryByUserComponent } from "./../plan-resource/plan-user/
 import { ProjectHistoryByUserComponent } from "./../plan-resource/plan-user/project-history-by-user/project-history-by-user.component";
 import { result } from 'lodash-es';
 import { APP_ENUMS } from '@shared/AppEnums';
+import { AddNoteDialogComponent } from '../plan-resource/add-note-dialog/add-note-dialog.component';
 
 @Component({
   selector: 'app-all-resource',
@@ -86,6 +87,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
   Resource_TabAllResource_CancelMyPlan = PERMISSIONS_CONSTANT.Resource_TabAllResource_CancelMyPlan
   Resource_TabAllResource_CancelAnyPlan = PERMISSIONS_CONSTANT.Resource_TabAllResource_CancelAnyPlan
   Resource_TabAllResource_UpdateSkill = PERMISSIONS_CONSTANT.Resource_TabAllResource_UpdateSkill
+  Resource_TabAllResource_EditNote = PERMISSIONS_CONSTANT.Resource_TabAllResource_EditNote;
   Resource_TabAllResource_ViewUserStarSkill = PERMISSIONS_CONSTANT.Resource_TabAllResource_ViewUserStarSkill
   Resource_TabAllResource_ProjectDetail = PERMISSIONS_CONSTANT.Resource_TabAllResource_ProjectDetail
 
@@ -108,6 +110,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
         )
         .subscribe(data => {
           this.availableResourceList = data.result.items;
+          this.availableResourceList.forEach(item => item.isViewAll = false);
           this.showPaging(data.result, pageNumber);
           this.isLoading = false;
         })
@@ -354,18 +357,18 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
       this.selectedBranchIds = data.result.map(item => item.id)
       this.selectedBranchIdsOld = [...this.selectedBranchIds]
       this.selectedBranchIdsCr = this.selectedBranchIds
-      this.refresh();
+      //this.refresh();
     })
   }
 
   getAllPositions() {
     this.positionService.getAllNotPagging().subscribe((data) => {
-      this.listPositions = data.result
+      this.listPositions = data.result  
       this.listPositionsId = data.result.map(item => item.id)
       this.selectedPositions = data.result.map(item => item.id)
       this.selectedPositionsOld = [...this.selectedPositions]
       this.selectedPositionsCr = this.selectedPositions
-      this.refresh();
+      //this.refresh();
     })
   }
 
@@ -380,7 +383,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     this.selectedUserTypes = this.listUserTypes.map(item => item.value);
     this.selectedUserTypesOld = [...this.selectedUserTypes];
     this.selectedUserTypesCr = this.selectedUserTypes;
-    this.refresh();
+    //this.refresh();
   }
 
   skillsCommas(arr) {
@@ -613,11 +616,11 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
         item: userInfo,
       },
     });
-    show.afterClosed().subscribe((result) => {
+    /*show.afterClosed().subscribe((result) => {
       if (result) {
         this.refresh();
       }
-    });
+    });*/
   }
   projectHistorUser(user: availableResourceDto) {
     this.showDialogProjectHistoryUser(user);
@@ -635,14 +638,35 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
         item: userInfo,
       },
     });
-    show.afterClosed().subscribe((result) => {
+    /*show.afterClosed().subscribe((result) => {
       if (result) {
         this.refresh();
       }
-    });
+    });*/
   }
   RetroReviewHistoryUser(user: availableResourceDto) {
     this.showDialogRetroReviewHistoryUser(user);
+  }
+
+  updateNote(user: availableResourceDto) {
+    const addOrEditNoteDialog = this.dialog.open(AddNoteDialogComponent, {
+      width: "40%",
+      data: {
+        userId: user.userId,
+        fullName: user.fullName,
+        poolNote: user.poolNote
+      },
+    });
+
+    addOrEditNoteDialog.afterClosed().subscribe((data) => {
+      const item = this.availableResourceList.find(item => item.userId == data.userId);
+      if (item != null){
+        item.poolNote = data.note;
+      }
+    });
+  }
+  toggle(item){    
+    item.isViewAll = !item.isViewAll
   }
 
 }

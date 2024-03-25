@@ -801,6 +801,8 @@ namespace ProjectManagement.Services.ResourceManager
                                SkillRank = s.SkillRank
                            }).ToList(),
 
+                           PoolNote = x.PoolNote,
+
                            PlanProjects = x.ProjectUsers
                            .Where(pu => pu.Status == ProjectUserStatus.Future)
                            .Where(pu => pu.Project.Status != ProjectStatus.Closed)
@@ -847,7 +849,6 @@ namespace ProjectManagement.Services.ResourceManager
                        });
 
             if (
-                input.UserTypes.Count == 0 &&
                 input.BranchIds.Count == 0 &&
                 input.PositionIds.Count == 0 &&
                 input.SkillIds.Count == 0 &&

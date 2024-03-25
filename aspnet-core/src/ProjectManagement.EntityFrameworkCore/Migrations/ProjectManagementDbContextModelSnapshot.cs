@@ -2354,6 +2354,52 @@ namespace ProjectManagement.Migrations
                     b.ToTable("Currencies");
                 });
 
+            modelBuilder.Entity("ProjectManagement.Entities.LinkedResource", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("CreatorUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("DeleterUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("LastModifierUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("ProjectUserBillId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int?>("TenantId")
+                        .HasColumnType("int");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProjectUserBillId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("LinkedResources");
+                });
+
             modelBuilder.Entity("ProjectManagement.Entities.PMReport", b =>
                 {
                     b.Property<long>("Id")
@@ -4517,6 +4563,21 @@ namespace ProjectManagement.Migrations
                     b.HasOne("ProjectManagement.Entities.CriteriaCategory", "CriteriaCategory")
                         .WithMany()
                         .HasForeignKey("CriteriaCategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ProjectManagement.Entities.LinkedResource", b =>
+                {
+                    b.HasOne("ProjectManagement.Entities.ProjectUserBill", "ProjectUserBill")
+                        .WithMany("LinkedResources")
+                        .HasForeignKey("ProjectUserBillId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProjectManagement.Authorization.Users.User", "User")
+                        .WithMany("LinkedResources")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

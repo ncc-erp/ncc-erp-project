@@ -1,3 +1,4 @@
+import { result } from 'lodash-es';
 import { AddSubInvoiceDialogComponent } from './add-sub-invoice-dialog/add-sub-invoice-dialog.component';
 import { ParentInvoice, SubInvoice } from './../../../../../service/model/bill-info.model';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -8,7 +9,7 @@ import { AppComponentBase } from '@shared/app-component-base';
 import { UserDto } from '@shared/service-proxies/service-proxies';
 import { projectUserBillDto, ProjectRateDto } from './../../../../../service/model/project.dto';
 import { ProjectUserBillService } from './../../../../../service/api/project-user-bill.service';
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit, Injector, ViewChildren, QueryList, ChangeDetectorRef, ViewChild } from '@angular/core';
 import * as moment from 'moment';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { EditNoteDialogComponent } from './add-note-dialog/edit-note-dialog.component';
@@ -20,7 +21,13 @@ import { ProjectInvoiceSettingDto } from '@app/service/model/project-invoice-set
 import { UpdateInvoiceDto } from '@app/service/model/updateInvoice.dto';
 import { MatDialog } from '@angular/material/dialog';
 import { ShadowAccountDialogComponent } from './shadow-account-dialog/shadow-account-dialog.component';
-import { concat } from 'rxjs';
+import { Observable, concat } from 'rxjs';
+import { SortableModel } from '@shared/components/sortable/sortable.component';
+import { ChargeStatusFilter } from '@app/service/model/project-process-criteria-result.dto';
+import { MatSelect } from '@angular/material/select';
+import { Pipe, PipeTransform } from '@angular/core';
+import { optionDto } from '@shared/components/multiple-select/multiple-select.component';
+import * as _ from 'lodash';
 
 
 @Component({
@@ -28,39 +35,64 @@ import { concat } from 'rxjs';
   templateUrl: './project-bill.component.html',
   styleUrls: ['./project-bill.component.css']
 })
+
 export class ProjectBillComponent extends AppComponentBase implements OnInit {
   public userBillList: projectUserBillDto[] = [];
   private filteredUserBillList: projectUserBillDto[] = [];
+
+  public filteredChargeRoles: any;
   public userForUserBill: UserDto[] = [];
-  public userIdOld:number
+  public userIdOld: number;
+  sortColumn: string;
+  sortDirect: number;
+  iconSort: string;
   public parentInvoice: ParentInvoice = new ParentInvoice();
   public isEditUserBill: boolean = false;
   public userBillProcess: boolean = false;
   public panelOpenState: boolean = false;
   public isShowUserBill: boolean = false;
-  public searchUserBill: string = ""
-  public searchBillCharge: number
+  public showSearchAndFilter: boolean = true;
+  public isAddingOrEditingUserBill: boolean = false
+  public searchUserBill: string = "";
+  public searchText: string = "";
+  public accountName;
+  public billRole;
   private projectId: number
+  public projectUserBillId: number
   public userBillCurrentPage: number = 1
   public rateInfo = {} as ProjectRateDto;
   public lastInvoiceNumber;
   public discount;
-  public chargeTypeList = [{ name: 'Daily', value: 0 }, { name: 'Monthly', value: 1 }, { name: 'Hourly', value: 2 }];
   public isEditLastInvoiceNumber: boolean = false;
   public isEditDiscount: boolean = false;
   public maxBillUserCurrentPage = 10;
   public totalBillList: number;
+  public sortable = new SortableModel("", 0, "");
+  @ViewChildren("sortThead") private elementRefSortable: QueryList<any>;
+  public sortResource = {};
   public invoiceSettingOptions = Object.entries(this.APP_ENUM.InvoiceSetting).map((item) => ({
     key: item[0],
     value: item[1]
   }))
   public expandInvoiceSetting: true;
-  public selectedIsCharge: string = "Charge" ;
+  public ChargeStatusFilter = ChargeStatusFilter;
+  public selectedIsCharge: ChargeStatusFilter = ChargeStatusFilter.IsCharge;
+  public chargeTypeList = [{ name: 'Daily', value: 0 }, { name: 'Monthly', value: 1 }, { name: 'Hourly', value: 2 }];
+
   public listProjectOfClient: SubInvoice[] = []
   public listSelectProject: DropDownDataDto[] = []
   public currentProjectInfo: ProjectDto
   public projectInvoiceSetting: ProjectInvoiceSettingDto;
   public updateInvoiceDto: UpdateInvoiceDto = {} as UpdateInvoiceDto;
+
+  public selectedChargeRole: string[] = [];
+  public listSelectChargeRole: string[] = [];
+
+  public selectedLinkedResources: number[] = [];
+  public listSelectLinkedResources: optionDto[] = [];
+
+  public listAllResource = []
+
   Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_View = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_View;
   Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Create = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Create;
   Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Edit = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Edit;
@@ -70,6 +102,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport;
   Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_View = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_View;
   Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount
+
   constructor(private router: Router,
     private projectUserBillService: ProjectUserBillService,
     private route: ActivatedRoute,
@@ -84,11 +117,17 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
 
   ngOnInit(): void {
     this.getUserBill();
+    this.GetChargeRoleData();
+    this.GetLinkedResourcesData();
     this.getParentInvoice();
     this.getAllProject();
     this.getCurrentProjectInfo();
     this.getProjectBillInfo();
+    this.searchContext();
+    this.getAllFakeUser('');
+    this.getAllLinkResource();
   }
+
   isShowInvoiceSetting(){
     return this.isGranted(PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_InvoiceSetting_View)
   }
@@ -167,16 +206,13 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   //#endregion
 
   private getAllFakeUser(userId?) {
-    this.projectUserBillService.GetAllUserActive(this.projectId, userId, false, true).pipe(catchError(this.userService.handleError)).subscribe(data => {
-      // this.userForProjectUser = data.result;
+    this.projectUserBillService.GetAllUser(this.projectId, userId, false, true, true).pipe(catchError(this.userService.handleError)).subscribe(data => {
       this.userForUserBill = data.result;
     })
   }
-  public removeLinkResource(projectId, billAccountId, userId, id){
-    // this.isLoading = true
+  public removeLinkResource(userId, id){
     const req = {
-      billAccountId: billAccountId,
-      projectId: projectId,
+      projectUserBillId: id,
       userIds: [userId]
     }
     const status = this.userBillList.find(item => item.id === id).createMode
@@ -186,7 +222,8 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
       (result: boolean) => {
         if (result) {
           this.isLoading = true;
-          this.projectUserBillService.RemoveUserFromBillAccount(req).pipe(catchError(this.projectUserBillService.handleError)).subscribe(data => {
+          this.projectUserBillService.RemoveLinkedResource(req).pipe(catchError(this.projectUserBillService.handleError)).subscribe(data => {
+            abp.notify.success(`Linked Resource Removed Successfully!`)
              this.getUserBill(id, status);
           }, () => {
             this.isLoading = false
@@ -196,39 +233,45 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     )
   }
   public addUserBill(): void {
-    this.getAllFakeUser('')
     let newUserBill = {} as projectUserBillDto
     newUserBill.createMode = true;
     newUserBill.isActive = true;
     this.userBillProcess = true;
-    this.filteredUserBillList.unshift(newUserBill)
-    if( newUserBill.createMode == true){
-      this.filteredUserBillList.length = this.filteredUserBillList.length;
-    }
+    this.filteredUserBillList.unshift(newUserBill);
+    this.showSearchAndFilter = false;
+    this.isAddingOrEditingUserBill = true;
 
   }
   public saveUserBill(userBill: projectUserBillDto): void {
-    delete userBill["createMode"]
+    this.showSearchAndFilter = true;
+    this.isAddingOrEditingUserBill = false;
     userBill.startTime = moment(userBill.startTime).format("YYYY-MM-DD");
     if (userBill.endTime) {
       userBill.endTime = moment(userBill.endTime).format("YYYY-MM-DD");
     }
-    this.isLoading = true
-
+    const existingUserBill = this.userBillList.find(item => item.userId === userBill.userId);
     if (!this.isEditUserBill) {
-      userBill.projectId = this.projectId
-      this.projectUserBillService.create(userBill).pipe(catchError(this.projectUserBillService.handleError)).subscribe(res => {
-        abp.notify.success(`Created new user bill`)
-        this.getUserBill()
-        this.userBillProcess = false;
-        this.searchUserBill = ""
-      }, () => {
-        userBill.createMode = true;
-        this.isLoading = false
-      })
+      if (existingUserBill) {
+        abp.message.confirm(
+          "This user bill already exists. Do you want to continue?",
+          "",
+          (result: boolean) => {
+            if (result) {
+              this.createUserBill(userBill);
+            } else {
+              this.userBillProcess = true;
+              this.showSearchAndFilter = false;
+              this.isAddingOrEditingUserBill = true;
+            }
+          }
+        );
+      } else {
+        this.createUserBill(userBill);
+      }
     }
     else {
       if(this.userIdOld == userBill.userId){
+        this.isLoading = true
         const userBillToUpdate = {
           projectId : userBill.projectId,
           userId: userBill.userId,
@@ -249,7 +292,8 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
           this.getUserBill()
           this.userBillProcess = false;
           this.isEditUserBill = false;
-          this.searchUserBill = ""
+          this.searchUserBill = "";
+          delete userBill["createMode"];
       },
         () => {
           userBill.createMode = true;
@@ -258,78 +302,175 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
         )
       }
       else {
-        const reqAdd = {
-          billAccountId:userBill.userId,
-          projectId: this.projectId,
-          userIds: userBill.linkedResources ? userBill.linkedResources.map(item => item.id): []
+        if (existingUserBill) {
+          abp.message.confirm(
+            "This user bill already exists. Do you want to continue?",
+            "",
+            (result: boolean) => {
+              if (result) {
+                this.updateUserBill(userBill);
+              } else {
+                this.userBillProcess = true;
+                this.isEditUserBill = true;
+                this.showSearchAndFilter = false;
+                this.isAddingOrEditingUserBill = true;
+              }
+            }
+          );
+        } else {
+          this.updateUserBill(userBill);
         }
-        const reqDelete = {
-          billAccountId: this.userIdOld,
-          projectId: this.projectId,
-          userIds: userBill.linkedResources ? userBill.linkedResources.map(item => item.id) : []
-        }
-        concat(this.projectUserBillService.RemoveUserFromBillAccount(reqDelete),this.projectUserBillService.update(userBill),this.projectUserBillService.LinkUserToBillAccount(reqAdd))
-        .pipe(catchError(this.projectUserBillService.handleError))
-        .subscribe(() => {
-            abp.notify.success("Update successfully")
-            this.getUserBill()
-            this.userBillProcess = false;
-            this.isEditUserBill = false;
-            this.searchUserBill = ""
-        },
-          () => {
-            userBill.createMode = true;
-            this.isLoading = false
-          })
       }
     }
   }
-  // private filterProjectUserDropDown() {
 
-  //   let userProjectList = this.projectUserList.map(item => item.userId)
-  //   this.userForProjectUser = this.userForUserBill.filter(user => userProjectList.indexOf(user.id) == -1)
-  // }
+  createUserBill(userBill: projectUserBillDto): void {
+    this.isLoading = true;
+    userBill.projectId = this.projectId;
+    this.projectUserBillService.create(userBill).pipe(
+      catchError(error => {
+        this.userBillProcess = true;
+        this.showSearchAndFilter = false;
+        this.isAddingOrEditingUserBill = true;
+        return this.projectUserBillService.handleError(error);
+      })
+    ).subscribe(
+        () => {
+            abp.notify.success(`Created new user bill`);
+            this.getUserBill();
+            this.userBillProcess = false;
+            this.searchUserBill = "";
+            delete userBill["createMode"];
+        },
+        () => {
+            userBill.createMode = true;
+            this.isLoading = false;
+        }
+    );
+  }
+
+  updateUserBill(userBill: projectUserBillDto): void {
+    this.isLoading = true
+    this.projectUserBillService.update(userBill).pipe(
+        catchError(error => {
+        this.userBillProcess = true;
+        this.isEditUserBill = true;
+        this.showSearchAndFilter = false;
+        this.isAddingOrEditingUserBill = true;
+        return this.projectUserBillService.handleError(error);
+      })
+    ).subscribe(() => {
+        abp.notify.success("Update successfully")
+        this.getUserBill()
+        this.userBillProcess = false;
+        this.isEditUserBill = false;
+        this.searchUserBill = "";
+        delete userBill["createMode"];
+    },
+      () => {
+        userBill.createMode = true;
+        this.isLoading = false
+      })
+  }
+
   public cancelUserBill(): void {
     this.getUserBill();
     this.userBillProcess = false;
     this.isEditUserBill = false;
-    this.searchUserBill = ""
+    this.searchUserBill = "";
+    this.showSearchAndFilter = true;
+    this.isAddingOrEditingUserBill = false;
   }
   public editUserBill(userBill: projectUserBillDto): void {
-    this.getAllFakeUser(userBill.userId)
     this.userIdOld = userBill.userId
     userBill.createMode = true;
     this.userBillProcess = true;
     this.isEditUserBill = true;
-    // userBill.billRole = this.APP_ENUM.ProjectUserRole[userBill.billRole];
+    this.showSearchAndFilter = false;
+    this.isAddingOrEditingUserBill = true;
   }
-  private getUserBill( id?: number,status?: boolean, userIdNew?: number): void {
-    this.isLoading = true
-    this.projectUserBillService.getAllUserBill(this.projectId).pipe(catchError(this.projectUserBillService.handleError)).subscribe(data => {
-      this.userBillList = data.result.map(item=> {
-      if(item.id === id && userIdNew){
-        return {...item,createMode:status,userId:userIdNew}
-      }
-      return {...item, createMode:false}
-      })
-      this.filteredUserBillList = this.userBillList.filter(bill => bill.isActive === true);
-      if (this.selectedIsCharge === 'All') {
-        this.filteredUserBillList = this.userBillList;
-      } else if (this.selectedIsCharge === 'Charge') {
-        this.filteredUserBillList = this.userBillList.filter(bill => bill.isActive === true);
-      } else if (this.selectedIsCharge === 'Not Charge') {
-        this.filteredUserBillList = this.userBillList.filter(bill => bill.isActive === false);
-      }
-      this.isLoading = false
-    }, ()=>{ this.isLoading = false })
+  private getUserBill(id?: number, status?: boolean, userIdNew?: number): void {
+    this.isLoading = true;
+    const body = {
+        projectId: this.projectId,
+        chargeStatusFilter: this.selectedIsCharge,
+        linkedResourcesFilter: this.selectedLinkedResources,
+        chargeRoleFilter: this.selectedChargeRole,
+        searchText: this.searchText,
+    };
+
+    this.projectUserBillService.getAllUserBill(body).pipe(
+        catchError(this.projectUserBillService.handleError)
+    ).subscribe(data => {
+        this.userBillList = data.result.map(item => {
+            if (item.id === id && userIdNew) {
+                return { ...item, createMode: status, userId: userIdNew };
+            }
+            return { ...item, createMode: false };
+        });
+
+        this.filteredUserBillList = _.cloneDeep(this.userBillList);
+        this.isLoading = false;
+    }, () => { this.isLoading = false; });
+  }
+
+  GetChargeRoleData(){
+    this.projectUserBillService.GetAllChargeRoleByProject(this.projectId).subscribe(data => {
+      this.listSelectChargeRole = data.result;
+    })
+  }
+
+  GetLinkedResourcesData(){
+    this.projectUserBillService.GetAllLinkedResourcesByProject(this.projectId).subscribe(data => {
+      this.listSelectLinkedResources = data.result.map(item => {
+        return {
+          id: item.id,
+          name: `${item.fullName} (${item.emailAddress})`
+        };
+      });
+    })
+  }
+
+  getAllLinkResource(){
+    this.projectUserBillService.GetAllResource().subscribe(res => {
+      this.listAllResource = res.result;
+      this.isLoading = false;
+    }, () => { this.isLoading = false; });
   }
 
   filterByIsCharge() {
     this.getUserBill()
     this.userBillProcess = false;
     this.isEditUserBill = false;
-    this.searchUserBill = ""
+    this.searchUserBill = "";
+    this.sortColumn = "";
   }
+
+  filterByChargeType() {
+    this.getUserBill();
+  }
+
+  selectAll(select: MatSelect) {
+    select.value = this.getSelectableOptions(select);
+    this.updateSelectedValues(select);
+  }
+
+  clearAll(select: MatSelect) {
+      select.value = [];
+      this.updateSelectedValues(select);
+  }
+
+  updateSelectedValues(select: MatSelect) {
+      select.writeValue(select.value);
+      // Trigger the selectionChange event manually
+      select._onChange(select.value);
+  }
+
+  getSelectableOptions(select: MatSelect): any[] {
+      const allOptions = select.options.toArray();
+      return allOptions.filter(option => !option.disabled).map(option => option.value);
+  }
+
 
   changePageSizeCurrent()
   {
@@ -337,18 +478,13 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   }
 
   public removeUserBill(userBill: projectUserBillDto): void {
-    const reqDelete = {
-      billAccountId: userBill.userId,
-      projectId: this.projectId,
-      userIds: userBill.linkedResources.map(item => item.id)
-    }
     abp.message.confirm(
       "Delete user bill?",
       "",
       (result: boolean) => {
         if (result) {
           this.isLoading = true
-          concat(this.projectUserBillService.RemoveUserFromBillAccount(reqDelete),this.projectUserBillService.deleteUserBill(userBill.id))
+          this.projectUserBillService.deleteUserBill(userBill.id)
           .pipe(catchError(this.projectUserBillService.handleError)).subscribe(()=>{
                 abp.notify.success("Delete Bill account success")
                 this.getUserBill()
@@ -426,7 +562,9 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
         projectId: projectId,
         userId: this.userIdOld != userId && this.isEditUserBill ? this.userIdOld : userId,
         listResource: listResource ? listResource.map(item=> item.id) : [],
-        userIdNew: userId
+        listAllResource: this.listAllResource,
+        userIdNew: userId,
+        projectUserBillId: id
       },
       width: "700px",
     })
@@ -475,7 +613,115 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
       window.open(url, '_blank');
   }
 
+  sortData(data) {
+    if (!this.showSearchAndFilter) {
+      return;
+  }
+    if (this.sortColumn !== data) {
+        this.sortDirect = -1;
+    }
+    this.sortColumn = data;
+    this.sortDirect++;
+    if (this.sortDirect > 1) {
+        this.iconSort = "";
+        this.sortDirect = -1;
+    }
+    if (this.sortDirect == 1) {
+        this.iconSort = "fas fa-sort-amount-down";
+        this.sortDesc(this.sortColumn);
+    } else if (this.sortDirect == 0) {
+        this.iconSort = "fas fa-sort-amount-up";
+        this.sortAsc(this.sortColumn);
+    } else {
+        this.iconSort = "fas fa-sort";
+        this.filteredUserBillList = _.cloneDeep(this.userBillList);
+      }
+}
 
+  sortAsc(sortColumn: string){
+    this.filteredUserBillList.sort((a,b) => (typeof a[sortColumn] === "number") ? a[sortColumn]-b[sortColumn] : (a[sortColumn] ?? "").localeCompare(b[sortColumn] ?? ""));
+  }
+  sortDesc(sortColumn: string){
+    this.filteredUserBillList.sort((a,b) => (typeof a[sortColumn] === "number") ? b[sortColumn]-a[sortColumn] : (b[sortColumn] ?? "").localeCompare(a[sortColumn] ?? ""));
+  }
+
+  orderLinkedResourcesOnTop(data: string) {
+    if (!this.showSearchAndFilter) {
+      return;
+  }
+    if (this.sortColumn !== data) {
+        this.sortDirect = -1;
+    }
+    this.sortColumn = data;
+    this.sortDirect++;
+    if (this.sortDirect > 1) {
+        this.iconSort = "";
+        this.sortDirect = -1;
+    }
+    if (this.sortDirect == 1) {
+        this.iconSort = "fas fa-sort-amount-down";
+        this.sortLinkedResourcesDesc();
+    } else if (this.sortDirect == 0) {
+        this.iconSort = "fas fa-sort-amount-up";
+        this.sortLinkedResourcesAsc();
+    } else {
+        this.iconSort = "fas fa-sort";
+        this.filteredUserBillList = _.cloneDeep(this.userBillList);
+    }
+  }
+
+  sortLinkedResourcesDesc() {
+      this.filteredUserBillList.sort((a, b) => {
+          return b.linkedResources.length - a.linkedResources.length;
+      });
+  }
+
+  sortLinkedResourcesAsc() {
+      this.filteredUserBillList.sort((a, b) => {
+          return a.linkedResources.length - b.linkedResources.length;
+      });
+  }
+
+
+
+  searchContext() {
+    this.getUserBill();
+  }
+
+  onChangeListLinkedResourcesSelected(selectedLinkedResources: number[]) {
+    this.selectedLinkedResources = selectedLinkedResources;
+    this.getUserBill();
+  }
+
+  onChangeListChargeRoleSelected(selectedChargeRole: string[]) {
+    this.selectedChargeRole = selectedChargeRole;
+    this.getUserBill();
+  }
+
+  onCancelFilterLinkedResources() {
+    this.selectedLinkedResources = [];
+    this.getUserBill();
+  }
+
+  onCancelFilterChargeRole() {
+    this.selectedChargeRole = []
+    this.getUserBill();
+  }
+  refresh(){
+    this.searchText = "";
+    this.selectedIsCharge = ChargeStatusFilter.IsCharge;
+    this.selectedLinkedResources = [];
+    this.selectedChargeRole = [];
+    this.getUserBill();
+  }
+
+  getStyleStatusUser(isActive: boolean){
+    return isActive?"badge badge-pill badge-success":"badge badge-pill badge-danger"
+  }
+
+  getValueStatusUser(isActive: boolean){
+    return isActive?"Active":"InActive"
+  }
 }
 
 export interface AddSubInvoicesDto {

@@ -61,5 +61,7 @@ namespace ProjectManagement.Authorization.Users
         [ForeignKey(nameof(PositionId))]
         public ProjectManagement.Entities.Position Position { get; set; }
 
+        public virtual ICollection<LinkedResource> LinkedResources { get; set; }
+
     }
 }

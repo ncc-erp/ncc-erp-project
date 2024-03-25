@@ -11,7 +11,6 @@
       <label for="">Note:</label>
       <mat-form-field class="w-100" appearance="outline">
         <textarea
-          #note
           cdkTextareaAutosize
           #autosize="cdkTextareaAutosize"
           style="max-height: 68vh; overflow: auto"
@@ -19,8 +18,8 @@
           rows="3"
           matInput
           placeholder="Leave a comment..."
-          [(ngModel)]="currentResource.note"
-          >{{ note.focus() }}</textarea
+          [(ngModel)]="note"
+          ></textarea
         >
       </mat-form-field>
     </div>

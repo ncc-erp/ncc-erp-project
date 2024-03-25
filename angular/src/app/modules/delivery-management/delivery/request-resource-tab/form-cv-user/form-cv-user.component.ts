@@ -62,7 +62,7 @@ export class FormCvUserComponent extends AppComponentBase implements OnInit {
       fullName: 'Unassigned',
       emailAddress: ''
     }
-    this.projectUserBillService.GetAllUserActive(this.input.item.projectId, '', false, true).subscribe(res => {
+    this.projectUserBillService.GetAllUser(this.input.item.projectId, '', false, false, true).subscribe(res => {
       this.listUsers = res.result
       if(this.typePlan == 'update'){
         this.listUsers.unshift(unassigned)

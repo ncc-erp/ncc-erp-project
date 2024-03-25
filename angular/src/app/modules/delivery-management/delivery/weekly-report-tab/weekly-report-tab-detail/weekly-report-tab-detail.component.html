@@ -1016,23 +1016,20 @@
                                                                 <i class="fas fa-sign-out-alt mr-1"></i>Release</button>
                                                         </mat-menu>
                                                     </td>
-                                                    <td style="white-space: break-spaces;">
-                                                        <span class="d-flex align-items-center justify-content-between">
-                                                            <p PrjResizeContent [collapseLine]="2" style="flex: 1;"
-                                                                class="mb-0 p-0  ml-2 max-line-content-2">{{user.note}}
-                                                            </p>
-                                                            <i style="color: #585858;" class="fas fa-ellipsis-v ml-1"
-                                                                [matMenuTriggerFor]="menu3"></i>
+                                                    <td style="white-space: break-spaces"> 
+                                                        <div class="d-flex align-items-centern">
+                                                            <p style="flex: 1;" 
+                                                            class="mb-0 p-0 ml-2">{{user.note}}</p>
+                                                            <i style="color: #585858;" class="fas fa-ellipsis-v ml-1" [matMenuTriggerFor]="menu3"></i>
                                                             <mat-menu #menu3="matMenu">
-                                                                <button class="mat-menu-item  w-100"
-                                                                    *ngIf="permission.isGranted(WeeklyReport_ReportDetail_CurrentResource_Update_Note)"
+                                                                <button class="mat-menu-item w-100" *ngIf="permission.isGranted(WeeklyReport_ReportDetail_CurrentResource_Update_Note)"
                                                                     (click)="editResoureNote(user)">
                                                                     <i class="fas fa-edit mr-2 fa-lg"></i>
                                                                     Edit
                                                                 </button>
                                                             </mat-menu>
-                                                        </span>
-                                                    </td>
+                                                        </div>
+                                                    </td>                                                    
                                                     <td class="text-center">
                                                         <div [matTooltip]="user.normalWorkingTime + 'h of project'
                                                                         + ' / ' + user.normalWorkingTimeAll + 'h all'
@@ -1135,8 +1132,8 @@
                                                     </td>
                                                     <td style="white-space: break-spaces;">
                                                         <div class="d-flex align-items-center" style="width: 100%;">
-                                                            <p PrjResizeContent [collapseLine]="2" style="flex: 1; min-width: 220px; max-width: 100%;"
-                                                            class="mb-0 p-0 ml-2 max-line-content-2">{{ user.note }}</p>
+                                                            <p style="flex: 1; min-width: 220px; max-width: 100%;"
+                                                            class="mb-0 p-0 ml-2 ">{{ user.note }}</p>     
                                                             <i style="color: #585858;" class="fas fa-ellipsis-v ml-1" [matMenuTriggerFor]="menu3"></i>
                                                             <mat-menu #menu3="matMenu">
                                                                 <button class="mat-menu-item" (click)="editBillNote(user)">
@@ -1146,8 +1143,6 @@
                                                             </mat-menu>
                                                         </div>
                                                     </td>
-
-
                                                 </tr>
                                             </tbody>
                                         </table>

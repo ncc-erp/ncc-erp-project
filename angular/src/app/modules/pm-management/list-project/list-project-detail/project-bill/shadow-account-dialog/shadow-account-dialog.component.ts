@@ -15,8 +15,8 @@ export class ShadowAccountDialogComponent
   implements OnInit
 {
   listAllResource = []
-  projectId: number;
   userId: number;
+  projectUserBillId: number;
   listResourceSelect=[]
   listResourceSelected=[]
   listResourceSelectCurrent=[]
@@ -32,17 +32,13 @@ export class ShadowAccountDialogComponent
     super(injector);
   }
   @ViewChild("select") select;
-  ngOnInit() { 
-    this.listResourceSelect = this.data.listResource
-    this.listResourceSelected = [...this.data.listResource]
-    this.listResourceSelectCurrent = [...this.listResourceSelect]
-    this.isLoading = true;
-    this.projectUserBillService.GetAllResource().subscribe(res=> {
-      this.listAllResource = res.result;
-      this.orderListResource()
-      this.isLoading = false
-    }, () => { this.isLoading = false })
+  ngOnInit() {
+    this.listResourceSelect = this.data.listResource;
+    this.listResourceSelected = [...this.data.listResource];
+    this.listResourceSelectCurrent = [...this.listResourceSelect];
+    this.listAllResource = this.data.listAllResource.filter(item => !this.listResourceSelect.includes(item.userId));
   }
+
   openedChange(event){
     if(!event){
       this.searchUser = ''
@@ -66,32 +62,36 @@ export class ShadowAccountDialogComponent
     this.listAllResource = [...this.resourceSelected, ...this.resourceUnSelected]
   }
 
-  save(){
+  save() {
     const reqAdd = {
-      billAccountId: this.data.userId,
-      projectId: this.data.projectId,
+      projectUserBillId: this.data.projectUserBillId,
       userIds: this.listResourceSelect.filter(item => !this.listResourceSelected.includes(item))
+    };
+
+    let linkedResourceUpdate;
+
+    if (reqAdd.userIds.length > 0) {
+      linkedResourceUpdate = this.projectUserBillService.LinkUserToBillAccount(reqAdd);
+    } else {
+      abp.notify.success("Linked resources updated successfully");
+      this.dialogRef.close({
+        userIdNew: this.data.userIdNew,
+        isSave: true
+      });
     }
 
-    const reqDelete = {
-      billAccountId: this.data.userId,
-      projectId: this.data.projectId,
-      userIds: this.listResourceSelected.filter(item => !this.listResourceSelect.includes(item))
-    }
-
-      forkJoin(this.projectUserBillService.LinkUserToBillAccount(reqAdd),this.projectUserBillService.RemoveUserFromBillAccount(reqDelete))
-      .pipe(catchError(this.projectUserBillService.handleError))
-      .subscribe(([rsAdd,rsRemove])=>{
-        if(rsAdd.result && rsRemove.result){
-          abp.notify.success("Update successfully")
-          this.dialogRef.close({
-            userIdNew: this.data.userIdNew,
-            isSave:true
-          })
-        }
-      })  
-
+    linkedResourceUpdate.pipe(
+      catchError(this.projectUserBillService.handleError)
+    ).subscribe(result => {
+      abp.notify.success("Linked resources updated successfully");
+      this.dialogRef.close({
+        userIdNew: this.data.userIdNew,
+        isSave: true
+      });
+    });
   }
+
+
   clear(){
     this.listResourceSelect = [];
     this.listResourceSelectCurrent = [];

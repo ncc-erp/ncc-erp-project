@@ -203,9 +203,10 @@
                                 <th>#</th>
                                 <th>Employee</th>
                                 <th style="width: 75px;">History</th>
-                                <th>Project</th>
-                                <th style="width: 350px;">Plan</th>
-                                <th>Skills</th>
+                                <th >Project</th>
+                                <th >Plan</th>
+                                <th >Note</th>
+                                <th >Skills</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -218,8 +219,8 @@
                                 totalItems: totalItems
                                 }; let i= index">
                                 <td class="text-center"><span>{{ i + 1 + pageSize * (pageNumber - 1 ) }}</span></td>
-                                <td style="width: 350px;">
-                                    <div style="width: 100%;">
+                                <td style="width: 200px;">
+                                    <div style="width: 90%;">
                                         <app-user-info [userData]="item">
                                         </app-user-info>
                                     </div>
@@ -238,7 +239,7 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td>
+                                <td style="width: 300px;">
                                     <p *ngFor="let project of
                                         item.workingProjects" class="mb-1">
                                         <span matTooltip="Potential project"
@@ -299,8 +300,8 @@
                                         && item.showMoreHistory"
                                         (click)="showMoreHistory(item);getHistoryProjectsByUserId(item)"></i>
                                 </td>
-                                <td>
-                                    <div class="d-flex justify-content-between">
+                                <td style="width: 450px;">
+                                    <div class="d-flex justify-content-between" style="width: 450px;">
                                         <div>
                                             <div *ngFor="let plan of
                                                 item.planProjects" (mouseenter)="plan.onHover=
@@ -373,21 +374,44 @@
                                             <i class="fas fa-plus text-primary" (click)="planUser(item)"
                                                 matTooltip="Plan user"></i>
                                         </div>
-                                    </div>
-
+                                    </div>    
+                                
                                 </td>
+
+                                <td style="
+                                    white-space: pre-line;
+                                    word-break: break-all;
+                                    min-width: 200px;">
+                                    <div class="d-flex">
+                                        <div style="width: 90%;word-break:break-word">{{ item.poolNote }}
+                                        </div>
+                                        <div *ngIf="permission.isGranted(Resource_TabAllResource_EditNote)"
+                                            style="width: 10%; text-align: right;" class="ml-1">
+                                            <i class="fas fa-edit " (click)="updateNote(item)"
+                                                matTooltip="Edit note"></i>
+                                        </div>
+                                    </div>
+                                </td>
+
                                 <td style="white-space: normal; max-width:
                                     200px;">
                                     <div class="d-flex justify-content-between" style="align-items: center;">
                                         <div style="width: 200px">
-                                            <p class="m-0" *ngFor="let skill of
-                                                item.userSkills">
-                                                - {{skill.skillName}}
-                                            <strong *ngIf="skill.skillRank && permission.isGranted(Resource_TabAllResource_ViewUserStarSkill)">- {{skill.skillRank}} <i class="fa fa-star"
-                                                [ngClass] = '{crimson: skill.skillRank == 5, grey:skill.skillRank ==1 || skill.skillRank == 2,
-                                                yellow:skill.skillRank == 3 ,orange:skill.skillRank == 4}' style="
-                                                font-size: 13px;"></i></strong>
-                                            </p>
+                                            <div (click)="toggle(item)">
+                                                <p [ngClass]="item.isViewAll == true ? 'review' : 'preReview'">
+                                                    <ng-container *ngFor="let skill of item.userSkills">
+                                                        <p class="m-0">
+                                                            - {{skill.skillName}}
+                                                        <strong *ngIf="skill.skillRank && permission.isGranted(Resource_TabAllResource_ViewUserStarSkill)">- {{skill.skillRank}} <i class="fa fa-star"
+                                                            [ngClass] = '{crimson: skill.skillRank == 5, grey:skill.skillRank ==1 || skill.skillRank == 2,
+                                                            yellow:skill.skillRank == 3 ,orange:skill.skillRank == 4}' style="
+                                                            font-size: 13px;"></i></strong>
+                                                        </p>
+                                                    </ng-container>
+                                                </p>
+                                            </div>
+        
+                                            
                                             <div style="white-space: pre-line" *ngIf="item.skillNote"><strong>Note: </strong> {{item.skillNote}}</div>
                                         </div>
                                         <div *ngIf="permission.isGranted(Resource_TabAllResource_UpdateSkill)" style="width: 10%; text-align:
@@ -397,8 +421,8 @@
                                         </div>
                                     </div>
                                 </td>
-
-
+                                
+                                
                             </tr>
                         </tbody>
                     </table>

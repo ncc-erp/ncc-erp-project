@@ -18,8 +18,6 @@ import { finalize } from "rxjs/operators";
   styleUrls: ["./add-note-dialog.component.css"],
 })
 export class AddNoteDialogComponent implements OnInit, OnDestroy {
-  poolNote: string = "";
-  userId: number;
 
   saving = false;
   @Output() onSave = new EventEmitter<null>();
@@ -34,20 +32,13 @@ export class AddNoteDialogComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    if (this.data.id) {
-      this.subscription.push(
-        this.userService.getOne(this.data.id).subscribe((response) => {
-          this.userId = response.result.id;
-          this.poolNote = response.result.poolNote;
-        })
-      );
-    }
   }
+  
 
   SaveAndClose() {
     let requestBody = {
-      userId: this.userId,
-      note: this.poolNote,
+      userId: this.data.userId,
+      note: this.data.poolNote,
     };
     this.saving = true;
     this.subscription.push(
@@ -59,9 +50,9 @@ export class AddNoteDialogComponent implements OnInit, OnDestroy {
           })
         )
         .subscribe(() => {
-          this.dialogRef.close();
-          this.onSave.emit();
-          abp.notify.success("Update Note");
+            this.dialogRef.close({ userId: this.data.userId, note: this.data.poolNote});
+            this.onSave.emit();
+            abp.notify.success("Update Note Successful");
         })
     );
   }

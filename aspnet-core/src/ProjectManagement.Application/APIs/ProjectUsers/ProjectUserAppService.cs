@@ -438,11 +438,16 @@ namespace ProjectManagement.APIs.ProjectUsers
         }
 
         [HttpPut]
-        public async Task EditCurentResourceNote(long id, string note)
+        [AbpAuthorize(PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_CurrentResource_Update_Note)]
+        public async Task<UpdateNoteCurrentResourceDto> UpdateNoteCurrentResource(UpdateNoteCurrentResourceDto input)
         {
-            var item = WorkScope.Get<ProjectUser>(id);
-            item.Note = note;
-            await WorkScope.UpdateAsync(item);
+            var projectUser = await WorkScope.GetAsync<ProjectUser>(input.Id);
+
+            var entity = ObjectMapper.Map(input, projectUser);
+
+            await WorkScope.UpdateAsync(entity);
+
+            return input;
         }
     }
 }

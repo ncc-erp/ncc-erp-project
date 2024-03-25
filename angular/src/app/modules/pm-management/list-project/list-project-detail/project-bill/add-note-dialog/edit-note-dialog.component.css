@@ -3,3 +3,10 @@
   display: flex;
   justify-content: space-between;
 }
+
+.custom-textarea {
+  min-height: 300px;
+  max-height: 600px;
+  resize: vertical;
+  overflow-y: hidden;
+}

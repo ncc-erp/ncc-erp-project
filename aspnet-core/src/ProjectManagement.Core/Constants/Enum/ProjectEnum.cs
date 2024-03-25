@@ -103,7 +103,8 @@
         {
             Daily = 0,
             Monthly = 1,
-            Hourly = 2
+            Hourly = 2,
+            All = 3
         }
 
         public enum ResourceRequestStatus
@@ -340,11 +341,11 @@
             IsOut = 3
         }
         
-        public enum ChargeStatus
+        public enum ChargeStatusFilter
         {
-            All = 1,
-            IsCharge = 2,
-            IsNotCharge = 3
+            All = 0,
+            IsCharge = 1,
+            IsNotCharge = 2
         }
     }
 }

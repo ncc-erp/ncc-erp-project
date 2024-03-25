@@ -37,100 +37,102 @@ namespace ProjectManagement.APIs.ProjectUserBills
             this.projectUserBillManager = projectUserBillManager;
         }
 
+        [HttpPost]
+        [AbpAuthorize(PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo,
+          PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo,
+          PermissionNames.Projects_TrainingProjects_ProjectDetail_TabBillInfo)]
+        public async Task<List<Services.ProjectUserBill.Dto.GetProjectUserBillDto>> GetAllByProject(GetAllProjectUserBillDto input)
+        {
+            return await projectUserBillManager.GetAllByProject(input);
+        }
+
         [HttpGet]
         [AbpAuthorize(PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo,
           PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo,
           PermissionNames.Projects_TrainingProjects_ProjectDetail_TabBillInfo)]
-        public async Task<List<Services.ProjectUserBill.Dto.GetProjectUserBillDto>> GetAllByProject(long projectId)
+        public async Task<List<LinkedResourceInfoDto>> GetAllLinkedResourcesByProject(long projectId)
         {
-            return await projectUserBillManager.GetAllByProject(projectId);
-        }
-
-        [HttpPost]
-        [AbpAuthorize(PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount,
-            PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount,
-            PermissionNames.Projects_TrainingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount)]
-        public async Task<bool> LinkUserToBillAccount(ProjectUserBillAccountsDto input)
-        {
-            try
-            {
-                await projectUserBillManager.AddProjectUserBillAccounts(input);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                 throw new UserFriendlyException(ex.Message);
-            }
-        }
-
-        [HttpPost]
-        [AbpAuthorize(PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount,
-            PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount,
-            PermissionNames.Projects_TrainingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount)]
-        public async Task<bool> RemoveUserFromBillAccount(ProjectUserBillAccountsDto input)
-        {
-            try
-            {
-                await projectUserBillManager.RemoveProjectUserBillAccount(input);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw new UserFriendlyException(ex.Message);
-            }
-        }
-
-        [HttpPost]
-        public async Task LinkOneProjectUserBillAccount(ProjectUserBillAccountDto input)
-        {
-            try
-            {
-                await projectUserBillManager.LinkOneProjectUserBillAccount(input);
-            }
-            catch (Exception ex)
-            {
-                throw new UserFriendlyException(ex.Message);
-            }
+            return await projectUserBillManager.GetAllLinkedResourcesByProject(projectId);
         }
 
         [HttpGet]
-        public async Task<List<UserDto>> GetAllUserActive(bool onlyStaff, long projectId, long? currentUserId)
+        [AbpAuthorize(PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo,
+          PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo,
+          PermissionNames.Projects_TrainingProjects_ProjectDetail_TabBillInfo)]
+        public async Task<List<string>> GetAllChargeRoleByProject(long projectId)
         {
-            return await projectUserBillManager.GetAllUserActive(onlyStaff, projectId, currentUserId);
+            return await projectUserBillManager.GetAllChargeRoleByProject(projectId);
+        }
+
+        [HttpPost]
+        [AbpAuthorize(
+            PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount,
+            PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount,
+            PermissionNames.Projects_TrainingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount
+        )]
+        public async Task<bool> LinkUserToBillAccount(LinkedResourcesDto input)
+        {
+            var linkedResources = await projectUserBillManager.AddLinkedResources(input);
+            return linkedResources.Any();
+        }
+
+        [HttpPost]
+        [AbpAuthorize(
+            PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount,
+            PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount,
+            PermissionNames.Projects_TrainingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount
+        )]
+        public async Task<bool> RemoveLinkedResource(LinkedResourcesDto input)
+        {
+            await projectUserBillManager.RemoveLinkedResource(input);
+            return true;
+        }
+
+        [HttpPost]
+        public async Task LinkOneProjectUserBillAccount(LinkedResourceDto input)
+        {
+            await projectUserBillManager.LinkOneLinkedResource(input);
+        }
+
+
+        [HttpGet]
+        public async Task<List<UserDto>> GetAllUser(bool onlyStaff, long projectId, long? currentUserId, bool isIncludedUserInPUB)
+        {
+            return await projectUserBillManager.GetAllUser(onlyStaff, projectId, currentUserId, isIncludedUserInPUB);
         }
 
         [HttpPost]
         public async Task<List<SubProjectBillDto>> GetSubProjectBills(InputSubProjectBillDto input)
         {
-                var query = projectUserBillManager.GetSubProjectBills(input.ParentProjectId)
-                    .Select(x => new SubProjectBillDto
-                    {
-                        ProjectBillId = x.Id,
-                        UserId = x.UserId,
-                        UserName = x.User.Name,
-                        ProjectId = x.ProjectId,
-                        ProjectName = x.Project.Name,
-                        ProjectCode = x.Project.Code,
-                        AccountName = x.AccountName,
-                        BillRole = x.BillRole,
-                        BillRate = x.BillRate,
-                        StartTime = x.StartTime.Date,
-                        EndTime = x.EndTime.Value.Date,
-                        isActive = x.isActive,
-                        AvatarPath = x.User.AvatarPath,
-                        FullName = x.User.FullName,
-                        Branch = x.User.BranchOld,
-                        BranchColor = x.User.Branch.Color,
-                        BranchDisplayName = x.User.Branch.DisplayName,
-                        PositionId = x.User.PositionId,
-                        PositionName = x.User.Position.ShortName,
-                        PositionColor = x.User.Position.Color,
-                        EmailAddress = x.User.EmailAddress,
-                        UserType = x.User.UserType,
-                        UserLevel = x.User.UserLevel,
-                        ChargeType = x.ChargeType.HasValue ? x.ChargeType : x.Project.ChargeType,
-                    });
-                return await query.ToListAsync();
+            var query = projectUserBillManager.GetSubProjectBills(input.ParentProjectId)
+                .Select(x => new SubProjectBillDto
+                {
+                    ProjectBillId = x.Id,
+                    UserId = x.UserId,
+                    UserName = x.User.Name,
+                    ProjectId = x.ProjectId,
+                    ProjectName = x.Project.Name,
+                    ProjectCode = x.Project.Code,
+                    AccountName = x.AccountName,
+                    BillRole = x.BillRole,
+                    BillRate = x.BillRate,
+                    StartTime = x.StartTime.Date,
+                    EndTime = x.EndTime.Value.Date,
+                    isActive = x.isActive,
+                    AvatarPath = x.User.AvatarPath,
+                    FullName = x.User.FullName,
+                    Branch = x.User.BranchOld,
+                    BranchColor = x.User.Branch.Color,
+                    BranchDisplayName = x.User.Branch.DisplayName,
+                    PositionId = x.User.PositionId,
+                    PositionName = x.User.Position.ShortName,
+                    PositionColor = x.User.Position.Color,
+                    EmailAddress = x.User.EmailAddress,
+                    UserType = x.User.UserType,
+                    UserLevel = x.User.UserLevel,
+                    ChargeType = x.ChargeType.HasValue ? x.ChargeType : x.Project.ChargeType,
+                });
+            return await query.ToListAsync();
         }
 
         [HttpGet]
@@ -185,14 +187,14 @@ namespace ProjectManagement.APIs.ProjectUserBills
         //[AbpAllowAnonymous]
         public GridResult<BillInfoDto> GetAllBillInfo(InputGetBillInfoDto input)
         {
-            var result = WorkScope.All<ProjectUserBill>()               
+            var result = WorkScope.All<ProjectUserBill>()
                 .Select(x => new
                 {
                     UserInfor = new GetUserBillDto
                     {
                         UserId = x.UserId,
                         AvatarPath = x.User.AvatarPath,
-                        FullName = x.User.FullName,                       
+                        FullName = x.User.FullName,
                         BranchColor = x.User.Branch.Color,
                         BranchDisplayName = x.User.Branch.DisplayName,
                         PositionId = x.User.PositionId,
@@ -217,7 +219,7 @@ namespace ProjectManagement.APIs.ProjectUserBills
                         CurrencyCode = x.Project.Currency.Code,
                         ClientId = x.Project.ClientId,
                         ClientCode = x.Project.Client.Code,
-                        ClientName = x.Project.Client.Name                        
+                        ClientName = x.Project.Client.Name
                     },
                     IsCharge = x.isActive
                 })
@@ -226,8 +228,8 @@ namespace ProjectManagement.APIs.ProjectUserBills
                     (s.Project.AccountName != null && s.Project.AccountName.ToLower().Contains(input.SearchText.ToLower())) ||
                     (s.Project.ProjectCode != null && s.Project.ProjectCode.ToLower().Contains(input.SearchText.ToLower())) ||
                     (s.Project.ProjectName != null && s.Project.ProjectName.ToLower().Contains(input.SearchText.ToLower())) ||
-                    (s.Project.ClientCode != null && s.Project.ClientCode.ToLower().Contains(input.SearchText.ToLower()))   ||
-                    (s.Project.ClientName != null && s.Project.ClientName.ToLower().Contains(input.SearchText.ToLower()))   ||
+                    (s.Project.ClientCode != null && s.Project.ClientCode.ToLower().Contains(input.SearchText.ToLower())) ||
+                    (s.Project.ClientName != null && s.Project.ClientName.ToLower().Contains(input.SearchText.ToLower())) ||
                     (s.Project.Note != null && s.Project.Note.ToLower().Contains(input.SearchText.ToLower()))
                 ))
                 .WhereIf(input.ProjectId.HasValue, s => s.Project.ProjectId == input.ProjectId.Value)
@@ -362,7 +364,6 @@ namespace ProjectManagement.APIs.ProjectUserBills
             return dto;
         }
 
-
         [HttpPost]
         [AbpAuthorize(PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Create,
             PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo_Create,
@@ -372,16 +373,6 @@ namespace ProjectManagement.APIs.ProjectUserBills
             if (input.EndTime.HasValue && input.StartTime.Date > input.EndTime.Value.Date)
                 throw new UserFriendlyException($"Start date cannot be greater than end date !");
 
-            var duplicatedPUB = await WorkScope.GetAll<ProjectUserBill>()
-                .Where(s => s.UserId == input.UserId)
-                .Where(s => s.ProjectId == input.ProjectId)
-                .Select(s => new { s.User.FullName, s.BillRole, s.isActive, s.BillRate })
-                .FirstOrDefaultAsync();
-
-            if (duplicatedPUB != default)
-            {
-                throw new UserFriendlyException($"Already exist: {duplicatedPUB.FullName} - {duplicatedPUB.BillRole} - {duplicatedPUB.BillRate} - Active: {duplicatedPUB.isActive}");
-            }
             var project = await WorkScope.GetAll<Project>()
                 .Where(s => s.Id == input.ProjectId)
                 .Select(s => new Project
@@ -399,7 +390,6 @@ namespace ProjectManagement.APIs.ProjectUserBills
 
             return input;
         }
-
 
         [HttpPut]
         [AbpAuthorize(PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Edit,
@@ -431,8 +421,18 @@ namespace ProjectManagement.APIs.ProjectUserBills
             PermissionNames.Projects_TrainingProjects_ProjectDetail_TabBillInfo_Delete)]
         public async Task Delete(long projectUserBillId)
         {
-            var projectUserBill = await WorkScope.GetAsync<ProjectUserBill>(projectUserBillId);
-
+            var projectUserBill = await WorkScope.GetAll<ProjectUserBill>()
+                .Include(s => s.LinkedResources)
+                .Where(s => s.Id == projectUserBillId)
+                .FirstOrDefaultAsync();
+            var linkedResources = projectUserBill.LinkedResources?.ToList();
+            if (linkedResources != null)
+            {
+                foreach (var linkedResource in linkedResources)
+                {
+                    await WorkScope.DeleteAsync(linkedResource);
+                }
+            }
             await WorkScope.DeleteAsync(projectUserBill);
         }
 
@@ -463,7 +463,7 @@ namespace ProjectManagement.APIs.ProjectUserBills
         }
 
         [HttpGet]
-        public async Task<List<SubInvoiceDto>> GetAllProjectCanUsing(long projectId)
+        public List<SubInvoiceDto> GetAllProjectCanUsing(long projectId)
         {
             var clientId = WorkScope.Get<Project>(projectId).ClientId;
             var listProjectAll = GetAllProject();
@@ -480,7 +480,7 @@ namespace ProjectManagement.APIs.ProjectUserBills
                 }).ToList();
         }
         [HttpGet]
-        public async Task<ParentInvoiceDto> GetParentInvoiceByProject(long projectId)
+        public ParentInvoiceDto GetParentInvoiceByProject(long projectId)
         {
             var listProjectAll = GetAllProject();
             return listProjectAll
@@ -630,45 +630,45 @@ namespace ProjectManagement.APIs.ProjectUserBills
             return await projectUserBillManager.GetAllBillAccount();
         }
         [HttpGet]
-        public async Task<object> Get(long userId,long projectId )
+        public async Task<object> Get(long userId, long projectId)
         {
-            return await WorkScope.GetAll<ProjectUserBill>().Select(x=>
+            return await WorkScope.GetAll<ProjectUserBill>().Select(x =>
              new
-            {
-                UserInfor = new GetUserBillDto
-                {
-                    UserId = x.UserId,
-                    //UserName = x.User.Name,
-                    AvatarPath = x.User.AvatarPath,
-                    FullName = x.User.FullName,
-                    BranchColor = x.User.Branch.Color,
-                    BranchDisplayName = x.User.Branch.DisplayName,
-                    PositionId = x.User.PositionId,
-                    PositionName = x.User.Position.ShortName,
-                    PositionColor = x.User.Position.Color,
-                    EmailAddress = x.User.EmailAddress,
-                    UserType = x.User.UserType,
-                    UserLevel = x.User.UserLevel,
-                },
-                Project = new GetProjectBillDto
-                {
-                    ProjectStatus = x.Project.Status,
-                    ProjectId = x.ProjectId,
-                    ProjectName = x.Project.Name,
-                    AccountName = x.User.FullName,
-                    //BillRole = x.BillRole,
-                    BillRate = x.BillRate,
-                    StartTime = x.StartTime,
-                    EndTime = x.EndTime,
-                    Note = x.Note,
-                    isActive = x.isActive,
-                    ChargeType = x.ChargeType,
-                    CurrencyCode = x.Project.Currency.Code,
-                    ClientId = x.Project.ClientId,
-                    ClientCode = x.Project.Client.Code,
-                    ClientName = x.Project.Client.Name
-                }
-            }).FirstOrDefaultAsync(x => x.UserInfor.UserId == userId && x.Project.ProjectId == projectId);
+             {
+                 UserInfor = new GetUserBillDto
+                 {
+                     UserId = x.UserId,
+                     //UserName = x.User.Name,
+                     AvatarPath = x.User.AvatarPath,
+                     FullName = x.User.FullName,
+                     BranchColor = x.User.Branch.Color,
+                     BranchDisplayName = x.User.Branch.DisplayName,
+                     PositionId = x.User.PositionId,
+                     PositionName = x.User.Position.ShortName,
+                     PositionColor = x.User.Position.Color,
+                     EmailAddress = x.User.EmailAddress,
+                     UserType = x.User.UserType,
+                     UserLevel = x.User.UserLevel,
+                 },
+                 Project = new GetProjectBillDto
+                 {
+                     ProjectStatus = x.Project.Status,
+                     ProjectId = x.ProjectId,
+                     ProjectName = x.Project.Name,
+                     AccountName = x.User.FullName,
+                     //BillRole = x.BillRole,
+                     BillRate = x.BillRate,
+                     StartTime = x.StartTime,
+                     EndTime = x.EndTime,
+                     Note = x.Note,
+                     isActive = x.isActive,
+                     ChargeType = x.ChargeType,
+                     CurrencyCode = x.Project.Currency.Code,
+                     ClientId = x.Project.ClientId,
+                     ClientCode = x.Project.Client.Code,
+                     ClientName = x.Project.Client.Name
+                 }
+             }).FirstOrDefaultAsync(x => x.UserInfor.UserId == userId && x.Project.ProjectId == projectId);
         }
 
         [HttpPut]

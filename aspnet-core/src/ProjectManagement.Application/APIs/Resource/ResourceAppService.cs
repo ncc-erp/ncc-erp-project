@@ -200,7 +200,7 @@ namespace ProjectManagement.APIs.Resource
             {
                 var komuMessage = new StringBuilder();
                 komuMessage.Append($"PM **{pu.PMName}** đã **HỦY** plan: ");
-                komuMessage.Append($"**{pu.EmployeeName}** {pu.InOutString } **{pu.ProjectName}** ");
+                komuMessage.Append($"**{pu.EmployeeName}** {pu.InOutString} **{pu.ProjectName}** ");
                 komuMessage.Append($"từ ngày **{projectUser.StartTime:dd/MM/yyyy}**, ");
 
                 _komuService.NotifyToChannel(new KomuMessage
@@ -237,7 +237,7 @@ namespace ProjectManagement.APIs.Resource
         }
 
         [HttpPut]
-        [AbpAuthorize(PermissionNames.Resource_TabPool_EditNote)]
+        [AbpAuthorize(PermissionNames.Resource_TabPool_EditNote, PermissionNames.Resource_TabAllResource_EditNote)]
         public async Task updateUserPoolNote(UpdateUserPoolNoteDto input)
         {
             var user = await _userManager.GetUserByIdAsync(input.UserId);

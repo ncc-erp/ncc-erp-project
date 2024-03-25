@@ -11,12 +11,14 @@ export class ProjectDto {
   id?: number;
   isRequiredWeeklyReport:boolean;
 }
+
 export interface ResponseWrapper<T> {
   result: T;
   error?: unknown;
   success?: boolean;
   targetUrl?: unknown;
 }
+
 export interface IProjectHistoryUser {
   userId: number;
   fullName: string;
@@ -67,6 +69,7 @@ export class projectUserDto {
   workType:boolean;
   isPool?: boolean;
 }
+
 export class projectResourceRequestDto {
   name: string;
   projectId: number;
@@ -80,9 +83,11 @@ export class projectResourceRequestDto {
   pmNote?: string;
   dmNote?: string;
 }
+
 export class projectUserBillDto {
   userId: number;
   userName: string;
+  emailAddress: string;
   projectId: number;
   projectName: string;
   billAccountName: string;
@@ -102,7 +107,7 @@ export class projectUserBillDto {
   userList?: any[];
   chargeType?: number;
   chargeTypeName: string;
-  linkedResources: any[]
+  linkedResources: any[];
 }
 
 export class ProjectRateDto {
@@ -110,6 +115,7 @@ export class ProjectRateDto {
   isCharge: boolean;
   chargeType: number;
 }
+
 export class MilestoneDto {
   projectId: number;
   name: string;
@@ -122,6 +128,7 @@ export class MilestoneDto {
   id?: number;
   createMode?: boolean;
 }
+
 export class ProjectInfoDto {
   projectName: string;
   clientName: string;
@@ -134,6 +141,7 @@ export class ProjectInfoDto {
   pmNote: string;
   projectUserBills: any;
 }
+
 export class TrainingProjectDto {
   name: string;
   code: string;
@@ -161,7 +169,9 @@ export class TrainingProjectDto {
   evaluation?: string;
   id: number;
   isRequiredWeeklyReport:boolean;
+  resourceInfo?: any; 
 }
+
 export class ProductProjectDto {
   name: string;
   code: string;
@@ -183,4 +193,3 @@ export class ProductProjectDto {
   id: number;
   requireTimesheetFile?: boolean;
 }
-

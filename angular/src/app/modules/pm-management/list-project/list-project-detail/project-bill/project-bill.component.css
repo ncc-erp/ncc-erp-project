@@ -20,3 +20,24 @@
 .highLightOne{
     border-left: 10px solid #ffc107 !important;
 }
+::ng-deep .custom-panel-class {
+    min-width: 700px !important;
+    max-height: 500px !important;
+}
+
+.mat-option .mat-option-text {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.mat-option .mat-option-text .data-name {
+    margin-right: 8px;
+}
+
+.mat-option .mat-option-text .data-type-label {
+    text-align: right;
+    font-size: 12px;
+    vertical-align: center;
+    border-radius: 0.25rem;
+}

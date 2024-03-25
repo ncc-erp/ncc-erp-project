@@ -29,7 +29,7 @@ namespace ProjectManagement.Services.ProjectUserBill.Dto
 
         public string UserName { get; set; }
 
-        public List<WorkingProjectDto> WorkingProjects { get; set; }
+        public ICollection<WorkingProjectDto> WorkingProjects { get; set; }
         public string BranchColor { get; set; }
         public string BranchDisplayName { get; set; }
 
@@ -38,5 +38,34 @@ namespace ProjectManagement.Services.ProjectUserBill.Dto
         public string PositionColor { get; set; }
 
         public string PositionName { get; set; }
+    }
+
+    public class GetUserInfo : EntityDto<long>
+    {
+        public string EmailAddress { get; set; }
+        public string AvatarPath { get; set; }
+        public string AvatarFullPath => FileUtils.FullFilePath(AvatarPath);
+        public UserType UserType { get; set; }
+        public UserLevel UserLevel { get; set; }
+        public bool IsActive { get; set; }
+        public string FullName { get; set; }
+
+        public string UserName { get; set; }
+
+        public string BranchColor { get; set; }
+        public string BranchDisplayName { get; set; }
+
+        public long? PositionId { get; set; }
+
+        public string PositionColor { get; set; }
+
+        public string PositionName { get; set; }
+    }
+
+    public class LinkedResourceInfoDto
+    {
+        public long Id { get; set; }
+        public string EmailAddress { get; set; }
+        public string FullName { get; set; }
     }
 }

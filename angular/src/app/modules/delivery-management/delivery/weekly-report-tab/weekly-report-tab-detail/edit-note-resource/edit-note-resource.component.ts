@@ -10,25 +10,30 @@ import {ProjectUserService} from '@app/service/api/project-user.service'
   styleUrls: ['./edit-note-resource.component.css']
 })
 export class EditNoteResourceComponent extends AppComponentBase implements OnInit {
-
-  currentResource = {} as any
-  oldNote = ""
+  id: number;
+  note: string;
   constructor(@Inject(MAT_DIALOG_DATA) public data: any, injector: Injector,
     public dialogRef: MatDialogRef<EditNoteResourceComponent>, private projectUserService: ProjectUserService) {
     super(injector)
   }
 
   ngOnInit(): void {
-    this.currentResource = this.data
-    this.oldNote =this.data.note
+    this.id =this.data.id;
+    this.note = this.data.note;
   }
+
   saveAndClose() {
-    this.projectUserService.EditCurentResourceNote(this.data.id, this.currentResource.note).pipe().subscribe(rs => {
+    let requestBody = {
+      id: this.id,
+      note: this.note
+    }
+    this.projectUserService.UpdateNoteCurrentResource(requestBody).pipe().subscribe(rs => {
       this.notify.success("Update note Successfully!");
-      this.dialogRef.close(this.currentResource.note)
+      this.dialogRef.close(this.note)
     })
   }
+
   Cancel() {
-    this.dialogRef.close(this.oldNote)
+    this.dialogRef.close(this.note)
   }
 }

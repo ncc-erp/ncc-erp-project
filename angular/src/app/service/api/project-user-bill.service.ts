@@ -19,18 +19,18 @@ export class ProjectUserBillService extends BaseApiService {
   constructor(http: HttpClient) {
     super(http);
   }
-  getAllUserBill(id: number): Observable<any> {
-    return this.http.get<any>(this.rootUrl + `/GetAllByProject?projectId=${id}`);
+  getAllUserBill(input): Observable<any> {
+    return this.http.post<any>(this.rootUrl + `/GetAllByProject`,input);
   }
-  public GetAllUserActive(projectId, userId, onlyStaff: boolean, isFake?: any): Observable<any> {
+  public GetAllUser(projectId, userId, onlyStaff: boolean, isIncludedUserInPUB: boolean, isFake?: any): Observable<any> {
     if (isFake) {
       return this.http.get<any>(
         this.rootUrl +
-          `/GetAllUserActive?onlyStaff=${onlyStaff}&projectId=${projectId}&currentUserId=${userId}&isFake=${isFake}`
+          `/GetAllUser?onlyStaff=${onlyStaff}&projectId=${projectId}&currentUserId=${userId}&isFake=${isFake}&isIncludedUserInPUB=${isIncludedUserInPUB}`
       );
     } else {
       return this.http.get<any>(
-        this.rootUrl + `/GetAllUserActive?onlyStaff=${onlyStaff}`
+        this.rootUrl + `/GetAllUser?onlyStaff=${onlyStaff}`
       );
     }
   }
@@ -61,8 +61,8 @@ export class ProjectUserBillService extends BaseApiService {
   LinkUserToBillAccount(input): Observable<any>{
     return this.http.post<any>(this.rootUrl + '/LinkUserToBillAccount',input);
   }
-  RemoveUserFromBillAccount(input): Observable<any>{
-    return this.http.post<any>(this.rootUrl + '/RemoveUserFromBillAccount',input);
+  RemoveLinkedResource(input): Observable<any>{
+    return this.http.post<any>(this.rootUrl + '/RemoveLinkedResource',input);
   }
   LinkOneProjectUserBillAccount(input): Observable<any>{
     return this.http.post<any>(this.rootUrl + '/LinkOneProjectUserBillAccount',input);
@@ -96,5 +96,13 @@ export class ProjectUserBillService extends BaseApiService {
   getAllBillAccount(){
     return this.http.get<any>(this.rootUrl + '/GetAllBillAccount');
   }
+
+  GetAllChargeRoleByProject(projectId: number): Observable<any>{
+    return this.http.get<any>(this.rootUrl + `/GetAllChargeRoleByProject?projectId=${projectId}`);
+  }
+  GetAllLinkedResourcesByProject(projectId: number): Observable<any>{
+    return this.http.get<any>(this.rootUrl + `/GetAllLinkedResourcesByProject?projectId=${projectId}`);
+  }
+
   //#endregion
 }

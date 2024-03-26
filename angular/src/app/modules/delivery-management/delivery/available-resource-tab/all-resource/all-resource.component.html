@@ -99,7 +99,7 @@
                                 <mat-option [value]="-1"> All </mat-option>
                                 <mat-option
                                     *ngFor=" let project of listProject | listFilter : 'projectName' : searchProject"
-                                    [value]="project.id">
+                                    [value]="project.projectId">
                                     {{ project.projectName }}
                                 </mat-option>
                                 </mat-select>
@@ -151,7 +151,7 @@
                                                 <mat-radio-button class="mr-3" [value]="true">And</mat-radio-button>
                                                 <mat-radio-button [value]="false">Or</mat-radio-button>
                                             </div>
-                                            <div class="col-8 mb-2">
+                                            <div class="col-8 mb-2" style="display: contents;">
                                                 <app-select-clear-option [type]= "'Skill'" [listOption]="listSkillsId"
                                                     (newListEvent)= "actionSelect($event)" (doneEvent)="selectDone($event)">
                                                 </app-select-clear-option>
@@ -479,7 +479,7 @@
                     </div>
                     <div class="col-sm-4 col-12 text-center">
                         <p class="mb-0 my-2">
-                            {{ "TotalRecordsCount" | localize: totalItems }}
+                            {{ "TotalRecordsCount" | localize: availableResourceList.length }}
                         </p>
                     </div>
                     <div class="col-sm-4 col-12">

@@ -1,4 +1,5 @@
 ﻿using Abp.Application.Services;
+using Abp.Collections.Extensions;
 using Abp.Configuration;
 using Abp.Linq.Extensions;
 using Abp.Runtime.Session;
@@ -851,8 +852,7 @@ namespace ProjectManagement.Services.ResourceManager
             if (
                 input.BranchIds.Count == 0 &&
                 input.PositionIds.Count == 0 &&
-                input.SkillIds.Count == 0 &&
-                (input.PlanStatus == PlanStatus.All || input.PlanStatus == null)
+                input.SkillIds.Count == 0
                 )
             {
                 return quser;
@@ -861,13 +861,7 @@ namespace ProjectManagement.Services.ResourceManager
             {
                 return quser.WhereIf(input.BranchIds != null, x => input.BranchIds.Contains(x.BranchId.Value))
                        .WhereIf(input.PositionIds != null, x => input.PositionIds.Contains(x.PositionId.Value))
-                       .WhereIf(input.UserTypes != null, x => input.UserTypes.Contains((UserType)x.UserType))
-                       .WhereIf(input.PlanStatus == PlanStatus.AllPlan, x => x.PlanProjects.Count > 0)
-                       .WhereIf(input.PlanStatus == PlanStatus.PlanningJoin,
-                        x => x.PlanProjects.Any(x => x.AllocatePercentage <= 100 && x.AllocatePercentage > 0))
-                       .WhereIf(input.PlanStatus == PlanStatus.PlanningOut,
-                        x => x.PlanProjects.Any(x => x.AllocatePercentage == 0))
-                       .WhereIf(input.PlanStatus == PlanStatus.NoPlan, x => x.PlanProjects.Count == 0);
+                       .WhereIf(input.UserTypes != null, x => input.UserTypes.Contains((UserType)x.UserType));
             }
         }
 
@@ -1046,13 +1040,15 @@ namespace ProjectManagement.Services.ResourceManager
             return await quser.GetGridResult(quser, input);
         }
 
-        public async Task<GridResult<GetAllResourceDto>> GetResources(InputGetAllResourceDto input, bool isVendor)
+        public async Task<List<GetAllResourceDto>> GetResources(InputGetAllResourceDto input, bool isVendor)
         {
             var query = await QueryAllResource(input, isVendor);
+            List<GetAllResourceDto> result = new List<GetAllResourceDto>();
 
             if (input.SkillIds == null || input.SkillIds.IsEmpty())
             {
-                return query.GetGridResultSync(query, input);
+                result = query.ApplySearch(input.SearchText).ToList();
+                return FilterProjectAndPlannedResource(result, input);
             }
             if (input.SkillIds.Count() == 1 || !input.IsAndCondition)
             {
@@ -1061,14 +1057,36 @@ namespace ProjectManagement.Services.ResourceManager
                         join userId in querySkillUserIds on u.UserId equals userId
                         select u;
 
-                return query.GetGridResultSync(query, input);
+                result = query.ApplySearch(input.SearchText).ToList();
+                return FilterProjectAndPlannedResource(result, input);
             }
 
             var userIdsHaveAllSkill = await getUserIdsHaveAllSkill(input.SkillIds);
             query = query.Where(s => userIdsHaveAllSkill.Contains(s.UserId));
 
 
-            return query.GetGridResultSync(query, input);
+            result = query.ApplySearch(input.SearchText).ToList();
+            return FilterProjectAndPlannedResource(result, input);
+        }
+
+        public List<GetAllResourceDto> FilterProjectAndPlannedResource(List<GetAllResourceDto> list, InputGetAllResourceDto input)
+        {
+            if (input.ProjectIds.Count > 0)
+            {
+                list = list.Where(x => x.WorkingProjects.Any(wp => input.ProjectIds.Contains(wp.ProjectId))).ToList();
+            }
+            if (input.PlanStatus != PlanStatus.All && input.PlanStatus != null)
+            {
+                list = input.PlanStatus switch
+                {
+                    PlanStatus.AllPlan => list.Where(x => x.PlanProjects.Count > 0).ToList(),
+                    PlanStatus.PlanningJoin => list.Where(x => x.PlanProjects.Any(p => p.AllocatePercentage <= 100 && p.AllocatePercentage > 0)).ToList(),
+                    PlanStatus.PlanningOut => list.Where(x => x.PlanProjects.Any(p => p.AllocatePercentage == 0)).ToList(),
+                    PlanStatus.NoPlan => list.Where(x => x.PlanProjects.Count == 0).ToList(),
+                    _ => list, // Default case, returns the original list
+                };
+            }
+            return list;
         }
 
         public void SendKomu(StringBuilder komuMessage, string projectCode)
@@ -1288,8 +1306,6 @@ namespace ProjectManagement.Services.ResourceManager
             });
             return currentResources.OrderBy(c => c.ProjectName).ThenBy(c => c.EmailAddress);
         }
-
-        [HttpPost]
         public async Task UpdateTempProjectForUser(UpdateTempProjectForUserDto input)
         {
             var currentPU = _workScope.GetAll<ProjectUser>()
@@ -1301,5 +1317,29 @@ namespace ProjectManagement.Services.ResourceManager
 
             await _workScope.UpdateAsync(currentPU);
         }
+        public async Task<List<GetProjectAllResourceDto>> GetProjectAllResource(bool isVendor)
+        {
+            var projectResources = await _workScope.GetAll<ProjectUser>()
+                .Where(s => s.User.IsActive)
+                .Where(s => s.User.UserType != UserType.FakeUser)
+                .Where(s => isVendor ? s.User.UserType == UserType.Vendor : s.User.UserType != UserType.Vendor)
+                .Where(s => s.Status == ProjectUserStatus.Present
+                    && s.AllocatePercentage > 0
+                    && s.Project.Status != ProjectStatus.Closed)
+                .Select(s => new GetProjectAllResourceDto
+                {
+                    ProjectId = s.ProjectId,
+                    ProjectName = s.Project.Name
+                })
+                .OrderBy(s => s.ProjectName)
+                .ToListAsync();
+
+            var uniqueProjectNames = projectResources.GroupBy(pr => pr.ProjectId)
+                                                     .Select(group => group.First())
+                                                     .ToList();
+
+            return uniqueProjectNames;
+        }
+
     }
 }

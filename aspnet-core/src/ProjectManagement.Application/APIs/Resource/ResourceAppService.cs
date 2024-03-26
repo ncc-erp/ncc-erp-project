@@ -255,5 +255,11 @@ namespace ProjectManagement.APIs.Resource
         {
             await _resourceManager.UpdateTempProjectForUser(input);
         }
+
+        [HttpGet]
+        public async Task<List<GetProjectAllResourceDto>> GetProjectAllResource()
+        {
+            return await _resourceManager.GetProjectAllResource();
+        }
     }
 }

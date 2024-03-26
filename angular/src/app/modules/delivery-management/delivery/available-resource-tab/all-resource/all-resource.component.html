@@ -3,9 +3,9 @@
         <div class="">
             <div class="">
                 <div class="input-group" style="display: block;">
-
                     <div style="width: 100%;" class="row">
-                        <div class="col-12 col-md-4 mt-1 d-flex align-items-center mb-3">
+
+                        <div class="col-12 col-md-3 mt-1 d-flex align-items-center mb-3">
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <button type="button" class="btn bg-blue" (click)="getDataPage(1)">
@@ -22,7 +22,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-12 col-md-4 mt-1 d-flex align-items-center mb-3">
+
+                        <div class="col-12 col-md-3 mt-1 d-flex align-items-center mb-3">
                             <mat-form-field appearance="outline" class="flex-grow-1">
                                 <mat-label>User Type:</mat-label>
                                 <mat-select #selectUserType placeholder="Select user type"
@@ -46,18 +47,8 @@
                                 </mat-select>
                             </mat-form-field>
                         </div>
-                        <!-- <div class="col-12 col-md-4 mt-1 d-flex align-items-center mb-3">
-                            <mat-form-field appearance="outline" class="flex-grow-1">
-                                <mat-label>User Type:</mat-label>
-                                <mat-select placeholder="Select user type" [(ngModel)]="selectedUserTypes" multiple
-                                    (selectionChange)="onChangeUserTypeEvent($event)">
-                                    <mat-option *ngFor="let userType of userTypeParam" [value]="userType.value">
-                                        {{userType.displayName}}
-                                    </mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </div> -->
-                        <div class="col-12 col-md-4 mt-1 d-flex align-items-center mb-3">
+
+                        <div class="col-12 col-md-3 mt-1 d-flex align-items-center mb-3">
                             <mat-form-field appearance="outline" class="flex-grow-1">
                                 <mat-label>Position:</mat-label>
                                 <mat-select #selectPosition placeholder="Select position"
@@ -81,10 +72,43 @@
                                 </mat-select>
                             </mat-form-field>
                         </div>
-                    </div>
 
+                        <div class="col-12 col-md-3 mt-1 d-flex align-items-center mb-3">
+                            <mat-form-field appearance="outline" class="flex-grow-1">
+                                <mat-label>Project:</mat-label>
+                                <mat-select
+                                    panelClass="project-panel"
+                                    name="projectId"
+                                    placeholder="Select project"
+                                    [(ngModel)]="projectId"
+                                    (selectionChange)="getDataPage(1)"
+                                >
+                                <mat-form-field
+                                    class="w-100 px-3"
+                                    style=" position: sticky; top: 0; z-index: 2; background-color: white;"
+                                >
+                                    <input
+                                    matInput
+                                    [(ngModel)]="searchProject"
+                                    name="searchProjectName"
+                                    (keydown)="$event.stopPropagation()"
+                                    placeholder="Search"
+                                    #search
+                                    />{{ search.focus() }}
+                                </mat-form-field>
+                                <mat-option [value]="-1"> All </mat-option>
+                                <mat-option
+                                    *ngFor=" let project of listProject | listFilter : 'projectName' : searchProject"
+                                    [value]="project.id">
+                                    {{ project.projectName }}
+                                </mat-option>
+                                </mat-select>
+                          </mat-form-field>
+                        </div>
+                    </div>
+    
                     <div class="row">
-                        <div class="col-12 col-md-4 mt-1 d-flex align-items-center mb-3">
+                        <div class="col-12 col-md-3 mt-1 d-flex align-items-center mb-3">
                             <mat-form-field appearance="outline" class="flex-grow-1">
                                 <mat-label>Branch:</mat-label>
                                 <mat-select #selectBranch [(ngModel)]="selectedBranchIds"
@@ -110,7 +134,7 @@
                                 </mat-select>
                             </mat-form-field>
                         </div>
-                        <div class="col-12 col-md-4 mt-1 d-flex align-items-center mb-3">
+                        <div class="col-12 col-md-3 mt-1 d-flex align-items-center mb-3">
                             <mat-form-field appearance="outline" class="flex-grow-1" style="max-height: 500px;">
                                 <mat-label>Skills:</mat-label>
                                 <mat-select #selectSkill placeholder="select skill" multiple
@@ -144,7 +168,7 @@
                                 (click)="selectedSkillId = null; refresh()"></i>
                         </div>
 
-                        <div class="col-12 col-md-4 mt-1 d-flex align-items-center mb-3">
+                        <div class="col-12 col-md-3 mt-1 d-flex align-items-center mb-3">
                             <mat-form-field appearance="outline" class="flex-grow-1">
                                 <mat-label>Planned Resource:</mat-label>
                                 <mat-select placeholder="Select plan status" [(ngModel)]="selectedIsPlanned" (selectionChange)="getDataPage(1)">
@@ -177,9 +201,7 @@
                                             fa-plus-circle ml-3" (click)="addFilter()"></i>
                                     </div>
                                 </div>
-
                             </div>
-
                         </div>
                     </form>
                     <!-- <div class="col-4">

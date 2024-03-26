@@ -263,77 +263,87 @@
                 </tr>
                 
                 <tr *ngFor="let project of item.projects; let j = index">
-                  <td>
-                    <span>{{ project.clientName }}</span>
-                  </td>
+                    <td>
+                        <span>{{ project.clientName }}</span>
+                    </td>
 
-                  <td style="width: 180px; padding: 3px">
-                    <div class="d-flex flex-column">
-                      <div>
+                    <td style="width: 180px; padding: 3px">
                         <div class="d-flex flex-column">
-                          <div class="project_link--wapper">
-                            <a
-                              href="{{ viewProjectDetail(project) }}"
-                              class="project-link"
-                            >
-                              <strong>{{ project.projectName }}</strong>
-                            </a>
-                            <span
-                              [outerHTML]="
+                            <div>
+                                <div class="d-flex flex-column">
+                                    <div class="project_link--wapper">
+                                        <a href="{{ viewProjectDetail(project) }}"
+                                           class="project-link">
+                                            <strong>{{ project.projectName }}</strong>
+                                        </a>
+                                        <span [outerHTML]="
                                 project.projectStatus | projectStatusPipe
-                              "
-                            ></span>
-                          </div>
-                          <span>{{ project.accountName }}</span>
-                          <span *ngIf="isShowBillRate">{{project.rateDisplay}}</span>
+                              "></span>
+                                    </div>
+                                    <span>{{ project.accountName }}</span>
+                                    <span *ngIf="isShowBillRate">{{project.rateDisplay}}</span>
+                                </div>
+                            </div>
                         </div>
-                      </div> 
-                    </div>
-                  </td>
+                    </td>
 
-                  <td>
-                    <span class="d-flex flex-column align-items-center">
-                      <mat-checkbox
-                        color="primary"
-                        [disabled]="true"
-                        [(ngModel)]="project.isActive"
-                      ></mat-checkbox>
-                    </span>
-                  </td>
+                    <td>
+                        <span class="d-flex flex-column align-items-center">
+                            <mat-checkbox color="primary"
+                                          [disabled]="true"
+                                          [(ngModel)]="project.isActive"></mat-checkbox>
+                        </span>
+                    </td>
 
-                  <td>
-                    <span
-                      class="d-flex flex-column align-items-center"
-                      [ngClass]="{
+                    <td>
+                        <span class="d-flex flex-column align-items-center"
+                              [ngClass]="{
                         redColor: checkTimeInFilterDate(project.startTime)
-                      }"
-                      >{{ project.startTime | date : "dd-MM-yyyy" }}</span
-                    >
-                    <span
-                      class="d-flex flex-column align-items-center"
-                      [ngClass]="{
+                      }">{{ project.startTime | date : "dd-MM-yyyy" }}</span>
+                        <span class="d-flex flex-column align-items-center"
+                              [ngClass]="{
                         redColor: checkTimeInFilterDate(project.endTime)
-                      }"
-                      >{{ project.endTime | date : "dd-MM-yyyy" }}</span
-                    >
-                  </td>
+                      }">{{ project.endTime | date : "dd-MM-yyyy" }}</span>
+                    </td>
 
-                  <td class="note-edit" style="padding: 3px">
-                    <div class="d-flex">
-                      <span>{{ project.note }}</span>
-                      <i
-                        class="fas fa-edit note_edit--icon"
-                        (click)="
+                    <td>
+                        <div class="d-flex align-items-start justify-content-end">
+                            <div class="d-flex" style="flex-direction: column;">
+                                <div *ngFor="let resource of item.linkedResources" class="mb-2 position-relative">
+                                    <app-user-info [userData]="resource"
+                                                   [isHideEmail]="false"
+                                                   [isWeeklyReport]="false"
+                                                   [isSmallerDiv]="true"
+                                                   [isChangeContentSize]="true">
+                                    </app-user-info>
+                                    <i *ngIf="true" (click)="removeLinkResource(resource.userId, resource.billId)"
+                                       class="fa fa-times position-absolute" style="top:32px; right: -28px;"></i>
+                                </div>
+                            </div>
+                            <i *ngIf="true"
+                               (click)="handleOpenDialogShadowAccount(project.projectId, item.userInfor.userId, item.linkedResources, item.billId)"
+                               class="btn bg-blue ml-2 btn-sm mb-2"
+                               style="cursor: pointer; font-size: 10px;">
+                                <i class="fa fa-plus fa-s m-0"></i>
+                            </i>
+                        </div>
+                    </td>
+
+
+                    <td class="note-edit" style="padding: 3px">
+                        <div class="d-flex">
+                            <span>{{ project.note }}</span>
+                            <i class="fas fa-edit note_edit--icon"
+                               (click)="
                           UpdateBillNote(
                             item.userInfor,
                             project.projectId,
                             project.note,
                             project.projectName
                           )
-                        "
-                      ></i>
-                    </div>
-                  </td>
+                        "></i>
+                        </div>
+                    </td>
                 </tr>
               </ng-container>
             </tbody>

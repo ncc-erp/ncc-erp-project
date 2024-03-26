@@ -10,6 +10,7 @@ import { catchError } from "rxjs/operators";
 import { PlanningBillInfoService } from "../../../../../service/api/bill-account-plan.service";
 import { THeadTable } from "../../request-resource-tab/request-resource-tab.component";
 import { MatDialog } from "@angular/material/dialog";
+import { HandleLinkedResourcesDialogComponent } from './handle-linked-resources-dialog/handle-linked-resources-dialog.component';
 
 @Component({
   selector: "app-bill-account-plan",
@@ -33,6 +34,7 @@ export class BillAccountPlanComponent
   public billInfoList = [];
   public projectList = [];
   public clientList = [];
+  public listAllResource = []
 
   public theadTable: THeadTable[] = [
     { name: "#", width: "30px" },
@@ -41,6 +43,7 @@ export class BillAccountPlanComponent
     { name: "Projects"},
     { name: "Is Charge", width: "70px", padding : "12px 10px", whiteSpace: "nowrap" },
     { name: "Bill Date", width: "100px" },
+    { name: "Linked Resource", width: "280px" },
     { name: "Note" },
   ];
 
@@ -66,6 +69,7 @@ export class BillAccountPlanComponent
   ngOnInit(): void {
     this.getProjectUserBill();
     this.getProjectClientBill();
+    this.getAllLinkResource();
     this.refresh();
   }
 
@@ -85,7 +89,14 @@ export class BillAccountPlanComponent
         .subscribe((data) => {
             this.clientList = data.result;
         });
-  } 
+    }
+
+    getAllLinkResource() {
+        this.planningBillInfoService.GetAllResource().subscribe(res => {
+            this.listAllResource = res.result;
+            this.isLoading = false;
+        }, () => { this.isLoading = false; });
+    }
 
   protected list(
     request: PagedRequestDto,
@@ -110,7 +121,49 @@ export class BillAccountPlanComponent
         },
         () => {}
       );
-  }
+    }
+
+    handleOpenDialogShadowAccount(projectId, userId, listResource, id) {
+        const show = this.dialog.open(HandleLinkedResourcesDialogComponent, {
+            data: {
+                projectId: projectId,
+                userId: this.userIdOld != userId && this.isEditUserBill ? this.userIdOld : userId,
+                listResource: listResource ? listResource.map(item => item.userId) : [],
+                listAllResource: this.listAllResource,
+                userIdNew: userId,
+                projectUserBillId: id
+            },
+            width: "700px",
+        })
+
+        show.afterClosed().subscribe((res) => {
+            if (res.isSave) {
+                this.refresh();
+            }
+        })
+    }
+
+    public removeLinkResource(userId, id) {
+        const req = {
+            projectUserBillId: id,
+            userIds: [userId]
+        }
+        abp.message.confirm(
+            "Remove linked resource?",
+            "",
+            (result: boolean) => {
+                if (result) {
+                    this.isLoading = true;
+                    this.planningBillInfoService.RemoveLinkedResource(req).pipe(catchError(this.planningBillInfoService.handleError)).subscribe(data => {
+                        abp.notify.success(`Linked Resource Removed Successfully!`);
+                        this.refresh();
+                    }, () => {
+                        this.isLoading = false
+                    })
+                }
+            }
+        )
+    }
 
   protected delete(entity: BillAccountPlanComponent): void {}
 

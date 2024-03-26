@@ -182,6 +182,7 @@ namespace ProjectManagement.APIs.ProjectUserBills
             return query;
         }
 
+
         [HttpPost]
         [AbpAuthorize(PermissionNames.Resource_TabAllBillAccount)]
         //[AbpAllowAnonymous]
@@ -190,6 +191,7 @@ namespace ProjectManagement.APIs.ProjectUserBills
             var result = WorkScope.All<ProjectUserBill>()
                 .Select(x => new
                 {
+                    BillId = x.Id,
                     UserInfor = new GetUserBillDto
                     {
                         UserId = x.UserId,
@@ -221,6 +223,21 @@ namespace ProjectManagement.APIs.ProjectUserBills
                         ClientCode = x.Project.Client.Code,
                         ClientName = x.Project.Client.Name
                     },
+                    LinkedResources = x.LinkedResources.Select(item => new GetLinkedResourceInfoDto
+                    {
+                        BillId = item.ProjectUserBillId,
+                        UserId = item.UserId,
+                        AvatarPath = item.User.AvatarPath,
+                        FullName = item.User.FullName,
+                        BranchColor = item.User.Branch.Color,
+                        BranchDisplayName = item.User.Branch.DisplayName,
+                        PositionId = item.User.PositionId,
+                        PositionName = item.User.Position.ShortName,
+                        PositionColor = item.User.Position.Color,
+                        EmailAddress = item.User.EmailAddress,
+                        UserType = item.User.UserType,
+                        UserLevel = item.User.UserLevel
+                    }),
                     IsCharge = x.isActive
                 })
                 .WhereIf(!string.IsNullOrEmpty(input.SearchText), s => s.UserInfor.EmailAddress.Contains(input.SearchText) ||
@@ -239,13 +256,16 @@ namespace ProjectManagement.APIs.ProjectUserBills
                 .GroupBy(s => s.UserInfor)
                 .Select(s => new BillInfoDto
                 {
+                    BillId = s.First().BillId,
                     UserInfor = s.Key,
-                    Projects = s.Select(x => x.Project).OrderBy(x => x.ClientCode).ToList()
+                    Projects = s.Select(x => x.Project).OrderBy(x => x.ClientCode).ToList(),
+                    LinkedResources = s.SelectMany(x => x.LinkedResources).Distinct().ToList()
                 }).OrderBy(s => s.UserInfor.EmailAddress)
                 .AsQueryable();
 
             return result.GetGridResultSync(result, input);
         }
+
 
         /// <summary>
         /// return list projects that have the same client with input projectId

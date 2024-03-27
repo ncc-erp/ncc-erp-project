@@ -16,7 +16,7 @@ namespace ProjectManagement.Services.ResourceService.Dto
         public bool IsAndCondition { get; set; }
     }
 
-    public class InputGetAllResourceDto : GridParam
+    public class InputGetAllResourceDto
     {
         public List<UserType> UserTypes { get; set; }
         public List<long> BranchIds { get; set; }
@@ -24,5 +24,7 @@ namespace ProjectManagement.Services.ResourceService.Dto
         public List<long> SkillIds { get; set; }
         public PlanStatus? PlanStatus { get; set; }
         public bool IsAndCondition { get; set; }
+        public List<long> ProjectIds { get; set; }
+        public string SearchText { get; set; }
     }
 }

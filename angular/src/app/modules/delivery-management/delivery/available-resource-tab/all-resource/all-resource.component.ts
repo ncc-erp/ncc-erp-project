@@ -7,7 +7,7 @@ import { DeliveryResourceRequestService } from './../../../../../service/api/del
 import { availableResourceDto } from './../../../../../service/model/delivery-management.dto';
 import { InputFilterDto } from './../../../../../../shared/filter/filter.component';
 import { PlanResourceComponent } from './../plan-resource/plan-resource.component';
-import { catchError, finalize, filter } from 'rxjs/operators';
+import { catchError, finalize, filter, map } from 'rxjs/operators';
 import { PagedRequestDto } from './../../../../../../shared/paged-listing-component-base';
 import { SkillDto } from './../../../../../service/model/list-project.dto';
 import { PagedListingComponentBase } from '@shared/paged-listing-component-base';
@@ -41,13 +41,16 @@ import { AddNoteDialogComponent } from '../plan-resource/add-note-dialog/add-not
 export class AllResourceComponent extends PagedListingComponentBase<any> implements OnInit {
 
   subscription: Subscription[] = [];
-  public searchSkill:string = '';
-  public searchBranch:string = '';
-  public searchPosition:string ='';
-  public searchUserType:string ='';
+  public searchSkill: string = '';
+  public searchBranch: string = '';
+  public searchPosition: string ='';
+  public searchUserType: string ='';
+  public searchProject: string ='';
   public listSkills: SkillDto[] = [];
   public listBranchs: BranchDto[] = [];
   public listPositions: PositionDto[] = [];
+  public listProject = [];
+  public projectId = -1;
   public listUserTypes: any = [];
   public listSkillsId: number[] = [];
   public listBranchsId: number[] = [];
@@ -100,7 +103,8 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
       branchIds: this.selectedBranchIds,
       userTypes: this.selectedUserTypes,
       positionIds: this.selectedPositions,
-      planStatus: this.selectedIsPlanned || APP_ENUMS.PlanStatus.AllPlan
+      planStatus: this.selectedIsPlanned || APP_ENUMS.PlanStatus.AllPlan,
+      projectIds: this.projectId == -1 ? [] : [this.projectId]
     };
 
     this.subscription.push(
@@ -109,14 +113,13 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
           catchError(this.availableRerourceService.handleError)
         )
         .subscribe(data => {
-          this.availableResourceList = data.result.items;
+          this.availableResourceList = data.result;
           this.availableResourceList.forEach(item => item.isViewAll = false);
           this.showPaging(data.result, pageNumber);
           this.isLoading = false;
         })
     );
   }
-
 
   protected delete(entity: PlanResourceComponent): void {
   }
@@ -145,6 +148,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     private projectUserService: ProjectUserService,
     private branchService: BranchService,
     private positionService: PositionService,
+    
   ) { super(injector) }
 
   @ViewChild("selectPosition") selectPosition;
@@ -159,8 +163,10 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     this.getAllPositions();
     this.getAllBranchs();
     this.getAllUserTypes();
+    this.getProjectAllResource();
     this.selectedIsPlanned = 1;
   }
+  
   showDialogPlanUser(command: string, user: any) {
     let item = {
       userId: user.userId,
@@ -315,11 +321,12 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
       }
     }
   }
+
   planUser(user: any) {
     this.showDialogPlanUser("plan", user);
   }
-  showUserDetail(userId: any) {
 
+  showUserDetail(userId: any) {
   }
 
   getAllSkills() {
@@ -348,7 +355,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     this.selectedIsPlanned = APP_ENUMS.PlanStatus.All;
     this.isFilterSelected = false;
     this.getDataPage(1);
-}
+  }
 
   getAllBranchs() {
     this.branchService.getAllNotPagging().subscribe((data) => {
@@ -361,9 +368,15 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     })
   }
 
+  getProjectAllResource() {
+    this.availableRerourceService.getProjectAllResource().subscribe((data) => {
+      this.listProject = data.result;
+    })
+  }
+
   getAllPositions() {
     this.positionService.getAllNotPagging().subscribe((data) => {
-      this.listPositions = data.result  
+      this.listPositions = data.result
       this.listPositionsId = data.result.map(item => item.id)
       this.selectedPositions = data.result.map(item => item.id)
       this.selectedPositionsOld = [...this.selectedPositions]
@@ -392,6 +405,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     })
     return arr.join(', ')
   }
+  
   projectsCommas(arr) {
     arr = arr.map((item) => {
       return item.projectName;
@@ -409,6 +423,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
       height: '90vh',
     })
   }
+
   updateUserSkill(user, note) {
     let ref = this.dialog.open(UpdateUserSkillDialogComponent, {
       width: "700px",
@@ -427,7 +442,6 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
       }
     })
   }
-
 
   CancelResourcePlan(projectUser, userName: string) {
     abp.message.confirm(
@@ -518,11 +532,10 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     );
   }
 
-
-
   showMoreHistory(user) {
     user.showAllHistory = !user.showAllHistory;
   }
+
   ngOnDestroy(): void {
     this.subscription.forEach(sub => sub.unsubscribe())
   }
@@ -622,9 +635,11 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
       }
     });*/
   }
+
   projectHistorUser(user: availableResourceDto) {
     this.showDialogProjectHistoryUser(user);
   }
+
   showDialogRetroReviewHistoryUser(user: availableResourceDto) {
     let userInfo = {
       userId: user.userId,
@@ -644,6 +659,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
       }
     });*/
   }
+
   RetroReviewHistoryUser(user: availableResourceDto) {
     this.showDialogRetroReviewHistoryUser(user);
   }
@@ -665,8 +681,8 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
       }
     });
   }
+
   toggle(item){    
     item.isViewAll = !item.isViewAll
   }
-
 }

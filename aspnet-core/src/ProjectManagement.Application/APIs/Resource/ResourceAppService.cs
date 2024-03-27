@@ -259,7 +259,7 @@ namespace ProjectManagement.APIs.Resource
         [HttpGet]
         public async Task<List<GetProjectAllResourceDto>> GetProjectAllResource()
         {
-            return await _resourceManager.GetProjectAllResource(false);
+            return await _resourceManager.GetProjectAllResource(false); 
         }
     }
 }

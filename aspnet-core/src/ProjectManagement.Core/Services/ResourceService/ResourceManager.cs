@@ -1083,9 +1083,10 @@ namespace ProjectManagement.Services.ResourceManager
                     PlanStatus.PlanningJoin => list.Where(x => x.PlanProjects.Any(p => p.AllocatePercentage <= 100 && p.AllocatePercentage > 0)).ToList(),
                     PlanStatus.PlanningOut => list.Where(x => x.PlanProjects.Any(p => p.AllocatePercentage == 0)).ToList(),
                     PlanStatus.NoPlan => list.Where(x => x.PlanProjects.Count == 0).ToList(),
-                    _ => list, // Default case, returns the original list
+                    _ => list,
                 };
             }
+
             return list;
         }
 
@@ -1317,6 +1318,7 @@ namespace ProjectManagement.Services.ResourceManager
 
             await _workScope.UpdateAsync(currentPU);
         }
+
         public async Task<List<GetProjectAllResourceDto>> GetProjectAllResource(bool isVendor)
         {
             var projectResources = await _workScope.GetAll<ProjectUser>()
@@ -1334,12 +1336,11 @@ namespace ProjectManagement.Services.ResourceManager
                 .OrderBy(s => s.ProjectName)
                 .ToListAsync();
 
-            var uniqueProjectNames = projectResources.GroupBy(pr => pr.ProjectId)
-                                                     .Select(group => group.First())
-                                                     .ToList();
+            var result = projectResources.GroupBy(pr => pr.ProjectId)
+                                         .Select(group => group.First())
+                                         .ToList();
 
-            return uniqueProjectNames;
+            return result;
         }
-
     }
 }

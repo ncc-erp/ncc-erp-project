@@ -32,7 +32,6 @@ import { ProjectHistoryByUserComponent } from "./../plan-resource/plan-user/proj
 import { result } from 'lodash-es';
 import { APP_ENUMS } from '@shared/AppEnums';
 import { AddNoteDialogComponent } from '../plan-resource/add-note-dialog/add-note-dialog.component';
-import { ProjectDto } from '@app/service/model/project.dto';
 
 @Component({
   selector: 'app-all-resource',
@@ -47,14 +46,11 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
   public searchPosition: string ='';
   public searchUserType: string ='';
   public searchProject: string ='';
-
   public listSkills: SkillDto[] = [];
   public listBranchs: BranchDto[] = [];
   public listPositions: PositionDto[] = [];
-
   public listProject = [];
   public projectId = -1;
-
   public listUserTypes: any = [];
   public listSkillsId: number[] = [];
   public listBranchsId: number[] = [];
@@ -373,8 +369,6 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
   }
 
   getProjectAllResource() {
-    console.log(this.listProject, 1);
-  
     this.availableRerourceService.getProjectAllResource().subscribe((data) => {
       this.listProject = data.result;
     })

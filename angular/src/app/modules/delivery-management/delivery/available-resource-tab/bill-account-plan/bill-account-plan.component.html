@@ -309,21 +309,19 @@
                     <td>
                         <div class="d-flex align-items-start justify-content-end">
                             <div class="d-flex" style="flex-direction: column;">
-                                <!-- <div *ngFor="let linkedResourceGroup of item.linkedResources" class="mb-2 position-relative"> -->
-                                  <div *ngFor="let resource of  item.linkedResources[j]" class="mb-2 position-relative">
+                                  <div *ngFor="let resource of  project.linkedResources" class="mb-2 position-relative">
                                       <app-user-info [userData]="resource"
                                                     [isHideEmail]="true"
                                                     [isWeeklyReport]="false"
                                                     [isSmallerDiv]="true"
                                                     [isChangeContentSize]="true">
                                       </app-user-info>
-                                      <i *ngIf="true" (click)="removeLinkResource(resource.userId, resource.billId, j)"
+                                      <i *ngIf="true" (click)="removeLinkResource(resource.userId, resource.billId)"
                                         class="fa fa-times position-absolute" style="top:32px; right: -28px;"></i>
                                   </div>
-                                <!-- </div> -->
                             </div>
                             <i *ngIf="true"
-                               (click)="handleOpenDialogShadowAccount(project.projectId, item.userInfor.userId, item.linkedResources[j], project.billId, j)"
+                               (click)="handleOpenDialogShadowAccount(project.projectId, item.userInfor.userId, project.linkedResources, project.billId)"
                                class="btn bg-blue ml-2 btn-sm mb-2"
                                style="cursor: pointer; font-size: 10px;">
                                 <i class="fa fa-plus fa-s m-0"></i>

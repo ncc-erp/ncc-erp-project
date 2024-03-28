@@ -43,8 +43,8 @@ export class PlanningBillInfoService extends BaseApiService {
     public RemoveLinkedResource(input): Observable<any> {
         return this.http.post<any>(this.rootUrl + '/RemoveLinkedResource', input);
     }
-    public GetBillinfoBy(projectUserBillId): Observable<any> {
-        return this.http.get<any>(this.rootUrl + `/GetBillInfoBy?projectUserBillId=${projectUserBillId}`);
+    public GetLinkResources(projectUserBillId): Observable<any> {
+        return this.http.get<any>(this.rootUrl + `/GetLinkResources?projectUserBillId=${projectUserBillId}`);
     }
 }
 

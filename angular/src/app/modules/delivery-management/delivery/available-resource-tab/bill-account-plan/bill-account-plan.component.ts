@@ -123,27 +123,29 @@ export class BillAccountPlanComponent
       );
     }
 
-    filterLinkedResourcesByBillId(billId: number, index){  
+    filterLinkedResourcesByBillId(billId: number){  
 
       let billInfo: any[] = [];
 
       this.planningBillInfoService
-      .GetBillinfoBy(billId)
+      .GetLinkResources(billId)
       .pipe(catchError(this.planningBillInfoService.handleError))
       .subscribe(
         (data) => {
-          billInfo = data.result.linkedResources;
+          billInfo = data.result;
           this.billInfoList.forEach(item => {
-            if (item.projects.some(project => project.billId === billId)) {
-              item.linkedResources[index] = billInfo;
-            }
+              item.projects.forEach(project => {
+                  if (project.billId === billId) {
+                      project.linkedResources = billInfo;
+                  }
+              })
            })
         },
         () => {}
       );
     }
 
-    handleOpenDialogShadowAccount(projectId, userId, listResource, id, index) {
+    handleOpenDialogShadowAccount(projectId, userId, listResource, id) {
         const show = this.dialog.open(HandleLinkedResourcesDialogComponent, {
             data: {
                 projectId: projectId,
@@ -158,12 +160,12 @@ export class BillAccountPlanComponent
 
         show.afterClosed().subscribe((res) => {
             if (res.isSave) {
-                this.filterLinkedResourcesByBillId(id, index);
+                this.filterLinkedResourcesByBillId(id);
             }
         })
     }
 
-    public removeLinkResource(userId, id, index) {
+    public removeLinkResource(userId, id) {
         const req = {
             projectUserBillId: id,
             userIds: [userId]
@@ -176,7 +178,7 @@ export class BillAccountPlanComponent
                     this.isLoading = true;
                     this.planningBillInfoService.RemoveLinkedResource(req).pipe(catchError(this.planningBillInfoService.handleError)).subscribe(data => {
                         abp.notify.success(`Linked Resource Removed Successfully!`);
-                        this.filterLinkedResourcesByBillId(id, index);
+                        this.filterLinkedResourcesByBillId(id);
                     }, () => {
                         this.isLoading = false
                     })

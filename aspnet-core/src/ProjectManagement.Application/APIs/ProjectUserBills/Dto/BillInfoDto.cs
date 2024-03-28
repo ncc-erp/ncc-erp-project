@@ -20,7 +20,6 @@ namespace ProjectManagement.APIs.ProjectUserBills.Dto
     {
         public GetUserBillDto UserInfor { get; set; }
         public List<GetProjectBillDto> Projects { get; set; }
-        public List<IEnumerable<GetLinkedResourceInfoDto>> LinkedResources { get; set; }
     }
 
     public class GetUserBillDto : IEquatable<GetUserBillDto>
@@ -93,6 +92,8 @@ namespace ProjectManagement.APIs.ProjectUserBills.Dto
         public string ClientCode { get; set; }
         public string ClientName { get; set; }
         public string RateDisplay => $"{CommonUtil.FormatMoney(this.BillRate)} {this.CurrencyCode}/{CommonUtil.ChargeTypeShortName(this.ChargeType)}";
+        public IEnumerable<GetLinkedResourceInfoDto> LinkedResources { get; set; }
+
     }
 
     public class InputGetBillInfoDto : GridParam

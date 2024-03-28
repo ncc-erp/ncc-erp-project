@@ -185,28 +185,25 @@ namespace ProjectManagement.APIs.ProjectUserBills
         [HttpGet]
         [AbpAuthorize(PermissionNames.Resource_TabAllBillAccount)]
         //[AbpAllowAnonymous]
-        public async Task<object> GetBillInfoBy(long projectUserBillId)
+        public async Task<List<GetLinkedResourceInfoDto>> GetLinkResources(long projectUserBillId)
         {
-            var result = WorkScope.All<ProjectUserBill>().Where(s => s.Id == projectUserBillId)
-                .Select(x => new
+            return await WorkScope.All<LinkedResource>()
+                    .Where(s => s.ProjectUserBillId == projectUserBillId)
+                .Select(x => new GetLinkedResourceInfoDto
                 {
-                    LinkedResources = x.LinkedResources.Select(item => new GetLinkedResourceInfoDto
-                    {
-                        BillId = item.ProjectUserBillId,
-                        UserId = item.UserId,
-                        AvatarPath = item.User.AvatarPath,
-                        FullName = item.User.FullName,
-                        BranchColor = item.User.Branch.Color,
-                        BranchDisplayName = item.User.Branch.DisplayName,
-                        PositionId = item.User.PositionId,
-                        PositionName = item.User.Position.ShortName,
-                        PositionColor = item.User.Position.Color,
-                        EmailAddress = item.User.EmailAddress,
-                        UserType = item.User.UserType,
-                        UserLevel = item.User.UserLevel
-                    })
-                });
-            return await result.FirstOrDefaultAsync() ;
+                    BillId = x.ProjectUserBillId,
+                    UserId = x.UserId,
+                    AvatarPath = x.User.AvatarPath,
+                    FullName = x.User.FullName,
+                    BranchColor = x.User.Branch.Color,
+                    BranchDisplayName = x.User.Branch.DisplayName,
+                    PositionId = x.User.PositionId,
+                    PositionName = x.User.Position.ShortName,
+                    PositionColor = x.User.Position.Color,
+                    EmailAddress = x.User.EmailAddress,
+                    UserType = x.User.UserType,
+                    UserLevel = x.User.UserLevel
+                }).ToListAsync();
         }
 
         [HttpPost]
@@ -247,23 +244,23 @@ namespace ProjectManagement.APIs.ProjectUserBills
                         CurrencyCode = x.Project.Currency.Code,
                         ClientId = x.Project.ClientId,
                         ClientCode = x.Project.Client.Code,
-                        ClientName = x.Project.Client.Name
+                        ClientName = x.Project.Client.Name,
+                        LinkedResources = x.LinkedResources.Select(item => new GetLinkedResourceInfoDto
+                        {
+                            BillId = item.ProjectUserBillId,
+                            UserId = item.UserId,
+                            AvatarPath = item.User.AvatarPath,
+                            FullName = item.User.FullName,
+                            BranchColor = item.User.Branch.Color,
+                            BranchDisplayName = item.User.Branch.DisplayName,
+                            PositionId = item.User.PositionId,
+                            PositionName = item.User.Position.ShortName,
+                            PositionColor = item.User.Position.Color,
+                            EmailAddress = item.User.EmailAddress,
+                            UserType = item.User.UserType,
+                            UserLevel = item.User.UserLevel
+                        })
                     },
-                    LinkedResources = x.LinkedResources.Select(item => new GetLinkedResourceInfoDto
-                    {
-                        BillId = item.ProjectUserBillId,
-                        UserId = item.UserId,
-                        AvatarPath = item.User.AvatarPath,
-                        FullName = item.User.FullName,
-                        BranchColor = item.User.Branch.Color,
-                        BranchDisplayName = item.User.Branch.DisplayName,
-                        PositionId = item.User.PositionId,
-                        PositionName = item.User.Position.ShortName,
-                        PositionColor = item.User.Position.Color,
-                        EmailAddress = item.User.EmailAddress,
-                        UserType = item.User.UserType,
-                        UserLevel = item.User.UserLevel
-                    }),
                     IsCharge = x.isActive
                 })
                 .WhereIf(!string.IsNullOrEmpty(input.SearchText), s => s.UserInfor.EmailAddress.Contains(input.SearchText) ||
@@ -288,7 +285,6 @@ namespace ProjectManagement.APIs.ProjectUserBills
                             {
                                 UserInfor = key,
                                 Projects = projects.ToList(),
-                                LinkedResources = dataList.Where(d => d.UserInfor.Equals(key)).Select(d => d.LinkedResources).ToList()
                             }
                         ).OrderBy(s => s.UserInfor.EmailAddress)
                          .AsQueryable(); 

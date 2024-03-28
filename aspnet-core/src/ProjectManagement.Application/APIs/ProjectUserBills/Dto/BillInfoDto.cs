@@ -18,13 +18,12 @@ namespace ProjectManagement.APIs.ProjectUserBills.Dto
 {
     public class BillInfoDto
     {
-        public long BillId { get; set; }
         public GetUserBillDto UserInfor { get; set; }
         public List<GetProjectBillDto> Projects { get; set; }
-        public List<GetLinkedResourceInfoDto> LinkedResources { get; set; }
+        public List<IEnumerable<GetLinkedResourceInfoDto>> LinkedResources { get; set; }
     }
 
-    public class GetUserBillDto
+    public class GetUserBillDto : IEquatable<GetUserBillDto>
     {
         public long UserId { get; set; }
         public string AvatarPath { get; set; }
@@ -39,9 +38,45 @@ namespace ProjectManagement.APIs.ProjectUserBills.Dto
         public string SimplizeEmailAddress => this.EmailAddress.Split('@')[0];
         public UserType UserType { get; set; }
         public UserLevel UserLevel { get; set; }
+
+        public bool Equals(GetUserBillDto other)
+        {
+            if (other == null) return false;
+            return this.UserId == other.UserId; // Compare based on Id
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is GetUserBillDto other)
+            {
+                return this.Equals(other);
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return this.UserId.GetHashCode();
+        }
+
+        //public bool Equals(GetUserBillDto x, GetUserBillDto y)
+        //{
+        //    if (x == null && y == null)
+        //        return true;
+        //    if (x == null || y == null)
+        //        return false;
+        //    return x.UserId == y.UserId;
+        //}
+
+        //public int GetHashCode(GetUserBillDto obj)
+        //{
+        //    return obj.UserId.GetHashCode();
+        //}
     }
+
     public class GetProjectBillDto
     {
+        public long BillId { get; set; }
         public long ProjectId { get; set; }
         public string ProjectName { get; set; }
         public ProjectStatus ProjectStatus { get; set; }

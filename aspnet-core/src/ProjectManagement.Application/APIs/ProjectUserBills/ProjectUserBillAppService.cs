@@ -181,17 +181,42 @@ namespace ProjectManagement.APIs.ProjectUserBills
                 .ToListAsync();
             return query;
         }
-
+        
+        [HttpGet]
+        [AbpAuthorize(PermissionNames.Resource_TabAllBillAccount)]
+        //[AbpAllowAnonymous]
+        public async Task<object> GetBillInfoBy(long projectUserBillId)
+        {
+            var result = WorkScope.All<ProjectUserBill>().Where(s => s.Id == projectUserBillId)
+                .Select(x => new
+                {
+                    LinkedResources = x.LinkedResources.Select(item => new GetLinkedResourceInfoDto
+                    {
+                        BillId = item.ProjectUserBillId,
+                        UserId = item.UserId,
+                        AvatarPath = item.User.AvatarPath,
+                        FullName = item.User.FullName,
+                        BranchColor = item.User.Branch.Color,
+                        BranchDisplayName = item.User.Branch.DisplayName,
+                        PositionId = item.User.PositionId,
+                        PositionName = item.User.Position.ShortName,
+                        PositionColor = item.User.Position.Color,
+                        EmailAddress = item.User.EmailAddress,
+                        UserType = item.User.UserType,
+                        UserLevel = item.User.UserLevel
+                    })
+                });
+            return await result.FirstOrDefaultAsync() ;
+        }
 
         [HttpPost]
         [AbpAuthorize(PermissionNames.Resource_TabAllBillAccount)]
         //[AbpAllowAnonymous]
         public GridResult<BillInfoDto> GetAllBillInfo(InputGetBillInfoDto input)
         {
-            var result = WorkScope.All<ProjectUserBill>()
+            var dataList = WorkScope.All<ProjectUserBill>()
                 .Select(x => new
                 {
-                    BillId = x.Id,
                     UserInfor = new GetUserBillDto
                     {
                         UserId = x.UserId,
@@ -208,6 +233,7 @@ namespace ProjectManagement.APIs.ProjectUserBills
                     },
                     Project = new GetProjectBillDto
                     {
+                        BillId = x.Id,
                         ProjectStatus = x.Project.Status,
                         ProjectId = x.ProjectId,
                         ProjectName = x.Project.Name,
@@ -253,17 +279,21 @@ namespace ProjectManagement.APIs.ProjectUserBills
                 .WhereIf(input.ClientId.HasValue, s => s.Project.ClientId == input.ClientId.Value)
                 .WhereIf(input.ProjectStatus.HasValue, s => s.Project.ProjectStatus == input.ProjectStatus.Value)
                 .WhereIf(input.IsCharge.HasValue, s => s.IsCharge == input.IsCharge.Value)
-                .GroupBy(s => s.UserInfor)
-                .Select(s => new BillInfoDto
-                {
-                    BillId = s.First().BillId,
-                    UserInfor = s.Key,
-                    Projects = s.Select(x => x.Project).OrderBy(x => x.ClientCode).ToList(),
-                    LinkedResources = s.SelectMany(x => x.LinkedResources).Distinct().ToList()
-                }).OrderBy(s => s.UserInfor.EmailAddress)
-                .AsQueryable();
+                .ToList();
 
-            return result.GetGridResultSync(result, input);
+            var groupedData = dataList.GroupBy(
+                            data => data.UserInfor,
+                            data => data.Project,
+                            (key, projects) => new BillInfoDto
+                            {
+                                UserInfor = key,
+                                Projects = projects.ToList(),
+                                LinkedResources = dataList.Where(d => d.UserInfor.Equals(key)).Select(d => d.LinkedResources).ToList()
+                            }
+                        ).OrderBy(s => s.UserInfor.EmailAddress)
+                         .AsQueryable(); 
+
+            return groupedData.GetGridResultSync(groupedData, input);
         }
 
 

@@ -123,7 +123,27 @@ export class BillAccountPlanComponent
       );
     }
 
-    handleOpenDialogShadowAccount(projectId, userId, listResource, id) {
+    filterLinkedResourcesByBillId(billId: number, index){  
+
+      let billInfo: any[] = [];
+
+      this.planningBillInfoService
+      .GetBillinfoBy(billId)
+      .pipe(catchError(this.planningBillInfoService.handleError))
+      .subscribe(
+        (data) => {
+          billInfo = data.result.linkedResources;
+          this.billInfoList.forEach(item => {
+            if (item.projects.some(project => project.billId === billId)) {
+              item.linkedResources[index] = billInfo;
+            }
+           })
+        },
+        () => {}
+      );
+    }
+
+    handleOpenDialogShadowAccount(projectId, userId, listResource, id, index) {
         const show = this.dialog.open(HandleLinkedResourcesDialogComponent, {
             data: {
                 projectId: projectId,
@@ -138,12 +158,12 @@ export class BillAccountPlanComponent
 
         show.afterClosed().subscribe((res) => {
             if (res.isSave) {
-                this.refresh();
+                this.filterLinkedResourcesByBillId(id, index);
             }
         })
     }
 
-    public removeLinkResource(userId, id) {
+    public removeLinkResource(userId, id, index) {
         const req = {
             projectUserBillId: id,
             userIds: [userId]
@@ -156,7 +176,7 @@ export class BillAccountPlanComponent
                     this.isLoading = true;
                     this.planningBillInfoService.RemoveLinkedResource(req).pipe(catchError(this.planningBillInfoService.handleError)).subscribe(data => {
                         abp.notify.success(`Linked Resource Removed Successfully!`);
-                        this.refresh();
+                        this.filterLinkedResourcesByBillId(id, index);
                     }, () => {
                         this.isLoading = false
                     })

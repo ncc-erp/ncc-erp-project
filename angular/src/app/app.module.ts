@@ -227,6 +227,7 @@ import { BillAccountDialogComponent } from './modules/admin/configuration/bill-a
 import { MatDialogModule } from '@angular/material/dialog';
 import { BillAccountDialogNoteComponent } from "./modules/delivery-management/delivery/available-resource-tab/bill-account-plan/bill-account-dialog-note/bill-account-dialog-note.component";
 import { MultipleSelectResourceRequestCodeComponent } from './modules/delivery-management/delivery/request-resource-tab/multiple-select-resource-request-code/multiple-select-resource-request-code.component';
+import { HandleLinkedResourcesDialogComponent } from './modules/delivery-management/delivery/available-resource-tab/bill-account-plan/handle-linked-resources-dialog/handle-linked-resources-dialog.component';
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, "./assets/i18n/", ".json");
 }
@@ -437,6 +438,7 @@ export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
     BillAccountDialogComponent,
     BillAccountDialogNoteComponent,
     MultipleSelectResourceRequestCodeComponent,
+    HandleLinkedResourcesDialogComponent,
   ],
   imports: [
     CommonModule,

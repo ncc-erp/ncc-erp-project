@@ -150,7 +150,7 @@ export class BillAccountPlanComponent
             data: {
                 projectId: projectId,
                 userId: this.userIdOld != userId && this.isEditUserBill ? this.userIdOld : userId,
-                listResource: listResource ? listResource.map(item => item.userId) : [],
+                listResource: listResource ? listResource.map(item => item.id) : [],
                 listAllResource: this.listAllResource,
                 userIdNew: userId,
                 projectUserBillId: id

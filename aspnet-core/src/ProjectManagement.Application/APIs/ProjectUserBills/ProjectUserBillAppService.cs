@@ -185,24 +185,25 @@ namespace ProjectManagement.APIs.ProjectUserBills
         [HttpGet]
         [AbpAuthorize(PermissionNames.Resource_TabAllBillAccount)]
         //[AbpAllowAnonymous]
-        public async Task<List<GetLinkedResourceInfoDto>> GetLinkResources(long projectUserBillId)
+        public async Task<List<GetUserInfo>> GetLinkResources(long projectUserBillId)
         {
             return await WorkScope.All<LinkedResource>()
                     .Where(s => s.ProjectUserBillId == projectUserBillId)
-                .Select(x => new GetLinkedResourceInfoDto
+                .Select(lr => new GetUserInfo
                 {
-                    BillId = x.ProjectUserBillId,
-                    UserId = x.UserId,
-                    AvatarPath = x.User.AvatarPath,
-                    FullName = x.User.FullName,
-                    BranchColor = x.User.Branch.Color,
-                    BranchDisplayName = x.User.Branch.DisplayName,
-                    PositionId = x.User.PositionId,
-                    PositionName = x.User.Position.ShortName,
-                    PositionColor = x.User.Position.Color,
-                    EmailAddress = x.User.EmailAddress,
-                    UserType = x.User.UserType,
-                    UserLevel = x.User.UserLevel
+                    Id = lr.UserId,
+                    EmailAddress = lr.User.EmailAddress,
+                    UserName = lr.User.UserName,
+                    AvatarPath = lr.User.AvatarPath ?? "",
+                    UserType = lr.User.UserType,
+                    PositionId = lr.User.PositionId,
+                    PositionColor = lr.User.Position.Color,
+                    PositionName = lr.User.Position.ShortName,
+                    UserLevel = lr.User.UserLevel,
+                    BranchColor = lr.User.Branch.Color,
+                    BranchDisplayName = lr.User.Branch.DisplayName,
+                    IsActive = lr.User.IsActive,
+                    FullName = lr.User.FullName
                 }).ToListAsync();
         }
 
@@ -211,7 +212,7 @@ namespace ProjectManagement.APIs.ProjectUserBills
         //[AbpAllowAnonymous]
         public GridResult<BillInfoDto> GetAllBillInfo(InputGetBillInfoDto input)
         {
-            var dataList = WorkScope.All<ProjectUserBill>()
+            var result = WorkScope.All<ProjectUserBill>()
                 .Select(x => new
                 {
                     UserInfor = new GetUserBillDto
@@ -245,20 +246,21 @@ namespace ProjectManagement.APIs.ProjectUserBills
                         ClientId = x.Project.ClientId,
                         ClientCode = x.Project.Client.Code,
                         ClientName = x.Project.Client.Name,
-                        LinkedResources = x.LinkedResources.Select(item => new GetLinkedResourceInfoDto
+                        LinkedResources = x.LinkedResources.Select(lr => new GetUserInfo
                         {
-                            BillId = item.ProjectUserBillId,
-                            UserId = item.UserId,
-                            AvatarPath = item.User.AvatarPath,
-                            FullName = item.User.FullName,
-                            BranchColor = item.User.Branch.Color,
-                            BranchDisplayName = item.User.Branch.DisplayName,
-                            PositionId = item.User.PositionId,
-                            PositionName = item.User.Position.ShortName,
-                            PositionColor = item.User.Position.Color,
-                            EmailAddress = item.User.EmailAddress,
-                            UserType = item.User.UserType,
-                            UserLevel = item.User.UserLevel
+                            Id = lr.UserId,
+                            EmailAddress = lr.User.EmailAddress,
+                            UserName = lr.User.UserName,
+                            AvatarPath = lr.User.AvatarPath ?? "",
+                            UserType = lr.User.UserType,
+                            PositionId = lr.User.PositionId,
+                            PositionColor = lr.User.Position.Color,
+                            PositionName = lr.User.Position.ShortName,
+                            UserLevel = lr.User.UserLevel,
+                            BranchColor = lr.User.Branch.Color,
+                            BranchDisplayName = lr.User.Branch.DisplayName,
+                            IsActive = lr.User.IsActive,
+                            FullName = lr.User.FullName
                         })
                     },
                     IsCharge = x.isActive
@@ -276,20 +278,16 @@ namespace ProjectManagement.APIs.ProjectUserBills
                 .WhereIf(input.ClientId.HasValue, s => s.Project.ClientId == input.ClientId.Value)
                 .WhereIf(input.ProjectStatus.HasValue, s => s.Project.ProjectStatus == input.ProjectStatus.Value)
                 .WhereIf(input.IsCharge.HasValue, s => s.IsCharge == input.IsCharge.Value)
-                .ToList();
+                .GroupBy(s => s.UserInfor)
+                .Select(s => new BillInfoDto
+                {
+                    UserInfor = s.Key,
+                    Projects = s.Select(x => x.Project).OrderBy(x => x.ClientCode).ToList()
+                })
+                .OrderBy(s => s.UserInfor.EmailAddress)
+                .AsQueryable(); 
 
-            var groupedData = dataList.GroupBy(
-                            data => data.UserInfor,
-                            data => data.Project,
-                            (key, projects) => new BillInfoDto
-                            {
-                                UserInfor = key,
-                                Projects = projects.ToList(),
-                            }
-                        ).OrderBy(s => s.UserInfor.EmailAddress)
-                         .AsQueryable(); 
-
-            return groupedData.GetGridResultSync(groupedData, input);
+            return result.GetGridResultSync(result, input);
         }
 
 

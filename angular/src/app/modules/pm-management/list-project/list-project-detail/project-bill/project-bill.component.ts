@@ -52,7 +52,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   public panelOpenState: boolean = false;
   public isShowUserBill: boolean = false;
   public showSearchAndFilter: boolean = true;
-  public isAddingOrEditingUserBill: boolean = false
+  public isAddingOrEditingUserBill: boolean = false;
   public searchUserBill: string = "";
   public searchText: string = "";
   public accountName;

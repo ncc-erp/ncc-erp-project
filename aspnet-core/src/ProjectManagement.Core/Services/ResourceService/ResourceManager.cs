@@ -842,7 +842,8 @@ namespace ProjectManagement.Services.ResourceManager
                                 StartTime = pu.StartTime,
                                 IsPool = pu.IsPool,
                                 ProjectType = pu.Project.ProjectType,
-                                ProjectCode = pu.Project.Code
+                                ProjectCode = pu.Project.Code,
+                                Note = pu.Note
                             })
                            .ToList(),
 
@@ -1341,6 +1342,14 @@ namespace ProjectManagement.Services.ResourceManager
                                          .ToList();
 
             return result;
+        }
+
+        public async Task DeleteProjectNote(long projectUserId)
+        {
+            var currentPU = _workScope.GetAll<ProjectUser>()
+                                      .FirstOrDefault(pu => pu.Id == projectUserId);
+
+            await _workScope.DeleteAsync(currentPU);
         }
     }
 }

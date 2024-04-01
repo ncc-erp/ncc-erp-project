@@ -261,5 +261,11 @@ namespace ProjectManagement.APIs.Resource
         {
             return await _resourceManager.GetProjectAllResource(false); 
         }
+
+        [HttpDelete]
+        public async Task DeleteProjectNote(long projectUserId)
+        {
+            await _resourceManager.DeleteProjectNote(projectUserId);
+        }
     }
 }

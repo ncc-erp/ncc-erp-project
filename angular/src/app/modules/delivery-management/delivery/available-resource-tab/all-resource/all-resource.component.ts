@@ -114,7 +114,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
         )
         .subscribe(data => {
           this.availableResourceList = data.result;
-          this.availableResourceList.forEach(item => item.isViewAll = false);
+          this.availableResourceList.forEach(item => item.isViewAll = false);   
           this.showPaging(data.result, pageNumber);
           this.isLoading = false;
         })
@@ -165,6 +165,10 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     this.getAllUserTypes();
     this.getProjectAllResource();
     this.selectedIsPlanned = 1;
+  }
+
+  hasProjectNote(item: any): boolean {
+    return item.workingProjects.some(project => project.note);
   }
   
   showDialogPlanUser(command: string, user: any) {

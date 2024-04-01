@@ -14,6 +14,8 @@ namespace ProjectManagement.Services.ResourceService.Dto
         public long UserId { get; set; }
         [ApplySearchAttribute]
         public string EmailAddress { get; set; }
+        public string SimplizeEmailAddress => this.EmailAddress.Split('@')[0];
+
         [ApplySearchAttribute]
         public string FullName { get; set; }
         [ApplySearchAttribute]

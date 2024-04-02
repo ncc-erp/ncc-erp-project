@@ -81,7 +81,6 @@ span {
     border: none;
     resize: none;
     cursor: pointer;
-    overflow-y: scroll;
     background-color: transparent;
     text-overflow: ellipsis;
     line-height: 25px;
@@ -126,4 +125,8 @@ span {
 {
 	background-color: #cecece;
 	border: 2px solid #cecece;
+}
+
+.table-all-resource {
+    max-height: 70vh !important;
 }

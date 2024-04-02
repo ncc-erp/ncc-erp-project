@@ -170,7 +170,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
   hasProjectNote(item: any): boolean {
     return item.workingProjects.some(project => project.note);
   }
-  
+
   showDialogPlanUser(command: string, user: any) {
     let item = {
       userId: user.userId,
@@ -686,7 +686,21 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     });
   }
 
-  toggle(item){    
-    item.isViewAll = !item.isViewAll
+  deleteProjectNote(projectUser: any, userId: number){
+    abp.message.confirm(
+      "Delete Note from Project: " + projectUser.projectName + "?",
+      "",
+      (result: boolean) => {
+        if (result) {
+          this.isLoading = true;
+          this.availableRerourceService.deleteProjectNote(projectUser.id).pipe(catchError(this.availableRerourceService.handleError)).subscribe(data => {
+            abp.notify.success(`Delete Note Successfully!`)
+             this.refresh();
+          }, () => {
+            this.isLoading = false
+          })
+        }
+      }
+    )
   }
 }

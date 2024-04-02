@@ -129,7 +129,7 @@ export class ResourceManagerService extends BaseApiService{
     return this.http.get(this.rootUrl + "/GetProjectAllResource");
   }
 
-  public deleteProjectNote(): Observable<any> {
-    return this.http.delete(this.rootUrl + "/DeleteProjectNote");
+  public deleteProjectNote(projectUserId: number): Observable<any> {
+    return this.http.put<any>(this.rootUrl + `/DeleteProjectNote?projectUserId=${projectUserId}`, {});
   }
 }

@@ -773,7 +773,7 @@ namespace ProjectManagement.Services.ResourceManager
 
             var projectUsers = _workScope.GetAll<ProjectUser>();
 
-            var quser = qActiveUser
+            var quser = qActiveUser     
                        .Select(x => new GetAllResourceDto
                        {
                            UserId = x.Id,
@@ -850,20 +850,21 @@ namespace ProjectManagement.Services.ResourceManager
                            SkillNote = x.UserSkills.Select(s => s.Note).FirstOrDefault() ?? ""
                        });
 
-            if (
-                input.BranchIds.Count == 0 &&
-                input.PositionIds.Count == 0 &&
-                input.SkillIds.Count == 0
-                )
+            quser = ApplyInputFilters(quser, input);
+
+            return quser;
+        }
+
+        private IQueryable<GetAllResourceDto> ApplyInputFilters(IQueryable<GetAllResourceDto> quser, InputGetAllResourceDto input)
+        {
+            if (input.BranchIds.Count != 0 || input.PositionIds.Count != 0 || input.SkillIds.Count != 0)
             {
-                return quser;
+                quser = quser.WhereIf(input.BranchIds != null, x => input.BranchIds.Contains(x.BranchId.Value))
+                             .WhereIf(input.PositionIds != null, x => input.PositionIds.Contains(x.PositionId.Value))
+                             .WhereIf(input.UserTypes != null, x => input.UserTypes.Contains((UserType)x.UserType));
             }
-            else
-            {
-                return quser.WhereIf(input.BranchIds != null, x => input.BranchIds.Contains(x.BranchId.Value))
-                       .WhereIf(input.PositionIds != null, x => input.PositionIds.Contains(x.PositionId.Value))
-                       .WhereIf(input.UserTypes != null, x => input.UserTypes.Contains((UserType)x.UserType));
-            }
+
+            return quser;
         }
 
         public IQueryable<long> queryUserIdsHaveAnySkill(List<long> skillIds)
@@ -1044,44 +1045,65 @@ namespace ProjectManagement.Services.ResourceManager
         public async Task<List<GetAllResourceDto>> GetResources(InputGetAllResourceDto input, bool isVendor)
         {
             var query = await QueryAllResource(input, isVendor);
-            List<GetAllResourceDto> result = new List<GetAllResourceDto>();
 
-            if (input.SkillIds == null || input.SkillIds.IsEmpty())
-            {
-                result = query.ApplySearch(input.SearchText).ToList();
-                return FilterProjectAndPlannedResource(result, input);
-            }
-            if (input.SkillIds.Count() == 1 || !input.IsAndCondition)
-            {
-                var querySkillUserIds = queryUserIdsHaveAnySkill(input.SkillIds).Distinct();
-                query = from u in query
-                        join userId in querySkillUserIds on u.UserId equals userId
-                        select u;
+            List<GetAllResourceDto> result = await FilterSkills(input, query);
 
-                result = query.ApplySearch(input.SearchText).ToList();
-                return FilterProjectAndPlannedResource(result, input);
-            }
-
-            var userIdsHaveAllSkill = await getUserIdsHaveAllSkill(input.SkillIds);
-            query = query.Where(s => userIdsHaveAllSkill.Contains(s.UserId));
-
-
-            result = query.ApplySearch(input.SearchText).ToList();
             return FilterProjectAndPlannedResource(result, input);
         }
 
+        private async Task<List<GetAllResourceDto>> FilterSkills(InputGetAllResourceDto input, IQueryable<GetAllResourceDto> query)
+        {
+            IQueryable<GetAllResourceDto> result = query;
+
+            if (input.SkillIds == null || input.SkillIds.IsEmpty())
+            {
+                result = query.ApplySearch(input.SearchText);
+            }
+            else if (input.SkillIds.Count() == 1 || !input.IsAndCondition)
+            {
+                var querySkillUserIds = queryUserIdsHaveAnySkill(input.SkillIds).Distinct();
+                result = from u in query
+                         join userId in querySkillUserIds on u.UserId equals userId
+                         select u;
+
+                result = result.ApplySearch(input.SearchText);
+            }
+            else
+            {
+                var userIdsHaveAllSkill = await getUserIdsHaveAllSkill(input.SkillIds);
+                result = query.Where(s => userIdsHaveAllSkill.Contains(s.UserId))
+                             .ApplySearch(input.SearchText);
+            }
+
+            return await result.ToListAsync();
+        }
+
         public List<GetAllResourceDto> FilterProjectAndPlannedResource(List<GetAllResourceDto> list, InputGetAllResourceDto input)
+        {
+            list = FilterProject(list, input);
+            list = FilterPlannedResource(list, input);
+
+            return list;
+        }
+
+        public List<GetAllResourceDto> FilterProject(List<GetAllResourceDto> list, InputGetAllResourceDto input)
         {
             if (input.ProjectIds.Count > 0)
             {
                 list = list.Where(x => x.WorkingProjects.Any(wp => input.ProjectIds.Contains(wp.ProjectId))).ToList();
             }
+
+            return list;
+        }
+
+        public List<GetAllResourceDto> FilterPlannedResource(List<GetAllResourceDto> list, InputGetAllResourceDto input)
+        {
             if (input.PlanStatus != PlanStatus.All && input.PlanStatus != null)
             {
                 list = input.PlanStatus switch
                 {
                     PlanStatus.AllPlan => list.Where(x => x.PlanProjects.Count > 0).ToList(),
-                    PlanStatus.PlanningJoin => list.Where(x => x.PlanProjects.Any(p => p.AllocatePercentage <= 100 && p.AllocatePercentage > 0)).ToList(),
+                    PlanStatus.PlanningJoin => list.Where(x => x.PlanProjects.Any(p => p.AllocatePercentage > 0)).ToList(),
                     PlanStatus.PlanningOut => list.Where(x => x.PlanProjects.Any(p => p.AllocatePercentage == 0)).ToList(),
                     PlanStatus.NoPlan => list.Where(x => x.PlanProjects.Count == 0).ToList(),
                     _ => list,
@@ -1349,7 +1371,8 @@ namespace ProjectManagement.Services.ResourceManager
             var currentPU = _workScope.GetAll<ProjectUser>()
                                       .FirstOrDefault(pu => pu.Id == projectUserId);
 
-            await _workScope.DeleteAsync(currentPU);
+            currentPU.Note = "";
+            await _workScope.UpdateAsync(currentPU);
         }
     }
 }

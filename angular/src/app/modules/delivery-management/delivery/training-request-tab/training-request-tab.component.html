@@ -224,26 +224,21 @@
             <thead>
               <tr>
                 <th *ngFor="let thead of theadTable; let i = index">
-                  <div class="row sortHeader" [ngStyle]="styleThead(thead)">
-                    <div class="col-xl-8 col-lg-12 rsp-th-name text-left">
-                      {{ thead.name }}
-                    </div>
-                    <div
-                      class="col-xl-4 col-lg-12 rsp-th-sort text-right"
-                      *ngIf="i != 0 && thead.sortName"
-                      style="vertical-align: middle"
-                    >
-                      <ng-container>
-                        <app-sortable
-                          #sortThead
-                          [data]="{
+                  <div class="row sortHeader"  [ngStyle]="{ 'min-width': thead.width }">
+                      <div class="col-xl-12 col-lg-12 rsp-th-sort text-right"
+                           style="vertical-align: middle">
+                          {{ thead.name }}
+                          <ng-container
+                           *ngIf="i != 0 && thead.sortName">
+                              <app-sortable #sortThead
+                                            [data]="{
                             sort: thead.sortName,
                             typeSort: thead.defaultSort
                           }"
-                          (sortEvent)="sortTable($event)"
-                        ></app-sortable>
-                      </ng-container>
-                    </div>
+                                            (sortEvent)="sortTable($event)"
+                                             style="padding-left: 5px"></app-sortable>
+                          </ng-container>
+                      </div>
                   </div>
                 </th>
               </tr>

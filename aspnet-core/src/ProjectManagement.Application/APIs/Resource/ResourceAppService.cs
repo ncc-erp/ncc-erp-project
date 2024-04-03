@@ -153,6 +153,12 @@ namespace ProjectManagement.APIs.Resource
             return await _resourceManager.GetResources(input, false);
         }
 
+        [HttpGet]
+        [AbpAuthorize(PermissionNames.Resource_TabPool)]
+        public async Task<ProjectUserNoteDto> GetWorkingProjectNote(long projectUserId)
+        {
+            return await _resourceManager.GetWorkingProjectNote(projectUserId);
+        }
 
         [HttpPost]
         [AbpAuthorize(PermissionNames.Resource_TabPool)]
@@ -160,7 +166,6 @@ namespace ProjectManagement.APIs.Resource
         {
             return await _resourceManager.GetAllPoolResource(input);
         }
-
 
         public async Task CancelResourcePlan(long projectUserId, bool allowCancelAnyPlan)
         {

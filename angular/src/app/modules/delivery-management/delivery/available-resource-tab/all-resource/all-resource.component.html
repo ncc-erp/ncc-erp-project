@@ -412,19 +412,19 @@
                                                 <i class="fas fa-edit " (click)="updateNote(item)" matTooltip="Edit note"></i>
                                             </div>
                                         </div>
-                                        <div *ngIf="item.poolNote && hasProjectNote(item)"
+                                        <div *ngIf="hasProjectNote(item)"
                                             style="border-bottom: 1px solid #1e55cd; padding: 10px 0; margin-bottom: 10px;">
                                         </div>               
                                         <div style="display: contents;">
                                             <ng-container *ngFor="let projectUser of item.workingProjects">
-                                                <div style="display: flex; align-items: center;">
-                                                    <div *ngIf="projectUser.note" style="width: 90%; word-break: break-word;">
+                                                <div class="row" style="display: flex;">
+                                                    <div *ngIf="projectUser.note" class="col-11" style="word-break: break-word;">
                                                         <p>
                                                             <span style="color: #0077cc">{{ projectUser.projectName }}: </span> {{ projectUser.note }}
                                                         </p>
                                                     </div>
-                                                    <div *ngIf="projectUser.note" style="width: 10%; text-align: right;">
-                                                        <i class="fas fa-times ml-2" (click)="deleteProjectNote(projectUser, item.userId)" matTooltip="Delete note"></i>
+                                                    <div *ngIf="projectUser.note" class="col-1">
+                                                        <i class="fas fa-times" (click)="deleteProjectNote(projectUser, item.userId)" matTooltip="Delete note"></i>
                                                     </div>
                                                 </div>
                                             </ng-container>

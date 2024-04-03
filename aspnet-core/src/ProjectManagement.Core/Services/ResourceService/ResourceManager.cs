@@ -751,7 +751,7 @@ namespace ProjectManagement.Services.ResourceManager
             await _workScope.UpdateAsync(projectUser);
         }
 
-        public async Task<IQueryable<GetAllResourceDto>> QueryAllResource(InputGetAllResourceDto input, bool isVendor)
+        public async Task<IQueryable<GetAllResourceDto>> QueryAllResource(bool isVendor)
         {
             // get current user and view user level permission
             // if user level = intern => all show no matter the permission
@@ -850,12 +850,10 @@ namespace ProjectManagement.Services.ResourceManager
                            SkillNote = x.UserSkills.Select(s => s.Note).FirstOrDefault() ?? ""
                        });
 
-            quser = ApplyInputFilters(quser, input);
-
             return quser;
         }
 
-        private IQueryable<GetAllResourceDto> ApplyInputFilters(IQueryable<GetAllResourceDto> quser, InputGetAllResourceDto input)
+        private void ApplyInputFilters(ref IQueryable<GetAllResourceDto> quser, InputGetAllResourceDto input)
         {
             if (input.BranchIds.Count != 0 || input.PositionIds.Count != 0 || input.SkillIds.Count != 0)
             {
@@ -863,8 +861,6 @@ namespace ProjectManagement.Services.ResourceManager
                              .WhereIf(input.PositionIds != null, x => input.PositionIds.Contains(x.PositionId.Value))
                              .WhereIf(input.UserTypes != null, x => input.UserTypes.Contains((UserType)x.UserType));
             }
-
-            return quser;
         }
 
         public IQueryable<long> queryUserIdsHaveAnySkill(List<long> skillIds)
@@ -1044,11 +1040,25 @@ namespace ProjectManagement.Services.ResourceManager
 
         public async Task<List<GetAllResourceDto>> GetResources(InputGetAllResourceDto input, bool isVendor)
         {
-            var query = await QueryAllResource(input, isVendor);
+            var query = await QueryAllResource(isVendor);
+
+            ApplyInputFilters(ref query, input);
 
             List<GetAllResourceDto> result = await FilterSkills(input, query);
 
             return FilterProjectAndPlannedResource(result, input);
+        }
+
+        public async Task<ProjectUserNoteDto> GetWorkingProjectNote(long projectUserId)
+        {
+            return await _workScope.GetAll<ProjectUser>()
+                        .Where(s => s.Id == projectUserId)
+                        .Select(s => new ProjectUserNoteDto
+                        {
+                            Id = s.Id,
+                            Note = s.Note
+                        })
+                        .FirstOrDefaultAsync();
         }
 
         private async Task<List<GetAllResourceDto>> FilterSkills(InputGetAllResourceDto input, IQueryable<GetAllResourceDto> query)
@@ -1080,23 +1090,20 @@ namespace ProjectManagement.Services.ResourceManager
 
         public List<GetAllResourceDto> FilterProjectAndPlannedResource(List<GetAllResourceDto> list, InputGetAllResourceDto input)
         {
-            list = FilterProject(list, input);
-            list = FilterPlannedResource(list, input);
-
+            FilterProject(ref list, input);
+            FilterPlannedResource(ref list, input);
             return list;
         }
 
-        public List<GetAllResourceDto> FilterProject(List<GetAllResourceDto> list, InputGetAllResourceDto input)
+        public void FilterProject(ref List<GetAllResourceDto> list, InputGetAllResourceDto input)
         {
-            if (input.ProjectIds.Count > 0)
+            if (input.ProjectId != null)
             {
-                list = list.Where(x => x.WorkingProjects.Any(wp => input.ProjectIds.Contains(wp.ProjectId))).ToList();
+                list = list.Where(x => x.WorkingProjects.Any(wp => wp.ProjectId == input.ProjectId)).ToList();
             }
-
-            return list;
         }
 
-        public List<GetAllResourceDto> FilterPlannedResource(List<GetAllResourceDto> list, InputGetAllResourceDto input)
+        public void FilterPlannedResource(ref List<GetAllResourceDto> list, InputGetAllResourceDto input)
         {
             if (input.PlanStatus != PlanStatus.All && input.PlanStatus != null)
             {
@@ -1109,8 +1116,6 @@ namespace ProjectManagement.Services.ResourceManager
                     _ => list,
                 };
             }
-
-            return list;
         }
 
         public void SendKomu(StringBuilder komuMessage, string projectCode)

@@ -24,7 +24,7 @@ namespace ProjectManagement.Services.ResourceService.Dto
         public List<long> SkillIds { get; set; }
         public PlanStatus? PlanStatus { get; set; }
         public bool IsAndCondition { get; set; }
-        public List<long> ProjectIds { get; set; }
+        public long? ProjectId { get; set; }
         public string SearchText { get; set; }
     }
 }

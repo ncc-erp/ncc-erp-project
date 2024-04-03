@@ -104,7 +104,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
       userTypes: this.selectedUserTypes,
       positionIds: this.selectedPositions,
       planStatus: this.selectedIsPlanned || APP_ENUMS.PlanStatus.AllPlan,
-      projectIds: this.projectId == -1 ? [] : [this.projectId]
+      projectId: this.projectId == -1 ? null : this.projectId
     };
 
     this.subscription.push(
@@ -686,7 +686,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     });
   }
 
-  deleteProjectNote(projectUser: any, userId: number){
+  deleteProjectNote(projectUser: any){
     abp.message.confirm(
       "Delete Note from Project: " + projectUser.projectName + "?",
       "",
@@ -695,12 +695,32 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
           this.isLoading = true;
           this.availableRerourceService.deleteProjectNote(projectUser.id).pipe(catchError(this.availableRerourceService.handleError)).subscribe(data => {
             abp.notify.success(`Delete Note Successfully!`)
-             this.refresh();
+             this.refreshWorkingProjectNote(projectUser.id);
+             this.isLoading = false;
           }, () => {
             this.isLoading = false
           })
         }
       }
     )
+  }
+
+  refreshWorkingProjectNote(projectUserId: number): void {
+    this.availableRerourceService.getWorkingProjectNote(projectUserId)
+      .pipe(
+        catchError(this.availableRerourceService.handleError)
+      )
+      .subscribe(data => {
+        let projectUser = data.result;
+        this.availableResourceList.forEach(item => {
+          if (Array.isArray(item.workingProjects)) {
+              const matchingProject = item.workingProjects.find(project => project.id === projectUser.id);
+              if (matchingProject) {
+                  matchingProject.note = projectUser.note;
+              }
+          }
+        });
+      }, () => {
+    })
   }
 }

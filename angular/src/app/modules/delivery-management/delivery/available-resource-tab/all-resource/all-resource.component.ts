@@ -157,7 +157,6 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
   @ViewChild("selectUserType") selectUserType;
 
   ngOnInit(): void {
-    this.pageSizeType = 100
     this.changePageSize();
     this.getAllSkills();
     this.getAllPositions();
@@ -686,6 +685,27 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     });
   }
 
+  toggle(item){    
+    item.isViewAll = !item.isViewAll
+  }
+
+  filterUserSkill(item){
+    let userSkillsAfterFilter = []
+    if(item.userSkills){
+      if(item.isViewAll){
+        userSkillsAfterFilter = item.userSkills
+      }
+      else{
+        item.userSkills.forEach((skill, index)=>{
+          if(index < 5){
+            userSkillsAfterFilter.push(skill)
+          }
+        })
+      }
+    }
+    return userSkillsAfterFilter
+  }
+
   deleteProjectNote(projectUser: any){
     abp.message.confirm(
       "Delete Note from Project: " + projectUser.projectName + "?",
@@ -695,7 +715,14 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
           this.isLoading = true;
           this.availableRerourceService.deleteProjectNote(projectUser.id).pipe(catchError(this.availableRerourceService.handleError)).subscribe(data => {
             abp.notify.success(`Delete Note Successfully!`)
-             this.refreshWorkingProjectNote(projectUser.id);
+             this.availableResourceList.forEach(item => {
+              if (Array.isArray(item.workingProjects)) {
+                  const matchingProject = item.workingProjects.find(project => project.id === projectUser.id);
+                  if (matchingProject) {
+                      matchingProject.note = "";
+                  }
+              }
+            });
              this.isLoading = false;
           }, () => {
             this.isLoading = false
@@ -703,24 +730,5 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
         }
       }
     )
-  }
-
-  refreshWorkingProjectNote(projectUserId: number): void {
-    this.availableRerourceService.getWorkingProjectNote(projectUserId)
-      .pipe(
-        catchError(this.availableRerourceService.handleError)
-      )
-      .subscribe(data => {
-        let projectUser = data.result;
-        this.availableResourceList.forEach(item => {
-          if (Array.isArray(item.workingProjects)) {
-              const matchingProject = item.workingProjects.find(project => project.id === projectUser.id);
-              if (matchingProject) {
-                  matchingProject.note = projectUser.note;
-              }
-          }
-        });
-      }, () => {
-    })
   }
 }

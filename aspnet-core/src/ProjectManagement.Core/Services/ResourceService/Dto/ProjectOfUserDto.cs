@@ -42,10 +42,4 @@ namespace ProjectManagement.Services.ResourceManager.Dto
         public string ResourceRequestNote { get; set; }
         public string ResourceRequestDes { get; set; }
     }
-
-    public class ProjectUserNoteDto
-    {
-        public long Id { get; set; }
-        public string Note { get; set; }
-    }
 }

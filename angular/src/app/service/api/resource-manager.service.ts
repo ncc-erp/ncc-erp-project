@@ -132,8 +132,4 @@ export class ResourceManagerService extends BaseApiService{
   public deleteProjectNote(projectUserId: number): Observable<any> {
     return this.http.put<any>(this.rootUrl + `/DeleteProjectNote?projectUserId=${projectUserId}`, {});
   }
-
-  public getWorkingProjectNote(projectUserId: number): Observable<any> {
-    return this.http.get(this.rootUrl + `/GetWorkingProjectNote?projectUserId=${projectUserId}`);
-  }
 }

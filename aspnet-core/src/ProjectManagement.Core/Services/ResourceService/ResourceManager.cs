@@ -1049,18 +1049,6 @@ namespace ProjectManagement.Services.ResourceManager
             return FilterProjectAndPlannedResource(result, input);
         }
 
-        public async Task<ProjectUserNoteDto> GetWorkingProjectNote(long projectUserId)
-        {
-            return await _workScope.GetAll<ProjectUser>()
-                        .Where(s => s.Id == projectUserId)
-                        .Select(s => new ProjectUserNoteDto
-                        {
-                            Id = s.Id,
-                            Note = s.Note
-                        })
-                        .FirstOrDefaultAsync();
-        }
-
         private async Task<List<GetAllResourceDto>> FilterSkills(InputGetAllResourceDto input, IQueryable<GetAllResourceDto> query)
         {
             IQueryable<GetAllResourceDto> result = query;

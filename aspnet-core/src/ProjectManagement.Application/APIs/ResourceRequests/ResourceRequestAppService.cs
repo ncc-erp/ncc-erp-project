@@ -535,6 +535,13 @@ namespace ProjectManagement.APIs.ResourceRequests
             return input;
         }
 
+        [HttpDelete]
+        [AbpAuthorize]
+        public async Task RemoveResourceRequestPlan(long requestId)
+        {
+            await _resourceRequestManager.RemoveResourceRequestPlan(requestId);
+        }
+
         [HttpPost]
         [AbpAuthorize]
         public async Task<PlanUserInfoDto> UpdateResourceRequestPlan(ResourceRequestPlanDto input)

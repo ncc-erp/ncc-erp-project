@@ -324,6 +324,44 @@ export class RequestResourceTabComponent
     });
   }
 
+  async removePlanUser(id: number) {
+     abp.message.confirm(
+         "Remove This Resource ?",
+          "",
+        (result: boolean) => {
+            if (result) {
+                this.resourceRequestService.RemoveResourceRequestPlan(id).pipe(catchError(this.resourceRequestService.handleError)).subscribe(data => {
+                        abp.notify.success(` Resource Removed Successfully!`);
+                        this.refresh();
+                    }, () => {
+                        this.isLoading = false
+                    })
+                }
+            }
+        )
+  }
+
+  async removeCvUser(id) {
+    const input = {
+        resourceRequestId: id
+    };
+
+     abp.message.confirm(
+         "Remove This Bill Account ?",
+          "",
+        (result: boolean) => {
+            if (result) {
+                this.resourceRequestService.UpdateBillInfoPlan(input).pipe(catchError(this.resourceRequestService.handleError)).subscribe(data => {
+                        abp.notify.success(` Bill Account Removed Successfully!`);
+                        this.refresh();
+                    }, () => {
+                        this.isLoading = false
+                    })
+                }
+            }
+        )
+  }
+
   sendRecruitment(item: ResourceRequestDto) {
     const show = this.dialog.open(FormSendRecruitmentComponent, {
       data: {

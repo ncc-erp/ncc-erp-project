@@ -162,7 +162,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     this.getAllPositions();
     this.getAllBranchs();
     this.getAllUserTypes();
-    this.getProjectAllResource();
+    this.getProjectsForAllResource();
     this.selectedIsPlanned = 1;
   }
 
@@ -371,8 +371,8 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     })
   }
 
-  getProjectAllResource() {
-    this.availableRerourceService.getProjectAllResource().subscribe((data) => {
+  getProjectsForAllResource() {
+    this.availableRerourceService.getProjectsForAllResource().subscribe((data) => {
       this.listProject = data.result;
     })
   }

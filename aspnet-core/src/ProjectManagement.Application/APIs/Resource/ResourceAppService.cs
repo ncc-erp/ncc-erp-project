@@ -255,9 +255,9 @@ namespace ProjectManagement.APIs.Resource
         }
 
         [HttpGet]
-        public async Task<List<GetProjectAllResourceDto>> GetProjectAllResource()
+        public async Task<List<GetProjectsForAllResourceDto>> GetProjectsForAllResource()
         {
-            return await _resourceManager.GetProjectAllResource(false); 
+            return await _resourceManager.GetProjectsForAllResource(); 
         }
 
         [HttpPut]

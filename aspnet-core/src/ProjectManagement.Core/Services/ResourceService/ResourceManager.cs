@@ -853,7 +853,7 @@ namespace ProjectManagement.Services.ResourceManager
             return quser;
         }
 
-        private void ApplyInputFilters(ref IQueryable<GetAllResourceDto> quser, InputGetAllResourceDto input)
+        private IQueryable<GetAllResourceDto> ApplyInputFilters(IQueryable<GetAllResourceDto> quser, InputGetAllResourceDto input)
         {
             if (input.BranchIds.Count != 0 || input.PositionIds.Count != 0 || input.SkillIds.Count != 0)
             {
@@ -861,6 +861,7 @@ namespace ProjectManagement.Services.ResourceManager
                              .WhereIf(input.PositionIds != null, x => input.PositionIds.Contains(x.PositionId.Value))
                              .WhereIf(input.UserTypes != null, x => input.UserTypes.Contains((UserType)x.UserType));
             }
+            return quser;
         }
 
         public IQueryable<long> queryUserIdsHaveAnySkill(List<long> skillIds)
@@ -1042,20 +1043,26 @@ namespace ProjectManagement.Services.ResourceManager
         {
             var query = await QueryAllResource(isVendor);
 
-            ApplyInputFilters(ref query, input);
+            query = ApplyInputFilters(query, input);
 
-            List<GetAllResourceDto> result = await FilterSkills(input, query);
+            query.ApplySearch(input.SearchText);
 
-            return FilterProjectAndPlannedResource(result, input);
+            var result = await ApplyFilterSkills(input, query).Result.ToListAsync();
+
+            result = ApplyFilterProject(result, input);
+
+            result = ApplyFilterPlannedResource(result, input);
+
+            return result;
         }
 
-        private async Task<List<GetAllResourceDto>> FilterSkills(InputGetAllResourceDto input, IQueryable<GetAllResourceDto> query)
+        private async Task<IQueryable<GetAllResourceDto>> ApplyFilterSkills(InputGetAllResourceDto input, IQueryable<GetAllResourceDto> query)
         {
             IQueryable<GetAllResourceDto> result = query;
 
             if (input.SkillIds == null || input.SkillIds.IsEmpty())
             {
-                result = query.ApplySearch(input.SearchText);
+                return result;
             }
             else if (input.SkillIds.Count() == 1 || !input.IsAndCondition)
             {
@@ -1063,8 +1070,7 @@ namespace ProjectManagement.Services.ResourceManager
                 result = from u in query
                          join userId in querySkillUserIds on u.UserId equals userId
                          select u;
-
-                result = result.ApplySearch(input.SearchText);
+                return result;
             }
             else
             {
@@ -1072,26 +1078,19 @@ namespace ProjectManagement.Services.ResourceManager
                 result = query.Where(s => userIdsHaveAllSkill.Contains(s.UserId))
                              .ApplySearch(input.SearchText);
             }
-
-            return await result.ToListAsync();
+            return result;
         }
 
-        public List<GetAllResourceDto> FilterProjectAndPlannedResource(List<GetAllResourceDto> list, InputGetAllResourceDto input)
-        {
-            FilterProject(ref list, input);
-            FilterPlannedResource(ref list, input);
-            return list;
-        }
-
-        public void FilterProject(ref List<GetAllResourceDto> list, InputGetAllResourceDto input)
+        public List<GetAllResourceDto> ApplyFilterProject(List<GetAllResourceDto> list, InputGetAllResourceDto input)
         {
             if (input.ProjectId != null)
             {
                 list = list.Where(x => x.WorkingProjects.Any(wp => wp.ProjectId == input.ProjectId)).ToList();
             }
+            return list;
         }
 
-        public void FilterPlannedResource(ref List<GetAllResourceDto> list, InputGetAllResourceDto input)
+        public List<GetAllResourceDto> ApplyFilterPlannedResource(List<GetAllResourceDto> list, InputGetAllResourceDto input)
         {
             if (input.PlanStatus != PlanStatus.All && input.PlanStatus != null)
             {
@@ -1104,6 +1103,7 @@ namespace ProjectManagement.Services.ResourceManager
                     _ => list,
                 };
             }
+            return list;
         }
 
         public void SendKomu(StringBuilder komuMessage, string projectCode)
@@ -1335,35 +1335,24 @@ namespace ProjectManagement.Services.ResourceManager
             await _workScope.UpdateAsync(currentPU);
         }
 
-        public async Task<List<GetProjectAllResourceDto>> GetProjectAllResource(bool isVendor)
+        public async Task<List<GetProjectsForAllResourceDto>> GetProjectsForAllResource()
         {
-            var projectResources = await _workScope.GetAll<ProjectUser>()
-                .Where(s => s.User.IsActive)
-                .Where(s => s.User.UserType != UserType.FakeUser)
-                .Where(s => isVendor ? s.User.UserType == UserType.Vendor : s.User.UserType != UserType.Vendor)
-                .Where(s => s.Status == ProjectUserStatus.Present
-                    && s.AllocatePercentage > 0
-                    && s.Project.Status != ProjectStatus.Closed)
-                .Select(s => new GetProjectAllResourceDto
+            var result = await _workScope.GetAll<Project>()
+                .Where(s => s.Status != ProjectStatus.Closed)
+                .Select(s => new GetProjectsForAllResourceDto
                 {
-                    ProjectId = s.ProjectId,
-                    ProjectName = s.Project.Name
+                    ProjectId = s.Id,
+                    ProjectName = s.Name + " [" + s.Code + "]"
                 })
                 .OrderBy(s => s.ProjectName)
                 .ToListAsync();
-
-            var result = projectResources.GroupBy(pr => pr.ProjectId)
-                                         .Select(group => group.First())
-                                         .ToList();
 
             return result;
         }
 
         public async Task DeleteProjectNote(long projectUserId)
         {
-            var currentPU = _workScope.GetAll<ProjectUser>()
-                                      .FirstOrDefault(pu => pu.Id == projectUserId);
-
+            var currentPU = _workScope.Get<ProjectUser>(projectUserId);
             currentPU.Note = "";
             await _workScope.UpdateAsync(currentPU);
         }

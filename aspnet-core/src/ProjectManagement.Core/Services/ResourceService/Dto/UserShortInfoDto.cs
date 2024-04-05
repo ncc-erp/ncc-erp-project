@@ -16,8 +16,6 @@ namespace ProjectManagement.Services.ResourceService.Dto
         public long Id { get; set; }
         public string EmailAddress { get; set; }
         public UserType UserType { get; set; }
-        public ProjectManagement.Constants.Enum.ProjectEnum.Branch Branch { get; set; }
-
         public bool IsActive { get; set; }
         public string FullName { get; set; }
         public long? BranchId { get; set; }

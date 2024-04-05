@@ -257,12 +257,12 @@ namespace ProjectManagement.APIs.Resource
         }
 
         [HttpGet]
-        public async Task<List<UserShortInfoDto>> GetAllUserShortInfo()
+        public async Task<List<UserShortInfoDto>> GetListAllUserShortInfo()
         {
             return await _resourceManager.GetUserShortInfo(false);
         }
         [HttpGet]
-        public async Task<List<UserShortInfoDto>> GetActiveUserShortInfo()
+        public async Task<List<UserShortInfoDto>> GetListActiveUserShortInfo()
         {
             return await _resourceManager.GetUserShortInfo(true);
         }

@@ -1301,7 +1301,7 @@ namespace ProjectManagement.Services.ResourceManager
 
             await _workScope.UpdateAsync(currentPU);
         }
-        public async Task<List<UserShortInfoDto>> GetUserShortInfo(bool onlyActive)
+        public async Task<List<UserShortInfoDto>> GetListUserShortInfo(bool onlyActive)
         {
             var query = _workScope.GetAll<User>()
                 .Where(x => x.UserType != UserType.FakeUser)
@@ -1312,7 +1312,6 @@ namespace ProjectManagement.Services.ResourceManager
                     EmailAddress = u.EmailAddress,
                     FullName = u.FullName,
                     UserType = u.UserType,
-                    Branch = u.BranchOld,
                     IsActive = u.IsActive,
                     BranchId = u.BranchId,
                     BrandName = u.Branch.Name

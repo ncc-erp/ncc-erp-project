@@ -113,7 +113,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
           catchError(this.availableRerourceService.handleError)
         )
         .subscribe(data => {
-          this.availableResourceList = data.result;
+          this.availableResourceList = data.result.items;
           this.availableResourceList.forEach(item => item.isViewAll = false);   
           this.showPaging(data.result, pageNumber);
           this.isLoading = false;

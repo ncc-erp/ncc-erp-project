@@ -35,18 +35,18 @@ namespace ProjectManagement.Manager.TimesheetProjectManager
                 TenantId = AbpSession.TenantId
             };
             var delays = double.Parse(SettingManager.GetSettingValue(AppSettingNames.ActiveTimesheetProjectPeriod));
-            if (closeDate.HasValue)
+            if (!closeDate.HasValue)
             {
-                if ((closeDate.Value - Clock.Provider.Now).TotalMilliseconds < 0)
-                {
-                    throw new UserFriendlyException("Thời gian đóng phải lớn hơn thời gian hiện tại");
-                }
-                delays = (closeDate.Value - Clock.Provider.Now).TotalMilliseconds;
+                closeDate = Clock.Provider.Now.AddHours(2);
             }
+            if ((closeDate.Value - Clock.Provider.Now).TotalMilliseconds < 0)
+            {
+                throw new UserFriendlyException("Thời gian đóng phải lớn hơn thời gian hiện tại");
+            }
+            delays = (closeDate.Value - Clock.Provider.Now).TotalMilliseconds;
 
             _backgroundJobManager.Enqueue<ReactivetimesheetProjectBackgroudJob, ReactiveTimesheetBGJDto>(
                     reactiveTimesheetBGJDto, BackgroundJobPriority.High, TimeSpan.FromMilliseconds(delays));
-
         }
 
         public void DeleteOldRequestInBackgroundJob(long timesheetProjectId)

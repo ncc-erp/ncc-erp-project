@@ -141,14 +141,14 @@ namespace ProjectManagement.APIs.Resource
 
         [HttpPost]
         [AbpAuthorize(PermissionNames.Resource_TabVendor)]
-        public async Task<List<GetAllResourceDto>> GetVendorResource(InputGetAllResourceDto input)
+        public async Task<GridResult<GetAllResourceDto>> GetVendorResource(InputGetAllResourceDto input)
         {
             return await _resourceManager.GetResources(input, true);
         }
 
         [HttpPost]
         [AbpAuthorize(PermissionNames.Resource_TabAllResource)]
-        public async Task<List<GetAllResourceDto>> GetAllResource(InputGetAllResourceDto input)
+        public async Task<GridResult<GetAllResourceDto>> GetAllResource(InputGetAllResourceDto input)
         {
             return await _resourceManager.GetResources(input, false);
         }
@@ -252,6 +252,17 @@ namespace ProjectManagement.APIs.Resource
         public async Task UpdateTempProjectForUser(UpdateTempProjectForUserDto input)
         {
             await _resourceManager.UpdateTempProjectForUser(input);
+        }
+
+        [HttpGet]
+        public async Task<List<UserShortInfoDto>> GetListAllUserShortInfo()
+        {
+            return await _resourceManager.GetListUserShortInfo(false);
+        }
+        [HttpGet]
+        public async Task<List<UserShortInfoDto>> GetListActiveUserShortInfo()
+        {
+            return await _resourceManager.GetListUserShortInfo(true);
         }
 
         [HttpGet]

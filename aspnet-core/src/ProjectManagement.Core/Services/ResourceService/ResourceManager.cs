@@ -1,5 +1,4 @@
 ﻿using Abp.Application.Services;
-using Abp.Collections.Extensions;
 using Abp.Configuration;
 using Abp.Linq.Extensions;
 using Abp.Runtime.Session;
@@ -853,17 +852,6 @@ namespace ProjectManagement.Services.ResourceManager
             return quser;
         }
 
-        private IQueryable<GetAllResourceDto> ApplyInputFilters(IQueryable<GetAllResourceDto> quser, InputGetAllResourceDto input)
-        {
-            if (input.BranchIds.Count != 0 || input.PositionIds.Count != 0 || input.SkillIds.Count != 0)
-            {
-                quser = quser.WhereIf(input.BranchIds != null, x => input.BranchIds.Contains(x.BranchId.Value))
-                             .WhereIf(input.PositionIds != null, x => input.PositionIds.Contains(x.PositionId.Value))
-                             .WhereIf(input.UserTypes != null, x => input.UserTypes.Contains((UserType)x.UserType));
-            }
-            return quser;
-        }
-
         public IQueryable<long> queryUserIdsHaveAnySkill(List<long> skillIds)
         {
             if (skillIds == null || skillIds.IsEmpty())
@@ -1039,21 +1027,32 @@ namespace ProjectManagement.Services.ResourceManager
             return await quser.GetGridResult(quser, input);
         }
 
-        public async Task<List<GetAllResourceDto>> GetResources(InputGetAllResourceDto input, bool isVendor)
+        public async Task<GridResult<GetAllResourceDto>> GetResources(InputGetAllResourceDto input, bool isVendor)
         {
             var query = await QueryAllResource(isVendor);
 
-            query = ApplyInputFilters(query, input);
-
             query.ApplySearch(input.SearchText);
 
-            var result = await ApplyFilterSkills(input, query).Result.ToListAsync();
+            query = ApplyInputFilters(query, input);
 
-            result = ApplyFilterProject(result, input);
+            query = await ApplyFilterSkills(input, query);
 
-            result = ApplyFilterPlannedResource(result, input);
+            query = ApplyFilterProject(query, input);
 
-            return result;
+            query = ApplyFilterPlannedResource(query, input);
+
+            return query.GetGridResultWithoutSearchAndFilter(input);
+
+        }
+        private IQueryable<GetAllResourceDto> ApplyInputFilters(IQueryable<GetAllResourceDto> quser, InputGetAllResourceDto input)
+        {
+            if (input.BranchIds.Count != 0 || input.PositionIds.Count != 0 || input.SkillIds.Count != 0)
+            {
+                quser = quser.WhereIf(input.BranchIds != null, x => input.BranchIds.Contains(x.BranchId.Value))
+                             .WhereIf(input.PositionIds != null, x => input.PositionIds.Contains(x.PositionId.Value))
+                             .WhereIf(input.UserTypes != null, x => input.UserTypes.Contains((UserType)x.UserType));
+            }
+            return quser;
         }
 
         private async Task<IQueryable<GetAllResourceDto>> ApplyFilterSkills(InputGetAllResourceDto input, IQueryable<GetAllResourceDto> query)
@@ -1075,35 +1074,34 @@ namespace ProjectManagement.Services.ResourceManager
             else
             {
                 var userIdsHaveAllSkill = await getUserIdsHaveAllSkill(input.SkillIds);
-                result = query.Where(s => userIdsHaveAllSkill.Contains(s.UserId))
-                             .ApplySearch(input.SearchText);
+                result = query.Where(s => userIdsHaveAllSkill.Contains(s.UserId));
             }
             return result;
         }
 
-        public List<GetAllResourceDto> ApplyFilterProject(List<GetAllResourceDto> list, InputGetAllResourceDto input)
+        public IQueryable<GetAllResourceDto> ApplyFilterProject(IQueryable<GetAllResourceDto> query, InputGetAllResourceDto input)
         {
             if (input.ProjectId != null)
             {
-                list = list.Where(x => x.WorkingProjects.Any(wp => wp.ProjectId == input.ProjectId)).ToList();
+                return query.ToList().Where(x => x.WorkingProjects.Any(wp => wp.ProjectId == input.ProjectId)).AsQueryable();
             }
-            return list;
+            return query;
         }
 
-        public List<GetAllResourceDto> ApplyFilterPlannedResource(List<GetAllResourceDto> list, InputGetAllResourceDto input)
+        public IQueryable<GetAllResourceDto> ApplyFilterPlannedResource(IQueryable<GetAllResourceDto> query, InputGetAllResourceDto input)
         {
             if (input.PlanStatus != PlanStatus.All && input.PlanStatus != null)
             {
-                list = input.PlanStatus switch
+                query = input.PlanStatus switch
                 {
-                    PlanStatus.AllPlan => list.Where(x => x.PlanProjects.Count > 0).ToList(),
-                    PlanStatus.PlanningJoin => list.Where(x => x.PlanProjects.Any(p => p.AllocatePercentage > 0)).ToList(),
-                    PlanStatus.PlanningOut => list.Where(x => x.PlanProjects.Any(p => p.AllocatePercentage == 0)).ToList(),
-                    PlanStatus.NoPlan => list.Where(x => x.PlanProjects.Count == 0).ToList(),
-                    _ => list,
+                    PlanStatus.AllPlan => query.ToList().Where(x => x.PlanProjects.Count > 0).AsQueryable(),
+                    PlanStatus.PlanningJoin => query.ToList().Where(x => x.PlanProjects.Any(p => p.AllocatePercentage > 0)).AsQueryable(),
+                    PlanStatus.PlanningOut => query.ToList().Where(x => x.PlanProjects.Any(p => p.AllocatePercentage == 0)).AsQueryable(),
+                    PlanStatus.NoPlan => query.ToList().Where(x => x.PlanProjects.Count == 0).AsQueryable(),
+                    _ => query,
                 };
             }
-            return list;
+            return query;
         }
 
         public void SendKomu(StringBuilder komuMessage, string projectCode)
@@ -1355,6 +1353,27 @@ namespace ProjectManagement.Services.ResourceManager
             var currentPU = _workScope.Get<ProjectUser>(projectUserId);
             currentPU.Note = "";
             await _workScope.UpdateAsync(currentPU);
+        }
+        public async Task<List<UserShortInfoDto>> GetListUserShortInfo(bool onlyActive)
+        {
+            var query = _workScope.GetAll<User>()
+                .Where(x => x.UserType != UserType.FakeUser)
+                .Where(x => onlyActive ? x.IsActive : true)
+                .Select(u => new UserShortInfoDto
+                {
+                    Id = u.Id,
+                    EmailAddress = u.EmailAddress,
+                    FullName = u.FullName,
+                    UserType = u.UserType,
+                    IsActive = u.IsActive,
+                    BranchId = u.BranchId,
+                    BrandName = u.Branch.Name
+                })
+                .ToList()
+                .OrderByDescending(x => x.IsActive)
+                .ThenBy(x => x.EmailWithoutDomain)
+                .ToList();
+            return query;
         }
     }
 }

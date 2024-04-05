@@ -473,7 +473,7 @@
                         <span
                           *ngIf="item.billUserInfo">
                             <i class="fa fa-times"
-                               (click)="removeCvUser(item.id)"></i>
+                               (click)="removeCvUser(item)"></i>
                         </span>
                       </div>
                     </div>
@@ -558,7 +558,7 @@
                              (click)="showModalPlanUser(item)"></i>
                           <span *ngIf="item.planUserInfo">
                               <i class="fa fa-times"
-                                 (click)="removePlanUser(item.id)"></i>
+                                 (click)="removePlanUser(item)"></i>
                           </span>
                       </div>
                     </div>

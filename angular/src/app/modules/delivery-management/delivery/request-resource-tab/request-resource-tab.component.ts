@@ -324,15 +324,20 @@ export class RequestResourceTabComponent
     });
   }
 
-  async removePlanUser(id: number) {
+  async removePlanUser(item) {
      abp.message.confirm(
          "Remove This Resource ?",
           "",
         (result: boolean) => {
             if (result) {
-                this.resourceRequestService.RemoveResourceRequestPlan(id).pipe(catchError(this.resourceRequestService.handleError)).subscribe(data => {
+                this.resourceRequestService.RemoveResourceRequestPlan(item.id).pipe(catchError(this.resourceRequestService.handleError)).subscribe(data => {
                         abp.notify.success(` Resource Removed Successfully!`);
-                        this.refresh();
+                        let index = this.listRequest.findIndex(
+                            (x) => x.id == item.id
+                        );
+                        if (index >= 0) {
+                            this.listRequest[index].planUserInfo = null;
+                        }
                     }, () => {
                         this.isLoading = false
                     })
@@ -341,9 +346,9 @@ export class RequestResourceTabComponent
         )
   }
 
-  async removeCvUser(id) {
+  async removeCvUser(item) {
     const input = {
-        resourceRequestId: id
+        resourceRequestId: item.id
     };
 
      abp.message.confirm(
@@ -353,7 +358,12 @@ export class RequestResourceTabComponent
             if (result) {
                 this.resourceRequestService.UpdateBillInfoPlan(input).pipe(catchError(this.resourceRequestService.handleError)).subscribe(data => {
                         abp.notify.success(` Bill Account Removed Successfully!`);
-                        this.refresh();
+                        let index = this.listRequest.findIndex(
+                            (x) => x.id == item.id
+                        );
+                        if (index >= 0) {
+                            this.listRequest[index].billUserInfo = null;
+                            }
                     }, () => {
                         this.isLoading = false
                     })

@@ -1301,5 +1301,27 @@ namespace ProjectManagement.Services.ResourceManager
 
             await _workScope.UpdateAsync(currentPU);
         }
+        public async Task<List<UserShortInfoDto>> GetUserShortInfo(bool onlyActive)
+        {
+            var query = _workScope.GetAll<User>()
+                .Where(x => x.UserType != UserType.FakeUser)
+                .Where(x => onlyActive ? x.IsActive : true)
+                .Select(u => new UserShortInfoDto
+                {
+                    Id = u.Id,
+                    EmailAddress = u.EmailAddress,
+                    FullName = u.FullName,
+                    UserType = u.UserType,
+                    Branch = u.BranchOld,
+                    IsActive = u.IsActive,
+                    BranchId = u.BranchId,
+                    BrandName = u.Branch.Name
+                })
+                .ToList()
+                .OrderByDescending(x => x.IsActive)
+                .ThenBy(x => x.EmailWithoutDomain)
+                .ToList();
+            return query;
+        }
     }
 }

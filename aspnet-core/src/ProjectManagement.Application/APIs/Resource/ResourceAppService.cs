@@ -255,5 +255,16 @@ namespace ProjectManagement.APIs.Resource
         {
             await _resourceManager.UpdateTempProjectForUser(input);
         }
+
+        [HttpGet]
+        public async Task<List<UserShortInfoDto>> GetAllUserShortInfo()
+        {
+            return await _resourceManager.GetUserShortInfo(false);
+        }
+        [HttpGet]
+        public async Task<List<UserShortInfoDto>> GetActiveUserShortInfo()
+        {
+            return await _resourceManager.GetUserShortInfo(true);
+        }
     }
 }

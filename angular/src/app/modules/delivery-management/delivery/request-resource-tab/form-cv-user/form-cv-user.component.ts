@@ -43,10 +43,16 @@ export class FormCvUserComponent extends AppComponentBase implements OnInit {
     this.resourcePlan = this.input.planUser;
 
     this.timeJoin = this.billInfoPlan.startTime;
-    if(this.billInfoPlan.userId){
-      this.typePlan = 'update'
+    this.listUsers = this.input.listUsers
+    if(this.resourcePlan.userId){
+      this.typePlan = 'update';
+      let unassigned = {
+            id: -1,
+            fullName: 'Unassigned',
+            emailAddress: ''
+      };
+      this.listUsers.unshift(unassigned)
     }
-    this.getAllUser()
   }
 
   ngAfterViewChecked(): void {
@@ -55,37 +61,16 @@ export class FormCvUserComponent extends AppComponentBase implements OnInit {
     this.ref.detectChanges()
   }
 
-
-  getAllUser(){
-    let unassigned = {
-      id: -1,
-      fullName: 'Unassigned',
-      emailAddress: ''
-    }
-    this.projectUserBillService.GetAllUser(this.input.item.projectId, '', false, false, true).subscribe(res => {
-      this.listUsers = res.result
-      if(this.typePlan == 'update'){
-        this.listUsers.unshift(unassigned)
-      }
-    })
-  }
-
   SaveAndClose(){
     this.billInfoPlan.startTime = this.timeJoin;
     if (this.billInfoPlan.startTime) {
       this.billInfoPlan.startTime = moment(this.billInfoPlan.startTime).format('YYYY/MM/DD');
     }
 
-    const currentDate = moment().format('YYYY/MM/DD');
     this.resourcePlan.userId = this.billInfoPlan.userId;
     this.resourcePlan.projectUserId = this.billInfoPlan.projectUserId;
     this.resourcePlan.projectRole = 1; //Set default role for Resource as a Dev
-
-    if (this.billInfoPlan.startTime == null  || !moment(this.billInfoPlan.startTime).isValid()){
-      this.resourcePlan.startTime = currentDate;
-    } else {
-      this.resourcePlan.startTime = this.billInfoPlan.startTime;
-    }
+    this.resourcePlan.startTime = this.billInfoPlan.startTime;
 
     if (this.typePlan === 'create') {
       const updateBillInfoPlan = this.resourceRequestService.UpdateBillInfoPlan(this.billInfoPlan);

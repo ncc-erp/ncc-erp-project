@@ -116,4 +116,12 @@ export class ResourceManagerService extends BaseApiService{
   public updateTempProjectForUser(input: any) {
     return this.http.post(this.rootUrl + `/UpdateTempProjectForUser`, input)
   }
+
+  public GetListAllUserShortInfo(): Observable<any>  {
+      return this.http.get(this.rootUrl + `/GetListAllUserShortInfo`)
+  }
+
+  public GetListActiveUserShortInfo(): Observable<any>  {
+      return this.http.get(this.rootUrl + `/GetListActiveUserShortInfo`)
+  }
 }

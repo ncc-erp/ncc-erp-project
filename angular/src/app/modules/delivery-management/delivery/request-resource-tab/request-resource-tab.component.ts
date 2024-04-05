@@ -42,6 +42,7 @@ import { ProjectUserService } from "./../../../../service/api/project-user.servi
 import { concat, forkJoin, empty } from "rxjs";
 import { UpdateUserSkillDialogComponent } from "@app/users/update-user-skill-dialog/update-user-skill-dialog.component";
 import { resourceRequestCodeDto } from './multiple-select-resource-request-code/multiple-select-resource-request-code.component';
+import { ResourceManagerService } from '../../../../service/api/resource-manager.service';
 
 @Component({
   selector: "app-request-resource-tab",
@@ -117,6 +118,9 @@ export class RequestResourceTabComponent
     { text: "No Bill", value: 0 },
   ];
 
+  public listUsers: any[] = [];
+  public listActiveUsers: any[] = [];
+
   ResourceRequest_View = PERMISSIONS_CONSTANT.ResourceRequest_View;
   ResourceRequest_PlanNewResourceForRequest = PERMISSIONS_CONSTANT.ResourceRequest_PlanNewResourceForRequest;
   ResourceRequest_UpdateResourceRequestPlan = PERMISSIONS_CONSTANT.ResourceRequest_UpdateResourceRequestPlan;
@@ -141,6 +145,7 @@ export class RequestResourceTabComponent
     private dialog: MatDialog,
     private listProjectService: ListProjectService,
     private projectUserService: ProjectUserService,
+    private resourceManagerService: ResourceManagerService,
   ) {
     super(injector);
   }
@@ -153,6 +158,7 @@ export class RequestResourceTabComponent
     this.getProjectUserRoles();
     this.getAllProject();
     this.getAllRequestCode();
+    this.getAllUser();
     this.refresh();
   }
 
@@ -279,7 +285,7 @@ export class RequestResourceTabComponent
   async showModalPlanUser(item: any) {
     const data = await this.getPlanResource(item);
     const show = this.dialog.open(FormPlanUserComponent, {
-      data: { ...data, projectUserRoles: this.listProjectUserRoles },
+      data: { ...data, projectUserRoles: this.listProjectUserRoles, listActiveUsers: this.listActiveUsers },
       width: "700px",
       maxHeight: "90vh",
     });
@@ -293,6 +299,15 @@ export class RequestResourceTabComponent
         );
         if (index >= 0) this.listRequest[index].planUserInfo = rs.data.result;
       }
+    });
+  }
+  
+  getAllUser(){
+    this.resourceManagerService.GetListAllUserShortInfo().subscribe(res => {
+      this.listUsers = res.result
+    });
+    this.resourceManagerService.GetListActiveUserShortInfo().subscribe(res => {
+      this.listActiveUsers = res.result
     });
   }
 
@@ -313,7 +328,8 @@ export class RequestResourceTabComponent
     const show = this.dialog.open(FormCvUserComponent, {
       data: {
         item: item,
-        planUser: { ...planUser, projectUserRoles: this.listProjectUserRoles },
+        planUser: { ...planUser, projectUserRoles: this.listProjectUserRoles},
+        listUsers: this.listUsers,
         isHasResource: isHasResource,
       },
       width: "700px",
@@ -339,7 +355,6 @@ export class RequestResourceTabComponent
                             this.listRequest[index].planUserInfo = null;
                         }
                     }, () => {
-                        this.isLoading = false
                     })
                 }
             }
@@ -365,7 +380,6 @@ export class RequestResourceTabComponent
                             this.listRequest[index].billUserInfo = null;
                             }
                     }, () => {
-                        this.isLoading = false
                     })
                 }
             }
@@ -458,6 +472,7 @@ export class RequestResourceTabComponent
     pageNumber: number,
     finishedCallback: Function
   ): void {
+    this.isLoading= true;
     let requestBody: any = request;
     requestBody.isAndCondition = this.isAndCondition;
 
@@ -498,9 +513,11 @@ export class RequestResourceTabComponent
         (data) => {
           this.listRequest = this.tempListRequest = data.result.items;
           this.showPaging(data.result, pageNumber);
+          this.isLoading= false
         },
         (error) => {
           abp.notify.error(error);
+          this.isLoading= false
         }
       );
     let rsFilter = this.resetDataSearch(requestBody, request, objFilter);
@@ -516,7 +533,7 @@ export class RequestResourceTabComponent
     });
     requestBody.sort = null;
     requestBody.sortDirection = null;
-    this.isLoading = false;
+    
 
     return {
       request,

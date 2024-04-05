@@ -36,31 +36,22 @@ export class FormPlanUserComponent extends AppComponentBase implements OnInit {
     this.resourcePlan = this.input;
     this.timeJoin = this.resourcePlan.startTime
     this.listProjectUserRoles = this.input.projectUserRoles
+    this.listUsers = this.input.listActiveUsers
     if(this.resourcePlan.userId){
-      this.typePlan = 'update'
+      this.typePlan = 'update';
+      let unassigned = {
+            id: -1,
+            fullName: 'Unassigned',
+            emailAddress: ''
+      };
+      this.listUsers.unshift(unassigned)
     }
-    this.getAllUser()
   }
 
   ngAfterViewChecked(): void {
     //Called after every check of the component's view. Applies to components only.
     //Add 'implements AfterViewChecked' to the class.
     this.ref.detectChanges()
-  }
-
-
-  getAllUser(){
-    let unassigned = {
-      id: -1,
-      fullName: 'Unassigned',
-      emailAddress: ''
-    }
-    this._userService.getAllActiveUser().subscribe(res => {
-      this.listUsers = res.result
-      if(this.typePlan == 'update'){
-        this.listUsers.unshift(unassigned)
-      }
-    })
   }
 
   SaveAndClose(){

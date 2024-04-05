@@ -272,7 +272,7 @@
                   <b *ngIf="!permission.isGranted(Projects_OutsourcingProjects_ProjectDetail)" class="mb-0">
                     {{ item.projectName }}
                   </b>
-                  <p *ngIf="item.isActive && !item.closeTime" class="mb-0">
+                  <p *ngIf="item.isActive && item.closeTime" class="mb-0">
                      <i  class="far fa-hourglass fa-spin ml-1"></i>&nbsp;
                       <span >{{item.closeTime }}</span>
                    </p>

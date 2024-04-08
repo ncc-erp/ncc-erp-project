@@ -46,12 +46,6 @@ export class FormCvUserComponent extends AppComponentBase implements OnInit {
     this.listUsers = this.input.listUsers
     if(this.resourcePlan.userId){
       this.typePlan = 'update';
-      let unassigned = {
-            id: -1,
-            fullName: 'Unassigned',
-            emailAddress: ''
-      };
-      this.listUsers.unshift(unassigned)
     }
   }
 
@@ -67,60 +61,47 @@ export class FormCvUserComponent extends AppComponentBase implements OnInit {
       this.billInfoPlan.startTime = moment(this.billInfoPlan.startTime).format('YYYY/MM/DD');
     }
 
-    this.resourcePlan.userId = this.billInfoPlan.userId;
-    this.resourcePlan.projectUserId = this.billInfoPlan.projectUserId;
-    this.resourcePlan.projectRole = 1; //Set default role for Resource as a Dev
-    this.resourcePlan.startTime = this.billInfoPlan.startTime;
+    let data = {
+      resourceRequestId: this.billInfoPlan.resourceRequestId,
+      result: null
+    }
 
     if (this.typePlan === 'create') {
-      const updateBillInfoPlan = this.resourceRequestService.UpdateBillInfoPlan(this.billInfoPlan);
-      const createPlanUser = this.resourceRequestService.createPlanUser(this.resourcePlan);
-      const actions = this.billInfoPlan.isHasResource ? [updateBillInfoPlan] : [updateBillInfoPlan, createPlanUser];
-
-      concat(...actions)
-        .pipe(catchError(this.resourceRequestService.handleError))
-        .subscribe(() => {
-          if (this.billInfoPlan.isHasResource) {
-            abp.notify.success('Create Bill Account successfully!');
-          } else {
-            abp.notify.success('Create Bill Account and Plan User successfully!');
-          }
-          this.dialogRef.close(true);
-        });
+      const updateBillInfoPlan = this.resourceRequestService.CreateBillInfoPlan(this.billInfoPlan).subscribe((res:any) => {
+        if(res.success){
+          abp.notify.success("Create successfully")
+          data.result = res.result
+          this.dialogRef.close({ type: 'create', data})
+        }
+        else{
+          abp.notify.error(res.result)
+        }
+      })
     }
     else{
-      if(this.billInfoPlan.userId == -1){
-          let billInfoPlan = {
-            startTime:this.billInfoPlan.startTime,
-            userId:null,
-            resourceRequestId:this.billInfoPlan.resourceRequestId
-          }
-        this.resourceRequestService.UpdateBillInfoPlan(billInfoPlan).subscribe((res:any) => {
-          if(res.success){
-            abp.notify.success("Plan successfully")
-            this.dialogRef.close(true)
-          }
-          else{
-            abp.notify.error(res.result)
-          }
-        })
-      }
-      else{
-        this.resourceRequestService.UpdateBillInfoPlan(this.billInfoPlan).subscribe((res:any) => {
-          if(res.success){
-            abp.notify.success("Update successfully")
-            this.dialogRef.close(true)
-          }
-          else{
-            abp.notify.error(res.result)
-          }
-        })
-      }
+      this.resourceRequestService.UpdateBillInfoPlan(this.billInfoPlan).subscribe((res:any) => {
+        if(res.success){
+          abp.notify.success("Update successfully")
+          data.result = res.result
+          this.dialogRef.close({ type: 'update', data})
+        }
+        else{
+          abp.notify.error(res.result)
+        }
+      })
     }
   }
 
   cancel(){
     this.dialogRef.close()
+  }
+
+  getStyleStatusUser(isActive: boolean){
+    return isActive?"badge badge-pill badge-success":"badge badge-pill badge-danger"
+  }
+
+  getValueStatusUser(isActive: boolean){
+    return isActive?"Active":"InActive"
   }
 
 }

@@ -104,6 +104,10 @@ export class DeliveryResourceRequestService extends BaseApiService {
     return this.http.post(this.rootUrl + `/UpdateBillInfoTemp`, input)
   }
 
+  public CreateBillInfoPlan(input: any) {
+    return this.http.post(this.rootUrl + `/CreateBillInfoPlan`, input)
+  }
+
   public cancelResourceRequest(id: number): Observable<any> {
     return this.http.post<any>(this.rootUrl + '/CancelRequest?requestId=' + id, {});
   }

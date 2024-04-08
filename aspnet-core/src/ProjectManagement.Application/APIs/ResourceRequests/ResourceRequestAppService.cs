@@ -18,6 +18,7 @@ using ProjectManagement.Services.Komu.KomuDto;
 using ProjectManagement.Services.ResourceManager;
 using ProjectManagement.Services.ResourceRequestService;
 using ProjectManagement.Services.ResourceRequestService.Dto;
+using ProjectManagement.Services.ResourceService.Dto;
 using ProjectManagement.Services.Talent;
 using ProjectManagement.Users;
 using System;
@@ -514,7 +515,7 @@ namespace ProjectManagement.APIs.ResourceRequests
 
         [HttpPost]
         [AbpAuthorize(PermissionNames.ResourceRequest_CreateBillResourceForRequest)]
-        public async Task<UpdateResourceRequestPlanForBillInfoDto> UpdateBillInfoTemp(UpdateResourceRequestPlanForBillInfoDto input)
+        public async Task<GetResourceRequestDto> CreateBillInfoPlan(UpdateResourceRequestPlanForBillInfoDto input)
         {
             if (!input.ResourceRequestId.HasValue)
             {
@@ -530,9 +531,70 @@ namespace ProjectManagement.APIs.ResourceRequests
 
             request.BillAccountId = input.UserId;
             request.BillStartDate = input.UserId != null && input.StartTime != null ? input.StartTime : null;
-            WorkScope.Update(request);
 
-            return input;
+            var userActive = await WorkScope.GetAll<User>()
+                .Where(x => x.UserType != UserType.FakeUser
+                            && x.Id == input.UserId)
+                .Select(u => u.IsActive)
+                .FirstOrDefaultAsync();
+
+            if (userActive)
+            {
+                var activeReportId = await _resourceManager.GetActiveReportId();
+
+                var projectUser = new ProjectUser()
+                {
+                    UserId = input.UserId ?? default,
+                    ProjectId = request.ProjectId,
+                    ProjectRole = input.ProjectRole,
+                    AllocatePercentage = 100,
+                    StartTime = input.StartTime.HasValue ? input.StartTime.GetValueOrDefault() : DateTime.Now,
+                    Status = ProjectUserStatus.Future,
+                    ResourceRequestId = input.ResourceRequestId,
+                    PMReportId = activeReportId,
+                    IsPool = false,
+                    Note = "Planned for resource request Id " + input.ResourceRequestId
+                };
+
+                await WorkScope.InsertAndGetIdAsync(projectUser);
+            }
+            
+            await WorkScope.UpdateAsync(request);
+            CurrentUnitOfWork.SaveChanges();
+
+            var requestDto = await _resourceRequestManager.IQGetResourceRequest()
+                .Where(s => s.Id == input.ResourceRequestId)
+                .FirstOrDefaultAsync();
+
+            await notifyToKomu(requestDto, Action.Plan, null);
+
+            return requestDto;
+        }
+
+        [HttpPost]
+        [AbpAuthorize(PermissionNames.ResourceRequest_CreateBillResourceForRequest)]
+        public async Task<PlanUserInfoDto> UpdateBillInfoTemp(UpdateResourceRequestPlanForBillInfoDto input)
+        {
+            if (!input.ResourceRequestId.HasValue)
+            {
+                throw new UserFriendlyException("ResourceRequestId can't be null");
+            }
+
+            var request = await WorkScope.GetAll<ResourceRequest>()
+                .Where(s => s.Id == input.ResourceRequestId.Value)
+                .FirstOrDefaultAsync();
+
+            if (request == default)
+                throw new UserFriendlyException("Not found resource request Id " + input.ResourceRequestId);
+
+            request.BillAccountId = input.UserId;
+            request.BillStartDate = input.UserId != null && input.StartTime != null ? input.StartTime : null;
+            await WorkScope.UpdateAsync(request);
+            CurrentUnitOfWork.SaveChanges();
+
+            return (await _resourceRequestManager.IQGetResourceRequest()
+                .Where(s => s.Id == input.ResourceRequestId)
+                .FirstOrDefaultAsync()).BillUserInfo;
         }
 
         [HttpDelete]

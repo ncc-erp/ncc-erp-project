@@ -286,19 +286,15 @@ export class RequestResourceTabComponent
     const data = await this.getPlanResource(item);
     const show = this.dialog.open(FormPlanUserComponent, {
       data: { ...data, projectUserRoles: this.listProjectUserRoles, listActiveUsers: this.listActiveUsers },
-      width: "700px",
+      width: "800px",
       maxHeight: "90vh",
     });
     show.afterClosed().subscribe((rs) => {
       if (!rs) return;
-      if (rs.type == "delete") {
-        this.refresh();
-      } else {
-        let index = this.listRequest.findIndex(
-          (x) => x.id == rs.data.resourceRequestId
-        );
-        if (index >= 0) this.listRequest[index].planUserInfo = rs.data.result;
-      }
+      let index = this.listRequest.findIndex(
+        (x) => x.id == rs.data.resourceRequestId
+      );
+      if (index >= 0) this.listRequest[index].planUserInfo = rs.data.result;
     });
   }
   
@@ -332,11 +328,20 @@ export class RequestResourceTabComponent
         listUsers: this.listUsers,
         isHasResource: isHasResource,
       },
-      width: "700px",
+      width: "800px",
       maxHeight: "90vh",
     });
     show.afterClosed().subscribe((rs) => {
-      if (rs) this.refresh();
+
+      let index = this.listRequest.findIndex(
+            (x) => x.id == rs.data.resourceRequestId
+      );
+      if (rs.type == "create") {
+         if (index >= 0) this.listRequest[index] = rs.data.result;
+      }
+      else if (rs.type == "update") {
+         if (index >= 0) this.listRequest[index].billUserInfo = rs.data.result;
+      }
     });
   }
 

@@ -39,12 +39,6 @@ export class FormPlanUserComponent extends AppComponentBase implements OnInit {
     this.listUsers = this.input.listActiveUsers
     if(this.resourcePlan.userId){
       this.typePlan = 'update';
-      let unassigned = {
-            id: -1,
-            fullName: 'Unassigned',
-            emailAddress: ''
-      };
-      this.listUsers.unshift(unassigned)
     }
   }
 
@@ -66,7 +60,7 @@ export class FormPlanUserComponent extends AppComponentBase implements OnInit {
         if(res.success){
           abp.notify.success("Plan Success")
           data.result = res.result
-          this.dialogRef.close({ type: '', data})
+          this.dialogRef.close({ type: 'create', data})
         }
         else{
           abp.notify.error(res.result)
@@ -74,33 +68,28 @@ export class FormPlanUserComponent extends AppComponentBase implements OnInit {
       })
     }
     else{
-      if(this.resourcePlan.userId == -1){
-        this.resourceRequestService.deletePlanUser(this.resourcePlan.resourceRequestId).subscribe(res => {
-          if(res.success){
-            abp.notify.success("Plan successfully")
-            this.dialogRef.close({ type: 'delete', data})
-          }
-          else{
-            abp.notify.error(res.result)
-          }
-        })
-      }
-      else{
-        this.resourceRequestService.updatePlanUser(this.resourcePlan).subscribe(res => {
-          if(res.success){
-            abp.notify.success("Update successfully")
-            data.result = res.result
-            this.dialogRef.close({ type: '', data})
-          }
-          else{
-            abp.notify.error(res.result)
-          }
-        })
-      }
+      this.resourceRequestService.updatePlanUser(this.resourcePlan).subscribe(res => {
+        if(res.success){
+          abp.notify.success("Update successfully")
+          data.result = res.result
+          this.dialogRef.close({ type: 'update', data})
+        }
+        else{
+          abp.notify.error(res.result)
+        }
+      })
     }
   }
 
   cancel(){
     this.dialogRef.close()
+  }
+
+  getStyleStatusUser(isActive: boolean){
+    return isActive?"badge badge-pill badge-success":"badge badge-pill badge-danger"
+  }
+
+  getValueStatusUser(isActive: boolean){
+    return isActive?"Active":"InActive"
   }
 }

@@ -713,22 +713,17 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
       (result: boolean) => {
         if (result) {
           this.isLoading = true;
-          this.availableRerourceService.deleteProjectNote(projectUser.id).pipe(catchError(this.availableRerourceService.handleError)).subscribe(data => {
-            abp.notify.success(`Delete Note Successfully!`)
-             this.availableResourceList.forEach(item => {
-              if (Array.isArray(item.workingProjects)) {
-                  const matchingProject = item.workingProjects.find(project => project.id === projectUser.id);
-                  if (matchingProject) {
-                      matchingProject.note = "";
-                  }
-              }
-            });
-             this.isLoading = false;
+          this.availableRerourceService.deleteProjectNote(projectUser.id).pipe(
+            catchError(this.availableRerourceService.handleError)
+          ).subscribe(data => {
+            abp.notify.success(`Delete Note Successfully!`);
+            projectUser.note = "";
+            this.isLoading = false;
           }, () => {
-            this.isLoading = false
-          })
+            this.isLoading = false;
+          });
         }
       }
-    )
+    );
   }
 }

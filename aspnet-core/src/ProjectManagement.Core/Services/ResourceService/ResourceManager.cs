@@ -1031,7 +1031,7 @@ namespace ProjectManagement.Services.ResourceManager
         {
             var query = await QueryAllResource(isVendor);
 
-            query.ApplySearch(input.SearchText);
+            query = query.ApplySearch(input.SearchText);
 
             query = ApplyInputFilters(query, input);
 
@@ -1042,8 +1042,8 @@ namespace ProjectManagement.Services.ResourceManager
             query = ApplyFilterPlannedResource(query, input);
 
             return query.GetGridResultWithoutSearchAndFilter(input);
-
         }
+
         private IQueryable<GetAllResourceDto> ApplyInputFilters(IQueryable<GetAllResourceDto> quser, InputGetAllResourceDto input)
         {
             if (input.BranchIds.Count != 0 || input.PositionIds.Count != 0 || input.SkillIds.Count != 0)

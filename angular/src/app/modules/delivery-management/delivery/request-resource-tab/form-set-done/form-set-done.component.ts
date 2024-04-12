@@ -29,7 +29,6 @@ export class FormSetDoneComponent extends AppComponentBase implements OnInit {
     public injector: Injector,
     public dialogRef: MatDialogRef<FormSetDoneComponent>,
     private projectUserService: ProjectUserService,
-    private projectUserBillService: ProjectUserBillService
   ) {
     super(injector);
   }
@@ -55,51 +54,21 @@ export class FormSetDoneComponent extends AppComponentBase implements OnInit {
       billStartTime: this.planUserInfo.billUserInfo ? moment(this.planUserInfo.billUserInfo.plannedDate).format("YYYY-MM-DD") : null,
     }
 
-    const addedLinkResource = {
-      billAccountId: this.planUserInfo.billUserInfo ? this.planUserInfo.billUserInfo.employee.id : 0,
-      projectId: this.planUserInfo.projectId,
-      userId: this.planUserInfo.employee.id
-    }
-
     const requestObservable = this._resourceRequestService.setDoneRequest(request);
-    const linkUserToBillAccountObservable = this.projectUserBillService.LinkOneProjectUserBillAccount(addedLinkResource);
 
     if (this.plannedUserList.length > 0) {
-
-      if(this.planUserInfo.billUserInfo == null){
-        requestObservable.pipe(catchError(this.projectUserService.handleError)).subscribe(rs => {
-          abp.notify.success(`Confirmed for user ${this.planUserInfo.employee.fullName} join project`)
-          this.dialogRef.close(true);
-        })
-      } else {
-        concat(requestObservable, linkUserToBillAccountObservable)
-        .subscribe(() => {
-          abp.notify.success(`Confirmed for user ${this.planUserInfo.employee.fullName} join project`);
-          setTimeout(rs => {
-            abp.notify.success(`Resource ${this.planUserInfo.employee.fullName} has been added to Bill Account ${this.planUserInfo.billUserInfo.employee.fullName}`,"",  { timer: 6000 });
-          }, 5000);
-          this.dialogRef.close(true);
-        });
-      }
+      requestObservable.pipe(catchError(this.projectUserService.handleError)).subscribe(rs => {
+        abp.notify.success(`Confirmed for user ${this.planUserInfo.employee.fullName} join project`)
+        this.dialogRef.close(true);
+      })
     }
     else {
       abp.message.confirm(`Confirm user <strong>${this.planUserInfo.employee.fullName}</strong> <strong class="text-success">join</strong> Project`, "", rs => {
         if (rs) {
-          if(this.planUserInfo.billUserInfo == null){
-            requestObservable.pipe(catchError(this.projectUserService.handleError)).subscribe(rs => {
-              abp.notify.success(`Confirmed for user ${this.planUserInfo.employee.fullName} join project`)
-              this.dialogRef.close(true);
-            })
-          } else {
-            concat(requestObservable, linkUserToBillAccountObservable)
-            .subscribe(() => {
-              abp.notify.success(`Confirmed for user ${this.planUserInfo.employee.fullName} join project`);
-              setTimeout(rs => {
-                abp.notify.success(`Resource ${this.planUserInfo.employee.fullName} has been added to Bill Account ${this.planUserInfo.billUserInfo.employee.fullName}`,"",  { timer: 6000 });
-              }, 5000);
-              this.dialogRef.close(true);
-            });
-          }
+          requestObservable.pipe(catchError(this.projectUserService.handleError)).subscribe(rs => {
+            abp.notify.success(`Confirmed for user ${this.planUserInfo.employee.fullName} join project`)
+            this.dialogRef.close(true);
+          })
         }
       }, {isHtml:true})
     }

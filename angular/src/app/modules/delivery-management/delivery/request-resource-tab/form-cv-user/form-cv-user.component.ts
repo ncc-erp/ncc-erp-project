@@ -20,8 +20,6 @@ export class FormCvUserComponent extends AppComponentBase implements OnInit {
   public listUsers: any[] = [];
   public billInfoPlan:any
   public timeJoin: any;
-  public typePlan: string = 'create';
-  public resourcePlan = {} as ResourcePlanDto
   constructor(
     injector: Injector,
     @Inject(MAT_DIALOG_DATA) public input: any,
@@ -35,18 +33,13 @@ export class FormCvUserComponent extends AppComponentBase implements OnInit {
   }
 
   ngOnInit(): void {
-    this.billInfoPlan = {startTime: this.input.item.billUserInfo ? this.input.item.billUserInfo.plannedDate : '',
-                         resourceRequestId: this.input.item.id,
-                         userId : this.input.item.billUserInfo ? this.input.item.billUserInfo.employee.id : undefined,
-                         isHasResource: this.input.isHasResource,
+    this.billInfoPlan = {startTime: this.input.billUserInfo ? this.input.billUserInfo.plannedDate : '',
+                         resourceRequestId: this.input.resourceRequestId,
+                         userId : this.input.billUserInfo ? this.input.billUserInfo.employee.id : undefined
                          };
-    this.resourcePlan = this.input.planUser;
 
     this.timeJoin = this.billInfoPlan.startTime;
     this.listUsers = this.input.listUsers
-    if(this.resourcePlan.userId){
-      this.typePlan = 'update';
-    }
   }
 
   ngAfterViewChecked(): void {
@@ -59,37 +52,17 @@ export class FormCvUserComponent extends AppComponentBase implements OnInit {
     this.billInfoPlan.startTime = this.timeJoin;
     if (this.billInfoPlan.startTime) {
       this.billInfoPlan.startTime = moment(this.billInfoPlan.startTime).format('YYYY/MM/DD');
-    }
+      }
 
-    let data = {
-      resourceRequestId: this.billInfoPlan.resourceRequestId,
-      result: null
-    }
-
-    if (this.typePlan === 'create') {
-      const updateBillInfoPlan = this.resourceRequestService.CreateBillInfoPlan(this.billInfoPlan).subscribe((res:any) => {
-        if(res.success){
-          abp.notify.success("Create successfully")
-          data.result = res.result
-          this.dialogRef.close({ type: 'create', data})
-        }
-        else{
-          abp.notify.error(res.result)
-        }
-      })
-    }
-    else{
-      this.resourceRequestService.UpdateBillInfoPlan(this.billInfoPlan).subscribe((res:any) => {
-        if(res.success){
-          abp.notify.success("Update successfully")
-          data.result = res.result
-          this.dialogRef.close({ type: 'update', data})
-        }
-        else{
-          abp.notify.error(res.result)
-        }
-      })
-    }
+    this.resourceRequestService.UpdateBillInfoPlan(this.billInfoPlan).subscribe((res:any) => {
+      if(res.success){
+        abp.notify.success("Update successfully")
+        this.dialogRef.close({ type: 'update', data: res.result})
+      }
+      else{
+        abp.notify.error(res.result)
+      }
+    })
   }
 
   cancel(){

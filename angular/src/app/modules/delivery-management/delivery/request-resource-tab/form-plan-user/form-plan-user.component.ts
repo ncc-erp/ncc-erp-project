@@ -51,16 +51,12 @@ export class FormPlanUserComponent extends AppComponentBase implements OnInit {
   SaveAndClose(){
     this.resourcePlan.startTime = this.timeJoin
     this.resourcePlan.startTime = moment(this.resourcePlan.startTime).format('YYYY/MM/DD')
-    let data = {
-      resourceRequestId: this.resourcePlan.resourceRequestId,
-      result: null
-    }
+
     if(this.typePlan == 'create'){
       this.resourceRequestService.createPlanUser(this.resourcePlan).subscribe(res => {
         if(res.success){
           abp.notify.success("Plan Success")
-          data.result = res.result
-          this.dialogRef.close({ type: 'create', data})
+          this.dialogRef.close({ type: 'create', data: res.result})
         }
         else{
           abp.notify.error(res.result)
@@ -71,8 +67,7 @@ export class FormPlanUserComponent extends AppComponentBase implements OnInit {
       this.resourceRequestService.updatePlanUser(this.resourcePlan).subscribe(res => {
         if(res.success){
           abp.notify.success("Update successfully")
-          data.result = res.result
-          this.dialogRef.close({ type: 'update', data})
+          this.dialogRef.close({ type: 'update', data: res.result})
         }
         else{
           abp.notify.error(res.result)

@@ -119,6 +119,7 @@ namespace ProjectManagement.Services.ResourceRequestService
                                                                         Id = s.UserId,
                                                                         AvatarPath = s.User.AvatarPath,
                                                                     },
+                                                                    Role = s.ProjectRole,
                                                                     PlannedDate = s.StartTime,
                                                                     UserSkill = !userSkills.ContainsKey(s.UserId) ? null : userSkills[s.UserId]
                                                                 }).FirstOrDefault(),

@@ -353,7 +353,7 @@ namespace ProjectManagement.APIs.ResourceRequests
         }
 
         [HttpPost]
-        [AbpAuthorize]
+        [AbpAuthorize] 
         public async Task<ResourceRequestSetDoneDto> SetDone(ResourceRequestSetDoneDto input)
         {
             var request = await WorkScope.GetAll<ResourceRequest>()
@@ -387,14 +387,22 @@ namespace ProjectManagement.APIs.ResourceRequests
                    .FirstOrDefaultAsync();
                 if (existedPUB == null)
                 {
-                    await WorkScope.InsertAsync(new ProjectUserBill
+                    existedPUB = await WorkScope.InsertAsync(new ProjectUserBill
                     {
                         UserId = request.Request.BillAccountId ?? default,
                         StartTime = input.BillStartTime ?? default,
                         ProjectId = request.Request.ProjectId,
                         isActive = true
                     });
+                    CurrentUnitOfWork.SaveChanges();
                 }
+                var newLinkedResource = new LinkedResource
+                {
+                    UserId = request.PlanUserInfo.UserId,
+                    ProjectUserBillId = existedPUB.Id,
+                };
+
+                await WorkScope.InsertAsync(newLinkedResource);
             }
 
             return input;
@@ -464,7 +472,7 @@ namespace ProjectManagement.APIs.ResourceRequests
                     UserId = projectUser.UserId,
                     StartTime = projectUser.StartTime,
                     ProjectRole = projectUser.ProjectRole,
-                    ResourceRequestId = projectUser.ResourceRequestId
+                    ResourceRequestId = projectUser.ResourceRequestId.GetValueOrDefault()
                 };
         }
 
@@ -472,18 +480,7 @@ namespace ProjectManagement.APIs.ResourceRequests
         [AbpAuthorize]
         public async Task<PlanUserInfoDto> CreateResourceRequestPlan(ResourceRequestPlanDto input)
         {
-            if (!input.ResourceRequestId.HasValue)
-            {
-                throw new UserFriendlyException("ResourceRequestId can't be null");
-            }
-
-            var request = await WorkScope.GetAll<ResourceRequest>()
-                .Where(s => s.Id == input.ResourceRequestId.Value)
-                .Select(s => new { s.ProjectId })
-                .FirstOrDefaultAsync();
-
-            if (request == default)
-                throw new UserFriendlyException("Not found resource request Id " + input.ResourceRequestId);
+            var request = WorkScope.Get<ResourceRequest>(input.ResourceRequestId);
 
             var activeReportId = await _resourceManager.GetActiveReportId();
 
@@ -501,7 +498,7 @@ namespace ProjectManagement.APIs.ResourceRequests
                 Note = "Planned for resource request Id " + input.ResourceRequestId
             };
 
-            projectUser.Id = await WorkScope.InsertAndGetIdAsync(projectUser);
+            WorkScope.Insert(projectUser);
             CurrentUnitOfWork.SaveChanges();
 
             var requestDto = await _resourceRequestManager.IQGetResourceRequest()
@@ -515,50 +512,38 @@ namespace ProjectManagement.APIs.ResourceRequests
 
         [HttpPost]
         [AbpAuthorize(PermissionNames.ResourceRequest_CreateBillResourceForRequest)]
-        public async Task<GetResourceRequestDto> CreateBillInfoPlan(UpdateResourceRequestPlanForBillInfoDto input)
+        public async Task<GetResourceRequestDto> UpdateBillInfoTemp(UpdateResourceRequestPlanForBillInfoDto input)
         {
-            if (!input.ResourceRequestId.HasValue)
-            {
-                throw new UserFriendlyException("ResourceRequestId can't be null");
-            }
-
-            var request = await WorkScope.GetAll<ResourceRequest>()
-                .Where(s => s.Id == input.ResourceRequestId.Value)
-                .FirstOrDefaultAsync();
-
-            if (request == default)
-                throw new UserFriendlyException("Not found resource request Id " + input.ResourceRequestId);
+            var request = WorkScope.Get<ResourceRequest>(input.ResourceRequestId);
 
             request.BillAccountId = input.UserId;
-            request.BillStartDate = input.UserId != null && input.StartTime != null ? input.StartTime : null;
+            request.BillStartDate = input.StartTime;
 
-            var userActive = await WorkScope.GetAll<User>()
-                .Where(x => x.UserType != UserType.FakeUser
-                            && x.Id == input.UserId)
-                .Select(u => u.IsActive)
-                .FirstOrDefaultAsync();
+            var isAlreadyHaveResource = WorkScope.GetAll<ProjectUser>()
+                          .Where(s => s.ResourceRequestId == input.ResourceRequestId && s.Status == ProjectUserStatus.Future && s.AllocatePercentage > 0)
+                          .Any();
 
-            if (userActive)
+            if (!isAlreadyHaveResource && request.BillAccountId.HasValue)
             {
                 var activeReportId = await _resourceManager.GetActiveReportId();
 
-                var projectUser = new ProjectUser()
+                var pu = new ProjectUser()
                 {
                     UserId = input.UserId ?? default,
                     ProjectId = request.ProjectId,
                     ProjectRole = input.ProjectRole,
                     AllocatePercentage = 100,
-                    StartTime = input.StartTime.HasValue ? input.StartTime.GetValueOrDefault() : DateTime.Now,
+                    StartTime = input.StartTime.HasValue ? input.StartTime.Value : DateTime.Now.Date,
                     Status = ProjectUserStatus.Future,
                     ResourceRequestId = input.ResourceRequestId,
                     PMReportId = activeReportId,
                     IsPool = false,
                     Note = "Planned for resource request Id " + input.ResourceRequestId
                 };
+                WorkScope.Insert(pu);
 
-                await WorkScope.InsertAndGetIdAsync(projectUser);
             }
-            
+
             await WorkScope.UpdateAsync(request);
             CurrentUnitOfWork.SaveChanges();
 
@@ -569,32 +554,6 @@ namespace ProjectManagement.APIs.ResourceRequests
             await notifyToKomu(requestDto, Action.Plan, null);
 
             return requestDto;
-        }
-
-        [HttpPost]
-        [AbpAuthorize(PermissionNames.ResourceRequest_CreateBillResourceForRequest)]
-        public async Task<PlanUserInfoDto> UpdateBillInfoTemp(UpdateResourceRequestPlanForBillInfoDto input)
-        {
-            if (!input.ResourceRequestId.HasValue)
-            {
-                throw new UserFriendlyException("ResourceRequestId can't be null");
-            }
-
-            var request = await WorkScope.GetAll<ResourceRequest>()
-                .Where(s => s.Id == input.ResourceRequestId.Value)
-                .FirstOrDefaultAsync();
-
-            if (request == default)
-                throw new UserFriendlyException("Not found resource request Id " + input.ResourceRequestId);
-
-            request.BillAccountId = input.UserId;
-            request.BillStartDate = input.UserId != null && input.StartTime != null ? input.StartTime : null;
-            await WorkScope.UpdateAsync(request);
-            CurrentUnitOfWork.SaveChanges();
-
-            return (await _resourceRequestManager.IQGetResourceRequest()
-                .Where(s => s.Id == input.ResourceRequestId)
-                .FirstOrDefaultAsync()).BillUserInfo;
         }
 
         [HttpDelete]
@@ -609,9 +568,6 @@ namespace ProjectManagement.APIs.ResourceRequests
         public async Task<PlanUserInfoDto> UpdateResourceRequestPlan(ResourceRequestPlanDto input)
         {
             var projectUser = WorkScope.Get<ProjectUser>(input.ProjectUserId);
-
-            if (projectUser == null)
-                throw new UserFriendlyException($"Not found ProjectUser with id : {input.ProjectUserId}");
 
             projectUser.UserId = input.UserId ?? default;
             projectUser.StartTime = input.StartTime;

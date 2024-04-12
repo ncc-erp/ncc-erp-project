@@ -225,16 +225,14 @@ export class RequestResourceTabComponent
       this.resourceRequestService.setDoneRequest(request).subscribe((rs) => {
         if (rs) {
           abp.notify.success(`Set done success`);
-          this.refresh();
+          this.listRequest = this.listRequest.filter(req => req.id !== item.id);
         }
       });
     } else {
       let data = {
         ...item.planUserInfo,
         billUserInfo: item.billUserInfo,
-        requestName: item.name,
         resourceRequestId: item.id,
-        projectId: item.projectId,
       };
       const showModal = this.dialog.open(FormSetDoneComponent, {
         data,
@@ -242,7 +240,7 @@ export class RequestResourceTabComponent
         maxHeight: "90vh",
       });
       showModal.afterClosed().subscribe((rs) => {
-        if (rs) this.refresh();
+        if (rs) this.listRequest = this.listRequest.filter(req => req.id !== item.id);
       });
     }
   }
@@ -282,7 +280,7 @@ export class RequestResourceTabComponent
     );
   }
 
-  async showModalPlanUser(item: any) {
+  async showModalPlanUser(item) {
     const data = await this.getPlanResource(item);
     const show = this.dialog.open(FormPlanUserComponent, {
       data: { ...data, projectUserRoles: this.listProjectUserRoles, listActiveUsers: this.listActiveUsers },
@@ -291,57 +289,44 @@ export class RequestResourceTabComponent
     });
     show.afterClosed().subscribe((rs) => {
       if (!rs) return;
-      let index = this.listRequest.findIndex(
-        (x) => x.id == rs.data.resourceRequestId
-      );
-      if (index >= 0) this.listRequest[index].planUserInfo = rs.data.result;
+      item.planUserInfo = rs.data;
     });
   }
   
   getAllUser(){
     this.resourceManagerService.GetListAllUserShortInfo().subscribe(res => {
       this.listUsers = res.result
-    });
-    this.resourceManagerService.GetListActiveUserShortInfo().subscribe(res => {
-      this.listActiveUsers = res.result
+      this.listActiveUsers = this.listUsers.filter(x=>x.isActive);
     });
   }
 
   async getPlanResource(item) {
     let data = new ResourcePlanDto(item.id, 0);
     if (!item.planUserInfo) return data;
-    let res = await this.resourceRequestService.getPlanResource(
-      item.planUserInfo.projectUserId,
-      item.id
-    );
-    return res.result;
+
+    data.projectRole = item.planUserInfo.role;
+    data.projectUserId = item.planUserInfo.projectUserId;
+    data.startTime = item.planUserInfo.plannedDate;
+    data.userId = item.planUserInfo.employee.id;
+    return data;
   }
 
-  async showModalCvUser(item: any) {
+  async showModalCvUser(item) {
     const isHasResource = item.planUserInfo !== null;
     const planUser = await this.getPlanResource(item);
 
     const show = this.dialog.open(FormCvUserComponent, {
       data: {
-        item: item,
-        planUser: { ...planUser, projectUserRoles: this.listProjectUserRoles},
-        listUsers: this.listUsers,
-        isHasResource: isHasResource,
+        resourceRequestId: item.id,
+        billUserInfo: item.billUserInfo,
+        listUsers: this.listUsers,   
       },
       width: "800px",
       maxHeight: "90vh",
     });
     show.afterClosed().subscribe((rs) => {
-
-      let index = this.listRequest.findIndex(
-            (x) => x.id == rs.data.resourceRequestId
-      );
-      if (rs.type == "create") {
-         if (index >= 0) this.listRequest[index] = rs.data.result;
-      }
-      else if (rs.type == "update") {
-         if (index >= 0) this.listRequest[index].billUserInfo = rs.data.result;
-      }
+        item.billUserInfo = rs.data.billUserInfo;
+        item.planUserInfo = rs.data.planUserInfo;
     });
   }
 
@@ -353,12 +338,7 @@ export class RequestResourceTabComponent
             if (result) {
                 this.resourceRequestService.RemoveResourceRequestPlan(item.id).pipe(catchError(this.resourceRequestService.handleError)).subscribe(data => {
                         abp.notify.success(` Resource Removed Successfully!`);
-                        let index = this.listRequest.findIndex(
-                            (x) => x.id == item.id
-                        );
-                        if (index >= 0) {
-                            this.listRequest[index].planUserInfo = null;
-                        }
+                        item.planUserInfo = null;
                     }, () => {
                     })
                 }
@@ -378,12 +358,7 @@ export class RequestResourceTabComponent
             if (result) {
                 this.resourceRequestService.UpdateBillInfoPlan(input).pipe(catchError(this.resourceRequestService.handleError)).subscribe(data => {
                         abp.notify.success(` Bill Account Removed Successfully!`);
-                        let index = this.listRequest.findIndex(
-                            (x) => x.id == item.id
-                        );
-                        if (index >= 0) {
-                            this.listRequest[index].billUserInfo = null;
-                            }
+                        item.billUserInfo = null;
                     }, () => {
                     })
                 }

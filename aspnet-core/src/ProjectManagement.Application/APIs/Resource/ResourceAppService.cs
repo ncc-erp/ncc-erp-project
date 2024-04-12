@@ -153,14 +153,12 @@ namespace ProjectManagement.APIs.Resource
             return await _resourceManager.GetResources(input, false);
         }
 
-
         [HttpPost]
         [AbpAuthorize(PermissionNames.Resource_TabPool)]
         public async Task<GridResult<GetAllPoolResourceDto>> GetAllPoolResource(InputGetResourceDto input)
         {
             return await _resourceManager.GetAllPoolResource(input);
         }
-
 
         public async Task CancelResourcePlan(long projectUserId, bool allowCancelAnyPlan)
         {
@@ -265,6 +263,18 @@ namespace ProjectManagement.APIs.Resource
         public async Task<List<UserShortInfoDto>> GetListActiveUserShortInfo()
         {
             return await _resourceManager.GetListUserShortInfo(true);
+        }
+
+        [HttpGet]
+        public async Task<List<GetProjectsForAllResourceDto>> GetProjectsForAllResource()
+        {
+            return await _resourceManager.GetProjectsForAllResource(); 
+        }
+
+        [HttpPut]
+        public async Task DeleteProjectNote(long projectUserId)
+        {
+            await _resourceManager.DeleteProjectNote(projectUserId);
         }
     }
 }

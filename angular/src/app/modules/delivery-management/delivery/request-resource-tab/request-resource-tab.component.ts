@@ -73,6 +73,7 @@ export class RequestResourceTabComponent
       filterType: 1,
     },
   ];
+  public pageSizeType = 100;
   public projectId = -1;
   public selectedOption: string = "PROJECT";
   public selectedStatus: any = 0;

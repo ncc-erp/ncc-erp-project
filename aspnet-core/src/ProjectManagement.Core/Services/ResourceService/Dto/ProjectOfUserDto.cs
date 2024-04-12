@@ -37,7 +37,7 @@ namespace ProjectManagement.Services.ResourceManager.Dto
                 return CommonUtil.ProjectUserWorkType(this.IsPool);
             }
         }
-
+        public string Note { get; set; }
         public string ResourceRequestCode { get; set; }
         public string ResourceRequestNote { get; set; }
         public string ResourceRequestDes { get; set; }

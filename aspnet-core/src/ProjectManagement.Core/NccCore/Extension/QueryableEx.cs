@@ -42,6 +42,13 @@ namespace NccCore.Extension
             return new GridResult<R>(lstResult, total);
         }
 
+        public static GridResult<T> GetGridResultWithoutSearchAndFilter<T>(this IQueryable<T> qFullQuery, GridParam param) where T : class
+        {
+            var list = qFullQuery.TakePage(param).ToList();
+            var total = qFullQuery.Count();
+            return new GridResult<T>(list, total);
+        }
+
         public static GridResult<T> GetGridResultSync<T, Y>(this IQueryable<T> qFullQuery, IQueryable<Y> qTotalQuery, GridParam param) where T : class
         {
             var list = qFullQuery.ApplySearchAndFilter(param).TakePage(param).ToList();

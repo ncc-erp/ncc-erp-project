@@ -1,4 +1,6 @@
 ﻿using Abp.Application.Services;
+using Abp.UI;
+using Microsoft.EntityFrameworkCore;
 using NccCore.Extension;
 using NccCore.IoC;
 using NccCore.Paging;
@@ -10,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using static ProjectManagement.Constants.Enum.ProjectEnum;
 using Expression = System.Linq.Expressions.Expression;
 
@@ -116,6 +119,7 @@ namespace ProjectManagement.Services.ResourceRequestService
                                                                         Id = s.UserId,
                                                                         AvatarPath = s.User.AvatarPath,
                                                                     },
+                                                                    Role = s.ProjectRole,
                                                                     PlannedDate = s.StartTime,
                                                                     UserSkill = !userSkills.ContainsKey(s.UserId) ? null : userSkills[s.UserId]
                                                                 }).FirstOrDefault(),
@@ -152,6 +156,33 @@ namespace ProjectManagement.Services.ResourceRequestService
                         };
 
             return query;
+        }
+
+        public async Task RemoveResourceRequestPlan(long requestId)
+        {
+            var request =  await _workScope.GetAll<ResourceRequest>()
+               .Where(s => s.Id == requestId)
+               .Select(s => new
+               {
+                   s.Status,
+                   PUs = s.ProjectUsers.Where(s => s.Status == ProjectUserStatus.Future && s.AllocatePercentage > 0).ToList()
+               }).FirstOrDefaultAsync();
+
+            if (request == default)
+            {
+                throw new UserFriendlyException("Not found request with Id " + requestId);
+            }
+
+            if (request.Status == ResourceRequestStatus.DONE)
+            {
+                throw new UserFriendlyException("Request already DONE. You can't delete Planned Resource");
+            }
+
+            foreach (var pu in request.PUs)
+            {
+                await _workScope.DeleteAsync(pu);
+            }
+
         }
     }
 }

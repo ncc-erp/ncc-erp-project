@@ -36,10 +36,10 @@ export class FormPlanUserComponent extends AppComponentBase implements OnInit {
     this.resourcePlan = this.input;
     this.timeJoin = this.resourcePlan.startTime
     this.listProjectUserRoles = this.input.projectUserRoles
+    this.listUsers = this.input.listActiveUsers
     if(this.resourcePlan.userId){
-      this.typePlan = 'update'
+      this.typePlan = 'update';
     }
-    this.getAllUser()
   }
 
   ngAfterViewChecked(): void {
@@ -48,34 +48,15 @@ export class FormPlanUserComponent extends AppComponentBase implements OnInit {
     this.ref.detectChanges()
   }
 
-
-  getAllUser(){
-    let unassigned = {
-      id: -1,
-      fullName: 'Unassigned',
-      emailAddress: ''
-    }
-    this._userService.getAllActiveUser().subscribe(res => {
-      this.listUsers = res.result
-      if(this.typePlan == 'update'){
-        this.listUsers.unshift(unassigned)
-      }
-    })
-  }
-
   SaveAndClose(){
     this.resourcePlan.startTime = this.timeJoin
     this.resourcePlan.startTime = moment(this.resourcePlan.startTime).format('YYYY/MM/DD')
-    let data = {
-      resourceRequestId: this.resourcePlan.resourceRequestId,
-      result: null
-    }
+
     if(this.typePlan == 'create'){
       this.resourceRequestService.createPlanUser(this.resourcePlan).subscribe(res => {
         if(res.success){
           abp.notify.success("Plan Success")
-          data.result = res.result
-          this.dialogRef.close({ type: '', data})
+          this.dialogRef.close({ type: 'create', data: res.result})
         }
         else{
           abp.notify.error(res.result)
@@ -83,33 +64,27 @@ export class FormPlanUserComponent extends AppComponentBase implements OnInit {
       })
     }
     else{
-      if(this.resourcePlan.userId == -1){
-        this.resourceRequestService.deletePlanUser(this.resourcePlan.resourceRequestId).subscribe(res => {
-          if(res.success){
-            abp.notify.success("Plan successfully")
-            this.dialogRef.close({ type: 'delete', data})
-          }
-          else{
-            abp.notify.error(res.result)
-          }
-        })
-      }
-      else{
-        this.resourceRequestService.updatePlanUser(this.resourcePlan).subscribe(res => {
-          if(res.success){
-            abp.notify.success("Update successfully")
-            data.result = res.result
-            this.dialogRef.close({ type: '', data})
-          }
-          else{
-            abp.notify.error(res.result)
-          }
-        })
-      }
+      this.resourceRequestService.updatePlanUser(this.resourcePlan).subscribe(res => {
+        if(res.success){
+          abp.notify.success("Update successfully")
+          this.dialogRef.close({ type: 'update', data: res.result})
+        }
+        else{
+          abp.notify.error(res.result)
+        }
+      })
     }
   }
 
   cancel(){
     this.dialogRef.close()
+  }
+
+  getStyleStatusUser(isActive: boolean){
+    return isActive?"badge badge-pill badge-success":"badge badge-pill badge-danger"
+  }
+
+  getValueStatusUser(isActive: boolean){
+    return isActive?"Active":"InActive"
   }
 }

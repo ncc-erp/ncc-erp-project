@@ -413,7 +413,7 @@ namespace ProjectManagement.APIs.TrainingRequests
                     UserId = projectUser.UserId,
                     StartTime = projectUser.StartTime,
                     ProjectRole = projectUser.ProjectRole,
-                    ResourceRequestId = projectUser.ResourceRequestId
+                    ResourceRequestId = projectUser.ResourceRequestId.GetValueOrDefault()
                 };
         }
 
@@ -421,13 +421,8 @@ namespace ProjectManagement.APIs.TrainingRequests
         [AbpAuthorize]
         public async Task<PlanUserInfoDto> CreateResourceRequestPlan(ResourceRequestPlanDto input)
         {
-            if (!input.ResourceRequestId.HasValue)
-            {
-                throw new UserFriendlyException("ResourceRequestId can't be null");
-            }
-
             var request = await WorkScope.GetAll<ResourceRequest>()
-                .Where(s => s.Id == input.ResourceRequestId.Value)
+                .Where(s => s.Id == input.ResourceRequestId)
                 .Select(s => new { s.ProjectId })
                 .FirstOrDefaultAsync();
 

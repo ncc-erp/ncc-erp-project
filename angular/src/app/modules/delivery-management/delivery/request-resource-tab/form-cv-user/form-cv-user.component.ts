@@ -20,8 +20,6 @@ export class FormCvUserComponent extends AppComponentBase implements OnInit {
   public listUsers: any[] = [];
   public billInfoPlan:any
   public timeJoin: any;
-  public typePlan: string = 'create';
-  public resourcePlan = {} as ResourcePlanDto
   constructor(
     injector: Injector,
     @Inject(MAT_DIALOG_DATA) public input: any,
@@ -35,18 +33,13 @@ export class FormCvUserComponent extends AppComponentBase implements OnInit {
   }
 
   ngOnInit(): void {
-    this.billInfoPlan = {startTime: this.input.item.billUserInfo ? this.input.item.billUserInfo.plannedDate : '',
-                         resourceRequestId: this.input.item.id,
-                         userId : this.input.item.billUserInfo ? this.input.item.billUserInfo.employee.id : undefined,
-                         isHasResource: this.input.isHasResource,
+    this.billInfoPlan = {startTime: this.input.billUserInfo ? this.input.billUserInfo.plannedDate : '',
+                         resourceRequestId: this.input.resourceRequestId,
+                         userId : this.input.billUserInfo ? this.input.billUserInfo.employee.id : undefined
                          };
-    this.resourcePlan = this.input.planUser;
 
     this.timeJoin = this.billInfoPlan.startTime;
-    if(this.billInfoPlan.userId){
-      this.typePlan = 'update'
-    }
-    this.getAllUser()
+    this.listUsers = this.input.listUsers
   }
 
   ngAfterViewChecked(): void {
@@ -55,87 +48,33 @@ export class FormCvUserComponent extends AppComponentBase implements OnInit {
     this.ref.detectChanges()
   }
 
-
-  getAllUser(){
-    let unassigned = {
-      id: -1,
-      fullName: 'Unassigned',
-      emailAddress: ''
-    }
-    this.projectUserBillService.GetAllUser(this.input.item.projectId, '', false, false, true).subscribe(res => {
-      this.listUsers = res.result
-      if(this.typePlan == 'update'){
-        this.listUsers.unshift(unassigned)
-      }
-    })
-  }
-
   SaveAndClose(){
     this.billInfoPlan.startTime = this.timeJoin;
     if (this.billInfoPlan.startTime) {
       this.billInfoPlan.startTime = moment(this.billInfoPlan.startTime).format('YYYY/MM/DD');
-    }
+      }
 
-    const currentDate = moment().format('YYYY/MM/DD');
-    this.resourcePlan.userId = this.billInfoPlan.userId;
-    this.resourcePlan.projectUserId = this.billInfoPlan.projectUserId;
-    this.resourcePlan.projectRole = 1; //Set default role for Resource as a Dev
-
-    if (this.billInfoPlan.startTime == null  || !moment(this.billInfoPlan.startTime).isValid()){
-      this.resourcePlan.startTime = currentDate;
-    } else {
-      this.resourcePlan.startTime = this.billInfoPlan.startTime;
-    }
-
-    if (this.typePlan === 'create') {
-      const updateBillInfoPlan = this.resourceRequestService.UpdateBillInfoPlan(this.billInfoPlan);
-      const createPlanUser = this.resourceRequestService.createPlanUser(this.resourcePlan);
-      const actions = this.billInfoPlan.isHasResource ? [updateBillInfoPlan] : [updateBillInfoPlan, createPlanUser];
-
-      concat(...actions)
-        .pipe(catchError(this.resourceRequestService.handleError))
-        .subscribe(() => {
-          if (this.billInfoPlan.isHasResource) {
-            abp.notify.success('Create Bill Account successfully!');
-          } else {
-            abp.notify.success('Create Bill Account and Plan User successfully!');
-          }
-          this.dialogRef.close(true);
-        });
-    }
-    else{
-      if(this.billInfoPlan.userId == -1){
-          let billInfoPlan = {
-            startTime:this.billInfoPlan.startTime,
-            userId:null,
-            resourceRequestId:this.billInfoPlan.resourceRequestId
-          }
-        this.resourceRequestService.UpdateBillInfoPlan(billInfoPlan).subscribe((res:any) => {
-          if(res.success){
-            abp.notify.success("Plan successfully")
-            this.dialogRef.close(true)
-          }
-          else{
-            abp.notify.error(res.result)
-          }
-        })
+    this.resourceRequestService.UpdateBillInfoPlan(this.billInfoPlan).subscribe((res:any) => {
+      if(res.success){
+        abp.notify.success("Update successfully")
+        this.dialogRef.close({ type: 'update', data: res.result})
       }
       else{
-        this.resourceRequestService.UpdateBillInfoPlan(this.billInfoPlan).subscribe((res:any) => {
-          if(res.success){
-            abp.notify.success("Update successfully")
-            this.dialogRef.close(true)
-          }
-          else{
-            abp.notify.error(res.result)
-          }
-        })
+        abp.notify.error(res.result)
       }
-    }
+    })
   }
 
   cancel(){
     this.dialogRef.close()
+  }
+
+  getStyleStatusUser(isActive: boolean){
+    return isActive?"badge badge-pill badge-success":"badge badge-pill badge-danger"
+  }
+
+  getValueStatusUser(isActive: boolean){
+    return isActive?"Active":"InActive"
   }
 
 }

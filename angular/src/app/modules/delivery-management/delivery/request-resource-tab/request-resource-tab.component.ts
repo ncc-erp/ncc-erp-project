@@ -42,6 +42,7 @@ import { ProjectUserService } from "./../../../../service/api/project-user.servi
 import { concat, forkJoin, empty } from "rxjs";
 import { UpdateUserSkillDialogComponent } from "@app/users/update-user-skill-dialog/update-user-skill-dialog.component";
 import { resourceRequestCodeDto } from './multiple-select-resource-request-code/multiple-select-resource-request-code.component';
+import { ResourceManagerService } from '../../../../service/api/resource-manager.service';
 
 @Component({
   selector: "app-request-resource-tab",
@@ -117,6 +118,9 @@ export class RequestResourceTabComponent
     { text: "No Bill", value: 0 },
   ];
 
+  public listUsers: any[] = [];
+  public listActiveUsers: any[] = [];
+
   ResourceRequest_View = PERMISSIONS_CONSTANT.ResourceRequest_View;
   ResourceRequest_PlanNewResourceForRequest = PERMISSIONS_CONSTANT.ResourceRequest_PlanNewResourceForRequest;
   ResourceRequest_UpdateResourceRequestPlan = PERMISSIONS_CONSTANT.ResourceRequest_UpdateResourceRequestPlan;
@@ -141,6 +145,7 @@ export class RequestResourceTabComponent
     private dialog: MatDialog,
     private listProjectService: ListProjectService,
     private projectUserService: ProjectUserService,
+    private resourceManagerService: ResourceManagerService,
   ) {
     super(injector);
   }
@@ -153,6 +158,7 @@ export class RequestResourceTabComponent
     this.getProjectUserRoles();
     this.getAllProject();
     this.getAllRequestCode();
+    this.getAllUser();
     this.refresh();
   }
 
@@ -219,16 +225,14 @@ export class RequestResourceTabComponent
       this.resourceRequestService.setDoneRequest(request).subscribe((rs) => {
         if (rs) {
           abp.notify.success(`Set done success`);
-          this.refresh();
+          this.listRequest = this.listRequest.filter(req => req.id !== item.id);
         }
       });
     } else {
       let data = {
         ...item.planUserInfo,
         billUserInfo: item.billUserInfo,
-        requestName: item.name,
         resourceRequestId: item.id,
-        projectId: item.projectId,
       };
       const showModal = this.dialog.open(FormSetDoneComponent, {
         data,
@@ -236,7 +240,7 @@ export class RequestResourceTabComponent
         maxHeight: "90vh",
       });
       showModal.afterClosed().subscribe((rs) => {
-        if (rs) this.refresh();
+        if (rs) this.listRequest = this.listRequest.filter(req => req.id !== item.id);
       });
     }
   }
@@ -276,52 +280,90 @@ export class RequestResourceTabComponent
     );
   }
 
-  async showModalPlanUser(item: any) {
+  async showModalPlanUser(item) {
     const data = await this.getPlanResource(item);
     const show = this.dialog.open(FormPlanUserComponent, {
-      data: { ...data, projectUserRoles: this.listProjectUserRoles },
-      width: "700px",
+      data: { ...data, projectUserRoles: this.listProjectUserRoles, listActiveUsers: this.listActiveUsers },
+      width: "800px",
       maxHeight: "90vh",
     });
     show.afterClosed().subscribe((rs) => {
       if (!rs) return;
-      if (rs.type == "delete") {
-        this.refresh();
-      } else {
-        let index = this.listRequest.findIndex(
-          (x) => x.id == rs.data.resourceRequestId
-        );
-        if (index >= 0) this.listRequest[index].planUserInfo = rs.data.result;
-      }
+      item.planUserInfo = rs.data;
+    });
+  }
+  
+  getAllUser(){
+    this.resourceManagerService.GetListAllUserShortInfo().subscribe(res => {
+      this.listUsers = res.result
+      this.listActiveUsers = this.listUsers.filter(x=>x.isActive);
     });
   }
 
   async getPlanResource(item) {
     let data = new ResourcePlanDto(item.id, 0);
     if (!item.planUserInfo) return data;
-    let res = await this.resourceRequestService.getPlanResource(
-      item.planUserInfo.projectUserId,
-      item.id
-    );
-    return res.result;
+
+    data.projectRole = item.planUserInfo.role;
+    data.projectUserId = item.planUserInfo.projectUserId;
+    data.startTime = item.planUserInfo.plannedDate;
+    data.userId = item.planUserInfo.employee.id;
+    return data;
   }
 
-  async showModalCvUser(item: any) {
+  async showModalCvUser(item) {
     const isHasResource = item.planUserInfo !== null;
     const planUser = await this.getPlanResource(item);
 
     const show = this.dialog.open(FormCvUserComponent, {
       data: {
-        item: item,
-        planUser: { ...planUser, projectUserRoles: this.listProjectUserRoles },
-        isHasResource: isHasResource,
+        resourceRequestId: item.id,
+        billUserInfo: item.billUserInfo,
+        listUsers: this.listUsers,   
       },
-      width: "700px",
+      width: "800px",
       maxHeight: "90vh",
     });
     show.afterClosed().subscribe((rs) => {
-      if (rs) this.refresh();
+        item.billUserInfo = rs.data.billUserInfo;
+        item.planUserInfo = rs.data.planUserInfo;
     });
+  }
+
+  async removePlanUser(item) {
+     abp.message.confirm(
+         "Remove This Resource ?",
+          "",
+        (result: boolean) => {
+            if (result) {
+                this.resourceRequestService.RemoveResourceRequestPlan(item.id).pipe(catchError(this.resourceRequestService.handleError)).subscribe(data => {
+                        abp.notify.success(` Resource Removed Successfully!`);
+                        item.planUserInfo = null;
+                    }, () => {
+                    })
+                }
+            }
+        )
+  }
+
+  async removeCvUser(item) {
+    const input = {
+        resourceRequestId: item.id
+    };
+
+     abp.message.confirm(
+         "Remove This Bill Account ?",
+          "",
+        (result: boolean) => {
+            if (result) {
+                this.resourceRequestService.UpdateBillInfoPlan(input).pipe(catchError(this.resourceRequestService.handleError)).subscribe(data => {
+                        abp.notify.success(` Bill Account Removed Successfully!`);
+                        item.billUserInfo = null;
+                    }, () => {
+                    })
+                }
+            }
+        )
   }
 
   sendRecruitment(item: ResourceRequestDto) {
@@ -421,6 +463,7 @@ export class RequestResourceTabComponent
     pageNumber: number,
     finishedCallback: Function
   ): void {
+    this.isLoading= true;
     let requestBody: any = request;
     requestBody.isAndCondition = this.isAndCondition;
 
@@ -461,9 +504,11 @@ export class RequestResourceTabComponent
         (data) => {
           this.listRequest = this.tempListRequest = data.result.items;
           this.showPaging(data.result, pageNumber);
+          this.isLoading= false
         },
         (error) => {
           abp.notify.error(error);
+          this.isLoading= false
         }
       );
     let rsFilter = this.resetDataSearch(requestBody, request, objFilter);
@@ -479,7 +524,7 @@ export class RequestResourceTabComponent
     });
     requestBody.sort = null;
     requestBody.sortDirection = null;
-    this.isLoading = false;
+    
 
     return {
       request,

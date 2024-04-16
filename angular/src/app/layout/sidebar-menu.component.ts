@@ -197,7 +197,7 @@ export class SidebarMenuComponent extends AppComponentBase implements OnInit {
       ),
       new MenuItem(
         this.l('Resources'),
-        '/app/available-resource/pool',
+        '/app/available-resource/all-resource',
         'fas fa-hockey-puck',
         'Resource'
       ),

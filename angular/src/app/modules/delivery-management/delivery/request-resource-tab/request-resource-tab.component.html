@@ -390,7 +390,7 @@
                   </td>
                   <td style="min-width: 245px; max-width: 245px">
                     <div class="row">
-                      <div class="col-md-10">
+                      <div class="col-md-11">
                         <div
                           *ngIf="item.billUserInfo"
                           class="d-flex align-items-start"
@@ -452,13 +452,13 @@
                               {{ item.billUserInfo.employee.positionName }}
                             </span>
                           </p>
-                          <b>{{
+                          <p>{{
                             item.billUserInfo.plannedDate | date : "dd/MM/yyyy"
-                          }}</b>
+                          }}</p>
                         </div>
                       </div>
                       <div
-                        class="col-md-2 text-right"
+                        class="col-md-1"
                         *ngIf="
                           item.statusName == 'PENDING' &&
                           permission.isGranted(
@@ -470,12 +470,17 @@
                           class="fa fa-edit"
                           (click)="showModalCvUser(item)"
                         ></i>
+                        <span
+                          *ngIf="item.billUserInfo">
+                            <i class="fa fa-times"
+                               (click)="removeCvUser(item)"></i>
+                        </span>
                       </div>
                     </div>
                   </td>
                   <td style="min-width: 245px; max-width: 245px">
                     <div class="row">
-                      <div class="col-md-10">
+                      <div class="col-md-11">
                         <div
                           *ngIf="item.planUserInfo"
                           class="d-flex align-items-start"
@@ -537,24 +542,24 @@
                               {{ item.planUserInfo.employee.positionName }}
                             </span>
                           </p>
-                          <b>{{
+                          <p>{{
                             item.planUserInfo.plannedDate | date : "dd/MM/yyyy"
-                          }}</b>
+                          }}</p>
                         </div>
                       </div>
-                      <div
-                        class="col-md-2 text-right"
-                        *ngIf="
+                      <div class="col-md-1"
+                           *ngIf="
                           item.statusName == 'PENDING' &&
                           permission.isGranted(
                             ResourceRequest_PlanNewResourceForRequest
                           )
-                        "
-                      >
-                        <i
-                          class="fa fa-edit"
-                          (click)="showModalPlanUser(item)"
-                        ></i>
+                        ">
+                          <i class="fa fa-edit"
+                             (click)="showModalPlanUser(item)"></i>
+                          <span *ngIf="item.planUserInfo">
+                              <i class="fa fa-times"
+                                 (click)="removePlanUser(item)"></i>
+                          </span>
                       </div>
                     </div>
                   </td>
@@ -635,7 +640,7 @@
                         <i
                           class="fa fa-edit"
                           (click)="
-                            openModal(item.name, 'Note', item.dmNote, item.id)
+                            openModal(item.name, 'Note', item.dmNote, item.id, item.code)
                           "
                         ></i>
                       </div>
@@ -782,10 +787,9 @@
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <!-- Modal Header -->
-        <div class="modal-header">
+        <div class="modal-header" cdkDragHandle>
           <h4 class="modal-title">
-            {{ typePM }}:
-            <span class="text-success">{{ modal_title }}</span>
+            {{ titleModal(typePM) }}
           </h4>
           <button type="button" class="close" (click)="closeModal()">
             &times;
@@ -794,13 +798,9 @@
         <!-- Modal body -->
         <div class="modal-body">
           <div class="row">
-            <div class="col-md-2">
-              <label for="">{{ typePM }}:</label>
-            </div>
             <div class="col-md-10">
-              <textarea
-                rows="6"
-                style="max-height: 550px; height: 550px; min-height: 200px"
+              <textarea style ="width: 750px"
+                rows="8"
                 placeholder="{{ typePM }}"
                 name="note"
                 type="text"

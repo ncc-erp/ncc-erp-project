@@ -48,17 +48,17 @@ export class TrainingRequestTabComponent extends PagedListingComponentBase<Train
   public skillIds: number[]
   public theadTable: THeadTable[] = [
     { name: '#' },
-    { name: 'Priority', sortName: 'priority', defaultSort: 'DESC', width: '88px' },
-    { name: 'Project', sortName: 'projectName', defaultSort: '', width: '88px' },
-    { name: 'Quantity', sortName: 'quantity', defaultSort: '', width: '95px' },
-    { name: 'Skill', width: '5px'  },
-    { name: 'Time request', sortName: 'creationTime', defaultSort: '', width: '128px' },
-    { name: 'Time need', sortName: 'timeNeed', defaultSort: '', width: '108px' },
+    { name: 'Priority', sortName: 'priority', defaultSort: 'DESC', width: '100px'  },
+    { name: 'Project', sortName: 'projectName', defaultSort: '', width: '110px' },
+    { name: 'Quantity', sortName: 'quantity', defaultSort: '', width: '110px' },
+    { name: 'Skill'  },
+    { name: 'Time request', sortName: 'creationTime', defaultSort: '', width: '135px' },
+    { name: 'Time need', sortName: 'timeNeed', defaultSort: '', width: '135px' },
     { name: 'Planned resource'},
     { name: 'PM Note' },
     { name: 'HR/DM Note' },
     { name: 'Status' },
-    { name: 'Action', width: '-100px' },
+    { name: 'Action' },
 
   ]
   public isShowModal: string = 'none'

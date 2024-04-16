@@ -14,6 +14,8 @@ namespace ProjectManagement.Services.ResourceService.Dto
         public long UserId { get; set; }
         [ApplySearchAttribute]
         public string EmailAddress { get; set; }
+        public string SimplizeEmailAddress => this.EmailAddress.Split('@')[0];
+
         [ApplySearchAttribute]
         public string FullName { get; set; }
         [ApplySearchAttribute]
@@ -28,6 +30,7 @@ namespace ProjectManagement.Services.ResourceService.Dto
         public List<UserSkillDto> UserSkills { get; set; }
         public int? StarRate { get; set; }
         public List<ProjectOfUserDto> WorkingProjects { get; set; }
+        [ApplySearchAttribute]
         public string PoolNote { get; set; }
         public string BranchColor { get; set; }
         public string BranchDisplayName { get; set; }

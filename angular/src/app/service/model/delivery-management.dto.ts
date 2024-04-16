@@ -88,7 +88,6 @@ export class availableResourceDto {
   userId: number;
   userName: string;
   emailAddress: string;
-  projects: [];
   used: number;
   fullName: string;
   listSkills: any[];
@@ -97,6 +96,7 @@ export class availableResourceDto {
   avgPoint:number;
   isViewAll: boolean;
   poolNote: string;
+  workingProjects: any[];
 }
 export class planUserDto {
   projectId: number;

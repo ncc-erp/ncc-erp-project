@@ -635,7 +635,7 @@
                         <i
                           class="fa fa-edit"
                           (click)="
-                            openModal(item.name, 'Note', item.dmNote, item.id)
+                            openModal(item.name, 'Note', item.dmNote, item.id, item.code)
                           "
                         ></i>
                       </div>
@@ -782,10 +782,9 @@
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <!-- Modal Header -->
-        <div class="modal-header">
+        <div class="modal-header" cdkDragHandle>
           <h4 class="modal-title">
-            {{ typePM }}:
-            <span class="text-success">{{ modal_title }}</span>
+            {{ titleModal(typePM) }}
           </h4>
           <button type="button" class="close" (click)="closeModal()">
             &times;
@@ -794,13 +793,9 @@
         <!-- Modal body -->
         <div class="modal-body">
           <div class="row">
-            <div class="col-md-2">
-              <label for="">{{ typePM }}:</label>
-            </div>
             <div class="col-md-10">
-              <textarea
-                rows="6"
-                style="max-height: 550px; height: 550px; min-height: 200px"
+              <textarea style ="width: 750px"
+                rows="8"
                 placeholder="{{ typePM }}"
                 name="note"
                 type="text"

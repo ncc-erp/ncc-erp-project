@@ -105,7 +105,6 @@ export class RequestResourceTabComponent
     { name: "Action" },
   ];
   public isShowModal: string = "none";
-  public modal_title: string;
   public strNote: string;
   public typePM: string;
   public resourceRequestId: number;
@@ -344,16 +343,27 @@ export class RequestResourceTabComponent
   }
 
   // #region update note for pm, dmPm
-  public openModal(name, typePM, content, id) {
+  public openModal(name, typePM, content, id, code) {
     this.typePM = typePM;
     this.modal_title = name;
     this.strNote = content;
     this.resourceRequestId = id;
     this.isShowModal = "block";
+    this.code = code;
   }
 
   public closeModal() {
     this.isShowModal = "none";
+  }
+
+  public titleModal(typePM) {
+    switch (typePM) {
+      case 'Note': 
+        return 'Note for Request Code: ' +  `${this.code}`;
+      case 'Description':
+        return 'Description'
+      default: break;
+    }
   }
 
   openPopupSkill(user, userSkill) {

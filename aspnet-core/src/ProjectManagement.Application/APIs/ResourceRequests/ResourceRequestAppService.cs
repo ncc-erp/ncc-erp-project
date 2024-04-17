@@ -380,7 +380,7 @@ namespace ProjectManagement.APIs.ResourceRequests
             await WorkScope.UpdateAsync(request.Request);
 
             // add user in cv column to project user bill table
-            if (request.Request.BillAccountId != null)
+            if (request.Request.BillAccountId != null && request.PlanUserInfo != null)
             {
                 var existedPUB = await WorkScope.GetAll<ProjectUserBill>()
                    .Where(x => x.ProjectId == request.Request.ProjectId && x.UserId == request.Request.BillAccountId)
@@ -518,6 +518,7 @@ namespace ProjectManagement.APIs.ResourceRequests
 
             request.BillAccountId = input.UserId;
             request.BillStartDate = input.StartTime;
+            await WorkScope.UpdateAsync(request);
 
             var isAlreadyHaveResource = WorkScope.GetAll<ProjectUser>()
                           .Where(s => s.ResourceRequestId == input.ResourceRequestId && s.Status == ProjectUserStatus.Future && s.AllocatePercentage > 0)
@@ -543,9 +544,7 @@ namespace ProjectManagement.APIs.ResourceRequests
                 WorkScope.Insert(pu);
 
             }
-
-            await WorkScope.UpdateAsync(request);
-            CurrentUnitOfWork.SaveChanges();
+            await CurrentUnitOfWork.SaveChangesAsync();
 
             var requestDto = await _resourceRequestManager.IQGetResourceRequest()
                 .Where(s => s.Id == input.ResourceRequestId)

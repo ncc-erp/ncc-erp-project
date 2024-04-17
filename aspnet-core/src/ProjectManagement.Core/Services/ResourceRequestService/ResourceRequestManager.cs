@@ -178,10 +178,7 @@ namespace ProjectManagement.Services.ResourceRequestService
                 throw new UserFriendlyException("Request already DONE. You can't delete Planned Resource");
             }
 
-            foreach (var pu in request.PUs)
-            {
-                await _workScope.DeleteAsync(pu);
-            }
+            request.PUs.ForEach(p => {p.IsDeleted = true;});
 
         }
     }

@@ -217,7 +217,7 @@ export class RequestResourceTabComponent
   }
 
   public setDoneRequest(item) {
-    if (!item.planUserInfo && !item.billUserInfo) {
+    if (!item.planUserInfo) {
       const request = {
         requestId: item.id,
         startTime: moment().format("YYYY-MM-DD"),

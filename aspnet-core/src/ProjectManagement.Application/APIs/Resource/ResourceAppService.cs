@@ -266,6 +266,12 @@ namespace ProjectManagement.APIs.Resource
         }
 
         [HttpGet]
+        public async Task<List<UserShortInfoDto>> GetListResourcesShortInfo()
+        {
+            return await _resourceManager.GetListUserShortInfo(true);
+        }
+
+        [HttpGet]
         public async Task<List<GetProjectsForAllResourceDto>> GetProjectsForAllResource()
         {
             return await _resourceManager.GetProjectsForAllResource(); 

@@ -380,7 +380,7 @@ namespace ProjectManagement.APIs.ResourceRequests
             await WorkScope.UpdateAsync(request.Request);
 
             // add user in cv column to project user bill table
-            if (request.Request.BillAccountId != null && request.PlanUserInfo != null)
+            if (request.Request.BillAccountId != null)
             {
                 var existedPUB = await WorkScope.GetAll<ProjectUserBill>()
                    .Where(x => x.ProjectId == request.Request.ProjectId && x.UserId == request.Request.BillAccountId)
@@ -396,15 +396,17 @@ namespace ProjectManagement.APIs.ResourceRequests
                     });
                     CurrentUnitOfWork.SaveChanges();
                 }
-                var newLinkedResource = new LinkedResource
+                if (request.PlanUserInfo != null)
                 {
-                    UserId = request.PlanUserInfo.UserId,
-                    ProjectUserBillId = existedPUB.Id,
-                };
+                    var newLinkedResource = new LinkedResource
+                    {
+                        UserId = request.PlanUserInfo.UserId,
+                        ProjectUserBillId = existedPUB.Id,
+                    };
 
-                await WorkScope.InsertAsync(newLinkedResource);
+                    await WorkScope.InsertAsync(newLinkedResource);
+                }
             }
-
             return input;
         }
 

@@ -396,15 +396,17 @@ namespace ProjectManagement.APIs.ResourceRequests
                     });
                     CurrentUnitOfWork.SaveChanges();
                 }
-                var newLinkedResource = new LinkedResource
+                if (request.PlanUserInfo != null)
                 {
-                    UserId = request.PlanUserInfo.UserId,
-                    ProjectUserBillId = existedPUB.Id,
-                };
+                    var newLinkedResource = new LinkedResource
+                    {
+                        UserId = request.PlanUserInfo.UserId,
+                        ProjectUserBillId = existedPUB.Id,
+                    };
 
-                await WorkScope.InsertAsync(newLinkedResource);
+                    await WorkScope.InsertAsync(newLinkedResource);
+                }
             }
-
             return input;
         }
 
@@ -518,6 +520,7 @@ namespace ProjectManagement.APIs.ResourceRequests
 
             request.BillAccountId = input.UserId;
             request.BillStartDate = input.StartTime;
+            await WorkScope.UpdateAsync(request);
 
             var isAlreadyHaveResource = WorkScope.GetAll<ProjectUser>()
                           .Where(s => s.ResourceRequestId == input.ResourceRequestId && s.Status == ProjectUserStatus.Future && s.AllocatePercentage > 0)
@@ -543,9 +546,7 @@ namespace ProjectManagement.APIs.ResourceRequests
                 WorkScope.Insert(pu);
 
             }
-
-            await WorkScope.UpdateAsync(request);
-            CurrentUnitOfWork.SaveChanges();
+            await CurrentUnitOfWork.SaveChangesAsync();
 
             var requestDto = await _resourceRequestManager.IQGetResourceRequest()
                 .Where(s => s.Id == input.ResourceRequestId)

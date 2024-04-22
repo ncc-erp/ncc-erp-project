@@ -260,11 +260,11 @@
                     class="text-center"
                   >
                     <div class="row sortHeader justify-content-center" [ngStyle]="styleThead(thead)">
-                      <div class="rsp-th-name text-left">
+                      <div class="rsp-th-name">
                         {{ thead.name }}
                       </div>
                       <div
-                        class="rsp-th-sort text-right"
+                        class="rsp-th-sort"
                         *ngIf="i != 0 && thead.sortName"
                         style="vertical-align: middle"
                       >
@@ -406,7 +406,7 @@
                             "
                           >
                             <strong>
-                              {{ item.billUserInfo.employee.fullName }}</strong
+                              {{ extractEmailName(item.billUserInfo.employee.emailAddress) }}</strong
                             >
                           </p>
                           <p class="m-0">
@@ -496,7 +496,7 @@
                             "
                           >
                             <strong>{{
-                              item.planUserInfo.employee.fullName
+                              extractEmailName(item.planUserInfo.employee.emailAddress)
                             }}</strong>
                           </p>
                           <p class="m-0">
@@ -571,15 +571,14 @@
                     "
                   >
                     <div class="row justify-content-between flex-nowrap">
-                      <div class="mx-2">
+                      <div class="col-md-10">
                         <pre
                           (click)="
                             showDescription(item.pmNote);
                             $event.stopPropagation()
                           "
-                          class="mb-0 p-0 ml-2 max-line"
+                          class="mb-0 p-0 ml-2 max-line-content-4"
                           PrjResizeContent
-                          [collapseLine]="5"
                           style="
                             white-space: pre-line;
                             font-family: sans-serif;
@@ -592,7 +591,7 @@
                         >
                       </div>
                       <div
-                        class="mr-2"
+                       class="col-md-2 text-right"
                         *ngIf="permission.isGranted(ResourceRequest_EditPmNote)"
                       >
                         <i
@@ -600,7 +599,7 @@
                           (click)="
                             openModal(
                               item.name,
-                              'Description',
+                              'Description',    
                               item.pmNote,
                               item.id
                             )
@@ -619,9 +618,9 @@
                     <div class="row">
                       <div class="col-md-10">
                         <pre
-                          class="mb-0 p-0 ml-2 max-line-content-3"
+                          class="mb-0 p-0 ml-2 max-line-content-4"
                           PrjResizeContent
-                          [collapseLine]="3"
+                          [collapseLine]="4"
                           style="
                             white-space: pre-line;
                             font-family: sans-serif;
@@ -634,7 +633,7 @@
                         >
                       </div>
                       <div
-                        class="col-md-2"
+                            class="col-md-2 text-right"
                         *ngIf="permission.isGranted(ResourceRequest_EditDmNote)"
                       >
                         <i
@@ -646,6 +645,7 @@
                       </div>
                     </div>
                   </td>
+
                   <td class="text-center action-request-resource-tab">
                     <button mat-button [matMenuTriggerFor]="menu">
                       <i class="fas fa-bars fa-lg"></i>

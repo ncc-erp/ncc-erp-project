@@ -231,7 +231,7 @@
                                                             name="searchBillUser"
                                                             #search>{{search.focus()}}
                                                     </mat-form-field>
-                                                    <mat-option *ngFor="let user of userForUserBill | listFilter: 'fullName' : searchUserBill : 'emailAddress' : 'surname' : 'name'" [value]="user.id">
+                                                    <mat-option *ngFor="let user of userForUserBill | listFilter: 'fullName' : searchUserBill : 'emailAddress' " [value]="user.id">
                                                         <div class="mat-option-text">
                                                             <span class="data-name">
                                                                 {{user.fullName}} - ({{user.emailAddress}})
@@ -281,23 +281,65 @@
                                     <td>
                                         <div class="d-flex align-items-start justify-content-end">
                                             <div class="d-flex" style="flex-direction: column;">
+                                                <div *ngIf="bill.createLinkResourceMode" class="row">
+                                                    <div class="col-9 mb-2 position-relative">
+                                                        <mat-form-field style="max-width: 100%;" class="w-100" appearance="outline">
+                                                            <mat-select panelClass="custom-panel-class" (closed)="focusOut()"
+                                                                [(ngModel)]="selectedResource"
+                                                                name="userBill"
+                                                                placeholder="select a resource *"
+                                                                required
+                                                                #userBill="ngModel">
+                                                                <mat-form-field class="w-100 px-3" style="position: sticky; top: 0; z-index: 2; background-color: white;">
+                                                                    <input matInput [(ngModel)]="searchResource"
+                                                                        placeholder="search"
+                                                                        (keydown)="$event.stopPropagation()"
+                                                                        name="searchResource"
+                                                                        #search>{{search.focus()}}
+                                                                </mat-form-field>
+                                                                <mat-option *ngFor="let resource of listAvailableResource | listFilter: 'fullName' : searchResource : 'emailAddress' " [value]="resource.id">
+                                                                    <div class="mat-option-text">
+                                                                        <span class="data-name">
+                                                                            {{resource.fullName}} - ({{resource.emailAddress}})
+                                                                        </span>
+                                                                    </div>
+                                                                </mat-option>
+                                                            </mat-select>
+                                                        </mat-form-field>
+                                                        <mat-error class="mt-1" *ngIf="userBill.hasError('required') && userBill.touched" style="font-size: 13px;">
+                                                            This field is required
+                                                        </mat-error>
+                                                    </div>
+                                                    <div class="col-3 d-flex align-items-center">
+                                                        <button
+                                                            [disabled]="selectedResource == null"
+                                                            class="mr-1 submit-btn" style="background: none; border: none;"
+                                                            [hidden]="showSearchAndFilter"
+                                                            (click)="saveLinkResource(bill)">
+                                                            <i style="color: green; font-size: 20px;" class="fas fa-check fa-2x "></i>
+                                                        </button>
+                                                        <i style="color: red; font-size: 20px;" class="fas fa-undo fa-2x"
+                                                            [hidden]="showSearchAndFilter"
+                                                            (click)="cancelLinkResource(bill)"></i>
+                                                    </div>
+                                                </div>
                                                 <div *ngFor="let resource of bill.linkedResources" class="mb-2 position-relative">
                                                     <app-user-info
                                                         [userData]="resource"
-                                                        [isHideEmail]="bill.createMode"
+                                                        [isHideEmail]="!bill.createLinkResourceMode"
                                                         [isWeeklyReport] = "false"
                                                         [isSmallerDiv]="true"
                                                         [isChangeContentSize]="true">
                                                     </app-user-info>
-                                                    <i *ngIf="!isAddingOrEditingUserBill" (click)="removeLinkResource(resource.id, bill.id)"
+                                                    <i *ngIf="!isAddingOrEditingUserBill && !isAddingResource" (click)="removeLinkResource(resource.id, bill.id)"
                                                      class="fa fa-times position-absolute" style="top:32px; right: -28px;"></i>
                                                 </div>
                                             </div>
-                                            <i *ngIf="!isAddingOrEditingUserBill && permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount)"
-                                            (click)="handleOpenDialogShadowAccount(bill.projectId, bill.userId, bill.linkedResources, bill.id)"
+                                            <i *ngIf="!isAddingResource && !isAddingOrEditingUserBill && permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount)"
+                                            (click)="addLinkResource(bill)"
                                             class="btn bg-blue ml-2 btn-sm mb-2"
                                             style="cursor: pointer; font-size: 10px;">
-                                            <i class="fa fa-plus fa-s m-0"></i>
+                                                <i class="fa fa-plus fa-s m-0"></i>
                                             </i>
                                         </div>
                                     </td>

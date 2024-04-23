@@ -50,6 +50,15 @@ namespace ProjectManagement.APIs.ProjectUserBills
         [AbpAuthorize(PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo,
           PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo,
           PermissionNames.Projects_TrainingProjects_ProjectDetail_TabBillInfo)]
+        public async Task<Services.ProjectUserBill.Dto.GetProjectUserBillDto> GetProjectUserBillById(long projectUserBillId)
+        {
+            return await projectUserBillManager.GetProjectUserBillById(projectUserBillId);
+        }
+
+        [HttpGet]
+        [AbpAuthorize(PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo,
+          PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo,
+          PermissionNames.Projects_TrainingProjects_ProjectDetail_TabBillInfo)]
         public async Task<List<LinkedResourceInfoDto>> GetAllLinkedResourcesByProject(long projectId)
         {
             return await projectUserBillManager.GetAllLinkedResourcesByProject(projectId);

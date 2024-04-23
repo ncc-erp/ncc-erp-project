@@ -93,16 +93,16 @@ export class RequestResourceTabComponent
 
   public listPriorities: any[] = [];
   public isAndCondition: boolean = false;
-  public sortResource = {};
+  public sortResource = {"code":0};
   public theadTable: THeadTable[] = [
     { name: "#" },
-    { name: "Request Info", sortName: "projectName", defaultSort: "" },
-    { name: "Skill need" },
-    { name: "Code", sortName: "code", defaultSort: "" },
-    { name: "Bill Account", sortName: "billCVEmail", defaultSort: "" },
-    { name: "Resource" },
-    { name: "Description" },
-    { name: "Note" },
+    { name: "Request Info", sortName: "projectName", defaultSort: ""},
+    { name: "Skill need", width: "250px" },
+    { name: "Code", sortName: "code", defaultSort: "ASC", width: "100px" },
+    { name: "Bill Account", sortName: "billCVEmail", defaultSort: "", width: "200px" },
+    { name: "Resource" , width: "200px"},
+    { name: "Description", width: "300px" },
+    { name: "Note", width: "400px" },
     { name: "Action" },
   ];
   public isShowModal: string = "none";
@@ -216,7 +216,7 @@ export class RequestResourceTabComponent
   }
 
   public setDoneRequest(item) {
-    if (!item.planUserInfo && !item.billUserInfo) {
+    if (!item.planUserInfo) {
       const request = {
         requestId: item.id,
         startTime: moment().format("YYYY-MM-DD"),
@@ -634,7 +634,7 @@ export class RequestResourceTabComponent
   // #endregion
   styleThead(item: any) {
     return {
-      width: item.width,
+      'min-width': item.width,
       height: item.height,
     };
   }
@@ -667,7 +667,7 @@ export class RequestResourceTabComponent
           .pipe(catchError(this.resourceRequestService.handleError))
           .subscribe(() => {
             abp.notify.success(" Delete request successfully");
-            this.refresh();
+            this.listRequest = this.listRequest.filter(req => req.id !== item.id);
             this.getAllRequestCode();
           });
       }
@@ -731,6 +731,10 @@ export class RequestResourceTabComponent
     }
     var regexp = new RegExp(/\/[\d]\d{0,}/g);
     return regexp.exec(url).toString().slice(1);
+  }
+
+  extractEmailName(emailAddress) {
+    return emailAddress.split('@')[0];
   }
 }
 

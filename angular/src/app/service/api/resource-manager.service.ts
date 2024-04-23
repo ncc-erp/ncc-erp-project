@@ -132,6 +132,10 @@ export class ResourceManagerService extends BaseApiService{
   public GetListActiveUserShortInfo(): Observable<any>  {
       return this.http.get(this.rootUrl + `/GetListActiveUserShortInfo`)
   }
+
+  public GetListResourcesShortInfo(): Observable<any>{
+    return this.http.get<any>(this.rootUrl + '/GetListResourcesShortInfo');
+  }
   
   public getProjectsForAllResource(): Observable<any> {
     return this.http.get(this.rootUrl + "/GetProjectsForAllResource");

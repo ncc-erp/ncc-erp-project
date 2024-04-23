@@ -96,7 +96,7 @@ export class RequestResourceTabComponent
   public sortResource = {"code":0};
   public theadTable: THeadTable[] = [
     { name: "#" },
-    { name: "Request Info", sortName: "projectName", defaultSort: ""},
+    { name: "Request Info", sortName: "projectName", defaultSort: "", width: "380px"},
     { name: "Skill need", width: "250px" },
     { name: "Code", sortName: "code", defaultSort: "ASC", width: "100px" },
     { name: "Bill Account", sortName: "billCVEmail", defaultSort: "", width: "200px" },
@@ -472,8 +472,6 @@ export class RequestResourceTabComponent
       { name: "projectId", isTrue: false, value: this.projectId },
       { name: "isNewBillAccount", isTrue: false, value: this.isNewBillAccount },
     ];
-
-    this.isNewBillAccount = this.isNewBillAccount;
 
     objFilter.forEach((item) => {
       if (!item.isTrue) {  

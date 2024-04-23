@@ -18,7 +18,13 @@
                         </mat-form-field>
                         <ng-container *ngFor="let user of listUsers | listFilter: 'fullName' : search : 'emailAddress'">
                             <mat-option [value]="user.id">
-                                {{user.fullName}} - {{user.emailAddress}}
+                                <span >
+                                    {{user.fullName}} - ({{user.emailAddress}})
+                                </span>
+                                <span class="data-type-label"
+                                        [ngClass]="getStyleStatusUser(user.isActive)" style="display: inline-block;">
+                                    {{ getValueStatusUser(user.isActive) }}
+                                </span>
                             </mat-option>
                         </ng-container>
                     </mat-select>

@@ -36,7 +36,7 @@ export class ShadowAccountDialogComponent
     this.listResourceSelect = this.data.listResource;
     this.listResourceSelected = [...this.data.listResource];
     this.listResourceSelectCurrent = [...this.listResourceSelect];
-    this.listAllResource = this.data.listAllResource.filter(item => !this.listResourceSelect.includes(item.userId));
+    this.listAllResource = this.data.listAllResource.filter(item => !this.listResourceSelect.includes(item.id));
   }
 
   openedChange(event){
@@ -57,8 +57,8 @@ export class ShadowAccountDialogComponent
   }
 
   orderListResource(){
-    this.resourceSelected = this.listAllResource.filter(item =>  this.listResourceSelect.includes(item.userId))
-    this.resourceUnSelected  = this.listAllResource.filter(item =>  !this.listResourceSelect.includes(item.userId))
+    this.resourceSelected = this.listAllResource.filter(item =>  this.listResourceSelect.includes(item.id))
+    this.resourceUnSelected  = this.listAllResource.filter(item =>  !this.listResourceSelect.includes(item.id))
     this.listAllResource = [...this.resourceSelected, ...this.resourceUnSelected]
   }
 
@@ -95,11 +95,11 @@ export class ShadowAccountDialogComponent
   clear(){
     this.listResourceSelect = [];
     this.listResourceSelectCurrent = [];
-    this.resourceSelected = this.listAllResource.filter(item =>  this.listResourceSelect.includes(item.userId))
+    this.resourceSelected = this.listAllResource.filter(item =>  this.listResourceSelect.includes(item.id))
   }
   selectAll(){
-    this.listResourceSelect = this.listAllResource.map(item => item.userId)
+    this.listResourceSelect = this.listAllResource.map(item => item.id)
     this.listResourceSelectCurrent = [... this.listResourceSelect]
-    this.resourceSelected = this.listAllResource.filter(item =>  this.listResourceSelect.includes(item.userId))
+    this.resourceSelected = this.listAllResource.filter(item =>  this.listResourceSelect.includes(item.id))
   }
 }

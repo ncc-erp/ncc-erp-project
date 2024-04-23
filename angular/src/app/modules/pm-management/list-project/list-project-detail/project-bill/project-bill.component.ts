@@ -28,6 +28,7 @@ import { MatSelect } from '@angular/material/select';
 import { Pipe, PipeTransform } from '@angular/core';
 import { optionDto } from '@shared/components/multiple-select/multiple-select.component';
 import * as _ from 'lodash';
+import { ResourceManagerService } from '@app/service/api/resource-manager.service';
 
 
 @Component({
@@ -52,7 +53,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   public panelOpenState: boolean = false;
   public isShowUserBill: boolean = false;
   public showSearchAndFilter: boolean = true;
-  public isAddingOrEditingUserBill: boolean = false
+  public isAddingOrEditingUserBill: boolean = false;
   public searchUserBill: string = "";
   public searchText: string = "";
   public accountName;
@@ -110,7 +111,8 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     private userService: UserService,
     private _modalService: BsModalService,
     private dialog: MatDialog,
-    private projectService: ListProjectService) {
+    private projectService: ListProjectService,
+    private resourceManagerService: ResourceManagerService) {
     super(injector)
     this.projectId = Number(this.route.snapshot.queryParamMap.get("id"));
   }
@@ -124,7 +126,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     this.getCurrentProjectInfo();
     this.getProjectBillInfo();
     this.searchContext();
-    this.getAllFakeUser('');
+    this.getAllFakeUser();
     this.getAllLinkResource();
   }
 
@@ -205,8 +207,8 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   }
   //#endregion
 
-  private getAllFakeUser(userId?) {
-    this.projectUserBillService.GetAllUser(this.projectId, userId, false, true, true).pipe(catchError(this.userService.handleError)).subscribe(data => {
+  private getAllFakeUser() {
+    this.resourceManagerService.GetListAllUserShortInfo().pipe(catchError(this.userService.handleError)).subscribe(data => {
       this.userForUserBill = data.result;
     })
   }
@@ -432,7 +434,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   }
 
   getAllLinkResource(){
-    this.projectUserBillService.GetAllResource().subscribe(res => {
+    this.resourceManagerService.GetListResourcesShortInfo().subscribe(res => {
       this.listAllResource = res.result;
       this.isLoading = false;
     }, () => { this.isLoading = false; });

@@ -22,9 +22,14 @@
                         </mat-form-field>
                         <ng-container *ngFor="let user of listUsers | listFilter: 'fullName' : search : 'emailAddress'">
                             <mat-option [value]="user.id">
-                                {{user.fullName}} - {{user.emailAddress}}
-                            </mat-option>
-                        </ng-container>
+                                <span class="data-name">
+                                    {{user.fullName}} - ({{user.emailAddress}})
+                                </span>
+                                <span class="data-type-label"
+                                      [ngClass]="getStyleStatusUser(user.isActive)">
+                                    {{ getValueStatusUser(user.isActive) }}
+                                </span>
+                            </mat-option></ng-container>
                     </mat-select>
                 </mat-form-field>
                 <mat-error class="mt-1" *ngIf="userIdValid.hasError('required') && userIdValid.touched"

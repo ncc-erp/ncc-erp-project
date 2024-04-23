@@ -26,7 +26,7 @@ export class AvailableResourceTabComponent extends AppComponentBase implements O
   }
 
   ngOnInit(): void {
-    this.router.navigate(['pool'],{
+    this.router.navigate(['all-resource'],{
       relativeTo:this.route,
       replaceUrl:true
     })

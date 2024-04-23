@@ -15,7 +15,7 @@ namespace ProjectManagement.APIs.ResourceRequests.Dto
 
         public DateTime StartTime { get; set; }
 
-        public long? ResourceRequestId { get; set; }
+        public long ResourceRequestId { get; set; }
     }
 
     public class UpdateResourceRequestPlanForBillInfoDto
@@ -28,6 +28,6 @@ namespace ProjectManagement.APIs.ResourceRequests.Dto
 
         public DateTime? StartTime { get; set; }
 
-        public long? ResourceRequestId { get; set; }
+        public long ResourceRequestId { get; set; }
     }
 }

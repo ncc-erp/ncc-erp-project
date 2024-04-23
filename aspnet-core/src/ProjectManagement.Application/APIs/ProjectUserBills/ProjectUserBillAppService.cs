@@ -181,6 +181,31 @@ namespace ProjectManagement.APIs.ProjectUserBills
                 .ToListAsync();
             return query;
         }
+        
+        [HttpGet]
+        [AbpAuthorize(PermissionNames.Resource_TabAllBillAccount)]
+        //[AbpAllowAnonymous]
+        public async Task<List<GetUserInfo>> GetLinkResources(long projectUserBillId)
+        {
+            return await WorkScope.All<LinkedResource>()
+                    .Where(s => s.ProjectUserBillId == projectUserBillId)
+                .Select(lr => new GetUserInfo
+                {
+                    Id = lr.UserId,
+                    EmailAddress = lr.User.EmailAddress,
+                    UserName = lr.User.UserName,
+                    AvatarPath = lr.User.AvatarPath ?? "",
+                    UserType = lr.User.UserType,
+                    PositionId = lr.User.PositionId,
+                    PositionColor = lr.User.Position.Color,
+                    PositionName = lr.User.Position.ShortName,
+                    UserLevel = lr.User.UserLevel,
+                    BranchColor = lr.User.Branch.Color,
+                    BranchDisplayName = lr.User.Branch.DisplayName,
+                    IsActive = lr.User.IsActive,
+                    FullName = lr.User.FullName
+                }).ToListAsync();
+        }
 
         [HttpPost]
         [AbpAuthorize(PermissionNames.Resource_TabAllBillAccount)]
@@ -206,6 +231,7 @@ namespace ProjectManagement.APIs.ProjectUserBills
                     },
                     Project = new GetProjectBillDto
                     {
+                        BillId = x.Id,
                         ProjectStatus = x.Project.Status,
                         ProjectId = x.ProjectId,
                         ProjectName = x.Project.Name,
@@ -219,7 +245,23 @@ namespace ProjectManagement.APIs.ProjectUserBills
                         CurrencyCode = x.Project.Currency.Code,
                         ClientId = x.Project.ClientId,
                         ClientCode = x.Project.Client.Code,
-                        ClientName = x.Project.Client.Name
+                        ClientName = x.Project.Client.Name,
+                        LinkedResources = x.LinkedResources.Select(lr => new GetUserInfo
+                        {
+                            Id = lr.UserId,
+                            EmailAddress = lr.User.EmailAddress,
+                            UserName = lr.User.UserName,
+                            AvatarPath = lr.User.AvatarPath ?? "",
+                            UserType = lr.User.UserType,
+                            PositionId = lr.User.PositionId,
+                            PositionColor = lr.User.Position.Color,
+                            PositionName = lr.User.Position.ShortName,
+                            UserLevel = lr.User.UserLevel,
+                            BranchColor = lr.User.Branch.Color,
+                            BranchDisplayName = lr.User.Branch.DisplayName,
+                            IsActive = lr.User.IsActive,
+                            FullName = lr.User.FullName
+                        })
                     },
                     IsCharge = x.isActive
                 })
@@ -241,11 +283,13 @@ namespace ProjectManagement.APIs.ProjectUserBills
                 {
                     UserInfor = s.Key,
                     Projects = s.Select(x => x.Project).OrderBy(x => x.ClientCode).ToList()
-                }).OrderBy(s => s.UserInfor.EmailAddress)
-                .AsQueryable();
+                })
+                .OrderBy(s => s.UserInfor.EmailAddress)
+                .AsQueryable(); 
 
             return result.GetGridResultSync(result, input);
         }
+
 
         /// <summary>
         /// return list projects that have the same client with input projectId

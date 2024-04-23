@@ -9,15 +9,13 @@ import { BaseApiService } from './base-api.service';
   providedIn: 'root'
 })
 export class ResourceManagerService extends BaseApiService{
-
   changeUrl() {
     return 'Resource';
   }
+
   constructor(http: HttpClient) {
     super(http);
   }
-
-
 
   public GetVendorResource(
     request: PagedRequestDto
@@ -36,6 +34,7 @@ export class ResourceManagerService extends BaseApiService{
       request
     );
   }
+
   public GetAllResource(
     request: PagedRequestDto
   ): Observable<any> {
@@ -53,6 +52,7 @@ export class ResourceManagerService extends BaseApiService{
 
     );
   }
+  
   public CancelAllResourcePlan(
     id: number
   ): Observable<any> {
@@ -60,7 +60,9 @@ export class ResourceManagerService extends BaseApiService{
       this.rootUrl + '/CancelAllResourcePlan?projectUserId=' + id,
 
     );
-  }  public CancelVendorResourcPlan(
+  } 
+  
+  public CancelVendorResourcPlan(
     id: number
   ): Observable<any> {
     return this.http.delete<any>(
@@ -82,15 +84,19 @@ export class ResourceManagerService extends BaseApiService{
     return this.http.post(this.rootUrl + `/ConfirmOutProject`, input)
 
   }
+  
   // public ConfirmJoinProject(projectUserId: number, startTime: any) {
   //   return this.http.get(this.rootUrl + `/ConfirmJoinProject?projectUserId=${projectUserId}&startTime=${startTime}`)
   // }
+
   public ConfirmJoinProjectFromTabPool(projectUserId: number, startTime: any) {
     return this.http.get(this.rootUrl + `/ConfirmJoinProjectFromTabPool?projectUserId=${projectUserId}&startTime=${startTime}`)
   }
+
   public ConfirmJoinProjectFromTabAllResource(projectUserId: number, startTime: any) {
     return this.http.get(this.rootUrl + `/ConfirmJoinProjectFromTabAllResource?projectUserId=${projectUserId}&startTime=${startTime}`)
   }
+
   public ConfirmJoinProjectFromTabVendor(projectUserId: number, startTime: any) {
     return this.http.get(this.rootUrl + `/ConfirmJoinProjectFromTabVendor?projectUserId=${projectUserId}&startTime=${startTime}`)
   }
@@ -106,14 +112,36 @@ export class ResourceManagerService extends BaseApiService{
   public AddUserToTempProject( input:any) {
     return this.http.post(this.rootUrl + `/AddUserFromPoolToTempProject`,input)
   }
+
   public planUser(item: any): Observable<any> {
     return this.http.post<any>(this.rootUrl + '/PlanEmployeeJoinOrOutProject', item);
   }
+
   public GetTimesheetOfRetroReviewInternHistories(input:RetroReviewInternHistoriesDto): Observable<any> {
     return this.http.post(this.rootUrl + `/GetRetroReviewInternHistories`, input)
   }
 
   public updateTempProjectForUser(input: any) {
     return this.http.post(this.rootUrl + `/UpdateTempProjectForUser`, input)
+  }
+
+  public GetListAllUserShortInfo(): Observable<any>  {
+      return this.http.get(this.rootUrl + `/GetListAllUserShortInfo`)
+  }
+
+  public GetListActiveUserShortInfo(): Observable<any>  {
+      return this.http.get(this.rootUrl + `/GetListActiveUserShortInfo`)
+  }
+
+  public GetListResourcesShortInfo(): Observable<any>{
+    return this.http.get<any>(this.rootUrl + '/GetListResourcesShortInfo');
+  }
+  
+  public getProjectsForAllResource(): Observable<any> {
+    return this.http.get(this.rootUrl + "/GetProjectsForAllResource");
+  }
+
+  public deleteProjectNote(projectUserId: number): Observable<any> {
+    return this.http.put<any>(this.rootUrl + `/DeleteProjectNote?projectUserId=${projectUserId}`, {});
   }
 }

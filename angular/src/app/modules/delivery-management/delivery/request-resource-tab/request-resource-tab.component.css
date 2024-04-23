@@ -77,6 +77,17 @@ table td {
     -webkit-box-orient: vertical;
 }
 
+.max-line-content-4 {
+    word-break: break-word;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    line-height: 20px; 
+    max-height: 100px; 
+    -webkit-line-clamp: 4; 
+    -webkit-box-orient: vertical;
+}
+
 :host ::ng-deep .mat-button {
     min-width: 48px;
 }

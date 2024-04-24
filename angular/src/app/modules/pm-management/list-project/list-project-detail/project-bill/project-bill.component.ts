@@ -383,8 +383,14 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
       })
   }
 
-  public cancelUserBill(): void {
-    this.getUserBill();
+  public cancelUserBill(userBill): void {
+    if (!this.isEditUserBill) {
+      let index = this.filteredUserBillList.indexOf(userBill);
+      if (index !== -1) {
+          this.filteredUserBillList.splice(index, 1);
+      }
+    }   
+    userBill.createMode = false;
     this.userBillProcess = false;
     this.isEditUserBill = false;
     this.searchUserBill = "";

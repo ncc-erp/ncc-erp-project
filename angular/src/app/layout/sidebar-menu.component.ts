@@ -9,6 +9,7 @@ import {
 import { BehaviorSubject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { MenuItem } from '@shared/layout/menu-item';
+import { PERMISSIONS_CONSTANT } from '@app/constant/permission.constant';
 
 @Component({
   selector: 'sidebar-menu',
@@ -29,6 +30,13 @@ export class SidebarMenuComponent extends AppComponentBase implements OnInit {
 
   ngOnInit(): void {
     this.menuItems = this.getMenuItems();
+    if (!this.permission.isGranted(PERMISSIONS_CONSTANT.Resource_TabAllResource)) {
+        const resourceMenuItem = this.menuItems.find(item => item.label === this.l('Resources'));
+
+        if (resourceMenuItem) {
+            resourceMenuItem.route = '/app/available-resource/pool';
+        }
+    }
     this.patchMenuItems(this.menuItems);
     this.routerEvents
       .pipe(filter((event) => event instanceof NavigationEnd))

@@ -54,8 +54,11 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   public isShowUserBill: boolean = false;
   public showSearchAndFilter: boolean = true;
   public isAddingOrEditingUserBill: boolean = false;
+  public isAddingResource: boolean = false;
   public searchUserBill: string = "";
+  public searchResource: string = "";
   public searchText: string = "";
+  public selectedResource: number | null = null;
   public accountName;
   public billRole;
   private projectId: number
@@ -93,6 +96,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   public listSelectLinkedResources: optionDto[] = [];
 
   public listAllResource = []
+  public listAvailableResource = []
 
   Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_View = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_View;
   Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Create = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Create;
@@ -125,9 +129,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     this.getAllProject();
     this.getCurrentProjectInfo();
     this.getProjectBillInfo();
-    this.searchContext();
-    this.getAllFakeUser();
-    this.getAllLinkResource();
+    this.getListUserAndResources();
   }
 
   isShowInvoiceSetting(){
@@ -207,9 +209,10 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   }
   //#endregion
 
-  private getAllFakeUser() {
+  private getListUserAndResources() {
     this.resourceManagerService.GetListAllUserShortInfo().pipe(catchError(this.userService.handleError)).subscribe(data => {
       this.userForUserBill = data.result;
+      this.listAllResource = this.userForUserBill.filter(item => item.isActive)
     })
   }
   public removeLinkResource(userId, id){
@@ -217,7 +220,6 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
       projectUserBillId: id,
       userIds: [userId]
     }
-    const status = this.userBillList.find(item => item.id === id).createMode
     abp.message.confirm(
       "Remove linked resource?",
       "",
@@ -226,7 +228,13 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
           this.isLoading = true;
           this.projectUserBillService.RemoveLinkedResource(req).pipe(catchError(this.projectUserBillService.handleError)).subscribe(data => {
             abp.notify.success(`Linked Resource Removed Successfully!`)
-             this.getUserBill(id, status);
+            this.filteredUserBillList = this.filteredUserBillList.map(userBill => {
+              if (userBill.id === id) {
+                  userBill.linkedResources = userBill.linkedResources.filter(linkedResource => linkedResource.id !== userId);
+              }
+              return userBill;
+            });
+            this.isLoading = false;
           }, () => {
             this.isLoading = false
           })
@@ -291,7 +299,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
         }
         this.projectUserBillService.update(userBillToUpdate).pipe(catchError(this.projectUserBillService.handleError)).subscribe(()=>{
           abp.notify.success("Update successfully")
-          this.getUserBill()
+          this.getUpdatedProjectUserBill(userBill.id);
           this.userBillProcess = false;
           this.isEditUserBill = false;
           this.searchUserBill = "";
@@ -375,8 +383,14 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
       })
   }
 
-  public cancelUserBill(): void {
-    this.getUserBill();
+  public cancelUserBill(userBill): void {
+    if (!this.isEditUserBill) {
+      let index = this.filteredUserBillList.indexOf(userBill);
+      if (index !== -1) {
+          this.filteredUserBillList.splice(index, 1);
+      }
+    }   
+    userBill.createMode = false;
     this.userBillProcess = false;
     this.isEditUserBill = false;
     this.searchUserBill = "";
@@ -416,6 +430,17 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     }, () => { this.isLoading = false; });
   }
 
+  getUpdatedProjectUserBill(id: number){
+    this.isLoading = true;
+    this.projectUserBillService.GetProjectUserBillById(id).pipe(
+      catchError(this.projectUserBillService.handleError)
+    ).subscribe(data => {
+        let updated = data.result;
+        this.filteredUserBillList = this.filteredUserBillList.map(item => (item.userId === updated.userId ? updated : item));
+        this.isLoading = false;
+    }, () => { this.isLoading = false; });
+  }
+
   GetChargeRoleData(){
     this.projectUserBillService.GetAllChargeRoleByProject(this.projectId).subscribe(data => {
       this.listSelectChargeRole = data.result;
@@ -431,13 +456,6 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
         };
       });
     })
-  }
-
-  getAllLinkResource(){
-    this.resourceManagerService.GetListResourcesShortInfo().subscribe(res => {
-      this.listAllResource = res.result;
-      this.isLoading = false;
-    }, () => { this.isLoading = false; });
   }
 
   filterByIsCharge() {
@@ -488,8 +506,9 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
           this.isLoading = true
           this.projectUserBillService.deleteUserBill(userBill.id)
           .pipe(catchError(this.projectUserBillService.handleError)).subscribe(()=>{
-                abp.notify.success("Delete Bill account success")
-                this.getUserBill()
+            abp.notify.success("Delete Bill account success")
+            this.filteredUserBillList = this.filteredUserBillList.filter(user => user.id !== userBill.id);
+            this.isLoading = false;
           })
         }
       }
@@ -497,6 +516,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   }
   public focusOut() {
     this.searchUserBill = '';
+    this.searchResource = '';
   }
 
   cancelLastInvoiceNumber() {
@@ -557,27 +577,44 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     })
   }
 
-  handleOpenDialogShadowAccount(projectId, userId, listResource, id)
-  {
-    const show = this.dialog.open(ShadowAccountDialogComponent, {
-      data: {
-        projectId: projectId,
-        userId: this.userIdOld != userId && this.isEditUserBill ? this.userIdOld : userId,
-        listResource: listResource ? listResource.map(item=> item.id) : [],
-        listAllResource: this.listAllResource,
-        userIdNew: userId,
-        projectUserBillId: id
-      },
-      width: "700px",
-    })
+  public addLinkResource(userBill: projectUserBillDto): void {
+    let listLinkedResourceId = userBill.linkedResources.map(item => item.id);
+    this.listAvailableResource = this.listAllResource.filter(resource => !listLinkedResourceId.includes(resource.id));
+    userBill.createLinkResourceMode = true;
+    this.userBillProcess = true;
+    this.showSearchAndFilter = false;
+    this.isAddingResource = true;
+  }
 
-    const status = this.userBillList.find(item => item.id === id).createMode
+  public saveLinkResource(userBill): void {
+    this.isLoading = true
+    const reqAdd = {
+      projectUserBillId: userBill.id,
+      userId: this.selectedResource
+    };
+    
+    this.projectUserBillService.LinkOneProjectUserBillAccount(reqAdd).pipe(
+      catchError(this.projectUserBillService.handleError)
+    ).subscribe(() => {
+      abp.notify.success("Linked resources updated successfully");
+      this.getUpdatedProjectUserBill(userBill.id)
+      userBill.createLinkResourceMode = false;
+      this.selectedResource = null
+      this.userBillProcess = false;
+      this.searchResource = "";
+      this.showSearchAndFilter = true;
+      this.isAddingResource = false;
+      this.isLoading = false;
+    }, () => { this.isLoading = false; });
+  }
 
-    show.afterClosed().subscribe((res) => {
-      if (res.isSave) {
-        this.getUserBill(id,status,res.userIdNew);
-      }
-    })
+  public cancelLinkResource(userBill): void {
+    userBill.createLinkResourceMode = false;
+    this.selectedResource = null
+    this.userBillProcess = false;
+    this.searchResource = "";
+    this.showSearchAndFilter = true;
+    this.isAddingResource = false;
   }
 
   openInvoiceSettingDialog(){

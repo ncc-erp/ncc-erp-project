@@ -73,7 +73,8 @@ export class RequestResourceTabComponent
       filterType: 1,
     },
   ];
-  public pageSizeType = 100;
+  public pageSizeType = 50;
+  public pageSize = 50;
   public projectId = -1;
   public selectedOption: string = "PROJECT";
   public selectedStatus: any = 0;
@@ -97,12 +98,12 @@ export class RequestResourceTabComponent
   public theadTable: THeadTable[] = [
     { name: "#" },
     { name: "Request Info", sortName: "projectName", defaultSort: ""},
-    { name: "Skill need", width: "250px" },
-    { name: "Code", sortName: "code", defaultSort: "ASC", width: "100px" },
-    { name: "Bill Account", sortName: "billCVEmail", defaultSort: "", width: "200px" },
-    { name: "Resource" , width: "200px"},
-    { name: "Description", width: "300px" },
-    { name: "Note", width: "400px" },
+    { name: "Skill need" },
+    { name: "Bill Account", sortName: "billCVEmail", defaultSort: ""},
+    { name: "Code", sortName: "code", defaultSort: "ASC"},
+    { name: "Resource"},
+    { name: "Description"},
+    { name: "Note" },
     { name: "Action" },
   ];
   public isShowModal: string = "none";
@@ -473,8 +474,6 @@ export class RequestResourceTabComponent
       { name: "isNewBillAccount", isTrue: false, value: this.isNewBillAccount },
     ];
 
-    this.isNewBillAccount = this.isNewBillAccount;
-
     objFilter.forEach((item) => {
       if (!item.isTrue) {  
         requestBody.filterItems = this.AddFilterItem(
@@ -634,7 +633,9 @@ export class RequestResourceTabComponent
   // #endregion
   styleThead(item: any) {
     return {
-      'min-width': item.width,
+      width : item.width,
+      'min-width': item.minWidths,
+      'max-width':item.maxWidth,
       height: item.height,
     };
   }
@@ -741,6 +742,8 @@ export class RequestResourceTabComponent
 export class THeadTable {
   name: string;
   width?: string = "auto";
+  minWidth?: string = "auto";
+  maxWidth?: string = "auto";
   height?: string = "auto";
   backgroud_color?: string;
   sortName?: string;

@@ -26,10 +26,18 @@ export class AvailableResourceTabComponent extends AppComponentBase implements O
   }
 
   ngOnInit(): void {
-    this.router.navigate(['all-resource'],{
-      relativeTo:this.route,
-      replaceUrl:true
-    })
+    if(this.permission.isGranted(this.Resource_TabAllResource)){
+        this.router.navigate(['all-resource'], {
+            relativeTo: this.route,
+            replaceUrl: true
+        })
+    } else {
+        this.router.navigate(['pool'], {
+            relativeTo: this.route,
+            replaceUrl: true
+        })
+    }
+    
     this.router.events.subscribe(res => this.currentUrl = this.router.url)
   }
 

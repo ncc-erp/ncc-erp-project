@@ -214,7 +214,7 @@
                     </div> -->
                 </div>
             </div>
-            <div class=" table-responsive py-4 all-resource-table">
+            <div class=" table-responsive py-3 all-resource-table">
                 <div class="fixTableHead resource-table">
                     <table [busy]="isLoading" style="border-collapse: collapse;" class="table text-nowrap">
                         <thead class="bg-light">
@@ -237,11 +237,12 @@
                                 currentPage: pageNumber,
                                 totalItems: totalItems
                                 }; let i= index">
-                                <td class="text-center"><span>{{ i + 1 + pageSize * (pageNumber - 1 ) }}</span></td>
-                                <td style="max-width: 280px">
-                                    <div style="width: 90%;">
+                                <td style="width: 50px" class="text-center"><span>{{ i + 1 + pageSize * (pageNumber - 1 ) }}</span></td>
+                                <td style="width: 250px">
+                                    <div>
                                         <app-user-info [userData]="item"
-                                                       [isSimplizeEmailAddress]="true">
+                                                       [isSimplizeEmailAddress]="true"
+                                                       [isSmallerDiv] ="true">
                                         </app-user-info>
                                     </div>
                                 </td>
@@ -402,7 +403,7 @@
                                 <td style="white-space: pre-line; word-break: break-all; max-width: 250px;">
                                     <div class="d-flex" style="flex-direction: column;">
                                         <div style="display: flex;">
-                                            <div style="width: 90%; word-break: break-word">
+                                            <div style=" word-break: break-word">
                                                 {{ item.poolNote }}
                                             </div>
                                             <div *ngIf="permission.isGranted(Resource_TabAllResource_EditNote)" 

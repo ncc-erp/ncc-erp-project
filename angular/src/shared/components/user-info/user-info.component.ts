@@ -16,6 +16,7 @@ export class UserInfoComponent extends AppComponentBase implements OnInit {
   @Input() workType:string;
   @Input() isPool:boolean
   @Input() averagePoint: number
+  @Input() viewMode: number
   @Input() isWeeklyReport: boolean;
   @Input() isHideEmail: boolean = false;
   @Input() isSmallerDiv: boolean = false;
@@ -144,7 +145,7 @@ export class UserInfoComponent extends AppComponentBase implements OnInit {
       }
       case 15: {
         return {
-          userLevel: "Principal ",
+          userLevel: "Principal",
           style: {'background-color': '#902ee1'}
         }
       }

@@ -331,9 +331,7 @@
                                                         [isSmallerDiv]="true"
                                                         [userData]="resource"
                                                         [isWeeklyReport] = "false"
-                                                        [isSmallerDiv]="true"
-                                                        [isChangeContentSize]="true"
-                                                        [isSimplizeEmailAddress]="true">
+                                                        [viewMode] ="1">
                                                     </app-user-info>
                                                     <i *ngIf="!isAddingOrEditingUserBill && !isAddingResource" (click)="removeLinkResource(resource.id, bill.id)"
                                                      class="fa fa-times position-absolute" style="top:32px; right: -28px;"></i>

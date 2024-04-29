@@ -457,7 +457,19 @@
                                     <div *ngIf="item.skillNote"
                                         style="border-bottom: 1px solid #cecece;">
                                     </div> 
-                                    <div style="white-space: pre-line" *ngIf="item.skillNote"><strong>Note: </strong> {{item.skillNote}}</div>
+                                    <div *ngIf="item.skillNote">
+                                        <pre class="mb-0 p-0 ml-2 max-line-content-2"
+                                             PrjResizeContent
+                                             [collapseLine]="2"
+                                             style="
+                                               white-space: pre-line;
+                                               font-family: sans-serif;
+                                               align-self: flex-start;
+                                               line-height: initial;
+                                             ">
+                                                <strong>Note: </strong> {{item.skillNote}}
+                                          </pre>
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>

@@ -1046,7 +1046,7 @@ namespace ProjectManagement.Services.ResourceManager
 
         private IQueryable<GetAllResourceDto> ApplyInputFilters(IQueryable<GetAllResourceDto> quser, InputGetAllResourceDto input)
         {
-            if (input.BranchIds.Count != 0 || input.PositionIds.Count != 0 || input.SkillIds.Count != 0)
+            if ((input.BranchIds != null && input.BranchIds.Count != 0) || (input.PositionIds != null && input.PositionIds.Count != 0) || (input.SkillIds != null && input.SkillIds.Count != 0))
             {
                 quser = quser.WhereIf(input.BranchIds != null, x => input.BranchIds.Contains(x.BranchId.Value))
                              .WhereIf(input.PositionIds != null, x => input.PositionIds.Contains(x.PositionId.Value))

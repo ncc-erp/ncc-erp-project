@@ -211,6 +211,61 @@ namespace ProjectManagement.Services.ProjectUserBills
             return result;
         }
 
+        public async Task<GetProjectUserBillDto> GetProjectUserBillById(long projectUserBillId)
+        {
+            var isViewRate = await IsGrantedAsync(PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Rate_View);
+
+            return _workScope.GetAll<Entities.ProjectUserBill>()
+                .Where(x => x.Id == projectUserBillId)
+                .Select(x => new GetProjectUserBillDto
+                {
+                    Id = x.Id,
+                    UserId = x.UserId,
+                    UserName = x.User.Name,
+                    ProjectId = x.ProjectId,
+                    ProjectName = x.Project.Name,
+                    AccountName = x.AccountName,
+                    BillRole = x.BillRole,
+                    BillRate = isViewRate ? x.BillRate : 0,
+                    StartTime = x.StartTime.Date,
+                    EndTime = x.EndTime.Value.Date,
+                    Note = x.Note,
+                    shadowNote = x.shadowNote,
+                    isActive = x.isActive,
+                    AvatarPath = x.User.AvatarPath,
+                    FullName = x.User.FullName,
+                    Branch = x.User.BranchOld,
+                    BranchColor = x.User.Branch.Color,
+                    BranchDisplayName = x.User.Branch.DisplayName,
+                    PositionId = x.User.PositionId,
+                    PositionName = x.User.Position.ShortName,
+                    PositionColor = x.User.Position.Color,
+                    EmailAddress = x.User.EmailAddress,
+                    UserType = x.User.UserType,
+                    UserLevel = x.User.UserLevel,
+                    ChargeType = x.ChargeType ?? x.Project.ChargeType,
+                    CreationTime = x.CreationTime,
+
+                    LinkedResources = x.LinkedResources
+                        .Select(lr => new GetUserInfo
+                        {
+                            Id = lr.UserId,
+                            EmailAddress = lr.User.EmailAddress,
+                            UserName = lr.User.UserName,
+                            AvatarPath = lr.User.AvatarPath ?? "",
+                            UserType = lr.User.UserType,
+                            PositionId = lr.User.PositionId,
+                            PositionColor = lr.User.Position.Color,
+                            PositionName = lr.User.Position.ShortName,
+                            UserLevel = lr.User.UserLevel,
+                            BranchColor = lr.User.Branch.Color,
+                            BranchDisplayName = lr.User.Branch.DisplayName,
+                            IsActive = lr.User.IsActive,
+                            FullName = lr.User.FullName,
+                        }).ToList()
+                }).FirstOrDefault();
+        }
+
         public async Task<List<LinkedResourceInfoDto>> GetAllLinkedResourcesByProject(long projectId)
         {
             var result = await _workScope.GetAll<LinkedResource>()
@@ -298,6 +353,8 @@ namespace ProjectManagement.Services.ProjectUserBills
         public async Task<List<LinkedResource>> AddLinkedResources(LinkedResourcesDto input)
         {
             var listLinkedResources = new List<LinkedResource>();
+
+            if (input.UserIds.Count == 0) return listLinkedResources;
 
             ValidateProjectUserBill(input.ProjectUserBillId);
 

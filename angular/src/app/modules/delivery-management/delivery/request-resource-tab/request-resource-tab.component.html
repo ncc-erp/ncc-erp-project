@@ -284,8 +284,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr
-                  *ngFor="
+                  <tr *ngFor="
                     let item of listRequest
                       | paginate
                         : {
@@ -295,447 +294,358 @@
                             totalItems: totalItems
                           };
                     let i = index
-                  "
-                >
-                  <td class="text-center">
-                    <span>{{ i + 1 + pageSize * (pageNumber - 1) }}</span>
-                  </td>
-                  <td style="min-width: 380px">
-                    <div
-                      class="row"
-                      style="
+                  ">
+                      <td class="text-center" style="width: 30px">
+                          <span>{{ i + 1 + pageSize * (pageNumber - 1) }}</span>
+                      </td>
+                      <td style=" width: 380px">
+                          <div class="row"
+                               style="
                         align-items: flex-start;
                         justify-content: space-between;
-                      "
-                    >
-                      <div class="d-flex align-items-start col-8">
-                        <div
-                          class="mr-1 badge"
-                          [ngClass]="APP_CONST.priorityRequest[item.priority]"
-                        >
-                          {{ item.priorityName }}
-                        </div>
-                        <span class="link mr-2" (click)="showProject(item)">
-                          {{ item.projectName }}
-                        </span>
-                        <span
-                          *ngIf="item.isNewBillAccount"
-                          class="badge badge-danger"
-                          >Bill Acc</span
-                        >
-                        <span
-                          *ngIf="item.projectStatus == 'Potential'"
-                          [ngClass]="
+                      ">
+                              <div class="d-flex align-items-start col-8">
+                                  <div class="mr-1 badge"
+                                       [ngClass]="APP_CONST.priorityRequest[item.priority]">
+                                      {{ item.priorityName }}
+                                  </div>
+                                  <span class="link mr-2" style="width: 126px;height: 24px" (click)="showProject(item)">
+                                      {{ item.projectName }}
+                                  </span>
+                                  <span *ngIf="item.isNewBillAccount"
+                                        class="badge badge-danger">Bill Acc</span>
+                                  <span *ngIf="item.projectStatus == 'Potential'"
+                                        [ngClass]="
                             APP_CONST.statusStyle[
                               getByEnum(item.status, APP_ENUM.ProjectStatus)
                             ]
-                          "
-                        >
-                          {{ item.projectStatusName }}
-                        </span>
-                      </div>
-                      <div
-                        class="d-flex justify-content-end col-4"
-                        style="justify-content: space-between"
-                      >
-                        <span
-                          class="ml-1 badge text-white"
-                          [ngStyle]="Utils.getUserLevel(item.level).style"
-                        >
-                          {{ item.levelName }}
-                        </span>
-                        <p
-                          class="ml-2"
-                          style="border-radius: 0.25rem"
-                          [ngClass]="
+                          ">
+                                      {{ item.projectStatusName }}
+                                  </span>
+                              </div>
+                              <div class="d-flex justify-content-end col-4"
+                                   style="justify-content: space-between">
+                                  <span class="ml-1 badge text-white"
+                                        [ngStyle]="Utils.getUserLevel(item.level).style">
+                                      {{ item.levelName }}
+                                  </span>
+                                  <span class="ml-2"
+                                        style="border-radius: 0.25rem"
+                                        [ngClass]="
                             APP_CONST.resourceRequestStyle[
                               getValueByEnum(
                                 item.status,
                                 APP_ENUM.ResourceRequestStatus
                               )
                             ]
-                          "
-                        >
-                          {{
+                          ">
+                                      {{
                             getValueByEnum(
                               item.status,
                               APP_ENUM.ResourceRequestStatus
                             )
-                          }}
-                        </p>
-                      </div>
-                    </div>
-                    <div class="d-flex justify-content-between mt-4">
-                      <span
-                        style="
+                                      }}
+                                  </span>
+                              </div>
+                          </div>
+                          <div class="d-flex justify-content-between mt-4">
+                              <span style="
                           display: inline-block;
                           max-width: 270px;
                           text-align: left;
-                        "
-                        >{{ item.createAt | date : "d/MM/y HH:mm " }} by
-                        {{ item.userRequestName }}</span
-                      >
-                      <span
-                        >Time need: {{ item.timeNeed | date : "d/MM/y" }}</span
-                      >
-                    </div>
-                  </td>
-                  <td style="padding: 12px 4px; width: 120px">
-                    <p *ngFor="let skill of item.skills" class="m-0">
-                      - {{ skill.name }}
-                    </p>
-                  </td>
-                  <td style="padding: 12px 8px; width: 100px">
-                    <span *ngIf="item.code">{{ item.code }}</span>
-                  </td>
-                  <td style="min-width: 245px; max-width: 245px">
-                    <div class="row">
-                      <div class="col-md-11">
-                        <div
-                          *ngIf="item.billUserInfo"
-                          class="d-flex align-items-start"
-                          style="flex-direction: column"
-                        >
-                          <p
-                            class="m-0 pointer"
-                            (click)="
+                        ">
+                                  {{ item.createAt | date : "d/MM/y HH:mm " }} by
+                                  {{ item.userRequestName }}
+                              </span>
+                              <span>Time need: {{ item.timeNeed | date : "d/MM/y" }}</span>
+                          </div>
+                      </td>
+                      <td style="padding: 12px 4px;width:180px">
+                          <p *ngFor="let skill of item.skills.slice(0, 4)" class="m-0">
+                              - {{ skill.name }}
+                          </p>
+                      </td>
+                      <td style="width:250px">
+                          <div class="row">
+                              <div class="col-md-10">
+                                  <div *ngIf="item.billUserInfo"
+                                       class="d-flex align-items-start"
+                                       style="flex-direction: column">
+                                      <p class="m-0 pointer"
+                                         (click)="
                               openPopupSkill(
                                 item.billUserInfo.employee,
                                 item.billUserInfo.userSkill
                               )
-                            "
-                          >
-                            <strong>
-                              {{ extractEmailName(item.billUserInfo.employee.emailAddress) }}</strong
-                            >
-                          </p>
-                          <p class="m-0">
-                            <span
-                              *ngIf="
+                            ">
+                                          <strong>
+                                              {{ extractEmailName(item.billUserInfo.employee.emailAddress) }}
+                                          </strong>
+                                      </p>
+                                      <p class="m-0">
+                                          <span *ngIf="
                                 item.billUserInfo.employee.branchDisplayName
                               "
-                              class="mr-1 badge text-white"
-                              [style.backgroundColor]="
+                                                class="mr-1 badge text-white"
+                                                [style.backgroundColor]="
                                 item.billUserInfo.employee.branchColor
-                              "
-                            >
-                              {{ item.billUserInfo.employee.branchDisplayName }}
-                            </span>
-                            <span
-                              *ngIf="item.billUserInfo.employee.userTypeName"
-                              [ngClass]="
+                              ">
+                                              {{ item.billUserInfo.employee.branchDisplayName }}
+                                          </span>
+                                          <span *ngIf="item.billUserInfo.employee.userTypeName"
+                                                [ngClass]="
                                 APP_CONST.userTypeStyle[
                                   item.billUserInfo.employee.userType
                                 ]
-                              "
-                            >
-                              {{ item.billUserInfo.employee.userTypeName }}
-                            </span>
-                            <span
-                              *ngIf="item.billUserInfo.employee.levelName"
-                              class="ml-1 badge text-white"
-                              [ngStyle]="
+                              ">
+                                              {{ item.billUserInfo.employee.userTypeName }}
+                                          </span>
+                                          <span *ngIf="item.billUserInfo.employee.levelName"
+                                                class="ml-1 badge text-white"
+                                                [ngStyle]="
                                 Utils.getUserLevel(
                                   item.billUserInfo.employee.userLevel
                                 ).style
-                              "
-                            >
-                              {{ item.billUserInfo.employee.levelName }}
-                            </span>
-                            <span
-                              *ngIf="item.billUserInfo.employee.positionName"
-                              class="ml-1 badge text-white"
-                              [style.backgroundColor]="
+                              ">
+                                              {{ item.billUserInfo.employee.levelName }}
+                                          </span>
+                                          <span *ngIf="item.billUserInfo.employee.positionName"
+                                                class="ml-1 badge text-white"
+                                                [style.backgroundColor]="
                                 item.billUserInfo.employee.positionColor
-                              "
-                            >
-                              {{ item.billUserInfo.employee.positionName }}
-                            </span>
-                          </p>
-                          <p>{{
+                              ">
+                                              {{ item.billUserInfo.employee.positionName }}
+                                          </span>
+                                      </p>
+                                      <p class="m-0">
+                                          {{
                             item.billUserInfo.plannedDate | date : "dd/MM/yyyy"
-                          }}</p>
-                        </div>
-                      </div>
-                      <div
-                        class="col-md-1"
-                        *ngIf="
+                                          }}
+                                      </p>
+                                  </div>
+                              </div>
+                              <div class="col-md-2"
+                                   *ngIf="
                           item.statusName == 'PENDING' &&
                           permission.isGranted(
                             ResourceRequest_CreateBillResourceForRequest
                           )
-                        "
-                      >
-                        <i
-                          class="fa fa-edit"
-                          (click)="showModalCvUser(item)"
-                        ></i>
-                        <span
-                          *ngIf="item.billUserInfo">
-                            <i class="fa fa-times"
-                               (click)="removeCvUser(item)"></i>
-                        </span>
-                      </div>
-                    </div>
-                  </td>
-                  <td style="min-width: 245px; max-width: 245px">
-                    <div class="row">
-                      <div class="col-md-11">
-                        <div
-                          *ngIf="item.planUserInfo"
-                          class="d-flex align-items-start"
-                          style="flex-direction: column"
-                        >
-                          <p
-                            class="m-0 pointer"
-                            (click)="
+                        ">
+                                  <i class="fa fa-edit"
+                                     (click)="showModalCvUser(item)"></i>
+                                  <span *ngIf="item.billUserInfo">
+                                      <i class="fa fa-times"
+                                         (click)="removeCvUser(item)"></i>
+                                  </span>
+                              </div>
+                          </div>
+                      </td>
+                      <td style="padding: 12px 8px; width:130px">
+                          <span *ngIf="item.code">{{ item.code }}</span>
+                      </td>
+                      <td style="width:250px">
+                          <div class="row">
+                              <div class="col-md-10">
+                                  <div *ngIf="item.planUserInfo"
+                                       class="d-flex align-items-start"
+                                       style="flex-direction: column">
+                                      <p class="m-0 pointer"
+                                         (click)="
                               openPopupSkill(
                                 item.planUserInfo.employee,
                                 item.planUserInfo.userSkill
                               )
-                            "
-                          >
-                            <strong>{{
+                            ">
+                                          <strong>
+                                              {{
                               extractEmailName(item.planUserInfo.employee.emailAddress)
-                            }}</strong>
-                          </p>
-                          <p class="m-0">
-                            <span
-                              *ngIf="
+                                              }}
+                                          </strong>
+                                      </p>
+                                      <p class="m-0">
+                                          <span *ngIf="
                                 item.planUserInfo.employee.branchDisplayName
                               "
-                              class="mr-1 badge badge text-white"
-                              [style.backgroundColor]="
+                                                class="mr-1 badge badge text-white"
+                                                [style.backgroundColor]="
                                 item.planUserInfo.employee.branchColor
-                              "
-                            >
-                              {{ item.planUserInfo.employee.branchDisplayName }}
-                            </span>
-                            <span
-                              *ngIf="item.planUserInfo.employee.userTypeName"
-                              [ngClass]="
+                              ">
+                                              {{ item.planUserInfo.employee.branchDisplayName }}
+                                          </span>
+                                          <span *ngIf="item.planUserInfo.employee.userTypeName"
+                                                [ngClass]="
                                 APP_CONST.userTypeStyle[
                                   item.planUserInfo.employee.userType
                                 ]
-                              "
-                            >
-                              {{ item.planUserInfo.employee.userTypeName }}
-                            </span>
-                            <span
-                              *ngIf="item.planUserInfo.employee.levelName"
-                              class="ml-1 badge text-white"
-                              [ngStyle]="
+                              ">
+                                              {{ item.planUserInfo.employee.userTypeName }}
+                                          </span>
+                                          <span *ngIf="item.planUserInfo.employee.levelName"
+                                                class="ml-1 badge text-white"
+                                                [ngStyle]="
                                 Utils.getUserLevel(
                                   item.planUserInfo.employee.userLevel
                                 ).style
-                              "
-                            >
-                              {{ item.planUserInfo.employee.levelName }}
-                            </span>
-                            <span
-                              *ngIf="item.planUserInfo.employee.positionName"
-                              class="ml-1 badge text-white"
-                              [style.backgroundColor]="
+                              ">
+                                              {{ item.planUserInfo.employee.levelName }}
+                                          </span>
+                                          <span *ngIf="item.planUserInfo.employee.positionName"
+                                                class="ml-1 badge text-white"
+                                                [style.backgroundColor]="
                                 item.planUserInfo.employee.positionColor
-                              "
-                            >
-                              {{ item.planUserInfo.employee.positionName }}
-                            </span>
-                          </p>
-                          <p>{{
+                              ">
+                                              {{ item.planUserInfo.employee.positionName }}
+                                          </span>
+                                      </p>
+                                      <p class="m-0">
+                                          {{
                             item.planUserInfo.plannedDate | date : "dd/MM/yyyy"
-                          }}</p>
-                        </div>
-                      </div>
-                      <div class="col-md-1"
-                           *ngIf="
+                                          }}
+                                      </p>
+                                  </div>
+                              </div>
+                              <div class="col-md-2"
+                                   *ngIf="
                           item.statusName == 'PENDING' &&
                           permission.isGranted(
                             ResourceRequest_PlanNewResourceForRequest
                           )
                         ">
-                          <i class="fa fa-edit"
-                             (click)="showModalPlanUser(item)"></i>
-                          <span *ngIf="item.planUserInfo">
-                              <i class="fa fa-times"
-                                 (click)="removePlanUser(item)"></i>
-                          </span>
-                      </div>
-                    </div>
-                  </td>
-                  <td
-                    style="
+                                  <i class="fa fa-edit"
+                                     (click)="showModalPlanUser(item)"></i>
+                                  <span *ngIf="item.planUserInfo">
+                                      <i class="fa fa-times"
+                                         (click)="removePlanUser(item)"></i>
+                                  </span>
+                              </div>
+                          </div>
+                      </td>
+                      <td style="
                       white-space: normal;
-                      min-width: 250px;
-                      padding: 12px 0;
-                    "
-                  >
-                    <div class="row justify-content-between flex-nowrap">
-                      <div class="col-md-10">
-                        <pre
-                          (click)="
+                      width: 150px
+                    ">
+                          <div class="row justify-content-between flex-nowrap">
+                              <div class="col-md-10">
+                                  <pre (click)="
                             showDescription(item.pmNote);
                             $event.stopPropagation()
                           "
-                          class="mb-0 p-0 ml-2 max-line-content-4"
-                          PrjResizeContent
-                          style="
+                                       class="mb-0 p-0 ml-2 max-line-content-4"
+                                       PrjResizeContent
+                                       style="
                             white-space: pre-line;
                             font-family: sans-serif;
                             align-self: flex-start;
                             line-height: initial;
-                          "
-                        >
+                          ">
                                             {{ item.pmNote }}
-                                        </pre
-                        >
-                      </div>
-                      <div
-                       class="col-md-2 text-right"
-                        *ngIf="permission.isGranted(ResourceRequest_EditPmNote)"
-                      >
-                        <i
-                          class="fa fa-edit"
-                          (click)="
+                                        </pre>
+                              </div>
+                              <div class="col-md-2 text-right"
+                                   *ngIf="permission.isGranted(ResourceRequest_EditPmNote)">
+                                  <i class="fa fa-edit"
+                                     (click)="
                             openModal(
                               item.name,
-                              'Description',    
+                              'Description',
                               item.pmNote,
                               item.id
                             )
-                          "
-                        ></i>
-                      </div>
-                    </div>
-                  </td>
-                  <td
-                    style="
+                          "></i>
+                              </div>
+                          </div>
+                      </td>
+                      <td style="
                       white-space: normal;
-                      min-width: 180px;
-                      padding: 12px 0;
-                    "
-                  >
-                    <div class="row">
-                      <div class="col-md-10">
-                        <pre
-                          class="mb-0 p-0 ml-2 max-line-content-4"
-                          PrjResizeContent
-                          [collapseLine]="4"
-                          style="
-                            white-space: pre-line;
-                            font-family: sans-serif;
-                            align-self: flex-start;
-                            line-height: initial;
-                          "
-                        >
+                    ">
+                          <div class="row">
+                              <div class="col-md-10">
+                                  <pre class="mb-0 p-0 ml-2 max-line-content-4"
+                                       PrjResizeContent
+                                       [collapseLine]="4"
+                                       style="
+                                         white-space: pre-line;
+                                         font-family: sans-serif;
+                                         align-self: flex-start;
+                                         line-height: initial;
+                                      ">
                                             {{ item.dmNote }}
-                      </pre
-                        >
-                      </div>
-                      <div
-                            class="col-md-2 text-right"
-                        *ngIf="permission.isGranted(ResourceRequest_EditDmNote)"
-                      >
-                        <i
-                          class="fa fa-edit"
-                          (click)="
+                                   </pre>
+                              </div>
+                              <div class="col-md-2 text-right"
+                                   *ngIf="permission.isGranted(ResourceRequest_EditDmNote)">
+                                  <i class="fa fa-edit"
+                                     (click)="
                             openModal(item.name, 'Note', item.dmNote, item.id, item.code)
-                          "
-                        ></i>
-                      </div>
-                    </div>
-                  </td>
+                          "></i>
+                              </div>
+                          </div>
+                      </td>
 
-                  <td class="text-center action-request-resource-tab">
-                    <button mat-button [matMenuTriggerFor]="menu">
-                      <i class="fas fa-bars fa-lg"></i>
-                    </button>
-                    <mat-menu #menu="matMenu" class="p-2">
-                      <!-- case 1: Status is inprogress -->
-                      <div>
-                        <button
-                          *ngIf="isShowBtnSetDone(item)"
-                          class="btn btn-block text-left"
-                          mat-button
-                          (click)="setDoneRequest(item)"
-                        >
-                          <i
-                            class="fa fa-fw fa-check text-success vertical-align-baseline"
-                          ></i>
-                          Set Done
-                        </button>
+                      <td class="text-center action-request-resource-tab" style="width : 30px">
+                          <button mat-button [matMenuTriggerFor]="menu">
+                              <i class="fas fa-bars fa-lg"></i>
+                          </button>
+                          <mat-menu #menu="matMenu" class="p-2">
+                              <!-- case 1: Status is inprogress -->
+                              <div>
+                                  <button *ngIf="isShowBtnSetDone(item)"
+                                          class="btn btn-block text-left"
+                                          mat-button
+                                          (click)="setDoneRequest(item)">
+                                      <i class="fa fa-fw fa-check text-success vertical-align-baseline"></i>
+                                      Set Done
+                                  </button>
 
-                        <button
-                          *ngIf="isShowBtnCancel(item)"
-                          class="btn btn-block text-left"
-                          mat-button
-                          (click)="cancelRequest(item)"
-                        >
-                          <i
-                            class="fa fa-fw fa-times text-warning vertical-align-baseline"
-                          ></i>
-                          Cancel
-                        </button>
+                                  <button *ngIf="isShowBtnCancel(item)"
+                                          class="btn btn-block text-left"
+                                          mat-button
+                                          (click)="cancelRequest(item)">
+                                      <i class="fa fa-fw fa-times text-warning vertical-align-baseline"></i>
+                                      Cancel
+                                  </button>
 
-                        <br />
-                        <button
-                          class="btn btn-block text-left"
-                          mat-button
-                          *ngIf="isShowBtnEdit(item)"
-                          (click)="editRequest(item)"
-                        >
-                          <i
-                            class="fa fa-fw fa-edit vertical-align-baseline"
-                          ></i>
-                          Edit
-                        </button>
+                                  <br />
+                                  <button class="btn btn-block text-left"
+                                          mat-button
+                                          *ngIf="isShowBtnEdit(item)"
+                                          (click)="editRequest(item)">
+                                      <i class="fa fa-fw fa-edit vertical-align-baseline"></i>
+                                      Edit
+                                  </button>
 
-                        <button
-                          *ngIf="item.isRecruitmentSend && item.recruitmentUrl"
-                          class="btn btn-block text-left"
-                          (click)="viewRecruitment(item.recruitmentUrl)"
-                          mat-button
-                        >
-                          <i
-                            class="fa fa-fw fa-eye vertical-align-baseline"
-                          ></i>
-                          View recruitment
-                        </button>
+                                  <button *ngIf="item.isRecruitmentSend && item.recruitmentUrl"
+                                          class="btn btn-block text-left"
+                                          (click)="viewRecruitment(item.recruitmentUrl)"
+                                          mat-button>
+                                      <i class="fa fa-fw fa-eye vertical-align-baseline"></i>
+                                      View recruitment
+                                  </button>
 
-                        <button
-                          *ngIf="isShowBtnDelete(item)"
-                          class="btn btn-block text-left"
-                          mat-button
-                          (click)="delete(item)"
-                        >
-                          <i
-                            class="fa fa-fw fa-trash text-danger vertical-align-baseline"
-                          ></i>
-                          Delete
-                        </button>
+                                  <button *ngIf="isShowBtnDelete(item)"
+                                          class="btn btn-block text-left"
+                                          mat-button
+                                          (click)="delete(item)">
+                                      <i class="fa fa-fw fa-trash text-danger vertical-align-baseline"></i>
+                                      Delete
+                                  </button>
 
-                        <button
-                          *ngIf="isShowBtnSendRecruitment(item)"
-                          class="btn btn-block text-left"
-                          mat-button
-                          (click)="sendRecruitment(item)"
-                        >
-                          <i
-                            class="fa fa-fw fa-paper-plane text-primary vertical-align-baseline"
-                          ></i>
-                          Send recruitment
-                        </button>
-                      </div>
-                    </mat-menu>
-                    <span
-                      *ngIf="item.isRecruitmentSend == true"
-                      (click)="viewRecruitment(item.recruitmentUrl)"
-                      class="tl-link"
-                    >
-                      #{{ sliceUrl(item.recruitmentUrl) }}
-                    </span>
-                  </td>
-                </tr>
+                                  <button *ngIf="isShowBtnSendRecruitment(item)"
+                                          class="btn btn-block text-left"
+                                          mat-button
+                                          (click)="sendRecruitment(item)">
+                                      <i class="fa fa-fw fa-paper-plane text-primary vertical-align-baseline"></i>
+                                      Send recruitment
+                                  </button>
+                              </div>
+                          </mat-menu>
+                          <span *ngIf="item.isRecruitmentSend == true"
+                                (click)="viewRecruitment(item.recruitmentUrl)"
+                                class="tl-link">
+                              #{{ sliceUrl(item.recruitmentUrl) }}
+                          </span>
+                      </td>
+                  </tr>
               </tbody>
             </table>
           </div>

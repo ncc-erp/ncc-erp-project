@@ -1,9 +1,9 @@
-<div [style]="isSmallerDiv? 'width: 200px;': 'width: 322px'">
+<div [style]="isSmallerDiv? 'width: 230px': 'width: 322px'">
     <div class="row w-100">
 
         <div class="d-flex w-100">
             <div [class] = "isChangeContentSize? 'col-2 text-center': 'col-3 text-center'">
-                <img [src]="getAvatar(user)" class="rounded-circle  mt-1" [style]="isWeeklyReport? 'max-width: 67%;':'max-width: 100%;'"
+                <img [src]="getAvatar(user)" class="rounded-circle  mt-1" [style]="isWeeklyReport? 'max-width: 67%;':'max-width: 80%;'"
                     alt="avatar">
                 <!-- <ngx-stars style="z-index: 1 !important; margin-top: 10px;" [readonly]="true" [wholeStars]="true"
                     [size]="1" [color]="getStarColor(user.starRate, false)" [initialStars]="user.starRate"
@@ -16,7 +16,7 @@
                 </div>
             </div>
             <div [class] = "isChangeContentSize? 'col-10  text-left': 'col-9  text-left'">
-                <p class="m-0"><strong>{{user?.fullName}}</strong>&nbsp; <span style="font-weight: 600;" [ngClass]="isPool ? 'text-secondary' : 'text-primary'">{{workType}}</span></p>
+                <p class="m-0"><strong>{{ viewMode == 1 ? user?.emailAddress.split('@')[0] : user?.fullName}}</strong>&nbsp; <span style="font-weight: 600;" [ngClass]="isPool ? 'text-secondary' : 'text-primary'">{{workType}}</span></p>
                 <p class="m-0 text-left" style="width: 180px">
                     <span *ngIf="user.branchDisplayName" class="mr-1 badge badge-pill text-white" [style.backgroundColor]="user.branchColor">
                         {{user.branchDisplayName}}</span>
@@ -28,7 +28,7 @@
                     <span *ngIf="(user.userLevel || user.userLevel == 0) && !isHideLevel" class="ml-1 badge text-white" [ngStyle]="getUserLevel().style">{{getUserLevel().userLevel}}
                     </span>
                 </p>
-                <p *ngIf="!isHideEmail" class="m-0">{{isSimplizeEmailAddress? user?.emailAddress.split('@')[0]:user?.emailAddress}}</p>
+                <p *ngIf="!isHideEmail && !viewMode" class="m-0">{{isSimplizeEmailAddress? user?.emailAddress.split('@')[0]:user?.emailAddress}}</p>
             </div>
         </div>
     </div>

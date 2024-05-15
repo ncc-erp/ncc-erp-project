@@ -224,24 +224,24 @@
               <tr style="border: none">
                 <th class="stt">#</th>
                 <th>Project</th>
-                <th class="text-left">
-                  Bill Info
-                  <div class="total-amount" *ngIf="isGranted(this.Timesheets_TimesheetDetail_ViewBillRate)">
-                    <span *ngFor="let totalAmountByCurrency of listTotalAmountByCurrency"
-                      [style.color]="getColorByCurrency(totalAmountByCurrency.currencyName)" class="ml-4">
-                      {{totalAmountByCurrency.roundAmount | number : "1.0":"en-US"}}
-                      {{totalAmountByCurrency.currencyName}}
-                    </span>
-                  </div>
+                <th>
+                    <div class="total-amount" *ngIf="isGranted(this.Timesheets_TimesheetDetail_ViewBillRate)">
+                        <span>Bill Info</span>
+                        <span *ngFor="let totalAmountByCurrency of listTotalAmountByCurrency"
+                              [style.color]="getColorByCurrency(totalAmountByCurrency.currencyName)" class="ml-4">
+                            {{totalAmountByCurrency.roundAmount | number : "1.0":"en-US"}}
+                            {{totalAmountByCurrency.currencyName}}
+                        </span>
+                    </div>
                 </th>
                 <th>Invoice Info</th>
-                <th class="p-custom">Timesheet File</th>
-                <th class="p-custom">Done</th>
-                <th style="width: 100px;" class="p-custom text-center">
-                  <span>Action</span>
-                  <div class="align-items-center justify-content-center">
+                <th>Timesheet File</th>
+                <th>Done</th>
+                <th style="display: flex; align-items: center; justify-content: flex-start;" class="text-center">
+                  <span style="margin-right: 8px;">Action</span>
+                  <div class="align-items-center justify-content-center" style="height: 16px">
                     <mat-checkbox 
-                    [(ngModel)] ="CheckAllSelectBox"
+                    [(ngModel)]="CheckAllSelectBox"
                     [indeterminate]="indeterminate"
                     (change)="onCheckUncheckAllRow($event)"></mat-checkbox>                      
                   </div>
@@ -280,30 +280,30 @@
                   <span>PM: <b>{{item.pmFullName}}</b></span>
                 </td>
                 <td class="text-left bill">
-                  <div *ngIf="item.projectBillInfomation" style="min-width: 800px;">
+                  <div *ngIf="item.projectBillInfomation" style="min-width: 840px;">
 
                     <div class="row" [style.color]="getColorByCurrency(item.currency)">
-                      <div class="col-6"><label *ngIf="isGranted(Timesheets_TimesheetDetail_ViewBillRate)">Total:
+                      <div class="col-7"><label *ngIf="isGranted(Timesheets_TimesheetDetail_ViewBillRate)">Total:
                           {{item.projectBillInfomation.length}}</label></div>
-                      <div class="col-4" *ngIf="isGranted(Timesheets_TimesheetDetail_ViewBillRate)"><label
-                          style="margin-left: 60px;">{{item.roundTotalAmountProjectBillInfomation | number : "1.0":"en-US"}}
+                      <div class="col-3 ml-4" *ngIf="isGranted(Timesheets_TimesheetDetail_ViewBillRate)">
+                        <label>{{item.roundTotalAmountProjectBillInfomation | number : "1.0":"en-US"}}
                           {{item.currency}}</label></div>
-                      <div [ngClass]="isGranted(Timesheets_TimesheetDetail_ViewBillRate)?'col-2':'col-6'" style="text-align: center;">
+                      <div [ngClass]="isGranted(Timesheets_TimesheetDetail_ViewBillRate)?'col-1':'col-5'" style="text-align: center;">
                         Note</div>
                     </div>
                     <div class="row" *ngFor="let bill of item.projectBillInfomation; let i = index">
                       <div class="col-3 text-special"><label><span>{{i+1}}. &nbsp;</span>{{bill.fullName}}</label></div>
                       <div class="col-2 text-special role"><span>{{bill.billRole}}</span></div>
                       <div class="col-2 billRate" *ngIf="isGranted(Timesheets_TimesheetDetail_ViewBillRate)">
-                        <label class="ml-1" style="font-weight: 500;margin-left: -30px;">
+                        <label class="ml-1" style="font-weight: 500;">
                           {{(covertMoneyType(bill.billRate)+' '+item.currency + getChargeType(bill.chargeType))}}
                         </label>
                       </div>
-                      <div class="col-1 ml-2"><label style="font-weight: 500;">{{bill.workingTime}}d</label></div>
-                      <div class="col-2" style="margin-left: -40px;" *ngIf="isGranted(Timesheets_TimesheetDetail_ViewBillRate)"><label
+                      <div class="col-1"><label style="font-weight: 500;">{{bill.workingTime}}d</label></div>
+                      <div class="col-2" *ngIf="isGranted(Timesheets_TimesheetDetail_ViewBillRate)"><label
                           class="ml-1">{{bill.roundAmount | number: "1.0":"en-US" }} {{item.currency}}</label></div>
 
-                      <div class="text-left note" [ngClass]="isGranted(Timesheets_TimesheetDetail_ViewBillRate)?'col-3':'col-6'"
+                      <div class="text-right note" [ngClass]="isGranted(Timesheets_TimesheetDetail_ViewBillRate)?'col-2 ml-4':'col-5'"
                         style="word-break: break-all; white-space: pre-line;">
                         <div title="{{bill.description?bill.description:''}}" class="no-expand-text">
                           {{bill.description?bill.description:''}}

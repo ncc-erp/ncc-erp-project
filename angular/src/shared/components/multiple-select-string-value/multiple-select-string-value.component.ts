@@ -6,6 +6,7 @@ import {
   OnInit,
   Output,
   ViewChild,
+  ElementRef
 } from "@angular/core";
 import { MatSelect } from "@angular/material/select";
 import * as _ from "lodash";
@@ -24,6 +25,7 @@ export class MultipleSelectStringValueComponent implements OnInit, OnChanges {
   @Input() disabled?: boolean;
 
   @Output() onChange = new EventEmitter<any>();
+  @ViewChild('search') inputSearch: ElementRef;
 
   listFilteredOption: string[] = [];
 
@@ -150,6 +152,7 @@ export class MultipleSelectStringValueComponent implements OnInit, OnChanges {
   }
   handleOpenedChange(opened: boolean) {
     this.textSearch = "";
+    this.inputSearch.nativeElement.focus();
     this.handleSearch(this.textSearch);
   }
 }

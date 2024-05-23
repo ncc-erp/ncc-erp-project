@@ -208,7 +208,7 @@ namespace ProjectManagement.APIs.Projects
                                 .ThenByDescending(s => s.StartTime)
                                 .Distinct()
                                 .ToList(),
-                            ResourceInfo = resourceProject.ContainsKey(p.Id) ? resourceProject[p.Id] : null,
+                            ResourceInfo = resourceProject.ContainsKey(p.Id) ? resourceProject[p.Id] : new List<ResourceInfo>(),
                         };
 
             return await query.GetGridResult(query, input);

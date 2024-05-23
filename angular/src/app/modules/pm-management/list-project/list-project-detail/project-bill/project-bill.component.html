@@ -105,7 +105,7 @@
                                 (keydown.enter)="searchContext(); $event.stopPropagation()" />
                             </div>
                         </div>
-                        <div class="col-lg-2 mb-2" (click)="$event.stopPropagation()" [hidden]="!showSearchAndFilter">
+                        <div class="col-lg-1 mb-2" (click)="$event.stopPropagation()" [hidden]="!showSearchAndFilter">
                             <div class="input-group" [hidden]="isShowUserBill">
                                 <mat-form-field appearance="outline" style="width: 100%;">
                                     <mat-label>Charge Status</mat-label>
@@ -118,7 +118,7 @@
                             </div>
                         </div>
 
-                        <div class="col-lg-3 mb-2" (click)="$event.stopPropagation()" style="display: flex; align-items: center; margin-left: -10px;" [hidden]="!showSearchAndFilter">
+                        <div class="col-lg-4 mb-2" (click)="$event.stopPropagation()" style="display: flex; align-items: center; margin-left: -20px;" [hidden]="!showSearchAndFilter">
                             <app-multiple-select
                             [hidden]="isShowUserBill"
                             #linkedResources
@@ -137,7 +137,7 @@
                             ></i>
                         </div>
 
-                        <div class="col-lg-2 mb-2" (click)="$event.stopPropagation()" style="display: flex; align-items: center; margin-left: -20px;" [hidden]="!showSearchAndFilter">
+                        <div class="mb-2" (click)="$event.stopPropagation()" style="width: 135px; display: flex; align-items: center; margin-left: -20px;" [hidden]="!showSearchAndFilter">
                             <app-multiple-select-string-value
                             [hidden]="isShowUserBill"
                             #chargeRole
@@ -155,6 +155,16 @@
                             (click)="onCancelFilterChargeRole()"
                             ></i>
                         </div>
+
+                        <div class="col-lg-1" (click)="$event.stopPropagation()">
+                            <mat-checkbox
+                              [hidden]="isShowUserBill"
+                              name="cbx-hideRate"
+                              [(ngModel)]="isHideRates">
+                              Hide rates
+                            </mat-checkbox>
+                        </div>
+
                         <div class="mb-2 ml-3" style="display: flex; align-items: center;" (click)="$event.stopPropagation()" [hidden]="!showSearchAndFilter">
                             <button class="btn btn-primary" (click)="refresh()" [hidden]="isShowUserBill">
                                 <i class="fas fa-redo-alt"></i>
@@ -185,7 +195,7 @@
                                         <i *ngIf="sortColumn !== 'linkedResources'" class="fas fa-sort"></i>
                                     </th>
                                     <th class="align" (click)="sortData('billRate')" style="cursor: pointer; min-width: 100px;"
-                                        *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Rate_View)">
+                                        *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Rate_View) && !isHideRates">
                                         {{ "Rate" | localize }}
                                         <br>({{rateInfo.currencyName}})
                                         <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'billRate'"></i>
@@ -281,24 +291,24 @@
 
                                         </div>
                                     </td>
-                                    <td>
+                                    <td style="width: 280px;">
                                         <div class="d-flex align-items-start justify-content-end">
                                             <div class="d-flex" style="flex-direction: column;">
-                                                <div *ngIf="bill.createLinkResourceMode" class="row" style="width: 250px;">
+                                                <div *ngIf="bill.createLinkResourceMode" class="row">
                                                     <div class="col-10 mb-2 position-relative">
                                                         <mat-form-field style="max-width: 100%;" class="w-100" appearance="outline">
                                                             <mat-select panelClass="custom-panel-class" (closed)="focusOut()"
-                                                                [(ngModel)]="selectedResource"
-                                                                name="userBill"
-                                                                placeholder="select a resource *"
-                                                                required
-                                                                #userBill="ngModel">
+                                                                        [(ngModel)]="selectedResource"
+                                                                        name="userBill"
+                                                                        placeholder="select a resource *"
+                                                                        required
+                                                                        #userBill="ngModel">
                                                                 <mat-form-field class="w-100 px-3" style="position: sticky; top: 0; z-index: 2; background-color: white;">
                                                                     <input matInput [(ngModel)]="searchResource"
-                                                                        placeholder="search"
-                                                                        (keydown)="$event.stopPropagation()"
-                                                                        name="searchResource"
-                                                                        #search>{{search.focus()}}
+                                                                           placeholder="search"
+                                                                           (keydown)="$event.stopPropagation()"
+                                                                           name="searchResource"
+                                                                           #search>{{search.focus()}}
                                                                 </mat-form-field>
                                                                 <mat-option *ngFor="let resource of listAvailableResource | listFilter: 'fullName' : searchResource : 'emailAddress' " [value]="resource.id">
                                                                     <div class="mat-option-text">
@@ -314,39 +324,37 @@
                                                         </mat-error>
                                                     </div>
                                                     <div class="col-2 d-flex align-items-center" style="flex-direction: column;">
-                                                        <button
-                                                            [disabled]="selectedResource == null"
-                                                            class="mb-1 submit-btn" style="background: none; border: none;"
-                                                            [hidden]="showSearchAndFilter"
-                                                            (click)="saveLinkResource(bill)">
+                                                        <button [disabled]="selectedResource == null"
+                                                                class="mb-1 submit-btn" style="background: none; border: none;"
+                                                                [hidden]="showSearchAndFilter"
+                                                                (click)="saveLinkResource(bill)">
                                                             <i style="color: green; font-size: 20px;" class="fas fa-check fa-2x "></i>
                                                         </button>
                                                         <i style="color: red; font-size: 20px;" class="fas fa-undo fa-2x"
-                                                            [hidden]="showSearchAndFilter"
-                                                            (click)="cancelLinkResource(bill)"></i>
+                                                           [hidden]="showSearchAndFilter"
+                                                           (click)="cancelLinkResource(bill)"></i>
                                                     </div>
                                                 </div>
                                                 <div *ngFor="let resource of bill.linkedResources" class="mb-2 position-relative">
-                                                    <app-user-info
-                                                        [isSmallerDiv]="true"
-                                                        [userData]="resource"
-                                                        [isWeeklyReport] = "false"
-                                                        [viewMode] ="1">
+                                                    <app-user-info [isSmallerDiv]="true"
+                                                                   [userData]="resource"
+                                                                   [isWeeklyReport]="false"
+                                                                   [viewMode]="1">
                                                     </app-user-info>
                                                     <i *ngIf="!isAddingOrEditingUserBill && !isAddingResource" (click)="removeLinkResource(resource.id, bill.id)"
-                                                     class="fa fa-times position-absolute" style="top:32px; right: -28px;"></i>
+                                                       class="fa fa-times position-absolute" style="top:32px; right: -28px;"></i>
                                                 </div>
                                             </div>
                                             <i *ngIf="!isAddingResource && !isAddingOrEditingUserBill && permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount)"
-                                            (click)="addLinkResource(bill)"
-                                            class="btn bg-blue ml-2 btn-sm mb-2"
-                                            style="cursor: pointer; font-size: 10px;">
+                                               (click)="addLinkResource(bill)"
+                                               class="btn bg-blue ml-2 btn-sm mb-2"
+                                               style="cursor: pointer; font-size: 10px;">
                                                 <i class="fa fa-plus fa-s m-0"></i>
                                             </i>
                                         </div>
                                     </td>
                                     <td class="text-center"
-                                        *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Rate_View)">
+                                        *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Rate_View) && !isHideRates">
                                         <span class="text-center" *ngIf="!bill.createMode">{{bill.billRate |
                                             number:'1.0':'en-US'}}
                                         </span>

@@ -21,8 +21,8 @@
         </div>
       </div>
       <div class="p-2 input-wrapper">
-        <input type="text" matInput class="search-input" placeholder="Search Text" [(ngModel)]="textSearch"
-          (keydown)="$event.stopPropagation()" (input)="handleSearch($event.target.value)" />
+        <input type="text" matInput class="search-input" #search placeholder="Search Text" [(ngModel)]="textSearch"
+          (keydown)="$event.stopPropagation()" (input)="handleSearch($event.target.value)"/>
       </div>
       <div class="options">
         <mat-option *ngFor="let item of listFilteredOption" [value]='item' (click)="onClickOption(item)" [disabled]="disabled">

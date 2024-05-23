@@ -18,7 +18,9 @@
 }
 
 ::ng-deep .search-input {
-    padding: 10px 16px;
+    padding: 6px 10px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
 }
 
 .action-select-all-delete {

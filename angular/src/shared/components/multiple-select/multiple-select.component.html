@@ -21,7 +21,7 @@
         </div>
       </div>
       <div class="p-2 input-wrapper">
-        <input type="text" matInput class="search-input" placeholder="Search Text" [(ngModel)]="textSearch"
+        <input type="text" matInput #search class="search-input" placeholder="Search Text" [(ngModel)]="textSearch"
           (keydown)="$event.stopPropagation()" (input)="handleSearch($event.target.value)" />
       </div>
       <div class="options">
@@ -35,4 +35,3 @@
       </mat-option>
     </mat-select>
   </mat-form-field>
-  

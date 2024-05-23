@@ -94,6 +94,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
 
   public selectedLinkedResources: number[] = [];
   public listSelectLinkedResources: optionDto[] = [];
+  public isHideRates:boolean = false;
 
   public listAllResource = []
   public listAvailableResource = []

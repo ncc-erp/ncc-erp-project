@@ -281,6 +281,32 @@ export class RequestResourceTabComponent
     );
   }
 
+  active(request: RequestResourceDto) {
+    const cancelResourceRequest =
+      this.resourceRequestService.activeResourceRequest(request.id);
+    const actions = [cancelResourceRequest];
+    abp.message.confirm(
+      "Are you sure you want to active the request for project: " +
+        request.projectName,
+      "",
+      (result) => {
+        if (result) {
+          concat(...actions)
+            .pipe(
+              catchError((error) => {
+                abp.notify.error(error);
+                return empty(); // Return an empty observable to continue
+              })
+            )
+            .subscribe(() => {
+                abp.notify.success("Request has been successfully activated!");
+                this.listRequest = this.listRequest.filter(req => req.id !== request.id);
+            });
+        }
+      }
+    );
+  }
+
   async showModalPlanUser(item) {
     const data = await this.getPlanResource(item);
     const show = this.dialog.open(FormPlanUserComponent, {
@@ -695,6 +721,13 @@ export class RequestResourceTabComponent
       item.status == RESOURCE_REQUEST_STATUS.PENDING &&
       (this.isGranted(PERMISSIONS_CONSTANT.ResourceRequest_CancelAllRequest) ||
         this.isGranted(PERMISSIONS_CONSTANT.ResourceRequest_CancelMyRequest))
+    );
+  }
+
+  isShowBtnActivate(item) {
+    return (
+      item.status == RESOURCE_REQUEST_STATUS.CANCELLED &&
+      this.isGranted(PERMISSIONS_CONSTANT.ResourceRequest_Activate)
     );
   }
 

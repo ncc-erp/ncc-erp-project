@@ -622,6 +622,14 @@
                                       View recruitment
                                   </button>
 
+                                  <button *ngIf="isShowBtnActivate(item)"
+                                          class="btn btn-block text-left"
+                                          mat-button
+                                          (click)="active(item)">
+                                      <i class="fa fa-fw fa-check text-success vertical-align-baseline"></i>
+                                      Activate
+                                  </button>
+
                                   <button *ngIf="isShowBtnDelete(item)"
                                           class="btn btn-block text-left"
                                           mat-button

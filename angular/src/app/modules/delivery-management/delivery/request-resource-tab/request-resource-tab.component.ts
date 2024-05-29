@@ -273,8 +273,8 @@ export class RequestResourceTabComponent
               })
             )
             .subscribe(() => {
-              abp.notify.success("Request canceled successfully!");
-              this.refresh();
+                abp.notify.success("Request canceled successfully!");
+                this.listRequest = this.listRequest.filter(req => req.id !== request.id);
             });
         }
       }

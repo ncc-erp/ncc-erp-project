@@ -225,8 +225,9 @@ export class RequestResourceTabComponent
       };
       this.resourceRequestService.setDoneRequest(request).subscribe((rs) => {
         if (rs) {
-          abp.notify.success(`Set done success`);
-          this.listRequest = this.listRequest.filter(req => req.id !== item.id);
+            abp.notify.success(`Set done success`);
+            item.status = RESOURCE_REQUEST_STATUS.DONE;
+            item.statusName = "DONE"
         }
       });
     } else {
@@ -241,7 +242,10 @@ export class RequestResourceTabComponent
         maxHeight: "90vh",
       });
       showModal.afterClosed().subscribe((rs) => {
-        if (rs) this.listRequest = this.listRequest.filter(req => req.id !== item.id);
+          if (rs) {
+              item.status = RESOURCE_REQUEST_STATUS.DONE;
+              item.statusName = "DONE"
+          }
       });
     }
   }
@@ -274,7 +278,8 @@ export class RequestResourceTabComponent
             )
             .subscribe(() => {
                 abp.notify.success("Request canceled successfully!");
-                this.listRequest = this.listRequest.filter(req => req.id !== request.id);
+                request.status = RESOURCE_REQUEST_STATUS.CANCELLED;
+                request.statusName = "CANCELLED"
             });
         }
       }
@@ -300,7 +305,8 @@ export class RequestResourceTabComponent
             )
             .subscribe(() => {
                 abp.notify.success("Request has been successfully activated!");
-                this.listRequest = this.listRequest.filter(req => req.id !== request.id);
+                request.status = RESOURCE_REQUEST_STATUS.PENDING;
+                request.statusName = "PENDING"
             });
         }
       }

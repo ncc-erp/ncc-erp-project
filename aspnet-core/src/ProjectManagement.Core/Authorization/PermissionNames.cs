@@ -537,6 +537,7 @@ namespace ProjectManagement.Authorization
         public const string ResourceRequest_EditDmNote = "ResourceRequest.EditDmNote";
         public const string ResourceRequest_Edit = "ResourceRequest.Edit";
         public const string ResourceRequest_Delete = "ResourceRequest.Delete";
+        public const string ResourceRequest_Activate = "ResourceRequest.Activate";
         public const string ResourceRequest_SendRecruitment = "ResourceRequest.SendRecruitment";
         public const string ResourceRequest_CreateBillResourceForRequest = "ResourceRequest.CreateBillResourceForRequest";
         public const string ResourceRequest_UpdateUserBillResourceSkill = "ResourceRequest.UpdateUserBillResourceSkill";
@@ -1241,6 +1242,7 @@ namespace ProjectManagement.Authorization
                     PermissionNames.ResourceRequest_EditDmNote ,
                     PermissionNames.ResourceRequest_Edit ,
                     PermissionNames.ResourceRequest_Delete ,
+                    PermissionNames.ResourceRequest_Activate ,
                     PermissionNames.ResourceRequest_SendRecruitment ,
 
                     #endregion Weekly report
@@ -1962,6 +1964,7 @@ namespace ProjectManagement.Authorization
                  new SystemPermission{ Name =  PermissionNames.ResourceRequest_EditDmNote ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit DM Note"},
                  new SystemPermission{ Name =  PermissionNames.ResourceRequest_Edit ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit"},
                  new SystemPermission{ Name =  PermissionNames.ResourceRequest_Delete ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Delete"},
+                 new SystemPermission{ Name =  PermissionNames.ResourceRequest_Activate ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Active Request"},
                  new SystemPermission{ Name =  PermissionNames.ResourceRequest_SendRecruitment ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Send Recruitment"},
                  new SystemPermission{ Name =  PermissionNames.ResourceRequest_CreateBillResourceForRequest ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Create User Bill(CV) For Resource Request"},
                  new SystemPermission{ Name =  PermissionNames.ResourceRequest_UpdateUserBillResourceSkill ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Update User Bill Resource Skill"},
@@ -3548,6 +3551,9 @@ namespace ProjectManagement.Authorization
                             },
                             new SystemPermission {
                                 Name = PermissionNames.ResourceRequest_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit"
+                            },
+                            new SystemPermission {
+                                Name = PermissionNames.ResourceRequest_Activate, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Active"
                             },
                             new SystemPermission {
                                 Name = PermissionNames.ResourceRequest_Delete, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Delete"

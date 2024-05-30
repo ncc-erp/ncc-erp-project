@@ -327,6 +327,25 @@ namespace ProjectManagement.APIs.ResourceRequests
         }
 
         [HttpPost]
+        [AbpAuthorize(PermissionNames.ResourceRequest_Activate)]
+        public async Task<GetResourceRequestDto> ActiveRequest(long requestId)
+        {
+            await CheckRequestIsForMyProject(requestId, null);
+            var resourceRequest = await WorkScope.GetAsync<ResourceRequest>(requestId);
+
+            resourceRequest.Status = ResourceRequestStatus.PENDING;
+
+            await WorkScope.UpdateAsync(resourceRequest);
+
+            var requestDto = await _resourceRequestManager.IQGetResourceRequest()
+                .Where(s => s.Id == requestId)
+                .FirstOrDefaultAsync();
+
+            await notifyToKomu(requestDto, Action.Active, null);
+            return requestDto;
+        }
+
+        [HttpPost]
         [AbpAuthorize]
         public async Task<UpdateRequestNoteDto> Description(UpdateRequestNoteDto input)
         {
@@ -372,7 +391,10 @@ namespace ProjectManagement.APIs.ResourceRequests
             }
 
             if (request.PlanUserInfo != null)
+            {
+                request.PlanUserInfo.Note = string.Empty;
                 await _resourceManager.ConfirmJoinProject(request.PlanUserInfo.Id, input.StartTime, true);
+            }
 
             request.Request.Status = ResourceRequestStatus.DONE;
             request.Request.TimeDone = DateTimeUtils.GetNow();
@@ -446,6 +468,9 @@ namespace ProjectManagement.APIs.ResourceRequests
 
                 case Action.Done:
                     return "has **done** the resource request:";
+
+                case Action.Active:
+                    return "has **actived** the resource request:";
             }
             return "";
         }
@@ -765,7 +790,8 @@ namespace ProjectManagement.APIs.ResourceRequests
             Create = 1,
             Cancel = 2,
             Plan = 3,
-            Done = 4
+            Done = 4,
+            Active = 5
         }
     }
 }

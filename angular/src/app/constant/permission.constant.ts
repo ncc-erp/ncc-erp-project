@@ -515,6 +515,7 @@ export const PERMISSIONS_CONSTANT = {
        ResourceRequest_Edit: "ResourceRequest.Edit",
        ResourceRequest_Delete: "ResourceRequest.Delete",
        ResourceRequest_SendRecruitment: "ResourceRequest.SendRecruitment",
+       ResourceRequest_Activate: "ResourceRequest.Activate",
        // #endregion
 
        // #region Training Request

@@ -391,7 +391,10 @@ namespace ProjectManagement.APIs.ResourceRequests
             }
 
             if (request.PlanUserInfo != null)
+            {
+                request.PlanUserInfo.Note = string.Empty;
                 await _resourceManager.ConfirmJoinProject(request.PlanUserInfo.Id, input.StartTime, true);
+            }
 
             request.Request.Status = ResourceRequestStatus.DONE;
             request.Request.TimeDone = DateTimeUtils.GetNow();

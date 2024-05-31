@@ -225,8 +225,9 @@ export class RequestResourceTabComponent
       };
       this.resourceRequestService.setDoneRequest(request).subscribe((rs) => {
         if (rs) {
-          abp.notify.success(`Set done success`);
-          this.listRequest = this.listRequest.filter(req => req.id !== item.id);
+            abp.notify.success(`Set done success`);
+            item.status = RESOURCE_REQUEST_STATUS.DONE;
+            item.statusName = "DONE"
         }
       });
     } else {
@@ -241,7 +242,10 @@ export class RequestResourceTabComponent
         maxHeight: "90vh",
       });
       showModal.afterClosed().subscribe((rs) => {
-        if (rs) this.listRequest = this.listRequest.filter(req => req.id !== item.id);
+          if (rs) {
+              item.status = RESOURCE_REQUEST_STATUS.DONE;
+              item.statusName = "DONE"
+          }
       });
     }
   }
@@ -273,8 +277,36 @@ export class RequestResourceTabComponent
               })
             )
             .subscribe(() => {
-              abp.notify.success("Request canceled successfully!");
-              this.refresh();
+                abp.notify.success("Request canceled successfully!");
+                request.status = RESOURCE_REQUEST_STATUS.CANCELLED;
+                request.statusName = "CANCELLED"
+            });
+        }
+      }
+    );
+  }
+
+  active(request: RequestResourceDto) {
+    const cancelResourceRequest =
+      this.resourceRequestService.activeResourceRequest(request.id);
+    const actions = [cancelResourceRequest];
+    abp.message.confirm(
+      "Are you sure you want to active the request for project: " +
+        request.projectName,
+      "",
+      (result) => {
+        if (result) {
+          concat(...actions)
+            .pipe(
+              catchError((error) => {
+                abp.notify.error(error);
+                return empty(); // Return an empty observable to continue
+              })
+            )
+            .subscribe(() => {
+                abp.notify.success("Request has been successfully activated!");
+                request.status = RESOURCE_REQUEST_STATUS.PENDING;
+                request.statusName = "PENDING"
             });
         }
       }
@@ -695,6 +727,13 @@ export class RequestResourceTabComponent
       item.status == RESOURCE_REQUEST_STATUS.PENDING &&
       (this.isGranted(PERMISSIONS_CONSTANT.ResourceRequest_CancelAllRequest) ||
         this.isGranted(PERMISSIONS_CONSTANT.ResourceRequest_CancelMyRequest))
+    );
+  }
+
+  isShowBtnActivate(item) {
+    return (
+      item.status == RESOURCE_REQUEST_STATUS.CANCELLED &&
+      this.isGranted(PERMISSIONS_CONSTANT.ResourceRequest_Activate)
     );
   }
 

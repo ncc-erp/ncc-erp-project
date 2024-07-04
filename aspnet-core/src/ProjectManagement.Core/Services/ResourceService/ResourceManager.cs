@@ -823,7 +823,7 @@ namespace ProjectManagement.Services.ResourceManager
                                ResourceRequestCode = pu.ResourceRequest.Code,
                                ResourceRequestNote = pu.ResourceRequest.DMNote,
                                ResourceRequestDes = pu.ResourceRequest.PMNote
-                           }).OrderBy(t=>t.StartTime)
+                           })
                            .ToList(),
 
                            WorkingProjects = x.ProjectUsers

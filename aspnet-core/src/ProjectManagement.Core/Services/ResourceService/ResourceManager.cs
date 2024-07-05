@@ -1095,8 +1095,8 @@ namespace ProjectManagement.Services.ResourceManager
                 query = input.PlanStatus switch
                 {
                     PlanStatus.AllPlan => query.ToList().Where(x => x.PlanProjects.Count > 0).AsQueryable(),
-                    PlanStatus.PlanningJoin => query.ToList().Where(x => x.PlanProjects.Any(p => p.AllocatePercentage > 0)).AsQueryable(),
-                    PlanStatus.PlanningOut => query.ToList().Where(x => x.PlanProjects.Any(p => p.AllocatePercentage == 0)).AsQueryable(),
+                    PlanStatus.PlanningJoin => query.ToList().Where(x => x.PlanProjects.Any(p => p.AllocatePercentage > 0)).OrderBy(t => t.EmailAddress).AsQueryable(),
+                    PlanStatus.PlanningOut => query.ToList().Where(x => x.PlanProjects.Any(p => p.AllocatePercentage == 0)).OrderBy(s => s.PlanProjects.Select(t => t.StartTime).FirstOrDefault()).AsQueryable(),
                     PlanStatus.NoPlan => query.ToList().Where(x => x.PlanProjects.Count == 0).AsQueryable(),
                     _ => query,
                 };

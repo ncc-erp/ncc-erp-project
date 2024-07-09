@@ -24,6 +24,7 @@ export class RequestResourceDto {
   code:string;
   isNewBillAccount?:boolean;
   billUserInfo:any;
+  cvName?:string;
   isRequiredPlanResource?: boolean;
 }
 

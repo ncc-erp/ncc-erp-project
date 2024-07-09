@@ -400,7 +400,7 @@
                               ">
                                               {{ item.billUserInfo.employee.userTypeName }}
                                           </span>
-                                          <span *ngIf="item.billUserInfo.employee.levelName"
+                            <!--             <span *ngIf="item.billUserInfo.employee.levelName"
                                                 class="ml-1 badge text-white"
                                                 [ngStyle]="
                                 Utils.getUserLevel(
@@ -408,7 +408,7 @@
                                 ).style
                               ">
                                               {{ item.billUserInfo.employee.levelName }}
-                                          </span>
+                                          </span>--> 
                                           <span *ngIf="item.billUserInfo.employee.positionName"
                                                 class="ml-1 badge text-white"
                                                 [style.backgroundColor]="
@@ -422,6 +422,11 @@
                             item.billUserInfo.plannedDate | date : "dd/MM/yyyy"
                                           }}
                                       </p>
+                                      <p class="m-0 d-flex justify-content-between margin-left">                                    
+                                        {{
+                                            item.cvName
+                                        }}   
+                                    </p>
                                   </div>
                               </div>
                               <div class="col-md-2"

@@ -11,6 +11,7 @@ export class ResourcePlanDto{
     public resourceRequestId?: number
     public startTime?: any
     public userId?: number
+    public cvName?: string
 }
 export class RetroReviewInternHistoriesDto {
     emails: string[]

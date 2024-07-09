@@ -19,6 +19,7 @@ namespace ProjectManagement.Entities
         [ForeignKey(nameof(ProjectId))]
         public Project Project { get; set; }
         public long ProjectId { get; set; }
+        public string CVName {  get; set; }
         public DateTime TimeNeed { get; set; }
         public ResourceRequestStatus Status { get; set; }
         public DateTime? TimeDone { get; set; }

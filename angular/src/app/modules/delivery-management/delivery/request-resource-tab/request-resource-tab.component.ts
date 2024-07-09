@@ -341,6 +341,7 @@ export class RequestResourceTabComponent
     data.projectUserId = item.planUserInfo.projectUserId;
     data.startTime = item.planUserInfo.plannedDate;
     data.userId = item.planUserInfo.employee.id;
+    data.cvName = item.cvName;
     return data;
   }
 
@@ -352,7 +353,8 @@ export class RequestResourceTabComponent
       data: {
         resourceRequestId: item.id,
         billUserInfo: item.billUserInfo,
-        listUsers: this.listUsers,   
+        listUsers: this.listUsers, 
+        cvName : item.cvName,  
       },
       width: "800px",
       maxHeight: "90vh",
@@ -360,6 +362,7 @@ export class RequestResourceTabComponent
     show.afterClosed().subscribe((rs) => {
         item.billUserInfo = rs.data.billUserInfo;
         item.planUserInfo = rs.data.planUserInfo;
+        item.cvName = rs.data.cvName;
     });
   }
 

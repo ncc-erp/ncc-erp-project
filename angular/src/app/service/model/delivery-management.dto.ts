@@ -21,6 +21,7 @@ export class RequestResourceDto {
   priority?: any;
   quantity: number;
   planUserInfo: any;
+  cvName?: string;
   code:string;
   isNewBillAccount?:boolean;
   billUserInfo:any;

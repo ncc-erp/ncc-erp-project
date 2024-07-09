@@ -20,6 +20,7 @@ export class FormCvUserComponent extends AppComponentBase implements OnInit {
   public listUsers: any[] = [];
   public billInfoPlan:any
   public timeJoin: any;
+  public cvName: string;
   constructor(
     injector: Injector,
     @Inject(MAT_DIALOG_DATA) public input: any,
@@ -35,11 +36,13 @@ export class FormCvUserComponent extends AppComponentBase implements OnInit {
   ngOnInit(): void {
     this.billInfoPlan = {startTime: this.input.billUserInfo ? this.input.billUserInfo.plannedDate : '',
                          resourceRequestId: this.input.resourceRequestId,
-                         userId : this.input.billUserInfo ? this.input.billUserInfo.employee.id : undefined
+                         userId : this.input.billUserInfo ? this.input.billUserInfo.employee.id : undefined,
+                         cvName: this.input.cvName,
                          };
 
     this.timeJoin = this.billInfoPlan.startTime;
-    this.listUsers = this.input.listUsers
+    this.listUsers = this.input.listUsers;
+    this.cvName = this.input.cvName;
   }
 
   ngAfterViewChecked(): void {
@@ -53,7 +56,7 @@ export class FormCvUserComponent extends AppComponentBase implements OnInit {
     if (this.billInfoPlan.startTime) {
       this.billInfoPlan.startTime = moment(this.billInfoPlan.startTime).format('YYYY/MM/DD');
       }
-
+    this.billInfoPlan.cvName = this.cvName;
     this.resourceRequestService.UpdateBillInfoPlan(this.billInfoPlan).subscribe((res:any) => {
       if(res.success){
         abp.notify.success("Update successfully")

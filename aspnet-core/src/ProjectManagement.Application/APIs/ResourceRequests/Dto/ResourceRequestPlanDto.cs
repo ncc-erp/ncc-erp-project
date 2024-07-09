@@ -29,5 +29,6 @@ namespace ProjectManagement.APIs.ResourceRequests.Dto
         public DateTime? StartTime { get; set; }
 
         public long ResourceRequestId { get; set; }
+        public string CVName { get; set; }
     }
 }

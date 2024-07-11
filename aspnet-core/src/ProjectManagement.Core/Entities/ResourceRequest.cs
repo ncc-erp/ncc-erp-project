@@ -24,6 +24,7 @@ namespace ProjectManagement.Entities
         public DateTime? TimeDone { get; set; }
         [MaxLength(10000)]
         public string CVName { get; set; }
+        [MaxLength(10000)]
         public string PMNote { get; set; }
         public string DMNote { get; set; }
         public string Code { get; set; }

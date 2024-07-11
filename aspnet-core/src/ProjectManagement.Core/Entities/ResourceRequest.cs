@@ -20,10 +20,10 @@ namespace ProjectManagement.Entities
         public Project Project { get; set; }
         public long ProjectId { get; set; }
         public DateTime TimeNeed { get; set; }
+        public string CVName { get; set; }
         public ResourceRequestStatus Status { get; set; }
         public DateTime? TimeDone { get; set; }
-        [MaxLength(10000)]
-        public string CVName { get; set; }
+        [MaxLength(10000)]        
         public string PMNote { get; set; }
         public string DMNote { get; set; }
         public string Code { get; set; }

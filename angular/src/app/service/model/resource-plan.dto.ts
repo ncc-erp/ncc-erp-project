@@ -1,4 +1,4 @@
-import { SocialAuthServiceConfig } from 'angularx-social-login';
+
 export class ResourcePlanDto{
     constructor(_resourceRequestId, _projectUserId){
         this.projectUserId = _projectUserId;
@@ -11,6 +11,7 @@ export class ResourcePlanDto{
     public resourceRequestId?: number
     public startTime?: any
     public userId?: number
+    public cvName?:string
 }
 export class RetroReviewInternHistoriesDto {
     emails: string[]

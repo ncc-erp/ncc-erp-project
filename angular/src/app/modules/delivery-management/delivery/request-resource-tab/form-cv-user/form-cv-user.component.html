@@ -51,6 +51,19 @@
                 </mat-form-field>
             </div>
         </div>
+         <!--   thêm field CV     -->
+    <div class="form-group row">
+        <label class="col-md-3 col-form-label" for="tenancyName">
+            CV  
+        </label>
+       <div class="col-md-9">
+            <mat-form-field appearance="outline" class="w-100">
+                <input matInput placeholder="CV Name"  name="cvName"
+                    #CVNameNg="ngModel" [(ngModel)]="cvName" value=" ">
+                
+            </mat-form-field>
+        </div>
+    </div>
     </div>
     <div align="end" class="row justify-content-end">
         <button class="btn btn-secondary" (click)="cancel()">Cancel</button>

@@ -414,7 +414,8 @@ namespace ProjectManagement.APIs.ResourceRequests
                         UserId = request.Request.BillAccountId ?? default,
                         StartTime = input.BillStartTime ?? default,
                         ProjectId = request.Request.ProjectId,
-                        isActive = true
+                        isActive = true,
+                        AccountName = request.Request.CVName,
                     });
                     CurrentUnitOfWork.SaveChanges();
                 }
@@ -545,6 +546,7 @@ namespace ProjectManagement.APIs.ResourceRequests
 
             request.BillAccountId = input.UserId;
             request.BillStartDate = input.StartTime;
+            request.CVName = input.CVName;
             await WorkScope.UpdateAsync(request);
 
             var isAlreadyHaveResource = WorkScope.GetAll<ProjectUser>()

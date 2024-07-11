@@ -32,7 +32,7 @@ namespace ProjectManagement.Entities
         public DateTime? BillStartDate { get; set; }
         public bool IsRecruitmentSend { get; set; }
         public string RecruitmentUrl { get; set; }
-
+        public string CVName {  get; set; }
         public int Quantity { get; set; }
         public UserLevel Level { get; set; }
         public Priority Priority { get; set; }

@@ -17,6 +17,7 @@ namespace ProjectManagement.Services.ResourceRequestService.Dto
         public DateTime CreationTime { get; set; }
         public DateTime TimeNeed { get; set; }
         public DateTime? TimeDone { get; set; }
+        public string CVName { get; set; }
         public UserLevel Level { get; set; }
         public Priority Priority { get; set; }
 

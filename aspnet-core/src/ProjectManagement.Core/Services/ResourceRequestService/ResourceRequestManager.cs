@@ -98,7 +98,7 @@ namespace ProjectManagement.Services.ResourceRequestService
                             Quantity = request.Quantity,
                             ProjectCode = request.Project.Code,
                             Skills = request.ResourceRequestSkills.Select(p => new ResourceRequestSkillDto() { Id = p.SkillId, Name = p.Skill.Name }).ToList(),
-
+                            CVName = request.CVName,
                             PlanUserInfo = request.ProjectUsers.Where(x => x.Status == ProjectUserStatus.Future)
                                                                .OrderByDescending(q => q.CreationTime)
                                                                .Select(s => new PlanUserInfoDto

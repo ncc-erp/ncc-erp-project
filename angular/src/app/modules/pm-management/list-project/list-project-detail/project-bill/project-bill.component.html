@@ -87,7 +87,7 @@
                     <h4 class="d-inline" style="margin-top: 5px;">Bill accounts ({{ filteredUserBillList.length }}):</h4>
                     <div class="d-flex flex-wrap justify-content-start align-items-center" style="flex-grow: 1;">
                         <button name="btn-createUserBill" *ngIf="!userBillProcess && permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Create)"
-                        [hidden]="isShowUserBill" style="border: none; height: fit-content;"
+                            [hidden]="isShowUserBill" style="border: none; height: fit-content;"
                         class="btn bg-blue ml-2 btn-s mb-2" (click)="addUserBill(); userBillCurrentPage=1; $event.stopPropagation()">
                             <i class="fa fa-plus m-0"></i>
                         </button>
@@ -101,8 +101,8 @@
                                 <input type="text" class="form-control" name="keyword" placeholder="Search by Email, Charge Name/Role, Note,..."
                                 [hidden]="!showSearchAndFilter"
                                 [(ngModel)]="searchText"
-                                (keydown.space)="$event.stopPropagation()"
-                                (keydown.enter)="searchContext(); $event.stopPropagation()" />
+                                    (keydown.space)="$event.stopPropagation()"
+                                    (keydown.enter)="searchContext(); $event.stopPropagation()" />
                             </div>
                         </div>
                         <div class="col-lg-1 mb-2" (click)="$event.stopPropagation()" [hidden]="!showSearchAndFilter">
@@ -122,17 +122,17 @@
                             <app-multiple-select
                             [hidden]="isShowUserBill"
                             #linkedResources
-                            [ngClass]="selectedLinkedResources.length > 0? 'col-11' : 'col-12'"
+                                [ngClass]="selectedLinkedResources.length > 0? 'col-11' : 'col-12'"
                             name="filterLinkedResources"
                             placeholder="Tất cả"
                             labelName="Linked Resources"
                             [listOption]="listSelectLinkedResources"
                             [defaultValue]="selectedLinkedResources"
-                            (onChange)="onChangeListLinkedResourcesSelected($event)">
+                                (onChange)="onChangeListLinkedResourcesSelected($event)">
                             </app-multiple-select>
                             <i [hidden]="isShowUserBill"
                             class="fas fa-times fa-lg pointer"
-                            *ngIf="selectedLinkedResources.length > 0"
+                                *ngIf="selectedLinkedResources.length > 0"
                             (click)="onCancelFilterLinkedResources()"
                             ></i>
                         </div>
@@ -161,7 +161,7 @@
                               [hidden]="isShowUserBill"
                               name="cbx-hideRate"
                               [(ngModel)]="isHideRates">
-                              Hide rates
+                                Hide rates
                             </mat-checkbox>
                         </div>
 
@@ -175,43 +175,45 @@
                 <div class="mb-1 fixTableHead">
                         <table name="tbl-UserBill" style="border-collapse: collapse;"
                             class="table table-hover text-nowrap" [busy]="isLoading">
-                            <thead>
-                                <tr>
-                                    <th style="border-left: 10px solid #fff" class="align stt">#</th>
+                        <thead>
+                            <tr>
+                                <th style="border-left: 10px solid #fff" class="align stt">#</th>
                                     <th class="align" (click)="sortData('emailAddress')" style="cursor: pointer;">{{ "Employee" | localize }}
-                                        <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'emailAddress'"></i>
-                                        <i *ngIf="sortColumn !== 'emailAddress'" class="fas fa-sort"></i>
-                                    </th>
+                                    {{ "Employee" | localize }}
+                                    <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'emailAddress'"></i>
+                                    <i *ngIf="sortColumn !== 'emailAddress'" class="fas fa-sort"></i>
+                                </th>
                                     <th class="align" (click)="sortData('billAccountName')" style="cursor: pointer;">{{ "Charge Name" | localize }}
-                                        <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'billAccountName'"></i>
-                                        <i *ngIf="sortColumn !== 'billAccountName'" class="fas fa-sort"></i>
-                                    </th>
+                                    <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'billAccountName'"></i>
+                                    <i *ngIf="sortColumn !== 'billAccountName'" class="fas fa-sort"></i>
+                                </th>
                                     <th class="align" (click)="sortData('billRole')" style="cursor: pointer;">{{ "Charge Role" | localize }}
-                                        <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'billRole'"></i>
-                                        <i *ngIf="sortColumn !== 'billRole'" class="fas fa-sort"></i>
-                                    </th>
+                                    <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'billRole'"></i>
+                                    <i *ngIf="sortColumn !== 'billRole'" class="fas fa-sort"></i>
+                                </th>
                                     <th class="align" (click)="orderLinkedResourcesOnTop('linkedResources')" style="cursor: pointer;">{{ "Linked Resources" | localize }}
-                                        <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'linkedResources'"></i>
-                                        <i *ngIf="sortColumn !== 'linkedResources'" class="fas fa-sort"></i>
-                                    </th>
-                                    <th class="align" (click)="sortData('billRate')" style="cursor: pointer; min-width: 100px;"
-                                        *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Rate_View) && !isHideRates">
-                                        {{ "Rate" | localize }}
-                                        <br>({{rateInfo.currencyName}})
-                                        <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'billRate'"></i>
-                                        <i *ngIf="sortColumn !== 'billRate'" class="fas fa-sort"></i>
-                                    </th>
-                                    <th class="align">Charge Type</th>
+                                    <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'linkedResources'"></i>
+                                    <i *ngIf="sortColumn !== 'linkedResources'" class="fas fa-sort"></i>
+                                </th>
+                                <th class="align" style="cursor: pointer; min-width: 100px;">CVLink</th>
+                                <th class="align" (click)="sortData('billRate')" style="cursor: pointer; min-width: 100px;"
+                                    *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Rate_View) && !isHideRates">
+                                    {{ "Rate" | localize }}
+                                    <br>({{rateInfo.currencyName}})
+                                    <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'billRate'"></i>
+                                    <i *ngIf="sortColumn !== 'billRate'" class="fas fa-sort"></i>
+                                </th>
+                                <th class="align">Charge Type</th>
                                     <th class="align" (click)="sortData('startTime')" style="cursor: pointer;">{{ "Is Charge" | localize }}
-                                        <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'startTime'"></i>
-                                        <i *ngIf="sortColumn !== 'startTime'" class="fas fa-sort"></i>
-                                    </th>
-                                    <th class="align">Note</th>
-                                    <th class="align">Action</th>
-                                </tr>
-                              </thead>
-                                            <tbody>
-                                <tr *ngFor="let bill of filteredUserBillList |paginate:{
+                                    <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'startTime'"></i>
+                                    <i *ngIf="sortColumn !== 'startTime'" class="fas fa-sort"></i>
+                                </th>
+                                <th class="align">Note</th>
+                                <th class="align">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let bill of filteredUserBillList |paginate:{
                                     id: 'billUserInfo',
                                     itemsPerPage: maxBillUserCurrentPage,
                                     currentPage: userBillCurrentPage
@@ -219,19 +221,19 @@
                                     <td style="border-left: 10px solid #b9b8b8;"
                                      [ngClass]="{'highLight': bill.linkedResources && bill.linkedResources.length > 1,
                                         'highLightOne': bill.linkedResources && bill.linkedResources.length == 1  }">
-                                        <span>{{ i + 1 + maxBillUserCurrentPage * (userBillCurrentPage - 1) }}</span>
-                                    </td>
-                                    <td class="text-left">
-                                        <span *ngIf="!bill.createMode">
+                                    <span>{{ i + 1 + maxBillUserCurrentPage * (userBillCurrentPage - 1) }}</span>
+                                </td>
+                                <td class="text-left">
+                                    <span *ngIf="!bill.createMode">
                                             <app-user-info 
                                             [userData]="bill" [isHideLevel]="true" 
                                             [isSimplizeEmailAddress]="true"
                                             [isSmallerDiv]="true">
-                                            </app-user-info>
-                                        </span>
-                                        <div *ngIf="bill.createMode">
-                                            <mat-form-field class="w-100" appearance="outline">
-                                                <mat-select panelClass="custom-panel-class" (closed)="focusOut()"
+                                        </app-user-info>
+                                    </span>
+                                    <div *ngIf="bill.createMode">
+                                        <mat-form-field class="w-100" appearance="outline">
+                                            <mat-select panelClass="custom-panel-class" (closed)="focusOut()"
                                                     [(ngModel)]="bill.userId"
                                                     name="userBill"
                                                     placeholder="select an user *"
@@ -242,185 +244,191 @@
                                                             placeholder="search"
                                                             (keydown)="$event.stopPropagation()"
                                                             name="searchBillUser"
-                                                            #search>{{search.focus()}}
-                                                    </mat-form-field>
+                                                        #search>{{search.focus()}}
+                                                </mat-form-field>
                                                     <mat-option *ngFor="let user of userForUserBill | listFilter: 'fullName' : searchUserBill : 'emailAddress' " [value]="user.id">
-                                                        <div class="mat-option-text">
-                                                            <span class="data-name">
-                                                                {{user.fullName}} - ({{user.emailAddress}})
-                                                            </span>
-                                                            <span class="data-type-label"
-                                                                [ngClass]="getStyleStatusUser(user.isActive)">
-                                                                {{ getValueStatusUser(user.isActive) }}
-                                                            </span>
-                                                        </div>
-                                                    </mat-option>
-                                                </mat-select>
-                                            </mat-form-field>
+                                                    <div class="mat-option-text">
+                                                        <span class="data-name">
+                                                            {{user.fullName}} - ({{user.emailAddress}})
+                                                        </span>
+                                                        <span class="data-type-label"
+                                                            [ngClass]="getStyleStatusUser(user.isActive)">
+                                                            {{ getValueStatusUser(user.isActive) }}
+                                                        </span>
+                                                    </div>
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
                                             <mat-error class="mt-1" *ngIf="userBill.hasError('required') && userBill.touched" style="font-size: 13px;">
-                                                This field is required
-                                            </mat-error>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span *ngIf="!bill.createMode">{{ bill.billAccountName }}</span>
+                                            This field is required
+                                        </mat-error>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span *ngIf="!bill.createMode">{{ bill.billAccountName }}</span>
 
-                                        <div *ngIf="bill.createMode">
+                                    <div *ngIf="bill.createMode">
 
-                                            <input style="min-width: 100px;" class="form-control mt-1"
+                                        <input style="min-width: 100px;" class="form-control mt-1"
                                                 #accountName="ngModel" #accountNameEl type="text"
                                                 placeholder="Charge Name" name="accountName"
                                                 [(ngModel)]="bill.accountName" [value]="bill.billAccountName"/>
 
-                                            <abp-validation-summary [control]="accountName" [controlEl]="accountNameEl">
-                                            </abp-validation-summary>
+                                        <abp-validation-summary [control]="accountName" [controlEl]="accountNameEl">
+                                        </abp-validation-summary>
 
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span *ngIf="!bill.createMode">{{bill.billRole}}</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span *ngIf="!bill.createMode">{{bill.billRole}}</span>
 
-                                        <div *ngIf="bill.createMode">
+                                    <div *ngIf="bill.createMode">
 
-                                            <input style="min-width: 60px;" required class="form-control mt-1"
-                                                #billRole="ngModel" #billRoleEl type="text" placeholder="Charge role *"
-                                                name="billRole" [(ngModel)]="bill.billRole" />
+                                        <input style="min-width: 60px;" required class="form-control mt-1"
+                                            #billRole="ngModel" #billRoleEl type="text" placeholder="Charge role *"
+                                            name="billRole" [(ngModel)]="bill.billRole" />
 
-                                            <abp-validation-summary [control]="billRole" [controlEl]="billRoleEl">
-                                            </abp-validation-summary>
+                                        <abp-validation-summary [control]="billRole" [controlEl]="billRoleEl">
+                                        </abp-validation-summary>
 
-                                        </div>
-                                    </td>
-                                    <td style="width: 280px;">
-                                        <div class="d-flex align-items-start justify-content-end">
-                                            <div class="d-flex" style="flex-direction: column;">
-                                                <div *ngIf="bill.createLinkResourceMode" class="row">
-                                                    <div class="col-10 mb-2 position-relative">
+                                    </div>
+                                </td>
+                                <td style="width: 280px;">
+                                    <div class="d-flex align-items-start justify-content-end">
+                                        <div class="d-flex" style="flex-direction: column;">
+                                            <div *ngIf="bill.createLinkResourceMode" class="row">
+                                                <div class="col-10 mb-2 position-relative">
                                                         <mat-form-field style="max-width: 100%;" class="w-100" appearance="outline">
                                                             <mat-select panelClass="custom-panel-class" (closed)="focusOut()"
                                                                         [(ngModel)]="selectedResource"
                                                                         name="userBill"
                                                                         placeholder="select a resource *"
                                                                         required
-                                                                        #userBill="ngModel">
+                                                            #userBill="ngModel">
                                                                 <mat-form-field class="w-100 px-3" style="position: sticky; top: 0; z-index: 2; background-color: white;">
-                                                                    <input matInput [(ngModel)]="searchResource"
-                                                                           placeholder="search"
-                                                                           (keydown)="$event.stopPropagation()"
+                                                                <input matInput [(ngModel)]="searchResource"
+                                                                    placeholder="search"
+                                                                    (keydown)="$event.stopPropagation()"
                                                                            name="searchResource"
                                                                            #search>{{search.focus()}}
-                                                                </mat-form-field>
+                                                            </mat-form-field>
                                                                 <mat-option *ngFor="let resource of listAvailableResource | listFilter: 'fullName' : searchResource : 'emailAddress' " [value]="resource.id">
-                                                                    <div class="mat-option-text">
-                                                                        <span class="data-name">
+                                                                <div class="mat-option-text">
+                                                                    <span class="data-name">
                                                                             {{resource.fullName}} - ({{resource.emailAddress}})
-                                                                        </span>
-                                                                    </div>
-                                                                </mat-option>
-                                                            </mat-select>
-                                                        </mat-form-field>
+                                                                    </span>
+                                                                </div>
+                                                            </mat-option>
+                                                        </mat-select>
+                                                    </mat-form-field>
                                                         <mat-error class="mt-1" *ngIf="userBill.hasError('required') && userBill.touched" style="font-size: 13px;">
-                                                            This field is required
-                                                        </mat-error>
-                                                    </div>
+                                                        This field is required
+                                                    </mat-error>
+                                                </div>
                                                     <div class="col-2 d-flex align-items-center" style="flex-direction: column;">
-                                                        <button [disabled]="selectedResource == null"
-                                                                class="mb-1 submit-btn" style="background: none; border: none;"
+                                                    <button [disabled]="selectedResource == null"
+                                                        class="mb-1 submit-btn" style="background: none; border: none;"
                                                                 [hidden]="showSearchAndFilter"
                                                                 (click)="saveLinkResource(bill)">
                                                             <i style="color: green; font-size: 20px;" class="fas fa-check fa-2x "></i>
-                                                        </button>
-                                                        <i style="color: red; font-size: 20px;" class="fas fa-undo fa-2x"
-                                                           [hidden]="showSearchAndFilter"
-                                                           (click)="cancelLinkResource(bill)"></i>
-                                                    </div>
+                                                    </button>
+                                                    <i style="color: red; font-size: 20px;" class="fas fa-undo fa-2x"
+                                                        [hidden]="showSearchAndFilter"
+                                                        (click)="cancelLinkResource(bill)"></i>
                                                 </div>
+                                            </div>
                                                 <div *ngFor="let resource of bill.linkedResources" class="mb-2 position-relative">
                                                     <app-user-info [isSmallerDiv]="true"
                                                                    [userData]="resource"
                                                                    [isWeeklyReport]="false"
                                                                    [viewMode]="1">
-                                                    </app-user-info>
+                                                </app-user-info>
                                                     <i *ngIf="!isAddingOrEditingUserBill && !isAddingResource" (click)="removeLinkResource(resource.id, bill.id)"
                                                        class="fa fa-times position-absolute" style="top:32px; right: -28px;"></i>
-                                                </div>
                                             </div>
-                                            <i *ngIf="!isAddingResource && !isAddingOrEditingUserBill && permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount)"
+                                        </div>
+                                        <i *ngIf="!isAddingResource && !isAddingOrEditingUserBill && permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount)"
                                                (click)="addLinkResource(bill)"
                                                class="btn bg-blue ml-2 btn-sm mb-2"
-                                               style="cursor: pointer; font-size: 10px;">
-                                                <i class="fa fa-plus fa-s m-0"></i>
-                                            </i>
-                                        </div>
-                                    </td>
-                                    <td class="text-center"
-                                        *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Rate_View) && !isHideRates">
-                                        <span class="text-center" *ngIf="!bill.createMode">{{bill.billRate |
-                                            number:'1.0':'en-US'}}
-                                        </span>
-                                        <div *ngIf="bill.createMode">
-                                            <input style="min-width: 30px;" required class="form-control mt-1"
-                                                #billRate="ngModel" #billRateEl type="text" mask="separator"
+                                            style="cursor: pointer; font-size: 10px;">
+                                            <i class="fa fa-plus fa-s m-0"></i>
+                                        </i>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <span class="file-download" *ngIf="!bill.createMode"
+                                        (click)="downloadFile(bill.id)">
+                                        {{bill.linkCV}}
+                                    </span>
+                                </td>
+                                <td class="text-center"
+                                    *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Rate_View) && !isHideRates">
+                                    <span class="text-center" *ngIf="!bill.createMode">{{bill.billRate |
+                                        number:'1.0':'en-US'}}
+                                    </span>
+                                    <div *ngIf="bill.createMode">
+                                        <input style="min-width: 30px;" required class="form-control mt-1"
+                                            #billRate="ngModel" #billRateEl type="text" mask="separator"
                                                 thousandSeparator="." placeholder="number *"
                                                 [(ngModel)]="bill.billRate">
-                                            <abp-validation-summary [control]="billRate" [controlEl]="billRateEl">
-                                            </abp-validation-summary>
-                                        </div>
-                                    </td>
-                                    <td class="text-center">
-                                        <span class="text-center" *ngIf="!bill.createMode">
-                                            {{bill.chargeTypeName}}</span>
-                                        <div *ngIf="bill.createMode" style="width: 100px; ">
-                                            <mat-form-field class="w-100" appearance="outline">
-                                                <mat-select (closed)="focusOut()" [(ngModel)]="bill.chargeType"
+                                        <abp-validation-summary [control]="billRate" [controlEl]="billRateEl">
+                                        </abp-validation-summary>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <span class="text-center" *ngIf="!bill.createMode">
+                                        {{bill.chargeTypeName}}</span>
+                                    <div *ngIf="bill.createMode" style="width: 100px; ">
+                                        <mat-form-field class="w-100" appearance="outline">
+                                            <mat-select (closed)="focusOut()" [(ngModel)]="bill.chargeType"
                                                     name="chargeTypes" placeholder="select Charge"
                                                     #chargeTypes="ngModel">
                                                     <mat-option *ngFor="let item of chargeTypeList"
                                                         [value]="item.value">
-                                                        {{item.name}}
-                                                    </mat-option>
-                                                </mat-select>
-                                            </mat-form-field>
-                                        </div>
-                                    </td>
-                                    <td class="text-center">
-                                        <span class="text-center">
-                                            <mat-checkbox [disabled]="!bill.createMode" [(ngModel)]="bill.isActive">
-                                            </mat-checkbox>
-                                        </span>
-                                        <br>
+                                                    {{item.name}}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <span class="text-center">
+                                        <mat-checkbox [disabled]="!bill.createMode" [(ngModel)]="bill.isActive">
+                                        </mat-checkbox>
+                                    </span>
+                                    <br>
                                         <span *ngIf="!bill.createMode && bill.startTime">{{bill.startTime | date:"dd/MM/yyyy"}}</span>
-                                        <div *ngIf="bill.createMode">
-                                            <mat-form-field appearance="outline" style="width: 125px;">
-                                                <input matInput [matDatepicker]="billStarttimePicker"
-                                                    placeholder="chose a date *" [(ngModel)]="bill.startTime"
-                                                    name="billStarttime" #billStartTime="ngModel" required>
-                                                <mat-datepicker-toggle matSuffix [for]="billStarttimePicker">
-                                                </mat-datepicker-toggle>
-                                                <mat-datepicker #billStarttimePicker></mat-datepicker>
-                                            </mat-form-field>
+                                    <div *ngIf="bill.createMode">
+                                        <mat-form-field appearance="outline" style="width: 125px;">
+                                            <input matInput [matDatepicker]="billStarttimePicker"
+                                                placeholder="chose a date *" [(ngModel)]="bill.startTime"
+                                                name="billStarttime" #billStartTime="ngModel" required>
+                                            <mat-datepicker-toggle matSuffix [for]="billStarttimePicker">
+                                            </mat-datepicker-toggle>
+                                            <mat-datepicker #billStarttimePicker></mat-datepicker>
+                                        </mat-form-field>
 
-                                            <mat-error class="mt-1"
-                                                *ngIf="billStartTime.hasError('required') && billStartTime.touched"
-                                                style="font-size: 13px;">
-                                                This field is required
-                                            </mat-error>
-                                        </div>
-                                        <br *ngIf="bill.createMode || bill.startTime">
-                                        <span class="text-center" *ngIf="!bill.createMode && bill.endTime">{{bill.endTime
-                                            |date:"dd/MM/yyyy"}}</span>
-                                        <div *ngIf="bill.createMode">
-                                            <mat-form-field appearance="outline" style="width: 125px;">
-                                                <input matInput [matDatepicker]="billEndtimepicker"
-                                                    placeholder="chose a date" [(ngModel)]="bill.endTime"
-                                                    name="billEndtime">
-                                                <mat-datepicker-toggle matSuffix [for]="billEndtimepicker">
-                                                </mat-datepicker-toggle>
-                                                <mat-datepicker #billEndtimepicker></mat-datepicker>
-                                            </mat-form-field>
-                                        </div>
-                                    </td>
-                                    <!-- <td class="text-center">
+                                        <mat-error class="mt-1"
+                                            *ngIf="billStartTime.hasError('required') && billStartTime.touched"
+                                            style="font-size: 13px;">
+                                            This field is required
+                                        </mat-error>
+                                    </div>
+                                    <br *ngIf="bill.createMode || bill.startTime">
+                                    <span class="text-center" *ngIf="!bill.createMode && bill.endTime">{{bill.endTime
+                                        |date:"dd/MM/yyyy"}}</span>
+                                    <div *ngIf="bill.createMode">
+                                        <mat-form-field appearance="outline" style="width: 125px;">
+                                            <input matInput [matDatepicker]="billEndtimepicker"
+                                                placeholder="chose a date" [(ngModel)]="bill.endTime"
+                                                name="billEndtime">
+                                            <mat-datepicker-toggle matSuffix [for]="billEndtimepicker">
+                                            </mat-datepicker-toggle>
+                                            <mat-datepicker #billEndtimepicker></mat-datepicker>
+                                        </mat-form-field>
+                                    </div>
+                                </td>
+                                <!-- <td class="text-center">
                                         <span class="text-center" *ngIf="!bill.createMode">{{bill.endTime
                                             |date:"dd/MM/yyyy"}}</span>
                                         <div *ngIf="bill.createMode">
@@ -434,55 +442,55 @@
                                             </mat-form-field>
                                         </div>
                                     </td> -->
-                                    <!-- <td class="text-center">
+                                <!-- <td class="text-center">
                                         <mat-checkbox [disabled]="!bill.createMode" class="mt-1"
                                             [(ngModel)]="bill.isActive">
                                         </mat-checkbox>
                                     </td> -->
-                                    <td style="white-space: break-spaces;">
-                                        <div class="d-flex align-items-center" style="width: 100%;">
+                                <td style="white-space: break-spaces;">
+                                    <div class="d-flex align-items-center" style="width: 100%;">
                                             <p style="flex: 1; min-width: 200px; max-width: 100%;"
                                             class="mb-0 p-0 ml-2 ">{{ bill.note }}</p>
                                             <i style="color: #585858;" class="fas fa-ellipsis-v ml-1" [matMenuTriggerFor]="menu3"></i>
-                                            <mat-menu #menu3="matMenu">
-                                                <button class="mat-menu-item" (click)="editBillNote(bill)">
-                                                    <i class="fas fa-edit mr-2 fa-lg"></i>
-                                                    Edit Note
-                                                </button>
-                                            </mat-menu>
-                                        </div>
-                                    </td>
-                                    <td class="text-center">
-                                        <div *ngIf="!bill.createMode">
+                                        <mat-menu #menu3="matMenu">
+                                            <button class="mat-menu-item" (click)="editBillNote(bill)">
+                                                <i class="fas fa-edit mr-2 fa-lg"></i>
+                                                Edit Note
+                                            </button>
+                                        </mat-menu>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <div *ngIf="!bill.createMode">
                                             <button *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Edit)"
                                               [disabled]="userBillProcess" mat-button [matMenuTriggerFor]="actionMenu"><i class="fas fa-bars fa-lg"></i></button>
-                                            <!-- Define the mat-menu and its content -->
-                                            <mat-menu #actionMenu="matMenu">
+                                        <!-- Define the mat-menu and its content -->
+                                        <mat-menu #actionMenu="matMenu">
                                               <button mat-menu-item (click)="editUserBill(bill)" [hidden]="!showSearchAndFilter">
                                                 <i class="fas fa-pencil-alt"></i> Edit
-                                              </button>
-                                              <button mat-menu-item (click)="removeUserBill(bill)">
+                                            </button>
+                                            <button mat-menu-item (click)="removeUserBill(bill)">
                                                 <i class="fas fa-trash"></i> Delete
-                                              </button>
-                                            </mat-menu>
-                                          </div>
+                                            </button>
+                                        </mat-menu>
+                                    </div>
 
-                                          <div *ngIf="bill.createMode" class="pt-1 d-flex" style="flex-direction: column;">
-                                            <button
-                                                [disabled]="!bill?.userId || !bill?.billRole || !bill?.startTime  || bill?.billRate<0 || !bill?.billRate "
-                                                class="mb-3 submit-btn" style="background: none; border: none;"
+                                    <div *ngIf="bill.createMode" class="pt-1 d-flex" style="flex-direction: column;">
+                                        <button
+                                            [disabled]="!bill?.userId || !bill?.billRole || !bill?.startTime  || bill?.billRate<0 || !bill?.billRate "
+                                            class="mb-3 submit-btn" style="background: none; border: none;"
                                                 [hidden]="showSearchAndFilter"
                                                 (click)="saveUserBill(bill)">
-                                                <i style="color: green; font-size: 30px;" class="fas fa-check fa-2x "></i>
-                                            </button>
-                                            <i style="color: red; font-size: 30px;" class="fas fa-undo fa-2x"
+                                            <i style="color: green; font-size: 30px;" class="fas fa-check fa-2x "></i>
+                                        </button>
+                                        <i style="color: red; font-size: 30px;" class="fas fa-undo fa-2x"
                                                 [hidden]="showSearchAndFilter"
                                                 (click)="cancelUserBill(bill)"></i>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
 
                 </div>
                 <div class="card-footer bg-light border-top" style="height: 60px;">

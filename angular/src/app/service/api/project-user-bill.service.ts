@@ -77,6 +77,9 @@ export class ProjectUserBillService extends BaseApiService {
   getAllProjectCanUsing(projectId: number): Observable<ApiResponse<SubInvoice[]>>{
     return this.http.get<ApiResponse<SubInvoice[]>>(this.rootUrl + '/GetAllProjectCanUsing?projectId='+projectId);
   }
+  DownloadCVLink(projectId: number) {
+    return this.http.get<any>(this.rootUrl + '/DownloadCVLink?projectUserBillId=' + projectId);
+  }
   addSubInvoice(item: AddSubInvoiceModel): Observable<ApiResponse<string>>{
     return this.http.post<ApiResponse<string>>(this.rootUrl + '/AddSubInvoice', item);
   }

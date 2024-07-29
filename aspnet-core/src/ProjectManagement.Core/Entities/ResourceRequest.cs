@@ -42,6 +42,8 @@ namespace ProjectManagement.Entities
         public bool IsRequiredPlanResource { get; set; }
 
         public ICollection<ResourceRequestSkill> ResourceRequestSkills { get; set; }
+        public string LinkCV { get; set; }
+        
 
         public ICollection<ProjectUser> ProjectUsers { get; set; }
     }

@@ -45,3 +45,15 @@
     text-align: center;
     vertical-align: middle;
 }
+.file-download {
+    display: inline-block;
+    width: 280px;
+    color: #007bff;
+    cursor: pointer;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+.file-download:hover {
+    color: blue;
+}

@@ -14,6 +14,8 @@ using ProjectManagement.Services.ProjectTimesheet;
 using ProjectManagement.Services.ProjectUserBill.Dto;
 using ProjectManagement.Services.ProjectUserBills;
 using ProjectManagement.Services.ResourceService.Dto;
+using ProjectManagement.UploadFilesService;
+using ProjectManagement.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,12 +31,15 @@ namespace ProjectManagement.APIs.ProjectUserBills
     {
         private ProjectTimesheetManager timesheetManager;
         private ProjectUserBillManager projectUserBillManager;
+        private readonly UploadFileService uploadFileService;
 
         public ProjectUserBillAppService(ProjectTimesheetManager timesheetManager
-            , ProjectUserBillManager projectUserBillManager)
+            , ProjectUserBillManager projectUserBillManager,
+            UploadFileService uploadFileService)
         {
             this.timesheetManager = timesheetManager;
             this.projectUserBillManager = projectUserBillManager;
+            this.uploadFileService = uploadFileService;
         }
 
         [HttpPost]
@@ -45,6 +50,7 @@ namespace ProjectManagement.APIs.ProjectUserBills
         {
             return await projectUserBillManager.GetAllByProject(input);
         }
+       
 
         [HttpGet]
         [AbpAuthorize(PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo,
@@ -676,6 +682,22 @@ namespace ProjectManagement.APIs.ProjectUserBills
         }
         #endregion
 
+        [HttpGet]
+        public async Task<object> DownloadCVLink(long projectUserBillId)
+        {
+            var filePath = WorkScope.GetAll<ProjectUserBill>()
+                .Where(s => s.Id == projectUserBillId)
+                .Select(s => s.LinkCV)
+                .FirstOrDefault();
+
+            var data = await uploadFileService.DownloadCvLinkAsync(filePath);
+            var fileName = FileUtils.GetFileName(filePath);
+            return new
+            {
+                FileName = fileName,
+                Data = data
+            };
+        }
         [HttpGet]
         [AbpAuthorize]
         public async Task<List<BillAccountDto>> GetAllBillAccount()

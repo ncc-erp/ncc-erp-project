@@ -50,7 +50,7 @@ namespace ProjectManagement.UploadFilesService
             var response = await s3Client.PutObjectAsync(request);
             logger.LogDebug(JsonConvert.SerializeObject(response));
             return key;
-        }       
+        }
 
         private void CheckValidFile(IFormFile file, string[] allowFileTypes)
         {
@@ -58,7 +58,12 @@ namespace ProjectManagement.UploadFilesService
             if (!allowFileTypes.Contains(fileExt))
                 throw new UserFriendlyException($"Wrong file type {file.ContentType}. Allow file types: {string.Join(", ", allowFileTypes)}");
         }
-
+      
+        public async Task<string> UploadCvFileAsync(IFormFile file, string tenantName, string fileName)
+        {
+            var filepath = $"{ConstantUploadFile.Project_Tool}/{tenantName}/{ConstantUploadFile.CV_Folder}/{fileName}";
+            return await UploadFileAsync(file, ConstantUploadFile.AllowCVFileTypes, filepath);
+        }
         public async Task<string> UploadAvatarAsync(IFormFile file, string tenantName)
         {
             var filePath = $"{ConstantUploadFile.AvatarFolder?.TrimEnd('/')}/{tenantName}/{CommonUtil.NowToYYYYMMddHHmmss()}_{Guid.NewGuid()}.{FileUtils.GetFileExtension(file)}";

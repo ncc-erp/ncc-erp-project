@@ -135,7 +135,9 @@ namespace ProjectManagement.Services.ResourceManager
                     ProjectName = x.Project.Name,
                     PmName = x.Project.PM.FullName,
                     StartTime = x.StartTime,
-                    IsPool = x.IsPool
+                    IsPool = x.IsPool,
+                    ProjectRole = x.ProjectRole
+                   
                 });
         }
 

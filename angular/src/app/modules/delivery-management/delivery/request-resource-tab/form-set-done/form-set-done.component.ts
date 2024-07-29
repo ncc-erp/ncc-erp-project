@@ -20,6 +20,7 @@ export class FormSetDoneComponent extends AppComponentBase implements OnInit {
   public plannedUserList: any = []
   public historyUser: string;
   public allowConfirm:boolean  =true
+  public projectRoleList = Object.keys(this.APP_ENUM.ProjectUserRole);
   public timeDone: any = new Date();
   // PmManager_ProjectUser_ConfirmMoveEmployeeToOtherProject = PERMISSIONS_CONSTANT.PmManager_ProjectUser_ConfirmMoveEmployeeToOtherProject
   // PmManager_ProjectUser_ConfirmPickUserFromPoolToProject = PERMISSIONS_CONSTANT.PmManager_ProjectUser_ConfirmPickUserFromPoolToProject
@@ -36,7 +37,7 @@ export class FormSetDoneComponent extends AppComponentBase implements OnInit {
   ngOnInit(): void {
     this.planUserInfo = this.data
     this.getPlannedUser()
-  }
+    }
 
   private getPlannedUser() {
     this.projectUserService
@@ -44,6 +45,7 @@ export class FormSetDoneComponent extends AppComponentBase implements OnInit {
       .pipe(catchError(this.projectUserService.handleError))
       .subscribe(data => {
         this.plannedUserList = data.result;
+        debugger
       })
   }
 
@@ -52,10 +54,12 @@ export class FormSetDoneComponent extends AppComponentBase implements OnInit {
       requestId: this.planUserInfo.resourceRequestId,
       startTime: moment(this.planUserInfo.plannedDate).format("YYYY-MM-DD"),
       billStartTime: this.planUserInfo.billUserInfo ? moment(this.planUserInfo.billUserInfo.plannedDate).format("YYYY-MM-DD") : null,
+      projectRole: this.planUserInfo.projectRole,
+    
     }
 
     const requestObservable = this._resourceRequestService.setDoneRequest(request);
-
+   
     if (this.plannedUserList.length > 0) {
       requestObservable.pipe(catchError(this.projectUserService.handleError)).subscribe(rs => {
         abp.notify.success(`Confirmed for user ${this.planUserInfo.employee.fullName} join project`)

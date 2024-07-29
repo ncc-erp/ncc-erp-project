@@ -29,6 +29,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { optionDto } from '@shared/components/multiple-select/multiple-select.component';
 import * as _ from 'lodash';
 import { ResourceManagerService } from '@app/service/api/resource-manager.service';
+import * as FileSaver from 'file-saver';
 
 
 @Component({
@@ -490,6 +491,20 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   getSelectableOptions(select: MatSelect): any[] {
       const allOptions = select.options.toArray();
       return allOptions.filter(option => !option.disabled).map(option => option.value);
+  }
+  downloadFile(id: number){
+    this.projectUserBillService.DownloadCVLink(id).subscribe(data => {
+      const file = new Blob([this.s2ab(atob(data.result.data))],{
+        type: "application/vnd.ms-excel;charset=utf-8"
+      });
+      FileSaver.saveAs(file,data.result.fileName);
+    })
+  }
+  s2ab(s){
+    var buf = new ArrayBuffer(s.length);
+    var view = new Uint8Array(buf);
+    for (var i = 0; i != s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
+    return buf;
   }
 
 

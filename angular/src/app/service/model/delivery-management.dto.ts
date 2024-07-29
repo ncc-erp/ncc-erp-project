@@ -26,6 +26,7 @@ export class RequestResourceDto {
   isNewBillAccount?:boolean;
   billUserInfo:any;
   isRequiredPlanResource?: boolean;
+  linkCv: string;
 }
 
 export class TrainingRequestDto {

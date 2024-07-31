@@ -147,11 +147,6 @@ export class ResourceManagerService extends BaseApiService{
   }
   public UpdateFileCvLink(linkCv,id): Observable<any>{
     const formData = new FormData();
-    // if (navigator.msSaveBlob) {
-    //     formData.append('File', file);
-    // } else {
-
-    // }
     formData.append('File', linkCv);
     formData.append('ResourceRequestId', id);
     const uploadReq = new HttpRequest(

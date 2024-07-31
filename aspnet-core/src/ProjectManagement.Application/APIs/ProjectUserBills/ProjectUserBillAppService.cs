@@ -18,6 +18,7 @@ using ProjectManagement.UploadFilesService;
 using ProjectManagement.Utils;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -689,6 +690,11 @@ namespace ProjectManagement.APIs.ProjectUserBills
                 .Where(s => s.Id == projectUserBillId)
                 .Select(s => s.LinkCV)
                 .FirstOrDefault();
+
+            if (filePath == null)
+            {
+                throw new UserFriendlyException(String.Format("File path not found"));
+            }
 
             var data = await uploadFileService.DownloadCvLinkAsync(filePath);
             var fileName = FileUtils.GetFileName(filePath);

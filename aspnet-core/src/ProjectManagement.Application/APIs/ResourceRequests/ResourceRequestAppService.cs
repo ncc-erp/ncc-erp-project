@@ -25,6 +25,7 @@ using ProjectManagement.Users;
 using ProjectManagement.Utils;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -252,10 +253,7 @@ namespace ProjectManagement.APIs.ResourceRequests
         [HttpPost]
         [AbpAuthorize]
         public async Task UploadCV([FromForm] CVUploadDto input)
-        {
-            try
-            {
-                
+        {  
                 var resourceRequest = await WorkScope.GetAsync<ResourceRequest>(input.ResourceRequestId);
 
                 if (input.file == null || input.file.Length == 0)
@@ -272,14 +270,7 @@ namespace ProjectManagement.APIs.ResourceRequests
                     resourceRequest.LinkCV = filePath;
                 }
                await CurrentUnitOfWork.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                throw new UserFriendlyException(ex.Message);
-            }
-
-    
-        }
+         }
 
         [HttpGet]
         public async Task<object> DownloadCVLink(long resourceRequestId)
@@ -289,6 +280,10 @@ namespace ProjectManagement.APIs.ResourceRequests
                 .Select(s => s.LinkCV)
                 .FirstOrDefault();
 
+            if (filePath == null)
+            {
+                throw new UserFriendlyException(String.Format("File path not found"));
+            }
             var data = await _uploadFileService.DownloadCvLinkAsync(filePath);
             var fileName = FileUtils.GetFileName(filePath);
             return new

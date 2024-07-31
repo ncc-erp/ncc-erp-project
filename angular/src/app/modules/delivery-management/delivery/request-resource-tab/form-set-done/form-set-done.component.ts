@@ -44,8 +44,7 @@ export class FormSetDoneComponent extends AppComponentBase implements OnInit {
       .GetAllWorkingProjectByUserId(this.planUserInfo.employee.id)
       .pipe(catchError(this.projectUserService.handleError))
       .subscribe(data => {
-        this.plannedUserList = data.result;
-        debugger
+        this.plannedUserList = data.result;       
       })
   }
 

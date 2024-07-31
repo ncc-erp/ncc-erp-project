@@ -43,7 +43,6 @@ export class ImportFileResourceComponent implements OnInit {
       )
       .pipe(catchError(this.resourceService.handleError))
       .subscribe((res) => {
-        console.log("response: ", res, this.uploadFile.resourceRequestId);
         if (!!res.body) {
           abp.notify.success("Upload file successfully!");
           this.dialogRef.close(this.uploadFile.resourceRequestId);

@@ -311,7 +311,9 @@ namespace ProjectManagement.APIs.ResourceRequests
             resourceRequest.Status = ResourceRequestStatus.CANCELLED;
 
             await WorkScope.UpdateAsync(resourceRequest);
-
+            var projectUser = WorkScope.GetAll<ProjectUser>().Where(p => p.ResourceRequestId == requestId).ToList();
+            projectUser.ForEach(pu => pu.IsDeleted = true);
+            CurrentUnitOfWork.SaveChanges();
             var requestDto = await _resourceRequestManager.IQGetResourceRequest()
                 .Where(s => s.Id == requestId)
                 .FirstOrDefaultAsync();

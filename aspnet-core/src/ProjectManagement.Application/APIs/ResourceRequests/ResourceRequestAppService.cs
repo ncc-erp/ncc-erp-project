@@ -253,9 +253,14 @@ namespace ProjectManagement.APIs.ResourceRequests
         [HttpPost]
         [AbpAuthorize]
         public async Task UploadCV([FromForm] CVUploadDto input)
-        {  
+        {
+            try
+            {
                 var resourceRequest = await WorkScope.GetAsync<ResourceRequest>(input.ResourceRequestId);
-
+                if (resourceRequest == null)
+                {
+                    throw new UserFriendlyException(String.Format("Resource Request Not Found"));
+                }
                 if (input.file == null || input.file.Length == 0)
                 {
                     resourceRequest.LinkCV = null;
@@ -266,10 +271,20 @@ namespace ProjectManagement.APIs.ResourceRequests
                     var filename = input.ResourceRequestId + '_' + input.file.FileName;
 
                     var filePath = await _uploadFileService.UploadCvAsync(input.file, filename);
-                    
+                    if (string.IsNullOrEmpty(filePath))
+                    {
+                        throw new Exception("File Upload Failed");
+                    }
+
+
                     resourceRequest.LinkCV = filePath;
                 }
-               await CurrentUnitOfWork.SaveChangesAsync();
+                await CurrentUnitOfWork.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new UserFriendlyException("An error occurred while uploading the CV", ex);
+            }
          }
 
         [HttpGet]

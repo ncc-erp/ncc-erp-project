@@ -20,9 +20,12 @@ using ProjectManagement.Services.ResourceRequestService;
 using ProjectManagement.Services.ResourceRequestService.Dto;
 using ProjectManagement.Services.ResourceService.Dto;
 using ProjectManagement.Services.Talent;
+using ProjectManagement.UploadFilesService;
 using ProjectManagement.Users;
+using ProjectManagement.Utils;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -38,6 +41,7 @@ namespace ProjectManagement.APIs.ResourceRequests
         private readonly IUserAppService _userAppService;
         private readonly ResourceManager _resourceManager;
         private readonly ResourceRequestManager _resourceRequestManager;
+        private readonly UploadFileService _uploadFileService;
 
         private readonly UserManager _userManager;
         private ISettingManager _settingManager;
@@ -53,7 +57,8 @@ namespace ProjectManagement.APIs.ResourceRequests
             ResourceRequestManager resourceRequestManager,
             ISettingManager settingManager,
             IUserAppService userAppService,
-            TalentService talentService)
+            TalentService talentService,
+            UploadFileService uploadFileService)
         {
             _projectUserAppService = projectUserAppService;
             _pMReportProjectIssueAppService = pMReportProjectIssueAppService;
@@ -64,6 +69,7 @@ namespace ProjectManagement.APIs.ResourceRequests
             _userManager = userManager;
             _resourceRequestManager = resourceRequestManager;
             _talentService = talentService;
+            _uploadFileService = uploadFileService;
         }
 
         [HttpPost]
@@ -244,6 +250,64 @@ namespace ProjectManagement.APIs.ResourceRequests
                 .FirstOrDefaultAsync();
         }
 
+        [HttpPost]
+        [AbpAuthorize]
+        public async Task UploadCV([FromForm] CVUploadDto input)
+        {
+            try
+            {
+                var resourceRequest = await WorkScope.GetAsync<ResourceRequest>(input.ResourceRequestId);
+                if (resourceRequest == null)
+                {
+                    throw new UserFriendlyException(String.Format("Resource Request Not Found"));
+                }
+                if (input.file == null || input.file.Length == 0)
+                {
+                    resourceRequest.LinkCV = null;
+
+                }
+                else
+                {
+                    var filename = input.ResourceRequestId + '_' + input.file.FileName;
+
+                    var filePath = await _uploadFileService.UploadCvAsync(input.file, filename);
+                    if (string.IsNullOrEmpty(filePath))
+                    {
+                        throw new Exception("File Upload Failed");
+                    }
+
+
+                    resourceRequest.LinkCV = filePath;
+                }
+                await CurrentUnitOfWork.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new UserFriendlyException("An error occurred while uploading the CV", ex);
+            }
+         }
+
+        [HttpGet]
+        public async Task<object> DownloadCVLink(long resourceRequestId)
+        {
+            var filePath = WorkScope.GetAll<ResourceRequest>()
+                .Where(s => s.Id == resourceRequestId)
+                .Select(s => s.LinkCV)
+                .FirstOrDefault();
+
+            if (filePath == null)
+            {
+                throw new UserFriendlyException(String.Format("File path not found"));
+            }
+            var data = await _uploadFileService.DownloadCvLinkAsync(filePath);
+            var fileName = FileUtils.GetFileName(filePath);
+            return new
+            {
+                FileName = fileName,
+                Data = data
+            };
+        }
+
         [HttpPut]
         public async Task<GetResourceRequestDto> UpdateMyRequest(UpdateResourceRequestDto input)
         {
@@ -418,6 +482,7 @@ namespace ProjectManagement.APIs.ResourceRequests
                         ProjectId = request.Request.ProjectId,
                         isActive = true,
                         AccountName = request.Request.CVName,
+                        LinkCV = request.Request.LinkCV,
                     });
                     CurrentUnitOfWork.SaveChanges();
                 }

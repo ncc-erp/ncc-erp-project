@@ -228,6 +228,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { BillAccountDialogNoteComponent } from "./modules/delivery-management/delivery/available-resource-tab/bill-account-plan/bill-account-dialog-note/bill-account-dialog-note.component";
 import { MultipleSelectResourceRequestCodeComponent } from './modules/delivery-management/delivery/request-resource-tab/multiple-select-resource-request-code/multiple-select-resource-request-code.component';
 import { HandleLinkedResourcesDialogComponent } from './modules/delivery-management/delivery/available-resource-tab/bill-account-plan/handle-linked-resources-dialog/handle-linked-resources-dialog.component';
+import { ImportFileResourceComponent } from './modules/delivery-management/delivery/request-resource-tab/import-file-resource/import-file-resource.component';
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, "./assets/i18n/", ".json");
 }
@@ -295,6 +296,7 @@ export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
     WeeklyReportTabComponent,
     WeeklyReportTabDetailComponent,
     CreateEditProjectChecklistComponent,
+    ResourceRequestDetailComponent,
     RequestResourceTabComponent,
     ResourceRequestDetailComponent,
     AddUserToRequestComponent,
@@ -439,6 +441,7 @@ export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
     BillAccountDialogNoteComponent,
     MultipleSelectResourceRequestCodeComponent,
     HandleLinkedResourcesDialogComponent,
+    ImportFileResourceComponent,
   ],
   imports: [
     CommonModule,

@@ -40,6 +40,21 @@
                 </mat-error>
             </div>
         </div>
+        <div class="form-group row required" *ngIf="planUserInfo.billUserInfo">
+         <div class="col-md-3">
+            <label class="col-form-label" for="tenancyName">
+                Role:
+            </label>
+        </div>
+            <div class="col-md-9">
+                    <mat-form-field appearance="outline" class="w-100">
+                    <mat-select [(ngModel)]="planUserInfo.billUserInfo.role" name="projectRole" placeholder="select a role" required #projectRole="ngModel">
+                        <mat-option *ngFor="let role of projectRoleList" [value]="APP_ENUM.ProjectUserRole[role]">
+                            {{role}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
         <div *ngIf="!allowConfirm">
             <p style="font-size: 20px;" class="text-danger"><strong>{{planUserInfo.employee.fullName}}</strong> is working on the following
                 projects:</p>

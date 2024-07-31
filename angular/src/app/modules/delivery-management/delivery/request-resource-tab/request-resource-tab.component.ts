@@ -43,6 +43,8 @@ import { concat, forkJoin, empty } from "rxjs";
 import { UpdateUserSkillDialogComponent } from "@app/users/update-user-skill-dialog/update-user-skill-dialog.component";
 import { resourceRequestCodeDto } from './multiple-select-resource-request-code/multiple-select-resource-request-code.component';
 import { ResourceManagerService } from '../../../../service/api/resource-manager.service';
+import { ImportFileResourceComponent } from './import-file-resource/import-file-resource.component';
+import * as FileSaver from 'file-saver';
 
 @Component({
   selector: "app-request-resource-tab",
@@ -83,7 +85,7 @@ export class RequestResourceTabComponent
 
   public listStatuses: any[] = [];
   public listLevels: any[] = [];
-  
+
   public listSkills: SkillDto[] = [];
   public listProjectUserRoles: IDNameDto[] = [];
   public listProject = [];
@@ -187,7 +189,7 @@ export class RequestResourceTabComponent
       id: request.id ? request.id : null,
       projectId: 0,
     };
-    
+
     const show = this.dialog.open(CreateUpdateResourceRequestComponent, {
       data: {
         command: command,
@@ -225,9 +227,9 @@ export class RequestResourceTabComponent
       };
       this.resourceRequestService.setDoneRequest(request).subscribe((rs) => {
         if (rs) {
-            abp.notify.success(`Set done success`);
-            item.status = RESOURCE_REQUEST_STATUS.DONE;
-            item.statusName = "DONE"
+          abp.notify.success(`Set done success`);
+          item.status = RESOURCE_REQUEST_STATUS.DONE;
+          item.statusName = "DONE"
         }
       });
     } else {
@@ -242,10 +244,10 @@ export class RequestResourceTabComponent
         maxHeight: "90vh",
       });
       showModal.afterClosed().subscribe((rs) => {
-          if (rs) {
-              item.status = RESOURCE_REQUEST_STATUS.DONE;
-              item.statusName = "DONE"
-          }
+        if (rs) {
+          item.status = RESOURCE_REQUEST_STATUS.DONE;
+          item.statusName = "DONE"
+        }
       });
     }
   }
@@ -265,7 +267,7 @@ export class RequestResourceTabComponent
     const actions = [cancelResourceRequest];
     abp.message.confirm(
       "Are you sure you want to cancel the request for project: " +
-        request.projectName,
+      request.projectName,
       "",
       (result) => {
         if (result) {
@@ -277,9 +279,9 @@ export class RequestResourceTabComponent
               })
             )
             .subscribe(() => {
-                abp.notify.success("Request canceled successfully!");
-                request.status = RESOURCE_REQUEST_STATUS.CANCELLED;
-                request.statusName = "CANCELLED"
+              abp.notify.success("Request canceled successfully!");
+              request.status = RESOURCE_REQUEST_STATUS.CANCELLED;
+              request.statusName = "CANCELLED"
             });
         }
       }
@@ -292,7 +294,7 @@ export class RequestResourceTabComponent
     const actions = [cancelResourceRequest];
     abp.message.confirm(
       "Are you sure you want to active the request for project: " +
-        request.projectName,
+      request.projectName,
       "",
       (result) => {
         if (result) {
@@ -304,9 +306,9 @@ export class RequestResourceTabComponent
               })
             )
             .subscribe(() => {
-                abp.notify.success("Request has been successfully activated!");
-                request.status = RESOURCE_REQUEST_STATUS.PENDING;
-                request.statusName = "PENDING"
+              abp.notify.success("Request has been successfully activated!");
+              request.status = RESOURCE_REQUEST_STATUS.PENDING;
+              request.statusName = "PENDING"
             });
         }
       }
@@ -325,7 +327,7 @@ export class RequestResourceTabComponent
       item.planUserInfo = rs.data;
     });
   }
-  
+
   getAllUser(){
     this.resourceManagerService.GetListAllUserShortInfo().subscribe(res => {
       this.listUsers = res.result
@@ -367,39 +369,39 @@ export class RequestResourceTabComponent
   }
 
   async removePlanUser(item) {
-     abp.message.confirm(
-         "Remove This Resource ?",
-          "",
-        (result: boolean) => {
-            if (result) {
-                this.resourceRequestService.RemoveResourceRequestPlan(item.id).pipe(catchError(this.resourceRequestService.handleError)).subscribe(data => {
-                        abp.notify.success(` Resource Removed Successfully!`);
-                        item.planUserInfo = null;
-                    }, () => {
-                    })
-                }
-            }
-        )
+    abp.message.confirm(
+      "Remove This Resource ?",
+      "",
+      (result: boolean) => {
+        if (result) {
+          this.resourceRequestService.RemoveResourceRequestPlan(item.id).pipe(catchError(this.resourceRequestService.handleError)).subscribe(data => {
+            abp.notify.success(` Resource Removed Successfully!`);
+            item.planUserInfo = null;
+          }, () => {
+          })
+        }
+      }
+    )
   }
 
   async removeCvUser(item) {
     const input = {
-        resourceRequestId: item.id
+      resourceRequestId: item.id
     };
 
-     abp.message.confirm(
-         "Remove This Bill Account ?",
-          "",
-        (result: boolean) => {
-            if (result) {
-                this.resourceRequestService.UpdateBillInfoPlan(input).pipe(catchError(this.resourceRequestService.handleError)).subscribe(data => {
-                        abp.notify.success(` Bill Account Removed Successfully!`);
-                        item.billUserInfo = null;
-                    }, () => {
-                    })
-                }
-            }
-        )
+    abp.message.confirm(
+      "Remove This Bill Account ?",
+      "",
+      (result: boolean) => {
+        if (result) {
+          this.resourceRequestService.UpdateBillInfoPlan(input).pipe(catchError(this.resourceRequestService.handleError)).subscribe(data => {
+            abp.notify.success(` Bill Account Removed Successfully!`);
+            item.billUserInfo = null;
+          }, () => {
+          })
+        }
+      }
+    )
   }
 
   sendRecruitment(item: ResourceRequestDto) {
@@ -419,6 +421,17 @@ export class RequestResourceTabComponent
       item.recruitmentUrl = rs.recruitmentUrl;
     });
   }
+   importExcel(item: ResourceRequestDto) {
+    const dialogRef = this.dialog.open(ImportFileResourceComponent, {
+      data: { id: item.id, width: '500px' }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      // item.File= result.File;
+      if (result) {
+        this.refresh();
+      }
+    });
+  }
 
   // #region update note for pm, dmPm
   public openModal(name, typePM, content, id, code) {
@@ -436,7 +449,7 @@ export class RequestResourceTabComponent
 
   public titleModal(typePM) {
     switch (typePM) {
-      case 'Note': 
+      case 'Note':
         return 'Note for Request Code: ' +  `${this.code}`;
       case 'Description':
         return 'Description'
@@ -510,7 +523,7 @@ export class RequestResourceTabComponent
     ];
 
     objFilter.forEach((item) => {
-      if (!item.isTrue) {  
+      if (!item.isTrue) {
         requestBody.filterItems = this.AddFilterItem(
           requestBody,
           item.name,
@@ -558,7 +571,7 @@ export class RequestResourceTabComponent
     });
     requestBody.sort = null;
     requestBody.sortDirection = null;
-    
+
 
     return {
       request,
@@ -674,7 +687,7 @@ export class RequestResourceTabComponent
       height: item.height,
     };
   }
-  
+
   public getValueByEnum(enumValue: number, enumObject) {
     for (const key in enumObject) {
       if (enumObject[key] == enumValue) {
@@ -763,11 +776,41 @@ export class RequestResourceTabComponent
       this.isGranted(PERMISSIONS_CONSTANT.ResourceRequest_SendRecruitment)
     );
   }
-
+  isShowBtnUpload(item){
+    return(item);
+  }
+  downloadFile(resourceRequest: any){ 
+    this.resourceRequestService.DownloadCVLink(resourceRequest.id).subscribe(data => {
+      const file = new Blob([this.s2ab(atob(data.result.data))],{
+        type: "application/vnd.ms-excel;charset=utf-8"
+        
+      });
+      FileSaver.saveAs(file,data.result.fileName);
+    })
+  }
+  s2ab(s){
+    var buf = new ArrayBuffer(s.length);
+    var view = new Uint8Array(buf);
+    for (var i = 0; i != s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
+    return buf;
+  }
+  openInNewTab(event: MouseEvent, resourceRequest: any){
+    event.preventDefault();
+    if(resourceRequest.id){
+      this.resourceRequestService.DownloadCVLink(resourceRequest.id).subscribe(data => {
+        const file = new Blob([this.s2ab(atob(data.result.data))],{
+          type: "application/vnd.ms-excel;charset=utf-8"
+          
+        });
+        FileSaver.saveAs(file,data.result.fileName);
+      })
+      window.open('_blank');
+    }
+  }
   isShowBtnDelete(item) {
     return this.isGranted(PERMISSIONS_CONSTANT.ResourceRequest_Delete);
   }
-  
+
   public sliceUrl(url: string): string {
     if (isNull(url) || isEmpty(url)) {
       return "";

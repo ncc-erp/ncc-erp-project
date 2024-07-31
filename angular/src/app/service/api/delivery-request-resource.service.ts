@@ -183,6 +183,9 @@ export class DeliveryResourceRequestService extends BaseApiService {
   public deleteMyRequest(id): Observable<any> {
     return this.http.delete<any>(this.rootUrl + '/DeleteMyRequest?resourceRequestId=' + id)
   }
+  public DownloadCVLink(resourceRequestId: number) {
+    return this.http.get<any>(this.rootUrl + '/DownloadCVLink?resourceRequestId=' + resourceRequestId);
+  }
 
   public createTraining(item: any): Observable<any> {
     return this.http.post<any>(this.rootUrl + '/CreateTraining', item);

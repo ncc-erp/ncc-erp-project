@@ -47,5 +47,6 @@ namespace ProjectManagement.Services.ProjectUserBill.Dto
         public DateTime CreationTime { get; set; }
         public List<GetUserInfo> LinkedResources { get; set; }
         public GridParam GridParam { get; set; }
+        public string LinkCV { get; set; }
     }
 }

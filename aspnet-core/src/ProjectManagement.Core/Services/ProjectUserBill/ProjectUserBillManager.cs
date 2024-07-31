@@ -177,6 +177,7 @@ namespace ProjectManagement.Services.ProjectUserBills
                     UserLevel = x.User.UserLevel,
                     ChargeType = x.ChargeType ?? x.Project.ChargeType,
                     CreationTime = x.CreationTime,
+                    LinkCV = x.LinkCV,
 
                     LinkedResources = x.LinkedResources
                         .Select(lr => new GetUserInfo
@@ -245,6 +246,7 @@ namespace ProjectManagement.Services.ProjectUserBills
                     UserLevel = x.User.UserLevel,
                     ChargeType = x.ChargeType ?? x.Project.ChargeType,
                     CreationTime = x.CreationTime,
+                    LinkCV = x.LinkCV,
 
                     LinkedResources = x.LinkedResources
                         .Select(lr => new GetUserInfo
@@ -265,7 +267,7 @@ namespace ProjectManagement.Services.ProjectUserBills
                         }).ToList()
                 }).FirstOrDefault();
         }
-
+         
         public async Task<List<LinkedResourceInfoDto>> GetAllLinkedResourcesByProject(long projectId)
         {
             var result = await _workScope.GetAll<LinkedResource>()

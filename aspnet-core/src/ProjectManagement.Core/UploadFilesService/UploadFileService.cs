@@ -30,6 +30,13 @@ namespace ProjectManagement.UploadFilesService
             throw new NotImplementedException();
         }
 
+        public async Task<string> UploadCvAsync(IFormFile file, string fileName)
+        {
+            var tenantName = getSessionTenantName();
+            var filePath = await _fileService.UploadCvFileAsync(file, tenantName, fileName);
+            return filePath;
+        }
+
         public async Task<string> UploadAvatarAsync(IFormFile file)
         {
             var tenantName = getSessionTenantName();
@@ -38,12 +45,16 @@ namespace ProjectManagement.UploadFilesService
         }
         public async Task<string> UploadTimesheetFileAsync(IFormFile file, int year, int month, string filename)
         {
-            var tenantName = getSessionTenantName();           
+            var tenantName = getSessionTenantName();        
             var filePath = await _fileService.UploadTimsheetAsync(file, tenantName, year, month, filename);
             return filePath;
         }
 
         public async Task<byte[]> DownloadTimesheetFileAsync(string filePath)
+        {
+            return await _fileService.DownloadFileAsync(filePath);
+        }
+        public async Task<byte[]> DownloadCvLinkAsync(string filePath)
         {
             return await _fileService.DownloadFileAsync(filePath);
         }

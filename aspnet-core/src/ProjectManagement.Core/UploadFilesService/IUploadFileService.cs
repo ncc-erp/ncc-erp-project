@@ -12,6 +12,7 @@ namespace ProjectManagement.UploadFilesService
         Task<string> UploadTimsheetAsync(IFormFile file, string tenantName, int year, int month, string fileName);
 
         Task<string> UploadFileAsync(IFormFile file, string[] allowFileTypes, string filePath);
+        Task<string> UploadCvFileAsync(IFormFile file, string tenantName, string fileName);
 
         Task<byte[]> DownloadFileAsync(string filePath);
     }

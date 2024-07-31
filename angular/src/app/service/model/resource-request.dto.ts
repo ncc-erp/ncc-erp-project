@@ -26,6 +26,11 @@ export class ResourceRequestDto {
     priorityName: string;
     levelName: string;
     quantity: number;
+    linkCv: string
+}
+export class UploadFileDto {
+    resourceRequestId: number;
+    linkCv: any;
 }
 
 export class ResourceRequestTrainingDto {

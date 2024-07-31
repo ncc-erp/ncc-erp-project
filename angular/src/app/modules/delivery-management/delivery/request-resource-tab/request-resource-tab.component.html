@@ -417,14 +417,15 @@
                               {{ item.billUserInfo.employee.positionName }}
                             </span>
                           </p>
-                          <p *ngIf="item.cvName; else emptyCV" class="m-0" 
+                          <p *ngIf="item.cvName; else emptyCV" class="cv-link m-0" 
                            style="width: 100%; justify-content: space-between; display: flex ;white-space: nowrap;
                            ;cursor: pointer; overflow: hidden;" 
                             [ngStyle]="{'color': item.linkCv ? 'blue' : 'black'}" 
-                          (click)="downloadFile(item)">
+                            (contextmenu)="openInNewTab($event, item)"
+                          (click)= "downloadFile(item)">
                             {{item.cvName}}
                           </p>
-                          <ng-template #emptyCV>
+                          <ng-template class="cv-link1 m-0" #emptyCV>
                             <p style="width: 100%; justify-content: space-between; display: flex ;white-space: nowrap;
                             color:red;cursor: pointer; overflow: hidden;"
                              (click)="downloadFile(item)">

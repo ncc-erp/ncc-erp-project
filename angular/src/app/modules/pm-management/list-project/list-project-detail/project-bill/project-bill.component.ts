@@ -506,6 +506,19 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     for (var i = 0; i != s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
     return buf;
   }
+  openInNewTab(event: MouseEvent, id: any){
+    event.preventDefault();
+    if(id){
+      this.projectUserBillService.DownloadCVLink(id).subscribe(data => {
+        const file = new Blob([this.s2ab(atob(data.result.data))],{
+          type: "application/vnd.ms-excel;charset=utf-8"
+          
+        });
+        FileSaver.saveAs(file,data.result.fileName);
+      })
+      window.open('_blank');
+    }
+  }
 
 
   changePageSizeCurrent()

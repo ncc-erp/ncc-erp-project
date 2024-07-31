@@ -57,3 +57,6 @@
 .file-download:hover {
     color: blue;
 }
+.cv-link:hover{
+    text-decoration: underline;
+}

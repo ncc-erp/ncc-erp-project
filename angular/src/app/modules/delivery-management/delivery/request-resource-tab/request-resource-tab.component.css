@@ -108,3 +108,9 @@ table td {
 .file-download:hover {
     color: blue;
 }
+.cv-link{
+    text-decoration: none;
+}
+.cv-link:hover{
+    text-decoration: underline ;
+}

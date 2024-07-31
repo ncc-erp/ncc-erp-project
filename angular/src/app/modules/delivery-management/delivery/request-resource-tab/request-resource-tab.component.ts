@@ -794,7 +794,19 @@ export class RequestResourceTabComponent
     for (var i = 0; i != s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
     return buf;
   }
-
+  openInNewTab(event: MouseEvent, resourceRequest: any){
+    event.preventDefault();
+    if(resourceRequest.id){
+      this.resourceRequestService.DownloadCVLink(resourceRequest.id).subscribe(data => {
+        const file = new Blob([this.s2ab(atob(data.result.data))],{
+          type: "application/vnd.ms-excel;charset=utf-8"
+          
+        });
+        FileSaver.saveAs(file,data.result.fileName);
+      })
+      window.open('_blank');
+    }
+  }
   isShowBtnDelete(item) {
     return this.isGranted(PERMISSIONS_CONSTANT.ResourceRequest_Delete);
   }

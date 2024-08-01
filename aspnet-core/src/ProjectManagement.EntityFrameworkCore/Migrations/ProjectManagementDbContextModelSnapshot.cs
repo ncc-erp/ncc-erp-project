@@ -3541,6 +3541,9 @@ namespace ProjectManagement.Migrations
                     b.Property<long?>("LastModifierUserId")
                         .HasColumnType("bigint");
 
+                    b.Property<string>("LinkCV")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
@@ -3675,6 +3678,9 @@ namespace ProjectManagement.Migrations
 
                     b.Property<byte>("Level")
                         .HasColumnType("tinyint");
+
+                    b.Property<string>("LinkCV")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(1000)")

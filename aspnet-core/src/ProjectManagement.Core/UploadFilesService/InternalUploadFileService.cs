@@ -43,6 +43,23 @@ namespace ProjectManagement.UploadFilesService
             throw new NotImplementedException();
         }
 
+            public async Task<string> UploadCvFileAsync(IFormFile file, string tenantName, string fileName)
+        {
+            CheckValidFile(file, ConstantUploadFile.AllowCVFileTypes);
+
+            var folder = $"{ConstantUploadFile.UPLOAD_FOLDER}/{tenantName}/{ConstantUploadFile.CV_Folder}";
+
+            UploadFile.CreateFolderIfNotExists(folder);
+
+            var filePath = $"{folder.TrimEnd('/')}/{fileName}";
+
+            await UploadFile.UploadFileAsync(folder, file, fileName);
+
+            return filePath;
+        }
+            
+    
+
         public async Task<string> UploadTimsheetAsync(IFormFile file, string tenantName, int year, int month, string fileName)
         {
             CheckValidFile(file, ConstantUploadFile.AllowTimesheetFileTypes);
@@ -65,4 +82,5 @@ namespace ProjectManagement.UploadFilesService
             return await File.ReadAllBytesAsync(filePath);           
         }
     }
-}
+    }
+

@@ -224,6 +224,15 @@ namespace ProjectManagement.Web.Host.Startup
             ConstantUploadFile.AllowTimesheetFileTypes = strAllowTimesheetFileType.Split(",");
 
             ConstantInternalUploadFile.RootUrl = _appConfiguration.GetValue<string>("App:ServerRootAddress");
+
+            var strAllowCVFileType = _appConfiguration.GetValue<string>("UploadFile:AllowcCVTypes");
+            if (string.IsNullOrEmpty(strAllowCVFileType))
+            {
+                strAllowCVFileType = "xlsx,xltx,png,pdf,docx";
+            }
+            ConstantUploadFile.AllowCVFileTypes = strAllowCVFileType.Split(",");
+
+            ConstantInternalUploadFile.RootUrl = _appConfiguration.GetValue<string>("App:ServerRootAddress");
         }
 
         private void RegisterFileService(IServiceCollection services)

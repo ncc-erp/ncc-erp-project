@@ -96,3 +96,21 @@ table td {
     min-width: 400px !important;
     max-height: 60vh !important; 
 }
+.file-download {
+    display: inline-block;
+    width: 280px;
+    color: #007bff;
+    cursor: pointer;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+.file-download:hover {
+    color: blue;
+}
+.cv-link{
+    text-decoration: none;
+}
+.cv-link:hover{
+    text-decoration: underline ;
+}

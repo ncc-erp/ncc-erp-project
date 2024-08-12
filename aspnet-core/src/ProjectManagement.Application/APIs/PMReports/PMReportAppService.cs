@@ -171,11 +171,11 @@ namespace ProjectManagement.APIs.PMReports
             {
                 try
                 {
-                    var isExist = await WorkScope.GetAll<PMReport>()
-                        .AnyAsync(x => x.Name == input.Name && x.Type == input.Type && x.Year == input.Year);
+                    //var isExist = await WorkScope.GetAll<PMReport>()
+                    //    .AnyAsync(x => x.Name == input.Name && x.Type == input.Type && x.Year == input.Year);
 
-                    if (isExist)
-                        throw new UserFriendlyException("PM Report already exist!");
+                    //if (isExist)
+                    //    throw new UserFriendlyException("PM Report already exist!");
 
                     var activeReport = await WorkScope.GetAll<PMReport>().Where(x => x.IsActive).FirstOrDefaultAsync();
                     long lastReportId = 0;

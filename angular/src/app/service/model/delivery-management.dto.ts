@@ -1,3 +1,4 @@
+import { ResourceRequestCVDto } from "./resource-requestCV.dto";
 export class RequestResourceDto {
   constructor() {
     this.level = 100;
@@ -27,6 +28,7 @@ export class RequestResourceDto {
   billUserInfo:any;
   isRequiredPlanResource?: boolean;
   linkCv: string;
+  resCV: ResourceRequestCVDto[];
 }
 
 export class TrainingRequestDto {
@@ -53,6 +55,7 @@ export class TrainingRequestDto {
   quantity: number;
   planUserInfo: any;
   isRequiredPlanResource: boolean;
+  resCV: ResourceRequestCVDto[];
 }
 export class ResourceRequestDetailDto {
   userId: number;

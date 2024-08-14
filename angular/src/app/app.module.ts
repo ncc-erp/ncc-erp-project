@@ -1,3 +1,7 @@
+import { FocusDirective } from './service/api/focus.directive';
+import { FormResourceRequestCVUserComponent } from './modules/delivery-management/delivery/request-resource-tab/form-resourceRequestCVUser/form-resourceRequestCVUser.component';
+import { UploadCVPathResourceRequestCV } from './modules/delivery-management/delivery/request-resource-tab/upload-cvPath-resource-requestCV/upload-cvPath-resource-requestCV.component';
+import { ResourceRequestCVComponent } from './modules/delivery-management/delivery/request-resource-tab/form-resource-requestCV/form-resource-requestCV.component';
 import { AppConsts } from "@shared/AppConsts";
 import { Ng2SearchPipeModule } from "ng2-search-filter";
 import { IConfig, NgxMaskModule } from "ngx-mask";
@@ -442,6 +446,10 @@ export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
     MultipleSelectResourceRequestCodeComponent,
     HandleLinkedResourcesDialogComponent,
     ImportFileResourceComponent,
+    ResourceRequestCVComponent,
+    UploadCVPathResourceRequestCV,
+    FormResourceRequestCVUserComponent,
+    FocusDirective,
   ],
   imports: [
     CommonModule,

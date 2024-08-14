@@ -45,6 +45,13 @@ import { resourceRequestCodeDto } from './multiple-select-resource-request-code/
 import { ResourceManagerService } from '../../../../service/api/resource-manager.service';
 import { ImportFileResourceComponent } from './import-file-resource/import-file-resource.component';
 import * as FileSaver from 'file-saver';
+import { ResourceRequestCVDto } from './../../../../service/model/resource-requestCV.dto';
+import * as momentTime from "moment-timezone";
+import { ResourceRequestCVComponent } from "./form-resource-requestCV/form-resource-requestCV.component";
+import { UploadCVPathResourceRequestCV } from './upload-cvPath-resource-requestCV/upload-cvPath-resource-requestCV.component';
+import { FormResourceRequestCVUserComponent } from './form-resourceRequestCVUser/form-resourceRequestCVUser.component';
+import { of } from 'rxjs';
+import 'moment-timezone';
 
 @Component({
   selector: "app-request-resource-tab",
@@ -123,6 +130,12 @@ export class RequestResourceTabComponent
 
   public listUsers: any[] = [];
   public listActiveUsers: any[] = [];
+  public listResourceRequestCV: ResourceRequestCVDto[] = [];
+  public isRowExpand: { [key: number]: boolean } = {};
+  public expandedRows: number[] = [];
+  public editing: { [key: number]: { [key: string]: boolean } } = {};
+  public originalValues: { [key: number]: { [key: string]: any } } = {};
+  public cvStatusList: string[] = Object.keys(this.APP_ENUM.CVStatus)
 
   ResourceRequest_View = PERMISSIONS_CONSTANT.ResourceRequest_View;
   ResourceRequest_PlanNewResourceForRequest = PERMISSIONS_CONSTANT.ResourceRequest_PlanNewResourceForRequest;
@@ -169,6 +182,8 @@ export class RequestResourceTabComponent
     this.ref.detectChanges();
   }
 
+
+
   showDetail(item: any) {
     if (
       this.permission.isGranted(
@@ -183,6 +198,287 @@ export class RequestResourceTabComponent
       });
     }
   }
+
+  edit(index: number, field: string, item: ResourceRequestCVDto, request: RequestResourceDto): void {
+    if (!this.editing[index]) {
+      this.editing[index] = {};
+      
+    }
+    this.editing[index][field] = true;   
+  }
+  save(index: number, item: ResourceRequestCVDto, request: RequestResourceDto) {
+    if (this.editing[index]) { 
+        if (isNaN(item.kpiPoint) || item.kpiPoint< 0 ||item.kpiPoint> 10) {
+          abp.notify.error(`Nhập kpi Point ko phù hợp vui lòng nhập lại ! `);  
+            return;
+        }
+      Object.keys(this.editing[index]).forEach(field => {
+        this.editing[index][field] = false;
+      });  
+      this.updateResourceRequestCV(item, request);
+    }
+  }
+  getIconClass(entity : RequestResourceDto): string {
+      return this.isRowExpand[entity.id] ? 'pi pi-chevron-down' : 'pi pi-chevron-right';
+  }
+  async getResourceRequestCVExpand(entity: RequestResourceDto) {
+    const rowindex = this.expandedRows.indexOf(entity.id);
+    if (this.isRowExpand[entity.id]) {   
+      delete this.isRowExpand[entity.id];
+      const rowindex = this.expandedRows.indexOf(entity.id);
+      if (rowindex !== -1) {
+        this.expandedRows.splice(rowindex, 1);
+      }
+    } else { 
+      this.isRowExpand[entity.id] = true;
+      this.expandedRows.push(entity.id);
+    }
+    try {
+      const rs = await this.resourceRequestService.getResouceRequestCV(entity.id).toPromise();     
+       if (rs && rs.success) {
+        const index = this.listRequest.findIndex(res => res.id === entity.id);
+        if (index !== -1) {
+          this.listRequest[index].resCV = rs.result as ResourceRequestCVDto[];       
+        }
+      } else {
+        console.error('Unexpected response:', rs);
+      }
+    } catch (error) {
+      console.error('An error occurred:', error);
+    }
+  }
+  checkRowExpanded(id: number): boolean {
+    return this.expandedRows.includes(id);
+  }
+  checkArrayNullOrEmpty(array: any[]): boolean {
+    return array === null || array === undefined || array.length === 0;
+  }
+  checkNullOrEmpty(a : string):boolean{
+    return a===null|| a===undefined|| a.trim().length===0;
+  }
+  public removeCVPath(item: ResourceRequestCVDto) {
+    abp.message.confirm("Delete this Link CV?", "", (result: boolean) => {
+      if (result) { 
+   const input1 = {...item,cvPath: " ",linkCVPath: " "};
+   this.resourceRequestService.updateResourceRequestCV(input1).pipe(
+    catchError(error => {
+      console.error('Error in updateResourceRequestCV API call:', error);
+      return null; 
+    })
+  ).subscribe(
+    response => {
+      abp.notify.success("Delete Link CV successfully");
+        this.resourceRequestService.getResouceRequestCV(item.resourceRequestId).subscribe(
+          rs => {
+              const index = this.listRequest.findIndex(res => res.id ===item.resourceRequestId);
+              if (index !== -1) {
+                this.listRequest[index].resCV = rs.result as ResourceRequestCVDto[];
+                this.listRequest = [...this.listRequest];              
+              }          
+          },
+          error => {
+            console.error('Error fetching resource request CV:', error);
+          }
+        );    
+    },
+    error => {
+      console.error('Error updating resource request CV:', error);
+    }
+  );
+   } 
+  });
+
+}
+  public deleteResourceRequestCV(item: ResourceRequestCVDto, re: RequestResourceDto): void {
+    abp.message.confirm("Delete this ResourceRequestCV?", "", (result: boolean) => {
+      if (result) {
+        this.resourceRequestService
+          .deleteResourceRequestCV(item.id)
+          .pipe(catchError(this.resourceRequestService.handleError))
+          .subscribe(() => {
+            abp.notify.success("Delete ResourceRequestCV successfully");
+            const index = this.listRequest.findIndex(res => res.id == re.id);
+            this.listRequest[index].resCV = this.listRequest[index].resCV.filter(req => req.id !== item.id);
+          });
+      }
+    });
+  }
+ 
+  public formatInterviewDateToVN(resourceRequestCV: ResourceRequestCVDto): any {
+    return {
+      ...resourceRequestCV,
+      interviewDate: momentTime(resourceRequestCV.interviewDate)
+        .tz('Asia/Ho_Chi_Minh')
+        .format('YYYY-MM-DD HH:mm:ss'), 
+      sendCVDate: momentTime(resourceRequestCV.sendCVDate)
+        .tz('Asia/Ho_Chi_Minh')
+        .format('YYYY-MM-DD HH:mm:ss')
+    };
+}
+  public updateResourceRequestCV(resourceRequestCV: ResourceRequestCVDto, request: RequestResourceDto): void {  
+    const formattedCV = this.formatInterviewDateToVN(resourceRequestCV);
+    this.resourceRequestService.updateResourceRequestCV(formattedCV).pipe(
+      catchError(error => {
+        console.error('Error in updateResourceRequestCV API call:', error);
+        return of(null); 
+      })
+    ).subscribe(
+      response => {
+        if (response && response.success) {
+          this.resourceRequestService.getResouceRequestCV(request.id).subscribe(
+            rs => {          
+              if (rs && rs.success) {
+                const index = this.listRequest.findIndex(res => res.id === request.id);
+                if (index !== -1) {
+                  this.listRequest[index].resCV = rs.result as ResourceRequestCVDto[];
+                  this.listRequest = [...this.listRequest];                 
+                }
+              } else {
+                console.error('Unexpected response:', rs);
+              }
+            },
+            error => {
+              console.error('Error fetching resource request CV:', error);
+            }
+          );
+        } else {
+          console.error('Update was not successful:', response);
+        }
+      },
+      error => {
+        console.error('Error updating resource request CV:', error);
+      }
+    );
+  }
+
+  public AddCV(request: RequestResourceDto) {
+    this.showModalResourceRequestCV("create", {}, request);
+  }
+  public EditCV(item: any, request: RequestResourceDto) {
+    this.showModalResourceRequestCV("edit", item, request);
+  }
+  async showModalResourceRequestCV(command: string, item: any, request: RequestResourceDto) {
+    let resourceRequestCV = {
+      id: item.id ? item.id : null,
+      requestResource: request,
+    };
+    const show = this.dialog.open(ResourceRequestCVComponent, {
+      data: {
+        command: command,
+        item1: resourceRequestCV,
+        resourceRequestId: request.id,
+        requestResourceDto: request,
+        cvPath: item.cvPath,
+        linkCVPath: item.linkCVPath,
+        cvName: item.cvName,
+        userId: item.userId,
+        status: item.status,
+        note: item.note,
+        kpiPoint: item.kpiPoint,
+        inteviewDate: item.inteviewDate,
+        sendCVDate: item.sendCVDate,
+        listUsers: this.listUsers,
+      },
+      width: "800px",
+      maxHeight: "90vh",
+    });
+    show.afterClosed().subscribe((rs) => {
+      if (rs) {
+        this.resourceRequestService.getResouceRequestCV(request.id).subscribe(
+          rs => {
+            const index = this.listRequest.findIndex(res => res.id === request.id);
+            this.listRequest[index].resCV = rs.result as ResourceRequestCVDto[];
+          },
+          error => {
+            console.error('Error fetching resource request CV', error);
+          }
+        );
+      }
+    })
+  }
+
+  uploadCVPath(item: ResourceRequestCVDto, request: RequestResourceDto) {
+    const dialogRef = this.dialog.open(UploadCVPathResourceRequestCV, {
+      data: { id: item.id, width: '500px' }
+    });
+    dialogRef.afterClosed().subscribe(rs => {
+      if (rs) {
+        this.resourceRequestService.getResouceRequestCV(request.id).subscribe(
+          rs => {
+            const index = this.listRequest.findIndex(res => res.id === request.id);
+            this.listRequest[index].resCV = rs.result as ResourceRequestCVDto[];
+          },
+          error => {
+            console.error('Error fetching resource request CV', error);
+          }
+        );
+      }
+    });
+  }
+
+  async showCvUser(item : RequestResourceDto,resCv :ResourceRequestCVDto) { 
+    const show = this.dialog.open(FormResourceRequestCVUserComponent, {
+      data: {
+        resourceRequestCV : resCv,
+        resourceRequestId: item.id,
+        billUserInfo: resCv.user,
+        listUsers: this.listUsers,
+        cvName: resCv.cvName,
+      },
+      width: "800px",
+      maxHeight: "90vh",
+    });
+    show.afterClosed().subscribe((rs) => {
+      if (rs) {
+        this.resourceRequestService.getResouceRequestCV(resCv.resourceRequestId).subscribe(
+          rs => {         
+            const index = this.listRequest.findIndex(res => res.id === resCv.resourceRequestId);
+            this.listRequest[index].resCV = rs.result as ResourceRequestCVDto[];
+          },
+          error => {
+            console.error('Error fetching resource request CV', error);
+          }
+        );
+      }
+    });
+  }
+async removeResourceRequestCvUser(resCv : ResourceRequestCVDto){
+  abp.message.confirm(
+    "Remove This CV User ?",
+    "",
+    (result: boolean) => {
+      if (result) {
+        const input = {...resCv,userId : 0 , user : { } };  
+     this.resourceRequestService.updateResourceRequestCV(input).pipe(
+         catchError(error => {
+          console.error('Error in updateResourceRequestCV API call:', error);
+          return null; 
+         })
+      ).subscribe(
+             response => {    
+                  this.resourceRequestService.getResouceRequestCV(resCv.resourceRequestId).subscribe(
+                        rs => {             
+                         abp.notify.success(` UserCV Removed Successfully!`);  
+                         const index = this.listRequest.findIndex(res => res.id ===resCv.resourceRequestId);
+                         if (index !== -1) {
+                              this.listRequest[index].resCV = rs.result as ResourceRequestCVDto[];
+                              this.listRequest = [...this.listRequest];
+                    }          
+            },
+            error => {
+              console.error('Error fetching resource request CV:', error);
+            }
+          );    
+      },
+      error => {
+        console.error('Error updating resource request CV:', error);
+      }
+    );
+
+      }
+    }
+  )
+}
 
   showDialog(command: string, request: any) {
     let resourceRequest = {

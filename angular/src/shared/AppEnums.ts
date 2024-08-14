@@ -305,7 +305,19 @@ export const APP_ENUMS = {
         PlanningJoin : 3,
         PlanningOut : 4,
         NoPlan : 5
-    }
+    },
+    CVStatus : {
+        "Chua lam CV" : 0,
+        "Da Lam CV" : 1,
+        "Da Gui CV" : 2,
+        "FailCV" : 3,
+        "PassCV" : 4,
+        "Da hen CV" : 5,
+        "Da Pv CV" : 6,
+        "Pass" : 7,
+        "Fail" : 8,
+        "Onboarded" : 9
+ }
 
 }
 

@@ -284,7 +284,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="
+                <ng-container *ngFor="
                     let item of listRequest
                       | paginate
                         : {
@@ -295,8 +295,16 @@
                           };
                     let i = index
                   ">
+                  <tr>
                   <td class="text-center" style="width: 30px">
-                    <span>{{ i + 1 + pageSize * (pageNumber - 1) }}</span>
+                    <button style="border: none; background-color: transparent;"  type="button" (click)="getResourceRequestCVExpand(item)"> 
+                      <i [class]="getIconClass(item)" ></i>
+                    </button>
+                    <span style=" margin-bottom: 20px;">{{ i + 1 + pageSize * (pageNumber - 1) }}</span>
+                    <div class="text-center" >
+                      <i class="fas fa-plus text-primary" (click)="AddCV(item)"
+                          matTooltip="Add CV"></i>
+                 </div>
                   </td>
                   <td style=" width: 380px">
                           <div class="row"
@@ -668,6 +676,241 @@
                     </span>
                   </td>
                 </tr>
+                <tr *ngIf="checkRowExpanded(item.id)">
+                  <td colspan="100%">
+                    <div class=" sub-table" style="padding: 0 10px 0 10px;">
+                      <p-table [value]="item.resCV" *ngIf="!checkArrayNullOrEmpty(item.resCV)" [busy]="isLoading"  class="table table-hover text-nowrap" responsiveLayout="scroll">
+                        <thead>
+                          <tr>
+                            <th class="text-center" style=" width: 60px">#</th>
+                            <th pResizableColumn class="text-center" style="padding: 12px 4px;width:300px"> CV Infor</th>
+                            <th pResizableColumn style="padding: 12px 8px; width:150px">CVStatus</th>             
+                            <th pResizableColumn style="padding: 12px 8px; width:100px">Kpi Point</th>
+                            <th pResizableColumn style="white-space: normal;width: 120px">SendCVDate</th>
+                            <th pResizableColumn style="white-space: normal;width: 130px">Interview Time</th>                         
+                            <th pResizableColumn style=" resize: horizontal; white-space: normal;
+                            overflow: auto;
+                            max-width: 100%;
+                            min-width: 800px;">Note</th>
+                            <th pResizableColumn class="text-center action-request-resource-tab" style="width : 30px">Action</th>
+                          </tr>
+                        </thead>
+            <tbody  >
+              <tr *ngFor="let c of item.resCV ; let a = index">
+                  <td class="text-center">{{a+1}}</td>            
+                  <td style="width: 250px;">               
+                    <div class="row">
+                      <div class="col-md-10">
+                                  <div *ngIf="c.user"
+                                       class="d-flex align-items-start"
+                                       style="flex-direction: column">
+                                      <p class="m-0 pointer"
+                                         (click)="
+                              openPopupSkill(
+                                item.billUserInfo.employee,
+                                item.billUserInfo.userSkill
+                              )
+                            ">
+                            <strong>
+                              {{ extractEmailName(c.user.emailAddress) }}
+                            </strong>
+                          </p>
+                          <p class="m-0">
+                            <span *ngIf="
+                            c.user.branchDisplayName
+                          "
+                                            class="mr-1 badge badge text-white"
+                                            [style.backgroundColor]="
+                                            c.user.branchColor
+                          ">
+                          {{ c.user.branchDisplayName }}
+                        </span>
+                                          <span *ngIf="c.user.userType"
+                                                [ngClass]="
+                                APP_CONST.userTypeStyle[
+                                c.user.userType
+                                ]
+                              ">
+                              {{ getValueByEnum(c.user.userType, APP_ENUM.UserType)}}
+                            </span>
+                               <span *ngIf="c.user.userLevel"
+                                                class="ml-1 badge text-white"
+                                                [ngStyle]="
+                                Utils.getUserLevel(
+                                  c.user.userLevel
+                                ).style
+                              ">
+                                              {{ getValueByEnum(c.user.userLevel, APP_ENUM.UserLevel)}}
+                                </span>                                
+                                <span *ngIf="c.user.positionName"
+                                class="ml-1 badge text-white"
+                                   [style.backgroundColor]="
+                                   c.user.positionColor
+                                        ">
+                                         {{ c.user.positionName }}
+                                </span> 
+                          </p>                           
+                        </div>                       
+                      </div>                                         
+                              <div class="col-md-2"
+                                   *ngIf="
+                          item.statusName == 'PENDING' &&
+                          permission.isGranted(
+                            ResourceRequest_CreateBillResourceForRequest
+                          )
+                        ">
+                       <span>
+                        <i class="fa fa-edit" (click)="showCvUser(item,c)" title="Update Account CV" ></i>
+                       </span>
+                         <span    *ngIf="c.user" style="margin-left: 2px;" >
+                                      <i class="fa fa-times" title="Remove Acount CV"
+                                         (click)="removeResourceRequestCvUser(c)"></i>
+                         </span>                       
+                      </div>                     
+                    </div>
+                    <div style="display: flex; align-items: center;">
+                      <div class=" col-md-11">
+                     <a class="cv-link m-0"
+                        target="_blank"
+                        style="display: flex; align-items: center; justify-content: space-between; width: 100%; white-space: nowrap; cursor: pointer; overflow: hidden; text-overflow: ellipsis;"
+                        [href]="!checkNullOrEmpty(c.cvPath) ? c.linkCVPath : '#'"
+                        [ngStyle]="{'color': !checkNullOrEmpty(c.cvPath) ? 'blue' : 'black'}">
+                       <span style="flex: 1; overflow: hidden;">
+                         {{c.cvName}}
+                       </span></a>
+                     </div>
+                       <div style="display: flex ; justify-content: left;"  class="col-md-1">
+                         <span *ngIf="!checkNullOrEmpty(c.cvPath)" (click)="removeCVPath(c)">
+                           <i class="fa fa-times" title="Remove FileCV"></i>
+                         </span>
+                         <span *ngIf="checkNullOrEmpty(c.cvPath)" (click)="uploadCVPath(c, item)">
+                           <i class="fa fa-fw fa-upload vertical-align-baseline" title="Add FileCV"></i>
+                         </span>
+                       </div>                    
+                   </div>
+                  </td>
+                  <td  style="text-align: left;" (dblclick)="edit(a,'status',c,item)" >
+                    <ng-container *ngIf="!editing[a]?.status">                    
+                      {{ getValueByEnum(c.status, APP_ENUM.CVStatus) }}
+                    </ng-container>
+                    <ng-container *ngIf="editing[a]?.status">
+                      <mat-form-field  appearance="outline"  (keydown.enter)="save(a, c, item)">
+                      <mat-select [(ngModel)]="c.status" placeholder="Select Status" (selectionChange)="save(a, c, item)">
+                        <span> {{getValueByEnum(c.status ,APP_ENUM.CVStatus)}}</span>
+                        <ng-container *ngFor="let status of cvStatusList">
+                          <mat-option [value]="APP_ENUM.CVStatus[status]">
+                            {{ status }}
+                          </mat-option>
+                        </ng-container>
+                      </mat-select>
+                    </mat-form-field>
+                  </ng-container>
+                 </td>
+                  
+                 <td  style="text-align: right;" (dblclick)="edit(a, 'kpiPoint', c, item)">
+                  <span *ngIf="!editing[a]?.kpiPoint">{{ c.kpiPoint }}</span>
+                  <input                
+                    type="number"
+                    *ngIf="editing[a]?.kpiPoint"
+                    appFocus
+                    style="max-width: 300px; border: none; background-color: transparent;"             
+                    [(ngModel)]="c.kpiPoint"
+                    (focusout)="save(a, c, item)"
+                    (keydown.enter)="save(a, c, item)"                  
+                  />                 
+                </td>
+                  
+                <td class="text-center" (dblclick)="edit(a, 'sendCVDate',c,item)">
+                  <ng-container *ngIf="!editing[a]?.sendCVDate">      
+                    <span>{{ c.sendCVDate | date: 'd/MM/y' }}</span>
+                  </ng-container>
+                  <ng-container *ngIf="editing[a]?.sendCVDate">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <input matInput                 
+                    placeholder="Choose a day"
+                    name="exchangeDate"
+                    [(ngModel)]="c.sendCVDate"
+                    [min]="minDate"
+                    #timeStart="ngModel"                 
+                    [readonly]="true"                  
+                    [owlDateTime]="dt2" [owlDateTimeTrigger]="dt2"
+                    (dateTimeChange)="save(a, c, item)"                    
+                    (keydown.enter)="save(a, c, item)"               
+                    />
+                    <owl-date-time #dt2></owl-date-time>
+                </mat-form-field>
+                </ng-container>
+                </td>
+                
+                  <td class="text-center" (dblclick)="edit(a, 'interviewDate', c, item)">
+                    <ng-container *ngIf="!editing[a]?.interviewDate">                   
+                      <span>{{ c.interviewDate | date: 'd/MM/y' }}</span>
+                      <br>
+                      <span>{{ c.interviewDate | date: 'HH:mm' }}</span>
+                    </ng-container>                  
+                    <ng-container *ngIf="editing[a]?.interviewDate">                       
+                        <mat-form-field appearance="outline"  class="w-100">
+                          <input matInput                         
+                          placeholder="Choose a day"
+                          name="exchangeDate"
+                          [(ngModel)]="c.interviewDate"
+                          [min]="minDate"
+                          #timeStart="ngModel"                      
+                          [readonly]="true"                      
+                          [owlDateTime]="dt1" 
+                          [owlDateTimeTrigger]="dt1" 
+                          (dateTimeChange)="save(a, c, item)"
+                          (keydown.enter)="save(a, c, item)"                                           
+                          />
+                          <owl-date-time #dt1  ></owl-date-time>
+                      </mat-form-field>
+                    </ng-container>
+                  </td>                 
+                  <td class="text-align:left" style="resize: horizontal; overflow: auto; max-width: 350px; min-width: 50px;" (dblclick)="edit(a,'note',c,item)">
+                    <span *ngIf="!editing[a]?.note">{{ c.note }} </span>
+                    <textarea appFocus 
+                              style="width: 100%; height: 100%; box-sizing: border-box; border: none; background-color: transparent;" 
+                              *ngIf="editing[a]?.note"  
+                              [(ngModel)]="c.note"                                                       
+                              (focusout)="save(a, c, item)"
+                           >
+                    </textarea>
+                  </td>
+    
+                  <td class="text-center action-request-resource-tab" style="width : 30px">
+                    <button mat-button [matMenuTriggerFor]="menu">
+                      <i class="fas fa-bars fa-lg"></i>
+                    </button>
+                    <mat-menu #menu="matMenu" class="p-2">               
+                      <div>
+                        <br />
+                        <button class="btn btn-block text-left" mat-button
+                          (click)="EditCV(c,item)">
+                          <i class="fa fa-fw fa-edit vertical-align-baseline"></i>
+                          Edit
+                        </button>
+                        <button class="btn btn-block text-left" mat-button
+                          (click)="deleteResourceRequestCV(c,item)">
+                          <i class="fa fa-fw fa-trash text-danger vertical-align-baseline"></i>
+                          Delete
+                        </button>
+                      </div>
+                    </mat-menu>
+                    <span *ngIf="item.isRecruitmentSend == true" (click)="viewRecruitment(item.recruitmentUrl)"
+                      class="tl-link">
+                      #{{ sliceUrl(item.recruitmentUrl) }}
+                    </span>
+                  </td>
+              </tr>     
+            </tbody>
+          </p-table>
+        <div *ngIf="checkArrayNullOrEmpty(item.resCV)">
+          <td colspan="100%">These are no candidate for this ResourceRequestCV</td>
+        </div>
+      </div>
+      </td>    
+      </tr>            
+    </ng-container>
               </tbody>
             </table>
           </div>

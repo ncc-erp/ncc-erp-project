@@ -114,7 +114,7 @@ export class RequestResourceTabComponent
   public resourceRequestId: number;
   public sortable = new SortableModel("", 0, "");
 
-  public isNewBillAccount: number = -1;
+  public isNewBillAccount: number = 1;
   public isBillAccountList = [
     { text: "All", value: -1 },
     { text: "Bill", value: 1 },

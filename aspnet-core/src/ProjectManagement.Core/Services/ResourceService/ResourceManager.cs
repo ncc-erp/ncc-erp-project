@@ -137,7 +137,7 @@ namespace ProjectManagement.Services.ResourceManager
                     StartTime = x.StartTime,
                     IsPool = x.IsPool,
                     ProjectRole = x.ProjectRole
-                   
+
                 });
         }
 
@@ -774,7 +774,7 @@ namespace ProjectManagement.Services.ResourceManager
 
             var projectUsers = _workScope.GetAll<ProjectUser>();
 
-            var quser = qActiveUser     
+            var quser = qActiveUser
                        .Select(x => new GetAllResourceDto
                        {
                            UserId = x.Id,
@@ -855,7 +855,7 @@ namespace ProjectManagement.Services.ResourceManager
         }
 
         public IQueryable<long> queryUserIdsHaveAnySkill(List<long> skillIds)
-        {
+         {
             if (skillIds == null || skillIds.IsEmpty())
             {
                 throw new Exception("skillIds null or empty");
@@ -1071,12 +1071,35 @@ namespace ProjectManagement.Services.ResourceManager
                 result = from u in query
                          join userId in querySkillUserIds on u.UserId equals userId
                          select u;
-                return result;
+                if (input.SkillIds.Contains(50003) && input.EnglishSkillRating.HasValue && !string.IsNullOrEmpty(input.EnglishSkillOperator))
+                {  var allEnglishSkill = result.ToList().Where(x=> x.UserSkills.Any(s=>s.SkillId==50003)).AsQueryable();
+                   var queryEnglishSkill = input.EnglishSkillOperator switch
+                    {
+                        ">" => result.ToList().Where(x => x.UserSkills.Any(s => s.SkillId == 50003 && (int)s.SkillRank > input.EnglishSkillRating)).AsQueryable(),
+                        "<" => result.ToList().Where(x => x.UserSkills.Any(s => s.SkillId == 50003 && (int)s.SkillRank < input.EnglishSkillRating)).AsQueryable(),
+                        "=" => result.ToList().Where(x => x.UserSkills.Any(s => s.SkillId == 50003 && (int)s.SkillRank == input.EnglishSkillRating)).AsQueryable(),
+                        _ => result,
+                    };
+                    allEnglishSkill = allEnglishSkill.ToList().Where(s=> !queryEnglishSkill.Any(x=>x.UserId==s.UserId)).AsQueryable();
+                    result = result.ToList().Where(s=> !allEnglishSkill.Any(x=>x.UserId==s.UserId)).AsQueryable(); 
+
+                }
+                
             }
             else
             {
                 var userIdsHaveAllSkill = await getUserIdsHaveAllSkill(input.SkillIds);
                 result = query.Where(s => userIdsHaveAllSkill.Contains(s.UserId));
+                if (input.SkillIds.Contains(50003) && input.EnglishSkillRating.HasValue && !string.IsNullOrEmpty(input.EnglishSkillOperator))
+                {
+                    result = input.EnglishSkillOperator switch
+                    {
+                        ">" => result.ToList().Where(x => x.UserSkills.Any(s => s.SkillId == 50003 && (int)s.SkillRank > input.EnglishSkillRating)).AsQueryable(),
+                        "<" => result.ToList().Where(x => x.UserSkills.Any(s => s.SkillId == 50003 && (int)s.SkillRank < input.EnglishSkillRating)).AsQueryable(),
+                        "=" => result.ToList().Where(x => x.UserSkills.Any(s => s.SkillId == 50003 && (int)s.SkillRank == input.EnglishSkillRating)).AsQueryable(),
+                        _ => result,
+                    };
+                }
             }
             return result;
         }

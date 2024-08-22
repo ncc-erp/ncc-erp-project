@@ -143,7 +143,7 @@
                                         <input style="height: 30px; padding: 5px 10px; "
                                         matInput [(ngModel)]="searchSkill"  placeholder="Search" #search
                                         (keydown)="$event.stopPropagation()">
-                                        </mat-form-field>
+                                    </mat-form-field>
                                     <mat-radio-group aria-label="Filter by" class="w-80 px-2  row" [(ngModel)]="isAndCondition" style=" width: 100%;align-items: center;">
                                         <div class="col-4 d-flex" style="align-items: center;">
                                             <mat-radio-button class="mr-3" [value]="true">And</mat-radio-button>
@@ -156,16 +156,45 @@
                                         </div>
                                     </mat-radio-group>
                                 </div>
-                                <mat-option *ngFor="let skill of listSkills | listFilter:  'name' : searchSkill"
-                                    [value]="skill.id"  (click)="onSelectChangeSkill(skill.id)">
-                                    {{skill.name}}
-                                </mat-option>
+                            
+                                <ng-container *ngFor="let skill of listSkills | listFilter: 'name' : searchSkill">
+                                    <mat-option [value]="skill.id" (click)="onSelectChangeSkill(skill.id)">
+                                      {{ skill.name }}  
+                                      <span *ngIf="skill.name === 'English'&& isEnglishSkill">
+                                      {{selectedOperator}}  {{selectedRating}}
+                                    </span>
+                                    </mat-option>
+                                                                                
+                                    <ng-container *ngIf="skill.name === 'English'&& isEnglishSkill">
+                                        <div class="d-flex flex-column mt-2" style="padding: 0 10px;">
+                                            <div class="d-flex justify-content-between mb-2">
+                                                <div class="w-50 pr-1">
+                                                    <label for="operatorSelect">Operator</label>
+                                                    <select id="operatorSelect" [(ngModel)]="selectedOperator" class="form-control">
+                                                        <option *ngFor="let operator of operators" [value]="operator">
+                                                            {{ operator }}
+                                                        </option>
+                                                    </select>
+                                                </div>
+                    
+                                                <div class="w-50 pl-1">
+                                                    <label for="ratingSelect">Rating</label>
+                                                    <select id="ratingSelect" [(ngModel)]="selectedRating" class="form-control">
+                                                        <option *ngFor="let rating of ratings" [value]="rating">
+                                                            {{ rating }}
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </ng-container>
+                                  </ng-container>
                             </mat-select>
                         </mat-form-field>
                         <i class="fas fa-times fa-lg ml-2 mt-2" *ngIf="selectedSkillId?.length > 0"
                             (click)="selectedSkillId = null; refresh()"></i>
                     </div>
-
+                    
                     <div class="col-12 col-md-3 mt-1 d-flex align-items-center mb-3">
                         <mat-form-field appearance="outline" class="flex-grow-1">
                             <mat-label>Planned Resource:</mat-label>

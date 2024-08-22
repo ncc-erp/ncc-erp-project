@@ -74,6 +74,11 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
   public selectedIsPlanned: number;
   public listPlans: string[] = [];
 
+  public isEnglishSkill: boolean = false; 
+  public selectedOperator: string | null = null;
+  public selectedRating: number | null = null;
+  public operators: string[] = ['>','=', '<'];
+  public ratings: number[] = [1, 2, 3, 4, 5];
   Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport;
   Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_View = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_View;
   Projects_ProductProjects_ProjectDetail_TabWeeklyReport = PERMISSIONS_CONSTANT.Projects_ProductProjects_ProjectDetail_TabWeeklyReport
@@ -104,23 +109,24 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
       userTypes: this.selectedUserTypes,
       positionIds: this.selectedPositions,
       planStatus: this.selectedIsPlanned || APP_ENUMS.PlanStatus.AllPlan,
-      projectId: this.projectId == -1 ? null : this.projectId
+      projectId: this.projectId == -1 ? null : this.projectId,
+      EnglishSkillRating: this.selectedRating, 
+      EnglishSkillOperator: this.selectedOperator ,
     };
-
-    this.subscription.push(
-      this.availableRerourceService.GetAllResource(requestBody)
-        .pipe(
-          catchError(this.availableRerourceService.handleError)
-        )
-        .subscribe(data => {
+   this.subscription.push(
+    this.availableRerourceService.GetAllResource(requestBody)
+      .pipe(
+        catchError(this.availableRerourceService.handleError)
+      )
+      .subscribe(data => {       
           this.availableResourceList = data.result.items;
-          this.availableResourceList.forEach(item => item.isViewAll = false);   
-          this.showPaging(data.result, pageNumber);
-          this.isLoading = false;
-        })
-    );
+        this.availableResourceList.forEach(item => item.isViewAll = false);   
+        this.showPaging(data.result, pageNumber);
+        this.isLoading = false;
+      })
+  );
   }
-
+  
   protected delete(entity: PlanResourceComponent): void {
   }
 
@@ -269,20 +275,20 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     this.listBranchs = this.orderList(this.listBranchs,this.selectedBranchIds)
   }
 
-  onSelectChangeSkill(id){
+onSelectChangeSkill(id){
     const skill = this.onSelectChange(this.selectedSkillIdCr,id)
     this.selectedSkillIdCr = skill
     this.selectedSkillId= [...skill]
     this.listSkills = this.orderList(this.listSkills,this.selectedSkillId)
+    this.isEnglishSkill = this.selectedSkillId.includes(50003);
+    if (!this.isEnglishSkill) {
+      this.resetEnglishSkillSelections();
+    }
   }
-
-  onSelectChangeUserType(id){
-    const userType = this.onSelectChange(this.selectedUserTypesCr,id)
-    this.selectedUserTypesCr = userType
-    this.selectedUserTypes = [...userType]
-    this.listUserTypes = this.orderList(this.listUserTypes,this.selectedUserTypes)
+  resetEnglishSkillSelections() {
+    this.selectedOperator = '';
+    this.selectedRating = null ;
   }
-
   orderList(listAll, listIdSelect){
     const listSelect = listAll.filter(item => listIdSelect.includes(item.id))
     const listUnSelect = listAll.filter(item => !listIdSelect.includes(item.id))

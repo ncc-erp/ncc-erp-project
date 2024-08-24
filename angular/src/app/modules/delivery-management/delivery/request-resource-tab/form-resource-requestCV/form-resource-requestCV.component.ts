@@ -81,15 +81,12 @@ export class ResourceRequestCVComponent extends AppComponentBase implements OnIn
       
   }
   ngAfterViewChecked(): void {
-    //Called after every check of the component's view. Applies to components only.
-    //Add 'implements AfterViewChecked' to the class.
     this.ref.detectChanges()
   }
  
   getResourceRequestCVById(resourceRequestCVId : number){
      this.resourceRequestService.getResourceRequestCVById(resourceRequestCVId).subscribe(res=>{
         this.resourceRequestCV = res.result;
-        console.log(res.result);
      })
   }
  
@@ -98,7 +95,7 @@ export class ResourceRequestCVComponent extends AppComponentBase implements OnIn
       ...resourceRequestCV,
       interviewDate: momentTime(resourceRequestCV.interviewDate)
         .tz('Asia/Ho_Chi_Minh')
-        .format('YYYY-MM-DD HH:mm:ss'),  // Định dạng ngày, giờ, phút, giây
+        .format('YYYY-MM-DD HH:mm:ss'),  
       sendCVDate: momentTime(resourceRequestCV.sendCVDate)
         .tz('Asia/Ho_Chi_Minh')
         .format('YYYY-MM-DD HH:mm:ss')
@@ -118,23 +115,9 @@ export class ResourceRequestCVComponent extends AppComponentBase implements OnIn
    resourceCv.sendCVDate = this.resourceRequestCV.sendCVDate;
    resourceCv.interviewDate = this.resourceRequestCV.interviewDate;
 
-  //  let resourceCV1 = {
-  //     id : this.resourceRequestCV.id,
-  //     userId : this.billInfoPlan.userId,
-  //     cvName : this.resourceRequestCV.cvName,
-  //     cvPath : this.resourceRequestCV.cvPath,
-  //     status : this.resourceRequestCV.status,
-  //     note : this.resourceRequestCV.note,
-  //     kpiPoint : this.resourceRequestCV.kpiPoint,
-  //     interviewDate : this.resourceRequestCV.interviewDate,
-  //     sendCVDate : this.resourceRequestCV.sendCVDate,
-  //     resourceRequestId : this.resourceRequestCV.resourceRequestId,
-  //  }
    if(this.input.command=="create"){
        resourceCv.id =0
        let createResourceRequestCV = this.formatInterviewDateToVN(resourceCv);
-       console.log("Check Interview Time : ",createResourceRequestCV.interviewDate);
-       console.log("Check SendCVDate : " , createResourceRequestCV.sendCVDate);
        this.resourceRequestService.addCV(createResourceRequestCV).pipe(catchError(this.resourceRequestService.handleError)).subscribe((res)=>{
           abp.notify.success("Create SuccessFully");
        
@@ -142,8 +125,6 @@ export class ResourceRequestCVComponent extends AppComponentBase implements OnIn
        },()=> this.isLoading = false)
    }else{
      let createResourceRequestCV = this.formatInterviewDateToVN(resourceCv);
-    console.log("Check Interview Time edit : ",createResourceRequestCV.interviewDate);
-    console.log("Check SendCVDate edit : " , createResourceRequestCV.sendCVDate);
     this.resourceRequestService.updateResourceRequestCV(createResourceRequestCV).pipe(catchError(this.resourceRequestService.handleError)).subscribe((res)=>{
       abp.notify.success("Update Successfully!");
       this.dialogRef.close(res.result);

@@ -1,0 +1,24 @@
+::ng-deep.my-dialog .mat-dialog-container{
+    padding-top: 0;
+  }
+   
+:host::ng-deep .modal-header {
+    padding: 0;
+    align-items: center;
+}
+.input-group {
+  position: relative;
+}
+
+.cv-path-input {
+  padding-right: 30px; /* Tạo không gian để biểu tượng không bị đè lên text */
+}
+
+.input-clear-icon {
+  position: absolute;
+  right: 10px; /* Điều chỉnh khoảng cách biểu tượng với cạnh phải */
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #dc3545; /* Màu của biểu tượng 'x' */
+}

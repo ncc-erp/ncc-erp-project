@@ -347,5 +347,19 @@
             IsCharge = 1,
             IsNotCharge = 2
         }
+
+        public enum CVStatus
+        {
+            ChualamCV = 0,
+            DaLamCV = 1,
+            DaGuiCV = 2,
+            FailCV = 3,
+            PassCV = 4,
+            DahenCV = 5,
+            DaPvCV = 6,
+            Pass = 7,
+            Fail = 8,
+            Onboarded = 9,
+        }
     }
 }

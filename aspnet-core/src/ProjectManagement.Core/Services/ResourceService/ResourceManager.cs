@@ -1060,7 +1060,7 @@ namespace ProjectManagement.Services.ResourceManager
         private async Task<IQueryable<GetAllResourceDto>> ApplyFilterSkills(InputGetAllResourceDto input, IQueryable<GetAllResourceDto> query)
         {
             IQueryable<GetAllResourceDto> result = query;
-
+            var englishId = _workScope.GetAll<Skill>().Where(s => s.Name.Equals("English")).Select(s => s.Id).FirstOrDefault();
             if (input.SkillIds == null || input.SkillIds.IsEmpty())
             {
                 return result;
@@ -1071,13 +1071,15 @@ namespace ProjectManagement.Services.ResourceManager
                 result = from u in query
                          join userId in querySkillUserIds on u.UserId equals userId
                          select u;
-                if (input.SkillIds.Contains(50003) && input.EnglishSkillRating.HasValue && !string.IsNullOrEmpty(input.EnglishSkillOperator))
-                {  var allEnglishSkill = result.ToList().Where(x=> x.UserSkills.Any(s=>s.SkillId==50003)).AsQueryable();
+                if (input.SkillIds.Contains(englishId) && input.EnglishSkillRating.HasValue && !string.IsNullOrEmpty(input.EnglishSkillOperator))
+                {
+                   
+                    var allEnglishSkill = result.ToList().Where(x=> x.UserSkills.Any(s=>s.SkillId == englishId)).AsQueryable();
                    var queryEnglishSkill = input.EnglishSkillOperator switch
                     {
-                        ">" => result.ToList().Where(x => x.UserSkills.Any(s => s.SkillId == 50003 && (int)s.SkillRank > input.EnglishSkillRating)).AsQueryable(),
-                        "<" => result.ToList().Where(x => x.UserSkills.Any(s => s.SkillId == 50003 && (int)s.SkillRank < input.EnglishSkillRating)).AsQueryable(),
-                        "=" => result.ToList().Where(x => x.UserSkills.Any(s => s.SkillId == 50003 && (int)s.SkillRank == input.EnglishSkillRating)).AsQueryable(),
+                        ">" => result.ToList().Where(x => x.UserSkills.Any(s => s.SkillId == englishId && (int)s.SkillRank > input.EnglishSkillRating)).AsQueryable(),
+                        "<" => result.ToList().Where(x => x.UserSkills.Any(s => s.SkillId == englishId && (int)s.SkillRank < input.EnglishSkillRating)).AsQueryable(),
+                        "=" => result.ToList().Where(x => x.UserSkills.Any(s => s.SkillId == englishId && (int)s.SkillRank == input.EnglishSkillRating)).AsQueryable(),
                         _ => result,
                     };
                     allEnglishSkill = allEnglishSkill.ToList().Where(s=> !queryEnglishSkill.Any(x=>x.UserId==s.UserId)).AsQueryable();
@@ -1090,13 +1092,13 @@ namespace ProjectManagement.Services.ResourceManager
             {
                 var userIdsHaveAllSkill = await getUserIdsHaveAllSkill(input.SkillIds);
                 result = query.Where(s => userIdsHaveAllSkill.Contains(s.UserId));
-                if (input.SkillIds.Contains(50003) && input.EnglishSkillRating.HasValue && !string.IsNullOrEmpty(input.EnglishSkillOperator))
+                if (input.SkillIds.Contains(englishId) && input.EnglishSkillRating.HasValue && !string.IsNullOrEmpty(input.EnglishSkillOperator))
                 {
                     result = input.EnglishSkillOperator switch
                     {
-                        ">" => result.ToList().Where(x => x.UserSkills.Any(s => s.SkillId == 50003 && (int)s.SkillRank > input.EnglishSkillRating)).AsQueryable(),
-                        "<" => result.ToList().Where(x => x.UserSkills.Any(s => s.SkillId == 50003 && (int)s.SkillRank < input.EnglishSkillRating)).AsQueryable(),
-                        "=" => result.ToList().Where(x => x.UserSkills.Any(s => s.SkillId == 50003 && (int)s.SkillRank == input.EnglishSkillRating)).AsQueryable(),
+                        ">" => result.ToList().Where(x => x.UserSkills.Any(s => s.SkillId == englishId && (int)s.SkillRank > input.EnglishSkillRating)).AsQueryable(),
+                        "<" => result.ToList().Where(x => x.UserSkills.Any(s => s.SkillId == englishId && (int)s.SkillRank < input.EnglishSkillRating)).AsQueryable(),
+                        "=" => result.ToList().Where(x => x.UserSkills.Any(s => s.SkillId == englishId && (int)s.SkillRank == input.EnglishSkillRating)).AsQueryable(),
                         _ => result,
                     };
                 }

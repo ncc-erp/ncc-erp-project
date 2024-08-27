@@ -74,7 +74,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
   public selectedIsPlanned: number;
   public listPlans: string[] = [];
 
-  public isEnglishSkill: boolean = false; 
+  public isEnglishSkill: boolean = false;
   public selectedOperator: string | null = null;
   public selectedRating: number | null = null;
   public operators: string[] = ['>','=', '<'];
@@ -280,7 +280,7 @@ onSelectChangeSkill(id){
     this.selectedSkillIdCr = skill
     this.selectedSkillId= [...skill]
     this.listSkills = this.orderList(this.listSkills,this.selectedSkillId)
-    this.isEnglishSkill = this.selectedSkillId.includes(50003);
+    this.isEnglishSkill = this.listSkills.some(s => s.name === "English");
     if (!this.isEnglishSkill) {
       this.resetEnglishSkillSelections();
     }

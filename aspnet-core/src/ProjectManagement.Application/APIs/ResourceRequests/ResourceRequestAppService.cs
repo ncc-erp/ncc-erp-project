@@ -76,7 +76,7 @@ namespace ProjectManagement.APIs.ResourceRequests
         [HttpPost]
         public async Task<ResourceRequestCVDto> AddCV(ResourceRequestCVDto resourceRequestCV)
         {
-            var check = await WorkScope.GetAll<ResourceRequestCV>().AnyAsync(s => (s.UserId == resourceRequestCV.UserId && s.ResourceRequestId == resourceRequestCV.ResourceRequestId));
+            var check = await WorkScope.GetAll<ResourceRequestCV>().AnyAsync(s => s.UserId == resourceRequestCV.UserId && s.ResourceRequestId == resourceRequestCV.ResourceRequestId);
             if (check)
             {
                 throw new UserFriendlyException(string.Format("CV with Name {0} is exits !", resourceRequestCV.CVName));
@@ -124,7 +124,7 @@ namespace ProjectManagement.APIs.ResourceRequests
         [HttpGet]
         public async Task<ResourceRequestCV> GetResourceRequestCVById(long resourceRequestCVId)
         {
-            var check = await WorkScope.GetAll<ResourceRequestCV>().AnyAsync(s => (s.Id == resourceRequestCVId));
+            var check = await WorkScope.GetAll<ResourceRequestCV>().AnyAsync(s => s.Id == resourceRequestCVId);
             if (!check)
             {
                 throw new UserFriendlyException(string.Format("CV with Id {0} is not exits !", resourceRequestCVId));
@@ -143,7 +143,7 @@ namespace ProjectManagement.APIs.ResourceRequests
         [HttpDelete]
         public async Task DeleteResourceRequestCV(long resourceRequestCVId)
         {
-            var check = await WorkScope.GetAll<ResourceRequestCV>().AnyAsync(s => (s.Id == resourceRequestCVId));
+            var check = await WorkScope.GetAll<ResourceRequestCV>().AnyAsync(s => s.Id == resourceRequestCVId);
             if (!check)
             {
                 throw new UserFriendlyException(string.Format("CV with Id {0} is not exits !", resourceRequestCVId));

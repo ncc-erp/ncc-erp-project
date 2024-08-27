@@ -49,8 +49,7 @@ export class UploadCVPathResourceRequestCV implements OnInit {
     .pipe(catchError(this.resourceService.handleError))
     .subscribe((res) => {  
       if (res.body != null) {    
-        abp.notify.success("Upload file successfully!");
-         console.log("Result to close dialog:", res.body.result);
+        abp.notify.success("Upload file successfully!");     
         this.dialogRef.close(res.body.result);
       }
     });

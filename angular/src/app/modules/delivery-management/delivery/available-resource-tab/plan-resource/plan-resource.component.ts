@@ -37,6 +37,7 @@ import { ReleaseUserDialogComponent } from "@app/modules/pm-management/list-proj
 import { ConfirmPlanDialogComponent } from "./plan-user/confirm-plan-dialog/confirm-plan-dialog.component";
 import { ConfirmFromPage } from "@app/modules/pm-management/list-project/list-project-detail/resource-management/confirm-popup/confirm-popup.component";
 import { BranchService } from "@app/service/api/branch.service";
+import { APP_ENUMS } from "@shared/AppEnums";
 @Component({
   selector: "app-plan-resource",
   templateUrl: "./plan-resource.component.html",
@@ -57,6 +58,7 @@ export class PlanResourceComponent
   public selectedSkillId: number[] = [];
   public selectedSkillIdCr: number[] = [];
   public selectedSkillIdOld: number[] = [];
+  public selectedIsPlanned: number;
   public isAndCondition: boolean = false;
 
   Resource_TabPool = PERMISSIONS_CONSTANT.Resource_TabPool;
@@ -110,10 +112,11 @@ export class PlanResourceComponent
     this.isLoading = true;
     let requestBody: any = request;
     requestBody.skillIds = this.selectedSkillId;
-    requestBody.isAndCondition = this.isAndCondition;
+      requestBody.isAndCondition = this.isAndCondition;
+    requestBody.planStatus = this.selectedIsPlanned || APP_ENUMS.PlanStatus.AllPlan;
     this.subscription.push(
       this.availableRerourceService
-        .GetAllPoolResource(requestBody, this.skill)
+        .GetAllPoolResource(requestBody, this.skill, this.selectedIsPlanned)
         .pipe(
           finalize(() => {
             finishedCallback();
@@ -186,6 +189,7 @@ export class PlanResourceComponent
     this.changePageSize();
     this.getAllSkills();
     this.getAllBranchs();
+    this.selectedIsPlanned = 1;
   }
 
   getAllBranchs() {
@@ -204,6 +208,20 @@ export class PlanResourceComponent
         dropdownData: this.branchParam,
       });
     });
+  }
+
+  planStatusList = [
+    { value: APP_ENUMS.PlanStatus.AllPlan, displayName: 'Has plans' },
+    { value: APP_ENUMS.PlanStatus.PlanningJoin, displayName: 'Planning join' },
+    { value: APP_ENUMS.PlanStatus.PlanningOut, displayName: 'Planning out' },
+    { value: APP_ENUMS.PlanStatus.NoPlan, displayName: 'No plan' }
+  ];
+
+
+  applyPlanFilter(){
+    this.selectedIsPlanned = APP_ENUMS.PlanStatus.All;
+    this.isFilterSelected=false;
+    this.getDataPage(1);
   }
 
   openedChange(opened) {

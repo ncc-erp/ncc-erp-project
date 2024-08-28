@@ -347,6 +347,12 @@
             IsCharge = 1,
             IsNotCharge = 2
         }
+        public enum Operators
+        {
+            Greater = '>',
+            Less = '<',
+            Equal = '='
+        }
         public enum Skills
         {
             EngLish

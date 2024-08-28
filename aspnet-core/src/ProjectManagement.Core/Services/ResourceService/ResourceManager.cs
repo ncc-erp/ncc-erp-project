@@ -1060,7 +1060,7 @@ namespace ProjectManagement.Services.ResourceManager
         private async Task<IQueryable<GetAllResourceDto>> ApplyFilterSkills(InputGetAllResourceDto input, IQueryable<GetAllResourceDto> query)
         {
             IQueryable<GetAllResourceDto> result = query;
-            var englishId = _workScope.GetAll<Skill>().Where(s => s.Name.Equals("English")).Select(s => s.Id).FirstOrDefault();
+            var englishId = _workScope.GetAll<Skill>().Where(s => s.Name == Skills.EngLish.ToString()).Select(s => s.Id).FirstOrDefault();
             if (input.SkillIds == null || input.SkillIds.IsEmpty())
             {
                 return result;

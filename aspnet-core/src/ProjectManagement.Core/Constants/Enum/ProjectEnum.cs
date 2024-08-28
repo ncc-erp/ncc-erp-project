@@ -347,5 +347,9 @@
             IsCharge = 1,
             IsNotCharge = 2
         }
+        public enum Skills
+        {
+            EngLish
+        }
     }
 }

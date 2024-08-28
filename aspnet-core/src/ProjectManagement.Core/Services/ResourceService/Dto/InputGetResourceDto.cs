@@ -26,6 +26,6 @@ namespace ProjectManagement.Services.ResourceService.Dto
         public bool IsAndCondition { get; set; }
         public long? ProjectId { get; set; }
         public int? EnglishSkillRating  { get; set; }
-        public string? EnglishSkillOperator   { get; set; }
+        public Operators? EnglishSkillOperator   { get; set; }
     }
 }

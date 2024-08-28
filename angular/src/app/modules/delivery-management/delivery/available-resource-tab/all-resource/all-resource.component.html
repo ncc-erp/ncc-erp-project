@@ -160,19 +160,19 @@
                                 <ng-container *ngFor="let skill of listSkills | listFilter: 'name' : searchSkill">
                                     <mat-option [value]="skill.id" (click)="onSelectChangeSkill(skill.id)">
                                       {{ skill.name }}  
-                                      <span *ngIf="skill.name === 'English'&& isEnglishSkill">
-                                      {{selectedOperator}}  {{selectedRating}}
+                                      <span *ngIf="skill.name === skillEnglish&& isEnglishSkill">
+                                      {{selectedOperatorDisplayName}}  {{selectedRating}}
                                     </span>
                                     </mat-option>
                                                                                 
-                                    <ng-container *ngIf="skill.name === 'English'&& isEnglishSkill">
+                                    <ng-container *ngIf="skill.name === skillEnglish&& isEnglishSkill">
                                         <div class="d-flex flex-column mt-2" style="padding: 0 10px;">
                                             <div class="d-flex justify-content-between mb-2">
                                                 <div class="w-50 pr-1">
                                                     <label for="operatorSelect">Operator</label>
-                                                    <select id="operatorSelect" [(ngModel)]="selectedOperator" class="form-control">
-                                                        <option *ngFor="let operator of operators" [value]="operator">
-                                                            {{ operator }}
+                                                    <select id="operatorSelect" [(ngModel)]="selectedOperator" (change)="onSelectChangeOperator($event.target.value)" class="form-control">
+                                                        <option *ngFor="let operator of OperatorList" [value]="operator.value">
+                                                            {{ operator.displayName }}
                                                         </option>
                                                     </select>
                                                 </div>

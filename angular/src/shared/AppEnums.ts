@@ -308,6 +308,11 @@ export const APP_ENUMS = {
     },
     Skills:{
         English : "English",
+    },
+    Operators:{
+        Greater : 0,
+        Less :1 ,
+        Equal : 2,
     }
 
 }

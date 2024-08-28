@@ -39,7 +39,6 @@ import { AddNoteDialogComponent } from '../plan-resource/add-note-dialog/add-not
   styleUrls: ['./all-resource.component.css']
 })
 export class AllResourceComponent extends PagedListingComponentBase<any> implements OnInit {
-  APP_ENUM = APP_ENUMS;
   subscription: Subscription[] = [];
   public searchSkill: string = '';
   public searchBranch: string = '';
@@ -75,10 +74,17 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
   public listPlans: string[] = [];
 
   public isEnglishSkill: boolean = false;
-  public selectedOperator: string | null = null;
+  public selectedOperator: number | null = null;
   public selectedRating: number | null = null;
-  public operators: string[] = ['>','=', '<'];
   public ratings: number[] = [1, 2, 3, 4, 5];
+  public OperatorList = [
+    { value: APP_ENUMS.Operators.Greater, displayName: '>' },
+    { value: APP_ENUMS.Operators.Less, displayName: '<' },
+    { value: APP_ENUMS.Operators.Equal, displayName: '=' }
+  ];
+  public selectedOperatorDisplayName : string | null = null;
+  public skillEnglish = APP_ENUMS.Skills.English;
+  
   Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport;
   Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_View = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_View;
   Projects_ProductProjects_ProjectDetail_TabWeeklyReport = PERMISSIONS_CONSTANT.Projects_ProductProjects_ProjectDetail_TabWeeklyReport
@@ -280,17 +286,23 @@ onSelectChangeSkill(id){
     this.selectedSkillIdCr = skill
     this.selectedSkillId= [...skill]
     this.listSkills = this.orderList(this.listSkills,this.selectedSkillId)
-    this.isEnglishSkill = this.listSkills.some(s => s.name === APP_ENUMS.Skills.English);
     if (!this.isEnglishSkill) {
       this.resetEnglishSkillSelections();
     }
   }
   resetEnglishSkillSelections() {
-    this.selectedOperator = '';
+    this.selectedOperator = null;
     this.selectedRating = null ;
+    this.selectedOperatorDisplayName = null;
+  }
+  onSelectChangeOperator(selectedOperator: string) {
+    const operatorValue = parseInt(selectedOperator, 10) ;
+    const operator = this.OperatorList.find(op => op.value === operatorValue);
+    this.selectedOperatorDisplayName = operator ? operator.displayName : '';
   }
   orderList(listAll, listIdSelect){
     const listSelect = listAll.filter(item => listIdSelect.includes(item.id))
+    this.isEnglishSkill = listSelect.some(s=>s.name === APP_ENUMS.Skills.English);
     const listUnSelect = listAll.filter(item => !listIdSelect.includes(item.id))
     return [...listSelect, ...listUnSelect]
   }

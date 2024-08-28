@@ -349,9 +349,9 @@
         }
         public enum Operators
         {
-            Greater = '>',
-            Less = '<',
-            Equal = '='
+            Greater = 0,
+            Less = 1,
+            Equal = 2
         }
         public enum Skills
         {

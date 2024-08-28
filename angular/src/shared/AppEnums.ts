@@ -305,6 +305,9 @@ export const APP_ENUMS = {
         PlanningJoin : 3,
         PlanningOut : 4,
         NoPlan : 5
+    },
+    Skills:{
+        English : "English",
     }
 
 }

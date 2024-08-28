@@ -39,7 +39,7 @@ import { AddNoteDialogComponent } from '../plan-resource/add-note-dialog/add-not
   styleUrls: ['./all-resource.component.css']
 })
 export class AllResourceComponent extends PagedListingComponentBase<any> implements OnInit {
-
+  APP_ENUM = APP_ENUMS;
   subscription: Subscription[] = [];
   public searchSkill: string = '';
   public searchBranch: string = '';
@@ -280,7 +280,7 @@ onSelectChangeSkill(id){
     this.selectedSkillIdCr = skill
     this.selectedSkillId= [...skill]
     this.listSkills = this.orderList(this.listSkills,this.selectedSkillId)
-    this.isEnglishSkill = this.listSkills.some(s => s.name === "English");
+    this.isEnglishSkill = this.listSkills.some(s => s.name === APP_ENUMS.Skills.English);
     if (!this.isEnglishSkill) {
       this.resetEnglishSkillSelections();
     }

@@ -137,7 +137,7 @@ namespace ProjectManagement.Services.ResourceManager
                     StartTime = x.StartTime,
                     IsPool = x.IsPool,
                     ProjectRole = x.ProjectRole
-                   
+
                 });
         }
 
@@ -774,7 +774,7 @@ namespace ProjectManagement.Services.ResourceManager
 
             var projectUsers = _workScope.GetAll<ProjectUser>();
 
-            var quser = qActiveUser     
+            var quser = qActiveUser
                        .Select(x => new GetAllResourceDto
                        {
                            UserId = x.Id,
@@ -904,7 +904,6 @@ namespace ProjectManagement.Services.ResourceManager
 
         public async Task<GridResult<GetAllPoolResourceDto>> GetAllPoolResource(InputGetResourceDto input)
         {
-
             // get current user and view user level permission
             // if user level = intern => all show no matter the permission
             var listLoginUserPM = _workScope.GetAll<ProjectUser>()
@@ -917,7 +916,6 @@ namespace ProjectManagement.Services.ResourceManager
 
             var now = DateTimeUtils.GetNow().Date;
             var activeReportId = await GetActiveReportId();
-
             var workingUserIds = await _workScope.All<ProjectUser>()
                 .Where(s => s.Status == ProjectUserStatus.Present)
                 .Where(s => !s.IsPool)
@@ -1011,9 +1009,10 @@ namespace ProjectManagement.Services.ResourceManager
                            SkillNote = u.UserSkills.Select(s => s.Note).FirstOrDefault() ?? ""
                        });
 
+            quser = ApplyFilterPlannedResource(quser, input);
             if (input.SkillIds == null || input.SkillIds.IsEmpty())
             {
-                return await quser.GetGridResult(quser, input);
+                return quser.GetGridResultWithoutSearchAndFilter(input);
             }
             if (input.SkillIds.Count() == 1 || !input.IsAndCondition)
             {
@@ -1022,11 +1021,11 @@ namespace ProjectManagement.Services.ResourceManager
                         join userId in querySkillUserIds on u.UserId equals userId
                         select u;
 
-                return await quser.GetGridResult(quser, input);
+                return quser.GetGridResultWithoutSearchAndFilter(input);
             }
             var userIdsHaveAllSkill = await getUserIdsHaveAllSkill(input.SkillIds);
             quser = quser.Where(s => userIdsHaveAllSkill.Contains(s.UserId));
-            return await quser.GetGridResult(quser, input);
+            return quser.GetGridResultWithoutSearchAndFilter(input);
         }
 
         public async Task<GridResult<GetAllResourceDto>> GetResources(InputGetAllResourceDto input, bool isVendor)
@@ -1055,6 +1054,21 @@ namespace ProjectManagement.Services.ResourceManager
                              .WhereIf(input.UserTypes != null, x => input.UserTypes.Contains((UserType)x.UserType));
             }
             return quser;
+        }
+        public IQueryable<GetAllPoolResourceDto> ApplyFilterPlannedResource(IQueryable<GetAllPoolResourceDto> query, InputGetResourceDto input)
+        {
+            if (input?.PlanStatus != null && input.PlanStatus != PlanStatus.All)
+            {
+                query = input.PlanStatus switch
+                {
+                    PlanStatus.AllPlan => query.ToList().Where(x => x.PlannedProjects.Count > 0).AsQueryable(),
+                    PlanStatus.PlanningJoin => query.ToList().Where(x => x.PlannedProjects.Any(p => p.AllocatePercentage > 0)).OrderBy(t => t.EmailAddress).AsQueryable(),
+                    PlanStatus.PlanningOut => query.ToList().Where(x => x.PlannedProjects.Any(p => p.AllocatePercentage == 0)).OrderBy(s => s.PlannedProjects.Select(t => t.StartTime).FirstOrDefault()).AsQueryable(),
+                    PlanStatus.NoPlan => query.ToList().Where(x => x.PlannedProjects.Count == 0).AsQueryable(),
+                    _ => query,
+                };
+            }
+            return query;
         }
 
         private async Task<IQueryable<GetAllResourceDto>> ApplyFilterSkills(InputGetAllResourceDto input, IQueryable<GetAllResourceDto> query)
@@ -1092,7 +1106,7 @@ namespace ProjectManagement.Services.ResourceManager
 
         public IQueryable<GetAllResourceDto> ApplyFilterPlannedResource(IQueryable<GetAllResourceDto> query, InputGetAllResourceDto input)
         {
-            if (input.PlanStatus != PlanStatus.All && input.PlanStatus != null)
+            if (input.PlanStatus != null && input.PlanStatus != PlanStatus.All)
             {
                 query = input.PlanStatus switch
                 {

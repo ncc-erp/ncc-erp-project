@@ -28,7 +28,7 @@ export class ResourceManagerService extends BaseApiService{
   }
 
   public GetAllPoolResource(
-    request: any, skillId?: any
+    request: any, skillId?: any, plannedStatus?: any
   ): Observable<any> {
     return this.http.post<any>(
       this.rootUrl + '/GetAllPoolResource',

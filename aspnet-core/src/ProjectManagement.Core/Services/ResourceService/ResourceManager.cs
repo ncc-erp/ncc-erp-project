@@ -1008,24 +1008,24 @@ namespace ProjectManagement.Services.ResourceManager
                            UserCreationTime = u.CreationTime,
                            SkillNote = u.UserSkills.Select(s => s.Note).FirstOrDefault() ?? ""
                        });
+            
+                quser = ApplyFilterPlannedResource(quser, input);
+                if (input.SkillIds == null || input.SkillIds.IsEmpty())
+                {
+                    return  quser.GetGridResultSync(quser, input);
+                }
+                if (input.SkillIds.Count() == 1 || !input.IsAndCondition)
+                {
+                    var querySkillUserIds = queryUserIdsHaveAnySkill(input.SkillIds).Distinct();
+                    quser = from u in quser
+                            join userId in querySkillUserIds on u.UserId equals userId
+                            select u;
 
-            quser = ApplyFilterPlannedResource(quser, input);
-            if (input.SkillIds == null || input.SkillIds.IsEmpty())
-            {
-                return quser.GetGridResultWithoutSearchAndFilter(input);
-            }
-            if (input.SkillIds.Count() == 1 || !input.IsAndCondition)
-            {
-                var querySkillUserIds = queryUserIdsHaveAnySkill(input.SkillIds).Distinct();
-                quser = from u in quser
-                        join userId in querySkillUserIds on u.UserId equals userId
-                        select u;
-
-                return quser.GetGridResultWithoutSearchAndFilter(input);
-            }
-            var userIdsHaveAllSkill = await getUserIdsHaveAllSkill(input.SkillIds);
-            quser = quser.Where(s => userIdsHaveAllSkill.Contains(s.UserId));
-            return quser.GetGridResultWithoutSearchAndFilter(input);
+                    return quser.GetGridResultSync(quser, input);
+                }
+                var userIdsHaveAllSkill = await getUserIdsHaveAllSkill(input.SkillIds);
+                quser = quser.Where(s => userIdsHaveAllSkill.Contains(s.UserId));
+                return quser.GetGridResultSync(quser, input);
         }
 
         public async Task<GridResult<GetAllResourceDto>> GetResources(InputGetAllResourceDto input, bool isVendor)

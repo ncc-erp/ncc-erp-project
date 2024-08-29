@@ -1042,7 +1042,7 @@ namespace ProjectManagement.Services.ResourceManager
 
             query = ApplyFilterPlannedResource(query, input);
 
-            return query.GetGridResultWithoutSearchAndFilter(input);
+            return query.GetGridResultSync(query, input);
         }
 
         private IQueryable<GetAllResourceDto> ApplyInputFilters(IQueryable<GetAllResourceDto> quser, InputGetAllResourceDto input)

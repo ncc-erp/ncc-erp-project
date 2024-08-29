@@ -109,6 +109,7 @@ export class projectUserBillDto {
   chargeTypeName: string;
   linkedResources: any[];
   createLinkResourceMode?: boolean;
+  linkCV: string;
 }
 
 export class ProjectRateDto {

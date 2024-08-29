@@ -11,5 +11,6 @@ namespace ProjectManagement.Services.ProjectUserBill.Dto
         public List<long> LinkedResourcesFilter { get; set; }
         public List<string> ChargeRoleFilter { get; set; }
         public string SearchText { get; set; }
+        public string LinkCv {  get; set; }
     }
 }

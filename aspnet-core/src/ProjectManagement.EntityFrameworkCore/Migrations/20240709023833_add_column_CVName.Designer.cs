@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectManagement.EntityFrameworkCore;
 
 namespace ProjectManagement.Migrations
 {
     [DbContext(typeof(ProjectManagementDbContext))]
-    partial class ProjectManagementDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240709023833_add_column_CVName")]
+    partial class add_column_CVName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3541,9 +3543,6 @@ namespace ProjectManagement.Migrations
                     b.Property<long?>("LastModifierUserId")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("LinkCV")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
@@ -3679,16 +3678,12 @@ namespace ProjectManagement.Migrations
                     b.Property<byte>("Level")
                         .HasColumnType("tinyint");
 
-                    b.Property<string>("LinkCV")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(1000)")
                         .HasMaxLength(1000);
 
                     b.Property<string>("PMNote")
-                        .HasColumnType("nvarchar(max)")
-                        .HasMaxLength(10000);
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<byte>("Priority")
                         .HasColumnType("tinyint");

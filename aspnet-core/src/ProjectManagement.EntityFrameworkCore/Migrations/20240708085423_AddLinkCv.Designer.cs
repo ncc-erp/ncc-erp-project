@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectManagement.EntityFrameworkCore;
 
 namespace ProjectManagement.Migrations
 {
     [DbContext(typeof(ProjectManagementDbContext))]
-    partial class ProjectManagementDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240708085423_AddLinkCv")]
+    partial class AddLinkCv
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3635,10 +3637,6 @@ namespace ProjectManagement.Migrations
 
                     b.Property<DateTime?>("BillStartDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("CVName")
-                        .HasColumnType("nvarchar(max)")
-                        .HasMaxLength(10000);
 
                     b.Property<string>("Code")
                         .HasColumnType("nvarchar(max)");

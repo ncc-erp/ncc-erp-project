@@ -1,9 +1,10 @@
 import { RetroReviewInternHistoriesDto } from './../model/resource-plan.dto';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { PagedRequestDto } from '../../../shared/paged-listing-component-base';
 import { BaseApiService } from './base-api.service';
+import { AppConsts } from '@shared/AppConsts';
 
 @Injectable({
   providedIn: 'root'
@@ -27,7 +28,7 @@ export class ResourceManagerService extends BaseApiService{
   }
 
   public GetAllPoolResource(
-    request: any, skillId?: any
+    request: any, skillId?: any, plannedStatus?: any
   ): Observable<any> {
     return this.http.post<any>(
       this.rootUrl + '/GetAllPoolResource',
@@ -144,4 +145,18 @@ export class ResourceManagerService extends BaseApiService{
   public deleteProjectNote(projectUserId: number): Observable<any> {
     return this.http.put<any>(this.rootUrl + `/DeleteProjectNote?projectUserId=${projectUserId}`, {});
   }
+  public UpdateFileCvLink(linkCv,id): Observable<any>{
+    const formData = new FormData();
+    formData.append('File', linkCv);
+    formData.append('ResourceRequestId', id);
+    const uploadReq = new HttpRequest(
+      'POST', AppConsts.remoteServiceBaseUrl + '/api/services/app/ResourceRequest/UploadCV', formData,
+      {
+        reportProgress: true
+      }
+    );
+    return this.http.request(uploadReq);
+  }
+
+  
 }

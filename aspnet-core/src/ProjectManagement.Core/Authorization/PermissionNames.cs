@@ -582,6 +582,7 @@ namespace ProjectManagement.Authorization
         public const string Resource_TabPool_ViewUserStarSkill = "Resource.TabPool.ViewUserStarSkill";
         public const string Resource_TabPool_EditNote = "Resource.TabPool.EditNote";
         public const string Resource_TabPool_ProjectDetail = "Resource.TabPool.ProjectDetail";
+        public const string Resource_TabPool_ViewLevel = "Resource.Pool.ViewLevel";
 
         public const string Resource_TabAllResource = "Resource.TabAllResource";
         public const string Resource_TabAllResource_View = "Resource.TabAllResource.View";
@@ -597,6 +598,7 @@ namespace ProjectManagement.Authorization
         public const string Resource_TabAllResource_EditNote = "Resource.TabAllResource.EditNote";
         public const string Resource_TabAllResource_ViewUserStarSkill = "Resource.TabAllResource.ViewUserStarSkill";
         public const string Resource_TabAllResource_ProjectDetail = "Resource.TabAllResource.ProjectDetail";
+        public const string Resource_TabAllResource_ViewLevel = "Resource.Resource.ViewLevel";
 
         public const string Resource_TabVendor = "Resource.TabVendor";
         public const string Resource_TabVendor_View = "Resource.TabVendor.View";
@@ -1286,6 +1288,7 @@ namespace ProjectManagement.Authorization
                     PermissionNames.Resource_TabPool_ViewUserStarSkill ,
                     PermissionNames.Resource_TabPool_EditNote ,
                     PermissionNames.Resource_TabPool_ProjectDetail,
+                    PermissionNames.Resource_TabPool_ViewLevel,
 
                     PermissionNames.Resource_TabAllResource ,
                     PermissionNames.Resource_TabAllResource_View ,
@@ -1301,6 +1304,7 @@ namespace ProjectManagement.Authorization
                     PermissionNames.Resource_TabAllResource_EditNote ,
                     PermissionNames.Resource_TabAllResource_ViewUserStarSkill ,
                     PermissionNames.Resource_TabAllResource_ProjectDetail,
+                    PermissionNames.Resource_TabAllResource_ViewLevel,
 
                     PermissionNames.Resource_TabVendor ,
                     PermissionNames.Resource_TabVendor_View ,
@@ -2011,6 +2015,7 @@ namespace ProjectManagement.Authorization
                  new SystemPermission{ Name =  PermissionNames.Resource_TabPool_ViewUserStarSkill ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View User Star Skill"},
                  new SystemPermission{ Name =  PermissionNames.Resource_TabPool_EditNote ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit Note"},
                  new SystemPermission{ Name =  PermissionNames.Resource_TabPool_ProjectDetail, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Project Detail"},
+                 new SystemPermission{ Name =  PermissionNames.Resource_TabPool_ViewLevel ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View Level"},
 
                  new SystemPermission{ Name =  PermissionNames.Resource_TabAllResource ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "All Resource"},
                  new SystemPermission{ Name =  PermissionNames.Resource_TabAllResource_View ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View"},
@@ -2026,6 +2031,7 @@ namespace ProjectManagement.Authorization
                  new SystemPermission{ Name =  PermissionNames.Resource_TabAllResource_EditNote ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit Note"},
                  new SystemPermission{ Name =  PermissionNames.Resource_TabAllResource_ViewUserStarSkill ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View User Star Skill"},
                  new SystemPermission{ Name =  PermissionNames.Resource_TabAllResource_ProjectDetail, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Project Detail"},
+                 new SystemPermission{ Name =  PermissionNames.Resource_TabAllResource_ViewLevel ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View Level"},
 
                  new SystemPermission{ Name =  PermissionNames.Resource_TabVendor ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "All Resource"},
                  new SystemPermission{ Name =  PermissionNames.Resource_TabVendor_View ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View"},
@@ -3678,6 +3684,9 @@ namespace ProjectManagement.Authorization
                                          new SystemPermission {
                                             Name = PermissionNames.Resource_TabPool_ProjectDetail, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Project Detail"
                                         },
+                                          new SystemPermission {
+                                            Name = PermissionNames.Resource_TabPool_ViewLevel, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View Level"
+                                        },
                                     },
                             },
 
@@ -3727,6 +3736,9 @@ namespace ProjectManagement.Authorization
 
                                         new SystemPermission {
                                             Name = PermissionNames.Resource_TabAllResource_ProjectDetail, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Project Detail"
+                                        },
+                                        new SystemPermission {
+                                            Name = PermissionNames.Resource_TabAllResource_ViewLevel, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View Level"
                                         },
                                     },
                             },

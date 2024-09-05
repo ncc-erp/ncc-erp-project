@@ -764,6 +764,8 @@ namespace ProjectManagement.Services.ResourceManager
                     ).Select(pu => pu.Id);
 
             var hasViewUserLevelPermission = PermissionChecker.IsGranted(PermissionNames.Resource_ViewUserLevel);
+            var userIdentifier = new Abp.UserIdentifier(AbpSession.TenantId, AbpSession.UserId.GetValueOrDefault());
+            var hasViewLevelPermission = PermissionChecker.IsGranted(userIdentifier, PermissionNames.Resource_TabAllResource_ViewLevel);
 
             var activeReportId = await GetActiveReportId();
 
@@ -789,10 +791,10 @@ namespace ProjectManagement.Services.ResourceManager
                            PositionId = x.PositionId,
                            PositionColor = x.Position.Color,
                            PositionName = x.Position.ShortName,
-                           UserLevel = hasViewUserLevelPermission || x.UserLevel >= UserLevel.Intern_0
+                           UserLevel = hasViewLevelPermission ? (hasViewUserLevelPermission ? x.UserLevel : (x.UserLevel >= UserLevel.Intern_0
                                 && x.UserLevel <= UserLevel.Intern_3 ? x.UserLevel :
                                 projectUsers.Any(pu => pu.UserId == x.Id
-                                && listLoginUserPM.Contains(pu.Id)) ? x.UserLevel : default(UserLevel?),
+                                && listLoginUserPM.Contains(pu.Id)) ? x.UserLevel : default(UserLevel?))) : null,
                            AvatarPath = x.AvatarPath,
                            StarRate = x.StarRate,
                            UserSkills = x.UserSkills.Select(s => new UserSkillDto
@@ -912,7 +914,10 @@ namespace ProjectManagement.Services.ResourceManager
                     || pu.Status == ProjectUserStatus.Future))
                 .Where(pu => pu.UserId == AbpSession.UserId.GetValueOrDefault() && pu.ProjectRole == 0 || pu.Project.PMId == AbpSession.UserId.GetValueOrDefault()
                     ).Select(pu => pu.Id);
+
             var hasViewUserLevelPermission = PermissionChecker.IsGranted(PermissionNames.Resource_ViewUserLevel);
+            var userIdentifier = new Abp.UserIdentifier(AbpSession.TenantId, AbpSession.UserId.GetValueOrDefault());
+            var hasViewLevelPermission = PermissionChecker.IsGranted(userIdentifier, PermissionNames.Resource_TabPool_ViewLevel);
 
             var now = DateTimeUtils.GetNow().Date;
             var activeReportId = await GetActiveReportId();
@@ -940,10 +945,10 @@ namespace ProjectManagement.Services.ResourceManager
                            BranchId = u.BranchId,
                            BranchColor = u.Branch.Color,
                            BranchDisplayName = u.Branch.DisplayName,
-                           UserLevel = hasViewUserLevelPermission || u.UserLevel >= UserLevel.Intern_0
+                           UserLevel = hasViewLevelPermission ? (hasViewUserLevelPermission ? u.UserLevel : (u.UserLevel >= UserLevel.Intern_0
                                 && u.UserLevel <= UserLevel.Intern_3 ? u.UserLevel : _workScope.GetAll<ProjectUser>()
                                 .Any(pu => pu.UserId == u.Id && listLoginUserPM.Contains(pu.Id))
-                                ? u.UserLevel : default(UserLevel?),
+                                ? u.UserLevel : default(UserLevel?))) : null,
                            PositionId = u.PositionId,
                            PositionColor = u.Position.Color,
                            PositionName = u.Position.ShortName,
@@ -1008,24 +1013,24 @@ namespace ProjectManagement.Services.ResourceManager
                            UserCreationTime = u.CreationTime,
                            SkillNote = u.UserSkills.Select(s => s.Note).FirstOrDefault() ?? ""
                        });
-            
-                quser = ApplyFilterPlannedResource(quser, input);
-                if (input.SkillIds == null || input.SkillIds.IsEmpty())
-                {
-                    return  quser.GetGridResultSync(quser, input);
-                }
-                if (input.SkillIds.Count() == 1 || !input.IsAndCondition)
-                {
-                    var querySkillUserIds = queryUserIdsHaveAnySkill(input.SkillIds).Distinct();
-                    quser = from u in quser
-                            join userId in querySkillUserIds on u.UserId equals userId
-                            select u;
 
-                    return quser.GetGridResultSync(quser, input);
-                }
-                var userIdsHaveAllSkill = await getUserIdsHaveAllSkill(input.SkillIds);
-                quser = quser.Where(s => userIdsHaveAllSkill.Contains(s.UserId));
+            quser = ApplyFilterPlannedResource(quser, input);
+            if (input.SkillIds == null || input.SkillIds.IsEmpty())
+            {
                 return quser.GetGridResultSync(quser, input);
+            }
+            if (input.SkillIds.Count() == 1 || !input.IsAndCondition)
+            {
+                var querySkillUserIds = queryUserIdsHaveAnySkill(input.SkillIds).Distinct();
+                quser = from u in quser
+                        join userId in querySkillUserIds on u.UserId equals userId
+                        select u;
+
+                return quser.GetGridResultSync(quser, input);
+            }
+            var userIdsHaveAllSkill = await getUserIdsHaveAllSkill(input.SkillIds);
+            quser = quser.Where(s => userIdsHaveAllSkill.Contains(s.UserId));
+            return quser.GetGridResultSync(quser, input);
         }
 
         public async Task<GridResult<GetAllResourceDto>> GetResources(InputGetAllResourceDto input, bool isVendor)

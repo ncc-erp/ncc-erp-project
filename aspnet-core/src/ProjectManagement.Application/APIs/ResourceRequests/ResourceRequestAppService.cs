@@ -82,6 +82,10 @@ namespace ProjectManagement.APIs.ResourceRequests
                 throw new UserFriendlyException(string.Format("CV with Name {0} is exits !", resourceRequestCV.CVName));
             }
             var input = ObjectMapper.Map<ResourceRequestCV>(resourceRequestCV);
+            if(input.Status == CVStatus.ChualamCV)
+            {
+                input.Status = CVStatus.DaLamCV;
+            }
             await WorkScope.InsertAsync<ResourceRequestCV>(input);
             return resourceRequestCV;
         }
@@ -736,6 +740,7 @@ namespace ProjectManagement.APIs.ResourceRequests
             request.BillAccountId = input.UserId;
             request.BillStartDate = input.StartTime;
             request.CVName = input.CVName;
+            request.LinkCV = input.CVPath;
             await WorkScope.UpdateAsync(request);
 
             var isAlreadyHaveResource = WorkScope.GetAll<ProjectUser>()

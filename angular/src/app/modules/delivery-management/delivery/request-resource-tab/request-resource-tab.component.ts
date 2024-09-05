@@ -134,7 +134,7 @@ export class RequestResourceTabComponent
   public isRowExpand: { [key: number]: boolean } = {};
   public expandedRows: number[] = [];
   public editing: { [key: number]: { [key: string]: boolean } } = {};
-  public originalValues: { [key: number]: { [key: string]: any } } = {};
+  public originalValues: { [index: number]: { [field: string]: any } } = {};
   public cvStatusList: string[] = Object.keys(this.APP_ENUM.CVStatus)
 
   ResourceRequest_View = PERMISSIONS_CONSTANT.ResourceRequest_View;
@@ -201,21 +201,36 @@ export class RequestResourceTabComponent
 
   edit(index: number, field: string, item: ResourceRequestCVDto, request: RequestResourceDto): void {
     if (!this.editing[index]) {
-      this.editing[index] = {};
-      
+      this.editing[index] = {};          
     }
-    this.editing[index][field] = true;   
+    if (!this.originalValues[index]) {
+      this.originalValues[index] = {};
+    }
+    if (!this.originalValues[index][field]) {
+      this.originalValues[index][field] = item[field];
+    } 
+    this.editing[index][field] = true;
+      
   }
   save(index: number, item: ResourceRequestCVDto, request: RequestResourceDto) {
     if (this.editing[index]) { 
         if (isNaN(item.kpiPoint) || item.kpiPoint< 0 ||item.kpiPoint> 10) {
-          abp.notify.error(`Nhập kpi Point ko phù hợp vui lòng nhập lại ! `);  
+          abp.notify.error(`Nhập Kpi Point ko phù hợp vui lòng nhập lại ! `);  
             return;
         }
       Object.keys(this.editing[index]).forEach(field => {
         this.editing[index][field] = false;
-      });  
-      this.updateResourceRequestCV(item, request);
+      }); 
+      this.updateResourceRequestCV(item, request); 
+    }
+  }
+  cancelEdit(index: number, field: string, request: RequestResourceDto): void {
+    if (this.editing[index]) {
+      const po = this.listRequest.findIndex(res => res.id === request.id);
+      this.listRequest[po].resCV[index][field] = this.originalValues[index][field];
+      Object.keys(this.editing[index]).forEach(field => {
+        this.editing[index][field] = false;
+      });
     }
   }
   getIconClass(entity : RequestResourceDto): string {
@@ -318,38 +333,48 @@ export class RequestResourceTabComponent
   public updateResourceRequestCV(resourceRequestCV: ResourceRequestCVDto, request: RequestResourceDto): void {  
     const formattedCV = this.formatInterviewDateToVN(resourceRequestCV);
     this.resourceRequestService.updateResourceRequestCV(formattedCV).pipe(
-      catchError(error => {
-        console.error('Error in updateResourceRequestCV API call:', error);
-        return of(null); 
-      })
-    ).subscribe(
-      response => {
+        catchError(error => {
+            console.error('Error in updateResourceRequestCV API call:', error);
+            return of(null); 
+        })
+    ).subscribe(response => {
         if (response && response.success) {
-          this.resourceRequestService.getResouceRequestCV(request.id).subscribe(
-            rs => {          
-              if (rs && rs.success) {
-                const index = this.listRequest.findIndex(res => res.id === request.id);
-                if (index !== -1) {
-                  this.listRequest[index].resCV = rs.result as ResourceRequestCVDto[];
-                  this.listRequest = [...this.listRequest];                 
+            this.resourceRequestService.getResouceRequestCV(request.id).subscribe(rs => {  
+                abp.notify.success(`Update CV Successfully!`);                         
+                if (rs && rs.success) {
+                    const index = this.listRequest.findIndex(res => res.id === request.id);                  
+                    if (index !== -1) {                    
+                        this.listRequest[index].resCV = rs.result as ResourceRequestCVDto[];
+                        if(formattedCV.status == this.APP_ENUM.CVStatus.Pass) {
+                            const billAccount = {
+                                startTime: resourceRequestCV.interviewDate,
+                                resourceRequestId: resourceRequestCV.resourceRequestId,
+                                userId : resourceRequestCV.userId,
+                                cvName: resourceRequestCV.cvName,
+                                cvPath : resourceRequestCV.linkCVPath,
+                            };
+                            this.resourceRequestService.UpdateBillInfoPlan(billAccount).subscribe((res: any) => {
+                                if (res && res.success) {                     
+                                    Object.assign(this.listRequest[index], res.result);
+                                    this.listRequest = [...this.listRequest];
+                                } else {
+                                    console.error('Error updating bill info:', res);
+                                }
+                            });
+                        } else {
+                            this.listRequest = [...this.listRequest];
+                        }
+                    }
                 }
-              } else {
-                console.error('Unexpected response:', rs);
-              }
-            },
-            error => {
-              console.error('Error fetching resource request CV:', error);
-            }
-          );
+            });
         } else {
-          console.error('Update was not successful:', response);
+            console.error('Update was not successful:', response);
         }
-      },
-      error => {
+    },
+    error => {
         console.error('Error updating resource request CV:', error);
-      }
-    );
-  }
+    });
+}
 
   public AddCV(request: RequestResourceDto) {
     this.showModalResourceRequestCV("create", {}, request);
@@ -376,7 +401,7 @@ export class RequestResourceTabComponent
         note: item.note,
         kpiPoint: item.kpiPoint,
         inteviewDate: item.inteviewDate,
-        sendCVDate: item.sendCVDate,
+        sendCVDate: item.sendCVDate ,
         listUsers: this.listUsers,
       },
       width: "800px",

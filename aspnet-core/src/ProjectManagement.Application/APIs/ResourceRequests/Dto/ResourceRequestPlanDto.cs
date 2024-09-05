@@ -30,5 +30,6 @@ namespace ProjectManagement.APIs.ResourceRequests.Dto
 
         public long ResourceRequestId { get; set; }
         public string CVName { get; set; }
+        public string CVPath { get; set; }
     }
 }

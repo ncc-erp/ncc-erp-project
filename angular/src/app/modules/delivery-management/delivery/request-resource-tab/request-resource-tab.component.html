@@ -301,8 +301,8 @@
                       <i [class]="getIconClass(item)" ></i>
                     </button>
                     <span style=" margin-bottom: 20px;">{{ i + 1 + pageSize * (pageNumber - 1) }}</span>
-                    <div class="text-center" >
-                      <i class="fas fa-plus text-primary" (click)="AddCV(item)"
+                    <div class="text-center" style="margin-top: 25px;" >
+                      <i class="fas fa-plus text-primary fa-2x" (click)="AddCV(item)"
                           matTooltip="Add CV"></i>
                  </div>
                   </td>
@@ -363,16 +363,16 @@
                       </div>
                       </div>
                     </div>
-                    <div class="d-flex justify-content-between mt-4">
+                    <div class="d-flex justify-content-between ">
                       <span style="
                           display: inline-block;
                           max-width: 270px;
                           text-align: left;
                         ">
-                        {{ item.createAt | date : "d/MM/y HH:mm " }}<br>
-                        by {{ item.userRequestName }}
+                        {{ item.createAt | date : "d/MM/y HH:mm " }} by {{ item.userRequestName }}
+                     
                       </span>
-                      <span>Time need:<br> {{ item.timeNeed | date : "d/MM/y" }}</span>
+                   
                     </div>
                   </td>
                   <td style="padding: 12px 4px;width:180px">
@@ -691,15 +691,15 @@
                           <tr>
                             <th class="text-center" style=" width: 60px">#</th>
                             <th pResizableColumn class="text-center" style="padding: 12px 4px;width:300px"> CV Infor</th>
-                            <th pResizableColumn style="padding: 12px 8px; width:150px">CVStatus</th>             
-                            <th pResizableColumn style="padding: 12px 8px; width:100px">Kpi Point</th>
-                            <th pResizableColumn style="white-space: normal;width: 120px">SendCVDate</th>
-                            <th pResizableColumn style="white-space: normal;width: 130px">Interview Time</th>                         
+                            <th pResizableColumn style="padding: 12px 8px; width:150px">CV Status</th>             
+                            <th pResizableColumn style="padding: 12px 8px; width:110px">Kpi Point</th>
+                            <th pResizableColumn style="white-space: normal;width: 160px">SendCV Date</th>
+                            <th pResizableColumn style="white-space: normal;width: 180px">Interview Time</th>                         
                             <th pResizableColumn style=" resize: horizontal; white-space: normal;
                             overflow: auto;
-                            max-width: 100%;
-                            min-width: 800px;">Note</th>
-                            <th pResizableColumn class="text-center action-request-resource-tab" style="width : 30px">Action</th>
+                            max-width: 100%;                       
+                            min-with:700px">Note</th>
+                          <th pResizableColumn class="text-center action-request-resource-tab" style="width : 30px">Action</th>
                           </tr>
                         </thead>
             <tbody  >
@@ -796,101 +796,119 @@
                        </div>                    
                    </div>
                   </td>
-                  <td  style="text-align: left;" (dblclick)="edit(a,'status',c,item)" >
-                    <ng-container *ngIf="!editing[a]?.status">                    
-                      {{ getValueByEnum(c.status, APP_ENUM.CVStatus) }}
+                  <td class="text-left" (dblclick)="edit(a, 'status', c, item)">
+
+                    <ng-container *ngIf="!editing[a]?.status">
+                      <span class="fixed-width-field">
+                        {{ getValueByEnum(c.status, APP_ENUM.CVStatus) }}
+                      </span>
                     </ng-container>
                     <ng-container *ngIf="editing[a]?.status">
-                      <mat-form-field  appearance="outline"  (keydown.enter)="save(a, c, item)">
-                      <mat-select [(ngModel)]="c.status" placeholder="Select Status" (selectionChange)="save(a, c, item)">
-                        <span> {{getValueByEnum(c.status ,APP_ENUM.CVStatus)}}</span>
-                        <ng-container *ngFor="let status of cvStatusList">
-                          <mat-option [value]="APP_ENUM.CVStatus[status]">
-                            {{ status }}
-                          </mat-option>
-                        </ng-container>
-                      </mat-select>
-                    </mat-form-field>
-                  </ng-container>
-                 </td>
+                      <mat-form-field appearance="outline" class="fixed-width-field" floatLabel="never">
+                        <mat-select
+                          appFocus
+                          [(ngModel)]="c.status"
+                          placeholder="Select Status"
+                          (selectionChange)="save(a, c, item)"
+                          (keydown.enter)="save(a, c, item)"
+                          (keydown.esc)=" cancelEdit(a,'status',item)"  
+                        >
+                          <ng-container *ngFor="let status of cvStatusList">
+                            <mat-option [value]="APP_ENUM.CVStatus[status]">
+                              {{ status }}
+                            </mat-option>
+                          </ng-container>
+                        </mat-select>
+                      </mat-form-field>
+                    </ng-container>
+                    
+                  </td>
                   
-                 <td  style="text-align: right;" (dblclick)="edit(a, 'kpiPoint', c, item)">
+                 <td style="text-align: right; width: 100px;" (dblclick)="edit(a, 'kpiPoint', c, item)">
                   <span *ngIf="!editing[a]?.kpiPoint">{{ c.kpiPoint }}</span>
                   <input                
                     type="number"
                     *ngIf="editing[a]?.kpiPoint"
                     appFocus
-                    style="max-width: 300px; border: none; background-color: transparent;"             
+                    style="width: 100%; max-width: 100%; border: none; background-color: transparent; text-align: right;"             
                     [(ngModel)]="c.kpiPoint"
                     (focusout)="save(a, c, item)"
-                    (keydown.enter)="save(a, c, item)"                  
+                    (keydown.enter)="save(a, c, item)" 
+                    (keydown.esc)=" cancelEdit(a,'kpiPoint',item)"                 
                   />                 
                 </td>
                   
-                <td class="text-center" (dblclick)="edit(a, 'sendCVDate',c,item)">
-                  <ng-container *ngIf="!editing[a]?.sendCVDate">      
-                    <span>{{ c.sendCVDate | date: 'd/MM/y' }}</span>
+                <td class="text-center " (dblclick)="edit(a, 'sendCVDate', c, item)">
+                  <ng-container *ngIf="!editing[a]?.sendCVDate">
+                    <span class="fixed-width-field1">{{ c.sendCVDate | date: 'd/MM/y' }}</span>
                   </ng-container>
-                  <ng-container *ngIf="editing[a]?.sendCVDate">
-                  <mat-form-field appearance="outline" class="w-100">
-                    <input matInput                 
-                    placeholder="Choose a day"
-                    name="exchangeDate"
-                    [(ngModel)]="c.sendCVDate"
-                    [min]="minDate"
-                    #timeStart="ngModel"                 
-                    [readonly]="true"                  
-                    [owlDateTime]="dt2" [owlDateTimeTrigger]="dt2"
-                    (dateTimeChange)="save(a, c, item)"                    
-                    (keydown.enter)="save(a, c, item)"               
-                    />
-                    <owl-date-time #dt2></owl-date-time>
-                </mat-form-field>
-                </ng-container>
+                  <ng-container *ngIf="editing[a]?.sendCVDate"  >
+                    <mat-form-field appearance="outline" class="fixed-width-field1">
+                      <input
+                        matInput
+                        appFocus
+                        placeholder="Choose a day"
+                        name="exchangeDate"
+                        [(ngModel)]="c.sendCVDate"
+                        [min]="minDate"
+                        [readonly]="true"
+                        [owlDateTime]="dt2"
+                        [owlDateTimeTrigger]="dt2"
+                        (dateTimeChange)="save(a, c, item)"
+                        (keydown.enter)="save(a, c, item)"  
+                        (keydown.esc)=" cancelEdit(a,'sendCVDate',item)"             
+                      />
+                      <owl-date-time #dt2  [pickerType]="'calendar'"></owl-date-time>
+                    </mat-form-field>
+                  </ng-container>
                 </td>
                 
-                  <td class="text-center" (dblclick)="edit(a, 'interviewDate', c, item)">
-                    <ng-container *ngIf="!editing[a]?.interviewDate">                   
-                      <span>{{ c.interviewDate | date: 'd/MM/y' }}</span>
-                      <br>
-                      <span>{{ c.interviewDate | date: 'HH:mm' }}</span>
-                    </ng-container>                  
-                    <ng-container *ngIf="editing[a]?.interviewDate">                       
-                        <mat-form-field appearance="outline"  class="w-100">
-                          <input matInput                         
-                          placeholder="Choose a day"
-                          name="exchangeDate"
-                          [(ngModel)]="c.interviewDate"
-                          [min]="minDate"
-                          #timeStart="ngModel"                      
-                          [readonly]="true"                      
-                          [owlDateTime]="dt1" 
-                          [owlDateTimeTrigger]="dt1" 
-                          (dateTimeChange)="save(a, c, item)"
-                          (keydown.enter)="save(a, c, item)"                                           
-                          />
-                          <owl-date-time #dt1  ></owl-date-time>
-                      </mat-form-field>
-                    </ng-container>
-                  </td>                 
-                  <td class="text-align:left" style="resize: horizontal; overflow: auto; max-width: 350px; min-width: 50px;" (dblclick)="edit(a,'note',c,item)">
+                <td class="text-center " (dblclick)="edit(a, 'interviewDate', c, item)">
+                  <ng-container *ngIf="!editing[a]?.interviewDate" class="fixed-width-field2">
+                    <span >{{ c.interviewDate | date: 'd/MM/y' }}</span>
+                    <br>
+                    <span>{{ c.interviewDate | date: 'HH:mm' }}</span>
+                  </ng-container>
+                  <ng-container *ngIf="editing[a]?.interviewDate">
+                    <mat-form-field appearance="outline" class="fixed-width-field1">
+                      <input
+                        matInput
+                        appFocus
+                        placeholder="Choose a day"
+                        name="exchangeDate"
+                        [(ngModel)]="c.interviewDate"
+                        [min]="minDate"
+                        [readonly]="true"
+                        [owlDateTime]="dt1"
+                        [owlDateTimeTrigger]="dt1"
+                        (dateTimeChange)="save(a, c, item)"
+                        (keydown.enter)="save(a, c, item)"  
+                        (keydown.esc)=" cancelEdit(a,'interviewDate',item)"                      
+                      />
+                      <owl-date-time #dt1></owl-date-time>
+                    </mat-form-field>
+                  </ng-container>
+                </td>
+                
+                          
+                  <td class="text-align:left" style="resize: horizontal;min-width: 700px; overflow: auto; max-width: 350px;" (dblclick)="edit(a,'note',c,item)">
                     <span *ngIf="!editing[a]?.note">{{ c.note }} </span>
                     <textarea appFocus 
                               style="width: 100%; height: 100%; box-sizing: border-box; border: none; background-color: transparent;" 
                               *ngIf="editing[a]?.note"  
                               [(ngModel)]="c.note"                                                       
                               (focusout)="save(a, c, item)"
+                              (keydown.esc)=" cancelEdit(a,'note',item)"   
                            >
                     </textarea>
                   </td>
     
-                  <td class="text-center action-request-resource-tab" style="width : 30px">
+                  <td class="text-center " style="width : 30px">
                     <button mat-button [matMenuTriggerFor]="menu">
                       <i class="fas fa-bars fa-lg"></i>
                     </button>
                     <mat-menu #menu="matMenu" class="p-2">               
-                      <div>
-                        <br />
+                      <div>                   
                         <button class="btn btn-block text-left" mat-button
                           (click)="EditCV(c,item)">
                           <i class="fa fa-fw fa-edit vertical-align-baseline"></i>
@@ -902,17 +920,14 @@
                           Delete
                         </button>
                       </div>
-                    </mat-menu>
-                    <span *ngIf="item.isRecruitmentSend == true" (click)="viewRecruitment(item.recruitmentUrl)"
-                      class="tl-link">
-                      #{{ sliceUrl(item.recruitmentUrl) }}
-                    </span>
+                    </mat-menu>                
+                   
                   </td>
               </tr>     
             </tbody>
           </p-table>
         <div *ngIf="checkArrayNullOrEmpty(item.resCV)">
-          <td colspan="100%">These are no candidate for this ResourceRequestCV</td>
+          <td colspan="100%" class="border-0 text-center">There is no CV for this ResourceRequest</td>
         </div>
       </div>
       </td>    

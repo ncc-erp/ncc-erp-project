@@ -71,7 +71,7 @@ export class ResourceRequestCVComponent extends AppComponentBase implements OnIn
       this.resourceRequestCV.interviewDate = this.input.interviewDate;
       this.listUsers = this.input.listUsers;
       this.resourceRequestCV.sendCVDate = this.input.sendCVDate;
-      this.resourceRequestCV.status= this.APP_ENUM.CVStatus['Chua lam CV'];
+      this.resourceRequestCV.status= this.APP_ENUM.CVStatus['Chưa làm CV'];
       this.resourceRequestCV.cvPath = this.input.cvPath? this.input.cvPath: " ";
       this.resourceRequestCV.note = this.input.note? this.input.note: " ";
       this.resourceRequestCV.kpiPoint = this.input.kpiPoint;

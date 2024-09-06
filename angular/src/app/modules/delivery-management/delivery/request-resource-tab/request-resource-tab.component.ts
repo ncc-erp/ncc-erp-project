@@ -351,7 +351,7 @@ export class RequestResourceTabComponent
                                 resourceRequestId: resourceRequestCV.resourceRequestId,
                                 userId : resourceRequestCV.userId,
                                 cvName: resourceRequestCV.cvName,
-                                cvPath : resourceRequestCV.linkCVPath,
+                                cvPath : resourceRequestCV.cvPath,
                             };
                             this.resourceRequestService.UpdateBillInfoPlan(billAccount).subscribe((res: any) => {
                                 if (res && res.success) {                     
@@ -746,12 +746,19 @@ async removeResourceRequestCvUser(resCv : ResourceRequestCVDto){
     const dialogRef = this.dialog.open(ImportFileResourceComponent, {
       data: { id: item.id, width: '500px' }
     });
-    dialogRef.afterClosed().subscribe(result => {
-      // item.File= result.File;
-      if (result) {
-        this.refresh();
-      }
-    });
+    dialogRef.afterClosed().subscribe(res => {
+      // item.File= result.File;     
+        this.resourceRequestService.getResouceRequestCV(item.id).subscribe(
+          rs => {             
+                const index = this.listRequest.findIndex(res => res.id ===item.id);
+                this.listRequest[index].resCV = rs.result as ResourceRequestCVDto[]; 
+                this.listRequest[index].linkCv = res;    
+                this.listRequest = [...this.listRequest];               
+              },
+          error => {
+          console.error('Error fetching resource request CV:', error);
+           });
+          });
   }
 
   // #region update note for pm, dmPm

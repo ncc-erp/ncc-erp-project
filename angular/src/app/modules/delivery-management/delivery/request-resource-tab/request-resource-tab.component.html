@@ -435,7 +435,7 @@
                           <p *ngIf="item.cvName; else emptyCV" class="cv-link m-0" 
                            style="width: 100%; justify-content: space-between; display: flex ;white-space: nowrap;
                            ;cursor: pointer; overflow: hidden;" 
-                            [ngStyle]="{'color': item.linkCv ? 'blue' : 'black'}" 
+                            [ngStyle]="{'color': !checkNullOrEmpty(item.linkCv) ? 'blue' : 'black'}" 
                             (contextmenu)="openInNewTab($event, item)"
                           (click)= "downloadFile(item)">
                             {{item.cvName}}

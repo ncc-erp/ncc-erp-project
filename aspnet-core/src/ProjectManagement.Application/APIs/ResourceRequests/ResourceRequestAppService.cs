@@ -378,7 +378,7 @@ namespace ProjectManagement.APIs.ResourceRequests
 
         [HttpPost]
         [AbpAuthorize]
-        public async Task UploadCV([FromForm] CVUploadDto input)
+        public async Task<string> UploadCV([FromForm] CVUploadDto input)
         {
             try
             {
@@ -390,7 +390,7 @@ namespace ProjectManagement.APIs.ResourceRequests
                 if (input.file == null || input.file.Length == 0)
                 {
                     resourceRequest.LinkCV = null;
-
+                    return null;
                 }
                 else
                 {
@@ -404,6 +404,7 @@ namespace ProjectManagement.APIs.ResourceRequests
 
 
                     resourceRequest.LinkCV = filePath;
+                    return filePath;
                 }
                 await CurrentUnitOfWork.SaveChangesAsync();
             }

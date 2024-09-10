@@ -158,8 +158,7 @@ namespace ProjectManagement.APIs.ResourceRequests
         [HttpPost]
         public async Task<string> UploadCVPathResourceRequestCV([FromForm] UploadCVPathResourceRequestCVDto input)
         {
-            try
-            {
+            
 
                 var resourceRequestCV = await WorkScope.GetAsync<ResourceRequestCV>(input.resourceRequestCVId);
                 if (resourceRequestCV == null)
@@ -189,12 +188,60 @@ namespace ProjectManagement.APIs.ResourceRequests
                 }
                 await CurrentUnitOfWork.SaveChangesAsync();
 
-            }
-
-            catch (Exception e)
+                       
+        }
+        [HttpPost]
+        public async Task<UpdateStatusResult> UpdateStatusResourceRequestCV(UpdateResouceRequestCVStatus input)
+        {
+            var resourceRequestCV = await WorkScope.GetAsync<ResourceRequestCV>(input.ResourceRequestCVId);
+            var result = new UpdateStatusResult();
+            if (input.Status == CVStatus.Pass)
             {
-                throw new UserFriendlyException("An error occurred while uploading the CV", e);
+                var newBillAcount =new UpdateResourceRequestPlanForBillInfoDto();
+                newBillAcount.StartTime = resourceRequestCV.InterviewDate;
+                newBillAcount.ResourceRequestId = resourceRequestCV.ResourceRequestId;
+                newBillAcount.CVName = resourceRequestCV.CVName;
+                newBillAcount.UserId = resourceRequestCV.UserId;
+                newBillAcount.CVPath = resourceRequestCV.CVPath;
+                var resourceRequestDto =  await UpdateBillInfoTemp(newBillAcount);
+                result.getResourceRequestDto = resourceRequestDto;
             }
+            resourceRequestCV.Status = input.Status;
+            await WorkScope.UpdateAsync(resourceRequestCV);
+            result.updateResouceRequestCVStatus = input;
+            return result;
+        }
+        [HttpPost]
+        public async Task<UpdateResourceRequestCVNote> UpdateNoteResourceRequestCV(UpdateResourceRequestCVNote input)
+        {
+            var resourceRequestCV = await WorkScope.GetAsync<ResourceRequestCV>(input.ResourceRequestCVId);
+            resourceRequestCV.Note = input.Note;
+            await WorkScope.UpdateAsync(resourceRequestCV);
+            return input;
+        }
+        [HttpPost]
+        public async Task<UpdateResouceRequestCVKpiPoint> UpdateKpiPointResourceRequestCV(UpdateResouceRequestCVKpiPoint input)
+        {
+            var resourceRequestCV = await WorkScope.GetAsync<ResourceRequestCV>(input.ResourceRequestCVId);
+            resourceRequestCV.KpiPoint = input.KpiPoint;
+            await WorkScope.UpdateAsync(resourceRequestCV);
+            return input;
+        }
+        [HttpPost]
+        public async Task<UpdateResouceRequestCVSendCVDate> UpdateSendCVDateResourceRequestCV(UpdateResouceRequestCVSendCVDate input)
+        {
+            var resourceRequestCV = await WorkScope.GetAsync<ResourceRequestCV>(input.ResourceRequestCVId);
+            resourceRequestCV.SendCVDate = input.SendCVDate;
+            await WorkScope.UpdateAsync(resourceRequestCV);
+            return input;
+        }
+        [HttpPost]
+        public async Task<UpdateResouceRequestCVInterviewTime> UpdateInterviewTimeResourceRequestCV(UpdateResouceRequestCVInterviewTime input)
+        {
+            var resourceRequestCV = await WorkScope.GetAsync<ResourceRequestCV>(input.ResourceRequestCVId);
+            resourceRequestCV.InterviewDate = input.InterviewDate;
+            await WorkScope.UpdateAsync(resourceRequestCV);
+            return input;
         }
 
 
@@ -380,8 +427,7 @@ namespace ProjectManagement.APIs.ResourceRequests
         [AbpAuthorize]
         public async Task<string> UploadCV([FromForm] CVUploadDto input)
         {
-            try
-            {
+           
                 var resourceRequest = await WorkScope.GetAsync<ResourceRequest>(input.ResourceRequestId);
                 if (resourceRequest == null)
                 {
@@ -407,11 +453,7 @@ namespace ProjectManagement.APIs.ResourceRequests
                     return filePath;
                 }
                 await CurrentUnitOfWork.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                throw new UserFriendlyException("An error occurred while uploading the CV", ex);
-            }
+           
          }
 
         [HttpGet]

@@ -58,6 +58,21 @@ export class DeliveryResourceRequestService extends BaseApiService {
     );
     return this.http.request(uploadReq);
   }
+  public updateStatusResourceRequestCV(item: any): Observable<any> {
+    return this.http.post<any>(this.rootUrl + '/UpdateStatusResourceRequestCV',item);
+  }
+  public updateKpiPointResourceRequestCV(item: any): Observable<any> {
+    return this.http.post<any>(this.rootUrl + '/UpdateKpiPointResourceRequestCV',item);
+  }
+  public updateNoteResourceRequestCV(item: any): Observable<any> {
+    return this.http.post<any>(this.rootUrl + '/UpdateNoteResourceRequestCV',item);
+  }
+  public updateSendCVDateResourceRequestCV(item: any): Observable<any> {
+    return this.http.post<any>(this.rootUrl + '/UpdateSendCVDateResourceRequestCV',item);
+  }
+  public updateInterviewTimeResourceRequestCV(item: any): Observable<any> {
+    return this.http.post<any>(this.rootUrl + '/UpdateInterviewTimeResourceRequestCV',item);
+  }
 
   public searchAvailableUserForRequest(
     item: any,

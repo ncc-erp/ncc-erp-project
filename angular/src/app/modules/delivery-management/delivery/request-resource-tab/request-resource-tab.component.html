@@ -809,8 +809,8 @@
                           appFocus
                           [(ngModel)]="c.status"
                           placeholder="Select Status"
-                          (selectionChange)="save(a, c, item)"
-                          (keydown.enter)="save(a, c, item)"
+                          (selectionChange)="updateStatusCV(a, c, 'status')"
+                          (keydown.enter)="updateStatusCV(a, c, item,'status')"
                           (keydown.esc)=" cancelEdit(a,'status',item)"  
                         >
                           <ng-container *ngFor="let status of cvStatusList">
@@ -832,8 +832,8 @@
                     appFocus
                     style="width: 100%; max-width: 100%; border: none; background-color: transparent; text-align: right;"             
                     [(ngModel)]="c.kpiPoint"
-                    (focusout)="save(a, c, item)"
-                    (keydown.enter)="save(a, c, item)" 
+                    (focusout)="updateKpiPointCV(a, c, 'KpiPoint')"
+                    (keydown.enter)="updateKpiPointCV(a, c, 'kpiPoint')" 
                     (keydown.esc)=" cancelEdit(a,'kpiPoint',item)"                 
                   />                 
                 </td>
@@ -854,8 +854,8 @@
                         [readonly]="true"
                         [owlDateTime]="dt2"
                         [owlDateTimeTrigger]="dt2"
-                        (dateTimeChange)="save(a, c, item)"
-                        (keydown.enter)="save(a, c, item)"  
+                        (dateTimeChange)="updateSendCVDate(a, c, 'sendCVDate')"
+                        (keydown.enter)="updateSendCVDate(a, c, 'sendCVDate')"  
                         (keydown.esc)=" cancelEdit(a,'sendCVDate',item)"             
                       />
                       <owl-date-time #dt2  [pickerType]="'calendar'"></owl-date-time>
@@ -881,8 +881,8 @@
                         [readonly]="true"
                         [owlDateTime]="dt1"
                         [owlDateTimeTrigger]="dt1"
-                        (dateTimeChange)="save(a, c, item)"
-                        (keydown.enter)="save(a, c, item)"  
+                        (dateTimeChange)="updateInterviewTimeCV(a, c,'interviewDate')"
+                        (keydown.enter)="updateInterviewTimeCV(a, c,'interviewDate')"  
                         (keydown.esc)=" cancelEdit(a,'interviewDate',item)"                      
                       />
                       <owl-date-time #dt1></owl-date-time>
@@ -890,14 +890,14 @@
                   </ng-container>
                 </td>
                 
-                          
+
                   <td class="text-align:left" style="resize: horizontal;min-width: 700px; overflow: auto; max-width: 350px;" (dblclick)="edit(a,'note',c,item)">
                     <span *ngIf="!editing[a]?.note">{{ c.note }} </span>
                     <textarea appFocus 
                               style="width: 100%; height: 100%; box-sizing: border-box; border: none; background-color: transparent;" 
                               *ngIf="editing[a]?.note"  
                               [(ngModel)]="c.note"                                                       
-                              (focusout)="save(a, c, item)"
+                              (focusout)=" updateNoteCV(a, c, 'note')"
                               (keydown.esc)=" cancelEdit(a,'note',item)"   
                            >
                     </textarea>

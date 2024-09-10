@@ -209,21 +209,97 @@ export class RequestResourceTabComponent
     if (!this.originalValues[index][field]) {
       this.originalValues[index][field] = item[field];
     } 
-    this.editing[index][field] = true;
-      
+    this.editing[index][field] = true;     
   }
-  save(index: number, item: ResourceRequestCVDto, request: RequestResourceDto) {
-    if (this.editing[index]) { 
-        if (isNaN(item.kpiPoint) || item.kpiPoint< 0 ||item.kpiPoint> 10) {
-          abp.notify.error(`Nhập Kpi Point ko phù hợp vui lòng nhập lại ! `);  
-            return;
+  updateStatusCV(index: number, item: ResourceRequestCVDto, field: string) {
+    if (this.editing[index]) {
+      const res = {
+        resourceRequestCVId: item.id,
+        status: item.status,
+      }; 
+      this.resourceRequestService.updateStatusResourceRequestCV(res).subscribe(
+        result => {
+          abp.notify.success("Update Status ResourceRequest successfully");  
+          const requestIndex = this.listRequest.findIndex(req => req.id === item.resourceRequestId); 
+          if (result.result.getResourceRequestDto != null) {
+            Object.assign(this.listRequest[requestIndex], result.result.getResourceRequestDto);
+            this.listRequest = [...this.listRequest];
+          }  
+          this.editing[index][field] = false;  
+        },
+        error => {
+          abp.notify.error("Failed to update status");
         }
-      Object.keys(this.editing[index]).forEach(field => {
-        this.editing[index][field] = false;
-      }); 
-      this.updateResourceRequestCV(item, request); 
+      );
     }
   }
+  
+  updateKpiPointCV(index:number,item : ResourceRequestCVDto,field : string){
+    if (this.editing[index]) {
+        const res = {
+          resourceRequestCVId : item.id,
+          kpiPoint : item.kpiPoint,
+        }
+        this.resourceRequestService.updateKpiPointResourceRequestCV(res).subscribe(
+          result=>{
+            if(res.kpiPoint>10 || res.kpiPoint<0){
+              abp.notify.error("Nhập Kpi Point không hợp lệ ! Vui Lòng nhập lại .")
+              return;
+            }
+            abp.notify.success("Update KpiPoint ResourceRequest successfully");
+          }
+        )
+        this.editing[index][field]=false;
+    }
+  }
+  updateSendCVDate(index:number,item : ResourceRequestCVDto,field : string){
+    if (this.editing[index]) { 
+        const res = {
+          resourceRequestCVId : item.id,
+          sendCVDate : momentTime(item.interviewDate)
+          .tz('Asia/Ho_Chi_Minh')
+          .format('YYYY-MM-DD HH:mm:ss'),
+        }   
+        this.resourceRequestService.updateSendCVDateResourceRequestCV(res).subscribe(
+          result=>{
+            abp.notify.success("Update SendCVDate ResourceRequest successfully");
+          }
+        )
+        this.editing[index][field]=false;
+    }
+  }
+  updateInterviewTimeCV(index:number,item : ResourceRequestCVDto,field : string){
+    if (this.editing[index]) {
+  
+        const res = {
+          resourceRequestCVId : item.id,
+          interviewDate : momentTime(item.interviewDate)
+          .tz('Asia/Ho_Chi_Minh')
+          .format('YYYY-MM-DD HH:mm:ss'),
+        }
+        this.resourceRequestService.updateInterviewTimeResourceRequestCV(res).subscribe(
+          result=>{
+            abp.notify.success("Update Status ResourceRequest successfully");
+          }
+        )
+        this.editing[index][field]=false;
+    }
+  }
+  updateNoteCV(index:number,item : ResourceRequestCVDto,field : string){
+    if (this.editing[index]) { 
+        const res = {
+          resourceRequestCVId : item.id,
+          note : item.note,
+        }
+        this.resourceRequestService.updateNoteResourceRequestCV(res).subscribe(
+          result=>{
+            abp.notify.success("Update Note ResourceRequest successfully");    
+          }
+        )
+        this.editing[index][field]=false;
+    }
+  }
+
   cancelEdit(index: number, field: string, request: RequestResourceDto): void {
     if (this.editing[index]) {
       const po = this.listRequest.findIndex(res => res.id === request.id);
@@ -248,7 +324,6 @@ export class RequestResourceTabComponent
       this.isRowExpand[entity.id] = true;
       this.expandedRows.push(entity.id);
     }
-    try {
       const rs = await this.resourceRequestService.getResouceRequestCV(entity.id).toPromise();     
        if (rs && rs.success) {
         const index = this.listRequest.findIndex(res => res.id === entity.id);
@@ -257,10 +332,7 @@ export class RequestResourceTabComponent
         }
       } else {
         console.error('Unexpected response:', rs);
-      }
-    } catch (error) {
-      console.error('An error occurred:', error);
-    }
+      } 
   }
   checkRowExpanded(id: number): boolean {
     return this.expandedRows.includes(id);
@@ -318,8 +390,7 @@ export class RequestResourceTabComponent
       }
     });
   }
- 
-  public formatInterviewDateToVN(resourceRequestCV: ResourceRequestCVDto): any {
+ public formatInterviewDateToVN(resourceRequestCV: ResourceRequestCVDto): any {
     return {
       ...resourceRequestCV,
       interviewDate: momentTime(resourceRequestCV.interviewDate)
@@ -338,38 +409,15 @@ export class RequestResourceTabComponent
             return of(null); 
         })
     ).subscribe(response => {
-        if (response && response.success) {
             this.resourceRequestService.getResouceRequestCV(request.id).subscribe(rs => {  
                 abp.notify.success(`Update CV Successfully!`);                         
                 if (rs && rs.success) {
-                    const index = this.listRequest.findIndex(res => res.id === request.id);                  
-                    if (index !== -1) {                    
-                        this.listRequest[index].resCV = rs.result as ResourceRequestCVDto[];
-                        if(formattedCV.status == this.APP_ENUM.CVStatus.Pass) {
-                            const billAccount = {
-                                startTime: resourceRequestCV.interviewDate,
-                                resourceRequestId: resourceRequestCV.resourceRequestId,
-                                userId : resourceRequestCV.userId,
-                                cvName: resourceRequestCV.cvName,
-                                cvPath : resourceRequestCV.cvPath,
-                            };
-                            this.resourceRequestService.UpdateBillInfoPlan(billAccount).subscribe((res: any) => {
-                                if (res && res.success) {                     
-                                    Object.assign(this.listRequest[index], res.result);
-                                    this.listRequest = [...this.listRequest];
-                                } else {
-                                    console.error('Error updating bill info:', res);
-                                }
-                            });
-                        } else {
-                            this.listRequest = [...this.listRequest];
-                        }
-                    }
+                    const index = this.listRequest.findIndex(res => res.id === request.id);                                               
+                   this.listRequest[index].resCV = rs.result as ResourceRequestCVDto[];
+                   this.listRequest = [...this.listRequest];
                 }
             });
-        } else {
-            console.error('Update was not successful:', response);
-        }
+       
     },
     error => {
         console.error('Error updating resource request CV:', error);

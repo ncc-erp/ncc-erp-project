@@ -246,7 +246,6 @@ export class RequestResourceTabComponent
     if (!this.editingRows[index]) {
       return;
     }
-
     const res = {
       resourceRequestCVId: item.id,
       kpiPoint: item.kpiPoint,
@@ -284,8 +283,9 @@ export class RequestResourceTabComponent
   }
 
   updateInterviewTimeCV(index: number, item: ResourceRequestCVDto, field: string) {
-    if (this.editingRows[index]) {
-
+     if (!this.editingRows[index]) {
+        return;
+     }
       const res = {
         resourceRequestCVId: item.id,
         interviewDate: this.formatDateToYYYYMMddHHmmss(item.interviewDate)
@@ -298,11 +298,12 @@ export class RequestResourceTabComponent
         error => {
           console.error("Failed to update InterviewTime");
         }
-      );   
-    }
+      );     
   }
   updateNoteCV(index: number, item: ResourceRequestCVDto, field: string) {
-    if (this.editingRows[index]) {
+      if (!this.editingRows[index]) {
+        return;
+      }
       const res = {
         resourceRequestCVId: item.id,
         note: item.note,
@@ -316,7 +317,7 @@ export class RequestResourceTabComponent
           console.error("Failed to update Note");
         }
       );    
-    }
+    
   }
 
   cancelEdit(index: number, field: string, request: RequestResourceDto): void {

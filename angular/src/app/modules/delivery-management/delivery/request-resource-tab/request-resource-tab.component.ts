@@ -474,8 +474,8 @@ export class RequestResourceTabComponent
     const dialogRef = this.dialog.open(UploadCVPathResourceRequestCV, {
       data: { id: item.id, width: '500px' }
     });
-    dialogRef.afterClosed().subscribe(rs => {
-      if (rs) {
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
         this.resourceRequestService.getResouceRequestCV(request.id).subscribe(
           rs => {
             const index = this.listRequest.findIndex(res => res.id === request.id);

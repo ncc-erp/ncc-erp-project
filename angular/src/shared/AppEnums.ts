@@ -313,7 +313,7 @@ export const APP_ENUMS = {
         "Fail CV" : 3,
         "Pass CV" : 4,
         "Đã Hẹn PV" : 5,
-        "Đã Pv CV" : 6,
+        "Đã Pv " : 6,
         "Pass" : 7,
         "Fail" : 8,
         "Onboarded" : 9

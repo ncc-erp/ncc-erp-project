@@ -784,7 +784,13 @@
                         [ngStyle]="{'color': !checkNullOrEmpty(c.cvPath) ? 'blue' : 'black'}">
                        <span style="flex: 1; overflow: hidden;">
                          {{c.cvName}}
-                       </span></a>
+                       </span></a>                     
+                        <span style="width: 100%; justify-content: space-between; display: flex ;white-space: nowrap;
+                        color:red;cursor: pointer; overflow: hidden;"
+                        *ngIf="checkNullOrEmpty(c.cvName)" class="cv-link1 m-0"
+                         >
+                          Empty CV Name
+                        </span>
                      </div>
                        <div style="display: flex ; justify-content: left;"  class="col-md-1">
                          <span *ngIf="!checkNullOrEmpty(c.cvPath)" (click)="removeCVPath(c)">
@@ -798,12 +804,12 @@
                   </td>
                   <td class="text-left" (dblclick)="edit(a, 'status', c, item)">
 
-                    <ng-container *ngIf="!editing[a]?.status">
+                    <ng-container *ngIf="!editingRows[a]?.status">
                       <span class="fixed-width-field">
                         {{ getValueByEnum(c.status, APP_ENUM.CVStatus) }}
                       </span>
                     </ng-container>
-                    <ng-container *ngIf="editing[a]?.status">
+                    <ng-container *ngIf="editingRows[a]?.status">
                       <mat-form-field appearance="outline" class="fixed-width-field" floatLabel="never">
                         <mat-select
                           appFocus
@@ -825,10 +831,10 @@
                   </td>
                   
                  <td style="text-align: right; width: 100px;" (dblclick)="edit(a, 'kpiPoint', c, item)">
-                  <span *ngIf="!editing[a]?.kpiPoint">{{ c.kpiPoint }}</span>
+                  <span *ngIf="!editingRows[a]?.kpiPoint">{{ c.kpiPoint }}</span>
                   <input                
                     type="number"
-                    *ngIf="editing[a]?.kpiPoint"
+                    *ngIf="editingRows[a]?.kpiPoint"
                     appFocus
                     style="width: 100%; max-width: 100%; border: none; background-color: transparent; text-align: right;"             
                     [(ngModel)]="c.kpiPoint"
@@ -839,10 +845,10 @@
                 </td>
                   
                 <td class="text-center " (dblclick)="edit(a, 'sendCVDate', c, item)">
-                  <ng-container *ngIf="!editing[a]?.sendCVDate">
+                  <ng-container *ngIf="!editingRows[a]?.sendCVDate">
                     <span class="fixed-width-field1">{{ c.sendCVDate | date: 'd/MM/y' }}</span>
                   </ng-container>
-                  <ng-container *ngIf="editing[a]?.sendCVDate"  >
+                  <ng-container *ngIf="editingRows[a]?.sendCVDate"  >
                     <mat-form-field appearance="outline" class="fixed-width-field1">
                       <input
                         matInput
@@ -864,12 +870,12 @@
                 </td>
                 
                 <td class="text-center " (dblclick)="edit(a, 'interviewDate', c, item)">
-                  <ng-container *ngIf="!editing[a]?.interviewDate" class="fixed-width-field2">
+                  <ng-container *ngIf="!editingRows[a]?.interviewDate" class="fixed-width-field2">
                     <span >{{ c.interviewDate | date: 'd/MM/y' }}</span>
                     <br>
                     <span>{{ c.interviewDate | date: 'HH:mm' }}</span>
                   </ng-container>
-                  <ng-container *ngIf="editing[a]?.interviewDate">
+                  <ng-container *ngIf="editingRows[a]?.interviewDate">
                     <mat-form-field appearance="outline" class="fixed-width-field1">
                       <input
                         matInput
@@ -892,10 +898,10 @@
                 
 
                   <td class="text-align:left" style="resize: horizontal;min-width: 700px; overflow: auto; max-width: 350px;" (dblclick)="edit(a,'note',c,item)">
-                    <span *ngIf="!editing[a]?.note">{{ c.note }} </span>
+                    <span *ngIf="!editingRows[a]?.note">{{ c.note }} </span>
                     <textarea appFocus 
                               style="width: 100%; height: 100%; box-sizing: border-box; border: none; background-color: transparent;" 
-                              *ngIf="editing[a]?.note"  
+                              *ngIf="editingRows[a]?.note"  
                               [(ngModel)]="c.note"                                                       
                               (focusout)=" updateNoteCV(a, c, 'note')"
                               (keydown.esc)=" cancelEdit(a,'note',item)"   

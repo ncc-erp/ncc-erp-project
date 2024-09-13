@@ -300,9 +300,9 @@
                     <button style="border: none; background-color: transparent;"  type="button" (click)="getResourceRequestCVExpand(item)"> 
                       <i [class]="getIconClass(item)" ></i>
                     </button>
-                    <span style=" margin-bottom: 20px;">{{ i + 1 + pageSize * (pageNumber - 1) }}</span>
-                    <div class="text-center" style="margin-top: 25px;" >
-                      <i class="fas fa-plus text-primary fa-2x" (click)="AddCV(item)"
+                    <span >{{ i + 1 + pageSize * (pageNumber - 1) }}</span>
+                    <div class="text-center" >
+                      <i class="fas fa-plus text-primary " (click)="AddCV(item)"
                           matTooltip="Add CV"></i>
                  </div>
                   </td>
@@ -375,8 +375,8 @@
                    
                     </div>
                   </td>
-                  <td style="padding: 12px 4px;width:180px">
-                    <p *ngFor="let skill of item.skills.slice(0, 4)" class="m-0">
+                  <td style="padding: 5px 4px;width:180px">
+                    <p *ngFor="let skill of item.skills.slice(0, 2)" class="m-0">
                       - {{ skill.name }}
                     </p>
                   </td>
@@ -469,7 +469,7 @@
                       </div>
                     </div>
                   </td>
-                  <td style="padding: 12px 8px; width:130px">
+                  <td style="padding: 5px 8px; width:130px">
                     <span *ngIf="item.code">{{ item.code }}</span>
                   </td>
                   <td style="width:250px">

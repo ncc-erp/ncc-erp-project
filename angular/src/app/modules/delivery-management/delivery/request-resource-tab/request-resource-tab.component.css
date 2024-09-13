@@ -57,8 +57,7 @@ table td {
 }
 .tl-link {
     color: #1769aa;
-    display: inline-block;
-    font-weight: 600;
+    font-weight: 500;
   }
 .tl-link:hover{
     text-decoration: underline;

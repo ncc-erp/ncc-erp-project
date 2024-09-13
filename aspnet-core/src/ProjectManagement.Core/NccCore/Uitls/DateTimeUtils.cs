@@ -102,6 +102,10 @@ namespace NccCore.Uitls
             return new DateTime(year, month, 15).ToString("yyyy-MM");
         }
 
+        public static string NowToyyyyMMddHHmmssfff()
+        {
+            return Clock.Provider.Now.ToString("yyyyMMddHHmmssfff");
+        }
         public static int GetHourNow()
         {
             return Clock.Provider.Now.Hour;

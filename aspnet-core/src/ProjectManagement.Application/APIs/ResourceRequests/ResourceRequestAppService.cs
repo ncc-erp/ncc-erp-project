@@ -74,16 +74,17 @@ namespace ProjectManagement.APIs.ResourceRequests
 
 
         [HttpPost]
-        public async Task<ResourceRequestCVDto> AddCV(ResourceRequestCVDto resourceRequestCV)
+        public async Task<ResourceRequestCV> AddCV(ResourceRequestCVDto input)
         {
-            var check = await WorkScope.GetAll<ResourceRequestCV>().AnyAsync(s => s.UserId == resourceRequestCV.UserId && s.ResourceRequestId == resourceRequestCV.ResourceRequestId);
-            if (check)
+            var isExist = await WorkScope.GetAll<ResourceRequestCV>()
+                                       .AnyAsync(s => s.CVName == input.CVName && s.ResourceRequestId == input.ResourceRequestId);
+            if (isExist && !input.CVName.IsEmpty())
             {
-                throw new UserFriendlyException(string.Format("CV with Name {0} is exits !", resourceRequestCV.CVName));
+                throw new UserFriendlyException(string.Format("CV Name {0} is already exist !", input.CVName));
             }
-            var input = ObjectMapper.Map<ResourceRequestCV>(resourceRequestCV);
-            await WorkScope.InsertAsync<ResourceRequestCV>(input);
-            return resourceRequestCV;
+            var entity = ObjectMapper.Map<ResourceRequestCV>(input);
+            await WorkScope.InsertAsync<ResourceRequestCV>(entity);
+            return entity;
         }
 
         [HttpGet]
@@ -133,66 +134,115 @@ namespace ProjectManagement.APIs.ResourceRequests
         }
 
         [HttpPut]
-        public async Task<ResourceRequestCVDto> UpdateResourceRequestCV(ResourceRequestCVDto resourceRequestCV)
+        public async Task<ResourceRequestCV> UpdateResourceRequestCV(ResourceRequestCVDto input)
         {
-            var rCV = await WorkScope.GetAsync<Entities.ResourceRequestCV>(resourceRequestCV.Id);
-            var nRs = ObjectMapper.Map<ResourceRequestCVDto, ResourceRequestCV>(resourceRequestCV, rCV);
-            await WorkScope.UpdateAsync<Entities.ResourceRequestCV>(nRs);
-            return resourceRequestCV;
+            var entity = await WorkScope.GetAsync<Entities.ResourceRequestCV>(input.Id);
+            ObjectMapper.Map(input, entity);
+            await WorkScope.UpdateAsync(entity);
+            return entity;
         }
+
         [HttpDelete]
         public async Task DeleteResourceRequestCV(long resourceRequestCVId)
         {
-            var check = await WorkScope.GetAll<ResourceRequestCV>().AnyAsync(s => s.Id == resourceRequestCVId);
-            if (!check)
-            {
-                throw new UserFriendlyException(string.Format("CV with Id {0} is not exits !", resourceRequestCVId));
-            }
             await WorkScope.DeleteAsync<ResourceRequestCV>(resourceRequestCVId);
         }
 
         [HttpPost]
         public async Task<string> UploadCVPathResourceRequestCV([FromForm] UploadCVPathResourceRequestCVDto input)
         {
-            try
+            if (input.file == null || input.file.Length == 0)
             {
-
-                var resourceRequestCV = await WorkScope.GetAsync<ResourceRequestCV>(input.resourceRequestCVId);
-                if (resourceRequestCV == null)
-                {
-                    throw new UserFriendlyException(String.Format("Resource RequestCV Not Found"));
-                }
-                if (input.file == null || input.file.Length == 0)
-                {
-                    resourceRequestCV.CVPath = null;
-                    return null;
-                }
-                else
-                {
-                    var user = await WorkScope.GetAsync<User>(resourceRequestCV.UserId);
-                    var filename = input.resourceRequestCVId + '_' + user.Id + '_' + input.file.FileName;
-                    var filePath = await _uploadFileService.UploadCvAsync(input.file, filename);
-                    if (string.IsNullOrEmpty(filePath))
-                    {
-                        throw new Exception("File Upload Failed");
-                    }
-                    resourceRequestCV.CVPath = filePath;
-                    if (resourceRequestCV.Status == CVStatus.ChualamCV)
-                    {
-                        resourceRequestCV.Status = CVStatus.DaGuiCV;
-                    }
-                    return filePath;
-                }
-                await CurrentUnitOfWork.SaveChangesAsync();
-
+                throw new UserFriendlyException(string.Format("File null"));
             }
 
-            catch (Exception e)
+            var resourceRequestCV = await WorkScope.GetAsync<ResourceRequestCV>(input.resourceRequestCVId);
+            if (resourceRequestCV == null)
             {
-                throw new UserFriendlyException("An error occurred while uploading the CV", e);
+                throw new UserFriendlyException(String.Format("Not Found ResourceRequestCV with Id {0} ", input.resourceRequestCVId));
             }
+            
+            var filename = input.file.FileName + "_" + DateTimeUtils.NowToyyyyMMddHHmmssfff();
+            var filePath = await _uploadFileService.UploadCvAsync(input.file, filename);
+
+            if (string.IsNullOrEmpty(filePath))
+            {
+                throw new Exception("File Upload Failed");
+            }
+
+            resourceRequestCV.CVPath = filePath;
+            if (resourceRequestCV.Status == CVStatus.ChualamCV)
+            {
+                resourceRequestCV.Status = CVStatus.DaLamCV;
+            }
+
+            await CurrentUnitOfWork.SaveChangesAsync();
+
+            return filePath;
+
+        }
+        [HttpPost]
+        public async Task<UpdateStatusResultDto> UpdateStatusResourceRequestCV(UpdateResouceRequestCVStatusDto input)
+        {
+            var resourceRequestCV = await WorkScope.GetAsync<ResourceRequestCV>(input.ResourceRequestCVId);
+            resourceRequestCV.Status = input.Status;
+
+            var resourceRequest = await WorkScope.GetAsync<ResourceRequest>(resourceRequestCV.ResourceRequestId);
+
+            var result = new UpdateStatusResultDto();
+            if (input.Status == CVStatus.Pass && !resourceRequest.BillAccountId.HasValue)
+            {
+                var newBillAcount = new UpdateResourceRequestPlanForBillInfoDto();
+                newBillAcount.StartTime = resourceRequestCV.InterviewDate;
+                newBillAcount.ResourceRequestId = resourceRequestCV.ResourceRequestId;
+                newBillAcount.CVName = resourceRequestCV.CVName;
+                newBillAcount.UserId = resourceRequestCV.UserId;
+                newBillAcount.CVPath = resourceRequestCV.CVPath;
+                var resourceRequestDto = await UpdateBillInfoTemp(newBillAcount);
+                result.getResourceRequestDto = resourceRequestDto;
+            }
+           
+            await WorkScope.UpdateAsync(resourceRequestCV);
+            result.updateResouceRequestCVStatus = input;
+
+            return result;
         }
 
+        [HttpPost]
+        public async Task<UpdateResourceRequestCVNote> UpdateNoteResourceRequestCV(UpdateResourceRequestCVNote input)
+        {
+            var resourceRequestCV = await WorkScope.GetAsync<ResourceRequestCV>(input.ResourceRequestCVId);
+            resourceRequestCV.Note = input.Note;
+            await WorkScope.UpdateAsync(resourceRequestCV);
+            return input;
+        }
+
+        [HttpPost]
+        public async Task<UpdateResouceRequestCVKpiPoint> UpdateKpiPointResourceRequestCV(UpdateResouceRequestCVKpiPoint input)
+        {
+            var resourceRequestCV = await WorkScope.GetAsync<ResourceRequestCV>(input.ResourceRequestCVId);
+            resourceRequestCV.KpiPoint = input.KpiPoint;
+            await WorkScope.UpdateAsync(resourceRequestCV);
+            return input;
+        }
+
+        [HttpPost]
+        public async Task<UpdateResouceRequestCVSendCVDate> UpdateSendCVDateResourceRequestCV(UpdateResouceRequestCVSendCVDate input)
+        {
+            var resourceRequestCV = await WorkScope.GetAsync<ResourceRequestCV>(input.ResourceRequestCVId);
+            resourceRequestCV.SendCVDate = input.SendCVDate;
+            await WorkScope.UpdateAsync(resourceRequestCV);
+            return input;
+        }
+
+        [HttpPost]
+        public async Task<UpdateResouceRequestCVInterviewTime> UpdateInterviewTimeResourceRequestCV(UpdateResouceRequestCVInterviewTime input)
+        {
+            var resourceRequestCV = await WorkScope.GetAsync<ResourceRequestCV>(input.ResourceRequestCVId);
+            resourceRequestCV.InterviewDate = input.InterviewDate;
+            await WorkScope.UpdateAsync(resourceRequestCV);
+            return input;
+        }
 
         [HttpPost]
         [AbpAuthorize(PermissionNames.ResourceRequest)]
@@ -211,7 +261,7 @@ namespace ProjectManagement.APIs.ResourceRequests
 
             if(input.FilterRequestCode != null && input.FilterRequestCode.Any()) 
             {
-                query = query.Where(s => input.FilterRequestCode.Contains(s.Code)); 
+                query = query.Where(s => input.FilterRequestCode.Contains(s.Code));
             }
             if (input.FilterRequestStatus != null && input.FilterRequestStatus.Any())
             {
@@ -242,7 +292,7 @@ namespace ProjectManagement.APIs.ResourceRequests
 
         [HttpGet]
         [AbpAuthorize]
-        public async Task<List<RequestCodeDto>> GetResourceRequestCode() 
+        public async Task<List<RequestCodeDto>> GetResourceRequestCode()
         {
             var result = WorkScope.GetAll<ResourceRequest>()
                                   .Where(r => r.Code != null)
@@ -374,40 +424,36 @@ namespace ProjectManagement.APIs.ResourceRequests
 
         [HttpPost]
         [AbpAuthorize]
-        public async Task UploadCV([FromForm] CVUploadDto input)
+        public async Task<string> UploadCV([FromForm] CVUploadDto input)
         {
-            try
+
+            var resourceRequest = await WorkScope.GetAsync<ResourceRequest>(input.ResourceRequestId);
+            if (resourceRequest == null)
             {
-                var resourceRequest = await WorkScope.GetAsync<ResourceRequest>(input.ResourceRequestId);
-                if (resourceRequest == null)
-                {
-                    throw new UserFriendlyException(String.Format("Resource Request Not Found"));
-                }
-                if (input.file == null || input.file.Length == 0)
-                {
-                    resourceRequest.LinkCV = null;
-
-                }
-                else
-                {
-                    var filename = input.ResourceRequestId + '_' + input.file.FileName;
-
-                    var filePath = await _uploadFileService.UploadCvAsync(input.file, filename);
-                    if (string.IsNullOrEmpty(filePath))
-                    {
-                        throw new Exception("File Upload Failed");
-                    }
-
-
-                    resourceRequest.LinkCV = filePath;
-                }
-                await CurrentUnitOfWork.SaveChangesAsync();
+                throw new UserFriendlyException(String.Format("Resource Request Not Found"));
             }
-            catch (Exception ex)
+            if (input.file == null || input.file.Length == 0)
             {
-                throw new UserFriendlyException("An error occurred while uploading the CV", ex);
+                resourceRequest.LinkCV = null;
+                return null;
             }
-         }
+            else
+            {
+                var filename = input.ResourceRequestId + '_' + input.file.FileName;
+
+                var filePath = await _uploadFileService.UploadCvAsync(input.file, filename);
+                if (string.IsNullOrEmpty(filePath))
+                {
+                    throw new Exception("File Upload Failed");
+                }
+
+
+                resourceRequest.LinkCV = filePath;
+                return filePath;
+            }
+            await CurrentUnitOfWork.SaveChangesAsync();
+
+        }
 
         [HttpGet]
         public async Task<object> DownloadCVLink(long resourceRequestId)
@@ -560,7 +606,7 @@ namespace ProjectManagement.APIs.ResourceRequests
         }
 
         [HttpPost]
-        [AbpAuthorize] 
+        [AbpAuthorize]
         public async Task<ResourceRequestSetDoneDto> SetDone(ResourceRequestSetDoneDto input)
         {
             var request = await WorkScope.GetAll<ResourceRequest>()
@@ -736,6 +782,7 @@ namespace ProjectManagement.APIs.ResourceRequests
             request.BillAccountId = input.UserId;
             request.BillStartDate = input.StartTime;
             request.CVName = input.CVName;
+            request.LinkCV = input.CVPath;
             await WorkScope.UpdateAsync(request);
 
             var isAlreadyHaveResource = WorkScope.GetAll<ProjectUser>()

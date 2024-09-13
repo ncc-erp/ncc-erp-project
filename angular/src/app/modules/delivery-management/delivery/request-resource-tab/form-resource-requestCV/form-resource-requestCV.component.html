@@ -6,13 +6,13 @@ novalidate
 >
 <abp-modal-header
   *ngIf="input.command == 'create'"
-  title="Create new CV of ResourceRequest : {{this.resourceRequestId}}"
+  title="Create new CV for request code : {{this.code}}"
   (onCloseClick)="dialogRef.close()"
 >
 </abp-modal-header>
 <abp-modal-header
   *ngIf="input.command == 'edit'"
-  title="Edit resource request CV with Id :  {{ this.input.item1.id }} of resourceRequest {{this.resourceRequestId}}"
+  title="Edit CV with Id  {{ this.input.item1.id }} for request code {{this.code}}"
   (onCloseClick)="dialogRef.close()"
 >
 </abp-modal-header>

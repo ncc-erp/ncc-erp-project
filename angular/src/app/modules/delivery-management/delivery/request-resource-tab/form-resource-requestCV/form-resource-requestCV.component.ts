@@ -38,6 +38,7 @@ export class ResourceRequestCVComponent extends AppComponentBase implements OnIn
    public userId : number;
    public resourceRequestCV = {} as ResourceRequestCVDto;
    public resourceRequestId: number;
+   public code: string;
    public cvStatusList: string[] = Object.keys(this.APP_ENUM.CVStatus)
    selectedFile: File;
    public requestResourceDto : RequestResourceDto;
@@ -67,7 +68,7 @@ export class ResourceRequestCVComponent extends AppComponentBase implements OnIn
     }else{
        this.getResourceRequestCVById(this.input.item1.id);
     }
-      this.resourceRequestId = this.input.resourceRequestId,
+      this.resourceRequestId = this.input.resourceRequestId;
       this.resourceRequestCV.interviewDate = this.input.interviewDate;
       this.listUsers = this.input.listUsers;
       this.resourceRequestCV.sendCVDate = this.input.sendCVDate;
@@ -78,7 +79,7 @@ export class ResourceRequestCVComponent extends AppComponentBase implements OnIn
       this.resourceRequestCV.cvName = this.input.cvName? this.input.cvName: " ";
       this.resourceRequestCV.linkCVPath = this.input.linkCVPath? this.input.linkCVPath: " ";
       this.requestResourceDto = this.input.item1.requestResource;
-      
+      this.code = this.input.code;
   }
   ngAfterViewChecked(): void {
     this.ref.detectChanges()

@@ -1,8 +1,10 @@
-import { PagedRequestDto } from './../../../shared/paged-listing-component-base';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { ApiResponse,PagedRequestDto } from './../../../shared/paged-listing-component-base';
+import { HttpClient, HttpParams, HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { throwError, Observable } from 'rxjs';
 import { BaseApiService } from './base-api.service';
+import { AppConsts } from '@shared/AppConsts';
+import { ResourceRequestCVDto } from '@app/service/model/resource-requestCV.dto';
 @Injectable({
   providedIn: 'root',
 })
@@ -18,6 +20,60 @@ export class DeliveryResourceRequestService extends BaseApiService {
       this.rootUrl + '/ResourceRequestDetail?resourceRequestId=' + id
     );
   }
+
+    // Api resourceRequestCV
+    public getResouceRequestCV(resourceRequestId: number): Observable<ApiResponse<ResourceRequestCVDto[]>>{
+      return this.http.get<any>(
+           `${this.rootUrl}/GetResourceRequestCV?resourceRequestId=${resourceRequestId}`
+      ).pipe();
+    }
+    public getResourceRequestCVById(resourceRequestCVId: number):Observable<ApiResponse<ResourceRequestCVDto>>{
+      return this.http.get<any>(
+        `${this.rootUrl}/GetResourceRequestCVById?resourceRequestCVId=${resourceRequestCVId}`
+      );
+    }
+  public updateResourceRequestCV(resourceRequestCV: any):Observable<any> {
+    
+      return this.http.put<any>(this.rootUrl + '/UpdateResourceRequestCV',resourceRequestCV);
+    }  
+    public deleteResourceRequestCV( resourceRequestCVId :number ){
+      return this.http.delete<any>(
+        this.rootUrl +
+        `/DeleteResourceRequestCV?resourceRequestCVId=${resourceRequestCVId}`
+      );
+    }
+   public addCV(resourceRequestCV : any):Observable<any>{
+       return this.http.post<any>(this.rootUrl+'/AddCV',resourceRequestCV);
+   }
+   public UploadCVPath(linkCv ,id): Observable<any>{
+    const formData = new FormData();
+    formData.append('File', linkCv);
+    formData.append('ResourceRequestCVId', id);
+  
+    const uploadReq = new HttpRequest(
+      'POST', AppConsts.remoteServiceBaseUrl + '/api/services/app/ResourceRequest/UploadCVPathResourceRequestCV', formData,
+      {
+        reportProgress: true
+      }
+    );
+    return this.http.request(uploadReq);
+  }
+  public updateStatusResourceRequestCV(item: any): Observable<any> {
+    return this.http.post<any>(this.rootUrl + '/UpdateStatusResourceRequestCV',item);
+  }
+  public updateKpiPointResourceRequestCV(item: any): Observable<any> {
+    return this.http.post<any>(this.rootUrl + '/UpdateKpiPointResourceRequestCV',item);
+  }
+  public updateNoteResourceRequestCV(item: any): Observable<any> {
+    return this.http.post<any>(this.rootUrl + '/UpdateNoteResourceRequestCV',item);
+  }
+  public updateSendCVDateResourceRequestCV(item: any): Observable<any> {
+    return this.http.post<any>(this.rootUrl + '/UpdateSendCVDateResourceRequestCV',item);
+  }
+  public updateInterviewTimeResourceRequestCV(item: any): Observable<any> {
+    return this.http.post<any>(this.rootUrl + '/UpdateInterviewTimeResourceRequestCV',item);
+  }
+
   public searchAvailableUserForRequest(
     item: any,
     request: PagedRequestDto

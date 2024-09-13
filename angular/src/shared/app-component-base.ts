@@ -1,3 +1,4 @@
+import * as momentTime from "moment-timezone";
 import { Utils } from './Utils';
 import { Injector, ElementRef } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
@@ -90,5 +91,11 @@ export abstract class AppComponentBase {
         return member.fullAvatarPath;
       }
       return '/assets/img/user.png';
+    }
+
+    formatDateToYYYYMMddHHmmss(date: Date ) {
+      return momentTime(date)
+        .tz('Asia/Ho_Chi_Minh')
+        .format('YYYY-MM-DD HH:mm:ss')
     }
 }

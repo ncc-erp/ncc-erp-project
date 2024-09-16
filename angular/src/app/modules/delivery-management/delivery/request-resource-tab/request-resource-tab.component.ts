@@ -469,6 +469,7 @@ export class RequestResourceTabComponent
         userId: item.userId,
         status: item.status,
         note: item.note,
+        code: request.code,
         kpiPoint: item.kpiPoint,
         inteviewDate: item.inteviewDate,
         sendCVDate: item.sendCVDate,

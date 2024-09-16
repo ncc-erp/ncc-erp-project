@@ -6,13 +6,13 @@ novalidate
 >
 <abp-modal-header
   *ngIf="input.command == 'create'"
-  title="Create new CV of ResourceRequest : {{this.resourceRequestId}}"
+  title="Create new CV for request code : {{this.code}}"
   (onCloseClick)="dialogRef.close()"
 >
 </abp-modal-header>
 <abp-modal-header
   *ngIf="input.command == 'edit'"
-  title="Edit resource request CV with Id :  {{ this.input.item1.id }} of resourceRequest {{this.resourceRequestId}}"
+  title="Edit CV with Id  {{ this.input.item1.id }} for request code {{this.code}}"
   (onCloseClick)="dialogRef.close()"
 >
 </abp-modal-header>
@@ -53,7 +53,7 @@ novalidate
     <label class="col-md-3 col-form-label" for="tenancyName">CVName</label>
     <div class="col-md-9">
       <mat-form-field appearance="outline" class="w-100">
-        <input matInput placeholder="CVName" name="cvName" #cvName="ngModel" [(ngModel)]="resourceRequestCV.cvName"  />
+        <input matInput  name="cvName" #cvName="ngModel" [(ngModel)]="resourceRequestCV.cvName"  />
       </mat-form-field>
     </div>
   </div>
@@ -61,7 +61,7 @@ novalidate
     <label class="col-md-3 col-form-label" for="tenancyName">Kpi Point</label>
     <div class="col-md-9">
       <mat-form-field appearance="outline" class="w-100">
-        <input matInput placeholder="KpiPoint" name="kpiPoint" #kpiPoint="ngModel" [(ngModel)]="resourceRequestCV.kpiPoint"  />
+        <input matInput  name="kpiPoint" #kpiPoint="ngModel" [(ngModel)]="resourceRequestCV.kpiPoint"  />
       </mat-form-field>
     </div>
   </div>
@@ -85,9 +85,7 @@ novalidate
   <label class="col-md-3 col-form-label" for="tenancyName">SendCVDate</label>
     <div class="col-md-9">
       <mat-form-field appearance="outline" class="w-100">
-        <input matInput
-    
-        placeholder="Time need"
+        <input matInput     
         name="sendCVDate"
         [(ngModel)]="resourceRequestCV.sendCVDate"   
         #timeStart="ngModel"        
@@ -95,7 +93,7 @@ novalidate
         [autofocus]="true"
         [owlDateTime]="dt1" [owlDateTimeTrigger]="dt1"                              
         />
-        <owl-date-time #dt1></owl-date-time>
+        <owl-date-time #dt1 [pickerType]="'calendar'"></owl-date-time>
     </mat-form-field>
     </div>
   </div>
@@ -105,9 +103,7 @@ novalidate
     <div class="col-md-9">
     
       <mat-form-field appearance="outline" class="w-100">
-        <input matInput
-    
-        placeholder="InterviewDate"
+        <input matInput     
         name="interviewDate"
         [(ngModel)]="resourceRequestCV.interviewDate"   
         #timeStart="ngModel"        
@@ -124,7 +120,7 @@ novalidate
     <label class="col-md-3 col-form-label" for="tenancyName">Note</label>
     <div class="col-md-9">
       <mat-form-field appearance="outline" class="w-100">
-        <textarea matInput placeholder="Note" name="note" #note="ngModel" [(ngModel)]="resourceRequestCV.note" ></textarea>
+        <textarea matInput  name="note" #note="ngModel" [(ngModel)]="resourceRequestCV.note" ></textarea>
       </mat-form-field>
     </div>
   </div>

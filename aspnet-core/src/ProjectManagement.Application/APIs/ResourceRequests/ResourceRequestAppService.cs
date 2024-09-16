@@ -161,8 +161,8 @@ namespace ProjectManagement.APIs.ResourceRequests
             {
                 throw new UserFriendlyException(String.Format("Not Found ResourceRequestCV with Id {0} ", input.resourceRequestCVId));
             }
-            
-            var filename = input.file.FileName + "_" + DateTimeUtils.NowToyyyyMMddHHmmssfff();
+
+            var filename = DateTimeUtils.NowToyyyyMMddHHmmssfff() + "_" + input.file.FileName.Replace(" ", "_");
             var filePath = await _uploadFileService.UploadCvAsync(input.file, filename);
 
             if (string.IsNullOrEmpty(filePath))

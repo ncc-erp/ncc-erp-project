@@ -163,5 +163,18 @@ span {
   .form-control {
     max-height: 50vh;
   }
+
+  .pagination {
+    order: 1;
+  }
+
+  .list-number-items {
+    order: 2;
+    padding-top: 10px;
+  }
+
+  .total {
+    order: 3;
+  }
 }
 

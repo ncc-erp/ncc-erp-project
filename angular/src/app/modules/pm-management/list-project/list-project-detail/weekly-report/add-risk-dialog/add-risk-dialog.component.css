@@ -10,7 +10,7 @@
 
     .form-horizontal .modal-body {
         max-height: 60vh !important;
-        padding: 12px 12px 0 0;
+        padding: 10px;
     }
 
     .modal-footer {

@@ -20,9 +20,8 @@
     }
 
     .modal-body {
-        padding-left: 0;
+        padding: 10px;
         padding-right: 0;
-        padding-top: 10px;
         max-height: 50vh;
     }
 

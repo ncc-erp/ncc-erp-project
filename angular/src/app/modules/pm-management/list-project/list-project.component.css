@@ -205,9 +205,8 @@ button{
   }
 
   ::ng-deep .cdk-overlay-container .cdk-global-overlay-wrapper .create-edit-project-dialog {
-    width: 100%;
     max-width: 100% !important;
-    padding: 0 22px;
+    padding: 0 18px;
   }
 }
 /*

@@ -113,4 +113,10 @@ td > div { height: 100%; }
     ::ng-deep .options-number-item {
         min-width: calc(100% + 32px) !important;
     }
+
+    ::ng-deep .list-skill app-select-clear-option {
+        button.bg-secondary, button.bg-success {
+          margin-left: 10px !important;
+        }
+    }
 }

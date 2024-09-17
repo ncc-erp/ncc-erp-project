@@ -41,8 +41,8 @@
     }
 
     .modal-body {
-        padding: 10px 10px 10px 0;
-        max-height: 60vh !important;
+        padding: 10px;
+        max-height: 55vh !important;
     }
 
     :host ::ng-deep .create-edit-list-project .modal-title {

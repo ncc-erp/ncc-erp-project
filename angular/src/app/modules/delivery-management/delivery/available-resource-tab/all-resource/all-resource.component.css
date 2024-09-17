@@ -6,7 +6,7 @@
     white-space: pre-line !important;
   }
 
-::ng-deep .mat-radio-label{
+::ng-deep .radio-group-skill .mat-radio-label{
     margin: 0;
 }
 .all-resource-table i {
@@ -142,7 +142,7 @@ span {
         padding: 0;
     }
 
-    ::ng-deep .form-horizontal app-filter .container-fluid {
+    :host ::ng-deep .form-horizontal app-filter .container-fluid {
         padding: 0;
     }
 

@@ -144,7 +144,7 @@
                                         matInput [(ngModel)]="searchSkill"  placeholder="Search" #search
                                         (keydown)="$event.stopPropagation()">
                                         </mat-form-field>
-                                    <mat-radio-group aria-label="Filter by" class="w-80 px-2  row" [(ngModel)]="isAndCondition" style=" width: 100%;align-items: center;">
+                                    <mat-radio-group aria-label="Filter by" class="w-80 px-2  row radio-group-skill" [(ngModel)]="isAndCondition" style=" width: 100%;align-items: center;">
                                         <div class="col-md-4 d-flex" style="align-items: center;">
                                             <mat-radio-button class="mr-3" [value]="true">And</mat-radio-button>
                                             <mat-radio-button [value]="false">Or</mat-radio-button>

@@ -79,16 +79,18 @@
     } 
 
     .btn-action {
-        font-size: 12px;
-        width: 60px;
+        font-size: 13px;
         white-space: nowrap;
+        padding: 6px 12px;
+        width: fit-content;
     }
 
     .btn-clear {
         margin-right: 10px;
     }
 
-    .btn-select-all {
-        width: 71px;
+    .mat-option .mat-option-text .data-name {
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 }

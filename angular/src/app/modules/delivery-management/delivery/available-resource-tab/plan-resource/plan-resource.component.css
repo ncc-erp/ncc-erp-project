@@ -68,7 +68,7 @@ td > div { height: 100%; }
 
 @media screen and (max-width: 600px) {
     .field-search {
-        margin-bottom: 1rem;
+        margin-bottom: 10px;
     }
 
     .card-body {
@@ -85,8 +85,8 @@ td > div { height: 100%; }
     }
 
     .form-horizontal {
-        margin-left: -8px;
         padding-right: 8px;
+        margin-left: -8px;
     }
 
     ::ng-deep .cdk-overlay-container .cdk-global-overlay-wrapper .add-edit-note-dialog {
@@ -118,5 +118,9 @@ td > div { height: 100%; }
         button.bg-secondary, button.bg-success {
           margin-left: 10px !important;
         }
+    }
+
+    .row-skill {
+        margin-bottom: 8px !important;
     }
 }

@@ -1,0 +1,18 @@
+
+@media screen and (max-width: 600px) {
+    .skill-rank {
+        max-width: 350px;
+        height: 100% !important;
+    }
+
+    .form-group {
+        margin-top: 10px !important;
+        max-height: 50vh;
+        overflow: auto;
+        padding: 0 1rem;
+    }
+
+    .card-header {
+        padding: 0 !important;
+    }
+}

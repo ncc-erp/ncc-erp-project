@@ -1,0 +1,6 @@
+@media screen and (max-width: 600px) {
+    .pagination {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}

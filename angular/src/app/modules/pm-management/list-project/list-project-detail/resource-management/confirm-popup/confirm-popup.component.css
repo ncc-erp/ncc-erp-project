@@ -1,0 +1,13 @@
+.join-date {
+    width: 200px;
+}
+
+@media screen and (max-width: 600px) {
+    .card-body {
+        padding: 0;
+    }
+
+    .join-date {
+        width: 100%;
+    }
+}

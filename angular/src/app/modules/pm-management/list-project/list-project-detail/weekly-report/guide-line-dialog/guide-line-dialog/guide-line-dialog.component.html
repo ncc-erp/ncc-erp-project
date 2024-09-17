@@ -5,7 +5,7 @@
         [title]="isEditMode ? 'Update Guideline: ' + data.criteriaName : 'Guideline: ' + data.criteriaName" (onCloseClick)="dialogRef.close()">
     </abp-modal-header>
 
-    <div class="modal-body" style="max-height: 500px; overflow-y: auto;" *ngIf="!isEditMode">
+    <div class="modal-body" *ngIf="!isEditMode">
 
         <span [innerHTML]="data.guideline | safeHtml">{{data.guideline}}</span>
     </div>

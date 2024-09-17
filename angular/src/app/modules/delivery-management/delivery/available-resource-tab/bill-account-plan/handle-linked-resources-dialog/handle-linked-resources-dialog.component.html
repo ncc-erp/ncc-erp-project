@@ -1,9 +1,9 @@
 <div [busy]="isLoading">
     <div class="row align-items-center">
-        <div class="col-2">
+        <div class="col-md-2">
             <label class="mr-2 mb-0">Resource</label>
         </div>
-        <div class="col-10 rsp-group-form-field">
+        <div class="col-md-10 rsp-group-form-field">
             <mat-form-field appearance="outline"
                             class="rsp-form-field">
                 <mat-select #select
@@ -33,7 +33,7 @@
     <div style="height: 350px; overflow-y: auto; overflow-x: hidden;">
         <div class="row" style="font-size: 18px;" *ngFor="let item of resourceSelected;index as i">
             <strong class="col-2">{{i+1}}.</strong>
-            <span class="col-10">{{item.emailAddress}}</span>
+            <span class="col-10 email-address">{{item.emailAddress}}</span>
         </div>
     </div>
     <div class="d-flex justify-content-end mt-3" style="position: sticky; bottom: 0; z-index: 2;">

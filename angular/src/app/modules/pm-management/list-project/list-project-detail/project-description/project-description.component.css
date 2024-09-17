@@ -3,7 +3,7 @@ pre{
     line-height: 24px;
 }
 
-::ng-deep .mat-form-field-appearance-outline .mat-form-field-flex{
+:host ::ng-deep .mat-form-field-appearance-outline .mat-form-field-flex{
     height: 52px;
 }
 
@@ -11,4 +11,30 @@ pre{
     white-space: pre-line;
     font-family: sans-serif; 
     align-self:flex-start;
+}
+
+@media screen and (max-width: 600px) {
+    .card {
+        border-radius: 0;
+    }
+
+    .title-project-des {
+        margin-bottom: 0;
+    }
+
+    .card-body {
+        padding: 10px 20px !important;
+    }
+
+    .footer-desc {
+        margin-left: 0px;
+    }
+
+    .text-description {
+        padding: 0;
+    }
+
+    :host ::ng-deep .form-use-technology .mat-form-field-flex > .mat-form-field-infix {
+        padding: 7px 0 !important;
+    }
 }

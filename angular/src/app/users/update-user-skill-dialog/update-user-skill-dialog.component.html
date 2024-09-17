@@ -41,7 +41,7 @@
             </mat-form-field>
         </div>
     </div > 
-    <div *ngIf="!isNotUpdate && viewStarSkillUser" style="width: 100%; margin-top: 15px; height: 350px; overflow-y: auto; overflow-x: hidden">
+    <div *ngIf="!isNotUpdate && viewStarSkillUser" style="width: 100%; margin-top: 15px; height: 350px; overflow-y: auto; overflow-x: hidden" class="skill-rank">
             <div *ngFor="let item of skillRankList " class="row align-items-center">
                 <span class="col-md-2">{{item.name}}</span>
                 <div class="col-md-10">
@@ -52,7 +52,7 @@
                
             </div>
     </div>
-    <div *ngIf="isNotUpdate && viewStarSkillUser" style="width: 100%; margin-top: 15px; height: 350px; overflow-y: auto; overflow-x: hidden">
+    <div *ngIf="isNotUpdate && viewStarSkillUser" style="width: 100%; margin-top: 15px; height: 350px; overflow-y: auto; overflow-x: hidden" class="skill-rank">
             <div *ngFor="let item of skillRankList " class="row align-items-center">
                 <span class="col-md-2">{{item.name}}</span>
                 <div class="col-md-10">

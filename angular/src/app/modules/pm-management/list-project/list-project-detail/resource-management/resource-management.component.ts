@@ -541,6 +541,7 @@ export class ResourceManagementComponent extends AppComponentBase implements OnI
       id: request.id ? request.id : null,
       projectId: this.projectId
     }
+    console.log(command, 'command')
     const show = this.dialog.open(CreateUpdateResourceRequestComponent, {
       data: {
         command: command,

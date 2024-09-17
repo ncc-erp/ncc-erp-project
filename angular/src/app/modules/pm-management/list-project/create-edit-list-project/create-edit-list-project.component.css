@@ -10,3 +10,42 @@
     font-size: 80%;
     color: #dc3545;
 }
+
+@media screen and (max-width: 600px) {
+    :host ::ng-deep .create-edit-list-project abp-modal-header .modal-header {
+        padding: 0;
+    }
+
+    .datepick mat-form-field {
+        display: block;
+    }
+
+    :host ::ng-deep .checkbox-weekly-report .mat-checkbox-layout,
+    :host ::ng-deep .checkbox-file .mat-checkbox-layout {
+        display: block;
+        white-space: normal;
+        margin-bottom: 0;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    :host ::ng-deep .checkbox-weekly-report .mat-checkbox-inner-container {
+        margin-right: 3px;
+        margin-bottom: 2px;
+    }
+
+    .label-weekly-report, .label-is-charge {
+        display: none;
+    }
+
+    .modal-body {
+        padding: 10px 10px 10px 0;
+        max-height: 60vh !important;
+    }
+
+    :host ::ng-deep .create-edit-list-project .modal-title {
+        margin-bottom: 10px;
+    }
+}

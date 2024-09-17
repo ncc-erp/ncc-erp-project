@@ -60,3 +60,57 @@ td > div { height: 100%; }
 .yellow{
     color: yellow !important;
 }
+
+::ng-deep .cdk-overlay-container .cdk-global-overlay-wrapper .add-edit-note-dialog {
+    width: 40%;
+}
+
+
+@media screen and (max-width: 600px) {
+    .field-search {
+        margin-bottom: 1rem;
+    }
+
+    .card-body {
+        padding: 0;
+    }
+
+    ::ng-deep .cdk-overlay-container .cdk-global-overlay-wrapper .plan-user-dialog {
+        max-width: 100% !important;
+        padding: 0 20px;
+    }
+
+    .add-filter {
+        margin-left: 6px !important;
+    }
+
+    .form-horizontal {
+        margin-left: -8px;
+        padding-right: 8px;
+    }
+
+    ::ng-deep .cdk-overlay-container .cdk-global-overlay-wrapper .add-edit-note-dialog {
+        width: 100%;
+    }
+    
+    .form-number-items {
+        width: 25% !important;
+    }
+
+    .pagination {
+        order: 1;
+    }
+
+    .list-number-items {
+        order: 2;
+        padding-top: 30px;
+    }
+
+    .total {
+        order: 3;
+    }
+
+    ::ng-deep .options-number-item {
+        min-width: calc(100% + 32px) !important;
+    }
+}

@@ -83,7 +83,7 @@
                 Status
             </label>
             <div class="col-md-9">
-                <mat-form-field appearance="outline">
+                <mat-form-field appearance="outline" class="mat-select-status">
                     <mat-select [value]="currentStatus" (selectionChange)="changeStatus($event)">
                         <mat-option *ngFor="let status of issueStatusList" [value]="status.value">
                             {{status.view}}</mat-option>
@@ -93,7 +93,7 @@
 
         </div>
     </div>
-    <div align="end" class="row justify-content-end" style="margin-right: 36px;">
+    <div align="end" class="row justify-content-end modal-footer">
         <button class="btn btn-secondary btn-action mr-3" mat-dialog-close>Cancel</button>
         <button class="btn btn-primary btn-action" [disabled]=" !issueForm.valid"
             (click)="SaveAndClose()">Save</button>

@@ -10,7 +10,7 @@
 } */
 
 
-.showText:hover::after {
+/* .showText:hover::after {
     content: "Charge vào timesheet tháng này!";
     background-color: rgba(66, 63, 63, 0.863);
     color: white;
@@ -27,8 +27,61 @@
     padding: 7px;
     border-radius: 3px;
     text-align: center;
-}
+} */
+
 .straight {
     display: flex;
     align-items: flex-end;
+}
+
+.form-control {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+@media screen and (max-width: 600px) {
+    .content {
+        padding: 0 !important;
+    }
+
+    .container-fluid {
+        padding: 0;
+    }
+
+    .card {
+        box-shadow: none;
+    }
+
+    .card-body {
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+    }
+
+    .datetime-picker {
+        display: block;
+    }
+
+    .label-badge, .content-badge, .label-badge, .content-badge,
+    .label-checkbox, .content-checkbox {
+        width: fit-content;
+    }
+
+    .row-badge, .row-badge {
+        align-items: center;
+        column-gap: 6px;
+    }
+
+    .row-checkbox {
+        align-items: center;
+    }
+
+    :host ::ng-deep .content-checkbox .mat-checkbox-layout {
+        margin-bottom: 0;
+    }
+
+    .icon-show-tooltip {
+        display: inline-flex;
+        align-items: baseline;
+    }
 }

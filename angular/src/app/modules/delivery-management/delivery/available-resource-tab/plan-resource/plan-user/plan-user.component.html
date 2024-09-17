@@ -9,7 +9,7 @@
                 Project:
             </label>
             <div class="col-md-9">
-                <mat-form-field class="mt-2" appearance="outline" style=width:250px>
+                <mat-form-field class="mt-2 field-project" appearance="outline" style=width:250px>
                     <mat-select name="projectId" #projectIdValid="ngModel" placeholder="Select project" required
                         [(ngModel)]="planUser.projectId">
                         <mat-form-field class="w-100 px-3 "
@@ -73,7 +73,7 @@
                 TimeStart:
             </label>
             <div class="col-md-9">
-                <mat-form-field appearance="outline">
+                <mat-form-field appearance="outline" class="field-timestart">
                     <input placeholder="Choose date" matInput [matDatepicker]="picker" name="startDate"
                         [(ngModel)]="planUser.startTime" #timeStart="ngModel" required />
                     <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
@@ -87,7 +87,7 @@
         </div>
 
     </div>
-    <div class="row justify-content-end">
+    <div class="row justify-content-end modal-footer">
         <button class="btn btn-secondary btn-action mr-2" mat-dialog-close>Cancel</button>
         <button class="btn btn-primary btn-action" [disabled]="!resourceRequestForm.valid || isLoading"
             (click)="SaveAndClose()">Save</button>

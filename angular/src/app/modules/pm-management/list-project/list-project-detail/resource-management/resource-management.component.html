@@ -12,6 +12,7 @@
         <mat-expansion-panel-header
           name="panel-current"
           class="mt-2 mb-2"
+          [ngClass]="{'current-resource': isShowProjectUser}"
           (click)="isShowProjectUser = !isShowProjectUser"
         >
           <div class="col-md-6">
@@ -47,8 +48,8 @@
               )
             "
           >
-            <div class="col-md-6" *ngIf="isShowProjectUser">
-              <section class="example-section">
+            <div class="col-md-6 view-history" *ngIf="isShowProjectUser">
+              <section class="checkbox-view-history">
                 <mat-checkbox
                   name="cbx-history"
                   class="example-margin"
@@ -224,7 +225,7 @@
                       <div class="d-flex">
                         <div style="width: 90%; text-align: left">
                           <p
-                            class="m-0 mr-1"
+                            class="m-0 mr-1 content-skills"
                             *ngFor="let item of filterSkillInfo(user)"
                           >
                             - {{ item.skillName }}
@@ -255,7 +256,7 @@
                           </div>
                         </div>
                         <div
-                          style="width: 10%; text-align: right"
+                          class="col-skill"
                           *ngIf="
                             !(
                               user.workingStatus ==
@@ -484,7 +485,7 @@
         </div>
         <div class="card-footer bg-light border-top" style="height: 50px">
           <div class="row" style="justify-content: space-between">
-            <div class="col-5 text-sm-left text-center">
+            <div class="col-md-5 text-sm-left text-center">
               <mat-form-field style="width: 20%; margin-left: 30px">
                 <mat-label>Number items</mat-label>
                 <mat-select
@@ -499,10 +500,10 @@
                 </mat-select>
               </mat-form-field>
             </div>
-            <div class="col-2 text-center">
+            <div class="col-md-2 text-center">
               <p class="mb-0 my-2">Total: {{ projectUserList.length }}</p>
             </div>
-            <div class="col-5">
+            <div class="col-md-5">
               <pagination-controls
                 autoHide="true"
                 id="projectUser"
@@ -527,6 +528,7 @@
         <mat-expansion-panel-header
           name="pannel-plan"
           class="mt-2 mb-2"
+          [ngClass]="{'current-resource': isShowCurrentResouce}"
           (click)="isShowCurrentResouce = !isShowCurrentResouce"
         >
           <div class="col-md-6">
@@ -665,7 +667,7 @@
                       <div class="d-flex">
                         <div style="width: 90%; text-align: left">
                           <p
-                            class="m-0 mr-1"
+                            class="m-0 mr-1 content-skills"
                             *ngFor="let item of filterSkillInfo(user)"
                           >
                             - {{ item.skillName }}
@@ -696,7 +698,7 @@
                           </div>
                         </div>
                         <div
-                          style="width: 10%; text-align: right"
+                          class="col-skill"
                           *ngIf="
                             !(
                               user.workingStatus ==
@@ -979,10 +981,13 @@
                         </button>
                       </mat-menu>
                     </div>
-                    <div *ngIf="user.createMode || user.editMode" class="pt-2">
+                    <div 
+                      *ngIf="user.createMode || user.editMode" 
+                      class="pt-2 d-flex flex-baseline align-items-center"
+                    >
                       <button
                         [disabled]="!user?.userId || !user?.startTime"
-                        class="mr-3 submit-btn"
+                        class="submit-btn"
                         style="background: none; border: none"
                         (click)="savePlanResource(user)"
                       >
@@ -1024,6 +1029,7 @@
         <mat-expansion-panel-header
           name="panel-resource"
           class="mt-2 mb-2"
+          [ngClass]="{'current-resource': isShowRequest}"
           (click)="isShowRequest = !isShowRequest"
         >
           <div class="col-md-6">
@@ -1047,14 +1053,14 @@
               <i class="fa fa-plus m-0"></i>
             </button>
           </div>
-          <div class="col-md-6">
+          <div class="col-md-6" [ngStyle]="{'display': isShowRequest ? 'block' : 'none'}">
             <div class="row">
               <div
-                class="col-md-2 d-flex justify-content-end align-items-center"
+                class="col-md-2 d-flex justify-content-end align-items-center label-status"
               >
                 <label class="mr-2 mb-0">Status:</label>
               </div>
-              <div class="col-md-10">
+              <div class="col-md-10 dropdown-status">
                 <mat-form-field
                   appearance="outline"
                   class="rsp-form-field"
@@ -1097,8 +1103,8 @@
                   <th style="width: 200px">Planned Resource</th>
                   <th class="status-column">Status</th>
                   <th class="status-column">Priority</th>
-                  <th>PM note</th>
-                  <th>HR/DM note</th>
+                  <th class="status-column">PM note</th>
+                  <th class="status-column">HR/DM note</th>
                   <th class="status-column">Action</th>
                 </tr>
               </thead>
@@ -1233,12 +1239,12 @@
                     }}</span>
                   </td>
                   <td class="text-center">
-                    <p
+                    <span
                       class="tag"
                       [ngClass]="APP_CONST.priorityRequest[item.priority]"
                     >
                       {{ item.priorityName }}
-                    </p>
+                    </span>
                   </td>
                   <td
                     style="

@@ -16,7 +16,7 @@ export class PlanningBillInfoService extends BaseApiService {
   constructor(http: HttpClient) {
     super(http);
   }
-  public GetTotalHeadCount(request: InputGetBillInfoDto): Observable<any>{
+  public GetTotalHeadCount(request: PagedRequestDto): Observable<any>{
     return this.http.post<any>(this.rootUrl + '/GetTotalHeadCount',request);
   }
 

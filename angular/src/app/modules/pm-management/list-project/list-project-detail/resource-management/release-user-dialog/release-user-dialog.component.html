@@ -3,12 +3,12 @@
         <strong *ngIf="data.type === 'confirmOut'" class="text-danger">Out project</strong></h4>
 </div>
 <div class="card-body">
-    <div class="form-group row required">
+    <div class="form-group row required align-items-center">
         <div class="col-3">
             <label for="releaseDate" class="mt-2">Release date: </label>
         </div>
         <div class="col-9">
-            <mat-form-field appearance="outline" style="width: 200px;">
+            <mat-form-field appearance="outline" style="width: 200px;" class="field-release-date">
                 <input matInput [matDatepicker]="picker" placeholder="chose a date *" required [(ngModel)]="releaseDate" #startTime="ngModel" name="releaseDate">
                 <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                 <mat-datepicker #picker></mat-datepicker>

@@ -6,3 +6,7 @@
 .width80{
     width: 80% !important;
 }
+
+.displayName {
+    white-space: normal;
+}

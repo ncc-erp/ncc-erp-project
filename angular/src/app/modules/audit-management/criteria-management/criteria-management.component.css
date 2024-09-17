@@ -46,6 +46,7 @@
   width: 100%;
   display: flex;
   justify-content: end;
+  flex-wrap: wrap;
 }
 .name-criteria {
   flex: 1;
@@ -104,4 +105,37 @@
   overflow: hidden;
   text-overflow: ellipsis;
   word-break: break-all;
+}
+
+@media only screen and (max-width: 600px){
+ .btn-create {
+  text-align: left !important;
+  margin-top: 1rem;
+ }
+ .btn-hidden {
+  display: none;
+ }
+
+ .checkbox {
+  margin-left: 0 !important;
+ }
+ .applicable {
+  width: fit-content !important;
+ }
+ .action {
+  width: fit-content !important;
+ }
+ .note-name {
+  padding-right: 0 !important;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  word-break: unset !important;
+ }
+ .mat-tree-node {
+  margin-left: 1rem;
+ }
+ .label-inactive {
+  margin-left: 0px !important;
+ }
 }

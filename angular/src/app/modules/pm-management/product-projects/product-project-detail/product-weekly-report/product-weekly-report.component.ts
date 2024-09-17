@@ -1204,6 +1204,7 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
     if (user.allocatePercentage <= 0) {
       let ref = this.dialog.open(ReleaseUserDialogComponent, {
         width: "700px",
+        maxHeight: '90vh',
         data: {
           user: user,
           type: "confirmOut"
@@ -1223,6 +1224,7 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
         workingProject = data.result
         let ref = this.dialog.open(ConfirmPopupComponent, {
           width: '700px',
+          maxHeight: '90vh',
           data: {
             workingProject: workingProject,
             user: user,
@@ -1359,6 +1361,7 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
     addPlanResource() {
       let ref = this.dialog.open(AddFutureResourceDialogComponent, {
         width: "700px",
+        maxHeight: '80vh',
         data: {
           projectId: this.projectId,
           projectName: this.projectInfo.projectName
@@ -1384,6 +1387,7 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
       }
       let ref = this.dialog.open(AddFutureResourceDialogComponent, {
         width: "700px",
+        maxHeight: '80vh',
         data: {
           command: "edit",
           item: item
@@ -1403,7 +1407,8 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
     }
     showGuideLine(item) {
       const show = this.dialog.open(GuideLineDialogComponent,{
-        width: "60%",
+        width: "700px",
+        maxHeight: '99vh',
         data:item
         })
       }

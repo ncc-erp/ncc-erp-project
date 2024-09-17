@@ -1,0 +1,9 @@
+
+@media only screen and (max-width: 768px) {
+    .card-body {
+        padding: 0;
+    }
+    .col-join-date {
+        width: 100% !important;
+    }
+}

@@ -1,0 +1,19 @@
+@media only screen and (max-width: 768px){
+    .create-update-client ::ng-deep .modal-header {
+        padding: 0 !important;
+    }
+    .create-update-client ::ng-deep .modal-body {
+        padding: 0;
+    }
+}
+
+@media (max-width: 600px) {
+  ::ng-deep.my-dialog .mat-dialog-container {
+      overflow: hidden;
+  }
+
+  :host ::ng-deep .mat-dialog-content {
+    max-height: 60vh;
+    overflow: auto;
+  }
+}

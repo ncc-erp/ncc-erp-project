@@ -6,3 +6,10 @@
     padding: 0;
     align-items: center;
 }
+
+
+@media only screen and (max-width: 768px){
+  .form-plan-user ::ng-deep .modal-body {
+      padding: 0;
+  }
+}

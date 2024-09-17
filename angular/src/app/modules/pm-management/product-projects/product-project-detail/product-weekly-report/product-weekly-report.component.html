@@ -1,17 +1,17 @@
 <section class="content p-3" style="background-color: #f1f1f1;"
     *ngIf="permission.isGranted(Projects_ProductProjects_ProjectDetail_TabWeeklyReport_View)">
-    <div class="row justify-content-between">
-        <div style="width: 59%;">
+    <div class="weekly-report row justify-content-between">
+        <div style="width: 59%;" class="section">
             <div class="px-4 pb-2 pt-2 card"
                 style="display: flex; flex-direction: column; justify-content: space-between; ">
                 <div class="row p-1">
-                    <div class="col-7 p-0 d-flex align-items-center">
+                    <div class="col-md-7 col-sm-12 p-0 d-flex align-items-center">
                         <label for="" class="mt-1">Status:</label>
                         <div *ngIf="!permission.isGranted(Projects_ProductProjects_ProjectDetail_TabWeeklyReport_ChangeOverAllProjectHealthCriteria)" class="status-label d-flex justify-content-center align-items-center" [ngClass]="bgFlag">
                             <span>{{status}}</span>
                         </div>
                         <mat-form-field *ngIf="permission.isGranted(Projects_ProductProjects_ProjectDetail_TabWeeklyReport_ChangeOverAllProjectHealthCriteria)" [ngClass]="APP_CONST.projectHealthStyle[statusProject]"
-                        style="margin-left: 10px !important;width: 100px;" class="ml-3" appearance="outline">
+                        style="margin-left: 10px !important;width: 50%;" class="ml-3 w-100" appearance="outline">
                         <mat-select name="flag" [(ngModel)]="statusProject" placeholder="Select Status" (selectionChange)="onChangeStatusProject()">
                             <ng-container *ngFor="let flag of problemIssueList">
                                 <mat-option style="border: 1px white solid;"
@@ -25,8 +25,8 @@
                         </mat-select>
                     </mat-form-field>
                     </div>
-                    <div class="col-5 m-0 p-0 d-flex align-items-center">
-                        <mat-form-field class="ml-2" style="width: 205px;" appearance="outline">
+                    <div class="col-md-5 col-sm-12 m-0 p-0 d-flex align-items-center justify-content-end weekly">
+                        <mat-form-field class="ml-2 pm-report w-100" appearance="outline">
                             <mat-label>PM report:</mat-label>
                             <mat-select [(ngModel)]="selectedReport" name="pmReport" (selectionChange)="onReportchange()"
                                 placeholder="select a report" required #projectEmployee="ngModel">
@@ -96,11 +96,11 @@
                                     {{problemIssueList[item.status - 1]}}</span>
                                 <div *ngIf="permission.isGranted(ProjectHealthCriteria_Edit) && selectedReport.isActive ">
                                     <button *ngIf="!item.editMode && selectedReport.isActive" mat-button [disabled]=" selectedReport.pmReportProjectId==0"
-                                        (click)="handleEditCriteriaResult(i)">
+                                        (click)="handleEditCriteriaResult(i)" class="btn-edit-criteriaResult">
                                         <i class="fas fa-pencil-alt fa-lg "></i>
                                     </button>
-                                    <div *ngIf="item.editMode && selectedReport.isActive" class="d-flex align-items-center">
-                                        <button class=" mr-3 submit-btn" style="background: none; border: none;"
+                                    <div *ngIf="item.editMode && selectedReport.isActive" class="d-flex align-items-center ml-3">
+                                        <button class="submit-btn" style="background: none; border: none;"
                                             (click)="saveCriteriaResult(item)">
                                             <i style="color: green;font-size: 24px;" class="fas fa-check"></i>
                                         </button>
@@ -127,14 +127,14 @@
 
             <div class="px-4 pb-2 pt-2 card">
                 <div class="row p-1">
-                    <div class="col">
+                    <div class="col pm-note">
                         <strong classs="col-12" style="font-size: 20px;">PM note: </strong>
                         <div class="d-inline ml-2 pt-1 text-right row">
                             <i [hidden]="!selectedReport.isActive || selectedReport.pmReportProjectId==0"
                                 *ngIf="!isEditingNote && permission.isGranted(Projects_ProductProjects_ProjectDetail_TabWeeklyReport_UpdateNote)"
                                 class="fas fa-edit fa-lg ml-2" style="font-size: 17px;"
                                 (click)="isEditingNote = true"></i>
-                                <i *ngIf="isEditingNote" style="color: green ;" class="fas fa-check fa-lg"
+                                <i *ngIf="isEditingNote" style="color: green ;" class="fas fa-check fa-lg mr-3"
                                 (click)="updateNote()"></i>
                                 <i *ngIf="isEditingNote" (click)="cancelUpdateNote()" style="color: red;"
                                     class="fas fa-times fa-lg mr-2"></i>
@@ -295,7 +295,7 @@
                                         <div *ngIf="problem.createMode" class="pt-2">
                                             <button
                                                 [disabled]=" !problem.description || !problem.impact || !(problem.status.toString())"
-                                                class=" mr-3 submit-btn" style="background: none; border: none;"
+                                                class="submit-btn" style="background: none; border: none;"
                                                 (click)="saveProblemReport(problem)">
                                                 <i style="color: green; ;" class="fas fa-check fa-2x"></i>
                                             </button>
@@ -316,11 +316,17 @@
             <div class="card"
                 *ngIf="permission.isGranted(Projects_ProductProjects_ProjectDetail_TabWeeklyReport_CurrentResource_View)">
                 <div class="card-body">
-                    <h4 class="d-inline-block mb-2">Current Resource</h4>&nbsp;
-                    <strong style="font-size: 20px;">({{projectCurrentResource?.length}})</strong>
-                    <span style="font-size: 21px; margin-left: 21px;">Charged accounts:
-                        <strong
-                            [ngClass]="projectInfo.totalBill> 0 ?'text-danger': '' ">{{projectInfo.totalBill}}</strong></span>
+                    <div class="d-flex align-items-center mb-10 resource">
+                        <div class="d-flex align-items-center">
+                            <h4 class="d-inline-block mb-0">Current Resource</h4>&nbsp;
+                            <strong style="font-size: 20px;">({{projectCurrentResource?.length}})</strong>
+                        </div>
+                        <span style="font-size: 21px; margin-left: 21px;" class="change-acc">Charged accounts:
+                            <strong
+                                [ngClass]="projectInfo.totalBill> 0 ?'text-danger': '' ">{{projectInfo.totalBill}}
+                            </strong>
+                        </span>
+                    </div>
                     <div class="fixTableHead" style="max-height: 72vh;">
                         <table class="table table-hover ">
                             <thead>
@@ -514,7 +520,7 @@
                 </div>
             </div>
         </div>
-        <div style="width: 40%;">
+        <div style="width: 40%;" class="section">
             <div class="">
                 <div class="card">
                     <div class="card-body">
@@ -554,7 +560,7 @@
                                         </button>
 
                                     </mat-expansion-panel-header>
-                                    <div class="mt-0 table-responsive px-4 pb-4">
+                                    <div class="mt-0 table-responsive pb-4">
                                         <table style="border-collapse: collapse;" class="table table-hover text-nowrap">
                                             <thead class="bg-light">
                                                 <tr>
@@ -643,7 +649,7 @@
                                                         </div>
                                                     </td>
 
-                                                    <td class="text-center" style="width: 80px;">
+                                                    <td class="text-center vertical-align-middle" style="width: 80px;">
                                                         <div class="" *ngIf="!report.createMode">
                                                             <div
                                                                 [ngClass]="APP_CONST.projectUserRole[report.projectRole]">
@@ -668,7 +674,7 @@
                                                             </mat-error>
                                                         </div>
                                                     </td>
-                                                    <td class="text-center">
+                                                    <td class="text-center" style="vertical-align: top;">
                                                         <div class="" *ngIf="!report.createMode">
                                                             {{report.startTime | date:"dd/MM/yyyy"}}
                                                         </div>
@@ -682,7 +688,7 @@
                                                             <mat-datepicker #picker></mat-datepicker>
                                                         </mat-form-field>
                                                     </td>
-                                                    <td>
+                                                    <td class="vertical-align-middle">
                                                         <div ngClass=""
                                                             [ngClass]="report.allocatePercentage >0 ?'text-success' : 'text-danger'"
                                                             class="text-center" *ngIf="!report.createMode">
@@ -725,7 +731,7 @@
 
 
 
-                                    <div class=" table-responsive px-4 pb-4">
+                                    <div class=" table-responsive pb-4">
                                         <table style="border-collapse: collapse;" class="table table-hover text-nowrap">
                                             <thead class="bg-light">
                                                 <tr>
@@ -780,7 +786,7 @@
 
                                                     </td>
 
-                                                    <td class="text-center">
+                                                    <td class="text-center vertical-align-middle">
                                                         <div class="" *ngIf="!report.createMode">
                                                             <div
                                                                 [ngClass]="APP_CONST.projectUserRole[report.projectRole]">
@@ -805,7 +811,7 @@
                                                             </mat-error>
                                                         </div>
                                                     </td>
-                                                    <td class="text-center">
+                                                    <td class="text-center" style="vertical-align: top;">
                                                         <div class="" *ngIf="!report.createMode">
                                                             {{report.startTime | date:"dd/MM/yyyy"}}
                                                         </div>

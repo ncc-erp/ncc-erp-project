@@ -102,6 +102,8 @@ export class TenantsComponent extends PagedListingComponentBase<TenantDto> {
       const showCreate = this.dialog.open(CreateTenantDialogComponent, {
         width: "700px",
         disableClose: true,
+        maxHeight: '80vh',
+        panelClass: 'my-dialog',
       });
       showCreate.afterClosed().subscribe(res => {
         if (res) {

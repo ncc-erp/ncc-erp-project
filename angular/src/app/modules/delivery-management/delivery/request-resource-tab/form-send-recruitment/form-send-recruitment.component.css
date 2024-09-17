@@ -1,0 +1,12 @@
+@media only screen and (max-width: 768px){
+    .btn-send {
+        margin-top: 10px;
+    }
+    .form-send-recruitment ::ng-deep .modal-header {
+         padding: 0 !important;
+    }
+    .form-send-recruitment ::ng-deep .modal-body {
+            padding: 0;
+    }
+    
+}

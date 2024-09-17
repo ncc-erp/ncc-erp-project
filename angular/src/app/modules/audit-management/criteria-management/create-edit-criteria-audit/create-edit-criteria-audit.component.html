@@ -1,10 +1,10 @@
 <form
-  class="form-horizontal"
+  class="form-horizontal create-edit-criteria-audit"
   autocomplete="off"
   #resourceRequestForm="ngForm"
   novalidate
 >
-  <div  style="position: sticky; top: 0; z-index: 2; background-color: white;">
+  <div style="position: sticky; top: 0; z-index: 2; background-color: white">
     <abp-modal-header
       *ngIf="data.command == 'create'"
       title="Create Criteria"
@@ -18,51 +18,102 @@
     >
     </abp-modal-header>
   </div>
-  <div style="height: 60vh; overflow-x: hidden;">
+  <mat-dialog-content class="mat-typography">
     <div class="modal-body">
-      <div class="form-group d-flex justify-content-between align-items-center" *ngIf="parentCurrent || isCreateCriteria">
+      <div
+        class="form-group d-flex justify-content-between align-items-center"
+        *ngIf="parentCurrent || isCreateCriteria"
+      >
         <label for="criteriaName" class="col-form-label">
           {{ "Parent" | localize }}:
         </label>
         <div class="w-75">
-          <div class="w-100 d-flex align-items-center" *ngIf="isCreateCriteria  ; else elseBlock">
-            <mat-form-field class="w-95" >
-              <mat-select [(ngModel)]="parentCurrent" name="parent" (selectionChange)="changeParent($event)">
-                <mat-form-field class="w-100 px-3 "
-                style="position: sticky; top: 0; z-index: 2; background-color: white;">
-                <input style="height: 50px; padding: 5px 10px; "
-                matInput [(ngModel)]="searchCriteria" name="searchCriteria" placeholder="Search" #search
-                (keydown)="$event.stopPropagation()">{{search.focus()}}
-              </mat-form-field>
-                  <mat-option  *ngFor="let item of listCriteriaAuditFilter | listFilter:  'name' : searchCriteria: 'code'" [value]="item.code" [style.paddingLeft] = "item.level * 20 + 'px'"><strong class="mr-1">{{item.code}}</strong>  {{item.name}}
+          <div
+            class="w-100 d-flex align-items-center"
+            *ngIf="isCreateCriteria; else elseBlock"
+          >
+            <mat-form-field class="w-100">
+              <mat-select
+                [(ngModel)]="parentCurrent"
+                name="parent"
+                (selectionChange)="changeParent($event)"
+              >
+                <mat-form-field
+                  class="w-100 px-3"
+                  style="
+                    position: sticky;
+                    top: 0;
+                    z-index: 2;
+                    background-color: white;
+                  "
+                >
+                  <input
+                    style="height: 50px; padding: 5px 10px"
+                    matInput
+                    [(ngModel)]="searchCriteria"
+                    name="searchCriteria"
+                    placeholder="Search"
+                    #search
+                    (keydown)="$event.stopPropagation()"
+                  />{{ search.focus() }}
+                </mat-form-field>
+                <mat-option
+                  *ngFor="
+                    let item of listCriteriaAuditFilter
+                      | listFilter : 'name' : searchCriteria : 'code'
+                  "
+                  [value]="item.code"
+                  [style.paddingLeft]="item.level * 20 + 'px'"
+                  ><strong class="mr-1">{{ item.code }}</strong> {{ item.name }}
                 </mat-option>
               </mat-select>
-  
             </mat-form-field>
-            <i *ngIf="parentCurrent" (click)="removeParent()" style="font-size: 28px; margin-left: 5px; color: #7f7373;" class="fa fa-times" aria-hidden="true"></i>
-  
+            <i
+              *ngIf="parentCurrent"
+              (click)="removeParent()"
+              style="font-size: 28px; margin-left: 5px; color: #7f7373"
+              class="fa fa-times"
+              aria-hidden="true"
+            ></i>
           </div>
-  
+
           <ng-template #elseBlock>
-            <p PrjResizeContent [collapseLine]="1" class="max-line-content-1" style="font-size: 16px;margin: 0;">{{nameParent}}</p>
+            <p
+              PrjResizeContent
+              [collapseLine]="1"
+              class="max-line-content-1"
+              style="font-size: 16px; margin: 0"
+            >
+              {{ nameParent }}
+            </p>
           </ng-template>
         </div>
       </div>
-  
-      <div class="form-group required d-flex justify-content-between ">
+
+      <div class="form-group required d-flex justify-content-between">
         <label for="criteriaName" class="col-form-label"> {{ "Code" }}: </label>
         <div class="w-75 d-flex justify-content-between align-items-center">
-          <div >
-            <span>{{ codeParent}} </span>
-            <input type="number" [(ngModel)]="codeChild" name="codeChild"  id="codeChild"  #criteriaNameModel="ngModel" [value]="codeChild"
-            #criteriaNameEl  required style="width: 45px;" min="1"
-            (ngModelChange)="checkCode($event)"/>
+          <div>
+            <span>{{ codeParent }} </span>
+            <input
+              type="number"
+              [(ngModel)]="codeChild"
+              name="codeChild"
+              id="codeChild"
+              #criteriaNameModel="ngModel"
+              [value]="codeChild"
+              #criteriaNameEl
+              required
+              style="width: 45px"
+              min="1"
+              (ngModelChange)="checkCode($event)"
+            />
           </div>
           <abp-validation-summary
-          [control]="criteriaNameModel"
-          [controlEl]="criteriaNameEl"
-        >
-        </abp-validation-summary>
+            [control]="criteriaNameModel"
+            [controlEl]="criteriaNameEl"
+          >
+          </abp-validation-summary>
           <!-- <mat-checkbox
            *ngIf="criteriaAudit.isLeaf"
             [(ngModel)]="criteriaAudit.isApplicable"
@@ -71,7 +122,7 @@
           >
             Is Applicable?
           </mat-checkbox> -->
-  
+
           <mat-checkbox
             [(ngModel)]="criteriaAudit.isApplicable"
             name="isApplicable"
@@ -79,13 +130,13 @@
           >
             Is Applicable?
           </mat-checkbox>
-  
+
           <!-- <label *ngIf="criteriaAudit.isActive"
             ><span class="label-active">Active</span></label
           > -->
         </div>
       </div>
-  
+
       <div class="form-group required d-flex justify-content-between">
         <label for="criteriaName" class="col-form-label"> {{ "Name" }}: </label>
         <div class="w-75">
@@ -100,64 +151,82 @@
             #criteriaNameEl
           />
           <abp-validation-summary
-          [control]="criteriaNameModel"
-          [controlEl]="criteriaNameEl"
-        >
-        </abp-validation-summary>
+            [control]="criteriaNameModel"
+            [controlEl]="criteriaNameEl"
+          >
+          </abp-validation-summary>
         </div>
       </div>
-  
-      <div class="form-group d-flex justify-content-between">
+
+      <div class="form-group d-flex justify-content-between form-criteria">
         <div>
           <label for="criteriaGuidLine"> {{ "Guideline" | localize }}: </label>
           <p>Paste: Ctrl + Shift + v</p>
         </div>
-        <div class="w-75">
+        <div class="w-75 w-100-mb">
           <editor
-          id=""
-          [formControl]="tinyMCE1"
-          initialValue="<p>Initial content of the editor</p>"
-          [init]="{
-            height:200,
-            menubar: true,
-            plugins: ['table', 'code', 'preview', 'media', 'image', 'template'],
-            toolbars: ['image'],
-            branding: false,
-            forced_root_block: false,
-            paste_retain_style_properties: true
-          }"
-        ></editor>
+            id=""
+            [formControl]="tinyMCE1"
+            initialValue="<p>Initial content of the editor</p>"
+            [init]="{
+              height: 200,
+              menubar: true,
+              plugins: [
+                'table',
+                'code',
+                'preview',
+                'media',
+                'image',
+                'template'
+              ],
+              toolbars: ['image'],
+              branding: false,
+              forced_root_block: false,
+              paste_retain_style_properties: true
+            }"
+          ></editor>
         </div>
       </div>
-  
-      <div class="form-group d-flex justify-content-between">
+
+      <div class="form-group d-flex justify-content-between form-criteria">
         <div>
           <label for="criteriaGuidLine"> {{ "Example" | localize }}: </label>
           <p>Paste: Ctrl + Shift + v</p>
         </div>
-        <div class="w-75">
+        <div class="w-75 w-100-mb">
           <editor
-        [formControl]="tinyMCE2"
-        initialValue="<p>Initial content of the editor</p>"
-        [init]="{
-              height:200,
+            [formControl]="tinyMCE2"
+            initialValue="<p>Initial content of the editor</p>"
+            [init]="{
+              height: 200,
               menubar: true,
-              plugins: ['table', 'code', 'preview', 'media', 'image', 'template'],
+              plugins: [
+                'table',
+                'code',
+                'preview',
+                'media',
+                'image',
+                'template'
+              ],
               toolbars: ['image'],
               branding: false
-        }"
-      ></editor>
+            }"
+          ></editor>
         </div>
       </div>
     </div>
-    <div align="end" class="row justify-content-end">
-      <mat-checkbox
-      style="width: 24%;"
+  </mat-dialog-content>
+  <div align="end" class="row justify-content-end">
+    <mat-checkbox
+      style="width: 24%"
       *ngIf="isCreateCriteria"
-      class="example-margin d-flex align-items-center "
-      [checked]='isCheckedCreateAnother'
-      (change)="setCheckedCreateAnother()">Create another</mat-checkbox>
-      <div class="col-6 "><button
+      class="example-margin d-flex align-items-center create-annother"
+      [checked]="isCheckedCreateAnother"
+      (change)="setCheckedCreateAnother()"
+      >Create another</mat-checkbox
+    >
+    <div class="col-md-6 col-sm-12 action">
+      <button
         name="btn-cancel"
         class="btn btn-secondary mr-2 btn-action"
         mat-dialog-close
@@ -165,7 +234,7 @@
         Cancel
       </button>
       <button
-      *ngIf="data.command == 'edit'"
+        *ngIf="data.command == 'edit'"
         name="btn-save"
         class="btn btn-primary btn-action mr-4"
         [disabled]="!resourceRequestForm.valid || isLoading"
@@ -174,15 +243,14 @@
         Update
       </button>
       <button
-      *ngIf="data.command == 'create'"
+        *ngIf="data.command == 'create'"
         name="btn-save"
-        class="btn btn-primary btn-action mr-4"
+        class="btn btn-primary btn-action mr-4 btn-create"
         [disabled]="!resourceRequestForm.valid || isLoading"
         (click)="SaveAndClose()"
       >
         Create
-      </button></div>
-  
+      </button>
     </div>
   </div>
 </form>

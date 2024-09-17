@@ -1,0 +1,8 @@
+@media only screen and (max-width: 768px){
+    .create-update-skill ::ng-deep .modal-header {
+        padding: 0 !important;
+    }
+    .create-update-skill ::ng-deep .modal-body {
+        padding: 0;
+    }
+}

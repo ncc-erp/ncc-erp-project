@@ -1,9 +1,9 @@
 <section class="content px-2 py-2 m-0" style="background-color: #f1f1f1;">
-    <div class="container-fluid">
+    <div class="container-fluid project-resource">
         <div class=" mt-2 ">
             <mat-expansion-panel [expanded]="isShowProjectUser" *ngIf="permission.isGranted(Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_View)">
-                <mat-expansion-panel-header class="mt-2 mb-2" (click)="isShowProjectUser = !isShowProjectUser">
-                    <div class="col-md-6">
+                <mat-expansion-panel-header class="mt-2 mb-2 header" (click)="isShowProjectUser = !isShowProjectUser">
+                    <div class="col-md-6 col-sm-8 col-xs-12">
                         <strong class="table-title">Current resource</strong>
                         <button *ngIf="!projectUserProcess && permission.isGranted(Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_AddNewResourceFromPool)
                         || permission.isGranted(Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_AddNewResourceFromOtherProject)"
@@ -14,7 +14,7 @@
 
                         </button>
                     </div>
-                    <div class="col-md-6" *ngIf="permission.isGranted(Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewHistory)">
+                    <div class="col-md-6 col-sm-4 col-xs-12 view-history" *ngIf="permission.isGranted(Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewHistory)">
                         <div class="col-md-6" *ngIf="isShowProjectUser">
                             <section class="example-section">
                                 <mat-checkbox class="example-margin" [checked]="viewHistory"
@@ -27,7 +27,7 @@
                 </mat-expansion-panel-header>
                 <div class=" mb-1 fixTableHead" style="max-height:50vh">
                     <div class="">
-                        <table style="border-collapse: collapse;" class="table text-nowrap" [busy]="isLoading">
+                        <table style="border-collapse: collapse;" class="table text-nowrap request-table" [busy]="isLoading">
                             <thead class="bg-light">
                                 <tr>
                                     <th class="stt">#</th>
@@ -194,7 +194,7 @@
                                         <div *ngIf="user.createMode || user.editMode" class="pt-2">
                                             <button
                                                 [disabled]="!(user?.userId || user.userInfo )|| (!user?.projectRole && user?.projectRole != 0)|| !user?.startTime "
-                                                class=" mr-3 submit-btn" style="background: none; border: none;"
+                                                class="submit-btn" style="background: none; border: none;"
                                                 (click)="saveProjectUser(user)">
                                                 <i style="color: green; ;" class="fas fa-check fa-2x"></i>
                                             </button>
@@ -208,9 +208,9 @@
                     </div>
                 </div>
                 <div class="card-footer bg-light border-top">
-                    <div class="row" style="justify-content: space-between;">
-                        <div class="col-5 text-sm-left text-center">
-                            <mat-form-field style="width: 20%;margin-left: 30px;">
+                    <div class="row footer" style="justify-content: space-between;">
+                        <div class="col-5 text-sm-left text-center number-item">
+                            <mat-form-field style="width: 30%" class="pag-number">
                                 <mat-label>Number items</mat-label>
                                 <mat-select [(ngModel)]="maxUserCurrentPage" (ngModelChange)="changePageSizeCurrent()">
                                     <mat-option [value]="5">
@@ -232,11 +232,11 @@
                             </mat-form-field>
                         </div>
                         <div class="col-2 text-center">
-                            <p class="mb-0 my-2">
+                            <p class="mb-0 my-2 total">
                                 Total: {{ projectUserList.length }}
                             </p>
                         </div>
-                        <div class="col-5">
+                        <div class="col-md-5 col-sm-12">
                             <pagination-controls autoHide="true" id="projectUser" (pageChange)="userListCurrentPage = $event">
                             </pagination-controls>
                         </div>
@@ -263,7 +263,7 @@
                 </mat-expansion-panel-header>
                 <div class="mb-1 fixTableHead" style="max-height:50vh">
                     <div class="">
-                        <table style="border-collapse: collapse;" class="table table-hover text-nowrap"
+                        <table style="border-collapse: collapse;" class="table table-hover text-nowrap request-table"
                             [busy]="isLoading">
                             <thead class="bg-light">
                                 <tr>
@@ -375,7 +375,7 @@
                                             {{user.startTime | date:"dd/MM/yyyy"}}
                                         </div>
                                         <div *ngIf="user.createMode || user.editMode">
-                                            <mat-form-field appearance="outline" style="width: 150px;">
+                                            <mat-form-field appearance="outline" style="width: 150px;" class="dateTime">
                                                 <input matInput [matDatepicker]="picker" [min]="tomorrowDate"
                                                     placeholder="chose a date *" required [(ngModel)]="user.startTime"
                                                     name="usercreateDate" #projectDate="ngModel" #projectDateEl>
@@ -392,8 +392,8 @@
 
 
 
-                                    <td class="text-center">
-                                        <div class="table-vertical" *ngIf="!user.createMode && !user.editMode">
+                                    <td class="">
+                                        <div class=" text-center table-vertical" *ngIf="!user.createMode && !user.editMode">
                                             <strong [ngClass]="user.isPool ? 'text-secondary' : 'text-primary'">
                                                 {{user.workType }}</strong>
 
@@ -456,7 +456,7 @@
                                         </div>
                                         <div *ngIf="user.createMode || user.editMode" class="pt-2">
                                             <button [disabled]="!user?.userId || !user?.startTime "
-                                                class=" mr-3 submit-btn" style="background: none; border: none;"
+                                                class="submit-btn" style="background: none; border: none;"
                                                 (click)="savePlanResource(user)">
                                                 <i style="color: green; ;" class="fas fa-check fa-2x"></i>
                                             </button>
@@ -485,11 +485,11 @@
 
 
     <!-- <form #projectUserForm ="ngForm"   class="form-horizontal" autocomplete="off"> -->
-    <div class="container-fluid">
+    <div class="container-fluid resource-request">
         <div class="card mt-3">
             <mat-expansion-panel expanded=false
                 *ngIf="permission.isGranted(Projects_ProductProjects_ProjectDetail_TabResourceManagement_ResourceRequest_View)">
-                <mat-expansion-panel-header class="mt-2 mb-2" (click)="isShowRequest=!isShowRequest">
+                <mat-expansion-panel-header class="mt-2 mb-2 request-header" (click)="isShowRequest=!isShowRequest">
                     <div class="col-md-6">
                         <strong class="table-title">Resource request</strong>
                         <button *ngIf="!requestProcess  &&  permission.isGranted(Projects_ProductProjects_ProjectDetail_TabResourceManagement_ResourceRequest_CreateNewRequest)"
@@ -500,8 +500,8 @@
                         </button>
                     </div>
                     <div class="col-md-6">
-                        <div class="row">
-                            <div class="col-md-2 d-flex justify-content-end align-items-center">
+                        <div class="row status">
+                            <div class="col-md-2 d-flex justify-content-end align-items-center title-status">
                                 <label class="mr-2 mb-0">Status:</label>
                             </div>
                             <div class="col-md-10 ">
@@ -574,7 +574,7 @@
                                                     <p class="m-0">
                                                         <strong>{{item.planUserInfo.employee.fullName}}</strong></p>
                                                     <p class="m-0">
-                                                        <span class="mr-1 badge badge-pill text-white" [style.backgroundColor]="item.planUserInfo.employee.branchColor">
+                                                        <span class="mr-1 badge badge-pill text-white displayName" [style.backgroundColor]="item.planUserInfo.employee.branchColor">
                                                             {{item.planUserInfo.employee.branchDisplayName}}
                                                         </span>
                                                         <span
@@ -610,7 +610,7 @@
                                             "dd/MM/yyyy"}}</span>
                                     </td>
                                     <td class="text-center">
-                                        <p class="tag" [ngClass]="APP_CONST.priorityRequest[item.priority]">
+                                        <p class="tag priority" [ngClass]="APP_CONST.priorityRequest[item.priority]">
                                             {{item.priorityName}}</p>
                                     </td>
                                     <td style="white-space: normal; max-width: 250px; min-width: 150px;">

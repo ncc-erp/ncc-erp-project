@@ -253,10 +253,12 @@ namespace ProjectManagement.APIs.ProjectUserBills
                         ProjectName = x.Project.Name,
                         AccountName = x.AccountName,
                         BillRate = x.BillRate,
+                        HeadCount = x.HeadCount,
                         StartTime = x.StartTime,
                         EndTime = x.EndTime,
                         Note = x.Note,
                         isActive = x.isActive,
+                        isExpose = x.isExpose,
                         ChargeType = x.ChargeType,
                         CurrencyCode = x.Project.Currency.Code,
                         ClientId = x.Project.ClientId,
@@ -301,11 +303,59 @@ namespace ProjectManagement.APIs.ProjectUserBills
                     Projects = s.Select(x => x.Project).OrderBy(x => x.ClientCode).ToList()
                 })
                 .OrderBy(s => s.UserInfor.EmailAddress)
-                .AsQueryable(); 
+                .AsQueryable();
 
             return result.GetGridResultSync(result, input);
         }
+        [HttpPost]
+        [AbpAuthorize(PermissionNames.Resource_TabAllBillAccount)]
+        public float GetTotalHeadCount(InputGetBillInfoDto input)
+        {
+            var totalHeadCount = WorkScope.All<ProjectUserBill>()
+                .Select(x => new
+                {
+                    UserInfor = new GetUserBillDto
+                    {
+                        UserId = x.UserId,
+                        FullName = x.User.FullName,
+                        EmailAddress = x.User.EmailAddress,
+                        UserType = x.User.UserType,
+                        UserLevel = x.User.UserLevel
+                    },
+                    Project = new GetProjectBillDto
+                    {
+                        BillId = x.Id,
+                        ProjectId = x.ProjectId,
+                        ProjectName = x.Project.Name,
+                        BillRate = x.BillRate,
+                        HeadCount = x.HeadCount,
+                        StartTime = x.StartTime,
+                        EndTime = x.EndTime,
+                        Note = x.Note,
+                        isActive = x.isActive,
+                        isExpose = x.isExpose,
+                        ChargeType = x.ChargeType,
+                        CurrencyCode = x.Project.Currency.Code,
+                        ClientId = x.Project.ClientId,
+                        ClientCode = x.Project.Client.Code,
+                        ClientName = x.Project.Client.Name
+                    }
+                })
+                .WhereIf(!string.IsNullOrEmpty(input.SearchText), s => s.UserInfor.EmailAddress.Contains(input.SearchText) ||
+                    (s.Project.AccountName != null && s.Project.AccountName.ToLower().Contains(input.SearchText.ToLower())) ||
+                    (s.Project.ProjectName != null && s.Project.ProjectName.ToLower().Contains(input.SearchText.ToLower())) ||
+                    (s.Project.ClientCode != null && s.Project.ClientCode.ToLower().Contains(input.SearchText.ToLower())) ||
+                    (s.Project.ClientName != null && s.Project.ClientName.ToLower().Contains(input.SearchText.ToLower())) ||
+                    (s.Project.Note != null && s.Project.Note.ToLower().Contains(input.SearchText.ToLower()))
+                )
+                .WhereIf(input.ProjectId.HasValue, s => s.Project.ProjectId == input.ProjectId.Value)
+                .WhereIf(input.ClientId.HasValue, s => s.Project.ClientId == input.ClientId.Value)
+                .WhereIf(input.ProjectStatus.HasValue, s => s.Project.ProjectStatus == input.ProjectStatus.Value)
+                .WhereIf(input.IsCharge.HasValue, s => s.Project.isActive == input.IsCharge.Value)
+                .Sum(x => x.Project.HeadCount); 
 
+            return totalHeadCount;
+        }
 
         /// <summary>
         /// return list projects that have the same client with input projectId

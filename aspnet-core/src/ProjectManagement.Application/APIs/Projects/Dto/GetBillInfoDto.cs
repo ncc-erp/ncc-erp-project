@@ -10,9 +10,11 @@ namespace ProjectManagement.APIs.Projects.Dto
     {
         public string BillRole { get; set; }
         public float BillRate { get; set; }
+        public float HeadCount { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime? EndTime { get; set; }
         public bool isActive { get; set; }
+        public bool isExpose { get; set; }
         public string FullName { get; set; }
     }
 

@@ -218,7 +218,14 @@
                     [ngStyle]="styleThead(thead)"
                   >
                     <div class="rsp-th-name">
-                      {{ thead.name }}
+                      <ng-container *ngIf="thead.name === 'Head Count'; else defaultThead" >
+                       <div style="margin-top: 26px;">
+                        {{ thead.name }} ({{ totalHeadCount }})
+                      </div>
+                      </ng-container>
+                      <ng-template #defaultThead>
+                        {{ thead.name }}
+                      </ng-template>
                     </div>
                   </div>
                 </th>
@@ -294,6 +301,20 @@
                                           [(ngModel)]="project.isActive"></mat-checkbox>
                         </span>
                     </td>
+
+                    <td>
+                      <span class="d-flex flex-column align-items-center">
+                          <mat-checkbox color="primary"
+                                        [disabled]="true"
+                                        [(ngModel)]="project.isExpose"></mat-checkbox>
+                      </span>
+                  </td>
+
+                <td >
+                    <span class="d-flex flex-column align-items-center"[(ngModel)]="project.headCount">
+                       {{project.headCount}}
+                    </span>
+                </td>
 
                     <td>
                         <span class="d-flex flex-column align-items-center"

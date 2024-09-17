@@ -188,7 +188,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
       data: {
         item: item,
         command: command,
-      }
+      },
     });
     show.afterClosed().subscribe((result) => {
       if (result) {

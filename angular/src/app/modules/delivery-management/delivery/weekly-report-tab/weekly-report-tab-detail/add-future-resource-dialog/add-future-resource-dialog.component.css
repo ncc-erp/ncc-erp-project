@@ -4,7 +4,7 @@
 
 :ng-deep .mat-form-field-flex > .mat-form-field-infix { bottom: 5px;}
 
-@media only screen and (max-width: 768px){
+/* @media only screen and (max-width: 768px){
     .card-header {
         padding: 0;
     }
@@ -16,6 +16,22 @@
         padding-right: 7px;
     }
 
+    .title {
+        font-size: 22px;
+    }
+} */
+@media screen and (max-width: 600px) {
+    .card-header {
+        padding: 0;
+    }
+
+    .form-group {
+        margin-bottom: 10px;
+    }
+
+    .modal-body {
+        padding: 10px;
+    }
     .title {
         font-size: 22px;
     }

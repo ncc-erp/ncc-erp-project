@@ -344,3 +344,21 @@ cd-timer {
 .paging .mat-form-field-label {
   padding-top: 10px;
 }
+
+@media screen and (max-width: 600px) {
+  .mat-select-panel {
+    min-width: 100% !important;
+  }
+  
+  div.content-wrapper {
+    background-color: #ffffff;
+  }
+
+  .cdk-overlay-pane:not(:has(.options-number-item)) {
+    transform: none !important;
+  }
+
+  .mat-form-field:not(.mat-form-field-appearance-legacy) .mat-form-field-suffix .mat-icon-button {
+    height: fit-content !important;
+  }
+}

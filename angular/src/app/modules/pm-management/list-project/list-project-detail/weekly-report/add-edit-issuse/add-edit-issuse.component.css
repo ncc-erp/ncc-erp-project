@@ -1,0 +1,29 @@
+.modal-footer {
+    margin-right: 36px;
+}
+
+@media screen and (max-width: 600px) {
+    :host ::ng-deep .form-horizontal {
+        .modal-header {
+            padding: 0;
+            align-items: baseline;
+        }
+
+        .modal-title {
+            margin-bottom: 10px;
+        }
+    } 
+
+    .form-horizontal .modal-body {
+        max-height: 60vh !important;
+        padding: 10px;
+    }
+
+    .mat-select-status {
+        display: block;
+    }
+
+    .modal-footer {
+        margin-right: 22px;
+    }
+}

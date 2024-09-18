@@ -7,9 +7,12 @@
     align-items: center;
 }
 
+@media screen and (max-width: 600px) {
+  .modal-body {
+    padding: 12px 0px;
+  }
 
-@media only screen and (max-width: 768px){
-  .form-plan-user ::ng-deep .modal-body {
-      padding: 0;
+  :host ::ng-deep .form-horizontal .modal-header {
+    align-items: baseline;
   }
 }

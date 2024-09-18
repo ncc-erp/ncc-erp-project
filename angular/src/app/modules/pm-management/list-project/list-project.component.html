@@ -2,10 +2,10 @@
   <section class="content-header pb-1">
     <div class="container-fluid">
       <div class="row">
-        <div class="col-6">
+        <div class="col-md-6 col-sm-12">
           <h1>Outsourcing Projects</h1>
         </div>
-        <div class="col-6 text-right">
+        <div class="col-md-6 col-sm-12 action-header">
           <button
             name="btn-checkInvoice"
             type="button"
@@ -39,7 +39,7 @@
       <div class="card">
         <div class="card-header">
           <div class="row g-3">
-            <div class="input-group col-3 pt-1">
+            <div class="input-group col-md-3 col-sm-12 pt-1">
               <div class="input-group-prepend">
                 <button
                   name="btn-search"
@@ -72,9 +72,9 @@
                 </button>
               </div>
             </div>
-            <div class="col-9">
+            <div class="col-md-9 col-sm-12">
               <div class="row filter-wrap">
-                <div class="col-3 search-pm text-right">
+                <div class="col-md-3 col-sm-12 search-pm text-right">
                   <!-- <label class="label-pm pr-2 mt-3 ">PM:</label> -->
                   <mat-form-field appearance="outline">
                     <mat-label>PM</mat-label>
@@ -121,7 +121,7 @@
                     </mat-select>
                   </mat-form-field>
                 </div>
-                <div class="col-2 pr-2">
+                <div class="col-md-2 col-sm-12 pr-2">
                   <mat-form-field appearance="outline" class="listStatus">
                     <mat-label>Project Type</mat-label>
                     <mat-select
@@ -139,7 +139,7 @@
                     </mat-select>
                   </mat-form-field>
                 </div>
-                <div class="col-2 search-status pr-2">
+                <div class="col-md-2 col-sm-12 search-status pr-2">
                   <!-- <label class="mt-3 label-status"><span class="pr-2">Trạng thái:</span></label> -->
                   <mat-form-field appearance="outline" class="listStatus">
                     <mat-label>Status</mat-label>
@@ -161,7 +161,7 @@
                   </mat-form-field>
                 </div>
 
-                <div class="col-5 row justify-content-between">
+                <div class="col-md-5 col-sm-12 row justify-content-between row-checkbox">
                   <div
                     style="margin-top: 10px"
                     *ngIf="
@@ -210,12 +210,12 @@
           </div>
         </div>
         <div *ngIf="advancedFiltersVisible" class="mb-0 mt-1">
-          <div class="card-body">
+          <div class="card-body show-list-filter">
             <form class="form-horizontal">
               <div class="row">
                 <div class="col-md-12 col-xl-12">
                   <div class="mb-0">
-                    <div>
+                    <div class="card-filter">
                       <div *ngFor="let item of filterItems; let i = index">
                         <app-filter
                           [item]="item"
@@ -225,11 +225,15 @@
                         >
                         </app-filter>
                       </div>
-                      <i
+                      <!-- <i
                         style="padding: 0"
                         class="fas fa-plus-circle ml-3"
                         (click)="addFilter()"
-                      ></i>
+                      ></i> -->
+                      <i style="padding: 0;" 
+                        class="fas fa-plus-circle ml-3 icon-add-filter"
+                        [ngClass]="{'icon-add-filter-item': filterItems.length}"
+                        (click)="addFilter()"></i>
                     </div>
                   </div>
                 </div>
@@ -237,7 +241,7 @@
             </form>
           </div>
         </div>
-        <div class="card-body table-responsive px-4 pb-2">
+        <div class="card-body table-responsive px-4 pb-2 table-outsourcing-project">
           <div class="fixTableHead">
             <table
               name="tbl_listProject"
@@ -275,7 +279,7 @@
                     <div
                       class="weekly-report-header-wrap d-flex align-items-center"
                     >
-                      <div>
+                      <div class="title-weekly-report">
                         {{ "Weekly Report" | localize }}
                       </div>
                       <div
@@ -321,7 +325,7 @@
                   </td>
                   <td style="white-space: normal">
                     <div
-                      class="d-flex align-items-center justify-content-between"
+                      class="d-flex align-items-center justify-content-between title-project"
                     >
                       <a
                         style="cursor: pointer; font-weight: bold"
@@ -403,7 +407,7 @@
                     </div>
                   </td>
 
-                  <td *ngIf="isShowResources">
+                  <td *ngIf="isShowResources" class="col-resources">
                     <strong
                       *ngIf="filterResourceInfo(project).length > 0"
                       style="color: red"
@@ -436,7 +440,7 @@
                     </span>
                   </td>
 
-                  <td *ngIf="isShowBillInfo || isShowAccount">
+                  <td *ngIf="isShowBillInfo || isShowAccount" class="col-bill-info">
                     <strong
                       *ngIf="filterBillInfo(project).length > 0"
                       style="color: red"
@@ -589,11 +593,11 @@
         </div>
         <div class="card-footer bg-light border-top">
           <div class="row">
-            <div class="col-sm-4 col-12 text-sm-left text-center">
+            <div class="col-sm-4 col-12 text-sm-left text-center list-number-item">
               <button class="btn btn-secondary mb-2" (click)="refresh()">
                 <i class="fas fa-redo-alt"></i>
               </button>
-              <mat-form-field style="width: 20%; margin-left: 30px">
+              <mat-form-field class="form-field-number-paging">
                 <mat-label>Number items</mat-label>
                 <mat-select
                   [(ngModel)]="pageSizeType"
@@ -607,12 +611,12 @@
                 </mat-select>
               </mat-form-field>
             </div>
-            <div class="col-sm-4 col-12 text-center">
+            <div class="col-sm-4 col-12 text-center total-record">
               <p class="mb-0 my-2">
                 {{ "TotalRecordsCount" | localize : totalItems }}
               </p>
             </div>
-            <div class="col-sm-4 col-12">
+            <div class="col-sm-4 col-12 list-pagination">
               <div class="float-sm-right m-auto">
                 <abp-pagination-controls
                   id="server"

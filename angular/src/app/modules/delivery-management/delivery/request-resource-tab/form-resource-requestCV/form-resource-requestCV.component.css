@@ -22,3 +22,19 @@
   cursor: pointer;
   color: #dc3545; /* Màu của biểu tượng 'x' */
 }
+
+@media screen and (max-width: 600px) {
+  :host ::ng-deep .form-horizontal .modal-header {
+    align-items: baseline;
+  }
+
+  .modal-body {
+    padding: 10px;
+    max-height: 55vh;
+    overflow: auto;
+  }
+  
+  .modal-footer-form {
+    margin-top: 6px;
+  }
+}

@@ -5,3 +5,11 @@
 ::ng-deep .mat-select-panel {
     max-height: 400px;
 }
+
+@media screen and (max-width: 600px) {
+    .email-address {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+}

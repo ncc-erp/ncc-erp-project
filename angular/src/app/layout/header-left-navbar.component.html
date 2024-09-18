@@ -17,10 +17,10 @@
         </button>
       </li>
 
-    <li style="margin-left: 20px; width: 100%;" *ngIf="!isShowReportBar" class="d-none d-sm-inline-block spaced-item">
+    <li style="margin-left: 20px; width: 100%;" *ngIf="!isShowReportBar" class="d-none d-sm-inline-block spaced-item title-project">
         <div class="mt-1" style="font-size: 20px; display: flex;">
-            <strong >
-                <span style="margin-right: 10px;"> {{projectName}}&nbsp; &nbsp;{{projectCode? '[': ''}}   {{projectCode}}  {{projectCode? ']': ''}} </span>
+            <strong class="parent-project-name">
+                <span class="project-name"> {{projectName}}&nbsp; &nbsp;{{projectCode? '[': ''}}   {{projectCode}}  {{projectCode? ']': ''}} </span>
             </strong>
         </div>
     </li>

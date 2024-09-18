@@ -7,6 +7,24 @@
     width: 80% !important;
 }
 
-.displayName {
-    white-space: normal;
+.branch-name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 240px;
+}
+
+.badge-type {
+    display: flex;
+    align-items: center;
+    row-gap: 6px;
+    flex-wrap: wrap;
+    width: 244px;
+}
+
+@media screen and (max-width: 600px) {
+    .badge-type {
+        width: 180px;
+        margin-top: 7px !important;
+    }
 }

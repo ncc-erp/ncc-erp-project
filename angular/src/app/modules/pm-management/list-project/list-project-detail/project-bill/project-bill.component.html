@@ -3,23 +3,23 @@
     <div class="container-fluid">
         <div *ngIf="isShowInvoiceSetting()" class="card mt-2 mb-1">
             <mat-expansion-panel [expanded]="!expandInvoiceSetting">
-                <mat-expansion-panel-header name="panel-InvoiceSetting" class="mt-2 mb-2"
+                <mat-expansion-panel-header name="panel-InvoiceSetting" class="mt-2 mb-2" [ngClass]="{'invoice-setting': !expandInvoiceSetting}"
                     (click)="expandInvoiceSetting=!expandInvoiceSetting">
-                    <h4 class="d-inline">Invoice settings:</h4>
+                    <h4 class="d-inline label-invoice">Invoice settings:</h4>
                     <button name="btn-editInvoiceSetting" *ngIf="canEditInvoiceSetting() && !expandInvoiceSetting"
-                        style="border: none; height: fit-content;" class="btn btn-secondary ml-3 btn-sm mb-2"
+                        style="border: none; height: fit-content;" class="btn btn-secondary ml-3 btn-sm mb-2 btn-edit-invoice-setting"
                         (click)="openInvoiceSettingDialog();$event.stopPropagation()">
                         <i class="fas fa-edit m-0"></i>
                     </button>
                 </mat-expansion-panel-header>
-                <div class="row p-2">
-                    <div class="col-lg-4 col-md-12">
+                <div class="row body-invoice-settings">
+                    <div class="col-lg-4 col-md-12 item-invoice-setting">
                         <div class="m-0 p-0">
-                            <div class="form-group row col-12">
-                                <label class="col-form-label col-6">
+                            <div class="form-group row col-md-12">
+                                <label class="col-form-label col-md-6">
                                     Last Invoice Number:
                                 </label>
-                                <div class="col-6 d-flex align-items-center">
+                                <div class="col-md-6 d-flex align-items-center col-form-result">
                                     <span style="width: 30px;" *ngIf="!isEditLastInvoiceNumber">
                                         {{lastInvoiceNumber}}
                                     </span>
@@ -28,9 +28,9 @@
                         </div>
 
                         <div class="">
-                            <div class="form-group row col-12">
-                                <label class="col-form-label col-6">Discount(%): </label>
-                                <div class="col-6 d-flex align-items-center">
+                            <div class="form-group row col-md-12">
+                                <label class="col-form-label col-md-6">Discount(%): </label>
+                                <div class="col-md-6 d-flex align-items-center col-form-result">
                                     <span style="width: 30px;" *ngIf="!isEditDiscount">
                                         {{updateInvoiceDto.discount}}
                                     </span>
@@ -38,12 +38,12 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-8 col-md-12">
-                        <div class="form-group row col-12">
-                            <label class="col-form-label col-2 pt-2">
+                    <div class="col-lg-8 col-md-12 item-invoice-setting">
+                        <div class="form-group row col-md-12">
+                            <label class="col-form-label col-md-2 pt-2">
                                 Invoice Setting:
                             </label>
-                            <div class="col-10 d-flex align-items-center">
+                            <div class="col-md-10 d-flex align-items-center col-form-result">
                                 <span class="text-primary text-bold" *ngIf="parentInvoice.isMainInvoice">
                                     Main
                                 </span>
@@ -53,11 +53,11 @@
                             </div>
                         </div>
                         <div *ngIf="parentInvoice.isMainInvoice == APP_ENUM.InvoiceSetting.Main"
-                            class="form-group row col-12">
-                            <label class="col-form-label col-2">
+                            class="form-group row col-md-12">
+                            <label class="col-form-label col-md-2">
                                 Sub projects:
                             </label>
-                            <div class="col-10 d-flex align-items-center flex-wrap">
+                            <div class="col-md-10 d-flex align-items-center flex-wrap col-form-result">
                                 <ng-container *ngIf="parentInvoice.projectId && parentInvoice.subInvoices.length">
                                     <span class="badge bg-secondary m-2"
                                         *ngFor="let item of parentInvoice.subInvoices" style="cursor: pointer;" (click)="routingProject(item.projectId, item.projectName, item.projectCode)">{{item.projectName}}</span>
@@ -68,10 +68,10 @@
                             </div>
                         </div>
                         <div *ngIf="!parentInvoice.isMainInvoice" class="form-group row col-12">
-                            <label class="col-form-label col-2">
+                            <label class="col-form-label col-md-2">
                                 Main project:
                             </label>
-                            <div class="col-10 d-flex align-items-center">
+                            <div class="col-md-10 d-flex align-items-center col-form-result">
                                 <ng-container *ngIf="parentInvoice.parentName">
                                     <span class="badge bg-primary mr-2">{{parentInvoice.parentName}}</span>
                                 </ng-container>
@@ -83,15 +83,22 @@
         </div>
         <div class="card mt-2" [busy] = isLoading>
             <mat-expansion-panel [expanded]="!isShowUserBill">
-                <mat-expansion-panel-header name="pannel-userBill" class="mt-2 mb-2 d-flex align-items-center flex-wrap" (click)="isShowUserBill=!isShowUserBill">
-                    <h4 class="d-inline" style="margin-top: 5px;">Bill accounts ({{ filteredUserBillList.length }}):</h4>
-                    <div class="d-flex flex-wrap justify-content-start align-items-center" style="flex-grow: 1;">
+                <mat-expansion-panel-header name="pannel-userBill" class="mt-2 mb-2 d-flex align-items-center flex-wrap" (click)="isShowUserBill=!isShowUserBill" [ngClass]="{'bill-account': !isShowUserBill}">
+                    <div class="header-bill-account">
+                        <h4 class="d-inline label-bill-account" style="margin-top: 5px;">Bill accounts ({{ filteredUserBillList.length }}):</h4>
                         <button name="btn-createUserBill" *ngIf="!userBillProcess && permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Create)"
                             [hidden]="isShowUserBill" style="border: none; height: fit-content;"
-                        class="btn bg-blue ml-2 btn-s mb-2" (click)="addUserBill(); userBillCurrentPage=1; $event.stopPropagation()">
+                            class="btn bg-blue ml-2 btn-s mb-2 add-bill-mobile" (click)="addUserBill(); userBillCurrentPage=1; $event.stopPropagation()">
                             <i class="fa fa-plus m-0"></i>
                         </button>
-                        <div class="col-lg-4 mb-2" style="margin-left: 10px; width: 100%;" (click)="$event.stopPropagation()" [hidden]="isShowUserBill">
+                    </div>
+                    <div class="d-flex flex-wrap justify-content-start align-items-center list-filter" style="flex-grow: 1;">
+                        <button name="btn-createUserBill" *ngIf="!userBillProcess && permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Create)"
+                            [hidden]="isShowUserBill" style="border: none; height: fit-content;"
+                        class="btn bg-blue ml-2 btn-s mb-2 add-bill-desktop" (click)="addUserBill(); userBillCurrentPage=1; $event.stopPropagation()">
+                            <i class="fa fa-plus m-0"></i>
+                        </button>
+                        <div class="col-lg-4 mb-2 bill-search" (click)="$event.stopPropagation()" [hidden]="!showSearchAndFilter">
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <button name="btn-search" type="button" class="btn bg-blue" (click)="searchContext(); $event.stopPropagation()" [hidden]="!showSearchAndFilter">
@@ -105,7 +112,7 @@
                                     (keydown.enter)="searchContext(); $event.stopPropagation()" />
                             </div>
                         </div>
-                        <div class="col-lg-1 mb-2" (click)="$event.stopPropagation()" [hidden]="!showSearchAndFilter">
+                        <div class="col-lg-1 mb-2 filter-change-status" (click)="$event.stopPropagation()" [hidden]="!showSearchAndFilter">
                             <div class="input-group" [hidden]="isShowUserBill">
                                 <mat-form-field appearance="outline" style="width: 100%;">
                                     <mat-label>Charge Status</mat-label>
@@ -118,11 +125,11 @@
                             </div>
                         </div>
 
-                        <div class="col-lg-4 mb-2" (click)="$event.stopPropagation()" style="display: flex; align-items: center; margin-left: -20px;" [hidden]="!showSearchAndFilter">
+                        <div class="col-lg-4 mb-2 filter-link-resource" (click)="$event.stopPropagation()" [hidden]="!showSearchAndFilter">
                             <app-multiple-select
                             [hidden]="isShowUserBill"
                             #linkedResources
-                                [ngClass]="selectedLinkedResources.length > 0? 'col-11' : 'col-12'"
+                            [ngClass]="selectedLinkedResources.length > 0? 'col-md-11' : 'col-md-12'"
                             name="filterLinkedResources"
                             placeholder="Tất cả"
                             labelName="Linked Resources"
@@ -137,7 +144,7 @@
                             ></i>
                         </div>
 
-                        <div class="mb-2" (click)="$event.stopPropagation()" style="width: 135px; display: flex; align-items: center; margin-left: -20px;" [hidden]="!showSearchAndFilter">
+                        <div class="mb-2 change-role" (click)="$event.stopPropagation()" [hidden]="!showSearchAndFilter">
                             <app-multiple-select-string-value
                             [hidden]="isShowUserBill"
                             #chargeRole
@@ -156,7 +163,7 @@
                             ></i>
                         </div>
 
-                        <div class="col-lg-1" (click)="$event.stopPropagation()">
+                        <div class="col-lg-1 checkbox-hide-rate" (click)="$event.stopPropagation()">
                             <mat-checkbox
                               [hidden]="isShowUserBill"
                               name="cbx-hideRate"
@@ -165,7 +172,7 @@
                             </mat-checkbox>
                         </div>
 
-                        <div class="mb-2 ml-3" style="display: flex; align-items: center;" (click)="$event.stopPropagation()" [hidden]="!showSearchAndFilter">
+                        <div class="mb-2 ml-3 btn-refresh" style="display: flex; align-items: center;" (click)="$event.stopPropagation()" [hidden]="!showSearchAndFilter">
                             <button class="btn btn-primary" (click)="refresh()" [hidden]="isShowUserBill">
                                 <i class="fas fa-redo-alt"></i>
                             </button>
@@ -182,14 +189,20 @@
                                     {{ "Employee" | localize }}
                                     <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'emailAddress'"></i>
                                     <i *ngIf="sortColumn !== 'emailAddress'" class="fas fa-sort"></i>
+                                </th> 
+                                <th class="align " (click)="sortData('billAccountName')" style="cursor: pointer;">
+                                    <div class="col-bill-account">
+                                        {{ "Charge Name" | localize }}
+                                        <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'billAccountName'"></i>
+                                        <i *ngIf="sortColumn !== 'billAccountName'" class="fas fa-sort"></i>
+                                    </div>
                                 </th>
-                                    <th class="align" (click)="sortData('billAccountName')" style="cursor: pointer;">{{ "Charge Name" | localize }}
-                                    <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'billAccountName'"></i>
-                                    <i *ngIf="sortColumn !== 'billAccountName'" class="fas fa-sort"></i>
-                                </th>
-                                    <th class="align" (click)="sortData('billRole')" style="cursor: pointer;">{{ "Charge Role" | localize }}
-                                    <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'billRole'"></i>
-                                    <i *ngIf="sortColumn !== 'billRole'" class="fas fa-sort"></i>
+                                <th class="align" (click)="sortData('billRole')" style="cursor: pointer;">
+                                    <div class="col-bill-account"> 
+                                        {{ "Charge Role" | localize }}
+                                        <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'billRole'"></i>
+                                        <i *ngIf="sortColumn !== 'billRole'" class="fas fa-sort"></i>
+                                    </div>  
                                 </th>
                                     <th class="align" (click)="orderLinkedResourcesOnTop('linkedResources')" style="cursor: pointer;">{{ "Linked Resources" | localize }}
                                     <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'linkedResources'"></i>
@@ -197,15 +210,20 @@
                                 </th>
                                 <th class="align" (click)="sortData('billRate')" style="cursor: pointer; min-width: 100px;"
                                     *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Rate_View) && !isHideRates">
-                                    {{ "Rate" | localize }}
-                                    <br>({{rateInfo.currencyName}})
-                                    <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'billRate'"></i>
-                                    <i *ngIf="sortColumn !== 'billRate'" class="fas fa-sort"></i>
+                                    <div class="col-bill-account"> 
+                                        {{ "Rate" | localize }}
+                                        <br>({{rateInfo.currencyName}})
+                                        <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'billRate'"></i>
+                                        <i *ngIf="sortColumn !== 'billRate'" class="fas fa-sort"></i>
+                                    </div>
                                 </th>
                                 <th class="align">Charge Type</th>
-                                    <th class="align" (click)="sortData('startTime')" style="cursor: pointer;">{{ "Is Charge" | localize }}
-                                    <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'startTime'"></i>
-                                    <i *ngIf="sortColumn !== 'startTime'" class="fas fa-sort"></i>
+                                <th class="align" (click)="sortData('startTime')" style="cursor: pointer;">
+                                    <div class="col-bill-account"> 
+                                        {{ "Is Charge" | localize }}
+                                        <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'startTime'"></i>
+                                        <i *ngIf="sortColumn !== 'startTime'" class="fas fa-sort"></i>
+                                    </div>
                                 </th>
                                 <th class="align">Note</th>
                                 <th class="align">Action</th>
@@ -247,7 +265,7 @@
                                                 </mat-form-field>
                                                     <mat-option *ngFor="let user of userForUserBill | listFilter: 'fullName' : searchUserBill : 'emailAddress' " [value]="user.id">
                                                     <div class="mat-option-text">
-                                                        <span class="data-name">
+                                                        <span class="data-name" class="user-info">
                                                             {{user.fullName}} - ({{user.emailAddress}})
                                                         </span>
                                                         <span class="data-type-label"
@@ -317,7 +335,7 @@
                                                             </mat-form-field>
                                                                 <mat-option *ngFor="let resource of listAvailableResource | listFilter: 'fullName' : searchResource : 'emailAddress' " [value]="resource.id">
                                                                 <div class="mat-option-text">
-                                                                    <span class="data-name">
+                                                                    <span class="data-name" class="user-info">
                                                                             {{resource.fullName}} - ({{resource.emailAddress}})
                                                                     </span>
                                                                 </div>
@@ -396,7 +414,7 @@
                                     <br>
                                         <span *ngIf="!bill.createMode && bill.startTime">{{bill.startTime | date:"dd/MM/yyyy"}}</span>
                                     <div *ngIf="bill.createMode">
-                                        <mat-form-field appearance="outline" style="width: 125px;">
+                                        <mat-form-field appearance="outline" style="width: 125px;" class="date-picker">
                                             <input matInput [matDatepicker]="billStarttimePicker"
                                                 placeholder="chose a date *" [(ngModel)]="bill.startTime"
                                                 name="billStarttime" #billStartTime="ngModel" required>
@@ -415,7 +433,7 @@
                                     <span class="text-center" *ngIf="!bill.createMode && bill.endTime">{{bill.endTime
                                         |date:"dd/MM/yyyy"}}</span>
                                     <div *ngIf="bill.createMode">
-                                        <mat-form-field appearance="outline" style="width: 125px;">
+                                        <mat-form-field appearance="outline" style="width: 125px;" class="date-picker">
                                             <input matInput [matDatepicker]="billEndtimepicker"
                                                 placeholder="chose a date" [(ngModel)]="bill.endTime"
                                                 name="billEndtime">
@@ -492,8 +510,8 @@
                 </div>
                 <div class="card-footer bg-light border-top" style="height: 60px;">
                     <div class="row" style="justify-content: space-between;">
-                        <div class="col-5 text-sm-left text-center">
-                            <mat-form-field style="width: 20%;margin-left: 30px;">
+                        <div class="col-md-5 text-sm-left text-center">
+                            <mat-form-field class="dropdown-list-pagination">
                                 <mat-label>Number items</mat-label>
                                 <mat-select [(ngModel)]="maxBillUserCurrentPage" (ngModelChange)="changePageSizeCurrent()">
                                     <mat-option [value]="5">
@@ -520,12 +538,12 @@
                                 </mat-select>
                             </mat-form-field>
                         </div>
-                        <div class="col-2 text-center">
+                        <div class="col-md-2 text-center">
                             <p class="mb-0 my-2">
                                 Total: {{ filteredUserBillList.length }}
                             </p>
                         </div>
-                        <div class="col-5">
+                        <div class="col-md-5">
                             <pagination-controls autoHide="true" id="billUserInfo"
                                 (pageChange)="userBillCurrentPage = $event">
                             </pagination-controls>

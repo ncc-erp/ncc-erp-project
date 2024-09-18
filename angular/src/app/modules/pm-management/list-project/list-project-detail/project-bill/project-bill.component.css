@@ -60,3 +60,181 @@
 .cv-link:hover{
     text-decoration: underline;
 }
+
+.body-invoice-settings {
+    padding: .5rem;
+}
+
+.add-bill-mobile {
+    display: none;
+}
+
+.dropdown-list-pagination {
+    width: 20%; 
+    margin-left: 30px;
+}
+
+.change-role {
+    width: 135px; 
+    display: flex; 
+    align-items: center; 
+    margin-left: -20px;
+}
+
+.filter-link-resource {
+    display: flex; 
+    align-items: center; 
+    margin-left: -20px;
+}
+
+.bill-search {
+    margin-left: 10px; 
+    width: 100%;
+}
+
+@media screen and (max-width: 600px) {
+    .invoice-setting, .bill-account {
+        height: 100% !important;
+        align-items: baseline !important;
+        margin-top: 20px !important;
+        padding: 0 20px;
+    }
+
+    :host ::ng-deep .invoice-setting .mat-content {
+        flex-wrap: wrap;
+        gap: 10px;
+        padding-right: 6px;
+    }
+
+    :host ::ng-deep .bill-account .mat-content {
+        display: block !important;
+        padding-right: 6px;
+    }
+
+    .label-invoice {
+        margin-bottom: 0;
+    }
+
+    .btn-edit-invoice-setting {
+        margin: 0 !important;
+    }
+
+    .body-invoice-settings, .item-invoice-setting {
+        padding: 0;
+    }
+
+    .col-form-label {
+        width: fit-content;
+        white-space: nowrap;
+    }
+
+    .col-form-result {
+        width: fit-content;
+    }
+
+    .form-group {
+        margin-bottom: 10px;
+    }
+
+    .label-bill-account {
+        white-space: nowrap;
+        margin: 0 !important;
+    }
+
+    .bill-search {
+        padding: 0;
+        margin-left: 0;
+        margin-top: 6px;
+        margin-top: 15px;
+        margin-bottom: 15px !important;
+    }
+
+    .filter-change-status {
+        padding: 0;
+        margin-left: 0 !important;
+        margin-top: 6px;
+    }
+
+    .filter-link-resource {
+        margin-left: -14px;
+    }
+
+    .change-role {
+        width: 100%;
+        margin-left: -7px;
+    }
+
+    .add-bill-desktop {
+        display: none;
+    }
+
+    .add-bill-mobile {
+        display: block;
+        margin: 0 !important;
+    }
+
+    .btn-refresh {
+        margin: 0 !important;
+    }
+
+    .checkbox-hide-rate {
+        padding: 0;
+        padding-top: 10px;
+    }
+
+    .date-picker {
+        width: 160px !important;
+    }
+
+    .col-bill-account {
+        white-space: nowrap;
+    }
+
+    .card-footer {
+        height: 100% !important;
+        padding-top: 20px;
+        margin-bottom: 20px;
+    }
+
+    .dropdown-list-pagination {
+        margin-left: 0;
+        width: 26%;
+    }
+
+    .list-filter {
+        display: block !important;
+    }
+
+    .header-bill-account {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    :host ::ng-deep .content .mat-expansion-panel-content {
+        padding: 0 20px;
+        padding-bottom: 10px;
+    }
+
+    .content, .container-fluid {
+        padding: 0 !important;
+    }
+
+    :host ::ng-deep .content .mat-expansion-panel {
+        border-radius: 0;
+    }
+
+    :host ::ng-deep .content .mat-expansion-panel-body {
+        padding: 0;
+    }
+
+    ::ng-deep .custom-panel-class {
+        min-width: 100% !important;
+        max-height: 400px !important;
+    }
+
+    .user-info {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}

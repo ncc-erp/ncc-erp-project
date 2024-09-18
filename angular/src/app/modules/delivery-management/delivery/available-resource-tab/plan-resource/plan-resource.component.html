@@ -5,7 +5,7 @@
                 <div class="input-group">
 
                     <div class="row w-100">
-                        <div class="col-6 d-flex mt-1">
+                        <div class="col-md-6 d-flex mt-1 field-search">
                             <div class="input-group-prepend">
                                 <button type="button" class="btn bg-blue" (click)="getDataPage(1)">
                                     <i class="fas fa-search"></i>
@@ -20,7 +20,7 @@
                                 </button>
                             </div>
                         </div>
-                        <div class="col-md-3 mt-1 d-flex align-items-center mb-3">
+                        <div class="col-md-3 mt-1 d-flex align-items-center mb-3 row-skill">
                             <mat-form-field appearance="outline" class="flex-grow-1">
                                 <mat-label>Skills:</mat-label>
                                 <mat-select #selectSkill placeholder="select skill" multiple
@@ -33,11 +33,11 @@
                                             (keydown)="$event.stopPropagation()">
                                           </mat-form-field>
                                         <mat-radio-group aria-label="Filter by" class="w-80 px-2  row" [(ngModel)]="isAndCondition" style=" width: 100%;align-items: center;">
-                                            <div class="col-4 d-flex" style="align-items: center;">
+                                            <div class="col-md-4 d-flex" style="align-items: center;">
                                                 <mat-radio-button class="mr-3" [value]="true">And</mat-radio-button>
                                                 <mat-radio-button [value]="false">Or</mat-radio-button>
                                             </div>
-                                            <div class="col-8 mb-2">
+                                            <div class="col-md-8 mb-2 list-skill">
                                                 <app-select-clear-option  [listOption]="listSkillsId"
                                                     (newListEvent)= "actionSelect($event)" (doneEvent)="selectDone()">
                                                 </app-select-clear-option>
@@ -81,7 +81,7 @@
                                                 (deleteDataFilter)="deleteFilterItem(i)" [inputFilters]="FILTER_CONFIG">
                                             </app-filter>
                                         </div>
-                                        <i style="padding: 0" class="fas fa-plus-circle ml-3" (click)="addFilter()"></i>
+                                        <i style="padding: 0" class="fas fa-plus-circle ml-3 add-filter" (click)="addFilter()"></i>
                                     </div>
                                 </div>
                             </div>
@@ -309,13 +309,13 @@
             </div>
             <div class="bg-light border-top pt-2">
                 <div class="row">
-                    <div class="col-sm-4 col-12 text-sm-left text-center">
+                    <div class="col-sm-4 col-12 text-sm-left text-center list-number-items">
                         <button class="btn btn-secondary mb-2" (click)="refresh()">
                             <i class="fas fa-redo-alt"></i>
                         </button>
-                        <mat-form-field style="width: 20%; margin-left: 30px">
+                        <mat-form-field style="width: 20%; margin-left: 30px" class="form-number-items">
                             <mat-label>Number items</mat-label>
-                            <mat-select [(ngModel)]="pageSizeType" (ngModelChange)="changePageSize()">
+                            <mat-select panelClass="options-number-item" [(ngModel)]="pageSizeType" (ngModelChange)="changePageSize()">
                                 <mat-option [value]="5"> 5 </mat-option>
                                 <mat-option [value]="10"> 10 </mat-option>
                                 <mat-option [value]="20"> 20 </mat-option>
@@ -324,12 +324,12 @@
                             </mat-select>
                         </mat-form-field>
                     </div>
-                    <div class="col-sm-4 col-12 text-center">
+                    <div class="col-sm-4 col-12 text-center total">
                         <p class="mb-0 my-2">
                             {{ 'TotalRecordsCount' | localize: totalItems }}
                         </p>
                     </div>
-                    <div class="col-sm-4 col-12">
+                    <div class="col-sm-4 col-12 pagination">
                         <div class="float-sm-right m-auto">
                             <abp-pagination-controls id="server" (pageChange)="getDataPage($event)">
                             </abp-pagination-controls>

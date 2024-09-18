@@ -627,6 +627,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
 
     const show = this.dialog.open(ProjectHistoryByUserComponent, {
       width: '1200px',
+      panelClass: 'project-history-dialog',
       disableClose: true,
       data: {
         item: userInfo,
@@ -651,6 +652,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
 
     const show = this.dialog.open(RetroReviewHistoryByUserComponent, {
       width: '1200px',
+      panelClass: 'retro-review-history-dialog',
       disableClose: true,
       data: {
         item: userInfo,
@@ -669,7 +671,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
 
   updateNote(user: availableResourceDto) {
     const addOrEditNoteDialog = this.dialog.open(AddNoteDialogComponent, {
-      width: "40%",
+      panelClass: 'add-edit-note-dialog',
       data: {
         userId: user.userId,
         fullName: user.fullName,

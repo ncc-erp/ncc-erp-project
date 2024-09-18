@@ -284,6 +284,7 @@ export class PlanResourceComponent
 
     const show = this.dialog.open(PlanUserComponent, {
       width: "700px",
+      panelClass: 'plan-user-dialog',
       disableClose: true,
       data: {
         item: item,
@@ -419,7 +420,7 @@ export class PlanResourceComponent
 
   updateNote(user: availableResourceDto) {
     const addOrEditNoteDialog = this.dialog.open(AddNoteDialogComponent, {
-      width: "40%",
+      panelClass: 'add-edit-note-dialog',
       data: {
         userId: user.userId,
         fullName: user.fullName,

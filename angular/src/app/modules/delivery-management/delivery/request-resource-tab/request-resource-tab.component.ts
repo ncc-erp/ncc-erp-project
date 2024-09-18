@@ -582,6 +582,8 @@ export class RequestResourceTabComponent
       projectId: 0,
     };
 
+    console.log(command, 'command')
+
     const show = this.dialog.open(CreateUpdateResourceRequestComponent, {
       data: {
         command: command,
@@ -804,8 +806,7 @@ export class RequestResourceTabComponent
         dmNote: item.dmNote,
         pmNote: item.pmNote,
       } as SendRecruitmentModel,
-      width: "700px",
-      maxHeight: "90vh",
+      panelClass: 'form-send-recruitment-dialog'
     });
     show.afterClosed().subscribe((rs) => {
       if (!rs) return;

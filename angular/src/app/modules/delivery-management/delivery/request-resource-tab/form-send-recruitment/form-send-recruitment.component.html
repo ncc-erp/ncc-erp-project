@@ -118,12 +118,12 @@
     </div>
   </div>
   <div class="row d-flex justify-content-end">
-    <!-- <div class="col-md-2"> -->
-      <button class="btn btn-secondary btn-action mr-2" (click)="dialogRef.close()">
+    <div class="col-md-2 btn-footer">
+      <button class="btn btn-secondary btn-block" (click)="dialogRef.close()">
         Cancel
       </button>
-    <!-- </div> -->
-    <!-- <div class="col-md-2 btn-send"> -->
+    </div>
+    <div class="col-md-2 btn-footer">
       <button
         class="btn btn-primary btn-action"
         [disabled]="isSending"
@@ -132,5 +132,6 @@
         Send
       </button>
     <!-- </div> -->
+  </div>
   </div>
 </form>

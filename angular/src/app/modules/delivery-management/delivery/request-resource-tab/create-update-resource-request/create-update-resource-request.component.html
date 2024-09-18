@@ -16,271 +16,273 @@
     (onCloseClick)="dialogRef.close()"
   >
   </abp-modal-header>
-  <mat-dialog-content class="mat-typography">
-    <div class="modal-body">
-      <div class="form-group row required">
-        <label class="col-md-3 col-form-label" for="tenancyName">
-          Project:
-        </label>
-        <div class="col-md-9">
-          <mat-form-field class="mt-2 w-100" appearance="outline">
-            <mat-select
-              (closed)="focusOut()"
-              name="projectId"
-              #projectIdValid="ngModel"
-              placeholder="Select project"
-              required
-              [(ngModel)]="resourceRequestDto.projectId"
+  
+  <mat-dialog-content>
+  <div class="modal-body">
+    <div class="form-group row required">
+      <label class="col-md-3 col-form-label" for="tenancyName">
+        Project:
+      </label>
+      <div class="col-md-9">
+        <mat-form-field class="mt-2 w-100 dropdown-select" appearance="outline">
+          <mat-select
+            (closed)="focusOut()"
+            name="projectId"
+            #projectIdValid="ngModel"
+            placeholder="Select project"
+            required
+            [(ngModel)]="resourceRequestDto.projectId"
+          >
+            <mat-form-field
+              class="w-100 px-3"
+              style="
+                position: sticky;
+                top: 0;
+                z-index: 2;
+                background-color: white;
+              "
             >
-              <mat-form-field
-                class="w-100 px-3"
-                style="
-                  position: sticky;
-                  top: 0;
+              <input
+                matInput
+                [(ngModel)]="searchProject"
+                name="searchProjectName"
+                (keydown)="$event.stopPropagation()"
+                placeholder="Search"
+                #search
+              />{{ search.focus() }}
+            </mat-form-field>
+            <ng-container
+              *ngFor="
+                let project of listProject | listFilter: 'name': searchProject
+              "
+            >
+              <mat-option [value]="project.id">
+                {{ project.name }}
+              </mat-option>
+            </ng-container>
+          </mat-select>
+        </mat-form-field>
+        <mat-error
+          class="mt-1"
+          *ngIf="projectIdValid.hasError('required') && projectIdValid.touched"
+          style="font-size: 13px"
+        >
+          This field is required
+        </mat-error>
+      </div>
+    </div>
+    
+    <div class="form-group row required">
+      <label class="col-md-3 col-form-label" for="tenancyName"> Skill: </label>
+      <div class="col-md-9">
+        <mat-form-field appearance="outline" class="w-100 dropdown-select skill-resource-request">
+          <mat-select
+            placeholder="Select skill"
+            multiple
+            [(ngModel)]="resourceRequestDto.skillIds"
+            name="SkillList"
+            #skill="ngModel"
+          >
+            <mat-option>
+              <ngx-mat-select-search
+                onkeydown="event.stopPropagation()"
+                placeholderLabel="Search..."
+                noEntriesFoundLabel="No match skill found"
+                ngModel
+                [ngModelOptions]="{ standalone: true }"
+                (ngModelChange)="filterSkills($event)"
+              >
+                <mat-icon ngxMatSelectSearchClear>
+                  <i class="fa fa-times" aria-hidden="true"></i>
+                </mat-icon>
+              </ngx-mat-select-search>
+            </mat-option>
+            <div style="
+                  max-width: auto;
+                  position: fixed;
+                  top: 45px;
                   z-index: 2;
                   background-color: white;
-                "
-              >
-                <input
-                  matInput
-                  [(ngModel)]="searchProject"
-                  name="searchProjectName"
-                  (keydown)="$event.stopPropagation()"
-                  placeholder="Search"
-                  #search
-                />{{ search.focus() }}
-              </mat-form-field>
-              <ng-container
-                *ngFor="
-                  let project of listProject | listFilter: 'name': searchProject
-                "
-              >
-                <mat-option [value]="project.id">
-                  {{ project.name }}
-                </mat-option>
-              </ng-container>
-            </mat-select>
-          </mat-form-field>
-          <mat-error
-            class="mt-1"
-            *ngIf="projectIdValid.hasError('required') && projectIdValid.touched"
-            style="font-size: 13px"
-          >
-            This field is required
-          </mat-error>
-        </div>
-      </div>
-      
-      <div class="form-group row required">
-        <label class="col-md-3 col-form-label" for="tenancyName"> Skill: </label>
-        <div class="col-md-9">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-select
-              placeholder="Select skill"
-              multiple
-              [(ngModel)]="resourceRequestDto.skillIds"
-              name="SkillList"
-              #skill="ngModel"
-            >
-              <mat-option>
-                <ngx-mat-select-search
-                  onkeydown="event.stopPropagation()"
-                  placeholderLabel="Search..."
-                  noEntriesFoundLabel="No match skill found"
-                  ngModel
-                  [ngModelOptions]="{ standalone: true }"
-                  (ngModelChange)="filterSkills($event)"
-                >
-                  <mat-icon ngxMatSelectSearchClear>
-                    <i class="fa fa-times" aria-hidden="true"></i>
-                  </mat-icon>
-                </ngx-mat-select-search>
-              </mat-option>
-              <div style="
-                    min-width: 480px;
-                    max-width: auto;
-                    position: fixed;
-                    top: 45px;
-                    z-index: 2;
-                    background-color: white;
-                    padding: 15px 7px;
-              ">
-              <button class="btn bg-primary" mat-button (click)="selectAllSkills()">Select All</button>
-              <button class="btn bg-secondary ml-4" mat-button (click)="clearAllSkills()">Clear All</button>
-              </div>
-              <div style="margin-top: 60px;">
-              <mat-option style="position: relative;"
-                *ngFor="let skill of filteredSkillList"
-                [value]="skill.id"
-              >
-                {{ skill.name }}
-              </mat-option>
+                  padding: 15px 7px;
+                  width: 100%;
+            "
+            class="button-filter-skill">
+            <button class="btn bg-primary" mat-button (click)="selectAllSkills()">Select All</button>
+            <button class="btn bg-secondary ml-4" mat-button (click)="clearAllSkills()">Clear All</button>
             </div>
-            </mat-select>
-          </mat-form-field>
-          <mat-error
-            class="mt-1"
-            *ngIf="skill.hasError('required') && skill.touched"
-            style="font-size: 13px"
-          >
-            This field is required
-          </mat-error>
-        </div>
-      </div>
-
-      <div class="form-group row required">
-        <label class="col-md-3 col-form-label" for="tenancyName"> Level: </label>
-        <div class="col-md-9">
-          <mat-form-field class="mt-2 w-100" appearance="outline">
-            <mat-select
-              name="userLevel"
-              #userLevelValid="ngModel"
-              placeholder="Select Level"
-              required
-              [(ngModel)]="resourceRequestDto.level"
+            <div style="margin-top: 60px;">
+            <mat-option style="position: relative;"
+              *ngFor="let skill of filteredSkillList"
+              [value]="skill.id"
             >
-              <ng-container *ngFor="let userLevel of userLevelList">
-                <mat-option [value]="userLevel.id">
-                  {{ userLevel.name }}
-                </mat-option>
-              </ng-container>
-            </mat-select>
-          </mat-form-field>
-          <mat-error
-            class="mt-1"
-            *ngIf="userLevelValid.hasError('required') && userLevelValid.touched"
-            style="font-size: 13px"
-          >
-            This field is required
-          </mat-error>
-        </div>
+              {{ skill.name }}
+            </mat-option>
+          </div>
+          </mat-select>
+        </mat-form-field>
+        <mat-error
+          class="mt-1"
+          *ngIf="skill.hasError('required') && skill.touched"
+          style="font-size: 13px"
+        >
+          This field is required
+        </mat-error>
       </div>
-
-      <div class="form-group row required" *ngIf="data.command == 'create'">
-        <label class="col-md-3 col-form-label" for="tenancyName">
-          Quantity:
-        </label>
-        <div class="col-md-9">
-          <mat-form-field appearance="outline" class="w-100">
-            <input
-              matInput
-              placeholder="Quantity"
-              name="quantity"
-              #quantity="ngModel"
-              [(ngModel)]="resourceRequestDto.quantity"
-              required
-            />
-          </mat-form-field>
-          <mat-error
-            class="mt-1"
-            *ngIf="quantity.hasError('required') && quantity.touched"
-            style="font-size: 13px"
-          >
-            This field is required
-          </mat-error>
-        </div>
-      </div>
-
-      <div class="form-group row">
-        <label class="col-md-3 col-form-label" for="tenancyName">
-          Priority:
-        </label>
-        <div class="col-md-9">
-          <mat-form-field class="mt-2" appearance="outline" class="w-100">
-            <mat-select
-              name="priority"
-              #priorityValid="ngModel"
-              placeholder="Select priority"
-              required
-              [(ngModel)]="resourceRequestDto.priority"
-            >
-              <ng-container *ngFor="let priority of priorityList">
-                <mat-option [value]="APP_ENUM.Priority[priority]">
-                  {{ priority }}
-                </mat-option>
-              </ng-container>
-            </mat-select>
-          </mat-form-field>
-        </div>
-      </div>
-
-      <div class="form-group row required">
-        <label class="col-md-3 col-form-label" for="tenancyName">
-          Time Need:
-        </label>
-        <div class="col-md-9">
-          <mat-form-field appearance="outline" class="w-100">
-            <input
-              matInput
-              placeholder="Time need"
-              [matDatepicker]="picker"
-              name="startTime"
-              name="timeNedd"
-              #timeNeed="ngModel"
-              [(ngModel)]="resourceRequestDto.timeNeed"
-              required
-            />
-            <mat-datepicker-toggle
-              matSuffix
-              [for]="picker"
-            ></mat-datepicker-toggle>
-            <mat-datepicker #picker></mat-datepicker>
-          </mat-form-field>
-          <mat-error
-            class="mt-1"
-            *ngIf="timeNeed.hasError('required') && timeNeed.touched"
-            style="font-size: 13px"
-          >
-            This field is required
-          </mat-error>
-        </div>
-      </div>
-      
-      <div class="form-group row required">
-        <label class="col-md-3 col-form-label" for="tenancyName">
-          Code
-        </label>
-        <div class="col-md-9">
-          <form>
-            <mat-form-field appearance="outline" class="w-100">
-              <mat-label>Code</mat-label>
-              <input type="text" matInput [formControl]="myControl" [matAutocomplete]="auto" required />
-              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
-                <mat-option *ngFor="let option of filteredOptions | async" [value]="option.code">
-                  {{option.code}}
-                </mat-option>
-              </mat-autocomplete>
-            </mat-form-field>
-            <mat-error
-                class="mt-1"
-                *ngIf="myControl.errors?.required && myControl.touched"
-                style="font-size: 13px"
-              >
-                This field is required
-            </mat-error>
-          </form>
-        </div>
-      </div>
-
-      <div class="form-group row ">
-        <label class="col-md-3 col-form-label" for="newBillAccount">
-          New Bill Account
-        </label>
-        <div class="col-md-9 d-flex align-items-center">
-          <mat-checkbox [(ngModel)]="resourceRequestDto.isNewBillAccount" name = 'isBillAccount' style="margin-top: 5px;"></mat-checkbox>
-        </div>
-      </div>
-
-      <div class="form-group row ">
-        <label class="col-md-3 col-form-label" for="isRequiredPlanResource">
-          Required Resource
-        </label>
-        <div class="col-md-9 d-flex align-items-center">
-          <mat-checkbox [(ngModel)]="resourceRequestDto.isRequiredPlanResource" name = 'isRequiredPlanResource' style="margin-top: 5px;"></mat-checkbox>
-        </div>
-      </div>
-
     </div>
+
+    <div class="form-group row required">
+      <label class="col-md-3 col-form-label" for="tenancyName"> Level: </label>
+      <div class="col-md-9">
+        <mat-form-field class="mt-2 w-100 dropdown-select" appearance="outline">
+          <mat-select
+            name="userLevel"
+            #userLevelValid="ngModel"
+            placeholder="Select Level"
+            required
+            [(ngModel)]="resourceRequestDto.level"
+          >
+            <ng-container *ngFor="let userLevel of userLevelList">
+              <mat-option [value]="userLevel.id">
+                {{ userLevel.name }}
+              </mat-option>
+            </ng-container>
+          </mat-select>
+        </mat-form-field>
+        <mat-error
+          class="mt-1"
+          *ngIf="userLevelValid.hasError('required') && userLevelValid.touched"
+          style="font-size: 13px"
+        >
+          This field is required
+        </mat-error>
+      </div>
+    </div>
+
+    <div class="form-group row required" *ngIf="data.command == 'create'">
+      <label class="col-md-3 col-form-label" for="tenancyName">
+        Quantity:
+      </label>
+      <div class="col-md-9">
+        <mat-form-field appearance="outline" class="w-100 dropdown-select">
+          <input
+            matInput
+            placeholder="Quantity"
+            name="quantity"
+            #quantity="ngModel"
+            [(ngModel)]="resourceRequestDto.quantity"
+            required
+          />
+        </mat-form-field>
+        <mat-error
+          class="mt-1"
+          *ngIf="quantity.hasError('required') && quantity.touched"
+          style="font-size: 13px"
+        >
+          This field is required
+        </mat-error>
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <label class="col-md-3 col-form-label" for="tenancyName">
+        Priority:
+      </label>
+      <div class="col-md-9">
+        <mat-form-field class="mt-2 dropdown-select" appearance="outline" class="w-100">
+          <mat-select
+            name="priority"
+            #priorityValid="ngModel"
+            placeholder="Select priority"
+            required
+            [(ngModel)]="resourceRequestDto.priority"
+          >
+            <ng-container *ngFor="let priority of priorityList">
+              <mat-option [value]="APP_ENUM.Priority[priority]">
+                {{ priority }}
+              </mat-option>
+            </ng-container>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="form-group row required">
+      <label class="col-md-3 col-form-label" for="tenancyName">
+        Time Need:
+      </label>
+      <div class="col-md-9">
+        <mat-form-field appearance="outline" class="w-100 dropdown-select">
+          <input
+            matInput
+            placeholder="Time need"
+            [matDatepicker]="picker"
+            name="startTime"
+            name="timeNedd"
+            #timeNeed="ngModel"
+            [(ngModel)]="resourceRequestDto.timeNeed"
+            required
+          />
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="picker"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+        <mat-error
+          class="mt-1"
+          *ngIf="timeNeed.hasError('required') && timeNeed.touched"
+          style="font-size: 13px"
+        >
+          This field is required
+        </mat-error>
+      </div>
+    </div>
+    
+    <div class="form-group row required">
+      <label class="col-md-3 col-form-label" for="tenancyName">
+        Code
+      </label>
+      <div class="col-md-9">
+        <form>
+          <mat-form-field appearance="outline" class="w-100 dropdown-select">
+            <mat-label>Code</mat-label>
+            <input type="text" matInput [formControl]="myControl" [matAutocomplete]="auto" required />
+            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+              <mat-option *ngFor="let option of filteredOptions | async" [value]="option.code">
+                {{option.code}}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+          <mat-error
+              class="mt-1"
+              *ngIf="myControl.errors?.required && myControl.touched"
+              style="font-size: 13px"
+            >
+              This field is required
+          </mat-error>
+        </form>
+      </div>
+    </div>
+
+    <div class="form-group row item-checkbox">
+      <label class="col-md-3 col-form-label" for="newBillAccount">
+        New Bill Account
+      </label>
+      <div class="col-md-9 d-flex align-items-center checkbox">
+        <mat-checkbox [(ngModel)]="resourceRequestDto.isNewBillAccount" name = 'isBillAccount' style="margin-top: 5px;"></mat-checkbox>
+      </div>
+    </div>
+
+    <div class="form-group row item-checkbox">
+      <label class="col-md-3 col-form-label" for="isRequiredPlanResource">
+        Required Resource
+      </label>
+      <div class="col-md-9 d-flex align-items-center checkbox">
+        <mat-checkbox [(ngModel)]="resourceRequestDto.isRequiredPlanResource" name = 'isRequiredPlanResource' style="margin-top: 5px;"></mat-checkbox>
+      </div>
+    </div>
+
+  </div>
   </mat-dialog-content>
   <div align="end" class="row justify-content-end">
     <button class="btn btn-secondary btn-action mr-2" mat-dialog-close>

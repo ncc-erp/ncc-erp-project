@@ -1,12 +1,20 @@
-@media only screen and (max-width: 768px){
-    .btn-send {
-        margin-top: 10px;
-    }
-    .form-send-recruitment ::ng-deep .modal-header {
-         padding: 0 !important;
-    }
-    .form-send-recruitment ::ng-deep .modal-body {
+@media screen and (max-width: 600px) {
+    :host ::ng-deep .form-horizontal {
+        .modal-header {
             padding: 0;
+            align-items: baseline;
+        }
     }
-    
+
+    .btn-footer {
+        width: fit-content;
+    }
+
+    .modal-body {
+        padding: 0;
+        max-height: 55vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding-right: 12px;
+    }
 }

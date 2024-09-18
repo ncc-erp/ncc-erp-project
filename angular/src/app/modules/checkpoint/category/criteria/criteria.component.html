@@ -14,7 +14,7 @@
                 <div class="card-header">
 
                     <div class='row'>
-                        <div class="col-6">
+                        <div class="col-8 pd-0">
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <button type="button" class="btn bg-blue" (click)="getDataPage(1)">
@@ -32,7 +32,7 @@
                             </div>
                         </div>
 
-                        <div class="col-6 text-right" >
+                        <div class="col-4 text-right pd-0" >
                             <button (click)="create()" class="btn bg-blue" *ngIf="permission.isGranted(Admin_Criteria_Create)">
                                 <i class="fa fa-plus-square"></i>
                                 Create
@@ -156,7 +156,7 @@
                         </div>
                         <div class="col-sm-4 col-12">
                             <div class="float-sm-right m-auto">
-                                <abp-pagination-controls id="server" (pageChange)="getDataPage($event)">
+                                <abp-pagination-controls id="server" class="pagination-criterial" (pageChange)="getDataPage($event)">
                                 </abp-pagination-controls>
                             </div>
                         </div>

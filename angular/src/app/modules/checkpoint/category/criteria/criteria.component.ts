@@ -107,8 +107,8 @@ export class CriteriaComponent extends PagedListingComponentBase<CriteriaCompone
         command: command,
 
       },
-      width: "60%",
-      height: "90%",
+      width: "700px",
+      maxHeight: '80vh'
 
     })
     show.afterClosed().subscribe((res) => {

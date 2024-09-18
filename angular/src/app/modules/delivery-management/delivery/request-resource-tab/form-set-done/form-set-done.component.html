@@ -1,4 +1,4 @@
-<form class="form-horizontal" autocomplete="off" #resourceRequestForm="ngForm" novalidate id="form-set-done">
+<form class="form-horizontal form-set-done" autocomplete="off" #resourceRequestForm="ngForm" novalidate id="form-set-done">
     <abp-modal-header title="Confirm done request: {{planUserInfo.requestName}}" (onCloseClick)="dialogRef.close()">
     </abp-modal-header>
     <div class="modal-body">
@@ -91,12 +91,12 @@
         </div>
     </div>
     <div class="row d-flex justify-content-end">
-        <div class="col-md-2">
+        <div class="col-md-2" style="width: fit-content;">
             <button class="btn btn-secondary btn-block" (click)="cancel()">
                 Cancel
             </button>
         </div>
-        <div class="col-md-2" *ngIf="allowConfirm">
+        <div class="col-md-2" style="width: fit-content;" *ngIf="allowConfirm">
             <button class="btn btn-primary btn-block" (click)="confirm()">
                 Confirm
             </button>

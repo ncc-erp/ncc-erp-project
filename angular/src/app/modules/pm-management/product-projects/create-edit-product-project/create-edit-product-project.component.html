@@ -2,7 +2,8 @@
     <abp-modal-header [title]="data.command =='create' ?'Create new project':'Edit project: '+title"
         (onCloseClick)="dialogRef.close()">
     </abp-modal-header>
-    <div class="modal-body" style="max-height: 80vh; overflow-y: auto;">
+    <mat-dialog-content class="mat-typography">
+    <div class="modal-body">
         <div class="form-group row required">
             <label class="col-md-3 col-form-label" for="projectName">
                 {{ 'Name' | localize }}:
@@ -105,7 +106,7 @@
                 Start time:
             </label>
             <div class="col-md-9 datepick">
-                <mat-form-field appearance="outline">
+                <mat-form-field appearance="outline" class="w-100">
                     <input matInput [matDatepicker]="picker" [(ngModel)]="project.startTime"
                         #productProjectTimeStart="ngModel" placeholder="choose a date" name="startTime" required>
                     <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
@@ -123,7 +124,7 @@
                 End time:
             </label>
             <div class="col-md-9 datepick">
-                <mat-form-field appearance="outline">
+                <mat-form-field appearance="outline" class="w-100">
                     <input matInput [matDatepicker]="picker2" [(ngModel)]="project.endTime" placeholder="choose a date"
                         name="endTime">
                     <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
@@ -132,6 +133,7 @@
             </div>
         </div>
     </div>
+</mat-dialog-content>
     <div style="background-color: white;" align="end" class="d-flex mb-0 px-3" mat-dialog-actions="">
         <button class="btn btn-secondary cancel-banks" mat-raised-button mat-dialog-close>Cancel</button>
         <button class="btn btn-primary btn-action ml-3" [disabled]="!bankForm.valid || isLoading || checkNull"

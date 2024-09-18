@@ -10,7 +10,21 @@
     align-items: center;
 }
 
+@media only screen and (max-width: 768px){
+    :host ::ng-deep .modal-body {
+        padding: 0;
+    }
+}
+
 @media screen and (max-width: 600px) {
+    :host ::ng-deep .mat-dialog-container {
+        overflow: hidden;
+    }
+    
+    :host ::ng-deep .mat-dialog-content {
+        max-height: 56vh;
+        overflow: auto;
+    }
     .item-checkbox label {
         max-width: 70%;
     }

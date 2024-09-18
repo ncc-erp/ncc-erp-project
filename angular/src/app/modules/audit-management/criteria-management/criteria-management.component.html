@@ -32,7 +32,7 @@
             </div>
           </div>
 
-          <div class="text-right col-lg-8 col-md-12">
+          <div class="text-right col-lg-8 col-md-12 btn-create">
             <button (click)="createCriteria(node)" class="btn bg-blue">
               <i class="fa fa-plus-square"></i>
               Create
@@ -52,14 +52,14 @@
           matTreeNodeToggle
           style="background-color: rgb(245, 242, 242)"
         >
-          <li class="mat-tree-node" >
-            <button mat-icon-button disabled></button>
+          <li class="mat-tree-node w-100" >
+            <button mat-icon-button disabled class="btn-hidden"></button>
             <div class="item-criteria">
               <div style="margin: auto 0;cursor: pointer;" class="name-criteria d-flex align-items-center"
                 (click)="viewGuiline(node)">
                 <div class="d-flex"  style="font-size: 16px; ">
                   <span class="d-flex align-items-center">{{ node.item.code }} </span>
-                  <div style="margin-left: 19px; word-break: break-word; padding-right: 45px;">  {{ node.item.name }} 
+                  <div style="margin-left: 19px; word-break: break-word; padding-right: 45px;" class="note-name">  {{ node.item.name }} 
                     <span *ngIf="!node.item.isActive" class="label-inactive">Inactive</span>
                     <i *ngIf="node.item.isLeaf" class="fas fa-leaf pl-2" style="color: #2ec610;"></i>
                   </div>
@@ -69,7 +69,7 @@
               <div class="custom-control custom-checkbox applicable">
                 <mat-checkbox
 
-                  class="example-margin"
+                  class="example-margin checkbox"
                   style="margin-left: 50px;"
                   matTooltip="Is Applicable"
                   aria-label="Button that displays a tooltip when focused or hovered over"
@@ -165,7 +165,7 @@
           </li>
         </mat-tree-node>
         <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChild">
-          <li>
+          <li class="tree-node">
             <div class="mat-tree-node" style="background-color: #c4dfec">
               <button
                 mat-icon-button

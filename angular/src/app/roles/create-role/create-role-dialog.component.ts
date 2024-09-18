@@ -17,7 +17,8 @@ import {
 import { forEach as _forEach, map as _map } from 'lodash-es';
 
 @Component({
-  templateUrl: 'create-role-dialog.component.html'
+  templateUrl: 'create-role-dialog.component.html',
+  styleUrls: ['./create-role-dialog.component.css']
 })
 export class CreateRoleDialogComponent extends AppComponentBase
   implements OnInit {

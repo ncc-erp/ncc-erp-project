@@ -178,3 +178,10 @@
   .label , label{
     margin-left: 3px !important;
   }
+
+  @media only screen and (max-width: 600px){
+    .add-mb {
+      margin-bottom: 1rem;
+      text-align: left !important;
+    }
+  }

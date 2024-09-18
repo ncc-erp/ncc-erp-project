@@ -8,3 +8,20 @@
     font-size: 80%;
     color: #dc3545;
 }
+
+@media screen and (max-width: 600px) {
+    .max-h-body {
+        max-height: 50vh;
+    }
+    .modal-body {
+        padding: 0;
+    }
+    .row-none {
+        padding: 0;
+        margin: 0;
+    }
+
+    .text-area-currency {
+        max-height: 100px;
+    }
+}

@@ -12,8 +12,8 @@
         <div class="container-fluid">
             <div class="card">
                 <div class="card-header">
-                    <div class='row'>
-                        <div class="col-6 mt-3 mt-md-0">
+                    <div class='row card-header-wrapper'>
+                        <div class="col-6 mt-3 mt-md-0 max-w-full">
                             <div class="input-group ">
                                 <div class="input-group-prepend">
                                     <button type="button" class="btn bg-blue" (click)="getDataPage(1)">
@@ -32,13 +32,13 @@
                             </div>
                         </div>
 
-                        <div class="col mt-3 mt-lg-0 text-right">
-                            <button *ngIf="permission.isGranted(Audits_Tailoring_DownLoadTemplate)" class="btn bg-blue mr-2" (click)="DownloadTemplate()"
+                        <div class="col mt-3 mt-lg-0 btn-action-wrapper">
+                            <button *ngIf="permission.isGranted(Audits_Tailoring_DownLoadTemplate)" class="btn bg-blue" (click)="DownloadTemplate()"
                                 matTooltip="Template gán tiêu chí đánh giá cho dự án">
                                 <i class="fas fa-download"></i>
                                 Download Template
                             </button>
-                            <button *ngIf="permission.isGranted(Audits_Tailoring_Import)" class="btn bg-success mr-2" (click)="openImportDialog()"
+                            <button *ngIf="permission.isGranted(Audits_Tailoring_Import)" class="btn bg-success" (click)="openImportDialog()"
                                 matTooltip="Upload file tiêu chí đã được gán cho dự án">
                                 <i class="fas fa-upload"></i>
                                 Import

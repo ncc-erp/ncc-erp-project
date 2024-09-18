@@ -24,13 +24,14 @@
                         <div class="row">
                             <div class="col-md-12 col-xl-12">
                                 <div class="mb-0">
-                                    <div>
+                                    <div class="card-filter">
                                         <div *ngFor="let item of filterItems; let i = index">
                                             <app-filter [item]="item" (emitChange)="onEmitChange($event, i)"
                                                 (deleteDataFilter)="deleteFilterItem(i)" [inputFilters]="FILTER_CONFIG">
                                             </app-filter>
                                         </div>
-                                        <i style="padding: 0;" class="fas fa-plus-circle ml-3"
+                                        <i style="padding: 0;" class="fas fa-plus-circle ml-3 icon-add-filter"
+                                            [ngClass]="{'icon-add-filter-item': filterItems?.length}"
                                             (click)="addFilter()"></i>
                                     </div>
                                 </div>
@@ -46,8 +47,8 @@
                         <thead class="bg-light">
                             <tr style="border: none;">
                                 <th class="stt">STT</th>
-                                <th style="width: 250px;">Weekly Report</th>
-                                <th style="width: 220px;">Projects</th>
+                                <th class="min-w-200" style="width: 250px;">Weekly Report</th>
+                                <th class="min-w-200" style="width: 220px;">Projects</th>
                                 <th>Note</th>
                                 <th style="width: 100px;">Actions</th>
                             </tr>
@@ -63,10 +64,10 @@
                                 <td class="text-center">{{i+1}}</td>
                                 <td  style="white-space: normal; max-width: 150px;">
                                     <div class="row">
-                                        <div class="col-9">
+                                        <div class="col-9 pd-0">
                                             <span class="hyperlink" (click)="showDetail(item)">{{item.name}} </span>
                                         </div>
-                                        <div class="col-3">
+                                        <div class="col-3 pd-0">
                                             <span
                                                 [ngClass]="item.isActive?'badge  badge-success':'badge  badge-secondary'">{{item.isActive?'Active':'Closed'}}</span>
                                         </div>

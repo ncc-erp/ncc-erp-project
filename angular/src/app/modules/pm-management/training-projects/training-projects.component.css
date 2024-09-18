@@ -1,76 +1,28 @@
-tr, th, td{
-    vertical-align: middle;
-   }
-   button{
-       height: fit-content;
-   }
-/* ::ng-deep .search-pm .mat-form-field{
-    width: 270px !important;
+tr,
+th,
+td {
+  vertical-align: middle;
 }
-::ng-deep .search-status .mat-form-field{
-    width: 150px !important;
-} */
-/* @media only screen and (min-width: 1546px){
-    .label-pm{
-      width: 20%;
-    }
-    .list-status{
-        width: 30%;
-      }
+button {
+  height: fit-content;
+}
 
-    .listPM {
-      width: 80% !important ;
-    }
-    .listStatus{
-        width: 70% !important ;
-    }
-  }
-  @media only screen and (min-width: 1349px)  and (max-width: 1545px){
-    .label-pm{
-      width: 20%;
-    }
-    .list-status{
-        width: 40%;
-      }
+.projectEvaluation {
+  font-size: 1rem;
+  font-family: sans-serif;
+  white-space: pre-line;
+  line-height: initial;
+}
 
-    .listPM {
-      width: 80% !important ;
-    }
-    .listStatus{
-        width: 60% !important ;
-    }
-  }
-
-  @media only screen and (min-width: 768px) and (max-width: 1348px){
-    .label-pm{
-      width: 20%;
-    }
-    .list-status{
-        width: 50%;
-      }
-
-    .listPM {
-      width: 80% !important ;
-    }
-    .listStatus{
-        width: 50% !important ;
-    }
-  } */
-  .projectEvaluation{
-    font-size: 1rem;
-    font-family: sans-serif;
-    white-space: pre-line;
-    line-height: initial;
-  }
-
-
-
-::ng-deep .filter-wrap .mat-form-field{
+::ng-deep .filter-wrap .mat-form-field {
   width: 100%;
 }
 
-::ng-deep .training-project .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
-  transform: translateY(-1.2em) scale(.75) ;
+::ng-deep
+  .training-project
+  .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float
+  .mat-form-field-label {
+  transform: translateY(-1.2em) scale(0.75);
 }
 
 .training-project .search-status {
@@ -110,4 +62,49 @@ tr, th, td{
 
 .training-project .sort-icon-wrap i.active {
   opacity: 1;
+}
+
+@media screen and (max-width: 600px) {
+  .title-training {
+    font-size: 1.4rem !important;
+  }
+
+  .card-header-body-responsive {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .search-group {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .filter-wrap-responsive {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .max-w-100 {
+    max-width: 100%;
+  }
+
+  .margin-0 {
+    margin: 0;
+  }
+
+  .card-filter {
+    position: relative;
+  }
+
+  .icon-add-filter-item {
+    position: absolute;
+    bottom: 3px;
+    left: 20px;
+  }
+
+  .card-body {
+    padding-bottom: 0;
+  }
 }

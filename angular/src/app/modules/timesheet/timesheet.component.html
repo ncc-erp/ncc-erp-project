@@ -42,12 +42,14 @@
                             <div class="row">
                                 <div class="col-md-12 col-xl-12">
                                     <div class="mb-0">
-                                        <div>
+                                        <div class="card-filter">
                                             <div *ngFor="let item of filterItems; let i = index">
                                                 <app-filter [item]="item" (emitChange)="onEmitChange($event, i)" (deleteDataFilter)="deleteFilterItem(i)" [inputFilters]="FILTER_CONFIG">
                                                 </app-filter>
                                             </div>
-                                            <i style="padding: 0;" class="fas fa-plus-circle ml-3" (click)="addFilter()"></i>
+                                            <i style="padding: 0;" class="fas fa-plus-circle ml-3 icon-add-filter"
+                                            [ngClass]="{'icon-add-filter-item': filterItems?.length}"
+                                            (click)="addFilter()"></i>
                                         </div>
                                     </div>
                                 </div>

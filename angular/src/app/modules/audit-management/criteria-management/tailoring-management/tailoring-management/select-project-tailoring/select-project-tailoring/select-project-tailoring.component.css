@@ -1,21 +1,32 @@
+:host table,
+th,
+td,
+thead,
+tbody {
+  border: none;
+}
+:host thead {
+  top: -1px;
+}
+:host th,
+td {
+  vertical-align: middle;
+}
 
-:host table,th,td,thead,tbody{
-    border: none;
+::ng-deep.my-dialog .mat-dialog-container {
+  padding-top: 0;
 }
-:host thead{
-    top:-1px;
+:host::ng-deep .modal-header {
+  padding: 0;
+  align-items: center;
 }
-:host th,td{
-    vertical-align: middle;
+:host::ng-deep .mat-dialog-title {
+  margin: 20px 0;
 }
 
-::ng-deep.my-dialog .mat-dialog-container{
-    padding-top: 0;
-  }
-  :host::ng-deep .modal-header {
+@media screen and (max-width: 600px) {
+  .modal-body {
     padding: 0;
-    align-items: center;
+    max-height: 55vh;
   }
-  :host::ng-deep .mat-dialog-title{
-    margin: 20px 0;
-  }
+}

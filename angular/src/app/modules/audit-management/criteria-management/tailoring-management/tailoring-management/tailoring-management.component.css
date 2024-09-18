@@ -1,13 +1,32 @@
-
-
 :host th,td{
-    vertical-align: middle;
+  vertical-align: middle;
 }
 :host .fixTableHead{
-    max-height: 65vh;
+  max-height: 65vh;
 }
 
 .prj-info:hover{
-    cursor: pointer;
-    text-decoration: underline;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.btn-action-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+@media screen and (max-width: 600px) {
+  .card-header-wrapper {
+    display: flex;
+    flex-direction: column;
+  }
+  .btn-action-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .max-w-full {
+    max-width: 100%;
+  }
 }

@@ -33,3 +33,24 @@ section {
   :host::ng-deep .mat-dialog-title{
     margin: 20px 0;
   }
+
+@media screen and (max-width: 600px) {
+  :host ::ng-deep .modal-header-audit .modal-header {
+    padding: 0;
+    align-items: baseline;
+  }
+
+  .modal-body {
+    max-height: 55vh;
+  }
+
+  .col-audit-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .example-label {
+    margin-left: 0;
+  }
+}

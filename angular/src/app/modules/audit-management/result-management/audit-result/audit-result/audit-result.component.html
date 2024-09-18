@@ -12,8 +12,8 @@
         <div class="container-fluid">
             <div class="card">
                 <div class="card-header">
-                    <div class='row align-items-center'>
-                        <div class="col-3 mt-3 mt-md-0">
+                    <div class='row align-items-center header-audit-result'>
+                        <div class="col-md-3 mt-3 mt-md-0">
                             <div class="input-group ">
                                 <div class="input-group-prepend">
                                     <button type="button" class="btn bg-blue" (click)="searchProject()">
@@ -25,7 +25,7 @@
                                     (keyup.enter)="searchProject()" />
                             </div>
                         </div>
-                        <div class="mr-2">
+                        <div class="mr-2 mat-form-field-select">
                             <mat-form-field appearance="outline">
                                 <mat-label>PM</mat-label>
                                 <mat-select name="slt-PM" [(ngModel)]="pmId" placeholder="select a PM"
@@ -44,7 +44,7 @@
                                 </mat-select>
                             </mat-form-field>
                         </div>
-                        <div class="mr-2">
+                        <div class="mr-2 mat-form-field-select">
                             <mat-form-field appearance="outline">
                                 <mat-label>Client</mat-label>
                                 <mat-select name="slt-clientId" [(ngModel)]="clientId" placeholder="select a Client"
@@ -64,7 +64,7 @@
                                 </mat-select>
                             </mat-form-field>
                         </div>
-                        <div>
+                        <div class="mat-form-field-kpi-status">
                             <mat-form-field appearance="outline">
                                 <mat-label>KPI Status</mat-label>
                                 <mat-select name="slt-clientId" [(ngModel)]="status" placeholder="select a Client"
@@ -83,7 +83,7 @@
                             </mat-form-field>
                         </div>
 
-                        <div class="col mt-3 mt-lg-0 text-right">
+                        <div class="col mt-3 mt-lg-0 text-right actions-audit">
                             <!-- <button class="btn bg-success mr-2">
                                 <i class="fa fa-plus-square"></i>
                                 Create
@@ -257,14 +257,14 @@
                     </div>
                 </div>
                 <div class="card-footer bg-light border-top">
-                    <div class="row">
-                        <div class="col-sm-4 col-12 text-sm-left text-center">
+                    <div class="row container-pagination">
+                        <div class="col-sm-4 col-12 text-sm-left text-center number-items-pagination">
                             <button class="btn btn-secondary mb-2" (click)="refresh()">
                                 <i class="fas fa-redo-alt"></i>
                             </button>
-                            <mat-form-field style=" width: 20%;margin-left: 30px;">
+                            <mat-form-field style=" width: 20%;margin-left: 30px;" class="form-number-items">
                                 <mat-label>Number items</mat-label>
-                                <mat-select [(ngModel)]="pageSizeType" (ngModelChange)="changePageSize()">
+                                <mat-select panelClass="options-number-item" [(ngModel)]="pageSizeType" (ngModelChange)="changePageSize()">
                                     <mat-option [value]="5">
                                         5
                                     </mat-option>
@@ -283,12 +283,12 @@
                                 </mat-select>
                             </mat-form-field>
                         </div>
-                        <div class="col-sm-4 col-12 text-center">
+                        <div class="col-sm-4 col-12 text-center total-pagination">
                             <p class="mb-0 my-2">
                                 {{ "TotalRecordsCount" | localize: totalItems }}
                             </p>
                         </div>
-                        <div class="col-sm-4 col-12">
+                        <div class="col-sm-4 col-12 pagination-control">
                             <div class="float-sm-right m-auto">
                                 <abp-pagination-controls id="server" (pageChange)="getDataPage($event)">
                                 </abp-pagination-controls>

@@ -153,6 +153,8 @@ table td {
     min-width: 180px;
 }
 
+
+
 @media screen and (max-width: 600px) {
     .title {
       max-width: 60%;
@@ -258,16 +260,9 @@ table td {
         max-height: 50vh !important;
     }
 
-    .container-fluid, .content {
-        padding: 0 !important;
-    }
-
-    .card {
-        border-radius: 0;
-    }
-
     .content-header {
-        padding: 15px 18px;
+        padding: 15px 6px;
+        margin-bottom: 10px;
     }
 
     ::ng-deep .cdk-overlay-container .cdk-global-overlay-wrapper .form-send-recruitment-dialog {
@@ -281,45 +276,20 @@ table td {
         column-gap: 5px;
     }
 
-    .list-number-item {
-        width: 22% !important;
+    .form-number-item {
+        width: 45% !important;
     }
 
-    .number-items {
-        order: 2;
-        padding-top: 30px;
-    }
-
-    .total {
-        order: 3;
-    }
-
-    .pagination {
-        order: 1;
-    }
-
-    ::ng-deep .options-number-item {
-        min-width: calc(100% + 32px) !important;
-    }
-}
-
-@media screen and (max-width: 575px) {
-    .card-filter {
-      position: relative;
-    }
-  
-    .icon-add-filter-item {
-      position: absolute;
-      bottom: 3px;
-      left: 20px;
-    }
-  
     .card-body {
-      padding-bottom: 0;
-    }
-  
+        padding-bottom: 0;
+      }
+
     .icon-add-filter {
-      margin-left: 0.5rem !important;
+        margin-left: 6px !important;
     }
-}
-  
+
+    .container-pagination {
+        display: flex;
+        flex-wrap: wrap;
+    }
+}  

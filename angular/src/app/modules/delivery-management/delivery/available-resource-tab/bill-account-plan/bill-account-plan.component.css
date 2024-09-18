@@ -72,23 +72,6 @@
   }
 
   .form-number-items {
-    width: 25% !important;
-  }
-
-  .pagination {
-    order: 1;
-  }
-
-  .list-number-items {
-    order: 2;
-    padding-top: 30px;
-  }
-
-  .total {
-    order: 3;
-  }
-
-  ::ng-deep .options-number-item {
-    min-width: calc(100% + 32px) !important;
+    width: 45% !important;
   }
 }

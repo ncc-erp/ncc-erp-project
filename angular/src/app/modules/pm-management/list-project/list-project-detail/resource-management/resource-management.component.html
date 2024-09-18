@@ -484,11 +484,12 @@
           </div>
         </div>
         <div class="card-footer bg-light border-top" style="height: 50px">
-          <div class="row" style="justify-content: space-between">
-            <div class="col-md-5 text-sm-left text-center list-number-items">
+          <div class="row container-pagination" style="justify-content: space-between">
+            <div class="col-md-5 text-sm-left text-center number-items-pagination">
               <mat-form-field style="width: 20%; margin-left: 30px">
                 <mat-label>Number items</mat-label>
                 <mat-select
+                  panelClass="options-number-item"
                   [(ngModel)]="maxUserCurrentPage"
                   (ngModelChange)="changePageSizeCurrent()"
                 >
@@ -500,10 +501,10 @@
                 </mat-select>
               </mat-form-field>
             </div>
-            <div class="col-md-2 text-center total">
+            <div class="col-md-2 text-center total-pagination">
               <p class="mb-0 my-2">Total: {{ projectUserList.length }}</p>
             </div>
-            <div class="col-md-5 pagination">
+            <div class="col-md-5 pagination-control">
               <pagination-controls
                 autoHide="true"
                 id="projectUser"

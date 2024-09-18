@@ -15,7 +15,7 @@
   </div>
 </section>
 <section class="content px-2">
-  <div class="container-fluid">
+  <div class="container-fluid table-branch">
     <div class="card">
       <div class="card-header">
         <div class="input-group">
@@ -48,7 +48,7 @@
         </div>
       </div>
       <div *ngIf="advancedFiltersVisible" class="mb-0 mt-1">
-        <div class="card-body">
+        <div class="card-body form-filter">
           <form class="form-horizontal">
             <div class="row">
               <div class="col-md-12 col-xl-12">
@@ -115,8 +115,8 @@
               <td>
                 <span class="badge badge-pill text-white" [style.backgroundColor]="item.color"> {{ item.color }}</span>
               </td>
-              <td *ngIf="permission.isGranted(Admin_Branchs_Edit) || permission.isGranted(Admin_Branchs_Delete)" style="width: 200px" class="text-center">
-                <button *ngIf="permission.isGranted(Admin_Branchs_Edit)"
+              <td *ngIf="permission.isGranted(Admin_Branchs_Edit) || permission.isGranted(Admin_Branchs_Delete)" style="width: 200px" class="text-center actions">
+                  <button *ngIf="permission.isGranted(Admin_Branchs_Edit)"
                   class="btn btn-sm bg-secondary mr-1"
                   (click)="editBranch(item); $event.stopPropagation()"
                 >
@@ -140,14 +140,15 @@
 
       </div>
       <div class="card-footer bg-light border-top">
-        <div class="row">
-          <div class="col-sm-4 col-12 text-sm-left text-center">
+        <div class="row container-pagination">
+          <div class="col-sm-4 col-12 text-sm-left text-center number-items-pagination">
             <button class="btn btn-secondary mb-2" (click)="refresh()">
               <i class="fas fa-redo-alt"></i>
             </button>
-            <mat-form-field style="width: 20%; margin-left: 30px">
+            <mat-form-field style="width: 20%; margin-left: 30px" class="form-number-items">
               <mat-label>Number items</mat-label>
               <mat-select
+                panelClass="options-number-item"
                 [(ngModel)]="pageSizeType"
                 (ngModelChange)="changePageSize()"
               >
@@ -159,12 +160,12 @@
               </mat-select>
             </mat-form-field>
           </div>
-          <div class="col-sm-4 col-12 text-center">
+          <div class="col-sm-4 col-12 text-center total-pagination">
             <p class="mb-0 my-2">
               {{ "TotalRecordsCount" | localize: totalItems }}
             </p>
           </div>
-          <div class="col-sm-4 col-12">
+          <div class="col-sm-4 col-12 pagination-control">
             <div class="float-sm-right m-auto">
               <abp-pagination-controls
                 id="server"

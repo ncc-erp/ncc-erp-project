@@ -63,7 +63,8 @@ export class TailoringManagementComponent extends PagedListingComponentBase<Tail
   openCreateDialog() {
     const show = this.dialog.open(SelectProjectTailoringComponent, {
       panelClass: 'my-dialog',
-      width: "60%",
+      width: "85%",
+      maxWidth:'calc(100% - 24px)'
     })
     show.afterClosed().subscribe(re => {
       this.refresh();
@@ -72,7 +73,8 @@ export class TailoringManagementComponent extends PagedListingComponentBase<Tail
   openImportDialog() {
     const show = this.dialog.open(ImportTailoringComponent, {
       panelClass: 'my-dialog',
-      width: "40%",
+      width: '600px',
+      maxWidth: 'calc(100% - 24px)'
     })
     show.afterClosed().subscribe(re => {
       this.refresh();

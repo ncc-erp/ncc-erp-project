@@ -1,8 +1,9 @@
 <form class="form-horizontal" autocomplete="off" #resourceRequestForm="ngForm" novalidate>
-    <abp-modal-header title="{{data.command == 'create'?'Add new currency':'Edit currency: '+title}}" (onCloseClick)="dialogRef.close()">
+    <abp-modal-header title="{{data.command == 'create'?'Add new currency':'Edit currency: '+title}}"
+        (onCloseClick)="dialogRef.close()">
     </abp-modal-header>
-    <div class="modal-body">
-        <div class="form-group row required">
+    <div class="modal-body max-h-body">
+        <div class="form-group row required row-none">
             <label class="col-md-3 col-form-label" for="pm">
                 Name:
             </label>
@@ -17,7 +18,7 @@
                 </abp-validation-summary>
             </div>
         </div>
-        <div class="form-group row required">
+        <div class="form-group row required row-none">
             <label class="col-md-3 col-form-label" for="pm">
                 Code:
             </label>
@@ -30,21 +31,21 @@
             </div>
         </div>
 
-            <div class="form-group row required">
-                <label class="col-md-3 col-form-label" for="pm">
-                    Invoice Payment Info:
-                </label>
-                <div class="col-md-9">
-                    <textarea class="form-control mt-1" placeholder="Invoice Payment Info" name="invoicePaymentInfo"
-                        [(ngModel)]="currency.invoicePaymentInfo" maxlength="1000" rows="10">
+        <div class="form-group row required row-none">
+            <label class="col-md-3 col-form-label" for="pm">
+                Invoice Payment Info:
+            </label>
+            <div class="col-md-9">
+                <textarea class="form-control mt-1 text-area-currency" placeholder="Invoice Payment Info" name="invoicePaymentInfo"
+                    [(ngModel)]="currency.invoicePaymentInfo" maxlength="1000" rows="10">
             </textarea>
-                </div>
             </div>
+        </div>
 
-        </div>
-        <div align="end" class="row justify-content-end">
-            <button class="btn btn-secondary mr-2 btn-action" mat-dialog-close>Cancel</button>
-            <button class="btn btn-primary btn-action" [disabled]="!resourceRequestForm.valid || checkNull || isLoading"
-                (click)="SaveAndClose()">Save</button>
-        </div>
+    </div>
+    <div align="end" class="row justify-content-end pt-3 px-3">
+        <button class="btn btn-secondary mr-2 btn-action" mat-dialog-close>Cancel</button>
+        <button class="btn btn-primary btn-action" [disabled]="!resourceRequestForm.valid || checkNull || isLoading"
+            (click)="SaveAndClose()">Save</button>
+    </div>
 </form>

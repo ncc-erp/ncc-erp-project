@@ -1,0 +1,9 @@
+@media screen and (max-width: 600px) {
+    .modal-body {
+        padding: 0;
+    }
+    .row-none {
+        padding: 0;
+        margin: 0;
+    }
+}

@@ -14,7 +14,7 @@
   >
   </abp-modal-header>
   <div class="modal-body">
-    <div class="form-group row required">
+    <div class="form-group row required row-none">
       <label class="col-md-3 col-form-label" for="pm"> Name: </label>
       <div class="col-md-9">
         <input name="{{data.command == 'create'?'ipt-technologyName':'ipt-technologyName_edit'}}"
@@ -33,7 +33,7 @@
       </div>
     </div>
 
-    <div class="form-group row required">
+    <div class="form-group row required row-none">
       <label class="col-md-3 col-form-label" for="pm"> Color: </label>
       <div class="col-md-9">
         <input name="{{data.command == 'create'?'ipt-color':'ipt-color_edit'}}"
@@ -53,7 +53,7 @@
     </div>
 
   </div>
-  <div align="end" class="row justify-content-end">
+  <div align="end" class="row justify-content-end px-3 pt-3">
     <button name="btn-cancel" class="btn btn-secondary mr-2 btn-action" mat-dialog-close>Cancel</button>
     <button name="btn-save"
       class="btn btn-primary btn-action"

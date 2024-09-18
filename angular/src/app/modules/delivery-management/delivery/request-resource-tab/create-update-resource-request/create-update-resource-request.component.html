@@ -17,13 +17,14 @@
   >
   </abp-modal-header>
   
+  <mat-dialog-content>
   <div class="modal-body">
     <div class="form-group row required">
       <label class="col-md-3 col-form-label" for="tenancyName">
         Project:
       </label>
       <div class="col-md-9">
-        <mat-form-field class="mt-2 w-100" appearance="outline">
+        <mat-form-field class="mt-2 w-100 dropdown-select" appearance="outline">
           <mat-select
             (closed)="focusOut()"
             name="projectId"
@@ -74,7 +75,7 @@
     <div class="form-group row required">
       <label class="col-md-3 col-form-label" for="tenancyName"> Skill: </label>
       <div class="col-md-9">
-        <mat-form-field appearance="outline" class="w-100">
+        <mat-form-field appearance="outline" class="w-100 dropdown-select skill-resource-request">
           <mat-select
             placeholder="Select skill"
             multiple
@@ -97,14 +98,15 @@
               </ngx-mat-select-search>
             </mat-option>
             <div style="
-                  min-width: 480px;
                   max-width: auto;
                   position: fixed;
                   top: 45px;
                   z-index: 2;
                   background-color: white;
                   padding: 15px 7px;
-            ">
+                  width: 100%;
+            "
+            class="button-filter-skill">
             <button class="btn bg-primary" mat-button (click)="selectAllSkills()">Select All</button>
             <button class="btn bg-secondary ml-4" mat-button (click)="clearAllSkills()">Clear All</button>
             </div>
@@ -131,7 +133,7 @@
     <div class="form-group row required">
       <label class="col-md-3 col-form-label" for="tenancyName"> Level: </label>
       <div class="col-md-9">
-        <mat-form-field class="mt-2 w-100" appearance="outline">
+        <mat-form-field class="mt-2 w-100 dropdown-select" appearance="outline">
           <mat-select
             name="userLevel"
             #userLevelValid="ngModel"
@@ -161,7 +163,7 @@
         Quantity:
       </label>
       <div class="col-md-9">
-        <mat-form-field appearance="outline" class="w-100">
+        <mat-form-field appearance="outline" class="w-100 dropdown-select">
           <input
             matInput
             placeholder="Quantity"
@@ -186,7 +188,7 @@
         Priority:
       </label>
       <div class="col-md-9">
-        <mat-form-field class="mt-2" appearance="outline" class="w-100">
+        <mat-form-field class="mt-2 dropdown-select" appearance="outline" class="w-100">
           <mat-select
             name="priority"
             #priorityValid="ngModel"
@@ -209,7 +211,7 @@
         Time Need:
       </label>
       <div class="col-md-9">
-        <mat-form-field appearance="outline" class="w-100">
+        <mat-form-field appearance="outline" class="w-100 dropdown-select">
           <input
             matInput
             placeholder="Time need"
@@ -242,7 +244,7 @@
       </label>
       <div class="col-md-9">
         <form>
-          <mat-form-field appearance="outline" class="w-100">
+          <mat-form-field appearance="outline" class="w-100 dropdown-select">
             <mat-label>Code</mat-label>
             <input type="text" matInput [formControl]="myControl" [matAutocomplete]="auto" required />
             <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
@@ -262,25 +264,26 @@
       </div>
     </div>
 
-    <div class="form-group row ">
+    <div class="form-group row item-checkbox">
       <label class="col-md-3 col-form-label" for="newBillAccount">
         New Bill Account
       </label>
-      <div class="col-md-9 d-flex align-items-center">
+      <div class="col-md-9 d-flex align-items-center checkbox">
         <mat-checkbox [(ngModel)]="resourceRequestDto.isNewBillAccount" name = 'isBillAccount' style="margin-top: 5px;"></mat-checkbox>
       </div>
     </div>
 
-    <div class="form-group row ">
+    <div class="form-group row item-checkbox">
       <label class="col-md-3 col-form-label" for="isRequiredPlanResource">
         Required Resource
       </label>
-      <div class="col-md-9 d-flex align-items-center">
+      <div class="col-md-9 d-flex align-items-center checkbox">
         <mat-checkbox [(ngModel)]="resourceRequestDto.isRequiredPlanResource" name = 'isRequiredPlanResource' style="margin-top: 5px;"></mat-checkbox>
       </div>
     </div>
 
   </div>
+  </mat-dialog-content>
   <div align="end" class="row justify-content-end">
     <button class="btn btn-secondary btn-action mr-2" mat-dialog-close>
       Cancel

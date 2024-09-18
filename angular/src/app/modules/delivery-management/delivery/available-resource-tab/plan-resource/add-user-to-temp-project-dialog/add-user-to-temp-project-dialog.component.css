@@ -1,0 +1,22 @@
+@media screen and (min-width: 601px) {
+    .dropdown-select-project {
+        width: 250px;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    :host ::ng-deep .form-horizontal {
+        .modal-header {
+            padding: 0;
+            align-items: baseline;
+        }
+    }
+
+    .mat-form-field-prj {
+        width: 100%;
+    }
+
+    .modal-body {
+        padding: 10px;
+    }
+}

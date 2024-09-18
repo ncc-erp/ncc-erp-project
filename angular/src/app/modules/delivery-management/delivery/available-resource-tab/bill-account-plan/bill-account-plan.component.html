@@ -3,9 +3,9 @@
     <div class="">
       <div class="">
         <div class="input-group" style="display: block">
-          <div style="width: 100%; margin-bottom: -30px" class="row">
+          <div style="width: 100%; margin-bottom: -30px" class="row list-form-filter">
             <div
-              class="col-12 col-md-4 mt-1 d-flex align-items-center mb-3 ml-2"
+              class="col-12 col-md-4 mt-1 d-flex align-items-center mb-3 ml-2 field-search"
             >
               <div class="input-group">
                 <input
@@ -355,13 +355,14 @@
         class="bg-light border-top pt-2"
       >
         <div class="row">
-          <div class="col-sm-4 col-12 text-sm-left text-center">
+          <div class="col-sm-4 col-12 text-sm-left text-center list-number-items">
             <button class="btn btn-secondary mb-2" (click)="refresh()">
               <i class="fas fa-redo-alt"></i>
             </button>
-            <mat-form-field style="width: 20%; margin-left: 30px">
+            <mat-form-field style="width: 20%; margin-left: 30px" class="form-number-items">
               <mat-label>Number items</mat-label>
               <mat-select
+                panelClass="options-number-item"
                 [(ngModel)]="pageSizeType"
                 (ngModelChange)="changePageSize()"
               >
@@ -375,12 +376,12 @@
               </mat-select>
             </mat-form-field>
           </div>
-          <div class="col-sm-4 col-12 text-center">
+          <div class="col-sm-4 col-12 text-center total">
             <p class="mb-0 my-2">
               {{ "TotalRecordsCount" | localize : totalItems }}
             </p>
           </div>
-          <div class="col-sm-4 col-12">
+          <div class="col-sm-4 col-12 pagination">
             <div class="float-sm-right m-auto">
               <abp-pagination-controls
                 id="server"

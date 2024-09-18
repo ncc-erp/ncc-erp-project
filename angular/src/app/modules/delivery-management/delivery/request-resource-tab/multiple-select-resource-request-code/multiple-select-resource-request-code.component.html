@@ -4,18 +4,18 @@
     (openedChange)="handleOpenedChange($event)" [disabled]="disabled" [compareWith]="compareObject">
     <div class="action-select-all-delete">
       <div class="d-flex">
-        <button class="btn btn-primary mr-10" (click)="handleSelectAll()">
+        <button class="btn btn-primary mr-10 btn-action" (click)="handleSelectAll()">
           Select all
         </button>
-        <button class="btn btn-default" (click)="handleClear()">
+        <button class="btn btn-default btn-action btn-clear" (click)="handleClear()">
           Clear
         </button>
       </div>
       <div class="d-flex">
-        <button class="btn btn-default mr-10" (click)="onCancelSelect()">
+        <button class="btn btn-default mr-10 btn-action" (click)="onCancelSelect()">
           Cancel
         </button>
-        <button class="btn btn-primary" (click)="onOkSelect()">
+        <button class="btn btn-primary btn-action" (click)="onOkSelect()">
           Ok
         </button>
       </div>

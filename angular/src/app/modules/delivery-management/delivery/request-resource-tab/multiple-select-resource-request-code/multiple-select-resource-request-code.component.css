@@ -72,3 +72,25 @@
     min-width: 400px !important;
     max-height: 60vh !important; 
 } 
+
+@media screen and (max-width: 600px) {
+    ::ng-deep .custom-panel {
+        min-width: 100% !important;
+    } 
+
+    .btn-action {
+        font-size: 13px;
+        white-space: nowrap;
+        padding: 6px 12px;
+        width: fit-content;
+    }
+
+    .btn-clear {
+        margin-right: 10px;
+    }
+
+    .mat-option .mat-option-text .data-name {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}

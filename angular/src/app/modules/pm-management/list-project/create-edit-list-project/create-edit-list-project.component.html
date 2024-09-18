@@ -1,4 +1,4 @@
-<form class="form-horizontal" autocomplete="off" #bankForm="ngForm">
+<form class="form-horizontal" autocomplete="off" #bankForm="ngForm" class="create-edit-list-project">
     <abp-modal-header [title]="data.command =='create' ?'Create new project':'Edit project: '+title" (onCloseClick)="dialogRef.close()">
     </abp-modal-header>
     <div class="modal-body" style="max-height: 80vh; overflow-y: auto;">
@@ -119,7 +119,7 @@
             </div>
         </div>
         <div class="form-group row">
-            <label class="col-md-3 col-form-label" for="ischarge"></label>
+            <label class="col-md-3 col-form-label label-is-charge" for="ischarge"></label>
             <div class="col-md-9 pt-2">
                 <mat-checkbox name="{{data.command == 'create'?'ipt-ischarge':'ipt-ischarge-edit'}}" [(ngModel)]="project.isCharge" (change)="checkValue($event)" name="ischarge">
                     is Charged
@@ -130,8 +130,8 @@
             </div>
         </div>
         <div *ngIf="data.command =='create' || permission.isGranted(Projects_OutsourcingProjects_ViewRequireWeeklyReport)" class="form-group row">
-            <label class="col-md-3 col-form-label" for="isRequiredWeeklyReport"></label>
-            <div class="col-md-9 pt-2">
+            <label class="col-md-3 col-form-label label-weekly-report" for="isRequiredWeeklyReport"></label>
+            <div class="col-md-9 col-sm-12 pt-2 checkbox-weekly-report">
                 <mat-checkbox name="{{data.command == 'create'?'ipt-isRequiredWeeklyReport':'ipt-isRequiredWeeklyReport-edit'}}" [(ngModel)]="project.isRequiredWeeklyReport" name="isRequiredWeeklyReport">
                     is Require Weekly Report
                     <span class="ml-2"
@@ -189,7 +189,7 @@
 
         <div class="form-group row">
             <label for="require-timesheet" class="col-md-3 col-form-label">Require File:</label>
-            <div class="col-md-9 pt-2">
+            <div class="col-md-9 col-sm-12 pt-2 checkbox-file">
                 <mat-checkbox name="{{data.command == 'create'?'ipt-requireFile':'ipt-requireFile-edit'}}" [(ngModel)]="project.requireTimesheetFile" name="requireFile">Require Upload Timesheet File</mat-checkbox>
             </div>
         </div>

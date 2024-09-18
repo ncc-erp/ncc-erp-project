@@ -670,8 +670,7 @@ export class WeeklyReportComponent extends PagedListingComponentBase<WeeklyRepor
             }
         }
         const dialogRef = this.dialog.open(AddRiskDialogComponent, {
-
-            width: "60%",
+            panelClass: 'add-risk-dialog',
             data: data
 
         });
@@ -699,8 +698,7 @@ export class WeeklyReportComponent extends PagedListingComponentBase<WeeklyRepor
             }
         }
         const dialogRef = this.dialog.open(AddEditIssuseComponent, {
-
-            width: "60%",
+            panelClass: 'add-edit-issue-dialog',
             data: data
 
         });
@@ -1661,11 +1659,11 @@ export class WeeklyReportComponent extends PagedListingComponentBase<WeeklyRepor
 
     addPlanResource() {
         let ref = this.dialog.open(AddFutureResourceDialogComponent, {
-            width: "700px",
             data: {
                 projectId: this.projectId,
                 projectName: this.projectInfo.projectName
-            }
+            },
+            panelClass: 'future-resource-dialog'
         })
         ref.afterClosed().subscribe(rs => {
             if (rs) {
@@ -1687,11 +1685,11 @@ export class WeeklyReportComponent extends PagedListingComponentBase<WeeklyRepor
             disabled: true
         }
         let ref = this.dialog.open(AddFutureResourceDialogComponent, {
-            width: "700px",
             data: {
                 command: "edit",
                 item: item
-            }
+            },
+            panelClass: 'future-resource-dialog'
         })
         ref.afterClosed().subscribe(rs => {
             if (rs) {
@@ -1708,7 +1706,7 @@ export class WeeklyReportComponent extends PagedListingComponentBase<WeeklyRepor
                     criteriaName: ProjectCriteria.criteriaName,
                     isActive: ProjectCriteria.isActive
                 },
-                width: "60%"
+                panelClass: 'weekly-report-dialog'
             });
 
             show.afterClosed().subscribe((res) => {
@@ -1747,7 +1745,7 @@ export class WeeklyReportComponent extends PagedListingComponentBase<WeeklyRepor
                         guidelineContent,
                         item: guideLine
                     },
-                    width: "60%"
+                    panelClass: 'weekly-report-dialog'
                 });
 
                 show.afterClosed().subscribe((updatedGuideline) => { });
@@ -1759,7 +1757,7 @@ export class WeeklyReportComponent extends PagedListingComponentBase<WeeklyRepor
                         guidelineContent: "",  // Provide an empty string as guideline
                         item: guideLine
                     },
-                    width: "60%"
+                    panelClass: 'weekly-report-dialog'
                 });
 
 

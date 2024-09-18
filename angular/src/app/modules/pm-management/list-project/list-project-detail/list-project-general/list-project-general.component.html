@@ -40,8 +40,11 @@
                                     PM:
                                 </label>
                                 <div *ngIf="readMode" class="col-md-7">
-                                    <div class="form-control text-read m-special">{{project.pmFullName}} -
-                                        ({{project.pmEmailAddress}})</div>
+                                    <div class="form-control text-read m-special">
+                                        <span>
+                                            {{project.pmFullName}} - ({{project.pmEmailAddress}})
+                                        </span>
+                                    </div>
                                 </div>
                                 <div *ngIf="!readMode" class="col-md-7">
                                     <mat-form-field class="w-100" appearance="outline">
@@ -66,11 +69,11 @@
                                     </mat-error>
                                 </div>
                             </div>
-                            <div class="straight form-group required row detail">
-                                <label class="col-md-3 col-form-label m-special" for="requestName">
+                            <div class="straight form-group required row detail row-badge">
+                                <label class="col-md-3 col-form-label m-special label-badge" for="requestName">
                                     Project Type:
                                 </label>
-                                <div *ngIf="readMode" class="col-md-7">
+                                <div *ngIf="readMode" class="col-md-7 content-badge">
                                     <div class="text-read m-special">
                                         <span
                                             [ngClass]="APP_CONST.ProjectTypeStyle[getByEnum(project.projectType , APP_ENUM.ProjectType)]">
@@ -95,15 +98,15 @@
                                     </mat-error>
                                 </div>
                             </div>
-                            <div class="straight form-group required row detail">
-                                <label class="col-md-3 col-form-label m-special" for="requestName">
+                            <div class="straight form-group required row detail row-badge">
+                                <label class="col-md-3 col-form-label m-special label-badge" for="requestName">
                                     Project Status:
                                 </label>
-                                <div *ngIf="readMode" class="col-md-7">
+                                <div *ngIf="readMode" class="col-md-7 content-badge">
                                     <div class="text-read m-special">
-                                        <p
+                                        <span
                                             [ngClass]="APP_CONST.statusStyle[getByEnum(project.status, APP_ENUM.ProjectStatus)]">
-                                            {{getByEnum(project.status, APP_ENUM.ProjectStatus)}}</p>
+                                            {{getByEnum(project.status, APP_ENUM.ProjectStatus)}}</span>
                                     </div>
                                 </div>
                                 <div *ngIf="!readMode" class="col-md-7">
@@ -171,25 +174,29 @@
                                     </mat-form-field>
                                 </div>
                             </div>
-                            <div class="straight form-group row detail" *ngIf="isShowCurrencyCharge">
-                                <label class="col-md-3 col-form-label" for="requestName">Charge:</label>
+                            <div class="straight form-group row detail row-checkbox" *ngIf="isShowCurrencyCharge">
+                                <label class="col-md-3 col-form-label label-checkbox" for="requestName">Charge:</label>
 
-                                <div class="col-md-5">
+                                <div class="col-md-5 content-checkbox">
                                     <mat-checkbox [disabled]="readMode" [(ngModel)]="project.isCharge"
                                         (change)="checkValue($event)" name="ischarge" class="mt-1">is Charged
                                     </mat-checkbox>
-                                    <span><i class="fas fa-question-circle showText ml-1 mb-1"></i></span>
+                                    <span matTooltip="Charge vào timesheet tháng này!">
+                                    <i class="fas fa-question-circle showText ml-1 mb-1 icon-show-tooltip"></i>
+                                    </span>
                                 </div>
                             </div>
 
-                            <div class="straight form-group row detail" >
-                                <label class="col-md-3 col-form-label" for="requestName">Weekly report:</label>
+                            <div class="straight form-group row detail row-checkbox" >
+                                <label class="col-md-3 col-form-label label-checkbox" for="requestName">Weekly report:</label>
 
-                                <div class="col-md-5">
+                                <div class="col-md-5 content-checkbox">
                                     <mat-checkbox [disabled]="readMode" [(ngModel)]="project.isRequiredWeeklyReport"
                                         name="isRequiredWeeklyReport" class="mt-1">is Required
                                     </mat-checkbox>
-                                    <span><i class="fas fa-question-circle showTextWR ml-1 mb-1"></i></span>
+                                    <span matTooltip="Require weekly report!">
+                                        <i class="fas fa-question-circle showTextWR ml-1 mb-1 icon-show-tooltip"></i>
+                                    </span>
                                 </div>
                             </div>
 

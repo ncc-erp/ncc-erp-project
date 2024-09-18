@@ -1,11 +1,11 @@
-<form action="" autocomplete="off" (submit)="SaveAndClose()">
+<form action="" autocomplete="off" (submit)="SaveAndClose()" class="form-edit-note">
   <abp-modal-header
     [title]="'Edit bill account note' | localize"
     (onCloseClick)="dialogRef.close()"
   ></abp-modal-header>
   <div class="modal-body">
     <label for="">Note:</label>
-    <mat-form-field appearance="outline" class="w-100">
+    <mat-form-field appearance="outline" class="w-100 text-area-note">
       <textarea
         matInput
         name="note"

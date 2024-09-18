@@ -2,11 +2,11 @@
     <div class="container-fluid">
         <div class="my-2">
             <mat-expansion-panel [expanded]="!isShowUserBill">
-                <mat-expansion-panel-header name="pannel-userBill" class="mt-2 mb-2"
+                <mat-expansion-panel-header name="pannel-userBill" class="mt-2 mb-2 pannel-header-bill" [ngClass]="{'pannel-header-bill-expand': !isShowUserBill}"
                     (click)="isShowUserBill=!isShowUserBill">
                     <strong class="d-inline table-title">Bill accounts ({{ filteredUserBillList.length }}):</strong>
 
-                    <div class="col-lg-2" (click)="$event.stopPropagation()" style="padding-left: 10%;">
+                    <div class="col-lg-2 list-charge-status" (click)="$event.stopPropagation()" [hidden]="isShowUserBill">
                         <div class="input-group">
                             <mat-form-field appearance="outline">
                                 <mat-label>Charge Status</mat-label>
@@ -83,10 +83,10 @@
                             </tbody>
                         </table>
                 </div>
-                <div class="card-footer bg-light border-top" style="height: 50px;">
+                <div class="card-footer bg-light border-top">
                     <div class="row" style="justify-content: space-between;">
-                        <div class="col-5 text-sm-left text-center">
-                            <mat-form-field style="width: 20%;margin-left: 30px;">
+                        <div class="col-md-5 text-sm-left text-center number-items">
+                            <mat-form-field class="form-number-items">
                                 <mat-label>Number items</mat-label>
                                 <mat-select [(ngModel)]="maxBillUserCurrentPage" (ngModelChange)="changePageSizeBill()">
                                     <mat-option [value]="5">
@@ -107,12 +107,12 @@
                                 </mat-select>
                             </mat-form-field>
                         </div>
-                        <div class="col-2 text-center">
+                        <div class="col-md-2 text-center total">
                             <p class="mb-0 my-2">
                                 Total: {{ filteredUserBillList.length }}
                             </p>
                         </div>
-                        <div class="col-5">
+                        <div class="col-md-5 pagination">
                             <pagination-controls autoHide="true" id="billUserInfo"
                                 (pageChange)="userBillCurrentPage = $event">
                             </pagination-controls>
@@ -122,11 +122,13 @@
             </mat-expansion-panel>
 
             <mat-expansion-panel [expanded]="isShowProjectUser" style="margin-top: 30px;">
-            <mat-expansion-panel-header name="panel-current" class="mt-2 mb-2" (click)="isShowProjectUser = !isShowProjectUser">
+            <mat-expansion-panel-header name="panel-current" class="mt-2 mb-2 pannel-header-resource" [ngClass]="{'pannel-header-resource-expand': isShowProjectUser}"
+                
+                (click)="isShowProjectUser = !isShowProjectUser">
                 <div class="col-md-6">
                     <strong class="table-title">Current resource ({{projectUserList.length}}):</strong>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-6" class="checkbox-history">
                 <div class="col-md-6" *ngIf="isShowProjectUser">
                     <section class="example-section">
                         <mat-checkbox name="cbx-history" class="example-margin" [checked]="viewHistory"
@@ -269,10 +271,10 @@
                     </table>
                 </div>
             </div>
-            <div class="card-footer bg-light border-top" style="height: 50px;">
+            <div class="card-footer bg-light border-top">
                 <div class="row" style="justify-content: space-between;">
-                    <div class="col-5 text-sm-left text-center">
-                        <mat-form-field style="width: 20%;margin-left: 30px;">
+                    <div class="col-md-5 text-sm-left text-center number-items">
+                        <mat-form-field class="form-number-items">
                             <mat-label>Number items</mat-label>
                             <mat-select [(ngModel)]="maxUserCurrentPage" (ngModelChange)="changePageSizeCurrent()">
                                 <mat-option [value]="5">
@@ -293,12 +295,12 @@
                             </mat-select>
                         </mat-form-field>
                     </div>
-                    <div class="col-2 text-center">
+                    <div class="col-md-2 text-center total">
                         <p class="mb-0 my-2">
                             Total: {{ projectUserList.length }}
                         </p>
                     </div>
-                    <div class="col-5">
+                    <div class="col-md-5 pagination">
                         <pagination-controls autoHide="true" id="projectUser"
                             (pageChange)="userListCurrentPage = $event">
                         </pagination-controls>

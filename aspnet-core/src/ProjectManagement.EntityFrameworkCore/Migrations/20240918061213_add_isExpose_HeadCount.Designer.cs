@@ -10,8 +10,8 @@ using ProjectManagement.EntityFrameworkCore;
 namespace ProjectManagement.Migrations
 {
     [DbContext(typeof(ProjectManagementDbContext))]
-    [Migration("20240911061045_add_headCount")]
-    partial class add_headCount
+    [Migration("20240918061213_add_isExpose_HeadCount")]
+    partial class add_isExpose_HeadCount
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

@@ -2,7 +2,7 @@
 
 namespace ProjectManagement.Migrations
 {
-    public partial class add_headCount : Migration
+    public partial class add_isExpose_HeadCount : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -11,12 +11,22 @@ namespace ProjectManagement.Migrations
                 table: "ProjectUserBills",
                 nullable: false,
                 defaultValue: 1f);
+
+            migrationBuilder.AddColumn<bool>(
+                name: "isExpose",
+                table: "ProjectUserBills",
+                nullable: false,
+                defaultValue: false);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
                 name: "HeadCount",
+                table: "ProjectUserBills");
+
+            migrationBuilder.DropColumn(
+                name: "isExpose",
                 table: "ProjectUserBills");
         }
     }

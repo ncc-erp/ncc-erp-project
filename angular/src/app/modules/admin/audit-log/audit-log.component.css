@@ -67,6 +67,10 @@ tr {
     inset 0 -0.4px 0 rgba(204, 204, 204, 0.35);
 }
 
+.card-footer-wrapper {
+  text-align: center;
+}
+
 @media screen and (max-width: 600px) {
   .min-w-100 {
     min-width: 100px;
@@ -80,5 +84,10 @@ tr {
   .search-wrapper {
     flex-direction: column;
     gap: 12px;
+  }
+  .card-footer-wrapper {
+    text-align: unset;
+    flex: 1 1;
+    width: calc(100% - 70px);
   }
 }

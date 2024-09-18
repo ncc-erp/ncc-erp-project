@@ -27,6 +27,10 @@
     inset 0 -0.4px 0 rgba(204, 204, 204, 0.35);
 }
 
+.card-footer-wrapper {
+  text-align: center;
+}
+
 @media screen and (max-width: 600px) {
   .min-w-200 {
     min-width: 200px;
@@ -47,4 +51,10 @@
   .card-body {
     padding-bottom: 0;
   }
+  .card-footer-wrapper {
+    text-align: unset;
+    flex: 1 1;
+    width: calc(100% - 70px);
+  }
+
 }

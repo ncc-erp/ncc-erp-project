@@ -1,3 +1,4 @@
+import { result } from 'lodash-es';
 import { Component, Inject, inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Route, Router } from '@angular/router';
@@ -44,8 +45,8 @@ export class ImportFileResourceComponent implements OnInit {
       .pipe(catchError(this.resourceService.handleError))
       .subscribe((res) => {
         if (!!res.body) {
-          abp.notify.success("Upload file successfully!");
-          this.dialogRef.close(this.uploadFile.resourceRequestId);
+            abp.notify.success("Upload file successfully!");
+          this.dialogRef.close(res.body.result);
         }
       });
   }

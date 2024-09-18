@@ -10,6 +10,28 @@
     }
 }
 
+.fixed-width-field {
+    max-width: 150px;
+}
+  .fixed-width-field .mat-form-field-infix {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  .fixed-width-field1 {
+    max-width: 160px;
+}
+  .fixed-width-field1 .mat-form-field-infix {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  .fixed-width-field2 {
+    max-width: 180px;
+}
+  .fixed-width-field02 .mat-form-field-infix {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
 table td {
     vertical-align: top;
 }
@@ -35,8 +57,7 @@ table td {
 }
 .tl-link {
     color: #1769aa;
-    display: inline-block;
-    font-weight: 600;
+    font-weight: 500;
   }
 .tl-link:hover{
     text-decoration: underline;

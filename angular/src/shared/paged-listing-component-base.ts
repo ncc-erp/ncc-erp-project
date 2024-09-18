@@ -1,6 +1,7 @@
 import { AppComponentBase } from 'shared/app-component-base';
 import { Component, Injector, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 
 export class PagedResultDto {
     items: any[];
@@ -26,6 +27,14 @@ export class PagedRequestDto {
     sort: string;
     sortDirection: number;
     isTraining: boolean;
+}
+export class ApiResponse<T>{
+    result?: T;
+    targetUrl?: string;
+    success: boolean;
+    error: HttpErrorResponse;
+    unAuthorizedRequest?: boolean;
+    loading: boolean;
 }
 export class PagedResultResultDto {
     result: PagedResultDto;

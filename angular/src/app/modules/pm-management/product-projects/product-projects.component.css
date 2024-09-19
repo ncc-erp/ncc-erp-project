@@ -138,3 +138,10 @@ tr, th, td{
 .product-project .sort-icon-wrap i.active {
   opacity: 1;
 }
+
+@media only screen and (max-width: 600px) {
+  .date-time {
+    min-width: 110px;
+  }
+}
+

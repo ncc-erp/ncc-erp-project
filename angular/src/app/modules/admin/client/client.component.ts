@@ -75,7 +75,7 @@ export class ClientComponent extends PagedListingComponentBase<ClientComponent> 
       },
       width: "700px",
       maxHeight: '80vh',
-      panelClass: 'my-dialog',
+      panelClass: 'create-update-client',
     })
     show.afterClosed().subscribe((res) => {
       if (res) {

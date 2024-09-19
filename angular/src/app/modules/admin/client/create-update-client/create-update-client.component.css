@@ -8,7 +8,7 @@
 }
 
 @media (max-width: 600px) {
-  ::ng-deep.my-dialog .mat-dialog-container {
+  ::ng-deep.create-update-client .mat-dialog-container {
       overflow: hidden;
   }
 

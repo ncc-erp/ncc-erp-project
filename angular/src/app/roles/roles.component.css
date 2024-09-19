@@ -16,6 +16,9 @@
       box-shadow: inset 0 0.4px 0 rgba(204, 204, 204, 0.35),
                   inset 0 -0.4px 0 rgba(204, 204, 204, 0.35);
   }
+  .card-footer-wrapper {
+    text-align: center;
+  }
 
   @media only screen and (max-width: 768px){
     .pagination-role {
@@ -25,4 +28,9 @@
     .actions {
         min-width: 200px;
     }
+    .card-footer-wrapper {
+        text-align: unset;
+        flex: 1 1;
+        width: calc(100% - 70px);
+      }
 }

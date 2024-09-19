@@ -26,11 +26,19 @@
 .add-filter {
   margin-left: 1rem;
 }
+.card-footer-wrapper {
+  text-align: center;
+}
 @media (max-width: 600px) {
   .actions {
     min-width: 200px;
   }
   .add-filter {
     margin-left: 5px;
+  }
+  .card-footer-wrapper {
+    text-align: unset;
+    flex: 1 1;
+    width: calc(100% - 70px);
   }
 }

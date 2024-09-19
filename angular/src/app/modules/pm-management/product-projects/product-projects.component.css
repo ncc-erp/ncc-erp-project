@@ -139,9 +139,19 @@ tr, th, td{
   opacity: 1;
 }
 
+.card-footer-wrapper {
+  text-align: center;
+}
+
 @media only screen and (max-width: 600px) {
   .date-time {
     min-width: 110px;
+  }
+
+  .card-footer-wrapper {
+    text-align: unset;
+    flex: 1 1;
+    width: calc(100% - 70px);
   }
 }
 

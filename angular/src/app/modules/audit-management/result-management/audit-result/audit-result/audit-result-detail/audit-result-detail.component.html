@@ -1,7 +1,7 @@
 <div class="wrapper" *ngIf="permission.isGranted(Audits_Results_Detail)" style="min-height: 94vh; margin-bottom: 0;padding-bottom: 0;">
   <section style="position: sticky; top: 0; z-index: 2;">
     <div class="row">
-      <div class="col-10 d-flex">
+      <div class="col-10 d-flex title-audit-detail">
         <h4>Quality Audit Result Project: &nbsp;</h4>
         <div style="color: #014C6E;">
           <h4> {{auditDate}} ({{pmName}})</h4>
@@ -50,7 +50,7 @@
           </div>
 
 
-          <div class="col text-right">
+          <div class="col text-right total-score">
             <span style="color: #014C6E;font-size: 21px;"  class="mr-2">Total Score:<strong  style="font-size: 21px;">  {{totalScore}}</strong></span>
             <span class="px-3" style="font-size:21px; font-weight: 500;"  [ngClass]="APP_CONST.auditStatus[statusFinal]">
               {{auditStatusList[statusFinal-1]}}</span>
@@ -78,7 +78,7 @@
     </table>
 
 
-      <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="example-tree px-2 pb-2" style="max-height: 75vh;overflow: overlay;" >
+      <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="example-tree px-2 pb-2 mat-tree-audit" style="max-height: 75vh;overflow: overlay;" >
         <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle>
           <li style="background-color: rgb(239, 239, 239);" class="mat-tree-node">
             <button mat-icon-button disabled></button>
@@ -87,7 +87,7 @@
               class="name-criteria">
               <div class="d-flex hyperlink"  (click)="viewPPCRnode(node.item, 'viewFromName')"  style="font-size: 16px;color: black; ">
                 <span class="d-flex align-items-center" style="min-width: 20px;">{{ node.item.processCriteria.code }} </span>
-                <div style="margin-left: 19px; word-break: break-word; padding-right: 45px;">  {{ node.item.processCriteria.name  }}
+                <div style="margin-left: 19px; word-break: break-word; padding-right: 45px;" class="name-hyperlink">  {{ node.item.processCriteria.name  }}
                 </div>
 
                   <!-- <span>
@@ -213,7 +213,7 @@
                 </div>
               </div>
             </div>
-            <ul [class.example-tree-invisible]="!treeControl.isExpanded(node)">
+            <ul [class.example-tree-invisible]="!treeControl.isExpanded(node)" class="ul-mat-tree">
               <ng-container matTreeNodeOutlet></ng-container>
             </ul>
           </li>

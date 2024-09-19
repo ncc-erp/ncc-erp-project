@@ -1,0 +1,6 @@
+@media screen and (max-width: 600px) {
+    .form-group {
+        max-height: 55vh;
+        overflow: auto;
+    }
+}

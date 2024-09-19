@@ -195,7 +195,7 @@
                                             </app-filter>
                                         </div>
                                         <i style="padding: 0;" class="fas
-                                            fa-plus-circle ml-3 btn-add-filter" [ngClass]="{'no-value-filter': !filterItems?.length}" (click)="addFilter()"></i>
+                                            fa-plus-circle ml-3 icon-add-filter" (click)="addFilter()"></i>
                                     </div>
                                 </div>
                             </div>
@@ -477,14 +477,14 @@
                 </div>
             </div>
             <div class="bg-light border-top pt-2">
-                <div class="row">
-                    <div class="col-sm-4 col-12 text-sm-left text-center paging">
+                <div class="row container-pagination">
+                    <div class="col-sm-4 col-12 text-sm-left text-center number-items-pagination">
                         <button class="btn btn-secondary mb-2" (click)="refresh()">
                             <i class="fas fa-redo-alt"></i>
                         </button>
-                        <mat-form-field style="width: 20%;margin-left: 30px;">
+                        <mat-form-field style="width: 20%;margin-left: 30px;" class="form-number-item">
                             <mat-label>Number items</mat-label>
-                            <mat-select [(ngModel)]="pageSizeType" (ngModelChange)="changePageSize()">
+                            <mat-select panelClass="options-number-item" [(ngModel)]="pageSizeType" (ngModelChange)="changePageSize()">
                                 <mat-option [value]="5">
                                     5
                                 </mat-option>
@@ -503,12 +503,12 @@
                             </mat-select>
                         </mat-form-field>
                     </div>
-                    <div class="col-sm-4 col-12 text-center total-record">
+                    <div class="col-sm-4 col-12 text-center total-pagination">
                         <p class="mb-0 my-2">
                             {{ "TotalRecordsCount" | localize: totalItems }}
                         </p>
                     </div>
-                    <div class="col-sm-4 col-12 list-pagination">
+                    <div class="col-sm-4 col-12 pagination-control">
                         <div class="float-sm-right m-auto">
                             <abp-pagination-controls id="server" (pageChange)="getDataPage($event)">
                             </abp-pagination-controls>

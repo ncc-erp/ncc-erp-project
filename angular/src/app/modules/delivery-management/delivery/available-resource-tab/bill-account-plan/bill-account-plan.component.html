@@ -354,8 +354,8 @@
         style="padding-top: 20px !important"
         class="bg-light border-top pt-2"
       >
-        <div class="row">
-          <div class="col-sm-4 col-12 text-sm-left text-center list-number-items">
+        <div class="row container-pagination">
+          <div class="col-sm-4 col-12 text-sm-left text-center number-items-pagination">
             <button class="btn btn-secondary mb-2" (click)="refresh()">
               <i class="fas fa-redo-alt"></i>
             </button>
@@ -376,12 +376,12 @@
               </mat-select>
             </mat-form-field>
           </div>
-          <div class="col-sm-4 col-12 text-center total">
+          <div class="col-sm-4 col-12 text-center total-pagination">
             <p class="mb-0 my-2">
               {{ "TotalRecordsCount" | localize : totalItems }}
             </p>
           </div>
-          <div class="col-sm-4 col-12 pagination">
+          <div class="col-sm-4 col-12 pagination-control">
             <div class="float-sm-right m-auto">
               <abp-pagination-controls
                 id="server"

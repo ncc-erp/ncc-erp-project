@@ -33,3 +33,18 @@ host:label {
   display: inline-block;
   margin-bottom: .5rem;
 }
+
+@media screen and (max-width: 600px) {
+  .modal-body {
+    max-height: 55vh;
+    overflow: auto;
+  }
+
+  .mat-dialog-actions {
+    justify-content: flex-end;
+  }
+
+  .mat-form-field-project {
+    margin-top: 15px;
+  }
+}

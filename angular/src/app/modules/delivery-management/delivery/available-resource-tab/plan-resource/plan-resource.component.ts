@@ -420,6 +420,7 @@ export class PlanResourceComponent
 
   updateNote(user: availableResourceDto) {
     const addOrEditNoteDialog = this.dialog.open(AddNoteDialogComponent, {
+      width: "40%",
       panelClass: 'add-edit-note-dialog',
       data: {
         userId: user.userId,

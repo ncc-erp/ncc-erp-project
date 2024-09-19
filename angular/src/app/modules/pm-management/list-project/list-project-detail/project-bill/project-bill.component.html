@@ -509,11 +509,11 @@
 
                 </div>
                 <div class="card-footer bg-light border-top" style="height: 60px;">
-                    <div class="row" style="justify-content: space-between;">
-                        <div class="col-md-5 text-sm-left text-center">
+                    <div class="row container-pagination" style="justify-content: space-between;">
+                        <div class="col-md-5 text-sm-left text-center number-items-pagination">
                             <mat-form-field class="dropdown-list-pagination">
                                 <mat-label>Number items</mat-label>
-                                <mat-select [(ngModel)]="maxBillUserCurrentPage" (ngModelChange)="changePageSizeCurrent()">
+                                <mat-select panelClass="options-number-item" [(ngModel)]="maxBillUserCurrentPage" (ngModelChange)="changePageSizeCurrent()">
                                     <mat-option [value]="5">
                                         5
                                     </mat-option>
@@ -538,12 +538,12 @@
                                 </mat-select>
                             </mat-form-field>
                         </div>
-                        <div class="col-md-2 text-center">
+                        <div class="col-md-2 text-center total-pagination">
                             <p class="mb-0 my-2">
                                 Total: {{ filteredUserBillList.length }}
                             </p>
                         </div>
-                        <div class="col-md-5">
+                        <div class="col-md-5 pagination-control">
                             <pagination-controls autoHide="true" id="billUserInfo"
                                 (pageChange)="userBillCurrentPage = $event">
                             </pagination-controls>

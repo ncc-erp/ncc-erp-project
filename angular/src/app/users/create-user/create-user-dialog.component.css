@@ -1,9 +1,8 @@
-.form-control:disabled{
-    background-color: white !important;
-    border: 1px solid #ebebeb;
-    color: #c1c1c1;
-}
 
+.modal-body {
+    max-height: 80vh;
+    overflow-y: auto; 
+}
 
 @media screen and (max-width: 600px) {
     :host ::ng-deep .form-horizontal .modal-header {
@@ -13,6 +12,5 @@
 
     .modal-body {
         max-height: 55vh;
-        overflow: auto;
     }
 }

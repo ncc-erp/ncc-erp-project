@@ -119,21 +119,8 @@ span {
   }
 
   .form-number-items {
-    width: 36%;
+    width: 48%;
     margin-left: 0;
-  }
-
-  .number-items {
-    order: 2;
-    padding-top: 10px;
-  }
-
-  .pagination {
-    order: 1;
-  }
-
-  .total {
-    order: 3;
   }
 
   .content {

@@ -47,6 +47,10 @@ table td {
     cursor: pointer;
 }
 
+.card-footer-wrapper {
+    text-align: center;
+}
+
 
 @media only screen and (max-width: 1200px){
    .first-col {
@@ -70,9 +74,10 @@ table td {
     .pd-0 {
         padding-right: 0;
     }
- }
- @media (max-width: 600px) {
-    ::ng-deep.my-dialog .mat-dialog-container {
-      overflow: hidden !important;
+
+    .card-footer-wrapper {
+        text-align: unset;
+        flex: 1 1;
+        width: calc(100% - 70px);
     }
-}
+ }

@@ -138,7 +138,7 @@
                                 }; let i = index" style="position: relative;" >
                                 <td class="text-center"> {{ i + 1 + pageSize * (pageNumber - 1) }} </td>
 
-                                <td style="width: 200px;white-space: normal;word-break: break-word;">
+                                <td style="width: 200px;white-space: normal;word-break: break-word; min-width: 130px">
                                     <div class="project-name-wrap">
                                         <!-- <span class="hyperlink"
                                             (click)="showDetail(project.id)">{{ project.name }}
@@ -184,7 +184,7 @@
                                     </mat-checkbox>
                                 </td>
 
-                                <td class="text-center" >
+                                <td class="text-center date-time" >
                                     <div class="time-wrap">
                                         <span class="time-item start-time">{{ project.startTime | date:"dd-MM-yyyy" }}</span>
                                         <span class="time-item end-time">{{ project.endTime | date:"dd-MM-yyyy" }}</span>
@@ -243,11 +243,11 @@
             </div>
             <div class="card-footer bg-light border-top">
                 <div class="row">
-                    <div class="col-sm-4 col-12 text-sm-left text-center">
+                    <div class="col-sm-4 col-12 text-sm-left card-footer-wrapper">
                         <!-- <button class="btn btn-secondary mb-2" (click)="refresh()">
                             <i class="fas fa-redo-alt"></i>
                         </button> -->
-                        <mat-form-field style="width: 20%;margin-left: 30px;" class="mb-number-items">
+                        <mat-form-field style="max-width: 100px;margin-left: 30px;" class="mb-number-items">
                             <mat-label>Number items</mat-label>
                             <mat-select [(ngModel)]="pageSizeType" (ngModelChange)="changePageSize()">
                                 <mat-option [value]="5">
@@ -268,7 +268,7 @@
                             </mat-select>
                         </mat-form-field>
                     </div>
-                    <div class="col-sm-4 col-12 text-center">
+                    <div class="">
                         <p class="mb-0 my-2">
                             {{ "TotalRecordsCount" | localize: totalItems }}
                         </p>

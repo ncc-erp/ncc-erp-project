@@ -81,6 +81,14 @@ span {
   .displayName {
     white-space: normal;
   }
+  .product-resource-skill {
+    white-space: normal; 
+    max-width: 200px;
+  }
+
+  .card-footer-wrapper {
+    text-align: center;
+  }
 
    /* ::ng-deep .dateTime.mat-form-field-infix { bottom: 5px;} */
    @media only screen and (max-width: 768px){
@@ -100,6 +108,14 @@ span {
     .request-table {
       width: 1200px;
     }
+    .product-resource-skill {
+      white-space: nowrap; 
+    }
+    .card-footer-wrapper {
+      text-align: unset;
+      flex: 1 1;
+      width: calc(100% - 70px);
+    }
   }
 
   @media only screen and (max-width: 576px){
@@ -114,11 +130,6 @@ span {
     }
     .footer {
       margin-top: 10px;
-      flex-direction: column;
-      align-items: center;
-    }
-    .number-item {
-      text-align: center;
     }
   }
 

@@ -27,4 +27,8 @@
         width: 180px;
         margin-top: 7px !important;
     }
+
+    .container-user-info {
+        width: 240px !important;
+    }
 }

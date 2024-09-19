@@ -163,5 +163,17 @@ span {
   .form-control {
     max-height: 50vh;
   }
+
+  .time-status {
+    white-space: nowrap;
+  }
+
+  .form-start-date {
+    width: 170px !important;
+  }
+
+  :host ::ng-deep .form-start-date .mat-form-field-suffix {
+    top: 6px;
+  }
 }
 

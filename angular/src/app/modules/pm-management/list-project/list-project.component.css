@@ -108,7 +108,7 @@ button{
   }
 
   .icon-add-filter {
-    margin-left: 6px !important;
+    margin-left: 10px !important;
   }
 
   .card-header {
@@ -131,6 +131,8 @@ button{
 
   .row-checkbox {
     padding: 0 17px;
+    column-gap: 15px;
+    justify-content: flex-start !important;
   }
 
   .show-list-filter {
@@ -167,8 +169,18 @@ button{
     min-width: 200px;
   }
 
-  .title-project {
+  .title-project, .code-project {
     gap: 10px;
+  }
+
+  .title-project a, .code-project span:first-child {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .column-project {
+    max-width: 300px;
   }
 
   ::ng-deep .cdk-overlay-container .cdk-global-overlay-wrapper .create-edit-project-dialog {
@@ -178,6 +190,11 @@ button{
 
   .form-number-item {
     width: 45%;
+  }
+
+  .list-project .time-wrap {
+    white-space: nowrap;
+    gap: 10px;
   }
 }
 /*

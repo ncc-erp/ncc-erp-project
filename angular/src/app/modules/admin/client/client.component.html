@@ -65,7 +65,7 @@
                     </div>
                     <i
                       style="padding: 0"
-                      class="fas fa-plus-circle ml-3"
+                      class="fas fa-plus-circle add-filter"
                       (click)="addFilter()"
                     ></i>
                   </div>
@@ -91,7 +91,7 @@
               <th>Invoice Date</th>
               <th>Payment Due By</th>
               <th>Transfer Fee</th>
-              <th *ngIf="permission.isGranted(Admin_Clients_Edit) || permission.isGranted(Admin_Clients_Delete)">Actions</th>
+              <th *ngIf="permission.isGranted(Admin_Clients_Edit) || permission.isGranted(Admin_Clients_Delete)" class="actions">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -170,6 +170,7 @@
             <div class="float-sm-right m-auto">
               <abp-pagination-controls
                 id="server"
+                class="paginations"
                 (pageChange)="getDataPage($event)"
               >
               </abp-pagination-controls>

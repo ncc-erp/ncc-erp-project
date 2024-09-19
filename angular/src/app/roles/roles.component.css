@@ -22,4 +22,7 @@
         display: flex;
         justify-content: center;
     }
+    .actions {
+        min-width: 200px;
+    }
 }

@@ -189,4 +189,8 @@ span {
     .col-skills > div > div {
         padding-bottom: 6px;
     }
+
+    .item-work-project {
+        white-space: nowrap;
+    }
 }

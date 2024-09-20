@@ -122,7 +122,7 @@
                                         </app-user-info>
                                     </div>
                                 </td>
-                                <td>
+                                <td class="column-project-vendor">
                                     <p *ngFor="let project of item.workingProjects" class="mb-1">
                                         <span matTooltip="Potential project" *ngIf="project.projectStatus==APP_ENUM.ProjectStatus.Potential"
                                         class="badge bg-info pointer mr-1">
@@ -144,7 +144,7 @@
                                     <div *ngIf="item.isshowProjectHistory" [ngClass]="item.showAllHistory == false ? 'preHistory' : 'history'">
                                         <div *ngFor="let project of item.userProjectHistory"
                                           class="mb-1 d-flex pointer {{ project.allowcatePercentage ? 'join-project' : 'out-project' }}">
-                                          <div class="col-md-11 p-0">
+                                          <div class="col-10 p-0">
                                             <p class="mb-0">
                                               <strong *ngIf="permission.isGranted(Resource_TabVendor_ViewHistory)" (click)="viewProjectDetail(project)">
                                                 {{ project.projectName }}
@@ -155,7 +155,7 @@
                                               - <span>{{ project.startTime }}</span>
                                             </p>
                                           </div>
-                                          <div class="col-md-1">
+                                          <div class="col-2">
                                             <span class="badge {{ project.allowcatePercentage ? 'bg-success' : 'bg-secondary' }}">
                                               {{ project.allowcatePercentage ? 'Join' : 'Out' }}
                                             </span>

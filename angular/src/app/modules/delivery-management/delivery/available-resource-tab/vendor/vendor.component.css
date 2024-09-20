@@ -89,4 +89,8 @@ button{
   .column-skill {
     min-width: 150px;
   }
+
+  .column-project-vendor {
+    white-space: nowrap;
+  }
 }

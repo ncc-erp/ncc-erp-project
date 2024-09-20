@@ -126,21 +126,13 @@ export class BillAccountPlanComponent
       .pipe(catchError(this.planningBillInfoService.handleError))
       .subscribe(
         (data) => {
-          this.billInfoList = data.result.items;
-          this.showPaging(data.result, pageNumber);
+          this.billInfoList = data.result.gridResult.items;
+          this.showPaging(data.result.gridResult, pageNumber);
           this.isLoading = false;
+          this.totalHeadCount = data.result.totalHeadCount
         },
         () => {}
       );
-      this.planningBillInfoService
-     .GetTotalHeadCount(requestBody)
-     .pipe(catchError(this.planningBillInfoService.handleError))
-     .subscribe(
-        (data) => {
-          this.totalHeadCount = data.result;
-      },
-      () => {}
-    );
     }
 
     filterLinkedResourcesByBillId(billId: number){  

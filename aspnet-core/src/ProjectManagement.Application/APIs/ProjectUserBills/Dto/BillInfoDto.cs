@@ -21,6 +21,7 @@ namespace ProjectManagement.APIs.ProjectUserBills.Dto
     {
         public GetUserBillDto UserInfor { get; set; }
         public List<GetProjectBillDto> Projects { get; set; }
+        public float TotalHeadCount { get; set; }
     }
 
     public class GetUserBillDto : IEquatable<GetUserBillDto>

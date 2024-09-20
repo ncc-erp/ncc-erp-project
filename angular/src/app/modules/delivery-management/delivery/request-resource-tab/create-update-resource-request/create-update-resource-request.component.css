@@ -51,7 +51,7 @@
         padding: 12px 7px !important;
     }
 
-    ::ng-deep .dropdown-code .mat-form-field-label {
+    ::ng-deep .mat-form-field-code .mat-form-field-label {
         margin-top: 4px !important;
     }
 }

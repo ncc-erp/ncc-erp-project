@@ -2,10 +2,10 @@
   <section class="content-header pb-1">
     <div class="container-fluid">
       <div class="row header">
-        <div class="col-6 title">
+        <div class="col-md-6 title">
           <h3>Resource Requests</h3>
         </div>
-        <div class="col-6 text-right btn-create-wrapper">
+        <div class="col-md-6 col-sm-12 text-right btn-create-wrapper">
           <button
             *ngIf="isShowBtnCreate()"
             (click)="createRequest()"
@@ -307,43 +307,43 @@
                  </div>
                   </td>
                   <td style=" width: 380px">
-                          <div class="row request-info">
-                      <div class="d-flex align-items-start col-6">
+                    <div class="row request-info">
+                      <div class="d-flex align-items-start col-md-6">
                            
                         <span class="link mr-2" style="width: 126px;height: 24px" (click)="showProject(item)">
                           {{ item.projectName }}
                         </span>
                        
                       </div>
-                              <div class="d-flex justify-content-end col-6"
-                                   style="justify-content: space-between">
-                                   <div class="col-6 d-flex flex-column align-items-start">
-                                   <div class="ml-2 badge request-info-item"
-                                   [ngClass]="APP_CONST.priorityRequest[item.priority]">
-                      {{ item.priorityName }}
-                    </div>
-                                  <span class="m-2 badge text-white request-info-item"
-                                        [ngStyle]="Utils.getUserLevel(item.level).style">
-                          {{ item.levelName }}
-                        </span>
+                      <div class="d-flex justify-content-end col-md-6"
+                        style="justify-content: space-between">
+                        <div class="col-md-6 d-flex flex-column align-items-start">
+                          <div class="ml-2 badge request-info-item"
+                            [ngClass]="APP_CONST.priorityRequest[item.priority]">
+                            {{ item.priorityName }}
+                          </div>
+                          <span class="m-2 badge text-white request-info-item"
+                            [ngStyle]="Utils.getUserLevel(item.level).style">
+                            {{ item.levelName }}
+                          </span>
                         
-                  <span *ngIf="item.projectStatus == 'Potential'"
-                        [ngClass]="
-            APP_CONST.statusStyle[
+                          <span *ngIf="item.projectStatus == 'Potential'"
+                            [ngClass]="
+                              APP_CONST.statusStyle[
               getByEnum(item.status, APP_ENUM.ProjectStatus)
             ]
           ">
-          {{ item.projectStatusName }}
-        </span>
-                </div>
-                        <div class="col-6 d-flex flex-column align-items-start">
-                                  <span class="ml-2 request-info-item"
-                                        style="border-radius: 0.25rem"
-                                        [ngClass]="
-                            APP_CONST.resourceRequestStyle[
+                            {{ item.projectStatusName }}
+                          </span>
+                        </div>
+                        <div class="col-md-6 d-flex flex-column align-items-start">
+                          <span class="ml-2 request-info-item"
+                            style="border-radius: 0.25rem"
+                            [ngClass]="
+                              APP_CONST.resourceRequestStyle[
                               getValueByEnum(
-                                item.status,
-                                APP_ENUM.ResourceRequestStatus
+                              item.status,
+                              APP_ENUM.ResourceRequestStatus
                               )
                             ]
                           ">
@@ -354,9 +354,9 @@
                           )
                           }}
                         </span>
-                        <span *ngIf="item.isNewBillAccount"
+                        <span *ngIf="item.isNewBillAccount" 
                         class="badge badge-danger m-2 request-info-item">Bill Acc</span>
-                      </div>
+                        </div>
                       </div>
                     </div>
                     <div class="d-flex justify-content-between ">
@@ -364,7 +364,8 @@
                           display: inline-block;
                           max-width: 270px;
                           text-align: left;
-                        ">
+                        "
+                        class="date-request-resource">
                         {{ item.createAt | date : "d/MM/y HH:mm " }} by {{ item.userRequestName }}
                      
                       </span>
@@ -378,7 +379,7 @@
                   </td>
                   <td style="width:250px">
                     <div class="row row-bill-account">
-                      <div class="col-md-10">
+                      <div class="col-10">
                                   <div *ngIf="item.billUserInfo"
                                        class="d-flex align-items-start"
                                        style="flex-direction: column">
@@ -446,7 +447,7 @@
                           </ng-template>
                         </div>                       
                       </div>
-                              <div class="col-md-2 icon-bill-account"
+                              <div class="col-2"
                                    *ngIf="
                           item.statusName == 'PENDING' &&
                           permission.isGranted(
@@ -470,7 +471,7 @@
                   </td>
                   <td style="width:250px">
                     <div class="row row-bill-account">
-                      <div class="col-md-10">
+                      <div class="col-10">
                                   <div *ngIf="item.planUserInfo"
                                        class="d-flex align-items-start"
                                        style="flex-direction: column">
@@ -529,7 +530,7 @@
                           </p>
                         </div>
                       </div>
-                              <div class="col-md-2 icon-bill-account"
+                              <div class="col-2"
                                    *ngIf="
                           item.statusName == 'PENDING' &&
                           permission.isGranted(
@@ -547,17 +548,16 @@
                   </td>
                   <td style="
                       white-space: normal;
-                      width: 150px
-                    ">
+                      width: 150px" 
+                      class="row-description">
                     <div class="row justify-content-between flex-nowrap">
-                      <div class="col-md-10">
                         <pre (click)="
                             showDescription(item.pmNote);
                             $event.stopPropagation()
                           "
-                                       class="mb-0 p-0 ml-2 max-line-content-4"
-                                       PrjResizeContent
-                                       style="
+                                    class="mb-0 p-0 ml-2 max-line-content-4"
+                                    PrjResizeContent
+                                    style="
                             white-space: pre-line;
                             font-family: sans-serif;
                             align-self: flex-start;
@@ -565,8 +565,7 @@
                           ">
                                             {{ item.pmNote }}
                                         </pre>
-                      </div>
-                              <div class="col-md-2 text-right"
+                              <div class="text-right"
                                    *ngIf="permission.isGranted(ResourceRequest_EditPmNote)">
                                   <i class="fa fa-edit"
                                      (click)="
@@ -581,10 +580,9 @@
                     </div>
                   </td>
                   <td style="
-                      white-space: normal;
-                    ">
-                    <div class="row">
-                      <div class="col-md-10">
+                      white-space: normal;"
+                    class="row-note">
+                    <div class="row flex-nowrap">
                                   <pre class="mb-0 p-0 ml-2 max-line-content-4"
                                        PrjResizeContent
                                        [collapseLine]="4"
@@ -596,8 +594,7 @@
                                       ">
                                             {{ item.dmNote }}
                                    </pre>
-                      </div>
-                              <div class="col-md-2 text-right"
+                              <div class="text-right"
                                    *ngIf="permission.isGranted(ResourceRequest_EditDmNote)">
                                   <i class="fa fa-edit"
                                      (click)="
@@ -630,7 +627,7 @@
                           Cancel
                         </button>
 
-                        <br />
+                        <!-- <br /> -->
                                   <button class="btn btn-block text-left"
                                           mat-button
                                           *ngIf="isShowBtnEdit(item)"
@@ -703,12 +700,12 @@
                   <td class="text-center">{{a+1}}</td>            
                   <td style="width: 250px;">               
                     <div class="row">
-                      <div class="col-md-10">
-                                  <div *ngIf="c.user"
-                                       class="d-flex align-items-start"
-                                       style="flex-direction: column">
-                                      <p class="m-0 pointer"
-                                         (click)="
+                      <div class="col-10">
+                        <div *ngIf="c.user"
+                          class="d-flex align-items-start"
+                          style="flex-direction: column">
+                          <p class="m-0 pointer"
+                            (click)="
                               openPopupSkill(
                                 item.billUserInfo.employee,
                                 item.billUserInfo.userSkill
@@ -719,68 +716,63 @@
                             </strong>
                           </p>
                           <p class="m-0">
-                            <span *ngIf="
-                            c.user.branchDisplayName
-                          "
-                                            class="mr-1 badge badge text-white"
-                                            [style.backgroundColor]="
-                                            c.user.branchColor
-                          ">
-                          {{ c.user.branchDisplayName }}
-                        </span>
-                                          <span *ngIf="c.user.userType"
-                                                [ngClass]="
+                            <span *ngIf="c.user.branchDisplayName"
+                              class="mr-1 badge badge text-white"
+                              [style.backgroundColor]="c.user.branchColor">
+                              {{ c.user.branchDisplayName }}
+                            </span>
+                            <span *ngIf="c.user.userType"
+                              [ngClass]="
                                 APP_CONST.userTypeStyle[
                                 c.user.userType
                                 ]
                               ">
                               {{ getValueByEnum(c.user.userType, APP_ENUM.UserType)}}
                             </span>
-                               <span *ngIf="c.user.userLevel"
-                                                class="ml-1 badge text-white"
-                                                [ngStyle]="
-                                Utils.getUserLevel(
-                                  c.user.userLevel
-                                ).style
+                            <span *ngIf="c.user.userLevel"
+                              class="ml-1 badge text-white"
+                              [ngStyle]="
+                              Utils.getUserLevel(
+                              c.user.userLevel
+                              ).style
                               ">
-                                              {{ getValueByEnum(c.user.userLevel, APP_ENUM.UserLevel)}}
-                                </span>                                
-                                <span *ngIf="c.user.positionName"
-                                class="ml-1 badge text-white"
-                                   [style.backgroundColor]="
-                                   c.user.positionColor
-                                        ">
-                                         {{ c.user.positionName }}
-                                </span> 
+                              {{ getValueByEnum(c.user.userLevel, APP_ENUM.UserLevel)}}
+                            </span>                                
+                            <span *ngIf="c.user.positionName"
+                              class="ml-1 badge text-white"
+                              [style.backgroundColor]="c.user.positionColor">
+                                {{ c.user.positionName }}
+                            </span> 
                           </p>                           
                         </div>                       
                       </div>                                         
-                              <div class="col-md-2"
-                                   *ngIf="
+                      <div style="display: flex; justify-content: right; gap: 5px;" class="col-2"
+                        *ngIf="
                           item.statusName == 'PENDING' &&
                           permission.isGranted(
                             ResourceRequest_CreateBillResourceForRequest
                           )
                         ">
-                       <span>
-                        <i class="fa fa-edit" (click)="showCvUser(item,c)" title="Update Account CV" ></i>
-                       </span>
-                         <span    *ngIf="c.user" style="margin-left: 2px;" >
-                                      <i class="fa fa-times" title="Remove Acount CV"
-                                         (click)="removeResourceRequestCvUser(c)"></i>
-                         </span>                       
+                        <span>
+                          <i class="fa fa-edit" (click)="showCvUser(item,c)" title="Update Account CV" ></i>
+                        </span>
+                        <span *ngIf="c.user" style="margin-left: 2px;" >
+                          <i class="fa fa-times" title="Remove Acount CV"
+                          (click)="removeResourceRequestCvUser(c)"></i>
+                        </span>                       
                       </div>                     
                     </div>
-                    <div style="display: flex; align-items: center;">
-                      <div class=" col-md-11">
-                     <a class="cv-link m-0"
-                        target="_blank"
-                        style="display: flex; align-items: center; justify-content: space-between; width: 100%; white-space: nowrap; cursor: pointer; overflow: hidden; text-overflow: ellipsis;"
-                        [href]="!checkNullOrEmpty(c.cvPath) ? c.linkCVPath : '#'"
-                        [ngStyle]="{'color': !checkNullOrEmpty(c.cvPath) ? 'blue' : 'black'}">
-                       <span style="flex: 1; overflow: hidden;">
-                         {{c.cvName}}
-                       </span></a>                     
+                    <div class="row">
+                      <div class="col-10 link-name-cv">
+                        <a class="cv-link m-0"
+                          target="_blank"
+                          style="display: flex; align-items: center; justify-content: space-between; width: 100%; cursor: pointer; overflow: hidden; text-overflow: ellipsis;"
+                          [href]="!checkNullOrEmpty(c.cvPath) ? c.linkCVPath : '#'"
+                          [ngStyle]="{'color': !checkNullOrEmpty(c.cvPath) ? 'blue' : 'black'}">
+                          <span style="flex: 1; overflow: hidden;">
+                            {{c.cvName}}
+                          </span>
+                        </a>                     
                         <span style="width: 100%; justify-content: space-between; display: flex ;white-space: nowrap;
                         color:red;cursor: pointer; overflow: hidden;"
                         *ngIf="checkNullOrEmpty(c.cvName)" class="cv-link1 m-0"
@@ -788,14 +780,14 @@
                           Empty CV Name
                         </span>
                      </div>
-                       <div style="display: flex ; justify-content: left;"  class="col-md-1">
-                         <span *ngIf="!checkNullOrEmpty(c.cvPath)" (click)="removeCVPath(c)">
-                           <i class="fa fa-times" title="Remove FileCV"></i>
-                         </span>
-                         <span *ngIf="checkNullOrEmpty(c.cvPath)" (click)="uploadCVPath(c, item)">
-                           <i class="fa fa-fw fa-upload vertical-align-baseline" title="Add FileCV"></i>
-                         </span>
-                       </div>                    
+                      <div style="display: flex; justify-content: right; gap: 5px;"  class="col-2">
+                        <span *ngIf="!checkNullOrEmpty(c.cvPath)" (click)="removeCVPath(c)">
+                          <i class="fa fa-times" title="Remove FileCV"></i>
+                        </span>
+                        <span *ngIf="checkNullOrEmpty(c.cvPath)" (click)="uploadCVPath(c, item)">
+                          <i class="fa fa-fw fa-upload vertical-align-baseline" title="Add FileCV"></i>
+                        </span>
+                      </div>                    
                    </div>
                   </td>
                   <td class="text-left" (dblclick)="edit(a, 'status', c, item)">
@@ -893,7 +885,7 @@
                 </td>
                 
 
-                  <td class="text-align:left" style="resize: horizontal;min-width: 700px; overflow: auto; max-width: 350px;" (dblclick)="edit(a,'note',c,item)">
+                  <td class="row-child-note" style="resize: horizontal;min-width: 700px; overflow: auto; max-width: 350px; text-align: left;" (dblclick)="edit(a,'note',c,item)">
                     <span *ngIf="!editingRows[a]?.note">{{ c.note }} </span>
                     <textarea appFocus 
                               style="width: 100%; height: 100%; box-sizing: border-box; border: none; background-color: transparent;" 

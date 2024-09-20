@@ -5,7 +5,7 @@
                 <div class="input-group">
 
                     <div class="row w-100">
-                        <div class="col-md-8 d-flex mt-1">
+                        <div class="col-md-8 d-flex mt-1 field-search">
                             <div class="input-group-prepend">
                                 <button type="button" class="btn bg-blue" (click)="getDataPage(1)">
                                     <i class="fas fa-search"></i>
@@ -217,7 +217,7 @@
                                     </div>
 
                                 </td>
-                                <td style="white-space: normal; max-width: 200px; vertical-align: unset;">
+                                <td style="white-space: normal; max-width: 200px; vertical-align: unset;" class="column-skill">
                                     <div class="d-flex justify-content-between">
                                         <div style="width: 90%">
                                             <p class="m-0" *ngFor="let skill of item.userSkills">
@@ -228,7 +228,7 @@
                                                     font-size: 13px;"></i> </strong>
                                             </p>
                                         </div>
-                                        <div *ngIf="permission.isGranted(Resource_TabVendor_UpdateSkill)" style="width: 10%; text-align: right;">
+                                        <div *ngIf="permission.isGranted(Resource_TabVendor_UpdateSkill)" style="width: 10%; text-align: right;" class="icon-edit-skill">
                                             <i class="fas fa-edit" (click)="updateUserSkill(item)"
                                                 matTooltip="Edit skill"></i>
                                         </div>

@@ -7,7 +7,7 @@ import { InputFilterDto, DropDownDataDto } from './../../../../shared/filter/fil
 import { PERMISSIONS_CONSTANT } from './../../../constant/permission.constant';
 import { ListProjectService } from './../../../service/api/list-project.service';
 import { ProjectDto } from './../../../service/model/list-project.dto';
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PagedListingComponentBase, PagedRequestDto, PagedResultResultDto } from '@shared/paged-listing-component-base';
 import { finalize, catchError } from 'rxjs/operators';
@@ -125,7 +125,8 @@ export class ListProjectComponent extends PagedListingComponentBase<any> impleme
   constructor(injector: Injector, public dialog: MatDialog, private userService: UserService,
     public listProjectService: ListProjectService ,
     public sessionService:AppSessionService,
-    public projectUserBillService: ProjectUserBillService
+    public projectUserBillService: ProjectUserBillService,
+    private renderer: Renderer2,
     ) {
     super(injector);
     this.pmId = Number(this.sessionService.userId);
@@ -390,6 +391,9 @@ export class ListProjectComponent extends PagedListingComponentBase<any> impleme
       projectName: project.name,
       projectCode: project.code} }));
       window.open(url, '_blank');
+    this.renderer.removeClass(document.body, 'sidebar-open');
+    this.renderer.addClass(document.body, 'sidebar-collapse');
+    console.log(document.body, 'bodyyyyyyyy')
   }
 
   filterBillInfo(project){

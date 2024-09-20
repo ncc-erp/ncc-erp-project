@@ -12,4 +12,9 @@
         white-space: nowrap;
         text-overflow: ellipsis;
     }
+
+    .resource-selected {
+        height: 100% !important;
+        max-height: 350px;
+    }
 }

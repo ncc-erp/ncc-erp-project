@@ -67,4 +67,26 @@ button{
   .add-plan {
     width: fit-content !important;
   }
+
+  .input-group-prepend button {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .input-group-append button {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+
+  .field-search input {
+    border-radius: 0;
+  }
+
+  .icon-edit-skill {
+    padding-right: 10px;
+  }
+
+  .column-skill {
+    min-width: 150px;
+  }
 }

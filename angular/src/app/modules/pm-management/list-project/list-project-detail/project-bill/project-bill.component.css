@@ -97,8 +97,7 @@
         height: 100% !important;
         align-items: baseline !important;
         margin-top: 20px !important;
-        padding-left: 20px;
-        padding-right: 20px;
+        padding: 0 20px;
     }
 
     :host ::ng-deep .invoice-setting .mat-content {
@@ -130,6 +129,10 @@
 
     .col-form-result {
         width: fit-content;
+    }
+
+    .col-form-result span {
+        width: fit-content !important;
     }
 
     .form-group {

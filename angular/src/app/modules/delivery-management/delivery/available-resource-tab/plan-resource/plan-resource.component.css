@@ -66,6 +66,20 @@ td > div { height: 100%; }
         margin-bottom: 10px;
     }
 
+    .input-group-prepend button {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    .input-group-append button {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+
+    .field-search input {
+        border-radius: 0;
+    }
+
     .card-body {
         padding: 0;
     }

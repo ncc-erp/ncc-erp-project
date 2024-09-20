@@ -210,6 +210,7 @@ export class UsersComponent extends PagedListingComponentBase<UserDto> {
     if (!id) {
       const showCreate = this.dialog.open(CreateUserDialogComponent, {
         width: "700px",
+        panelClass: 'create-edit-user-dialog',
         disableClose: true,
       });
       showCreate.afterClosed().subscribe(res => {
@@ -221,6 +222,7 @@ export class UsersComponent extends PagedListingComponentBase<UserDto> {
       const showEdit = this.dialog.open(EditUserDialogComponent, {
         data: {id: id},
         width: "700px",
+        panelClass: 'create-edit-user-dialog',
         disableClose: true,
       });
       showEdit.afterClosed().subscribe(res => {

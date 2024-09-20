@@ -16,7 +16,6 @@ export class PlanningBillInfoService extends BaseApiService {
   constructor(http: HttpClient) {
     super(http);
   }
-
   public GetAllBillInfo(request: PagedRequestDto): Observable<any> {
     return this.http.post<any>(this.rootUrl + '/GetAllBillInfo',request);
   }

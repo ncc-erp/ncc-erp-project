@@ -273,7 +273,8 @@ export class ListProjectComponent extends PagedListingComponentBase<any> impleme
         dialogData: project
       },
       width: '700px',
-      disableClose: true
+      disableClose: true,
+      panelClass: 'create-edit-project-dialog'
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -440,7 +441,8 @@ export class ListProjectComponent extends PagedListingComponentBase<any> impleme
 
   checkProjectInvoiceSetting(){
     this.projectUserBillService.checkInvoiceSetting().subscribe(rs => {
-      if(rs.result.length){
+      if (rs.result.length) {
+        console.log(rs.result, 'result')
         abp.message.warn(rs.result)
       }
       else {

@@ -2,13 +2,13 @@
   <section class="content-header">
     <div class="container-fluid">
       <div class="row">
-        <div class="col-6">
+        <div class="col-12">
           <h1>Edit Role <span class="text-success">{{title}}</span></h1>
         </div>
       </div>
     </div>
   </section>
-  <form class="form-horizontal" autocomplete="off" #editRoleForm="ngForm">
+  <form class="form-horizontal edit-role" autocomplete="off" #editRoleForm="ngForm">
     <div class="modal-body">
       <tabset>
         <tab id="tab_detail" [heading]="'Details' | localize" class="pt-3 px-2">
@@ -102,7 +102,7 @@
         <tab id="tab_user" class="tab-user" [heading]="'Users' | localize" class="pt-3 px-2 test"
           style="height : auto !important; width: 100%;">
           <div class="row mt-2">
-            <div class="col-10">
+            <div class="col-xl-10 col-sm-12">
               <div class="row form-search-role">
                 <div class="col-md-2">
                   <mat-form-field>
@@ -149,7 +149,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-2 text-right">
+            <div class="col-xl-2 col-sm-12 text-right add-mb">
               <a name="btn-create" href="javascript:;" class="btn bg-blue" (click)="addUserInRole()">
                 <i class="fa fa-plus-square"></i>
                 {{ "Add" | localize }}
@@ -162,14 +162,14 @@
                 <tbody>
                   <tr *ngFor="let member of listUsers">
                     <div class="row">
-                      <div class="col-1 col-sm-2 col-md-1 col-lg-1">
+                      <div class="col-3 col-sm-3 col-md-1 col-lg-1">
                         <button type="button" (click)="removeMemberFromProject(member.id, member.fullName)"
                           class="text-danger" mat-icon-button>
                           <i class="fa fa-times"></i>
                         </button>
                         <img [src]="getAvatar(member)" width="60" height="60" style="border-radius: 50%;" />
                       </div>
-                      <div class="col-11 col-sm-10 col-md-11 col-lg-11 name">
+                      <div class="col-9 col-sm-9 col-md-11 col-lg-11 name">
                         <b>{{member.fullName}}</b>
                         <span class="label tag bg-red " *ngIf="member.branch == 0">HN</span>
                         <span class="label tag bg-green " *ngIf="member.branch == 1">ĐN</span>

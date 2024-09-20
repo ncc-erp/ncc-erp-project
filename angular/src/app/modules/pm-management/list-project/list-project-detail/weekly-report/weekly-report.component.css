@@ -242,7 +242,7 @@ button {
      background-color: #e9edf1;
  }
 
- ::ng-deep .mat-expansion-panel .mat-expansion-panel-body {
+ :host :ng-deep .mat-expansion-panel .mat-expansion-panel-body {
      padding: 0;
  }
 
@@ -345,4 +345,161 @@ button {
 .hyperlink:hover {
     color: rgb(45, 57, 160);
     text-decoration: underline;
+}
+
+.weekly-report-left {
+    width: 59%;
+}
+  
+.weekly-report-right {
+    width: 40%;
+}
+
+.btn-add {
+    width: calc(88% - 5px);
+}
+
+.weekly-report-dialog {
+    width: 60%;
+}
+
+.status-weekly-report {
+    width: 220px;
+    margin-left: 10px !important
+}
+
+.select-pm-report {
+    width: 205px;
+}
+
+.future-resource-dialog {
+    width: 700px;
+}
+
+@media screen and (max-width: 600px) {
+    .weekly-report-left, .weekly-report-right {
+        width: 100%;
+    }
+
+    .row-pm-report {
+        gap: 10px;
+        margin-top: 12px !important;
+    }
+
+    :host ::ng-deep .row-pm-report .mat-form-field {
+        margin-left: 0 !important;
+    }
+
+    .row-criteria-result {
+        align-items: normal !important;
+    }
+
+    .fixTableHead {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        margin: 10px 0;
+    }
+
+    .field-pm-note {
+        margin-left: 0 !important;
+    }
+
+    .btn-add {
+        width: fit-content;
+    }
+
+    .title-resources {
+        flex-wrap: wrap;
+    }
+
+    .checkbox-view-sub-project {
+        display: none;
+    }
+
+    .title-resources-expand {
+        margin-top: 20px;
+        margin-bottom: 10px;
+    }
+
+    .text-editor {
+        padding: 0 2px;
+        padding-top: 10px;
+    }
+
+    .title-weekly {
+        justify-content: flex-start !important;
+    }
+
+    .content {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    .mt-6 {
+        margin-top: 6px;
+    }
+
+    .status-weekly-report {
+    }
+
+    .select-pm-report {
+
+    }
+    
+    .weekly-report-dialog {
+        width: 100%;
+    }
+
+    ::ng-deep .cdk-overlay-container .cdk-global-overlay-wrapper .add-risk-dialog,
+    ::ng-deep .cdk-overlay-container .cdk-global-overlay-wrapper .add-edit-issue-dialog,
+    ::ng-deep .cdk-overlay-container .cdk-global-overlay-wrapper .future-resource-dialog {
+        width: 100%;
+        max-width: 100vw !important;
+        padding: 0 15px;
+    }
+
+    .select-status-criteria {
+        align-items: normal !important;
+        height: fit-content;
+    }
+
+    :host ::ng-deep .select-status-criteria .mat-button {
+        min-width: 100%;
+        line-height: 44px;
+        padding-right: 0;
+    }
+
+    .action-report {
+        padding-top: 12px;
+    }
+
+    .weekly-report-container {
+        margin: 0;
+    }
+
+    .row-pm-note {
+        margin-top: -10px;
+        margin-bottom: 10px;
+    }
+
+    .card {
+        border-radius: 0;
+    }
+
+    .table-responsive {
+        padding-bottom: 15px;
+    }
+
+    :host ::ng-deep .content .mat-expansion-panel-body {
+        padding: 0;
+    }
+
+    .pannel-header-current-resource {
+        height: fit-content !important;
+    }
+
+    .col-note-resources {
+        min-width: 80px;
+    }
 }

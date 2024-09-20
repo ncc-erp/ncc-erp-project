@@ -51,3 +51,17 @@
     min-width: 350px !important;
     max-height: 40vh !important; 
 }
+
+@media screen and (max-width: 600px) {
+    ::ng-deep .custom-panel {
+        min-width: 100% !important;
+    }
+
+    .btn {
+        font-size: 14px;
+    }
+
+    .btn-clear {
+        margin-right: 10px;
+    }
+}

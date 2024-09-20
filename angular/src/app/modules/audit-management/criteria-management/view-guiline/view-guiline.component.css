@@ -8,3 +8,16 @@
   :host::ng-deep .mat-dialog-title{
     margin: 20px 0;
   }
+
+@media only screen and (max-width: 768px){
+  ::ng-deep.my-dialog {
+    width: 700px !important;
+  }
+  .content {
+    padding: 15px 0 !important;
+  }
+  .container {
+    max-height: 50vh !important;
+    padding: 0;
+  }
+}

@@ -135,3 +135,161 @@ table td {
 .cv-link:hover{
     text-decoration: underline ;
 }
+.request-info {
+    align-items: flex-start;
+    justify-content: space-between;
+}
+.modal-body textarea {
+    width: 750px;
+}
+
+::ng-deep .cdk-overlay-container .cdk-global-overlay-wrapper .form-send-recruitment-dialog {
+    width: 700px;
+    max-height: 90vh;
+}
+
+.col-skill {
+    padding: 5px 4px;
+    min-width: 180px;
+}
+
+
+
+@media screen and (max-width: 600px) {
+    .title {
+      max-width: 60%;
+      flex: 0 0 60%;
+    }
+  
+    .title h3 {
+      font-size: 22px;
+      white-space: nowrap;
+    }
+  
+    .btn-create-wrapper {
+      max-width: 40%;
+      flex: 0 0 40%;
+    }
+
+    .rsp-label {
+        justify-content: flex-start !important;
+    }
+  
+    .input-group {
+      padding-bottom: 15px;
+    }
+
+    .select-search .option-search {
+        row-gap: 15px;
+    }
+
+    .clear {
+        text-align: start !important;
+        margin-top: 10px;
+    }
+
+    .item-first {
+        width: 100%;
+        max-width: 100%;
+        align-items: baseline !important;
+        gap: 5px;
+    }
+
+    .request-info {
+        gap: 5px;
+        flex-wrap: nowrap;
+    }
+
+    .link {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 100%;
+    }
+
+    .request-info-item {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+
+    .row-bill-account {
+        position: relative;
+        min-width: 250px;
+    }
+
+    .icon-bill-account {
+        position: absolute;
+        width: fit-content;
+        right: 0;
+        display: flex;
+        gap: 5px;
+        align-items: center;
+    }
+
+    .user-bill-account {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .user-bill-account strong {
+        display: inline-block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 160px;
+    }
+
+    .badge {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 400px;
+    }
+
+    .rsp-th-name {
+        white-space: normal;
+    }
+
+    .modal-body textarea {
+        width: 100%;
+    }
+
+    ::ng-deep .project-panel {
+        min-width: 100% !important;
+        max-height: 50vh !important;
+    }
+
+    .content-header {
+        padding: 15px 6px;
+        margin-bottom: 10px;
+    }
+
+    ::ng-deep .cdk-overlay-container .cdk-global-overlay-wrapper .form-send-recruitment-dialog {
+        max-width: 100% !important;
+        width: 100%;
+        padding: 0 12px;
+    }
+
+    .sortHeader {
+        flex-wrap: nowrap;
+        column-gap: 5px;
+    }
+
+    .form-number-item {
+        width: 45% !important;
+    }
+
+    .card-body {
+        padding-bottom: 0;
+      }
+
+    .icon-add-filter {
+        margin-left: 6px !important;
+    }
+
+    .container-pagination {
+        display: flex;
+        flex-wrap: wrap;
+    }
+}  

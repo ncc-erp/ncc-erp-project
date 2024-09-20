@@ -24,13 +24,14 @@
                         <div class="row">
                             <div class="col-md-12 col-xl-12">
                                 <div class="mb-0">
-                                    <div>
+                                    <div class="card-filter">
                                         <div *ngFor="let item of filterItems; let i = index">
                                             <app-filter [item]="item" (emitChange)="onEmitChange($event, i)"
                                                 (deleteDataFilter)="deleteFilterItem(i)" [inputFilters]="FILTER_CONFIG">
                                             </app-filter>
                                         </div>
-                                        <i style="padding: 0;" class="fas fa-plus-circle ml-3"
+                                        <i style="padding: 0;" class="fas fa-plus-circle ml-3 icon-add-filter"
+                                            [ngClass]="{'icon-add-filter-item': filterItems?.length}"
                                             (click)="addFilter()"></i>
                                     </div>
                                 </div>
@@ -46,8 +47,8 @@
                         <thead class="bg-light">
                             <tr style="border: none;">
                                 <th class="stt">STT</th>
-                                <th style="width: 250px;">Weekly Report</th>
-                                <th style="width: 220px;">Projects</th>
+                                <th class="min-w-200" style="width: 250px;">Weekly Report</th>
+                                <th class="min-w-200" style="width: 220px;">Projects</th>
                                 <th>Note</th>
                                 <th style="width: 100px;">Actions</th>
                             </tr>
@@ -63,10 +64,10 @@
                                 <td class="text-center">{{i+1}}</td>
                                 <td  style="white-space: normal; max-width: 150px;">
                                     <div class="row">
-                                        <div class="col-9">
+                                        <div class="col-9 pd-0">
                                             <span class="hyperlink" (click)="showDetail(item)">{{item.name}} </span>
                                         </div>
-                                        <div class="col-3">
+                                        <div class="col-3 pd-0">
                                             <span
                                                 [ngClass]="item.isActive?'badge  badge-success':'badge  badge-secondary'">{{item.isActive?'Active':'Closed'}}</span>
                                         </div>
@@ -138,13 +139,13 @@
                 </div>
 
             </div>
-            <div class="card-footer bg-light border-top pb-0">
-                <div class="row">
-                    <div class="col-sm-4 col-12 text-sm-left text-center">
+            <div class="card-footer bg-light border-top">
+                <div class="row justify-content-between">
+                    <div class="col-sm-4 col-12 text-sm-left card-footer-wrapper">
                         <button class="btn btn-secondary mb-2" (click)="refresh()">
                             <i class="fas fa-redo-alt"></i>
                         </button>
-                        <mat-form-field style="width: 20%;margin-left: 30px;">
+                        <mat-form-field style="max-width:100px; margin-left: 30px">
                             <mat-label>Number items</mat-label>
                             <mat-select [(ngModel)]="pageSizeType" (ngModelChange)="changePageSize()">
                                 <mat-option [value]="5">
@@ -165,14 +166,14 @@
                             </mat-select>
                         </mat-form-field>
                     </div>
-                    <div class="col-sm-4 col-12 text-center">
+                    <div class="">
                         <p class="mb-0 my-2">
                             {{ "TotalRecordsCount" | localize: totalItems }}
                         </p>
                     </div>
                     <div class="col-sm-4 col-12">
                         <div class="float-sm-right m-auto">
-                            <abp-pagination-controls id="server" (pageChange)="getDataPage($event)">
+                            <abp-pagination-controls [maxSize]="6" id="server" (pageChange)="getDataPage($event)">
                             </abp-pagination-controls>
                         </div>
                     </div>

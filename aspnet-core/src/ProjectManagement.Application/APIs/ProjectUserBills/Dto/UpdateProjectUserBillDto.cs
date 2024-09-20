@@ -16,10 +16,12 @@ namespace ProjectManagement.APIs.ProjectUserBills.Dto
         public long UserId { get; set; }
         public string BillRole { get; set; }
         public float BillRate { get; set; }
+        public float HeadCount { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime? EndTime { get; set; }
         public string Note { get; set; }
         public string shadowNote { get; set; }
+        public bool isExpose { get; set; }
         public bool isActive { get; set; }
         public string AccountName { get; set; }
         public ChargeType? ChargeType { get; set; }

@@ -18,6 +18,11 @@ button {
   height: fit-content;
 }
 
+
+.vertical-align-middle {
+  vertical-align: middle
+}
+
 @media only screen and (min-width: 1921px) and (max-width: 2250px) {
   .res-btn {
     display: flex;
@@ -30,6 +35,8 @@ button {
   }
 }
 
+
+
 @media only screen and (max-width: 1920px) {
   .res-area {
     max-width: 85% !important;
@@ -41,6 +48,41 @@ button {
   }
 }
 
+@media only screen and (max-width: 1376px) {
+  .weekly-report {
+    flex-direction: column;
+  }
+  .section {
+    width: 100% !important;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .weekly {
+    justify-content: start !important;
+    margin-top: 10px !important;
+  }
+  .pm-report {
+    margin-left: 0 !important;
+  }
+  .btn-edit-criteriaResult {
+    padding-right: 0 !important;
+    padding-left: 16px;
+    min-width: 0;
+  }
+  .pm-note {
+    padding: 0;
+  }
+}
+@media only screen and (max-width: 487px) {
+  .resource {
+    flex-direction: column;
+    align-items: start !important;
+  }
+  .change-acc {
+    margin-left: 0 !important;
+  }
+}
 .label {
   color: white;
   padding: 12px;

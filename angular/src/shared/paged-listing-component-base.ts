@@ -115,6 +115,7 @@ export abstract class PagedListingComponentBase<TEntityDto> extends AppComponent
                 this.CheckAllSelectBox = false;
                 this.isLoading = false;
             }));
+
     }
 
     public deleteFilterItem(index: number) {

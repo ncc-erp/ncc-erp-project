@@ -18,3 +18,46 @@ td>div {
 .changeShow:hover{
     text-decoration: underline;
 }
+
+@media screen and (max-width: 600px) {
+    .form-number-items {
+        width: 45% !important;
+    }
+
+    ::ng-deep .cdk-overlay-container .cdk-global-overlay-wrapper .create-edit-criteria-dialog {
+        width: 100% !important;
+        height: fit-content !important;
+    }
+
+    .header-audit-result {
+        flex-direction: column;
+        width: 100%;
+        align-items: baseline;
+        gap: 10px;
+    }
+
+    .mat-form-field-select {
+        width: 100%;
+        padding-left: 10px;
+        padding-right: 2px;
+    }
+
+    .mat-form-field-kpi-status {
+        width: 100%;
+        padding-left: 6px;
+        padding-right: 6px;
+    }
+
+    .actions-audit {
+        margin-top: 0 !important;
+    }
+
+    ::ng-deep .mat-form-field-select .mat-form-field,
+    ::ng-deep .mat-form-field-kpi-status .mat-form-field {
+        display: block;
+    }
+
+    ::ng-deep .cdk-overlay-container .cdk-global-overlay-wrapper .my-dialog {
+        width: 100% !important;
+    }
+}

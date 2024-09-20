@@ -25,10 +25,13 @@ export class BillAccountPlanComponent
   public searchClient: string = "";
   public projectStatus;
   public isCharge: boolean = true;
+  public isExpose: boolean = true;
   public isShowLevel: boolean = false;
   public isShowBillRate: boolean = false;
   public filterFromDate: string;
   public filterToDate: string;
+  public headCount: number;
+  public totalHeadCount: number=0;
   public projectId;
   public clientId;
   public billInfoList = [];
@@ -42,6 +45,8 @@ export class BillAccountPlanComponent
     { name: "Client", width: "140px"},
     { name: "Projects"},
     { name: "Is Charge", width: "70px", padding : "12px 10px", whiteSpace: "nowrap" },
+    { name: "Is Expose", width: "70px", padding : "12px 10px", whiteSpace: "nowrap" },
+    { name: "Head Count", width: "100px" },
     { name: "Bill Date", width: "100px" },
     { name: "Linked Resource", width: "280px" },
     { name: "Note" },
@@ -58,6 +63,10 @@ export class BillAccountPlanComponent
     { text: "UnCharged", value: false },
   ];
 
+  public isExposeList = [
+   { text: "Exposed", value: true },
+   { text: "UnExposed", value: false },
+  ];
   constructor(
     injector: Injector,
     private planningBillInfoService: PlanningBillInfoService,
@@ -72,7 +81,7 @@ export class BillAccountPlanComponent
     this.getAllLinkResource();
     this.refresh();
   }
-
+  
   getProjectUserBill(): void {
     this.planningBillInfoService
         .GetAllProjectUserBill()
@@ -97,7 +106,7 @@ export class BillAccountPlanComponent
             this.isLoading = false;
         }, () => { this.isLoading = false; });
     }
-
+ 
   protected list(
     request: PagedRequestDto,
     pageNumber: number,
@@ -108,6 +117,8 @@ export class BillAccountPlanComponent
       clientId: this.clientId,
       projectStatus: this.projectStatus,
       isCharge: this.isCharge,
+      isExpose: this.isExpose,
+      headCount: this.headCount,
       sortParams: this.sortResource};
 
     this.planningBillInfoService
@@ -115,9 +126,10 @@ export class BillAccountPlanComponent
       .pipe(catchError(this.planningBillInfoService.handleError))
       .subscribe(
         (data) => {
-          this.billInfoList = data.result.items;
-          this.showPaging(data.result, pageNumber);
+          this.billInfoList = data.result.gridResult.items;
+          this.showPaging(data.result.gridResult, pageNumber);
           this.isLoading = false;
+          this.totalHeadCount = data.result.totalHeadCount
         },
         () => {}
       );

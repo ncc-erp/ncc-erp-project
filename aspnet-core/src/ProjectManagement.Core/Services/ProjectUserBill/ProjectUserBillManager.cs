@@ -159,11 +159,13 @@ namespace ProjectManagement.Services.ProjectUserBills
                     AccountName = x.AccountName,
                     BillRole = x.BillRole,
                     BillRate = isViewRate ? x.BillRate : 0,
+                    HeadCount = x.HeadCount,
                     StartTime = x.StartTime.Date,
                     EndTime = x.EndTime.Value.Date,
                     Note = x.Note,
                     shadowNote = x.shadowNote,
                     isActive = x.isActive,
+                    isExpose = x.isExpose,
                     AvatarPath = x.User.AvatarPath,
                     FullName = x.User.FullName,
                     Branch = x.User.BranchOld,
@@ -208,7 +210,9 @@ namespace ProjectManagement.Services.ProjectUserBills
             {
                 result = result.Where(x => x.LinkedResources.Any(lr => input.LinkedResourcesFilter.Contains(lr.Id))).ToList();
             }
+            var totalHeadCount = result.Sum(x => x.HeadCount);
 
+            result.ForEach(item => item.totalHeadCount = totalHeadCount);
             return result;
         }
 
@@ -228,11 +232,13 @@ namespace ProjectManagement.Services.ProjectUserBills
                     AccountName = x.AccountName,
                     BillRole = x.BillRole,
                     BillRate = isViewRate ? x.BillRate : 0,
+                    HeadCount = x.HeadCount,
                     StartTime = x.StartTime.Date,
                     EndTime = x.EndTime.Value.Date,
                     Note = x.Note,
                     shadowNote = x.shadowNote,
                     isActive = x.isActive,
+                    isExpose = x.isExpose,
                     AvatarPath = x.User.AvatarPath,
                     FullName = x.User.FullName,
                     Branch = x.User.BranchOld,

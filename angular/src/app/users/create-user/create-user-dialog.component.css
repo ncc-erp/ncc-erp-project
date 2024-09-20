@@ -1,0 +1,16 @@
+
+.modal-body {
+    max-height: 80vh;
+    overflow-y: auto; 
+}
+
+@media screen and (max-width: 600px) {
+    :host ::ng-deep .form-horizontal .modal-header {
+        padding: 0;
+        align-items: baseline;
+    }
+
+    .modal-body {
+        max-height: 55vh;
+    }
+}

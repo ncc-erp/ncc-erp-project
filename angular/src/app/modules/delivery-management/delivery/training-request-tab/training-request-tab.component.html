@@ -2,10 +2,10 @@
   <section class="content-header pb-1">
     <div class="container-fluid">
       <div class="row">
-        <div class="col-6">
+        <div class="col-8">
           <h3>Training Requests</h3>
         </div>
-        <div class="col-6 text-right">
+        <div class="col-4 text-right">
           <button
             *ngIf="isShowBtnCreate()"
             (click)="createRequest()"
@@ -22,178 +22,179 @@
     <div class="container-fluid">
       <div class="card">
         <div class="card-header">
-          <div class="row" id="search-resource-request">
-            <div class="col-xl-4 col-sm-12 pt-1 search-text">
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <button
-                        type="button"
-                        class="btn bg-blue"
-                        (click)="getDataPage(1)"
-                      >
-                        <i class="fas fa-search"></i>
-                      </button>
+          <div class="row mb-10 mr-15" id="search-resource-request1">
+            <div class="col-xl-10 col-md-12 row mb-10 pd-0">
+              <div class="col-xl-5 col-md-5 col-sm-12 pt-1 search-text">
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <button
+                          type="button"
+                          class="btn bg-blue"
+                          (click)="getDataPage(1)"
+                        >
+                          <i class="fas fa-search"></i>
+                        </button>
+                      </div>
+                      <input
+                        type="text"
+                        class="form-control"
+                        name="keyword"
+                        placeholder="Search"
+                        [(ngModel)]="searchText"
+                        (keyup.enter)="getDataPage(1)"
+                      />
+                      <div class="input-group-append">
+                        <button
+                          type="button"
+                          class="btn btn-default"
+                          (click)="checkAddFilter()"
+                        >
+                          <i
+                            class="fas"
+                            [class.fa-angle-up]="advancedFiltersVisible"
+                            [class.fa-angle-down]="!advancedFiltersVisible"
+                          ></i>
+                        </button>
+                      </div>
                     </div>
-                    <input
-                      type="text"
-                      class="form-control"
-                      name="keyword"
-                      placeholder="Search"
-                      [(ngModel)]="searchText"
-                      (keyup.enter)="getDataPage(1)"
-                    />
-                    <div class="input-group-append">
-                      <button
-                        type="button"
-                        class="btn btn-default"
-                        (click)="checkAddFilter()"
-                      >
-                        <i
-                          class="fas"
-                          [class.fa-angle-up]="advancedFiltersVisible"
-                          [class.fa-angle-down]="!advancedFiltersVisible"
-                        ></i>
-                      </button>
-                    </div>
-                  </div>
-                  <div *ngIf="advancedFiltersVisible" class="mb-0 mt-1">
-                    <div class="card-body">
-                      <form class="form-horizontal">
-                        <div class="row">
-                          <div class="col-md-12 col-xl-12">
-                            <div class="mb-0">
-                              <div>
-                                <div
-                                  *ngFor="
-                                    let item of filterItems;
-                                    let i = index
-                                  "
-                                >
-                                  <app-filter
-                                    [item]="item"
-                                    (emitChange)="onEmitChange($event, i)"
-                                    (deleteDataFilter)="deleteFilterItem(i)"
-                                    [inputFilters]="FILTER_CONFIG"
+                    <div *ngIf="advancedFiltersVisible" class="mb-0 mt-1">
+                      <div class="card-body">
+                        <form class="form-horizontal">
+                          <div class="row">
+                            <div class="col-md-12 col-xl-12">
+                              <div class="mb-0">
+                                <div>
+                                  <div
+                                    *ngFor="
+                                      let item of filterItems;
+                                      let i = index
+                                    "
                                   >
-                                  </app-filter>
+                                    <app-filter
+                                      [item]="item"
+                                      (emitChange)="onEmitChange($event, i)"
+                                      (deleteDataFilter)="deleteFilterItem(i)"
+                                      [inputFilters]="FILTER_CONFIG"
+                                    >
+                                    </app-filter>
+                                  </div>
+                                  <i
+                                    style="padding: 0"
+                                    class="fas fa-plus-circle ml-3"
+                                    (click)="addFilter()"
+                                  ></i>
                                 </div>
-                                <i
-                                  style="padding: 0"
-                                  class="fas fa-plus-circle ml-3"
-                                  (click)="addFilter()"
-                                ></i>
                               </div>
                             </div>
                           </div>
-                        </div>
-                      </form>
+                        </form>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div
-              class="col-xl-7 col-lg-12 select-search"
-              style="text-align: end"
-            >
-              <div class="row">
-                <div class="col-xl-4 col-lg-4" style="margin-left: 0px">
-                  <div class="row">
-                    <div
-                      class="col-md-2 col-xl-4 d-flex rsp-label justify-content-end align-items-center"
-                    >
-                      <label class="mr-2 mb-0">Status:</label>
-                    </div>
-                    <div class="col-md-10 col-xl-8 rsp-group-form-field">
-                      <mat-form-field
-                        appearance="outline"
-                        class="rsp-form-field"
+              <div
+                class="col-xl-7 col-md-12 col-sm-12 select-search"
+                style="text-align: end"
+              >
+                <div class="row mb-10">
+                  <div class="col-xl-6 col-lg-6" style="margin-left: 0px">
+                    <div class="row">
+                      <div class="col-md-2 col-xl-4 d-flex rsp-label justify-content-end align-items-center first-col"
                       >
-                        <mat-select
-                          [(ngModel)]="selectedStatus"
-                          (selectionChange)="onChangeStatus()"
+                        <label class="mr-2 mb-0">Status:</label>
+                      </div>
+                      <div class="col-md-10 col-xl-8 rsp-group-form-field">
+                        <mat-form-field
+                          appearance="outline"
+                          class="rsp-form-field w-100"
                         >
-                          <mat-option [value]="-1">All</mat-option>
-                          <mat-option
-                            *ngFor="let status of listStatuses"
-                            [value]="status.id"
+                          <mat-select
+                            [(ngModel)]="selectedStatus"
+                            (selectionChange)="onChangeStatus()"
                           >
-                            {{ status.name }}
-                          </mat-option>
-                        </mat-select>
-                      </mat-form-field>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-xl-4 col-lg-4" style="margin-left: 30px">
-                  <div class="row">
-                    <div
-                      class="col-md-2 col-xl-4 d-flex rsp-label justify-content-end align-items-center"
-                    >
-                      <label class="mr-2 mb-0">Skills:</label>
-                    </div>
-                    <div class="col-md-10 col-xl-8 rsp-group-form-field">
-                      <mat-form-field
-                        appearance="outline"
-                        class="rsp-form-field"
-                      >
-                        <mat-select
-                          placeholder="search skill"
-                          multiple
-                          (selectionChange)="getDataPage(1)"
-                          [(ngModel)]="skillIds"
-                        >
-                          <div
-                            style="width: 334px"
-                            style="
-                              position: sticky;
-                              top: 0;
-                              z-index: 2;
-                              background-color: white;
-                              padding: 10px 7px;
-                              padding: 13px 7px 0px 5px;
-                            "
-                          >
-                            <mat-radio-group
-                              aria-label="Filter by"
-                              class="w-100 px-3 row"
-                              [(ngModel)]="isAndCondition"
-                              (ngModelChange)="refresh()"
-                              style="width: 100%"
+                            <mat-option [value]="-1">All</mat-option>
+                            <mat-option
+                              *ngFor="let status of listStatuses"
+                              [value]="status.id"
                             >
-                              <div class="col-4">
-                                <label
-                                  style="white-space: nowrap"
-                                  class="mt-2 mr-2"
-                                  >Search type:</label
-                                >
-                              </div>
-                              <div class="col-8 pt-2">
-                                <mat-radio-button class="mr-3" [value]="true"
-                                  >And</mat-radio-button
-                                >
-                                <mat-radio-button [value]="false"
-                                  >Or</mat-radio-button
-                                >
-                              </div>
-                            </mat-radio-group>
-                          </div>
-                          <mat-option
-                            *ngFor="let skill of listSkills"
-                            [value]="skill.id"
+                              {{ status.name }}
+                            </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-xl-6 col-lg-6" style="">
+                    <div class="row">
+                      <div
+                      class="col-md-2 col-xl-4 d-flex rsp-label justify-content-end align-items-center first-col"
+                      >
+                        <label class="mr-2 mb-0">Skills:</label>
+                      </div>
+                      <div class="col-md-10 col-xl-8 rsp-group-form-field">
+                        <mat-form-field
+                          appearance="outline"
+                          class="rsp-form-field w-100"
+                        >
+                          <mat-select
+                            placeholder="search skill"
+                            multiple
+                            (selectionChange)="getDataPage(1)"
+                            [(ngModel)]="skillIds"
                           >
-                            {{ skill.name }}
-                          </mat-option>
-                        </mat-select>
-                      </mat-form-field>
+                            <div
+                              style="width: 334px"
+                              style="
+                                position: sticky;
+                                top: 0;
+                                z-index: 2;
+                                background-color: white;
+                                padding: 10px 7px;
+                                padding: 13px 7px 0px 5px;
+                              "
+                            >
+                              <mat-radio-group
+                                aria-label="Filter by"
+                                class="w-100 px-3 row"
+                                [(ngModel)]="isAndCondition"
+                                (ngModelChange)="refresh()"
+                                style="width: 100%"
+                              >
+                                <div class="col-4">
+                                  <label
+                                    style="white-space: nowrap"
+                                    class="mt-2 mr-2"
+                                    >Search type:</label
+                                  >
+                                </div>
+                                <div class="col-8 pt-2">
+                                  <mat-radio-button class="mr-3" [value]="true"
+                                    >And</mat-radio-button
+                                  >
+                                  <mat-radio-button [value]="false"
+                                    >Or</mat-radio-button
+                                  >
+                                </div>
+                              </mat-radio-group>
+                            </div>
+                            <mat-option
+                              *ngFor="let skill of listSkills"
+                              [value]="skill.id"
+                            >
+                              {{ skill.name }}
+                            </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div class="col-xl-1 pt-1 clear" style="margin-left: -182px">
+          </div>
+            <div class="col-xl-1 col-md-12 col-sm-12 pt-1 clear">
               <div class="row">
                 <div class="rsp-total-rows" style="display: none">
                   <label class="mb-0">Total:</label>
@@ -388,9 +389,10 @@
                   "
                 >
                   <div class="row">
-                    <div class="col-md-10">
+                    <div class="col-md-10" *ngIf="item.pmNote">
                       <pre
-                        class="mb-0 p-0 ml-2"
+                      
+                        class="mb-0 p-0"
                         style="
                           white-space: pre-line;
                           font-family: sans-serif;
@@ -403,11 +405,10 @@
                     </div>
                     <div
                       class="col-md-2"
-                      style="margin-left: -10px"
                       *ngIf="permission.isGranted(TrainingRequest_EditPmNote)"
                     >
                       <i
-                        class="fa fa-edit mr-1"
+                        class="fa fa-edit"
                         (click)="
                           openModal(item.name, 'PM', item.pmNote, item.id)
                         "
@@ -423,9 +424,9 @@
                   "
                 >
                   <div class="row">
-                    <div class="col-md-10">
+                    <div class="col-md-10" *ngIf="item.dmNote">
                       <pre
-                        class="mb-0 p-0 ml-2"
+                        class="mb-0 p-0"
                         style="
                           white-space: pre-line;
                           font-family: sans-serif;
@@ -565,11 +566,11 @@
         </div>
         <div class="card-footer bg-light border-top">
           <div class="row">
-            <div class="col-sm-4 col-12 text-sm-left text-center">
+            <div class="col-sm-4 col-12 text-sm-left card-footer-wrapper">
               <button class="btn btn-secondary mb-2" (click)="refresh()">
                 <i class="fas fa-redo-alt"></i>
               </button>
-              <mat-form-field style="width: 20%; margin-left: 30px">
+              <mat-form-field style="max-width: 100px; margin-left: 30px">
                 <mat-label>Number items</mat-label>
                 <mat-select
                   [(ngModel)]="pageSizeType"
@@ -583,7 +584,7 @@
                 </mat-select>
               </mat-form-field>
             </div>
-            <div class="col-sm-4 col-12 text-center">
+            <div class="">
               <p class="mb-0 my-2 total-rows">
                 {{ "TotalRecordsCount" | localize : totalItems }}
               </p>

@@ -1,10 +1,10 @@
-<abp-modal-header [title]="data.node.processCriteria.code + '. ' + data.node.processCriteria.name" (onCloseClick)="dialogRef.close()"></abp-modal-header>
+<abp-modal-header class="modal-header-audit" [title]="data.node.processCriteria.code + '. ' + data.node.processCriteria.name" (onCloseClick)="dialogRef.close()"></abp-modal-header>
 <mat-dialog-content class="mat-typography">
 
   <!-- For view note -->
   <ng-container *ngIf="!isContentTypeViewFromName()">
     <mat-divider></mat-divider>
-    <section>
+    <section class="col-audit-detail">
       <div class="example-label">NC Status</div>
       <div class="example-button-row">
         <div *ngFor="let button of availableColors">
@@ -25,7 +25,7 @@
   <ng-container *ngIf="isContentTypeViewFromName()">
     <mat-divider></mat-divider>
 
-    <section>
+    <section class="col-audit-detail">
       <div class="example-label">Applicable</div>
       <div class="example-button-row">
         <div *ngFor="let item of applicableProjectProcessCriteria">

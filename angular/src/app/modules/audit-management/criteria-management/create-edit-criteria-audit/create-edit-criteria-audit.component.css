@@ -14,6 +14,9 @@
 .w-95{
   width: 95%;
 }
+.w-100 {
+  width: 100%;
+}
 ::ng-deep.my-dialog .mat-dialog-container{
   padding-top: 0;
 }
@@ -24,4 +27,40 @@
 }
 :host::ng-deep .mat-dialog-title{
   margin: 20px 0;
+}
+
+@media only screen and (max-width: 768px){
+  .create-edit-criteria-audit ::ng-deep .modal-header {
+      padding: 0 !important;
+  }
+  .create-edit-criteria-audit ::ng-deep .modal-body {
+      padding: 0;
+  }
+}
+@media (max-width: 600px) {
+  ::ng-deep.my-dialog .mat-dialog-container {
+    overflow: hidden;
+  }
+  :host ::ng-deep .mat-dialog-content {
+    max-height: 56vh;
+    overflow: auto;
+    padding-top: 12px !important;
+  }
+  .btn-create {
+    margin-right: 12px !important;
+  }
+  .action {
+    padding: 0;
+  }
+  .create-annother {
+    width: 100% !important;
+    margin: 0 6px !important;
+    margin-top: 5px !important;
+  }
+  .form-criteria {
+    display: block !important;
+  }
+  .w-100-mb {
+    width: 100% !important;
+  }
 }

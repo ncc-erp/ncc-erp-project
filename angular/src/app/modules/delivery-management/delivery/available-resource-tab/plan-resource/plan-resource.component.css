@@ -60,3 +60,49 @@ td > div { height: 100%; }
 .yellow{
     color: yellow !important;
 }
+
+@media screen and (max-width: 600px) {
+    .field-search {
+        margin-bottom: 10px;
+    }
+
+    .card-body {
+        padding: 0;
+    }
+
+    ::ng-deep .cdk-overlay-container .cdk-global-overlay-wrapper .plan-user-dialog {
+        max-width: 100% !important;
+        padding: 0 20px;
+    }
+
+    .add-filter {
+        margin-left: 6px !important;
+    }
+
+    .form-horizontal {
+        padding-right: 8px;
+        margin-left: -8px;
+    }
+
+    ::ng-deep .cdk-overlay-container .cdk-global-overlay-wrapper .add-edit-note-dialog {
+        width: 100% !important;
+    }
+    
+    .form-number-items {
+        width: 45% !important;
+    }
+
+    ::ng-deep .list-skill app-select-clear-option button.bg-secondary,
+    ::ng-deep .list-skill app-select-clear-option button.bg-success {
+        margin-left: 10px !important;
+        font-size: 14px;
+    }
+
+    ::ng-deep .list-skill app-select-clear-option button.bg-primary {
+        font-size: 14px;
+    }
+
+    .row-skill {
+        margin-bottom: 8px !important;
+    }
+}

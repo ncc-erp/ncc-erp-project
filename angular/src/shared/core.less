@@ -78,7 +78,8 @@ th {
   color: #007bff;
 }
 .mat-form-field-flex > .mat-form-field-infix {
-  padding: 0.32em 0px !important;
+  padding: 8px 0px !important;
+  margin: auto;
 }
 .mat-form-field-label-wrapper {
   top: -1.5em;
@@ -343,4 +344,62 @@ cd-timer {
 
 .paging .mat-form-field-label {
   padding-top: 10px;
+}
+//  custom scroll page
+::-webkit-scrollbar {
+  width: 4px; 
+  height: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #888; 
+  border-radius: 10px; 
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+  border-radius: 10px;
+}
+
+@media screen and (max-width: 600px) {
+  .mat-select-panel {
+    min-width: 100% !important;
+  }
+  
+  div.content-wrapper {
+    background-color: #ffffff;
+  }
+
+  .cdk-overlay-pane:not(:has(.options-number-item)) {
+    transform: none !important;
+  }
+
+  .mat-form-field:not(.mat-form-field-appearance-legacy) .mat-form-field-suffix .mat-icon-button {
+    height: fit-content !important;
+  }
+
+  .options-number-item {
+    min-width: calc(100% + 32px) !important;
+  }
+
+  .number-items-pagination {
+    order: 2;
+    padding-top: 30px;
+    max-width: 55%;
+  }
+
+  .total-pagination {
+    order: 3;
+    max-width: 45%;
+    padding-top: 40px;
+  }
+
+  .pagination-control {
+    order: 1;
+    max-width: 100%;
+  }
 }

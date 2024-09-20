@@ -187,6 +187,7 @@ export class TrainingProjectsComponent extends PagedListingComponentBase<Trainin
         dialogData: project
       },
       width: '700px',
+      maxWidth: 'calc(100% - 24px)',
       maxHeight: '100vh',
       disableClose: true
     });

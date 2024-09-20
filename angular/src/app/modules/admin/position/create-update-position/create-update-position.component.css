@@ -1,0 +1,14 @@
+@media only screen and (max-width: 768px){
+    .create-update-position ::ng-deep .modal-header {
+        padding: 0 !important;
+    }
+    .create-update-position ::ng-deep .modal-body {
+        padding: 0;
+    }
+
+}
+@media only screen and (max-width: 505px){
+    .common-input {
+        width: 70%;
+    }
+}

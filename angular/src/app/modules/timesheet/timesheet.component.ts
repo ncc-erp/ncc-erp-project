@@ -92,6 +92,7 @@ export class TimesheetComponent extends PagedListingComponentBase<TimesheetDto> 
         command: command,
       },
       width: "800px",
+      maxWidth: 'calc(100% - 24px)',
       disableClose: true,
     });
     show.afterClosed().subscribe(result => {

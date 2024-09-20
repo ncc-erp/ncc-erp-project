@@ -7,7 +7,7 @@
                 Project:
             </label>
             <div class="col-md-9">
-                <mat-form-field class="mt-2" appearance="outline" style=width:250px>
+                <mat-form-field class="mt-2 dropdown-select-project mat-form-field-prj" appearance="outline">
                     <mat-select name="projectId" #projectIdValid="ngModel" placeholder="Select project" required [(ngModel)]="user.projectId">
                         <mat-form-field class="w-100 px-3 " style="position: sticky; top: 0; z-index: 2; background-color: white;">
                             <input matInput [(ngModel)]="searchProject" name="searchProjectName" placeholder="Search" #search (keydown)="$event.stopPropagation()">{{search.focus()}}
@@ -29,7 +29,7 @@
                 Role:
             </label>
             <div class="col-md-9">
-                <mat-form-field appearance="outline">
+                <mat-form-field appearance="outline" class="mat-form-field-prj">
                     <mat-select [(ngModel)]="user.projectRole" name="projectRole" placeholder="select a role" required #projectRole="ngModel">
                         <mat-option *ngFor="let role of projectRoleList" [value]="APP_ENUM.ProjectUserRole[role]">
                             {{role}}</mat-option>
@@ -45,7 +45,7 @@
                 Start Time:
             </label>
             <div class="col-md-9">
-                <mat-form-field appearance="outline">
+                <mat-form-field appearance="outline" class="mat-form-field-prj">
                     <input placeholder="Choose date" matInput [matDatepicker]="picker" name="startDate" [(ngModel)]="user.startTime" #timeStart="ngModel" required />
                     <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                     <mat-datepicker #picker></mat-datepicker>

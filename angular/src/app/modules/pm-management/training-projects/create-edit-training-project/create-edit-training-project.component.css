@@ -1,9 +1,35 @@
-::ng-deep input.is-check{
-    border: 1px solid #f33446;
+::ng-deep input.is-check {
+  border: 1px solid #f33446;
 }
-.invalid{
+.invalid {
+  width: 100%;
+  margin-top: 0.25rem;
+  font-size: 80%;
+  color: #dc3545;
+}
+
+.max-h-body {
+  max-height: 80vh;
+}
+
+::ng-deep .mat-form-field-flex {
+  display: flex;
+  align-items: center;
+}
+
+@media screen and (max-width: 600px) {
+  .max-h-body {
+    max-height: 50vh;
+  }
+  .modal-body {
+    overflow-x: hidden;
+    padding: 0;
+  }
+  .width-100 {
     width: 100%;
-    margin-top: .25rem;
-    font-size: 80%;
-    color: #dc3545;
+  }
+  .row-none {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
 }

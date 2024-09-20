@@ -71,3 +71,32 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
+
+.project-name {
+  margin-right: 10px;
+}
+
+@media screen and (max-width: 600px) {
+  .title-project {
+    margin: 0 !important;
+    white-space: nowrap;
+    display: inline-block !important;
+  }
+
+  .parent-project-name {
+    white-space: nowrap;
+    max-width: 148px;
+    overflow: hidden;
+  }
+
+  .project-name {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+  }
+
+  .navbar-nav > li:not(:last-child) {
+    margin-right: 0px;
+  }
+}

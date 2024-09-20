@@ -41,6 +41,7 @@ import * as FileSaver from 'file-saver';
 export class ProjectBillComponent extends AppComponentBase implements OnInit {
   public userBillList: projectUserBillDto[] = [];
   private filteredUserBillList: projectUserBillDto[] = [];
+  public totalHeadCount:number;
 
   public filteredChargeRoles: any;
   public userForUserBill: UserDto[] = [];
@@ -289,11 +290,13 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
           userId: userBill.userId,
           billRole: userBill.billRole,
           billRate: userBill.billRate,
+          headCount: userBill.headCount,
           startTime: userBill.startTime,
           endTime: userBill.endTime,
           note: userBill.note,
           shadowNote: userBill.shadowNote,
           isActive: userBill.isActive,
+          isExpose: userBill.isExpose,
           accountName: userBill.accountName,
           chargeType: userBill.chargeType,
           linkedResources: userBill.linkedResources,
@@ -420,6 +423,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     this.projectUserBillService.getAllUserBill(body).pipe(
         catchError(this.projectUserBillService.handleError)
     ).subscribe(data => {
+      this.totalHeadCount = data.result.reduce((sum, item) => sum + item.headCount, 0);
         this.userBillList = data.result.map(item => {
             if (item.id === id && userIdNew) {
                 return { ...item, createMode: status, userId: userIdNew };

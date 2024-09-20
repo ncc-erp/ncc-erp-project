@@ -184,7 +184,7 @@ export class ProductProjectsComponent extends PagedListingComponentBase<any> imp
         dialogData: project
       },
       width: '700px',
-      maxHeight: '100vh',
+      maxHeight: '80vh',
       disableClose: true
     });
 

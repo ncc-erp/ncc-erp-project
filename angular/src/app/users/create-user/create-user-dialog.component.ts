@@ -19,7 +19,8 @@ import { AbpValidationError } from '@shared/components/validation/abp-validation
 import { BranchService } from '@app/service/api/branch.service';
 import { PositionService } from '@app/service/api/position.service';
 @Component({
-  templateUrl: './create-user-dialog.component.html'
+  templateUrl: './create-user-dialog.component.html',
+  styleUrls: ['./create-user-dialog.component.css']
 })
 export class CreateUserDialogComponent extends AppComponentBase
   implements OnInit {

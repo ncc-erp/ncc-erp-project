@@ -3,8 +3,8 @@
     <abp-modal-header [title]="data.command == 'edit'?'Edit Timesheet: '+timesheet.name:'Create new Timesheet'"
         (onCloseClick)="dialogRef.close()">
     </abp-modal-header>
-    <div class="modal-body">
-        <div class="form-group row required">
+    <div class="modal-body max-h-body">
+        <div class="form-group row required row-none">
             <label class="col-md-3 col-form-label" for="tenancyName">
                 Name:
             </label>
@@ -21,7 +21,7 @@
                     </abp-validation-summary>
             </div>
         </div>
-        <div class="form-group row required mt-4">
+        <div class="form-group row required mt-4 row-none">
             <label class="col-md-3 col-form-label" for="tenancyName">
                 Working day:
             </label>
@@ -33,7 +33,7 @@
                     </abp-validation-summary>
             </div>
         </div>
-        <div class="form-group row required">
+        <div class="form-group row required row-none">
             <label class="col-md-3 col-form-label" for="tenancyName">
                 Month:
 
@@ -52,7 +52,7 @@
                 </mat-form-field>
             </div>
         </div>
-        <div class="form-group row required">
+        <div class="form-group row required row-none">
             <label class="col-md-3 col-form-label" for="code">
                 Year:
             </label>
@@ -70,7 +70,7 @@
                 </mat-form-field>
             </div>
         </div>
-        <div class="form-group row">
+        <div class="form-group row row-none">
             <label class="col-md-3 col-form-label" for="code">
                 Close time:
             </label>

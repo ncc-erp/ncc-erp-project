@@ -1,3 +1,10 @@
 ::ng-deep .mat-select-panel{
     max-height: 350px;
 }
+
+@media screen and (max-width: 600px) {
+    .email-address {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}

@@ -105,6 +105,9 @@ export class HeaderLeftNavbarComponent extends AppComponentBase implements OnIni
     if(this.currentUrl.includes("resource-request")){
       this._layoutStore.setSidebarExpanded(true);
     }
+    if(this.currentUrl.includes("list-project-detail")){
+      this._layoutStore.setSidebarExpanded(true);
+    }
     if (this.currentUrl.includes("weeklyReportTabDetail")) {
       this.reportId = this.route.snapshot.queryParamMap.get("id")
       this.isShowReportBar = true
@@ -133,6 +136,9 @@ export class HeaderLeftNavbarComponent extends AppComponentBase implements OnIni
             // this.reportService.changeProjectType("OUTSOURCING")
           }
           if(this.currentUrl.includes("resource-request")){
+            this._layoutStore.setSidebarExpanded(true);
+          }
+          if(this.currentUrl.includes("list-project-detail")){
             this._layoutStore.setSidebarExpanded(true);
           }
           if(this.isShowReportBar){

@@ -61,8 +61,8 @@ export class CriteriaManagementComponent
         command: command,
         childrens: (node ? node.children : this.dataSource.data)
       },
-      width: "60%",
-      height: "72%",
+      width: "700px",
+      maxHeight: '80vh',
       disableClose: true,
     });
     show.afterClosed().subscribe((result) => {
@@ -282,7 +282,7 @@ export class CriteriaManagementComponent
 
   viewGuiline(node): void {
     const dialogRef = this.dialog.open(ViewGuilineComponent, {
-       panelClass: 'my-dialog',
+      panelClass: 'my-dialog',
       width: '60%',
       data: node,
     });

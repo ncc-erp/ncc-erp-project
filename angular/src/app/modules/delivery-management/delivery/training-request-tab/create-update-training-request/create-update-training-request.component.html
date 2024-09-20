@@ -1,5 +1,5 @@
 <form
-  class="form-horizontal"
+  class="form-horizontal create-update-training-request"
   autocomplete="off"
   #resourceRequestForm="ngForm"
   novalidate
@@ -16,6 +16,7 @@
     (onCloseClick)="dialogRef.close()"
   >
   </abp-modal-header>
+  <mat-dialog-content class="mat-typography">
   <div class="modal-body">
     <div *ngIf="typeControl == 'request'" class="form-group row required">
       <label class="col-md-3 col-form-label" for="tenancyName">
@@ -201,6 +202,7 @@
       </div>
     </div>
   </div>
+</mat-dialog-content>
   <div align="end" class="row justify-content-end">
     <button class="btn btn-secondary btn-action mr-2" mat-dialog-close>
       Cancel

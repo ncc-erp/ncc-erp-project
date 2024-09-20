@@ -130,8 +130,9 @@ export class TrainingRequestTabComponent extends PagedListingComponentBase<Train
         levels: this.listLevels,
         typeControl: 'request'
       },
+      panelClass: 'my-dialog',
       width: "700px",
-      maxHeight: '90vh',
+      maxHeight: '80vh',
     })
     show.afterClosed().subscribe(rs => {
       if (!rs) return
@@ -212,7 +213,8 @@ export class TrainingRequestTabComponent extends PagedListingComponentBase<Train
     const show = this.dialog.open(FormPlanUserComponent, {
       data: { ...data, projectUserRoles: this.listProjectUserRoles },
       width: "700px",
-      maxHeight: "90vh"
+      maxHeight: "90vh",
+      maxWidth: '90vw'
     })
     show.afterClosed().subscribe(rs => {
       if (!rs) return
@@ -240,7 +242,7 @@ export class TrainingRequestTabComponent extends PagedListingComponentBase<Train
     const show = this.dialog.open(FormSendRecruitmentComponent, {
       data: { id: item.id, name: item.name, dmNote: item.dmNote, pmNote: item.pmNote } as SendRecruitmentModel,
       width: "700px",
-      maxHeight: "90vh"
+      maxHeight: "80vh"
     })
     show.afterClosed().subscribe(rs => {
       if (!rs) return;

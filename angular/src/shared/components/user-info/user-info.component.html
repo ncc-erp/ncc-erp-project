@@ -17,8 +17,8 @@
             </div>
             <div [class] = "isChangeContentSize? 'col-10  text-left': 'col-9  text-left'">
                 <p class="m-0"><strong>{{ viewMode == 1 ? user?.emailAddress.split('@')[0] : user?.fullName}}</strong>&nbsp; <span style="font-weight: 600;" [ngClass]="isPool ? 'text-secondary' : 'text-primary'">{{workType}}</span></p>
-                <p class="m-0 text-left" style="width: 180px">
-                    <span *ngIf="user.branchDisplayName" class="mr-1 badge badge-pill text-white" [style.backgroundColor]="user.branchColor">
+                <p class="m-0 text-left badge-type">
+                    <span *ngIf="user.branchDisplayName" class="mr-1 badge badge-pill text-white branch-name" [style.backgroundColor]="user.branchColor">
                         {{user.branchDisplayName}}</span>
                     <span *ngIf="user.userTypeName" [ngClass]="APP_CONST.userTypeStyle[user.userType]">{{user.userTypeName}}</span>
                     <span *ngIf="!user.userTypeName" [ngClass]="APP_CONST.userTypeStyle[user.userType]">{{APP_ENUM.UserType[user.userType]}}

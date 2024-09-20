@@ -9,3 +9,45 @@
     padding: 0;
     align-items: center;
 }
+
+@media only screen and (max-width: 768px){
+    :host ::ng-deep .modal-body {
+        padding: 0;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .item-checkbox label {
+        max-width: 70%;
+    }
+
+    .item-checkbox > div {
+        width: fit-content;
+    }
+
+    .modal-body {
+        padding: 10px 0;
+        padding-right: 0;
+        max-height: 50vh;
+    }
+
+    :host ::ng-deep .form-horizontal {
+        .modal-header {
+            align-items: baseline;
+        }  
+        
+        .mat-dialog-content {
+            margin-bottom: 20px;
+        }
+    }
+
+    .dropdown-select {
+        margin-top: 0 !important;
+    }
+
+    .button-filter-skill {
+        top: inherit !important;
+        width: auto !important;
+        padding: 12px 7px !important;
+    }
+}

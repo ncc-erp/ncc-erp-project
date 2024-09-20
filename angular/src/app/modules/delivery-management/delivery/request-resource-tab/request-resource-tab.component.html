@@ -1,11 +1,11 @@
 <div *ngIf="permission.isGranted(ResourceRequest_View)">
   <section class="content-header pb-1">
     <div class="container-fluid">
-      <div class="row">
-        <div class="col-6">
+      <div class="row header">
+        <div class="col-6 title">
           <h3>Resource Requests</h3>
         </div>
-        <div class="col-6 text-right">
+        <div class="col-6 text-right btn-create-wrapper">
           <button
             *ngIf="isShowBtnCreate()"
             (click)="createRequest()"
@@ -64,7 +64,7 @@
             </div>
 
             <div class="col-xl-7 col-lg-12 select-search">
-              <div class="row">
+              <div class="row option-search">
                 <div class="col-xl-3 col-lg-3">
                   <div class="row align-items-center">
                     <div
@@ -221,7 +221,7 @@
                 <div class="row">
                   <div class="col-md-12 col-xl-12">
                     <div class="mb-0">
-                      <div>
+                      <div class="card-filter">
                         <div *ngFor="let item of filterItems; let i = index">
                           <app-filter
                             [item]="item"
@@ -233,7 +233,7 @@
                         </div>
                         <i
                           style="padding: 0"
-                          class="fas fa-plus-circle ml-3"
+                          class="fas fa-plus-circle ml-3 icon-add-filter"
                           (click)="addFilter()"
                         ></i>
                       </div>
@@ -307,11 +307,7 @@
                  </div>
                   </td>
                   <td style=" width: 380px">
-                          <div class="row"
-                               style="
-                        align-items: flex-start;
-                        justify-content: space-between;
-                      ">
+                          <div class="row request-info">
                       <div class="d-flex align-items-start col-6">
                            
                         <span class="link mr-2" style="width: 126px;height: 24px" (click)="showProject(item)">
@@ -322,11 +318,11 @@
                               <div class="d-flex justify-content-end col-6"
                                    style="justify-content: space-between">
                                    <div class="col-6 d-flex flex-column align-items-start">
-                                   <div class="ml-2 badge"
+                                   <div class="ml-2 badge request-info-item"
                                    [ngClass]="APP_CONST.priorityRequest[item.priority]">
                       {{ item.priorityName }}
                     </div>
-                                  <span class="m-2 badge text-white"
+                                  <span class="m-2 badge text-white request-info-item"
                                         [ngStyle]="Utils.getUserLevel(item.level).style">
                           {{ item.levelName }}
                         </span>
@@ -341,7 +337,7 @@
         </span>
                 </div>
                         <div class="col-6 d-flex flex-column align-items-start">
-                                  <span class="ml-2"
+                                  <span class="ml-2 request-info-item"
                                         style="border-radius: 0.25rem"
                                         [ngClass]="
                             APP_CONST.resourceRequestStyle[
@@ -359,7 +355,7 @@
                           }}
                         </span>
                         <span *ngIf="item.isNewBillAccount"
-                        class="badge badge-danger m-2">Bill Acc</span>
+                        class="badge badge-danger m-2 request-info-item">Bill Acc</span>
                       </div>
                       </div>
                     </div>
@@ -375,18 +371,18 @@
                    
                     </div>
                   </td>
-                  <td style="padding: 5px 4px;width:180px">
+                  <td class="col-skill">
                     <p *ngFor="let skill of item.skills.slice(0, 2)" class="m-0">
                       - {{ skill.name }}
                     </p>
                   </td>
                   <td style="width:250px">
-                    <div class="row">
+                    <div class="row row-bill-account">
                       <div class="col-md-10">
                                   <div *ngIf="item.billUserInfo"
                                        class="d-flex align-items-start"
                                        style="flex-direction: column">
-                                      <p class="m-0 pointer"
+                                      <p class="m-0 pointer user-bill-account"
                                          (click)="
                               openPopupSkill(
                                 item.billUserInfo.employee,
@@ -450,7 +446,7 @@
                           </ng-template>
                         </div>                       
                       </div>
-                              <div class="col-md-2"
+                              <div class="col-md-2 icon-bill-account"
                                    *ngIf="
                           item.statusName == 'PENDING' &&
                           permission.isGranted(
@@ -473,12 +469,12 @@
                     <span *ngIf="item.code">{{ item.code }}</span>
                   </td>
                   <td style="width:250px">
-                    <div class="row">
+                    <div class="row row-bill-account">
                       <div class="col-md-10">
                                   <div *ngIf="item.planUserInfo"
                                        class="d-flex align-items-start"
                                        style="flex-direction: column">
-                                      <p class="m-0 pointer"
+                                      <p class="m-0 pointer user-bill-account"
                                          (click)="
                               openPopupSkill(
                                 item.planUserInfo.employee,
@@ -533,7 +529,7 @@
                           </p>
                         </div>
                       </div>
-                              <div class="col-md-2"
+                              <div class="col-md-2 icon-bill-account"
                                    *ngIf="
                           item.statusName == 'PENDING' &&
                           permission.isGranted(
@@ -946,14 +942,15 @@
           <!-- </div> -->
         </div>
         <div class="card-footer bg-light border-top">
-          <div class="row">
-            <div class="col-sm-4 col-12 text-sm-left text-center">
+          <div class="row container-pagination">
+            <div class="col-sm-4 col-12 text-sm-left text-center number-items-pagination">
               <button class="btn btn-secondary mb-2" (click)="refresh()">
                 <i class="fas fa-redo-alt"></i>
               </button>
-              <mat-form-field style="width: 20%; margin-left: 30px">
+              <mat-form-field style="width: 20%; margin-left: 30px" class="form-number-item">
                 <mat-label>Number items</mat-label>
                 <mat-select
+                  panelClass="options-number-item"
                   [(ngModel)]="pageSizeType"
                   (ngModelChange)="changePageSize()"
                 >
@@ -965,12 +962,12 @@
                 </mat-select>
               </mat-form-field>
             </div>
-            <div class="col-sm-4 col-12 text-center">
+            <div class="col-sm-4 col-12 text-center total-pagination">
               <p class="mb-0 my-2 total-rows">
                 {{ "TotalRecordsCount" | localize : totalItems }}
               </p>
             </div>
-            <div class="col-sm-4 col-12">
+            <div class="col-sm-4 col-12 pagination-control">
               <div class="float-sm-right m-auto">
                 <abp-pagination-controls
                   id="server"
@@ -1002,7 +999,7 @@
         <div class="modal-body">
           <div class="row">
             <div class="col-md-10">
-              <textarea style ="width: 750px"
+              <textarea
                 rows="8"
                 placeholder="{{ typePM }}"
                 name="note"

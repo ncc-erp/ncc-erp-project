@@ -94,10 +94,12 @@ export class projectUserBillDto {
   accountName: string;
   billRole: string;
   billRate: number;
+  headCount: number;
   startTime: string;
   endTime: string;
   currency: number;
   isActive: boolean;
+  isExpose: boolean;
   createMode?: boolean;
   note: string;
   shadowNote: string;
@@ -110,6 +112,7 @@ export class projectUserBillDto {
   linkedResources: any[];
   createLinkResourceMode?: boolean;
   linkCV: string;
+  totalHeadCount:number;
 }
 
 export class ProjectRateDto {

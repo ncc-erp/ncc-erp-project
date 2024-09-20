@@ -1,0 +1,16 @@
+@media screen and (max-width: 768px) {
+    :host ::ng-deep .form-horizontal .modal-header {
+        padding: 0;
+        align-items: baseline;
+    }
+
+    .modal-body {
+        max-height: 55vh;
+        overflow: auto;
+        padding: 10px;
+    }
+
+    :host ::ng-deep .mat-dialog-actions[align=end] {
+        margin-bottom: -15px !important;
+    }
+}

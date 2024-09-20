@@ -1,5 +1,5 @@
 <form
-  class="form-horizontal"
+  class="form-horizontal form-send-recruitment"
   autocomplete="off"
   #resourceRequestForm="ngForm"
   novalidate
@@ -118,19 +118,20 @@
     </div>
   </div>
   <div class="row d-flex justify-content-end">
-    <div class="col-md-2">
+    <div class="col-md-2 btn-footer">
       <button class="btn btn-secondary btn-block" (click)="dialogRef.close()">
         Cancel
       </button>
     </div>
-    <div class="col-md-2">
+    <div class="col-md-2 btn-footer">
       <button
-        class="btn btn-primary btn-block"
+        class="btn btn-primary btn-action"
         [disabled]="isSending"
         (click)="save()"
       >
         Send
       </button>
-    </div>
+    <!-- </div> -->
+  </div>
   </div>
 </form>

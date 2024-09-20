@@ -22,6 +22,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using static ProjectManagement.Constants.Enum.ProjectEnum;
 using UpdateNoteDto = ProjectManagement.APIs.ProjectUserBills.Dto.UpdateNoteDto;
 
@@ -226,85 +227,95 @@ namespace ProjectManagement.APIs.ProjectUserBills
         [HttpPost]
         [AbpAuthorize(PermissionNames.Resource_TabAllBillAccount)]
         //[AbpAllowAnonymous]
-        public GridResult<BillInfoDto> GetAllBillInfo(InputGetBillInfoDto input)
+        public BillInfoResultDto GetAllBillInfo(InputGetBillInfoDto input)
         {
-            var result = WorkScope.All<ProjectUserBill>()
-                .Select(x => new
+         var result = WorkScope.All<ProjectUserBill>()
+        .Select(x => new
+        {
+            UserInfor = new GetUserBillDto
+            {
+                UserId = x.UserId,
+                AvatarPath = x.User.AvatarPath,
+                FullName = x.User.FullName,
+                BranchColor = x.User.Branch.Color,
+                BranchDisplayName = x.User.Branch.DisplayName,
+                PositionId = x.User.PositionId,
+                PositionName = x.User.Position.ShortName,
+                PositionColor = x.User.Position.Color,
+                EmailAddress = x.User.EmailAddress,
+                UserType = x.User.UserType,
+                UserLevel = x.User.UserLevel,
+            },
+            Project = new GetProjectBillDto
+            {
+                BillId = x.Id,
+                ProjectStatus = x.Project.Status,
+                ProjectId = x.ProjectId,
+                ProjectName = x.Project.Name,
+                AccountName = x.AccountName,
+                BillRate = x.BillRate,
+                HeadCount = x.HeadCount,
+                StartTime = x.StartTime,
+                EndTime = x.EndTime,
+                Note = x.Note,
+                isActive = x.isActive,
+                isExpose = x.isExpose,
+                ChargeType = x.ChargeType,
+                CurrencyCode = x.Project.Currency.Code,
+                ClientId = x.Project.ClientId,
+                ClientCode = x.Project.Client.Code,
+                ClientName = x.Project.Client.Name,
+                LinkedResources = x.LinkedResources.Select(lr => new GetUserInfo
                 {
-                    UserInfor = new GetUserBillDto
-                    {
-                        UserId = x.UserId,
-                        AvatarPath = x.User.AvatarPath,
-                        FullName = x.User.FullName,
-                        BranchColor = x.User.Branch.Color,
-                        BranchDisplayName = x.User.Branch.DisplayName,
-                        PositionId = x.User.PositionId,
-                        PositionName = x.User.Position.ShortName,
-                        PositionColor = x.User.Position.Color,
-                        EmailAddress = x.User.EmailAddress,
-                        UserType = x.User.UserType,
-                        UserLevel = x.User.UserLevel,
-                    },
-                    Project = new GetProjectBillDto
-                    {
-                        BillId = x.Id,
-                        ProjectStatus = x.Project.Status,
-                        ProjectId = x.ProjectId,
-                        ProjectName = x.Project.Name,
-                        AccountName = x.AccountName,
-                        BillRate = x.BillRate,
-                        StartTime = x.StartTime,
-                        EndTime = x.EndTime,
-                        Note = x.Note,
-                        isActive = x.isActive,
-                        ChargeType = x.ChargeType,
-                        CurrencyCode = x.Project.Currency.Code,
-                        ClientId = x.Project.ClientId,
-                        ClientCode = x.Project.Client.Code,
-                        ClientName = x.Project.Client.Name,
-                        LinkedResources = x.LinkedResources.Select(lr => new GetUserInfo
-                        {
-                            Id = lr.UserId,
-                            EmailAddress = lr.User.EmailAddress,
-                            UserName = lr.User.UserName,
-                            AvatarPath = lr.User.AvatarPath ?? "",
-                            UserType = lr.User.UserType,
-                            PositionId = lr.User.PositionId,
-                            PositionColor = lr.User.Position.Color,
-                            PositionName = lr.User.Position.ShortName,
-                            UserLevel = lr.User.UserLevel,
-                            BranchColor = lr.User.Branch.Color,
-                            BranchDisplayName = lr.User.Branch.DisplayName,
-                            IsActive = lr.User.IsActive,
-                            FullName = lr.User.FullName
-                        })
-                    },
-                    IsCharge = x.isActive
+                    Id = lr.UserId,
+                    EmailAddress = lr.User.EmailAddress,
+                    UserName = lr.User.UserName,
+                    AvatarPath = lr.User.AvatarPath ?? "",
+                    UserType = lr.User.UserType,
+                    PositionId = lr.User.PositionId,
+                    PositionColor = lr.User.Position.Color,
+                    PositionName = lr.User.Position.ShortName,
+                    UserLevel = lr.User.UserLevel,
+                    BranchColor = lr.User.Branch.Color,
+                    BranchDisplayName = lr.User.Branch.DisplayName,
+                    IsActive = lr.User.IsActive,
+                    FullName = lr.User.FullName
                 })
-                .WhereIf(!string.IsNullOrEmpty(input.SearchText), s => s.UserInfor.EmailAddress.Contains(input.SearchText) ||
-                    s.Project != null && (
-                    (s.Project.AccountName != null && s.Project.AccountName.ToLower().Contains(input.SearchText.ToLower())) ||
-                    (s.Project.ProjectCode != null && s.Project.ProjectCode.ToLower().Contains(input.SearchText.ToLower())) ||
-                    (s.Project.ProjectName != null && s.Project.ProjectName.ToLower().Contains(input.SearchText.ToLower())) ||
-                    (s.Project.ClientCode != null && s.Project.ClientCode.ToLower().Contains(input.SearchText.ToLower())) ||
-                    (s.Project.ClientName != null && s.Project.ClientName.ToLower().Contains(input.SearchText.ToLower())) ||
-                    (s.Project.Note != null && s.Project.Note.ToLower().Contains(input.SearchText.ToLower()))
-                ))
-                .WhereIf(input.ProjectId.HasValue, s => s.Project.ProjectId == input.ProjectId.Value)
-                .WhereIf(input.ClientId.HasValue, s => s.Project.ClientId == input.ClientId.Value)
-                .WhereIf(input.ProjectStatus.HasValue, s => s.Project.ProjectStatus == input.ProjectStatus.Value)
-                .WhereIf(input.IsCharge.HasValue, s => s.IsCharge == input.IsCharge.Value)
-                .GroupBy(s => s.UserInfor)
-                .Select(s => new BillInfoDto
-                {
-                    UserInfor = s.Key,
-                    Projects = s.Select(x => x.Project).OrderBy(x => x.ClientCode).ToList()
-                })
-                .OrderBy(s => s.UserInfor.EmailAddress)
-                .AsQueryable(); 
+            },
+            IsCharge = x.isActive
+        })
+        .WhereIf(!string.IsNullOrEmpty(input.SearchText), s => s.UserInfor.EmailAddress.Contains(input.SearchText) ||
+            s.Project != null && (
+            (s.Project.AccountName != null && s.Project.AccountName.ToLower().Contains(input.SearchText.ToLower())) ||
+            (s.Project.ProjectCode != null && s.Project.ProjectCode.ToLower().Contains(input.SearchText.ToLower())) ||
+            (s.Project.ProjectName != null && s.Project.ProjectName.ToLower().Contains(input.SearchText.ToLower())) ||
+            (s.Project.ClientCode != null && s.Project.ClientCode.ToLower().Contains(input.SearchText.ToLower())) ||
+            (s.Project.ClientName != null && s.Project.ClientName.ToLower().Contains(input.SearchText.ToLower())) ||
+            (s.Project.Note != null && s.Project.Note.ToLower().Contains(input.SearchText.ToLower()))
+        ))
+        .WhereIf(input.ProjectId.HasValue, s => s.Project.ProjectId == input.ProjectId.Value)
+        .WhereIf(input.ClientId.HasValue, s => s.Project.ClientId == input.ClientId.Value)
+        .WhereIf(input.ProjectStatus.HasValue, s => s.Project.ProjectStatus == input.ProjectStatus.Value)
+        .WhereIf(input.IsCharge.HasValue, s => s.IsCharge == input.IsCharge.Value)
+        .GroupBy(s => s.UserInfor)
+        .Select(s => new BillInfoDto
+        {
+            UserInfor = s.Key,
+            Projects = s.Select(x => x.Project).OrderBy(x => x.ClientCode).ToList(),
+            TotalHeadCount = s.Select(x => x.Project).Sum(p => p.HeadCount)
+        })
+        .OrderBy(s => s.UserInfor.EmailAddress)
+        .AsQueryable();
 
-            return result.GetGridResultSync(result, input);
-        }
+    var totalHeadCount = result.Sum(x => x.TotalHeadCount);
+
+   
+    return new BillInfoResultDto
+    {
+        GridResult = result.GetGridResultSync(result, input), 
+        TotalHeadCount = totalHeadCount 
+    };
+}
 
 
         /// <summary>

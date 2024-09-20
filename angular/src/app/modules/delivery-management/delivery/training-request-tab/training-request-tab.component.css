@@ -46,3 +46,38 @@ table td {
     text-decoration: underline;
     cursor: pointer;
 }
+
+.card-footer-wrapper {
+    text-align: center;
+}
+
+
+@media only screen and (max-width: 1200px){
+   .first-col {
+    justify-content: start !important;
+    max-width: fit-content;
+   }
+}
+
+@media only screen and (max-width: 600px){
+    .mb-10 {
+     gap: 10px;
+    }
+
+    ::ng-deep .modal-content{
+        max-width: 85vw;
+    }
+
+    .mr-15 {
+        margin-right: -15px;
+    }
+    .pd-0 {
+        padding-right: 0;
+    }
+
+    .card-footer-wrapper {
+        text-align: unset;
+        flex: 1 1;
+        width: calc(100% - 70px);
+    }
+ }

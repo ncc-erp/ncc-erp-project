@@ -1,10 +1,10 @@
 <section class="content-header pb-1">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-6">
+            <div class="col-8">
                 <h1>{{'Product Projects' | localize}}</h1>
             </div>
-            <div class="col-6 text-right">
+            <div class="col-4 text-right">
                 <button name="btn-create" *ngIf="permission.isGranted(Projects_ProductProjects_Create)" type="button" class="btn bg-blue"
                     (click)="createProject()">
                     <i class="fa fa-plus-square"></i>
@@ -18,8 +18,8 @@
     <div class="container-fluid">
         <div class="card">
             <div class="card-header">
-                <div class="row g-3">
-                    <div class="input-group col-6 pt-1">
+                <div class="row g-3 header">
+                    <div class="input-group col-md-5 col-sm-12 col-xs-12 pt-1">
                         <div class="input-group-prepend">
                             <button name="btn-search" type="button" class="btn bg-blue" (click)="searchInfoProject()">
                                 <i class="fas fa-search"></i>
@@ -35,10 +35,10 @@
                         </div>
 
                     </div>
-                    <div class="col-6 ">
+                    <div class="col-md-7 col-sm-12 col-xs-12">
                         <div class="row filter-wrap">
 
-                            <div class="col-4 search-pm text-right">
+                            <div class="col-md-4 col-sm-4 col-xs-6 search-pm text-right">
                                 <!-- <label class="label-pm pr-2 mt-3 ">PM:</label> -->
                                 <mat-form-field appearance="outline">
                                     <mat-label>PM</mat-label>
@@ -59,7 +59,7 @@
                                     </mat-select>
                                 </mat-form-field>
                             </div>
-                            <div class="col-4 pr-2 search-status">
+                            <div class="col-md-4 col-sm-4 col-xs-6 pr-2 search-status">
                                 <!-- <label class="mt-3 label-status"><span class="pr-2">Trạng thái:</span></label> -->
                                 <mat-form-field appearance="outline" class="listStatus">
                                     <mat-label>Trạng thái</mat-label>
@@ -72,7 +72,7 @@
                                     </mat-select>
                                 </mat-form-field>
                             </div>
-                            <div class="col-4 row justify-content-between">
+                            <div class="col-md-4 col-sm-4 col-xs-12 row justify-content-between show-resource">
                                 <div style="margin-top: 10px;">
                                     <mat-checkbox name="cbx-showResource" [checked] ="isShowResources" (change)="changeShowResource($event.checked)">Show resources</mat-checkbox>
                                 </div>
@@ -93,7 +93,7 @@
                                                 (deleteDataFilter)="deleteFilterItem(i)" [inputFilters]="FILTER_CONFIG">
                                             </app-filter>
                                         </div>
-                                        <i style="padding: 0;" class="fas fa-plus-circle ml-3"
+                                        <i style="padding: 0;" class="fas fa-plus-circle ml-3 icon-add"
                                             (click)="addFilter()"></i>
                                     </div>
                                 </div>
@@ -138,7 +138,7 @@
                                 }; let i = index" style="position: relative;" >
                                 <td class="text-center"> {{ i + 1 + pageSize * (pageNumber - 1) }} </td>
 
-                                <td style="width: 200px;white-space: normal;word-break: break-word;">
+                                <td style="width: 200px;white-space: normal;word-break: break-word; min-width: 130px">
                                     <div class="project-name-wrap">
                                         <!-- <span class="hyperlink"
                                             (click)="showDetail(project.id)">{{ project.name }}
@@ -184,7 +184,7 @@
                                     </mat-checkbox>
                                 </td>
 
-                                <td class="text-center" >
+                                <td class="text-center date-time" >
                                     <div class="time-wrap">
                                         <span class="time-item start-time">{{ project.startTime | date:"dd-MM-yyyy" }}</span>
                                         <span class="time-item end-time">{{ project.endTime | date:"dd-MM-yyyy" }}</span>
@@ -243,11 +243,11 @@
             </div>
             <div class="card-footer bg-light border-top">
                 <div class="row">
-                    <div class="col-sm-4 col-12 text-sm-left text-center">
-                        <button class="btn btn-secondary mb-2" (click)="refresh()">
+                    <div class="col-sm-4 col-12 text-sm-left card-footer-wrapper">
+                        <!-- <button class="btn btn-secondary mb-2" (click)="refresh()">
                             <i class="fas fa-redo-alt"></i>
-                        </button>
-                        <mat-form-field style="width: 20%;margin-left: 30px;">
+                        </button> -->
+                        <mat-form-field style="max-width: 100px;margin-left: 30px;" class="mb-number-items">
                             <mat-label>Number items</mat-label>
                             <mat-select [(ngModel)]="pageSizeType" (ngModelChange)="changePageSize()">
                                 <mat-option [value]="5">
@@ -268,7 +268,7 @@
                             </mat-select>
                         </mat-form-field>
                     </div>
-                    <div class="col-sm-4 col-12 text-center">
+                    <div class="">
                         <p class="mb-0 my-2">
                             {{ "TotalRecordsCount" | localize: totalItems }}
                         </p>

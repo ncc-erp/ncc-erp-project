@@ -125,3 +125,43 @@ font-size: 16px;
 overflow: hidden;
 text-overflow: ellipsis;
 }
+
+@media screen and (max-width: 600px) {
+  .title-audit-detail {
+    flex-direction: column;
+    padding: 0 12px;
+    padding-bottom: 16px;
+  }
+
+  .title-audit-detail h4 {
+    line-height: 14px;
+  }
+
+  .total-score {
+    text-align: left !important;
+    padding-top: 10px;
+  }
+
+  .mat-tree-audit {
+    white-space: nowrap;
+    overflow-x: hidden !important;
+  }
+
+  .ul-mat-tree {
+    overflow: auto;
+  }
+
+  .name-hyperlink {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 132px;
+  }
+
+  ::ng-deep .cdk-overlay-container .cdk-global-overlay-wrapper .my-dialog {
+    width: 100% !important;
+  }
+
+  .note {
+    display: block;
+  }
+}

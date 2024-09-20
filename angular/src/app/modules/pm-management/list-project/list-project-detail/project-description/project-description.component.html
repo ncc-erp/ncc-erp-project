@@ -3,7 +3,7 @@
     <div class="card-header">
         <div class="row">
             <div class="col-md-6">
-                <h3>Thông tin chi tiết dự án</h3>
+                <h3 class="title-project-des">Thông tin chi tiết dự án</h3>
                 <button name="btn-editPRJDetail" class="btn bg-primary  mt-3" (click)="editRequest()"
                     *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabProjectDescription_Edit)">
                     <i class="fas fa-edit"></i>
@@ -18,7 +18,7 @@
                 <label class="col-md-2 col-form-label" for="requestName">
                     Mô tả ngắn dự án:
                 </label>
-                <div *ngIf="readMode" class="col-md-9 mt-2">
+                <div *ngIf="readMode && projectDetail.briefDescription" class="col-md-9 mt-2 text-description">
                     <pre class="mb-0 p-0  ml-2 pre-text">
                         {{projectDetail.briefDescription}}
                     </pre>
@@ -36,7 +36,7 @@
                 <label class="col-md-2 col-form-label" for="detailDescription">
                     Mô tả chi tiết dự án:
                 </label>
-                <div *ngIf="readMode" class="col-md-9 mt-2">
+                <div *ngIf="readMode && projectDetail.detailDescription" class="col-md-9 mt-2 text-description">
                     <pre class="mb-0 p-0  ml-2 pre-text">
                         {{projectDetail.detailDescription}}
                     </pre>
@@ -54,7 +54,7 @@
                 <label class="col-md-2 col-form-label" for="technologyUsed">
                     Công nghệ sử dụng:
                 </label>
-                <div *ngIf="readMode" class="col-md-9 mt-2">
+                <div *ngIf="readMode && projectDetail.technologyUsed" class="col-md-9 mt-2 text-description">
                     <pre *ngIf="projectDetail.technologyUsed" class="mb-0 p-0  ml-2 pre-text">
                         {{projectDetail.technologyUsed}}
                     </pre>
@@ -65,7 +65,7 @@
                     </pre>
                 </div>
                 <div *ngIf="!readMode" class="col-md-9">
-                    <mat-form-field class="w-100" appearance="outline">
+                    <mat-form-field class="w-100 form-use-technology" appearance="outline">
                         <mat-select multiple [(ngModel)]="projectTechnologyList" name="projectTechnologies"
                             placeholder="Select technologies" #projectTechnologies="ngModel">
                             <mat-form-field class="w-100 px-3 "
@@ -86,7 +86,7 @@
                 <label class="col-md-2 col-form-label" for="technicalProblems">
                     Các vấn đề kĩ thuật:
                 </label>
-                <div *ngIf="readMode" class="col-md-9 mt-2">
+                <div *ngIf="readMode && projectDetail.technicalProblems" class="col-md-9 mt-2 text-description">
                     <pre class="mb-0 p-0  ml-2 pre-text">
                         {{projectDetail.technicalProblems}}
                     </pre>
@@ -104,7 +104,7 @@
                 <label class="col-md-2 col-form-label" for="otherProblems">
                     Các vấn đề khác:
                 </label>
-                <div *ngIf="readMode" class="col-md-9 mt-2">
+                <div *ngIf="readMode && projectDetail.otherProblems" class="col-md-9 mt-2 text-description">
                     <pre class="mb-0 p-0  ml-2 pre-text">
                         {{projectDetail.otherProblems}}
                     </pre>
@@ -121,7 +121,7 @@
                 <label class="col-md-2 col-form-label" for="newKnowledge">
                     Kiến thức mới có thể sử dụng sau này:
                 </label>
-                <div *ngIf="readMode" class="col-md-9 mt-2">
+                <div *ngIf="readMode && projectDetail.newKnowledge" class="col-md-9 mt-2 text-description">
                     <pre class="mb-0 p-0  ml-2 pre-text">
                         {{projectDetail.newKnowledge}}
                     </pre>
@@ -135,7 +135,7 @@
                 </div>
             </div>
 
-            <div class="form-group row" [hidden]="readMode">
+            <div class="form-group row footer-desc" [hidden]="readMode">
                 <div class="form-group row d-flex justify-content-end">
                     <button name="btn-cancel" class="btn btn-secondary btn-action mx-2" (click)="readMode = true; "
                         (click)="getProjectDetail()">

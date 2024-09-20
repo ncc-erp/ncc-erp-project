@@ -21,6 +21,7 @@ namespace ProjectManagement.APIs.ProjectUserBills.Dto
     {
         public GetUserBillDto UserInfor { get; set; }
         public List<GetProjectBillDto> Projects { get; set; }
+        public float TotalHeadCount { get; set; }
     }
 
     public class GetUserBillDto : IEquatable<GetUserBillDto>
@@ -82,10 +83,12 @@ namespace ProjectManagement.APIs.ProjectUserBills.Dto
         public ProjectStatus ProjectStatus { get; set; }
         public string AccountName { get; set; }
         public float BillRate { get; set; }
+        public float HeadCount {  get; set; }
         public DateTime StartTime { get; set; }
         public DateTime? EndTime { get; set; }
         public string Note { get; set; }
         public bool isActive { get; set; }
+        public bool isExpose { get; set; }
         public ChargeType? ChargeType { get; set; }
         public string CurrencyCode { get; set; }
         public string ProjectCode { get; set; }

@@ -1,0 +1,10 @@
+@media screen and (max-width: 600px) {
+    :host ::ng-deep .form-horizontal .modal-header {
+        padding: 0;
+        align-items: baseline;
+    }
+
+    .modal-body {
+        padding: 10px;
+    }
+}

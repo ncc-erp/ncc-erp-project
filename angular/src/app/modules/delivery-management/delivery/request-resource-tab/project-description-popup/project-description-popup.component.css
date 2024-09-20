@@ -1,0 +1,38 @@
+@media screen and (max-width: 600px) {
+    :host ::ng-deep .project-description-popup {
+        .modal-header {
+            padding: 0;
+            align-items: baseline;
+        }
+    }
+
+    .card-body {
+        padding: 0 !important;
+        overflow-x: hidden;
+    }
+
+    .modal-body-project-desc {
+        max-height: 55vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding: 0 12px !important;
+    }
+
+    .modal-footer-wrapper {
+        margin-bottom: 0;
+    }
+
+    .modal-footer-project-desc {
+        margin-right: 10px;
+        margin-top: 10px;
+        margin-bottom: 0;
+    }
+
+    .desc-short-prj {
+        margin-top: 12px;
+    }
+
+    .pre-text {
+        margin-left: 0 !important;
+    }
+}

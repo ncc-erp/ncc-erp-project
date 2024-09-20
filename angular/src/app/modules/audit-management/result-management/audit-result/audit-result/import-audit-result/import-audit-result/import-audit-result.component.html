@@ -10,7 +10,7 @@
             </label>
             <span class="text-decoration pl-4"> {{fileName}}</span>
         </div>
-        <mat-form-field class=" w-100">
+        <mat-form-field class=" w-100 mat-form-field-project">
             <mat-label>Project</mat-label>
             <mat-select (closed)="focusOutProject()" [ngModel]="import.projectId" name="select-Project" #projectModel="ngModel" #projectEl  required
                 (selectionChange)="onSelectChange($event)">

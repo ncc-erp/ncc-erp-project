@@ -3532,6 +3532,9 @@ namespace ProjectManagement.Migrations
                     b.Property<DateTime?>("EndTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<float>("HeadCount")
+                        .HasColumnType("real");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -3560,6 +3563,9 @@ namespace ProjectManagement.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<bool>("isActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("isExpose")
                         .HasColumnType("bit");
 
                     b.Property<string>("shadowNote")

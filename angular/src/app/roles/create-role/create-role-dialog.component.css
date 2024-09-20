@@ -1,0 +1,12 @@
+@media only screen and (max-width: 768px){
+    .create-role ::ng-deep .modal-header {
+        padding: 0 !important;
+    }
+    .create-role ::ng-deep .modal-body {
+        padding: 1rem 0;
+    }
+    .create-role ::ng-deep .modal-footer {
+        padding: 0;
+        padding-top: 1rem;
+    }
+}

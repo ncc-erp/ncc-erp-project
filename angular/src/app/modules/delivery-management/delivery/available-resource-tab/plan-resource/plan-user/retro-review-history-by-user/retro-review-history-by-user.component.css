@@ -1,0 +1,8 @@
+@media screen and (max-width: 600px) {
+    :host ::ng-deep .modal-header-retro {
+        .modal-header {
+            padding: 0;
+            align-items: baseline;
+        }
+    }
+}

@@ -1,0 +1,21 @@
+.modal-body {
+    max-height: 500px; 
+    overflow-y: auto;
+}
+
+@media screen and (max-width: 600px) {
+    :host ::ng-deep .form-horizontal .modal-header {
+        padding: 0;
+        align-items: baseline;
+    }
+
+    .modal-body {
+        padding: 1rem 12px 0 0;
+        max-height: 400px;
+    }
+
+    .mat-dialog-actions {
+        margin-bottom: -10px;
+        padding-top: 20px;
+    }
+}

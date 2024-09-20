@@ -1,0 +1,27 @@
+@media only screen and (max-width: 768px){
+    .edit-tenant ::ng-deep .modal-header {
+        padding: 0 !important;
+    }
+    .edit-tenant ::ng-deep .modal-body {
+        padding: 0;
+        padding-bottom: 1rem;
+    }
+
+    .edit-tenant ::ng-deep.modal-footer {
+        padding: 0;
+        padding-top: 1rem;
+    }
+    .col-isActive {
+        width: fit-content;
+    }
+}
+
+@media (max-width: 600px) {
+    :host ::ng-deep .mat-dialog-container {
+      overflow: hidden;
+    }
+    :host ::ng-deep .mat-dialog-content {
+      max-height: 57vh;
+      overflow: auto;
+    }
+}

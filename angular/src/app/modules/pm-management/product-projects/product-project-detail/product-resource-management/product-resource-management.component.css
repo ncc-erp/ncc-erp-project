@@ -75,3 +75,72 @@ span {
   .yellow{
     color: yellow !important;
   }
+  .priority {
+    padding: 0.3em;
+  }
+  .displayName {
+    white-space: normal;
+  }
+  .product-resource-skill {
+    white-space: normal; 
+    max-width: 200px;
+  }
+
+  .card-footer-wrapper {
+    text-align: center;
+  }
+
+   /* ::ng-deep .dateTime.mat-form-field-infix { bottom: 5px;} */
+   @media only screen and (max-width: 768px){
+    .resource-request ::ng-deep .mat-content{
+      flex-direction: column;
+    }
+    .request-header {
+      height: auto !important;
+    }
+    .status {
+      flex-direction: column;
+    }
+    .title-status {
+      justify-content: start !important;
+      justify-content: start !important;
+    }
+    .request-table {
+      width: 1200px;
+    }
+    .product-resource-skill {
+      white-space: nowrap; 
+    }
+    .card-footer-wrapper {
+      text-align: unset;
+      flex: 1 1;
+      width: calc(100% - 70px);
+    }
+  }
+
+  @media only screen and (max-width: 576px){
+    .project-resource ::ng-deep .mat-content{
+      flex-direction: column;
+    }
+    .header {
+      height: auto !important;
+    }
+    .view-history {
+      padding-left: 0;
+    }
+    .footer {
+      margin-top: 10px;
+    }
+  }
+
+  @media only screen and (max-width: 496px){
+    .table-title {
+      font-size: 20px;
+    }
+    .pag-number {
+      width: 100% !important;
+    }
+    .total {
+      width: max-content;
+    }
+  }

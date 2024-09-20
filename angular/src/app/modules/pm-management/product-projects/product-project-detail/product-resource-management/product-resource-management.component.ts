@@ -391,6 +391,7 @@ export class ProductResourceManagementComponent extends AppComponentBase impleme
     if (user.allocatePercentage <= 0) {
       let ref = this.dialog.open(ReleaseUserDialogComponent, {
         width: "700px",
+        maxHeight: '80vh',
         data: {
           user: user,
           type: "confirmOut"
@@ -410,6 +411,7 @@ export class ProductResourceManagementComponent extends AppComponentBase impleme
         workingProject = data.result
         let ref = this.dialog.open(ConfirmPopupComponent, {
           width: '700px',
+          maxHeight: '80vh',
           data: {
             workingProject: workingProject,
             user: user,
@@ -541,7 +543,7 @@ export class ProductResourceManagementComponent extends AppComponentBase impleme
         typeControl: 'requestProject'
       },
       width: "700px",
-      maxHeight: '90vh',
+      maxHeight: '82vh',
     })
     show.afterClosed().subscribe(rs => {
       if(!rs) return
@@ -561,7 +563,7 @@ export class ProductResourceManagementComponent extends AppComponentBase impleme
     const show = this.dialog.open(FormPlanUserComponent, {
       data: {...data, projectUserRoles: this.listProjectUserRoles},
       width: "700px",
-      maxHeight:"90vh"
+      maxHeight:"80vh"
     })
     show.afterClosed().subscribe(rs => {
       if(!rs) return

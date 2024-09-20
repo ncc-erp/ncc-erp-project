@@ -165,9 +165,11 @@ namespace ProjectManagement.APIs.Projects
                                     {
                                         BillRole = b.BillRole,
                                         BillRate = hasViewBillPermission ? b.BillRate : float.NaN,
+                                        HeadCount = hasViewBillPermission ? b.HeadCount : float.NaN,
                                         StartTime = b.StartTime,
                                         EndTime = b.EndTime.Value,
                                         isActive = b.isActive,
+                                        isExpose = b.isExpose,
                                         FullName = b.User.FullName,
                                     }).ToList() : null,
 
@@ -270,7 +272,7 @@ namespace ProjectManagement.APIs.Projects
                 .ToListAsync();
             return new OkObjectResult(pms);
         }
-
+       
         [HttpGet]
         public async Task<List<ProjectInfoDto>> GetAllProjectInfo()
         {

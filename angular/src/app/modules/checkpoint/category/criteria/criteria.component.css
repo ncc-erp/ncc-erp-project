@@ -19,3 +19,29 @@
       box-shadow: inset 0 0.4px 0 rgba(204, 204, 204, 0.35),
                   inset 0 -0.4px 0 rgba(204, 204, 204, 0.35);
   }
+
+@media only screen and (max-width: 768px){
+    .pagination-criterial {
+        display: flex;
+        justify-content: center;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .filter-search {
+        padding: 12px;
+    }
+
+    .icon-add-filter {
+        margin-left: 6px !important;
+    }
+
+    .form-number-items {
+        width: 45% !important;
+    }
+
+    ::ng-deep .cdk-overlay-container .cdk-global-overlay-wrapper .create-edit-criteria-dialog {
+        width: 100% !important;
+        height: fit-content !important;
+    }
+}

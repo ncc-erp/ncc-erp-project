@@ -1,6 +1,6 @@
 <form class="form-horizontal" autocomplete="off" #resourceRequestForm="ngForm" novalidate>
    <div class="card-header">
-        <h3 class="pt-0">
+        <h3 class="pt-0 title">
             <span>
                 {{this.data?.command == 'edit' ? 'Edit plan for user:  ': 'Add plan for project: '}} 
             </span>
@@ -84,7 +84,7 @@
 
        
     </div>
-    <div class="row justify-content-end">
+    <div class="row justify-content-end footer">
         <button class="btn btn-secondary btn-action mr-2" mat-dialog-close>Cancel</button>
         <button class="btn btn-primary btn-action" [disabled]="!resourceRequestForm.valid || isLoading" (click)="SaveAndClose()">Save</button>
     </div>

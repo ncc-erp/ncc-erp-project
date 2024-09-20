@@ -109,6 +109,7 @@ export class CriteriaComponent extends PagedListingComponentBase<CriteriaCompone
       },
       width: "60%",
       height: "90%",
+      panelClass: 'create-edit-criteria-dialog'
 
     })
     show.afterClosed().subscribe((res) => {

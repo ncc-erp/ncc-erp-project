@@ -38,3 +38,33 @@ button{
 ::ng-deep .mat-select-panel{
   max-height: 350px !important;
 }
+
+@media screen and (max-width: 600px) {
+  .card-body {
+    padding: 0;
+    margin-left: -8px;
+    padding-right: 8px;
+  }
+
+  .add-filter {
+    margin-left: 6px !important;
+  }
+
+  .form-number-items {
+    width: 45% !important;
+  }
+
+  ::ng-deep .select-clear-option app-select-clear-option button.bg-secondary,
+  ::ng-deep .select-clear-option app-select-clear-option button.bg-success {
+    margin-left: 10px !important;
+    font-size: 14px;
+  }
+
+  ::ng-deep .select-clear-option app-select-clear-option button.bg-primary {
+    font-size: 14px;
+  }
+
+  .add-plan {
+    width: fit-content !important;
+  }
+}

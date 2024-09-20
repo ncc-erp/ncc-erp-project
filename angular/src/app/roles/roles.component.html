@@ -45,7 +45,7 @@
                 <tr>
                   <th>{{ "RoleName" | localize }}</th>
                   <th>{{ "DisplayName" | localize }}</th>
-                  <th style="width: 200px;">{{ "Actions" | localize }}</th>
+                  <th style="width: 200px;" class="actions">{{ "Actions" | localize }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -89,12 +89,12 @@
         </div>
         <div class="card-footer bg-light border-top">
           <div class="row">
-            <div class="col-sm-4 col-12 text-sm-left text-center">
+            <div class="col-sm-4 col-12 text-sm-left card-footer-wrapper">
               <button class="btn btn-secondary" (click)="refresh()">
                 <i class="fas fa-redo-alt"></i>
               </button>
             </div>
-            <div class="col-sm-4 col-12 text-center">
+            <div class="">
               <p class="mb-0 my-2">
                 {{ "TotalRecordsCount" | localize: totalItems }}
               </p>

@@ -85,8 +85,7 @@
                                             </mat-error>
                                         </div>
                                     </td>
-                                    <td style="vertical-align: middle;"> <span
-                                            style="white-space: normal; max-width: 200px">
+                                    <td style="vertical-align: middle;"> <span class="product-resource-skill">
                                             <div class="d-flex " style="align-items: center;">
                                                 <div style="width: 90%; text-align: left;">
                                                     <p class="m-0" *ngFor="let item of user.userSkills">
@@ -209,8 +208,8 @@
                 </div>
                 <div class="card-footer bg-light border-top">
                     <div class="row footer" style="justify-content: space-between;">
-                        <div class="col-5 text-sm-left text-center number-item">
-                            <mat-form-field style="width: 30%" class="pag-number">
+                        <div class="col-sm-4 col-12 text-sm-left card-footer-wrapper number-item">
+                            <mat-form-field style="max-width: 100px;" class="pag-number">
                                 <mat-label>Number items</mat-label>
                                 <mat-select [(ngModel)]="maxUserCurrentPage" (ngModelChange)="changePageSizeCurrent()">
                                     <mat-option [value]="5">
@@ -231,12 +230,12 @@
                                 </mat-select>
                             </mat-form-field>
                         </div>
-                        <div class="col-2 text-center">
+                        <div class="">
                             <p class="mb-0 my-2 total">
                                 Total: {{ projectUserList.length }}
                             </p>
                         </div>
-                        <div class="col-md-5 col-sm-12">
+                        <div class="col-sm-4 col-12">
                             <pagination-controls autoHide="true" id="projectUser" (pageChange)="userListCurrentPage = $event">
                             </pagination-controls>
                         </div>

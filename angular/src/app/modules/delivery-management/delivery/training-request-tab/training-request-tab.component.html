@@ -566,11 +566,11 @@
         </div>
         <div class="card-footer bg-light border-top">
           <div class="row">
-            <div class="col-sm-4 col-12 text-sm-left text-center">
+            <div class="col-sm-4 col-12 text-sm-left card-footer-wrapper">
               <button class="btn btn-secondary mb-2" (click)="refresh()">
                 <i class="fas fa-redo-alt"></i>
               </button>
-              <mat-form-field style="width: 20%; margin-left: 30px">
+              <mat-form-field style="max-width: 100px; margin-left: 30px">
                 <mat-label>Number items</mat-label>
                 <mat-select
                   [(ngModel)]="pageSizeType"
@@ -584,7 +584,7 @@
                 </mat-select>
               </mat-form-field>
             </div>
-            <div class="col-sm-4 col-12 text-center">
+            <div class="">
               <p class="mb-0 my-2 total-rows">
                 {{ "TotalRecordsCount" | localize : totalItems }}
               </p>

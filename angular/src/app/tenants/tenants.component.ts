@@ -103,7 +103,7 @@ export class TenantsComponent extends PagedListingComponentBase<TenantDto> {
         width: "700px",
         disableClose: true,
         maxHeight: '80vh',
-        panelClass: 'my-dialog',
+        panelClass: 'create-tenant',
       });
       showCreate.afterClosed().subscribe(res => {
         if (res) {

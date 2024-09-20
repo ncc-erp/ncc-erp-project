@@ -19,12 +19,14 @@ namespace ProjectManagement.APIs.ProjectUserBills.Dto
         public string AccountName { get; set; }
         public string BillRole { get; set; }
         public float BillRate { get; set; }
+        public float HeadCount { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime? EndTime { get; set; }
         public string CurrencyName { get; set; }
         public string Note { get; set; }
         public string shadowNote { get; set; }
         public bool isActive { get; set; }
+        public bool isExpose { get; set; }
         public string EmailAddress { get; set; }
         [ApplySearchAttribute]
         public string FullName { get; set; }

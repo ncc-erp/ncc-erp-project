@@ -20,6 +20,7 @@ namespace ProjectManagement.Services.ProjectUserBill.Dto
         [ApplySearchAttribute]
         public string BillRole { get; set; }
         public float BillRate { get; set; }
+        public float HeadCount { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime? EndTime { get; set; }
         public string CurrencyName { get; set; }
@@ -27,6 +28,7 @@ namespace ProjectManagement.Services.ProjectUserBill.Dto
         public string Note { get; set; }
         public string shadowNote { get; set; }
         public bool isActive { get; set; }
+        public bool isExpose { get; set; }
         [ApplySearchAttribute]
         public string EmailAddress { get; set; }
         public string FullName { get; set; }
@@ -46,6 +48,7 @@ namespace ProjectManagement.Services.ProjectUserBill.Dto
         public string PositionColor { get; set; }
         public DateTime CreationTime { get; set; }
         public List<GetUserInfo> LinkedResources { get; set; }
+        public float totalHeadCount { get; set; }
         public GridParam GridParam { get; set; }
         public string LinkCV { get; set; }
     }

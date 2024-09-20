@@ -217,6 +217,13 @@
                                         <i *ngIf="sortColumn !== 'billRate'" class="fas fa-sort"></i>
                                     </div>
                                 </th>
+                                <th class="align" (click)="sortData('headCount')" style="cursor: pointer; min-width: 100px;">
+                                {{ "Head Count" | localize }}
+                                <br>({{totalHeadCount | number: '1.2-2'}})
+                                <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'headCount'"></i>
+                                <i *ngIf="sortColumn !== 'headCount'" class="fas fa-sort"></i>
+                            </th>
+
                                 <th class="align">Charge Type</th>
                                 <th class="align" (click)="sortData('startTime')" style="cursor: pointer;">
                                     <div class="col-bill-account"> 
@@ -224,6 +231,10 @@
                                         <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'startTime'"></i>
                                         <i *ngIf="sortColumn !== 'startTime'" class="fas fa-sort"></i>
                                     </div>
+                                </th>
+                                <th class="align"  style="cursor: pointer;">{{ "Is Expose" | localize }}
+                                    
+                                    <i  class="fas fa-sort"></i>
                                 </th>
                                 <th class="align">Note</th>
                                 <th class="align">Action</th>
@@ -391,6 +402,18 @@
                                     </div>
                                 </td>
                                 <td class="text-center">
+                                    <span class="text-center" *ngIf="!bill.createMode">{{ bill.headCount | 
+                                        number: '1.2-2':'en-US' }}</span>
+                                
+                                    <div *ngIf="bill.createMode">
+                                        <input style="min-width: 30px;" required class="form-control mt-1"
+                                            #headCount="ngModel" #headCountEl type="number" min="0.01" max="1" step="0.01"
+                                            placeholder="0.01 - 1.00"
+                                            [(ngModel)]="bill.headCount" />
+                                        <abp-validation-summary [control]="headCount" [controlEl]="headCountEl"></abp-validation-summary>
+                                    </div>
+                                </td>
+                                <td class="text-center">
                                     <span class="text-center" *ngIf="!bill.createMode">
                                         {{bill.chargeTypeName}}</span>
                                     <div *ngIf="bill.createMode" style="width: 100px; ">
@@ -443,6 +466,13 @@
                                         </mat-form-field>
                                     </div>
                                 </td>
+                                <td class="text-center">
+                                    <span class="text-center">
+                                        <mat-checkbox [disabled]="!bill.createMode" [(ngModel)]="bill.isExpose">
+                                        </mat-checkbox>
+                                    </span>
+                                     
+                                </td>
                                 <!-- <td class="text-center">
                                         <span class="text-center" *ngIf="!bill.createMode">{{bill.endTime
                                             |date:"dd/MM/yyyy"}}</span>
@@ -492,7 +522,7 @@
 
                                     <div *ngIf="bill.createMode" class="pt-1 d-flex" style="flex-direction: column;">
                                         <button
-                                            [disabled]="!bill?.userId || !bill?.billRole || !bill?.startTime  || bill?.billRate<0 || !bill?.billRate "
+                                            [disabled]="!bill?.userId || !bill?.billRole || !bill?.startTime  || bill?.billRate<0 || !bill?.billRate || !bill?.headCount || bill?.headCount<0 || bill?.headCount>1  "
                                             class="mb-3 submit-btn" style="background: none; border: none;"
                                                 [hidden]="showSearchAndFilter"
                                                 (click)="saveUserBill(bill)">

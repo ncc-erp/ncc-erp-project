@@ -792,7 +792,7 @@
                       {{ user.startTime | date : "dd/MM/yyyy" }}
                     </div>
                     <div *ngIf="user.createMode || user.editMode">
-                      <mat-form-field appearance="outline" style="width: 150px">
+                      <mat-form-field appearance="outline" style="width: 150px" class="form-start-date">
                         <input
                           matInput
                           [matDatepicker]="picker"
@@ -1235,7 +1235,7 @@
                       }}
                     </span>
                     <br />
-                    <span *ngIf="item.statusName == 'DONE'">{{
+                    <span *ngIf="item.statusName == 'DONE'" class="time-status">{{
                       item.timeDone | date : "dd/MM/yyyy"
                     }}</span>
                   </td>

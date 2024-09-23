@@ -27,7 +27,9 @@ pre{
     }
 
     .footer-desc {
-        margin-left: 0px;
+        justify-content: end;
+        padding-right: 20px;
+        padding-top: 10px;
     }
 
     .text-description {
@@ -36,5 +38,12 @@ pre{
 
     :host ::ng-deep .form-use-technology .mat-form-field-flex > .mat-form-field-infix {
         padding: 7px 0 !important;
+    }
+
+    .body-description {
+        max-height: 56vh;
+        overflow: auto;
+        overflow-x: hidden;
+        padding-right: 5px;
     }
 }

@@ -4,12 +4,12 @@
 </div>
 <div class="card-body mt-2">
     <div class="form-group row required">
-        <div class="col-3">
+        <div class="col-md-3">
             <label for="releaseDate" class="mt-2">{{user.allocatePercentage > 0 ? 'Join date:' : 'Release date:' }}
             </label>
         </div>
-        <div class="col-9">
-            <mat-form-field appearance="outline" style="width: 200px;">
+        <div class="col-md-9">
+            <mat-form-field appearance="outline" style="width: 200px;" class="form-field-choose-date">
                 <input matInput [matDatepicker]="picker" placeholder="chose a date *" required [(ngModel)]="startDate" #startTime="ngModel" name="releaseDate">
                 <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                 <mat-datepicker #picker></mat-datepicker>

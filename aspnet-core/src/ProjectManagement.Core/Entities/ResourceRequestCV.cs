@@ -2,6 +2,7 @@
 using ProjectManagement.Authorization.Users;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 using static ProjectManagement.Constants.Enum.ProjectEnum;
 
@@ -18,7 +19,9 @@ namespace ProjectManagement.Entities
         public double KpiPoint { get; set; }
         public DateTime? InterviewDate { get; set; }
         public DateTime? SendCVDate { get; set; }
-
+        public long? CvStatusId { get; set; }
+        [ForeignKey(nameof(CvStatusId))]
+        public CvStatus CvStatus { get; set; }
     }
 
 }

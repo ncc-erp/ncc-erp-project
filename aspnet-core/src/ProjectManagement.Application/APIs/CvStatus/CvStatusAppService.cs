@@ -28,5 +28,18 @@ namespace ProjectManagement.APIs.CvStatus
             await WorkScope.InsertAsync(ObjectMapper.Map<Entities.CvStatus>(input));
             return input;
         }
+
+        [HttpPost]
+        public async Task<GridResult<CvStatusDto>> GetAllPaging(GridParam input)
+        {
+            var query = WorkScope.GetAll<Entities.CvStatus>()
+                .Select(cv => new CvStatusDto
+                {
+                    Id = cv.Id,
+                    Name = cv.Name,
+                    Color = cv.Color,
+                });
+            return await query.GetGridResult(query, input);
+        }
     }
 }

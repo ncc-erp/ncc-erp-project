@@ -129,6 +129,12 @@ export class SidebarMenuComponent extends AppComponentBase implements OnInit {
             '/app/criterias',
             'fas fa-tasks',
             'Admin.Criteria'
+          ),
+          new MenuItem(
+            this.l('CV Status'),
+            '/app/cvstatus',
+            'fas fa-file',
+            ''
           )
         ]
       ),

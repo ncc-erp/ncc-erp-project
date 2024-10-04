@@ -233,6 +233,7 @@ import { BillAccountDialogNoteComponent } from "./modules/delivery-management/de
 import { MultipleSelectResourceRequestCodeComponent } from './modules/delivery-management/delivery/request-resource-tab/multiple-select-resource-request-code/multiple-select-resource-request-code.component';
 import { HandleLinkedResourcesDialogComponent } from './modules/delivery-management/delivery/available-resource-tab/bill-account-plan/handle-linked-resources-dialog/handle-linked-resources-dialog.component';
 import { ImportFileResourceComponent } from './modules/delivery-management/delivery/request-resource-tab/import-file-resource/import-file-resource.component';
+import { CVStatusComponent } from './modules/admin/cvstatus/cvstatus.component';
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, "./assets/i18n/", ".json");
 }
@@ -450,6 +451,7 @@ export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
     UploadCVPathResourceRequestCV,
     FormResourceRequestCVUserComponent,
     FocusDirective,
+    CVStatusComponent,
   ],
   imports: [
     CommonModule,

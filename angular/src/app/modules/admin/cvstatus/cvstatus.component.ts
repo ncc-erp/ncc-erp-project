@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Injector, OnInit } from '@angular/core';
+import { CreateUpdateCvstatusComponent } from './create-update-cvstatus/create-update-cvstatus.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-cvstatus',
@@ -7,7 +9,9 @@ import { Component, OnInit } from '@angular/core';
 })
 export class CVStatusComponent implements OnInit {
   
-  constructor() {
+  constructor(private dialog: MatDialog,
+    injector: Injector,
+  ) {
   }
 
   cVStatusList = [
@@ -29,6 +33,12 @@ export class CVStatusComponent implements OnInit {
   ]
 
   ngOnInit(): void {
+  }
+
+  public showDialog() {
+    const show = this.dialog.open(CreateUpdateCvstatusComponent, {
+      width: "700px"
+    })
   }
 
 }

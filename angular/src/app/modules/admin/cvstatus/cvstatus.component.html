@@ -1,8 +1,98 @@
 <section class="content-header">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-6">
-                <h1>CV Status</h1>
+            <h1>CV Status</h1>
+        </div>
+    </div>
+</section>
+<section class="content px-2">
+    <div class="container-fluid table-branch">
+        <div class="card">
+            <div class="card-header">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <button type="button" class="btn bg-blue">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <input type="text" class="form-control col-6" name="keyword" placeholder="Search by Name" />
+                    <div class="text-right col-6">
+                        <button name="btn-create" class="btn bg-blue">
+                            <i class="fa fa-plus-square"></i>
+                            Create
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body table-responsive p-4">
+                <div class="fixHead">
+                    <table name="tbl_branch" style="border-collapse: collapse" class="table table-hover text-nowrap">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="col-2">#</th>
+                                <th class="col-4">Name</th>
+                                <th class="col-4">Color</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of cVStatusList">
+                                <td class="text-center">{{ item.id }}</td>
+                                <td>{{ item.name }}</td>
+                                <td class="text-center">
+                                    <span class="badge badge-pill text-white" [style.backgroundColor]="item.color"> {{ item.color }}</span>
+                                </td>
+                                <td class="text-center">
+                                    <div style="visibility: hidden; position: fixed"
+                                        [matMenuTriggerFor]="menu"></div>
+                                    <button mat-button [matMenuTriggerFor]="menu">
+                                        <i class="fas fa-bars fa-lg"></i>
+                                    </button>
+                                    <mat-menu #menu="matMenu" class="p-2">
+                                        <button class="mat-menu-item  w-100 ">
+                                            <i class="fas fa-pencil-alt mr-1"></i>
+                                            Edit
+                                        </button>
+                                        <button class="mat-menu-item  w-100 ">
+                                            <i class="fas fa-trash fa-lg mr-1"></i>
+                                            Delete
+                                        </button>
+                                    </mat-menu>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer bg-light border-top">
+                <div class="row container-pagination">
+                    <div class="col-sm-4 col-12 text-sm-left text-center number-items-pagination">
+                        <button class="btn btn-secondary mb-2">
+                            <i class="fas fa-redo-alt"></i>
+                        </button>
+                        <mat-form-field style="width: 20%; margin-left: 30px" class="form-number-items">
+                            <mat-label>Number items</mat-label>
+                            <mat-select panelClass="options-number-item">
+                                <mat-option [value]="5"> 5 </mat-option>
+                                <mat-option [value]="10"> 10 </mat-option>
+                                <mat-option [value]="20"> 20 </mat-option>
+                                <mat-option [value]="50"> 50 </mat-option>
+                                <mat-option [value]="100"> 100 </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-sm-4 col-12 text-center total-pagination">
+                        <p class="mb-0 my-2">
+                            {{ "Total: 2" }}
+                        </p>
+                    </div>
+                    <div class="col-sm-4 col-12 pagination-control">
+                        <div class="float-sm-right m-auto">
+                            <abp-pagination-controls id="server">
+                            </abp-pagination-controls>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

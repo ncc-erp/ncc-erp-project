@@ -34,10 +34,28 @@ export class CVStatusComponent extends PagedListingComponentBase<CVStatusCompone
     this.refresh();
   }
 
-  public showDialog() {
+  public showDialog(command: string, cvstatus: any) {
+    let item = {
+      name: cvstatus.name,
+      color: cvstatus.color,
+      id: cvstatus.id,
+    };
     const show = this.dialog.open(CreateUpdateCvstatusComponent, {
+      data: {
+        item: item,
+        command: command
+      },
       width: "700px"
-    })
+    });
+    show.afterClosed().subscribe((res) => {
+      if (res) {
+        this.refresh();
+      }
+    });
+  }
+
+  public createCVStatus() {
+    this.showDialog("create", {});
   }
 
 }

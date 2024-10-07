@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using NccCore.Extension;
 using NccCore.Paging;
 using ProjectManagement.APIs.CvStatus.Dto;
+using ProjectManagement.Authorization;
 using ProjectManagement.Entities;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,7 @@ namespace ProjectManagement.APIs.CvStatus
     public class CvStatusAppService : ProjectManagementAppServiceBase
     {
         [HttpPost]
+        [AbpAuthorize(PermissionNames.Admin_CVStatus_Create)]
         public async Task<CvStatusCreateEditDto> Create(CvStatusCreateEditDto input)
         {
             var checkName = await WorkScope.GetAll<Entities.CvStatus>().AnyAsync(cv => cv.Name == input.Name);
@@ -31,6 +33,7 @@ namespace ProjectManagement.APIs.CvStatus
         }
 
         [HttpPost]
+        [AbpAuthorize(PermissionNames.Admin_CVStatus)]
         public async Task<GridResult<CvStatusDto>> GetAllPaging(GridParam input)
         {
             var query = WorkScope.GetAll<Entities.CvStatus>()
@@ -44,6 +47,7 @@ namespace ProjectManagement.APIs.CvStatus
         }
 
         [HttpPut]
+        [AbpAuthorize(PermissionNames.Admin_CVStatus_Edit)]
         public async Task<CvStatusCreateEditDto> Update(CvStatusCreateEditDto input)
         {
             var cvStatus = await WorkScope.GetAsync<Entities.CvStatus>(input.Id);
@@ -57,6 +61,7 @@ namespace ProjectManagement.APIs.CvStatus
         }
 
         [HttpDelete]
+        [AbpAuthorize(PermissionNames.Admin_CVStatus_Delete)]
         public async Task Delete(long id)
         {
             var cvStatus = await WorkScope.GetAsync<Entities.CvStatus>(id);

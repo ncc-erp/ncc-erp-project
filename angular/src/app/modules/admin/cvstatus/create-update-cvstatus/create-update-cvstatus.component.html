@@ -1,7 +1,11 @@
 <form class="form-horizontal" autocomplete="off" #resourceRequestForm="ngForm" novalidate>
     <abp-modal-header title="{{
-            'Create new CV Status'
-        }}" (onCloseClick)="dialogRef.close()">
+            data.command == 'create'
+            ? 'Create new CV Status'
+            : 'Edit CV Status: ' + title
+        }}"
+        (onCloseClick)="dialogRef.close()"
+    >
     </abp-modal-header>
     <div class="modal-body">
         <div class="form-group row required">

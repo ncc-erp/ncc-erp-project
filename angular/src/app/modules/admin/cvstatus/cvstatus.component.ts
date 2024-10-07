@@ -58,4 +58,8 @@ export class CVStatusComponent extends PagedListingComponentBase<CVStatusCompone
     this.showDialog("create", {});
   }
 
+  public editCVStatus(cvstatus) {
+    this.showDialog("update", cvstatus);
+  }
+
 }

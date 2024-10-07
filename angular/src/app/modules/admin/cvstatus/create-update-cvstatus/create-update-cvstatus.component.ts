@@ -21,7 +21,12 @@ export class CreateUpdateCvstatusComponent extends AppComponentBase implements O
   ) { super(injector) }
 
   ngOnInit(): void {
-    this.setRandomColor();
+    if(this.data.command == 'update') {
+      this.cvstatus = this.data.item;
+      this.title = this.data.item.name ? this.data.item.name : ''
+    } else {
+      this.setRandomColor();
+    }
   }
 
   setRandomColor(): void {
@@ -30,9 +35,16 @@ export class CreateUpdateCvstatusComponent extends AppComponentBase implements O
   }
 
   SaveAndClose() {
-    this.cvStatusService.create(this.cvstatus).pipe(catchError(this.cvStatusService.handleError)).subscribe((res) => {
-      abp.notify.success("Create CV Status Successfully!");
-      this.dialogRef.close(this.cvstatus);
-    }, () => { this.isLoading = false })
+    if (this.data.command == "create") {
+      this.cvStatusService.create(this.cvstatus).pipe(catchError(this.cvStatusService.handleError)).subscribe((res) => {
+        abp.notify.success("Create CV Status Successfully!");
+        this.dialogRef.close(this.cvstatus);
+      }, () => { this.isLoading = false })
+    } else {
+      this.cvStatusService.update(this.cvstatus).pipe(catchError(this.cvStatusService.handleError)).subscribe((res) => {
+        abp.notify.success("Update CV Status Successfully!");
+        this.dialogRef.close(this.cvstatus);
+      }, () => { this.isLoading = false })
+    }
   }
 }

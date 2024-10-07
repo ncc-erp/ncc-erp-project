@@ -11,11 +11,17 @@
             <div class="card-header">
                 <div class="input-group">
                     <div class="input-group-prepend">
-                        <button type="button" class="btn bg-blue">
+                        <button type="button" class="btn bg-blue" (click)="getDataPage(1)">
                             <i class="fas fa-search"></i>
                         </button>
                     </div>
-                    <input type="text" class="form-control col-6" name="keyword" placeholder="Search by Name" />
+                    <input type="text" 
+                        class="form-control col-6"
+                        name="keyword"
+                        placeholder="Search by Name"
+                        [(ngModel)]="searchText"
+                        (keyup.enter)="getDataPage(1)"
+                    />
                     <div class="text-right col-6">
                         <button name="btn-create" class="btn bg-blue"
                             (click)="showDialog()">

@@ -44,10 +44,10 @@ namespace ProjectManagement.APIs.CvStatus
         }
 
         [HttpPut]
-        public async Task<CvStatusCreateEditDto> Update(long id, CvStatusCreateEditDto input)
+        public async Task<CvStatusCreateEditDto> Update(CvStatusCreateEditDto input)
         {
-            var cvStatus = await WorkScope.GetAsync<Entities.CvStatus>(id);
-            var checkName = await WorkScope.GetAll<Entities.CvStatus>().AnyAsync(cv => cv.Name == input.Name && cv.Id != id);
+            var cvStatus = await WorkScope.GetAsync<Entities.CvStatus>(input.Id);
+            var checkName = await WorkScope.GetAll<Entities.CvStatus>().AnyAsync(cv => cv.Name == input.Name && cv.Id != input.Id);
             if (checkName)
             {
                 throw new UserFriendlyException("Name already exists !");

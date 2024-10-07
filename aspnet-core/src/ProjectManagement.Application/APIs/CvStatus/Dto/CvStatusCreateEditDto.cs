@@ -10,7 +10,7 @@ using System.Text;
 namespace ProjectManagement.APIs.CvStatus.Dto
 {
     [AutoMap(typeof(Entities.CvStatus))]
-    public class CvStatusCreateEditDto
+    public class CvStatusCreateEditDto : Entity<long>
     {
         [Required]
         public string Name { get; set; }

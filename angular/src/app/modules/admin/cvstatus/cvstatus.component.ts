@@ -19,8 +19,19 @@ export class CVStatusComponent extends PagedListingComponentBase<CVStatusCompone
       this.showPaging(data.result, pageNumber)
     })
   }
-  protected delete(entity: CVStatusComponent): void {
-    throw new Error('Method not implemented.');
+  protected delete(cvstatus: CVStatusComponent): void {
+    abp.message.confirm(
+      "Delete CV Status " + cvstatus.name + "?",
+      "",
+      (result: boolean) => {
+        if (result) {
+          this.cvStatusService.delete(cvstatus.id).pipe(catchError(this.cvStatusService.handleError)).subscribe((res) => {
+            abp.notify.success("Delele CV Status " + cvstatus.name);
+            this.refresh()
+          })
+        }
+      }
+    )
   }
   
   constructor(private dialog: MatDialog,

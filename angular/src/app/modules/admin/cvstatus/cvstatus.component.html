@@ -1,3 +1,4 @@
+<div *ngIf="permission.isGranted(Admin_CVStatus_View)">
 <section class="content-header">
     <div class="container-fluid">
         <div class="row">
@@ -24,7 +25,8 @@
                     />
                     <div class="text-right col-6">
                         <button name="btn-create" class="btn bg-blue"
-                            (click)="createCVStatus()">
+                            (click)="createCVStatus()"
+                            *ngIf="permission.isGranted(Admin_CVStatus_Create)">
                             <i class="fa fa-plus-square"></i>
                             Create
                         </button>
@@ -66,11 +68,11 @@
                                         <i class="fas fa-bars fa-lg"></i>
                                     </button>
                                     <mat-menu #menu="matMenu" class="p-2">
-                                        <button class="mat-menu-item  w-100 " (click)="editCVStatus(item)">
+                                        <button class="mat-menu-item  w-100 " (click)="editCVStatus(item)" *ngIf="permission.isGranted(Admin_CVStatus_Edit)">
                                             <i class="fas fa-pencil-alt mr-1"></i>
                                             Edit
                                         </button>
-                                        <button class="mat-menu-item  w-100 " (click)="delete(item)">
+                                        <button class="mat-menu-item  w-100 " (click)="delete(item)" *ngIf="permission.isGranted(Admin_CVStatus_Delete)">
                                             <i class="fas fa-trash fa-lg mr-1"></i>
                                             Delete
                                         </button>
@@ -114,3 +116,4 @@
         </div>
     </div>
 </section>
+</div>

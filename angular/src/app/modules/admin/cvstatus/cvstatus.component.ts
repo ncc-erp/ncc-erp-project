@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { PagedListingComponentBase, PagedRequestDto } from '@shared/paged-listing-component-base';
 import { CvstatusService } from '../../../service/api/cvstatus.service';
 import { catchError, finalize } from 'rxjs/operators';
+import { PERMISSIONS_CONSTANT } from '@app/constant/permission.constant';
 
 @Component({
   selector: 'app-cvstatus',
@@ -33,6 +34,11 @@ export class CVStatusComponent extends PagedListingComponentBase<CVStatusCompone
       }
     )
   }
+
+  Admin_CVStatus_View = PERMISSIONS_CONSTANT.Admin_CVStatus_View;
+  Admin_CVStatus_Create = PERMISSIONS_CONSTANT.Admin_CVStatus_Create;
+  Admin_CVStatus_Edit = PERMISSIONS_CONSTANT.Admin_CVStatus_Edit;
+  Admin_CVStatus_Delete = PERMISSIONS_CONSTANT.Admin_CVStatus_Delete;
   
   constructor(private dialog: MatDialog,
     injector: Injector,

@@ -670,4 +670,12 @@ export const PERMISSIONS_CONSTANT = {
        Audits_Results_Detail_ViewNote: "Audits.Results.Detail.ViewNote",
 
        //#endregion
+
+       // #region CVStatus
+       Admin_CVStatus: "Admin.CVStatus",
+       Admin_CVStatus_View: "Admin.CVStatus.View",
+       Admin_CVStatus_Create: "Admin.CVStatus.Create",
+       Admin_CVStatus_Edit: "Admin.CVStatus.Edit",
+       Admin_CVStatus_Delete: "Admin.CVStatus.Delete",
+       // #endregion
 }

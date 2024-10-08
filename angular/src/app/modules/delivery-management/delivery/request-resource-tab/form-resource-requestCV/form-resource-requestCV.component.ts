@@ -74,9 +74,9 @@ export class ResourceRequestCVComponent extends AppComponentBase implements OnIn
        this.getResourceRequestCVById(this.input.item1.id);
     }
       this.resourceRequestId = this.input.resourceRequestId;
-      this.resourceRequestCV.interviewDate = this.input.interviewDate;
+      this.resourceRequestCV.interviewDate = this.input.interviewDate || null;
       this.listUsers = this.input.listUsers;
-      this.resourceRequestCV.sendCVDate = this.input.sendCVDate;
+      this.resourceRequestCV.sendCVDate = this.input.sendCVDate || null;
       this.resourceRequestCV.status= this.APP_ENUM.CVStatus['Chưa làm CV'];
       this.resourceRequestCV.cvPath = this.input.cvPath? this.input.cvPath: " ";
       this.resourceRequestCV.note = this.input.note? this.input.note: " ";
@@ -93,7 +93,7 @@ export class ResourceRequestCVComponent extends AppComponentBase implements OnIn
       this.cVStatusList = res.result;
     });
   }
-  
+
   ngAfterViewChecked(): void {
     this.ref.detectChanges()
   }
@@ -107,14 +107,19 @@ export class ResourceRequestCVComponent extends AppComponentBase implements OnIn
   public formatInterviewDateToVN(resourceRequestCV: ResourceRequestCVDto): any {
     return {
       ...resourceRequestCV,
-      interviewDate: momentTime(resourceRequestCV.interviewDate)
-        .tz('Asia/Ho_Chi_Minh')
-        .format('YYYY-MM-DD HH:mm:ss'),  
-      sendCVDate: momentTime(resourceRequestCV.sendCVDate)
-        .tz('Asia/Ho_Chi_Minh')
-        .format('YYYY-MM-DD HH:mm:ss')
+      interviewDate: resourceRequestCV.interviewDate 
+        ? momentTime(resourceRequestCV.interviewDate)
+            .tz('Asia/Ho_Chi_Minh')
+            .format('YYYY-MM-DD HH:mm:ss')
+        : null,
+      sendCVDate: resourceRequestCV.sendCVDate 
+        ? momentTime(resourceRequestCV.sendCVDate)
+            .tz('Asia/Ho_Chi_Minh')
+            .format('YYYY-MM-DD HH:mm:ss')
+        : null
     };
-}
+  }
+
  SaveAndClose(){
    this.isLoading = true;
    let resourceCv = new ResourceRequestCVDto();

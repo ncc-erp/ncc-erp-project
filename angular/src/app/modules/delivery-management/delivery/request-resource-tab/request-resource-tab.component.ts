@@ -283,7 +283,7 @@ export class RequestResourceTabComponent
     }
     const res = {
       resourceRequestCVId: item.id,
-      sendCVDate: this.formatDateToYYYYMMddHHmmss(item.interviewDate),
+      sendCVDate: this.formatDateToYYYYMMddHHmmss(item.sendCVDate),
     }
 
     this.resourceRequestService.updateSendCVDateResourceRequestCV(res).subscribe(

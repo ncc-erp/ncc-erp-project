@@ -790,26 +790,26 @@
                       </div>                    
                    </div>
                   </td>
-                  <td class="text-left" (dblclick)="edit(a, 'status', c, item)">
+                  <td class="text-left" (dblclick)="edit(a, 'cvStatusId', c, item)">
 
-                    <ng-container *ngIf="!editingRows[a]?.status">
+                    <ng-container *ngIf="!editingRows[a]?.cvStatusId">
                       <span class="fixed-width-field badge text-white" [style.backgroundColor]="c.cvStatus.color">
                         {{ c.cvStatus.name }}
                       </span>
                     </ng-container>
-                    <ng-container *ngIf="editingRows[a]?.status">
+                    <ng-container *ngIf="editingRows[a]?.cvStatusId">
                       <mat-form-field appearance="outline" class="fixed-width-field" floatLabel="never">
                         <mat-select
                           appFocus
-                          [(ngModel)]="c.status"
+                          [(ngModel)]="c.cvStatusId"
                           placeholder="Select Status"
-                          (selectionChange)="updateStatusCV(a, c, 'status')"
-                          (keydown.enter)="updateStatusCV(a, c, item,'status')"
-                          (keydown.esc)=" cancelEdit(a,'status',item)"  
+                          (selectionChange)="updateStatusCV(a, c, 'cvStatusId')"
+                          (keydown.enter)="updateStatusCV(a, c,'cvStatusId')"
+                          (keydown.esc)=" cancelEdit(a,'cvStatusId',item)"  
                         >
-                          <ng-container *ngFor="let status of cvStatusList">
-                            <mat-option [value]="APP_ENUM.CVStatus[status]">
-                              {{ status }}
+                          <ng-container *ngFor="let status of cVStatusList">
+                            <mat-option [value]="status.id">
+                              {{ status.name }}
                             </mat-option>
                           </ng-container>
                         </mat-select>

@@ -52,6 +52,8 @@ import { UploadCVPathResourceRequestCV } from './upload-cvPath-resource-requestC
 import { FormResourceRequestCVUserComponent } from './form-resourceRequestCVUser/form-resourceRequestCVUser.component';
 import { of } from 'rxjs';
 import 'moment-timezone';
+import { CvstatusService } from '@app/service/api/cvstatus.service';
+import { CVStatusDto } from '@app/service/model/cvstatus.dto';
 
 @Component({
   selector: "app-request-resource-tab",
@@ -135,6 +137,7 @@ export class RequestResourceTabComponent
   public editingRows: { [key: number]: { [key: string]: boolean } } = {};
   public originalValues: { [index: number]: { [field: string]: any } } = {};
   public cvStatusList: string[] = Object.keys(this.APP_ENUM.CVStatus)
+  public cVStatusList: CVStatusDto[] = [];
 
   ResourceRequest_View = PERMISSIONS_CONSTANT.ResourceRequest_View;
   ResourceRequest_PlanNewResourceForRequest = PERMISSIONS_CONSTANT.ResourceRequest_PlanNewResourceForRequest;
@@ -161,6 +164,7 @@ export class RequestResourceTabComponent
     private listProjectService: ListProjectService,
     private projectUserService: ProjectUserService,
     private resourceManagerService: ResourceManagerService,
+    private cvStatusService: CvstatusService
   ) {
     super(injector);
   }
@@ -174,6 +178,7 @@ export class RequestResourceTabComponent
     this.getAllProject();
     this.getAllRequestCode();
     this.getAllUser();
+    this.getAllCVStatus();
     this.refresh();
   }
 
@@ -210,7 +215,7 @@ export class RequestResourceTabComponent
     }
     this.editingRows[index][field] = true;
   }
-  updateStatusCV(index: number, item: ResourceRequestCVDto, field: string) {
+  async updateStatusCV(index: number, item: ResourceRequestCVDto, field: string) {
     if (!this.editingRows[index]) {
       return;
     }
@@ -218,9 +223,10 @@ export class RequestResourceTabComponent
     const res = {
       resourceRequestCVId: item.id,
       status: item.status,
+      cvStatusId: item.cvStatusId
     };
     this.resourceRequestService.updateStatusResourceRequestCV(res).subscribe(
-      result => {
+      async result => {
 
         const request = this.listRequest.find(req => req.id === item.resourceRequestId);
         if (request == null) {
@@ -234,6 +240,15 @@ export class RequestResourceTabComponent
 
         this.editingRows[index][field] = false;
         abp.notify.success("Updated Status!");
+        const rs = await this.resourceRequestService.getResouceRequestCV(item.resourceRequestId).toPromise();
+        if (rs && rs.success) {
+          const index = this.listRequest.findIndex(res => res.id === item.resourceRequestId);
+          if (index !== -1) {
+            this.listRequest[index].resCV = rs.result as ResourceRequestCVDto[];
+          }
+        } else {
+          console.error('Unexpected response:', rs);
+        }
       },
       error => {
         abp.notify.error("Failed to update status");
@@ -1225,6 +1240,13 @@ export class RequestResourceTabComponent
   extractEmailName(emailAddress) {
     return emailAddress.split('@')[0];
   }
+
+  getAllCVStatus() {
+    this.cvStatusService.getAll().subscribe(res => {
+      this.cVStatusList = res.result;
+    });
+  }
+  
 }
 
 export class THeadTable {

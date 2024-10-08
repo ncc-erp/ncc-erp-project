@@ -120,6 +120,8 @@ namespace ProjectManagement.APIs.ResourceRequests
                        InterviewDate = s.InterviewDate,
                        SendCVDate = s.SendCVDate,
                        Id = s.Id,
+                       CvStatusId = s.CvStatusId,
+                       CvStatus = WorkScope.GetAll<Entities.CvStatus>().Where(cv => cv.Id == s.CvStatusId).FirstOrDefault(),
                    }).ToListAsync();
         }
         [HttpGet]

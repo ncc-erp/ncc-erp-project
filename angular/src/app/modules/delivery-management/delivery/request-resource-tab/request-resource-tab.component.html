@@ -25,8 +25,8 @@
         <div class="card-header">
           <div class="row" id="search-resource-request">
             <div class="col-xl-4 col-sm-12 pt-1 search-text">
-              <div class="row">
-                <div class="col-md-12">
+              <div class="row d-flex align-items-center">
+                <div class="col-3">
                   <div class="input-group">
                     <div class="input-group-prepend">
                       <button
@@ -60,19 +60,12 @@
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-
-            <div class="col-xl-7 col-lg-12 select-search">
-              <div class="row option-search">
-                <div class="col-xl-3 col-lg-3">
-                  <div class="row align-items-center">
-                    <div
-                      class="col-md-4 col-xl-4 d-flex rsp-label justify-content-end align-items-center"
-                    >
+                <div class="col-8 d-flex">
+                  <div class="col-3 d-flex">
+                    <div class="col-md-4 col-xl-4 d-flex rsp-label justify-content-end align-items-center">
                       <label class="mb-0">Status:</label>
                     </div>
-                    <div class="col-md-8 col-xl-8">
+                    <div class="col-md-8 col-xl-8 align-items-center">
                       <mat-form-field
                         appearance="outline"
                         class="w-100"
@@ -92,16 +85,13 @@
                       </mat-form-field>
                     </div>
                   </div>
-                </div>
-
-                <div class="col-xl-3 col-lg-3">
-                  <div class="row">
+                  <div class="col-3 d-flex">
                     <div
                       class="col-md-4 col-xl-4 d-flex rsp-label justify-content-end align-items-center"
                     >
                       <label class="mb-0"> Project: </label>
                     </div>
-                    <div class="col-md-8 col-xl-8">
+                    <div class="col-md-8 col-xl-8 align-items-center">
                       <mat-form-field
                         class="w-100"
                         appearance="outline"
@@ -145,14 +135,11 @@
                       </mat-form-field>
                     </div>
                   </div>
-                </div>
-
-                <div class="col-xl-3 col-lg-3">
-                  <div class="row align-items-center">
+                  <div class="col-3 d-flex">
                     <div class="col-md-4 col-xl-4 d-flex rsp-label justify-content-end align-items-center">
                       <label class="mb-0">Bill Acc:</label>
                     </div>
-                    <div class="col-md-8 col-xl-8">
+                    <div class="col-md-8 col-xl-8 align-items-center">
                       <mat-form-field appearance="outline" class="w-100">
                         <mat-select
                           [(ngModel)]="isNewBillAccount"
@@ -165,10 +152,7 @@
                       </mat-form-field>
                     </div>
                   </div>
-                </div>
-
-                <div class="col-xl-3 col-lg-3">
-                  <div class="row align-items-center">
+                  <div class="col-3 d-flex">
                     <div
                       class="col-md-4 col-xl-4 d-flex rsp-label justify-content-end align-items-center"
                     >
@@ -193,16 +177,7 @@
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-
-            <div class="col-xl-1 pt-1 clear" style="text-align: end">
-              <div class="row">
-                <div class="rsp-total-rows" style="display: none">
-                  <label class="mb-0">Total:</label>
-                  <label class="mb-0">&nbsp;{{ totalItems }}</label>
-                </div>
-                <div class="col-md-12 clear-button">
+                <div class="clear-button text-right">
                   <button
                     type="button"
                     class="btn btn-light"
@@ -933,9 +908,9 @@
 
           <!-- </div> -->
         </div>
-        <div class="card-footer bg-light border-top">
+        <div class="card-footer bg-light border-top pb-0">
           <div class="row container-pagination">
-            <div class="col-sm-4 col-12 text-sm-left text-center number-items-pagination">
+            <div class="col-4 text-sm-left text-center number-items-pagination">
               <button class="btn btn-secondary mb-2" (click)="refresh()">
                 <i class="fas fa-redo-alt"></i>
               </button>
@@ -954,12 +929,16 @@
                 </mat-select>
               </mat-form-field>
             </div>
-            <div class="col-sm-4 col-12 text-center total-pagination">
+            <div class="col-4 text-center total-pagination align-items-center">
+              <div class="rsp-total-rows my-2">
+                <label class="mb-0">Total:</label>
+                <label class="mb-0">&nbsp;{{ totalItems }}</label>
+              </div>
               <p class="mb-0 my-2 total-rows">
                 {{ "TotalRecordsCount" | localize : totalItems }}
               </p>
             </div>
-            <div class="col-sm-4 col-12 pagination-control">
+            <div class="col-4 pagination-control">
               <div class="float-sm-right m-auto">
                 <abp-pagination-controls
                   id="server"

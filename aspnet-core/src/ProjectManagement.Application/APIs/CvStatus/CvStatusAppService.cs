@@ -72,5 +72,18 @@ namespace ProjectManagement.APIs.CvStatus
             }
             await WorkScope.GetRepo<Entities.CvStatus>().DeleteAsync(cvStatus);
         }
+
+        [HttpGet]
+        public async Task<List<CvStatusDto>> GetAll()
+        {
+            return await WorkScope.GetAll<Entities.CvStatus>()
+                .Select(s => new CvStatusDto
+                {
+                    Id = s.Id,
+                    Name = s.Name,
+                    Color = s.Color,
+                }).ToListAsync();
+
+        }
     }
 }

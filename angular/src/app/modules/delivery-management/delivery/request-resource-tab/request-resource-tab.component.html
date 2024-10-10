@@ -25,8 +25,8 @@
         <div class="card-header">
           <div class="row" id="search-resource-request">
             <div class="col-xl-4 col-sm-12 pt-1 search-text">
-              <div class="row">
-                <div class="col-md-12">
+              <div class="row d-flex align-items-center">
+                <div class="col-3">
                   <div class="input-group">
                     <div class="input-group-prepend">
                       <button
@@ -60,19 +60,12 @@
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-
-            <div class="col-xl-7 col-lg-12 select-search">
-              <div class="row option-search">
-                <div class="col-xl-3 col-lg-3">
-                  <div class="row align-items-center">
-                    <div
-                      class="col-md-4 col-xl-4 d-flex rsp-label justify-content-end align-items-center"
-                    >
+                <div class="col-8 d-flex">
+                  <div class="col-3 d-flex">
+                    <div class="col-md-4 col-xl-4 d-flex rsp-label justify-content-end align-items-center">
                       <label class="mb-0">Status:</label>
                     </div>
-                    <div class="col-md-8 col-xl-8">
+                    <div class="col-md-8 col-xl-8 align-items-center">
                       <mat-form-field
                         appearance="outline"
                         class="w-100"
@@ -92,16 +85,13 @@
                       </mat-form-field>
                     </div>
                   </div>
-                </div>
-
-                <div class="col-xl-3 col-lg-3">
-                  <div class="row">
+                  <div class="col-3 d-flex">
                     <div
                       class="col-md-4 col-xl-4 d-flex rsp-label justify-content-end align-items-center"
                     >
                       <label class="mb-0"> Project: </label>
                     </div>
-                    <div class="col-md-8 col-xl-8">
+                    <div class="col-md-8 col-xl-8 align-items-center">
                       <mat-form-field
                         class="w-100"
                         appearance="outline"
@@ -145,14 +135,11 @@
                       </mat-form-field>
                     </div>
                   </div>
-                </div>
-
-                <div class="col-xl-3 col-lg-3">
-                  <div class="row align-items-center">
+                  <div class="col-3 d-flex">
                     <div class="col-md-4 col-xl-4 d-flex rsp-label justify-content-end align-items-center">
                       <label class="mb-0">Bill Acc:</label>
                     </div>
-                    <div class="col-md-8 col-xl-8">
+                    <div class="col-md-8 col-xl-8 align-items-center">
                       <mat-form-field appearance="outline" class="w-100">
                         <mat-select
                           [(ngModel)]="isNewBillAccount"
@@ -165,10 +152,7 @@
                       </mat-form-field>
                     </div>
                   </div>
-                </div>
-
-                <div class="col-xl-3 col-lg-3">
-                  <div class="row align-items-center">
+                  <div class="col-3 d-flex">
                     <div
                       class="col-md-4 col-xl-4 d-flex rsp-label justify-content-end align-items-center"
                     >
@@ -193,16 +177,7 @@
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-
-            <div class="col-xl-1 pt-1 clear" style="text-align: end">
-              <div class="row">
-                <div class="rsp-total-rows" style="display: none">
-                  <label class="mb-0">Total:</label>
-                  <label class="mb-0">&nbsp;{{ totalItems }}</label>
-                </div>
-                <div class="col-md-12 clear-button">
+                <div class="clear-button text-right">
                   <button
                     type="button"
                     class="btn btn-light"
@@ -257,28 +232,27 @@
                 <tr>
                   <th
                     *ngFor="let thead of theadTable; let i = index"
-                    class="text-center"
+                    class="text-center rsp-th-name"
                   >
-                    <div class="row sortHeader justify-content-center" [ngStyle]="styleThead(thead)">
-                      <div class="rsp-th-name">
+                    <div class="row justify-content-center">
                         {{ thead.name }}
-                      </div>
-                      <div
-                        class="rsp-th-sort"
-                        *ngIf="i != 0 && thead.sortName"
-                        style="vertical-align: middle"
-                      >
-                        <ng-container>
+                        <button *ngIf="i == 0" style="border: none; background-color: transparent;"  type="button" (click)="getResourceRequestCVExpandAll()"> 
+                          <i [class]="getIconExpand()"></i>
+                        </button>
+                      <ng-container
+                          class="rsp-th-sort"
+                          *ngIf="i != 0 && thead.sortName">
                           <app-sortable
                             #sortThead
+                            class="ml-1"
                             [data]="{
                               sort: thead.sortName,
                               typeSort: thead.defaultSort
                             }"
                             (sortEvent)="sortTable($event)"
-                          ></app-sortable>
+                          >
+                          </app-sortable>
                         </ng-container>
-                      </div>
                     </div>
                   </th>
                 </tr>
@@ -296,33 +270,102 @@
                     let i = index
                   ">
                   <tr>
-                  <td class="text-center" style="width: 30px">
-                    <button style="border: none; background-color: transparent;"  type="button" (click)="getResourceRequestCVExpand(item)"> 
+                  <td class="text-center p-1" style="min-width: 50px">
+                    <button class="col-12" style="border: none; background-color: transparent;"  type="button" (click)="getResourceRequestCVExpand(item)"> 
                       <i [class]="getIconClass(item)" ></i>
                     </button>
                     <span >{{ i + 1 + pageSize * (pageNumber - 1) }}</span>
                     <div class="text-center" >
                       <i class="fas fa-plus text-primary " (click)="AddCV(item)"
                           matTooltip="Add CV"></i>
-                 </div>
+                  </div>
                   </td>
-                  <td style=" width: 380px">
+                  <td class="text-center action-request-resource-tab p-1" style="min-width: 70px">
+                    <button mat-button [matMenuTriggerFor]="menu" class="col-12">
+                      <i class="fas fa-bars fa-lg"></i>
+                    </button>
+                    <mat-menu #menu="matMenu" class="p-2">
+                      <!-- case 1: Status is inprogress -->
+                      <div>
+                                  <button *ngIf="isShowBtnSetDone(item)"
+                                          class="btn btn-block text-left"
+                                          mat-button
+                          (click)="setDoneRequest(item)">
+                          <i class="fa fa-fw fa-check text-success vertical-align-baseline"></i>
+                          Set Done
+                        </button>
+
+                                  <button *ngIf="isShowBtnCancel(item)"
+                                          class="btn btn-block text-left"
+                                          mat-button
+                          (click)="cancelRequest(item)">
+                          <i class="fa fa-fw fa-times text-warning vertical-align-baseline"></i>
+                          Cancel
+                        </button>
+
+                        <!-- <br /> -->
+                                  <button class="btn btn-block text-left"
+                                          mat-button
+                                          *ngIf="isShowBtnEdit(item)"
+                          (click)="editRequest(item)">
+                          <i class="fa fa-fw fa-edit vertical-align-baseline"></i>
+                          Edit
+                        </button>
+
+                                  <button *ngIf="item.isRecruitmentSend && item.recruitmentUrl"
+                                          class="btn btn-block text-left"
+                                          (click)="viewRecruitment(item.recruitmentUrl)"
+                                          mat-button>
+                          <i class="fa fa-fw fa-eye vertical-align-baseline"></i>
+                          View recruitment
+                        </button>
+
+                                  <button *ngIf="isShowBtnActivate(item)"
+                                          class="btn btn-block text-left"
+                                          mat-button
+                          (click)="active(item)">
+                          <i class="fa fa-fw fa-check text-success vertical-align-baseline"></i>
+                          Activate
+                        </button>
+
+                                  <button *ngIf="isShowBtnDelete(item)"
+                                          class="btn btn-block text-left"
+                                          mat-button
+                          (click)="delete(item)">
+                          <i class="fa fa-fw fa-trash text-danger vertical-align-baseline"></i>
+                          Delete
+                        </button>
+
+                                  <button *ngIf="isShowBtnSendRecruitment(item)"
+                                          class="btn btn-block text-left"
+                                          mat-button
+                          (click)="sendRecruitment(item)">
+                          <i class="fa fa-fw fa-paper-plane text-primary vertical-align-baseline"></i>
+                          Send recruitment
+                        </button>
+                      </div>
+                    </mat-menu>
+                          <span *ngIf="item.isRecruitmentSend == true"
+                                (click)="viewRecruitment(item.recruitmentUrl)"
+                      class="tl-link">
+                      #{{ sliceUrl(item.recruitmentUrl) }}
+                    </span>
+                  </td>
+                  <td style="min-width: 300px" class="p-1">
                     <div class="row request-info">
                       <div class="d-flex align-items-start col-md-6">
-                           
-                        <span class="link mr-2" style="width: 126px;height: 24px" (click)="showProject(item)">
+                        <span class="link mr-2" (click)="showProject(item)">
                           {{ item.projectName }}
                         </span>
-                       
                       </div>
                       <div class="d-flex justify-content-end col-md-6"
                         style="justify-content: space-between">
                         <div class="col-md-6 d-flex flex-column align-items-start">
-                          <div class="ml-2 badge request-info-item"
+                          <div class="badge request-info-item"
                             [ngClass]="APP_CONST.priorityRequest[item.priority]">
                             {{ item.priorityName }}
                           </div>
-                          <span class="m-2 badge text-white request-info-item"
+                          <span class="mt-1 badge text-white request-info-item"
                             [ngStyle]="Utils.getUserLevel(item.level).style">
                             {{ item.levelName }}
                           </span>
@@ -337,7 +380,7 @@
                           </span>
                         </div>
                         <div class="col-md-6 d-flex flex-column align-items-start">
-                          <span class="ml-2 request-info-item"
+                          <span class="request-info-item"
                             style="border-radius: 0.25rem"
                             [ngClass]="
                               APP_CONST.resourceRequestStyle[
@@ -355,11 +398,11 @@
                           }}
                         </span>
                         <span *ngIf="item.isNewBillAccount" 
-                        class="badge badge-danger m-2 request-info-item">Bill Acc</span>
+                        class="badge badge-danger mt-1 request-info-item">Bill Acc</span>
                         </div>
                       </div>
                     </div>
-                    <div class="d-flex justify-content-between ">
+                    <div class="rowd-flex justify-content-between ">
                       <span style="
                           display: inline-block;
                           max-width: 270px;
@@ -377,7 +420,7 @@
                       - {{ skill.name }}
                     </p>
                   </td>
-                  <td style="width:250px">
+                  <td style="min-width:200px" class="p-1">
                     <div class="row row-bill-account">
                       <div class="col-10">
                                   <div *ngIf="item.billUserInfo"
@@ -466,10 +509,10 @@
                       </div>
                     </div>
                   </td>
-                  <td style="padding: 5px 8px; width:130px">
+                  <td style="min-width:100px" class="p-1">
                     <span *ngIf="item.code">{{ item.code }}</span>
                   </td>
-                  <td style="width:250px">
+                  <td style="min-width:230px" class="p-1">
                     <div class="row row-bill-account">
                       <div class="col-10">
                                   <div *ngIf="item.planUserInfo"
@@ -546,134 +589,48 @@
                       </div>
                     </div>
                   </td>
-                  <td style="
-                      white-space: normal;
-                      width: 150px" 
-                      class="row-description">
-                    <div class="row justify-content-between flex-nowrap">
-                        <pre (click)="
-                            showDescription(item.pmNote);
-                            $event.stopPropagation()
-                          "
-                                    class="mb-0 p-0 ml-2 max-line-content-4"
-                                    PrjResizeContent
-                                    style="
-                            white-space: pre-line;
-                            font-family: sans-serif;
-                            align-self: flex-start;
-                            line-height: initial;
-                          ">
-                                            {{ item.pmNote }}
-                                        </pre>
-                              <div class="text-right"
-                                   *ngIf="permission.isGranted(ResourceRequest_EditPmNote)">
-                                  <i class="fa fa-edit"
-                                     (click)="
-                            openModal(
-                              item.name,
-                              'Description',
-                              item.pmNote,
-                              item.id
-                            )
-                          "></i>
+                  <td style="white-space: normal;
+                    min-width: 200px;" 
+                    class="row-description p-1">
+                    <div class="row px-1 justify-content-between flex-nowrap">
+                      <pre (click)="showDescription(item.pmNote);
+                        $event.stopPropagation()"
+                        class="mb-0 p-0 ml-2 max-line-content-4"
+                        PrjResizeContent
+                        [collapseLine]="4"
+                        style="white-space: pre-line;
+                          font-family: sans-serif;
+                          align-self: flex-start;
+                          line-height: initial;">
+                        {{ item.pmNote }}
+                      </pre>
+                      <div class="text-right col-2" *ngIf="permission.isGranted(ResourceRequest_EditPmNote)">
+                        <i class="fa fa-edit" (click)="openModal(item.name,'Description',item.pmNote,item.id)"></i>
                       </div>
                     </div>
                   </td>
-                  <td style="
-                      white-space: normal;"
-                    class="row-note">
-                    <div class="row flex-nowrap">
-                                  <pre class="mb-0 p-0 ml-2 max-line-content-4"
-                                       PrjResizeContent
-                                       [collapseLine]="4"
-                                       style="
-                                         white-space: pre-line;
-                                         font-family: sans-serif;
-                                         align-self: flex-start;
-                                         line-height: initial;
-                                      ">
-                                            {{ item.dmNote }}
-                                   </pre>
-                              <div class="text-right"
-                                   *ngIf="permission.isGranted(ResourceRequest_EditDmNote)">
-                                  <i class="fa fa-edit"
-                                     (click)="
-                            openModal(item.name, 'Note', item.dmNote, item.id, item.code)
-                          "></i>
+                  <td style="white-space: normal;
+                    min-width: 200px;" 
+                    class="row-description p-1">
+                    <div class="row px-1 justify-content-between flex-nowrap">
+                      <pre class="mb-0 p-0 ml-2 max-line-content-4"
+                        *ngIf="!checkNullOrEmpty(item.dmNote)"
+                        PrjResizeContent
+                        [collapseLine]="4"
+                        [ngStyle]="{
+                          'white-space': 'pre-line',
+                          'font-family': 'sans-serif',
+                          'align-self': item.dmNote ? 'flex-start' : 'flex-end',
+                          'line-height': 'initial'
+                        }">
+                        {{ item.dmNote }}
+                      </pre>
+                      <div class="col-2"
+                        [ngStyle]="{'text-align': item.dmNote ? 'right' : ''}"
+                        *ngIf="permission.isGranted(ResourceRequest_EditDmNote)">
+                        <i class="fa fa-edit" (click)="openModal(item.name,'Note',item.dmNote,item.id)"></i>
                       </div>
                     </div>
-                  </td>
-
-                  <td class="text-center action-request-resource-tab" style="width : 30px">
-                    <button mat-button [matMenuTriggerFor]="menu">
-                      <i class="fas fa-bars fa-lg"></i>
-                    </button>
-                    <mat-menu #menu="matMenu" class="p-2">
-                      <!-- case 1: Status is inprogress -->
-                      <div>
-                                  <button *ngIf="isShowBtnSetDone(item)"
-                                          class="btn btn-block text-left"
-                                          mat-button
-                          (click)="setDoneRequest(item)">
-                          <i class="fa fa-fw fa-check text-success vertical-align-baseline"></i>
-                          Set Done
-                        </button>
-
-                                  <button *ngIf="isShowBtnCancel(item)"
-                                          class="btn btn-block text-left"
-                                          mat-button
-                          (click)="cancelRequest(item)">
-                          <i class="fa fa-fw fa-times text-warning vertical-align-baseline"></i>
-                          Cancel
-                        </button>
-
-                        <!-- <br /> -->
-                                  <button class="btn btn-block text-left"
-                                          mat-button
-                                          *ngIf="isShowBtnEdit(item)"
-                          (click)="editRequest(item)">
-                          <i class="fa fa-fw fa-edit vertical-align-baseline"></i>
-                          Edit
-                        </button>
-
-                                  <button *ngIf="item.isRecruitmentSend && item.recruitmentUrl"
-                                          class="btn btn-block text-left"
-                                          (click)="viewRecruitment(item.recruitmentUrl)"
-                                          mat-button>
-                          <i class="fa fa-fw fa-eye vertical-align-baseline"></i>
-                          View recruitment
-                        </button>
-
-                                  <button *ngIf="isShowBtnActivate(item)"
-                                          class="btn btn-block text-left"
-                                          mat-button
-                          (click)="active(item)">
-                          <i class="fa fa-fw fa-check text-success vertical-align-baseline"></i>
-                          Activate
-                        </button>
-
-                                  <button *ngIf="isShowBtnDelete(item)"
-                                          class="btn btn-block text-left"
-                                          mat-button
-                          (click)="delete(item)">
-                          <i class="fa fa-fw fa-trash text-danger vertical-align-baseline"></i>
-                          Delete
-                        </button>
-
-                                  <button *ngIf="isShowBtnSendRecruitment(item)"
-                                          class="btn btn-block text-left"
-                                          mat-button
-                          (click)="sendRecruitment(item)">
-                          <i class="fa fa-fw fa-paper-plane text-primary vertical-align-baseline"></i>
-                          Send recruitment
-                        </button>
-                      </div>
-                    </mat-menu>
-                          <span *ngIf="item.isRecruitmentSend == true"
-                                (click)="viewRecruitment(item.recruitmentUrl)"
-                      class="tl-link">
-                      #{{ sliceUrl(item.recruitmentUrl) }}
-                    </span>
                   </td>
                 </tr>
                 <tr *ngIf="checkRowExpanded(item.id)">
@@ -682,23 +639,43 @@
                       <p-table [value]="item.resCV" *ngIf="!checkArrayNullOrEmpty(item.resCV)" [busy]="isLoading"  class="table table-hover text-nowrap" responsiveLayout="scroll">
                         <thead>
                           <tr>
-                            <th class="text-center" style=" width: 60px">#</th>
-                            <th pResizableColumn class="text-center" style="padding: 12px 4px;width:300px"> CV Infor</th>
-                            <th pResizableColumn style="padding: 12px 8px; width:150px">CV Status</th>             
-                            <th pResizableColumn style="padding: 12px 8px; width:110px">Kpi Point</th>
-                            <th pResizableColumn style="white-space: normal;width: 160px">SendCV Date</th>
-                            <th pResizableColumn style="white-space: normal;width: 180px">Interview Time</th>                         
+                            <th class="text-center" style=" min-width: 30px">#</th>
+                            <th pResizableColumn class="text-center action-request-resource-tab" style="min-width : 70px">Action</th>
+                            <th pResizableColumn class="text-center" style="padding: 12px 4px;min-width:200px"> CV Infor</th>
+                            <th pResizableColumn style="padding: 12px 8px; min-width:120px">CV Status</th>             
+                            <th pResizableColumn style="padding: 12px 8px; min-width:100px">Kpi Point</th>
+                            <th pResizableColumn style="white-space: normal;min-width: 120px">SendCV Date</th>
+                            <th pResizableColumn style="white-space: normal;min-width: 140px">Interview Time</th>                         
                             <th pResizableColumn style=" resize: horizontal; white-space: normal;
                             overflow: auto;
-                            max-width: 100%;                       
-                            min-with:700px">Note</th>
-                          <th pResizableColumn class="text-center action-request-resource-tab" style="width : 30px">Action</th>
+                            max-width: 100%;"
+                            >Note</th>
                           </tr>
                         </thead>
             <tbody  >
               <tr *ngFor="let c of item.resCV ; let a = index">
-                  <td class="text-center">{{a+1}}</td>            
-                  <td style="width: 250px;">               
+                  <td class="text-center p-1 px-2">{{a+1}}</td>  
+                  <td class="text-center p-1 px-2" style="width : 30px">
+                    <button mat-button [matMenuTriggerFor]="menu">
+                      <i class="fas fa-bars fa-lg"></i>
+                    </button>
+                    <mat-menu #menu="matMenu" class="p-2">               
+                      <div>                   
+                        <button class="btn btn-block text-left" mat-button
+                          (click)="EditCV(c,item)">
+                          <i class="fa fa-fw fa-edit vertical-align-baseline"></i>
+                          Edit
+                        </button>
+                        <button class="btn btn-block text-left" mat-button
+                          (click)="deleteResourceRequestCV(c,item)">
+                          <i class="fa fa-fw fa-trash text-danger vertical-align-baseline"></i>
+                          Delete
+                        </button>
+                      </div>
+                    </mat-menu>                
+                   
+                  </td>          
+                  <td class="p-1 px-2" style="width: 250px;">               
                     <div class="row">
                       <div class="col-10">
                         <div *ngIf="c.user"
@@ -714,36 +691,7 @@
                             <strong>
                               {{ extractEmailName(c.user.emailAddress) }}
                             </strong>
-                          </p>
-                          <p class="m-0">
-                            <span *ngIf="c.user.branchDisplayName"
-                              class="mr-1 badge badge text-white"
-                              [style.backgroundColor]="c.user.branchColor">
-                              {{ c.user.branchDisplayName }}
-                            </span>
-                            <span *ngIf="c.user.userType"
-                              [ngClass]="
-                                APP_CONST.userTypeStyle[
-                                c.user.userType
-                                ]
-                              ">
-                              {{ getValueByEnum(c.user.userType, APP_ENUM.UserType)}}
-                            </span>
-                            <span *ngIf="c.user.userLevel"
-                              class="ml-1 badge text-white"
-                              [ngStyle]="
-                              Utils.getUserLevel(
-                              c.user.userLevel
-                              ).style
-                              ">
-                              {{ getValueByEnum(c.user.userLevel, APP_ENUM.UserLevel)}}
-                            </span>                                
-                            <span *ngIf="c.user.positionName"
-                              class="ml-1 badge text-white"
-                              [style.backgroundColor]="c.user.positionColor">
-                                {{ c.user.positionName }}
-                            </span> 
-                          </p>                           
+                          </p>                          
                         </div>                       
                       </div>                                         
                       <div style="display: flex; justify-content: right; gap: 5px;" class="col-2"
@@ -760,7 +708,36 @@
                           <i class="fa fa-times" title="Remove Acount CV"
                           (click)="removeResourceRequestCvUser(c)"></i>
                         </span>                       
-                      </div>                     
+                      </div>
+                      <p class="m-1">
+                        <span *ngIf="c.user.branchDisplayName"
+                          class="mr-1 badge badge text-white"
+                          [style.backgroundColor]="c.user.branchColor">
+                          {{ c.user.branchDisplayName }}
+                        </span>
+                        <span *ngIf="c.user.userType"
+                          [ngClass]="
+                            APP_CONST.userTypeStyle[
+                            c.user.userType
+                            ]
+                          ">
+                          {{ getValueByEnum(c.user.userType, APP_ENUM.UserType)}}
+                        </span>
+                        <span *ngIf="c.user.userLevel"
+                          class="ml-1 badge text-white"
+                          [ngStyle]="
+                          Utils.getUserLevel(
+                          c.user.userLevel
+                          ).style
+                          ">
+                          {{ getValueByEnum(c.user.userLevel, APP_ENUM.UserLevel)}}
+                        </span>                                
+                        <span *ngIf="c.user.positionName"
+                          class="ml-1 badge text-white"
+                          [style.backgroundColor]="c.user.positionColor">
+                            {{ c.user.positionName }}
+                        </span> 
+                      </p>                    
                     </div>
                     <div class="row">
                       <div class="col-10 link-name-cv">
@@ -769,7 +746,7 @@
                           style="display: flex; align-items: center; justify-content: space-between; width: 100%; cursor: pointer; overflow: hidden; text-overflow: ellipsis;"
                           [href]="!checkNullOrEmpty(c.cvPath) ? c.linkCVPath : '#'"
                           [ngStyle]="{'color': !checkNullOrEmpty(c.cvPath) ? 'blue' : 'black'}">
-                          <span style="flex: 1; overflow: hidden;">
+                          <span style="flex: 1; overflow: hidden;" *ngIf="!checkNullOrEmpty(c.cvName)">
                             {{c.cvName}}
                           </span>
                         </a>                     
@@ -790,26 +767,26 @@
                       </div>                    
                    </div>
                   </td>
-                  <td class="text-left" (dblclick)="edit(a, 'status', c, item)">
+                  <td class="text-left p-1 px-2" (dblclick)="edit(a, 'cvStatusId', c, item)">
 
-                    <ng-container *ngIf="!editingRows[a]?.status">
-                      <span class="fixed-width-field">
-                        {{ getValueByEnum(c.status, APP_ENUM.CVStatus) }}
+                    <ng-container *ngIf="!editingRows[a]?.cvStatusId">
+                      <span class="fixed-width-field badge text-white" [style.backgroundColor]="c.cvStatus.color">
+                        {{ c.cvStatus.name }}
                       </span>
                     </ng-container>
-                    <ng-container *ngIf="editingRows[a]?.status">
+                    <ng-container *ngIf="editingRows[a]?.cvStatusId">
                       <mat-form-field appearance="outline" class="fixed-width-field" floatLabel="never">
                         <mat-select
                           appFocus
-                          [(ngModel)]="c.status"
+                          [(ngModel)]="c.cvStatusId"
                           placeholder="Select Status"
-                          (selectionChange)="updateStatusCV(a, c, 'status')"
-                          (keydown.enter)="updateStatusCV(a, c, item,'status')"
-                          (keydown.esc)=" cancelEdit(a,'status',item)"  
+                          (selectionChange)="updateStatusCV(a, c, 'cvStatusId')"
+                          (keydown.enter)="updateStatusCV(a, c,'cvStatusId')"
+                          (keydown.esc)=" cancelEdit(a,'cvStatusId',item)"  
                         >
-                          <ng-container *ngFor="let status of cvStatusList">
-                            <mat-option [value]="APP_ENUM.CVStatus[status]">
-                              {{ status }}
+                          <ng-container *ngFor="let status of cVStatusList">
+                            <mat-option [value]="status.id">
+                              <p class="badge text-white" [style.backgroundColor]="status.color">{{ status.name }}</p>
                             </mat-option>
                           </ng-container>
                         </mat-select>
@@ -818,7 +795,7 @@
                     
                   </td>
                   
-                 <td style="text-align: right; width: 100px;" (dblclick)="edit(a, 'kpiPoint', c, item)">
+                 <td class="p-1 px-2" style="text-align: right; width: 100px;" (dblclick)="edit(a, 'kpiPoint', c, item)">
                   <span *ngIf="!editingRows[a]?.kpiPoint">{{ c.kpiPoint }}</span>
                   <input                
                     type="number"
@@ -832,32 +809,38 @@
                   />                 
                 </td>
                   
-                <td class="text-center " (dblclick)="edit(a, 'sendCVDate', c, item)">
+                <td class="text-center p-1 px-2" (dblclick)="edit(a, 'sendCVDate', c, item)">
                   <ng-container *ngIf="!editingRows[a]?.sendCVDate">
                     <span class="fixed-width-field1">{{ c.sendCVDate | date: 'd/MM/y' }}</span>
                   </ng-container>
-                  <ng-container *ngIf="editingRows[a]?.sendCVDate"  >
-                    <mat-form-field appearance="outline" class="fixed-width-field1">
-                      <input
-                        matInput
-                        appFocus
-                        placeholder="Choose a day"
-                        name="exchangeDate"
-                        [(ngModel)]="c.sendCVDate"
-                        [min]="minDate"
-                        [readonly]="true"
-                        [owlDateTime]="dt2"
-                        [owlDateTimeTrigger]="dt2"
-                        (dateTimeChange)="updateSendCVDate(a, c, 'sendCVDate')"
-                        (keydown.enter)="updateSendCVDate(a, c, 'sendCVDate')"  
-                        (keydown.esc)=" cancelEdit(a,'sendCVDate',item)"             
-                      />
-                      <owl-date-time #dt2  [pickerType]="'calendar'"></owl-date-time>
-                    </mat-form-field>
+                  <ng-container *ngIf="editingRows[a]?.sendCVDate">
+                      <mat-form-field appearance="outline" class="fixed-width-field1">
+                        <div class="row d-flex">
+                          <input
+                            class="col-10 px-1"
+                            matInput
+                            appFocus
+                            placeholder="Choose a day"
+                            name="exchangeDate"
+                            [(ngModel)]="c.sendCVDate"
+                            [min]="minDate"
+                            [readonly]="true"
+                            [owlDateTime]="dt2"
+                            [owlDateTimeTrigger]="dt2"
+                            (dateTimeChange)="updateSendCVDate(a, c, 'sendCVDate')"
+                            (keydown.enter)="updateSendCVDate(a, c, 'sendCVDate')"  
+                            (keydown.esc)=" cancelEdit(a,'sendCVDate',item)"             
+                          />
+                          <span *ngIf="c.sendCVDate">
+                            <i class="fas fa-redo-alt" (click)="refreshDate(a, c, 'sendCVDate')" title="Refresh" ></i>
+                          </span>
+                        </div>
+                        <owl-date-time #dt2  [pickerType]="'calendar'"></owl-date-time>
+                      </mat-form-field>
                   </ng-container>
                 </td>
                 
-                <td class="text-center " (dblclick)="edit(a, 'interviewDate', c, item)">
+                <td class="text-center p-1 px-2" (dblclick)="edit(a, 'interviewDate', c, item)">
                   <ng-container *ngIf="!editingRows[a]?.interviewDate" class="fixed-width-field2">
                     <span >{{ c.interviewDate | date: 'd/MM/y' }}</span>
                     <br>
@@ -865,27 +848,33 @@
                   </ng-container>
                   <ng-container *ngIf="editingRows[a]?.interviewDate">
                     <mat-form-field appearance="outline" class="fixed-width-field1">
-                      <input
-                        matInput
-                        appFocus
-                        placeholder="Choose a day"
-                        name="exchangeDate"
-                        [(ngModel)]="c.interviewDate"
-                        [min]="minDate"
-                        [readonly]="true"
-                        [owlDateTime]="dt1"
-                        [owlDateTimeTrigger]="dt1"
-                        (dateTimeChange)="updateInterviewTimeCV(a, c,'interviewDate')"
-                        (keydown.enter)="updateInterviewTimeCV(a, c,'interviewDate')"  
-                        (keydown.esc)=" cancelEdit(a,'interviewDate',item)"                      
-                      />
+                      <div class="row d-flex">
+                        <input
+                          class="col-10 px-1"
+                          matInput
+                          appFocus
+                          placeholder="Choose a day"
+                          name="exchangeDate"
+                          [(ngModel)]="c.interviewDate"
+                          [min]="minDate"
+                          [readonly]="true"
+                          [owlDateTime]="dt1"
+                          [owlDateTimeTrigger]="dt1"
+                          (dateTimeChange)="updateInterviewTimeCV(a, c,'interviewDate')"
+                          (keydown.enter)="updateInterviewTimeCV(a, c,'interviewDate')"  
+                          (keydown.esc)=" cancelEdit(a,'interviewDate',item)"                      
+                        />
+                        <span *ngIf="c.interviewDate">
+                          <i class="fas fa-redo-alt" (click)="refreshDate(a, c, 'interviewDate')" title="Refresh" ></i>
+                        </span>
+                      </div>
                       <owl-date-time #dt1></owl-date-time>
                     </mat-form-field>
                   </ng-container>
                 </td>
                 
 
-                  <td class="row-child-note" style="resize: horizontal;min-width: 700px; overflow: auto; max-width: 350px; text-align: left;" (dblclick)="edit(a,'note',c,item)">
+                  <td class="row-child-note p-1 px-2 col-12" style="resize: horizontal; overflow: auto; text-align: left;" (dblclick)="edit(a,'note',c,item)">
                     <span *ngIf="!editingRows[a]?.note">{{ c.note }} </span>
                     <textarea appFocus 
                               style="width: 100%; height: 100%; box-sizing: border-box; border: none; background-color: transparent;" 
@@ -895,27 +884,6 @@
                               (keydown.esc)=" cancelEdit(a,'note',item)"   
                            >
                     </textarea>
-                  </td>
-    
-                  <td class="text-center " style="width : 30px">
-                    <button mat-button [matMenuTriggerFor]="menu">
-                      <i class="fas fa-bars fa-lg"></i>
-                    </button>
-                    <mat-menu #menu="matMenu" class="p-2">               
-                      <div>                   
-                        <button class="btn btn-block text-left" mat-button
-                          (click)="EditCV(c,item)">
-                          <i class="fa fa-fw fa-edit vertical-align-baseline"></i>
-                          Edit
-                        </button>
-                        <button class="btn btn-block text-left" mat-button
-                          (click)="deleteResourceRequestCV(c,item)">
-                          <i class="fa fa-fw fa-trash text-danger vertical-align-baseline"></i>
-                          Delete
-                        </button>
-                      </div>
-                    </mat-menu>                
-                   
                   </td>
               </tr>     
             </tbody>
@@ -933,9 +901,9 @@
 
           <!-- </div> -->
         </div>
-        <div class="card-footer bg-light border-top">
+        <div class="card-footer bg-light border-top pb-0">
           <div class="row container-pagination">
-            <div class="col-sm-4 col-12 text-sm-left text-center number-items-pagination">
+            <div class="col-4 text-sm-left text-center number-items-pagination">
               <button class="btn btn-secondary mb-2" (click)="refresh()">
                 <i class="fas fa-redo-alt"></i>
               </button>
@@ -954,12 +922,16 @@
                 </mat-select>
               </mat-form-field>
             </div>
-            <div class="col-sm-4 col-12 text-center total-pagination">
+            <div class="col-4 text-center total-pagination align-items-center">
+              <div class="rsp-total-rows my-2">
+                <label class="mb-0">Total:</label>
+                <label class="mb-0">&nbsp;{{ totalItems }}</label>
+              </div>
               <p class="mb-0 my-2 total-rows">
                 {{ "TotalRecordsCount" | localize : totalItems }}
               </p>
             </div>
-            <div class="col-sm-4 col-12 pagination-control">
+            <div class="col-4 pagination-control">
               <div class="float-sm-right m-auto">
                 <abp-pagination-controls
                   id="server"

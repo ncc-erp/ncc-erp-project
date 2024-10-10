@@ -120,6 +120,8 @@ namespace ProjectManagement.APIs.ResourceRequests
                        InterviewDate = s.InterviewDate,
                        SendCVDate = s.SendCVDate,
                        Id = s.Id,
+                       CvStatusId = s.CvStatusId,
+                       CvStatus = WorkScope.GetAll<Entities.CvStatus>().Where(cv => cv.Id == s.CvStatusId).FirstOrDefault(),
                    }).ToListAsync();
         }
         [HttpGet]
@@ -186,11 +188,12 @@ namespace ProjectManagement.APIs.ResourceRequests
         {
             var resourceRequestCV = await WorkScope.GetAsync<ResourceRequestCV>(input.ResourceRequestCVId);
             resourceRequestCV.Status = input.Status;
+            resourceRequestCV.CvStatusId = input.CvStatusId;
 
             var resourceRequest = await WorkScope.GetAsync<ResourceRequest>(resourceRequestCV.ResourceRequestId);
-
+            var getCvStatusId = await WorkScope.GetAll<Entities.CvStatus>().Where(s => s.Name == "Pass").Select(s => s.Id).FirstOrDefaultAsync();
             var result = new UpdateStatusResultDto();
-            if (input.Status == CVStatus.Pass && !resourceRequest.BillAccountId.HasValue)
+            if (input.CvStatusId == getCvStatusId && !resourceRequest.BillAccountId.HasValue)
             {
                 var newBillAcount = new UpdateResourceRequestPlanForBillInfoDto();
                 newBillAcount.StartTime = resourceRequestCV.InterviewDate;

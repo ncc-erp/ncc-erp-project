@@ -782,8 +782,8 @@
                           (keydown.esc)=" cancelEdit(a,'cvStatusId',item)"  
                         >
                           <ng-container *ngFor="let status of cVStatusList">
-                            <mat-option [value]="status.id" [style.backgroundColor]="status.color" [style.color]="'white'">
-                              {{ status.name }}
+                            <mat-option [value]="status.id">
+                              <p class="badge text-white" [style.backgroundColor]="status.color">{{ status.name }}</p>
                             </mat-option>
                           </ng-container>
                         </mat-select>

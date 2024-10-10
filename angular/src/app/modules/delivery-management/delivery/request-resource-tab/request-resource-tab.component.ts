@@ -107,6 +107,7 @@ export class RequestResourceTabComponent
   public sortResource = { "code": 0 };
   public theadTable: THeadTable[] = [
     { name: "#" },
+    { name: "Action" },
     { name: "Request Info", sortName: "projectName", defaultSort: "" },
     { name: "Skill need" },
     { name: "Bill Account", sortName: "billCVEmail", defaultSort: "" },
@@ -114,7 +115,6 @@ export class RequestResourceTabComponent
     { name: "Resource" },
     { name: "Description" },
     { name: "Note" },
-    { name: "Action" },
   ];
   public isShowModal: string = "none";
   public strNote: string;
@@ -138,6 +138,8 @@ export class RequestResourceTabComponent
   public originalValues: { [index: number]: { [field: string]: any } } = {};
   public cvStatusList: string[] = Object.keys(this.APP_ENUM.CVStatus)
   public cVStatusList: CVStatusDto[] = [];
+
+  public isExpand: boolean = false;
 
   ResourceRequest_View = PERMISSIONS_CONSTANT.ResourceRequest_View;
   ResourceRequest_PlanNewResourceForRequest = PERMISSIONS_CONSTANT.ResourceRequest_PlanNewResourceForRequest;
@@ -283,7 +285,7 @@ export class RequestResourceTabComponent
     }
     const res = {
       resourceRequestCVId: item.id,
-      sendCVDate: this.formatDateToYYYYMMddHHmmss(item.sendCVDate),
+      sendCVDate: item.sendCVDate ? this.formatDateToYYYYMMddHHmmss(item.sendCVDate) : null,
     }
 
     this.resourceRequestService.updateSendCVDateResourceRequestCV(res).subscribe(
@@ -303,7 +305,7 @@ export class RequestResourceTabComponent
      }
       const res = {
         resourceRequestCVId: item.id,
-        interviewDate: this.formatDateToYYYYMMddHHmmss(item.interviewDate)
+        interviewDate: item.interviewDate ? this.formatDateToYYYYMMddHHmmss(item.interviewDate) : null
       }
       this.resourceRequestService.updateInterviewTimeResourceRequestCV(res).subscribe(
         result => {
@@ -347,6 +349,11 @@ export class RequestResourceTabComponent
 
   getIconClass(entity: RequestResourceDto): string {
     return this.isRowExpand[entity.id] ? 'pi pi-chevron-down' : 'pi pi-chevron-right';
+  }
+
+  getIconExpand(): string {
+    this.isExpand = !this.isExpand;
+    return this.isExpand ? 'fas fa-caret-down' : 'fas fa-caret-up'
   }
 
   async getResourceRequestCVExpand(entity: RequestResourceDto) {
@@ -1245,6 +1252,24 @@ export class RequestResourceTabComponent
     this.cvStatusService.getAll().subscribe(res => {
       this.cVStatusList = res.result;
     });
+  }
+
+  refreshDate(index: number, item: ResourceRequestCVDto, field: string) {
+    if(field == 'sendCVDate') {
+      item.sendCVDate = null;
+      this.updateSendCVDate(index, item, field);
+    }
+    else {
+      item.interviewDate = null;
+      this.updateInterviewTimeCV(index, item, field);
+    }
+  }
+
+  getResourceRequestCVExpandAll() {
+    this.listRequest.forEach((item) => {
+      this.getResourceRequestCVExpand(item);
+    });
+    this.getIconExpand();
   }
   
 }

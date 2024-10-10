@@ -236,6 +236,9 @@
                   >
                     <div class="row justify-content-center">
                         {{ thead.name }}
+                        <button *ngIf="i == 0" style="border: none; background-color: transparent;"  type="button" (click)="getResourceRequestCVExpandAll()"> 
+                          <i [class]="getIconExpand()"></i>
+                        </button>
                       <ng-container
                           class="rsp-th-sort"
                           *ngIf="i != 0 && thead.sortName">
@@ -267,15 +270,15 @@
                     let i = index
                   ">
                   <tr>
-                  <td class="text-center p-1" style="min-width: 30px">
-                    <button style="border: none; background-color: transparent;"  type="button" (click)="getResourceRequestCVExpand(item)"> 
+                  <td class="text-center p-1" style="min-width: 50px">
+                    <button class="col-12" style="border: none; background-color: transparent;"  type="button" (click)="getResourceRequestCVExpand(item)"> 
                       <i [class]="getIconClass(item)" ></i>
                     </button>
                     <span >{{ i + 1 + pageSize * (pageNumber - 1) }}</span>
                     <div class="text-center" >
                       <i class="fas fa-plus text-primary " (click)="AddCV(item)"
                           matTooltip="Add CV"></i>
-                 </div>
+                  </div>
                   </td>
                   <td class="text-center action-request-resource-tab p-1" style="min-width: 70px">
                     <button mat-button [matMenuTriggerFor]="menu">

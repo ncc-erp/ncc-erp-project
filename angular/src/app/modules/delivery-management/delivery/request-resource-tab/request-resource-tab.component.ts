@@ -107,6 +107,7 @@ export class RequestResourceTabComponent
   public sortResource = { "code": 0 };
   public theadTable: THeadTable[] = [
     { name: "#" },
+    { name: "Action" },
     { name: "Request Info", sortName: "projectName", defaultSort: "" },
     { name: "Skill need" },
     { name: "Bill Account", sortName: "billCVEmail", defaultSort: "" },
@@ -114,7 +115,6 @@ export class RequestResourceTabComponent
     { name: "Resource" },
     { name: "Description" },
     { name: "Note" },
-    { name: "Action" },
   ];
   public isShowModal: string = "none";
   public strNote: string;

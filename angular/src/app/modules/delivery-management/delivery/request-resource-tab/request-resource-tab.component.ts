@@ -283,7 +283,7 @@ export class RequestResourceTabComponent
     }
     const res = {
       resourceRequestCVId: item.id,
-      sendCVDate: this.formatDateToYYYYMMddHHmmss(item.sendCVDate),
+      sendCVDate: item.sendCVDate ? this.formatDateToYYYYMMddHHmmss(item.sendCVDate) : null,
     }
 
     this.resourceRequestService.updateSendCVDateResourceRequestCV(res).subscribe(
@@ -303,7 +303,7 @@ export class RequestResourceTabComponent
      }
       const res = {
         resourceRequestCVId: item.id,
-        interviewDate: this.formatDateToYYYYMMddHHmmss(item.interviewDate)
+        interviewDate: item.interviewDate ? this.formatDateToYYYYMMddHHmmss(item.interviewDate) : null
       }
       this.resourceRequestService.updateInterviewTimeResourceRequestCV(res).subscribe(
         result => {
@@ -1245,6 +1245,17 @@ export class RequestResourceTabComponent
     this.cvStatusService.getAll().subscribe(res => {
       this.cVStatusList = res.result;
     });
+  }
+
+  refreshDate(index: number, item: ResourceRequestCVDto, field: string) {
+    if(field == 'sendCVDate') {
+      item.sendCVDate = null;
+      this.updateSendCVDate(index, item, field);
+    }
+    else {
+      item.interviewDate = null;
+      this.updateInterviewTimeCV(index, item, field);
+    }
   }
   
 }

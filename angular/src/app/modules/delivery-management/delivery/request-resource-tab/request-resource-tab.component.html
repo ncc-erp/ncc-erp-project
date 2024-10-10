@@ -810,24 +810,30 @@
                   <ng-container *ngIf="!editingRows[a]?.sendCVDate">
                     <span class="fixed-width-field1">{{ c.sendCVDate | date: 'd/MM/y' }}</span>
                   </ng-container>
-                  <ng-container *ngIf="editingRows[a]?.sendCVDate"  >
-                    <mat-form-field appearance="outline" class="fixed-width-field1">
-                      <input
-                        matInput
-                        appFocus
-                        placeholder="Choose a day"
-                        name="exchangeDate"
-                        [(ngModel)]="c.sendCVDate"
-                        [min]="minDate"
-                        [readonly]="true"
-                        [owlDateTime]="dt2"
-                        [owlDateTimeTrigger]="dt2"
-                        (dateTimeChange)="updateSendCVDate(a, c, 'sendCVDate')"
-                        (keydown.enter)="updateSendCVDate(a, c, 'sendCVDate')"  
-                        (keydown.esc)=" cancelEdit(a,'sendCVDate',item)"             
-                      />
-                      <owl-date-time #dt2  [pickerType]="'calendar'"></owl-date-time>
-                    </mat-form-field>
+                  <ng-container *ngIf="editingRows[a]?.sendCVDate">
+                      <mat-form-field appearance="outline" class="fixed-width-field1">
+                        <div class="row d-flex">
+                          <input
+                            class="col-10 px-1"
+                            matInput
+                            appFocus
+                            placeholder="Choose a day"
+                            name="exchangeDate"
+                            [(ngModel)]="c.sendCVDate"
+                            [min]="minDate"
+                            [readonly]="true"
+                            [owlDateTime]="dt2"
+                            [owlDateTimeTrigger]="dt2"
+                            (dateTimeChange)="updateSendCVDate(a, c, 'sendCVDate')"
+                            (keydown.enter)="updateSendCVDate(a, c, 'sendCVDate')"  
+                            (keydown.esc)=" cancelEdit(a,'sendCVDate',item)"             
+                          />
+                          <span>
+                            <i class="fas fa-redo-alt" (click)="refreshDate(a, c, 'sendCVDate')" title="Refresh" ></i>
+                          </span>
+                        </div>
+                        <owl-date-time #dt2  [pickerType]="'calendar'"></owl-date-time>
+                      </mat-form-field>
                   </ng-container>
                 </td>
                 
@@ -839,20 +845,26 @@
                   </ng-container>
                   <ng-container *ngIf="editingRows[a]?.interviewDate">
                     <mat-form-field appearance="outline" class="fixed-width-field1">
-                      <input
-                        matInput
-                        appFocus
-                        placeholder="Choose a day"
-                        name="exchangeDate"
-                        [(ngModel)]="c.interviewDate"
-                        [min]="minDate"
-                        [readonly]="true"
-                        [owlDateTime]="dt1"
-                        [owlDateTimeTrigger]="dt1"
-                        (dateTimeChange)="updateInterviewTimeCV(a, c,'interviewDate')"
-                        (keydown.enter)="updateInterviewTimeCV(a, c,'interviewDate')"  
-                        (keydown.esc)=" cancelEdit(a,'interviewDate',item)"                      
-                      />
+                      <div class="row d-flex">
+                        <input
+                          class="col-10 px-1"
+                          matInput
+                          appFocus
+                          placeholder="Choose a day"
+                          name="exchangeDate"
+                          [(ngModel)]="c.interviewDate"
+                          [min]="minDate"
+                          [readonly]="true"
+                          [owlDateTime]="dt1"
+                          [owlDateTimeTrigger]="dt1"
+                          (dateTimeChange)="updateInterviewTimeCV(a, c,'interviewDate')"
+                          (keydown.enter)="updateInterviewTimeCV(a, c,'interviewDate')"  
+                          (keydown.esc)=" cancelEdit(a,'interviewDate',item)"                      
+                        />
+                        <span>
+                          <i class="fas fa-redo-alt" (click)="refreshDate(a, c, 'interviewDate')" title="Refresh" ></i>
+                        </span>
+                      </div>
                       <owl-date-time #dt1></owl-date-time>
                     </mat-form-field>
                   </ng-container>

@@ -352,8 +352,7 @@ export class RequestResourceTabComponent
   }
 
   getIconExpand(): string {
-    this.isExpand = !this.isExpand;
-    return this.isExpand ? 'fas fa-caret-down' : 'fas fa-caret-up'
+    return (this.isExpand = !this.isExpand) ? 'fas fa-caret-down' : 'fas fa-caret-up';
   }
 
   async getResourceRequestCVExpand(entity: RequestResourceDto) {

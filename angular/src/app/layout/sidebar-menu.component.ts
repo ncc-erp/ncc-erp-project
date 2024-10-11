@@ -134,7 +134,7 @@ export class SidebarMenuComponent extends AppComponentBase implements OnInit {
             this.l('CV Status'),
             '/app/cvstatus',
             'fas fa-file',
-            ''
+            'Admin.CVStatus'
           )
         ]
       ),

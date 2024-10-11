@@ -10,7 +10,6 @@ using static ProjectManagement.Constants.Enum.ProjectEnum;
 using ProjectManagement.Authorization.Users;
 using ProjectManagement.Users.Dto;
 using ProjectManagement.Services.ResourceRequestService.Dto;
-using System.ComponentModel.DataAnnotations.Schema;
 namespace ProjectManagement.APIs.ResourceRequests.Dto
 {
     [AutoMapTo(typeof(ResourceRequestCV))]

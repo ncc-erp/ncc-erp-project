@@ -12,5 +12,11 @@ export class ResourceRequestCVDto{
     sendCVDate ?: Date;
     resourceRequestId: number;
     cvStatusId:number;
-    cvStatus: object;
+    cvStatus: CVStatus;
+}
+
+interface CVStatus {
+    id: number;
+    name: string;
+    color: string;
 }

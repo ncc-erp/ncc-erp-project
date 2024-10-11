@@ -30,7 +30,7 @@ export class CreateUpdateCvstatusComponent extends AppComponentBase implements O
   }
 
   setRandomColor(): void {
-    const randomColor = Math.floor(Math.random() * 16777215).toString(16);
+    const randomColor = Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
     this.cvstatus.color = `#${randomColor}`;
   }
 

@@ -90,7 +90,9 @@ namespace ProjectManagement.APIs.ResourceRequests
         [HttpGet]
         public async Task<List<ResourceRequestCVDto>> GetResourceRequestCV(long resourceRequestId)
         {
-            return await WorkScope.GetAll<Entities.ResourceRequestCV>().Where(rs => rs.ResourceRequestId == resourceRequestId)
+            return await WorkScope.GetAll<Entities.ResourceRequestCV>()
+                    .Include(s => s.CvStatus)
+                    .Where(rs => rs.ResourceRequestId == resourceRequestId)
                    .Select(s => new ResourceRequestCVDto
                    {
                        UserId = s.UserId,
@@ -121,7 +123,7 @@ namespace ProjectManagement.APIs.ResourceRequests
                        SendCVDate = s.SendCVDate,
                        Id = s.Id,
                        CvStatusId = s.CvStatusId,
-                       CvStatus = WorkScope.GetAll<Entities.CvStatus>().Where(cv => cv.Id == s.CvStatusId).FirstOrDefault(),
+                       CvStatus = s.CvStatus,
                    }).ToListAsync();
         }
         [HttpGet]

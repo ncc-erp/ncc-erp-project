@@ -27,7 +27,7 @@ export class CVStatusComponent extends PagedListingComponentBase<CVStatusCompone
       (result: boolean) => {
         if (result) {
           this.cvStatusService.delete(cvstatus.id).pipe(catchError(this.cvStatusService.handleError)).subscribe((res) => {
-            abp.notify.success("Delele CV Status " + cvstatus.name);
+            abp.notify.success("Delete CV Status " + cvstatus.name);
             this.refresh()
           })
         }
@@ -53,9 +53,9 @@ export class CVStatusComponent extends PagedListingComponentBase<CVStatusCompone
 
   public showDialog(command: string, cvstatus: any) {
     let item = {
-      name: cvstatus.name,
-      color: cvstatus.color,
-      id: cvstatus.id,
+      name: cvstatus.name || '',
+      color: cvstatus.color || '',
+      id: cvstatus.id || null,
     };
     const show = this.dialog.open(CreateUpdateCvstatusComponent, {
       data: {

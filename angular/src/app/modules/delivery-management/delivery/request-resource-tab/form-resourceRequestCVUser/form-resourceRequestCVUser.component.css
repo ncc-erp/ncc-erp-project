@@ -6,3 +6,13 @@
     padding: 0;
     align-items: center;
 }
+
+@media screen and (max-width: 600px) {
+  :host::ng-deep .modal-header {
+    align-items: baseline;
+  }
+
+  .modal-body {
+    padding: 12px 0;
+  }
+}

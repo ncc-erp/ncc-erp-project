@@ -16,3 +16,28 @@
     transform: translateY(-1.1em) scale(.75);
     width: 133.33333%;
 }
+
+.delete-filter {
+    display: none;
+}
+
+@media screen and (max-width: 600px) {
+    .input-filter {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .delete-filter {
+        display: block;
+        font-size: 20px;
+    }
+
+    .icon-delete {
+        display: none;
+    }
+
+    .list-form-filter {
+        padding-bottom: 15px;
+    }
+}

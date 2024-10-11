@@ -1,16 +1,13 @@
 @media screen and (max-width: 600px) {
     :host ::ng-deep .form-horizontal {
         .modal-header {
-            padding: 0;
             align-items: baseline;
         }
     }
 
     .modal-body {
         max-height: 50vh;
-        overflow: auto;
-        padding-left: 10px;
-        padding-top: 10px;
+        padding: 10px;
     }
 
     .modal-footer-plan-user {
@@ -23,7 +20,7 @@
         width: 100% !important;
     }
 
-    .field-timestart {
+    .field-timestart, .form-field-role {
         display: block;
     }
 }

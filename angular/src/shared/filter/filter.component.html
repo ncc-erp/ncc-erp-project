@@ -1,5 +1,5 @@
 <div class="container-fluid">
-  <div class="row">
+  <div class="row list-form-filter">
     <div class="col-lg-2 col-sm-2">
       <mat-form-field appearance="outline" style="width: 100%;">
         <mat-select placeholder="Filter by" id="propertyName" [value]="item.propertyName"
@@ -21,19 +21,21 @@
         </mat-select>
       </mat-form-field>
     </div>
-    <div class="col-lg-7 col-sm-7" *ngIf="!filterType">
+    <div class="col-lg-7 col-sm-7 input-filter" *ngIf="!filterType">
       <mat-form-field appearance="outline" style="width: 100%;">
         <input matInput placeholder="text" [value]="item.value" id="filterValue" type="text" name="value"
           maxlength="128" class="validate" (change)="onChange($event?.target?.value || '', 'value')">
       </mat-form-field>
+      <i class="fas fa-times delete-filter" (click)="deleteFilter()"></i>
     </div>
-    <div class="col-lg-7 col-sm-7" *ngIf="filterType==1">
+    <div class="col-lg-7 col-sm-7 input-filter" *ngIf="filterType==1">
       <mat-form-field appearance="outline">
         <input placeholder="Choose a date" matInput [matDatepicker]="picker" [(ngModel)]="item.value" name="date"
           (dateChange)="onDateChange()">
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
       </mat-form-field>
+      <i class="fas fa-times delete-filter" (click)="deleteFilter()"></i>
     </div>
     <div class="col-lg-2 col-sm-2" style="padding-top: 13px;" *ngIf="filterType==2">
       <mat-radio-group aria-label="Select an option" [(ngModel)]="item.value" (change)="onRadioChange($event)"
@@ -81,7 +83,7 @@
         </mat-select>
       </mat-form-field>
     </div>
-    <div class="col-lg-1 col-sm-1 " style="padding-top: 13px;">
+    <div class="col-lg-1 col-sm-1 icon-delete" style="padding-top: 13px;">
       <i class="fas fa-times" (click)="deleteFilter()"></i>
     </div>
   </div>

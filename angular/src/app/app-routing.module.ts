@@ -85,6 +85,7 @@ import { TaloringProjectComponent } from './modules/audit-management/criteria-ma
 import { AuditResultDetailComponent } from './modules/audit-management/result-management/audit-result/audit-result/audit-result-detail/audit-result-detail.component';
 import { BillAccountPlanComponent } from './modules/delivery-management/delivery/available-resource-tab/bill-account-plan/bill-account-plan.component';
 import { GeneralInformationComponent } from './modules/pm-management/list-project/list-project-detail/general-information/general-information.component';
+import { CVStatusComponent } from './modules/admin/cvstatus/cvstatus.component';
 @NgModule({
   imports: [
     RouterModule.forChild([
@@ -505,6 +506,11 @@ import { GeneralInformationComponent } from './modules/pm-management/list-projec
           {
             path:"auditResultDetail",
             component:AuditResultDetailComponent,
+            canActivate:[AppRouteGuard]
+          },
+          {
+            path:"cvstatus",
+            component:CVStatusComponent,
             canActivate:[AppRouteGuard]
           },
         ]

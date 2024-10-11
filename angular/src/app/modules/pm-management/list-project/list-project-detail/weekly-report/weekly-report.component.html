@@ -215,7 +215,7 @@
                                         class="text-danger">({{problemList?.length}})</strong>
                                 </span>
                                 </div>
-                                <div class="btn-add">
+                                <div class="btn-add" [hidden]="!isShowIssues">
                                     <button
                                     *ngIf=" permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_ProjectIssue_AddNewIssue) && selectedReport.isActive"
                                     [hidden]="processProblem || selectedReport.pmReportProjectId==0" (click)="addOrEditIssue('create');$event.stopPropagation()" class="btn bg-blue ml-3 btn-sm mb-2" style="padding: 0px 5px; margin-bottom: 0 !important;">
@@ -393,7 +393,7 @@
                                 class="text-danger">({{projectRiskList?.length}})</strong>
                         </span>
                            </div>
-                           <div class="btn-add">
+                           <div class="btn-add" [hidden]="!isShowRisks">
                                 <button *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_AddNewRisk) && selectedReport.isActive "
                                 (click)="addOrEditRisk('create');$event.stopPropagation()" [hidden]="selectedReport.pmReportProjectId==0" class="btn bg-blue ml-3 btn-sm mb-2"
                                 style="padding: 0px 5px;margin-bottom: 0 !important;">

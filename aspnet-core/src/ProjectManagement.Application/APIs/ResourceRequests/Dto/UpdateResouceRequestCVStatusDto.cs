@@ -11,6 +11,7 @@ namespace ProjectManagement.APIs.ResourceRequests.Dto
     {
         public long ResourceRequestCVId {  get; set; }
         public CVStatus Status { get; set; }
+        public long CvStatusId { get; set; }
 
     }
     public class UpdateStatusResultDto { 

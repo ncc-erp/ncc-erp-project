@@ -144,7 +144,6 @@ text-overflow: ellipsis;
 
   .mat-tree-audit {
     white-space: nowrap;
-    overflow-x: hidden !important;
   }
 
   .ul-mat-tree {

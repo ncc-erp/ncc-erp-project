@@ -60,9 +60,12 @@
         gap: 10px;
     }
 
+    .panel-header {
+        align-items: baseline;
+    }
+
     .panel-header-expand {
         height: fit-content !important;
-        align-items: baseline;
     }
 
     .edit-save { 

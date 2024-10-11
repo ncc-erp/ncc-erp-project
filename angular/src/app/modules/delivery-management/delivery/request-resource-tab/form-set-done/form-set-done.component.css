@@ -1,4 +1,4 @@
-::ng-deep #form-set-done .modal-header{
+:host ::ng-deep #form-set-done .modal-header{
     padding: 0 1rem 1rem 1rem;
 }
 
@@ -9,5 +9,10 @@
     }
     .form-set-done ::ng-deep .modal-body {
         padding: 0;
+        max-height: 55vh;
+    }
+
+    .form-horizontal ul {
+        padding-inline-start: 18px;
     }
 }

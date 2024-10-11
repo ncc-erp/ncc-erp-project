@@ -50,6 +50,7 @@
 
   .field-search {
     margin-left: 0 !important;
+    padding-right: 0;
   }
 
   .flex-grow-1 {
@@ -73,5 +74,13 @@
 
   .form-number-items {
     width: 45% !important;
+  }
+
+  .note-edit {
+    max-width: 200px;
+  }
+
+  .note-edit span {
+    width: 90%;
   }
 }

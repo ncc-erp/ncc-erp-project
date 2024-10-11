@@ -27,6 +27,7 @@ namespace ProjectManagement.APIs.ResourceRequests.Dto
         public double? KpiPoint { get; set; }
         public DateTime? InterviewDate { get; set; }
         public DateTime? SendCVDate { get; set; }
-
+        public long? CvStatusId { get; set; }
+        public Entities.CvStatus CvStatus { get; set; }
     }
 }

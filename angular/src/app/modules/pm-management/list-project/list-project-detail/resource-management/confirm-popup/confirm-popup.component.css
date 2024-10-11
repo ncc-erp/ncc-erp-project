@@ -10,4 +10,12 @@
     .join-date {
         width: 100%;
     }
+
+    .footer button {
+        width: fit-content;
+    }
+
+    .working-project {
+        padding-inline-start: 18px;
+    }
 }

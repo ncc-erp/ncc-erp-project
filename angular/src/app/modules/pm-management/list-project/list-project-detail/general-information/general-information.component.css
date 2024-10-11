@@ -130,4 +130,39 @@ span {
   :host ::ng-deep .content .mat-expansion-panel {
     border-radius: 0;
   }
+
+  .column-skill {
+    min-width: 180px;
+  }
+
+  .column-normal, .column-ot {
+    min-width: 150px;
+  }
+
+  :host ::ng-deep .pagination-control pagination-controls pagination-template ul {
+    display: flex;
+    padding-inline-start: 0;
+    justify-content: center;
+  }
+
+  :host ::ng-deep .pagination-control pagination-controls pagination-template li {
+    display: flex;
+    height: fit-content;
+    width: fit-content;
+  }
+
+  :host ::ng-deep .pagination-control pagination-controls pagination-template .ngx-pagination .small-screen {
+    display: none;
+  }
+
+  :host ::ng-deep .pagination-control pagination-controls pagination-template .ngx-pagination a {
+    padding: 3px 6px;
+    display: flex;
+  }
+
+  :host ::ng-deep .pagination-control pagination-controls pagination-template .pagination-previous,
+  :host ::ng-deep .pagination-control pagination-controls pagination-template .pagination-next {
+    padding-left: 6px;
+    padding-right: 6px;
+  }
 }

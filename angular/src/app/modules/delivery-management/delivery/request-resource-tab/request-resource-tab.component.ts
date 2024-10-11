@@ -1266,12 +1266,23 @@ export class RequestResourceTabComponent
   }
 
   getResourceRequestCVExpandAll() {
-    this.listRequest.forEach((item) => {
-      this.getResourceRequestCVExpand(item);
-    });
+    if (this.isExpand) {
+      this.listRequest.forEach((item) => {
+        if (!this.isRowExpand[item.id]) {
+          this.getResourceRequestCVExpand(item);
+        }
+      });
+    } else {
+      this.listRequest.forEach((item) => {
+        delete this.isRowExpand[item.id];
+        const rowIndex = this.expandedRows.indexOf(item.id);
+        if (rowIndex !== -1) {
+          this.expandedRows.splice(rowIndex, 1);
+        }
+      });
+    }
     this.getIconExpand();
   }
-  
 }
 
 export class THeadTable {

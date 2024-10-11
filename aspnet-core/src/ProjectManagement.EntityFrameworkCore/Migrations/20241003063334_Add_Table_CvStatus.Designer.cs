@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectManagement.EntityFrameworkCore;
 
 namespace ProjectManagement.Migrations
 {
     [DbContext(typeof(ProjectManagementDbContext))]
-    partial class ProjectManagementDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241003063334_Add_Table_CvStatus")]
+    partial class Add_Table_CvStatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3787,9 +3789,6 @@ namespace ProjectManagement.Migrations
                     b.Property<long?>("CreatorUserId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("CvStatusId")
-                        .HasColumnType("bigint");
-
                     b.Property<long?>("DeleterUserId")
                         .HasColumnType("bigint");
 
@@ -3827,8 +3826,6 @@ namespace ProjectManagement.Migrations
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CvStatusId");
 
                     b.ToTable("ResourceRequestCVs");
                 });
@@ -4932,13 +4929,6 @@ namespace ProjectManagement.Migrations
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("ProjectManagement.Entities.ResourceRequestCV", b =>
-                {
-                    b.HasOne("ProjectManagement.Entities.CvStatus", "CvStatus")
-                        .WithMany()
-                        .HasForeignKey("CvStatusId");
                 });
 
             modelBuilder.Entity("ProjectManagement.Entities.ResourceRequestSkill", b =>

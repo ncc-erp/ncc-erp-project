@@ -18,6 +18,8 @@ import 'moment-timezone';
 import * as momentTime from "moment-timezone";
 
 import { UploadCVPathResourceRequestCV } from './../upload-cvPath-resource-requestCV/upload-cvPath-resource-requestCV.component';
+import { CVStatusDto } from '@app/service/model/cvstatus.dto';
+import { CvstatusService } from '@app/service/api/cvstatus.service';
 @Component({
     selector : 'app-form-resource-requestCV',
     templateUrl:'./form-resource-requestCV.component.html',
@@ -43,7 +45,8 @@ export class ResourceRequestCVComponent extends AppComponentBase implements OnIn
    selectedFile: File;
    public requestResourceDto : RequestResourceDto;
    public resourceRequestDto : ResourceRequestDto;
- 
+   public cVStatusList: CVStatusDto[] = [];
+
    constructor(
     injector: Injector,
     @Inject(MAT_DIALOG_DATA) public input: any,
@@ -51,11 +54,13 @@ export class ResourceRequestCVComponent extends AppComponentBase implements OnIn
     private ref: ChangeDetectorRef,  
     private dialog: MatDialog,
     private resourceRequestService: DeliveryResourceRequestService,
+    private cvStatusService: CvstatusService
   ) 
 {
   super(injector);
 }
   ngOnInit():void{
+    this.getAllCVStatus();
     this.resourceRequestCV = this.input;
     this.billInfoPlan = {startTime: this.input.billUserInfo ? this.input.billUserInfo.plannedDate : '',
     resourceRequestId: this.input.resourceRequestId,
@@ -69,9 +74,9 @@ export class ResourceRequestCVComponent extends AppComponentBase implements OnIn
        this.getResourceRequestCVById(this.input.item1.id);
     }
       this.resourceRequestId = this.input.resourceRequestId;
-      this.resourceRequestCV.interviewDate = this.input.interviewDate;
+      this.resourceRequestCV.interviewDate = this.input.interviewDate || null;
       this.listUsers = this.input.listUsers;
-      this.resourceRequestCV.sendCVDate = this.input.sendCVDate;
+      this.resourceRequestCV.sendCVDate = this.input.sendCVDate || null;
       this.resourceRequestCV.status= this.APP_ENUM.CVStatus['Chưa làm CV'];
       this.resourceRequestCV.cvPath = this.input.cvPath? this.input.cvPath: " ";
       this.resourceRequestCV.note = this.input.note? this.input.note: " ";
@@ -80,7 +85,15 @@ export class ResourceRequestCVComponent extends AppComponentBase implements OnIn
       this.resourceRequestCV.linkCVPath = this.input.linkCVPath? this.input.linkCVPath: " ";
       this.requestResourceDto = this.input.item1.requestResource;
       this.code = this.input.code;
+      this.resourceRequestCV.cvStatusId = this.input.cvStatusId? this.input.cvStatusId: 1;
   }
+
+  getAllCVStatus() {
+    this.cvStatusService.getAll().subscribe(res => {
+      this.cVStatusList = res.result;
+    });
+  }
+
   ngAfterViewChecked(): void {
     this.ref.detectChanges()
   }
@@ -94,14 +107,19 @@ export class ResourceRequestCVComponent extends AppComponentBase implements OnIn
   public formatInterviewDateToVN(resourceRequestCV: ResourceRequestCVDto): any {
     return {
       ...resourceRequestCV,
-      interviewDate: momentTime(resourceRequestCV.interviewDate)
-        .tz('Asia/Ho_Chi_Minh')
-        .format('YYYY-MM-DD HH:mm:ss'),  
-      sendCVDate: momentTime(resourceRequestCV.sendCVDate)
-        .tz('Asia/Ho_Chi_Minh')
-        .format('YYYY-MM-DD HH:mm:ss')
+      interviewDate: resourceRequestCV.interviewDate 
+        ? momentTime(resourceRequestCV.interviewDate)
+            .tz('Asia/Ho_Chi_Minh')
+            .format('YYYY-MM-DD HH:mm:ss')
+        : null,
+      sendCVDate: resourceRequestCV.sendCVDate 
+        ? momentTime(resourceRequestCV.sendCVDate)
+            .tz('Asia/Ho_Chi_Minh')
+            .format('YYYY-MM-DD HH:mm:ss')
+        : null
     };
-}
+  }
+
  SaveAndClose(){
    this.isLoading = true;
    let resourceCv = new ResourceRequestCVDto();
@@ -115,6 +133,7 @@ export class ResourceRequestCVComponent extends AppComponentBase implements OnIn
    resourceCv.resourceRequestId =this.resourceRequestCV.resourceRequestId;
    resourceCv.sendCVDate = this.resourceRequestCV.sendCVDate;
    resourceCv.interviewDate = this.resourceRequestCV.interviewDate;
+   resourceCv.cvStatusId = this.resourceRequestCV.cvStatusId;
 
    if(this.input.command=="create"){
        resourceCv.id =0
@@ -145,5 +164,7 @@ export class ResourceRequestCVComponent extends AppComponentBase implements OnIn
   getValueStatusUser(isActive: boolean){
     return isActive?"Active":"InActive"
   }
+
+
  
 }

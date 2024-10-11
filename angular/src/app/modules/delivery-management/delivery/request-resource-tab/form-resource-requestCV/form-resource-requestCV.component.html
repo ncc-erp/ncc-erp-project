@@ -70,10 +70,10 @@ novalidate
     <label class="col-md-3 col-form-label" for="tenancyName">CVStatus:</label>
     <div class="col-md-9">
       <mat-form-field class="mt-2 w-100" appearance="outline">
-        <mat-select name="cvStatus" #cvStatus="ngModel" placeholder="Select cvStatus" [(ngModel)]="resourceRequestCV.status">
-          <ng-container *ngFor="let status of cvStatusList">
-            <mat-option [value]="APP_ENUM.CVStatus[status]">
-              {{ status }}
+        <mat-select name="cvStatus" #cvStatus="ngModel" placeholder="Select CV Status" [(ngModel)]="resourceRequestCV.cvStatusId">
+          <ng-container *ngFor="let status of cVStatusList">
+            <mat-option [value]="status.id">
+              <p class="badge text-white" [style.backgroundColor]="status.color">{{ status.name }}</p>
             </mat-option>
           </ng-container>
         </mat-select>

@@ -22,6 +22,7 @@ export class PlanUserComponent extends AppComponentBase implements OnInit {
   public projectRoleList = Object.keys(this.APP_ENUM.ProjectUserRole);
   public searchProject: string = ""
   public tomorrowDate = new Date();
+  public workingTypeList = Object.keys(this.APP_ENUM.ProjectUserWorkingType);
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any,
     private listProjectService: ListProjectService,
@@ -72,5 +73,5 @@ export class PlanUserComponent extends AppComponentBase implements OnInit {
     user.percentUsage = data
   }
 
-
+  
 }

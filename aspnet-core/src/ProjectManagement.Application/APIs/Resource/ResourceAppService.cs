@@ -64,6 +64,7 @@ namespace ProjectManagement.APIs.Resource
         [AbpAuthorize]
         public async Task PlanEmployeeJoinOrOutProject(InputPlanResourceDto input)
         {
+            input.IsPool = false;
             if (input.AllocatePercentage <= 0)
             {
                 var pu = _resourceManager.ValidateUserWorkingInThisProject(input.UserId, input.ProjectId);

@@ -655,7 +655,8 @@ namespace ProjectManagement.Services.ResourceManager
                 PMReportId = activeReportId,
                 Note = input.Note,
                 ProjectRole = input.ProjectRole,
-                IsFutureActive = false
+                IsFutureActive = false,
+                WorkingType = input.WorkingType
             };
             await _workScope.InsertAsync(pu);
             return pu;

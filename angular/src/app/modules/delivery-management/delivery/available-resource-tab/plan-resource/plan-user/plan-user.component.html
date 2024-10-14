@@ -47,11 +47,20 @@
                 <label class="col-md-3 col-form-label" for="allocatePercentage">
                     Work type:
                 </label>
-                <div class="col-md-9">
+                <div class="col-md-9" [ngStyle]="{'display':'none'}">
                     <mat-radio-group [(ngModel)]="planUser.isPool" aria-label="Select an option" name="allocatePercentage">
                         <mat-radio-button [checked]="planUser.isPool == false" class="mt-2 mr-3"
                             [value]="false">Offical</mat-radio-button>
                         <mat-radio-button [checked]="planUser.isPool == true" [value]="true">Temp</mat-radio-button>
+                    </mat-radio-group>
+                </div>
+                <div class="col-md-9">
+                    <mat-radio-group [(ngModel)]="planUser.workingType" aria-label="Select an option" name="allocatePercentage">
+                        <ng-container *ngFor="let type of workingTypeList">
+                            <mat-radio-button [value]="APP_ENUM.ProjectUserWorkingType[type]" class="mt-2 mr-3">
+                                {{ type }}
+                            </mat-radio-button>
+                        </ng-container>
                     </mat-radio-group>
                 </div>
             </div>

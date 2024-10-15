@@ -24,6 +24,7 @@ import { ConfirmPlanDialogComponent } from '../plan-resource/plan-user/confirm-p
 import { ProjectUserService } from '@app/service/api/project-user.service';
 import { ConfirmFromPage } from '@app/modules/pm-management/list-project/list-project-detail/resource-management/confirm-popup/confirm-popup.component';
 import { BranchService } from '@app/service/api/branch.service';
+import { getValueByEnum } from '../enum-until';
 @Component({
   selector: 'app-vendor',
   templateUrl: './vendor.component.html',
@@ -145,7 +146,8 @@ export class VendorComponent extends PagedListingComponentBase<PlanResourceCompo
       startTime: user.startTime,
       allocatePercentage: user.allocatePercentage,
       isPool: user.isPool,
-      projectUserId: user.projectUserId
+      projectUserId: user.projectUserId,
+      workingType: user.workingType
     };
 
     const show = this.dialog.open(PlanUserComponent, {
@@ -388,5 +390,9 @@ export class VendorComponent extends PagedListingComponentBase<PlanResourceCompo
       projectName: project.projectName, 
       projectCode:" "} }));
     window.open(url, '_blank');
+  }
+
+  getEnumValue(enumValue: number, enumObject) {
+    return getValueByEnum(enumValue, enumObject);
   }
 }

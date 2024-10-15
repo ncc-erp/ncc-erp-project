@@ -165,7 +165,7 @@
                                                     <mat-radio-button class="mr-2" [value]="false">Offical
                                                     </mat-radio-button>
                                                 </div>
-                                                <div class="text-left">
+                                                <div class="text-left" style="display: none;">
                                                     <mat-radio-button [value]="true">Temp</mat-radio-button>
                                                 </div>
                                             </mat-radio-group>
@@ -401,7 +401,7 @@
                                             <mat-radio-group [disabled]="user.allocatePercentage <= 0"  aria-label="Select an option" [(ngModel)]="user.isPool">
                                                 <mat-radio-button  class="mr-2 d-block" [value]="false">Offical
                                                 </mat-radio-button>
-                                                <mat-radio-button class="d-block" [value]="true">Temp</mat-radio-button>
+                                                <mat-radio-button style="display: none;" [value]="true">Temp</mat-radio-button>
                                             </mat-radio-group>
                                         </div>
 

@@ -2354,6 +2354,45 @@ namespace ProjectManagement.Migrations
                     b.ToTable("Currencies");
                 });
 
+            modelBuilder.Entity("ProjectManagement.Entities.CvStatus", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Color")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("CreatorUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("DeleterUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("LastModifierUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CvStatus");
+                });
+
             modelBuilder.Entity("ProjectManagement.Entities.LinkedResource", b =>
                 {
                     b.Property<long>("Id")
@@ -3748,6 +3787,9 @@ namespace ProjectManagement.Migrations
                     b.Property<long?>("CreatorUserId")
                         .HasColumnType("bigint");
 
+                    b.Property<long?>("CvStatusId")
+                        .HasColumnType("bigint");
+
                     b.Property<long?>("DeleterUserId")
                         .HasColumnType("bigint");
 
@@ -3785,6 +3827,8 @@ namespace ProjectManagement.Migrations
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CvStatusId");
 
                     b.ToTable("ResourceRequestCVs");
                 });
@@ -4888,6 +4932,13 @@ namespace ProjectManagement.Migrations
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ProjectManagement.Entities.ResourceRequestCV", b =>
+                {
+                    b.HasOne("ProjectManagement.Entities.CvStatus", "CvStatus")
+                        .WithMany()
+                        .HasForeignKey("CvStatusId");
                 });
 
             modelBuilder.Entity("ProjectManagement.Entities.ResourceRequestSkill", b =>

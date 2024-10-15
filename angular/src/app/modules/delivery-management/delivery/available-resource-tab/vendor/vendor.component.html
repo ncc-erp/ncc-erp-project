@@ -5,7 +5,7 @@
                 <div class="input-group">
 
                     <div class="row w-100">
-                        <div class="col-md-8 d-flex mt-1">
+                        <div class="col-md-8 d-flex mt-1 field-search">
                             <div class="input-group-prepend">
                                 <button type="button" class="btn bg-blue" (click)="getDataPage(1)">
                                     <i class="fas fa-search"></i>
@@ -122,7 +122,7 @@
                                         </app-user-info>
                                     </div>
                                 </td>
-                                <td>
+                                <td class="column-project-vendor">
                                     <p *ngFor="let project of item.workingProjects" class="mb-1">
                                         <span matTooltip="Potential project" *ngIf="project.projectStatus==APP_ENUM.ProjectStatus.Potential"
                                         class="badge bg-info pointer mr-1">
@@ -144,7 +144,7 @@
                                     <div *ngIf="item.isshowProjectHistory" [ngClass]="item.showAllHistory == false ? 'preHistory' : 'history'">
                                         <div *ngFor="let project of item.userProjectHistory"
                                           class="mb-1 d-flex pointer {{ project.allowcatePercentage ? 'join-project' : 'out-project' }}">
-                                          <div class="col-md-11 p-0">
+                                          <div class="col-10 p-0">
                                             <p class="mb-0">
                                               <strong *ngIf="permission.isGranted(Resource_TabVendor_ViewHistory)" (click)="viewProjectDetail(project)">
                                                 {{ project.projectName }}
@@ -155,7 +155,7 @@
                                               - <span>{{ project.startTime }}</span>
                                             </p>
                                           </div>
-                                          <div class="col-md-1">
+                                          <div class="col-2">
                                             <span class="badge {{ project.allowcatePercentage ? 'bg-success' : 'bg-secondary' }}">
                                               {{ project.allowcatePercentage ? 'Join' : 'Out' }}
                                             </span>
@@ -217,7 +217,7 @@
                                     </div>
 
                                 </td>
-                                <td style="white-space: normal; max-width: 200px; vertical-align: unset;">
+                                <td style="white-space: normal; max-width: 200px; vertical-align: unset;" class="column-skill">
                                     <div class="d-flex justify-content-between">
                                         <div style="width: 90%">
                                             <p class="m-0" *ngFor="let skill of item.userSkills">
@@ -228,7 +228,7 @@
                                                     font-size: 13px;"></i> </strong>
                                             </p>
                                         </div>
-                                        <div *ngIf="permission.isGranted(Resource_TabVendor_UpdateSkill)" style="width: 10%; text-align: right;">
+                                        <div *ngIf="permission.isGranted(Resource_TabVendor_UpdateSkill)" style="width: 10%; text-align: right;" class="icon-edit-skill">
                                             <i class="fas fa-edit" (click)="updateUserSkill(item)"
                                                 matTooltip="Edit skill"></i>
                                         </div>

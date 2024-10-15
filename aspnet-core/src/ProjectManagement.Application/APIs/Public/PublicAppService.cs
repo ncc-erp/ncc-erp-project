@@ -2,6 +2,7 @@
 using Abp.UI;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using ProjectManagement.APIs.Public.Dto;
 using ProjectManagement.Authorization.Users;
@@ -128,6 +129,42 @@ namespace ProjectManagement.APIs.Public
                     }).ToList();
 
             return results;
+        }
+
+        [AbpAllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> GetAllProjects()
+        {
+            var secretCode = SettingManager.GetSettingValue(AppSettingNames.SecurityCode);
+            var header = _httpContextAccessor.HttpContext.Request.Headers;
+            var securityCodeHeader = header["X-Secret-Key"].ToString();
+            if (secretCode != securityCodeHeader)
+            {
+                return new BadRequestObjectResult("You do not have permission to retrieve projects.");
+            }
+            var query = WorkScope.GetAll<Project>()
+               .Where(p => p.ProjectType != ProjectType.TRAINING && p.ProjectType != ProjectType.PRODUCT)
+               .Select(p => p);
+            var result = await query.ToListAsync();
+            return new OkObjectResult(result);
+        }
+
+        [AbpAllowAnonymous]
+        [HttpGet]
+        public async Task<ActionResult<List<Project>>> GetAllClients()
+        {
+            var secretCode = SettingManager.GetSettingValue(AppSettingNames.SecurityCode);
+            var header = _httpContextAccessor.HttpContext.Request.Headers;
+            var securityCodeHeader = header["X-Secret-Key"].ToString();
+            if (secretCode != securityCodeHeader)
+            {
+                return new BadRequestObjectResult("You do not have permission to retrieve clients.");
+            }
+            var query =  WorkScope.GetAll<Client>()
+               .Where(p => !p.IsDeleted)
+               .Select(p => p);
+            var result = await query.ToListAsync();
+            return new OkObjectResult(result);
         }
 
         [HttpGet]

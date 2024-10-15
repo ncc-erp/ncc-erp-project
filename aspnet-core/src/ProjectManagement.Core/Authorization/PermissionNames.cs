@@ -702,6 +702,15 @@ namespace ProjectManagement.Authorization
         public const string Audits_Results_Detail_ViewNote = "Audits.Results.Detail.ViewNote";
 
         #endregion Audit
+
+        #region CVStatus
+
+        public const string Admin_CVStatus = "Admin.CVStatus";
+        public const string Admin_CVStatus_View = "Admin.CVStatus.View";
+        public const string Admin_CVStatus_Create = "Admin.CVStatus.Create";
+        public const string Admin_CVStatus_Edit = "Admin.CVStatus.Edit";
+        public const string Admin_CVStatus_Delete = "Admin.CVStatus.Delete";
+        #endregion CVStatus
     }
 
     public class GrantPermissionRoles
@@ -1411,6 +1420,15 @@ namespace ProjectManagement.Authorization
                     PermissionNames.Audits_Results_Detail_ViewNote ,
 
                     #endregion Audit
+
+                    #region CVStatus
+
+                    PermissionNames.Admin_CVStatus,
+                    PermissionNames.Admin_CVStatus_View,
+                    PermissionNames.Admin_CVStatus_Create,
+                    PermissionNames.Admin_CVStatus_Edit,
+                    PermissionNames.Admin_CVStatus_Delete,
+                    #endregion CVStatus
                 }
             }
         };
@@ -2127,7 +2145,16 @@ namespace ProjectManagement.Authorization
                  new SystemPermission{ Name =  PermissionNames.Audits_Results_Detail ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = " Detail "},
                  new SystemPermission{ Name =  PermissionNames.Audits_Results_Detail_View ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = " View "},
                  new SystemPermission{ Name =  PermissionNames.Audits_Results_Detail_ViewNote ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "ViewNote "},
-                 #endregion Audit
+                #endregion Audit
+
+                #region CVStatus
+
+                 new SystemPermission{ Name =  PermissionNames.Admin_CVStatus, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "CVStatus" },
+                 new SystemPermission{ Name =  PermissionNames.Admin_CVStatus_View ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View" },
+                 new SystemPermission{ Name =  PermissionNames.Admin_CVStatus_Create, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Create" },
+                 new SystemPermission{ Name =  PermissionNames.Admin_CVStatus_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit" },
+                 new SystemPermission{ Name =  PermissionNames.Admin_CVStatus_Delete, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Delete" },
+                #endregion CVStatus
             };
             public static List<SystemPermission> TreePermissions = new List<SystemPermission>() {
 
@@ -2448,6 +2475,27 @@ namespace ProjectManagement.Authorization
                             },
 
                             #endregion Criteria
+
+                            #region CVStatus
+
+                            new SystemPermission {
+                                Name = PermissionNames.Admin_CVStatus, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "CVStatus",
+                                    Childrens = new List < SystemPermission > () {
+                                        new SystemPermission {
+                                            Name = PermissionNames.Admin_CVStatus_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View"
+                                        },
+                                        new SystemPermission {
+                                            Name = PermissionNames.Admin_CVStatus_Create, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Create"
+                                        },
+                                        new SystemPermission {
+                                            Name = PermissionNames.Admin_CVStatus_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit"
+                                        },
+                                        new SystemPermission {
+                                            Name = PermissionNames.Admin_CVStatus_Delete, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Delete"
+                                        },
+                                    }
+                            },
+                            #endregion CVStatus
                         },
                 },
 

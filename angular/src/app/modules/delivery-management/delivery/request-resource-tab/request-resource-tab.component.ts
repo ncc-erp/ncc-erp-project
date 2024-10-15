@@ -52,6 +52,8 @@ import { UploadCVPathResourceRequestCV } from './upload-cvPath-resource-requestC
 import { FormResourceRequestCVUserComponent } from './form-resourceRequestCVUser/form-resourceRequestCVUser.component';
 import { of } from 'rxjs';
 import 'moment-timezone';
+import { CvstatusService } from '@app/service/api/cvstatus.service';
+import { CVStatusDto } from '@app/service/model/cvstatus.dto';
 
 @Component({
   selector: "app-request-resource-tab",
@@ -105,6 +107,7 @@ export class RequestResourceTabComponent
   public sortResource = { "code": 0 };
   public theadTable: THeadTable[] = [
     { name: "#" },
+    { name: "Action" },
     { name: "Request Info", sortName: "projectName", defaultSort: "" },
     { name: "Skill need" },
     { name: "Bill Account", sortName: "billCVEmail", defaultSort: "" },
@@ -112,7 +115,6 @@ export class RequestResourceTabComponent
     { name: "Resource" },
     { name: "Description" },
     { name: "Note" },
-    { name: "Action" },
   ];
   public isShowModal: string = "none";
   public strNote: string;
@@ -135,6 +137,9 @@ export class RequestResourceTabComponent
   public editingRows: { [key: number]: { [key: string]: boolean } } = {};
   public originalValues: { [index: number]: { [field: string]: any } } = {};
   public cvStatusList: string[] = Object.keys(this.APP_ENUM.CVStatus)
+  public cVStatusList: CVStatusDto[] = [];
+
+  public isExpand: boolean = false;
 
   ResourceRequest_View = PERMISSIONS_CONSTANT.ResourceRequest_View;
   ResourceRequest_PlanNewResourceForRequest = PERMISSIONS_CONSTANT.ResourceRequest_PlanNewResourceForRequest;
@@ -161,6 +166,7 @@ export class RequestResourceTabComponent
     private listProjectService: ListProjectService,
     private projectUserService: ProjectUserService,
     private resourceManagerService: ResourceManagerService,
+    private cvStatusService: CvstatusService
   ) {
     super(injector);
   }
@@ -174,6 +180,7 @@ export class RequestResourceTabComponent
     this.getAllProject();
     this.getAllRequestCode();
     this.getAllUser();
+    this.getAllCVStatus();
     this.refresh();
   }
 
@@ -210,7 +217,7 @@ export class RequestResourceTabComponent
     }
     this.editingRows[index][field] = true;
   }
-  updateStatusCV(index: number, item: ResourceRequestCVDto, field: string) {
+  async updateStatusCV(index: number, item: ResourceRequestCVDto, field: string) {
     if (!this.editingRows[index]) {
       return;
     }
@@ -218,9 +225,10 @@ export class RequestResourceTabComponent
     const res = {
       resourceRequestCVId: item.id,
       status: item.status,
+      cvStatusId: item.cvStatusId
     };
     this.resourceRequestService.updateStatusResourceRequestCV(res).subscribe(
-      result => {
+      async result => {
 
         const request = this.listRequest.find(req => req.id === item.resourceRequestId);
         if (request == null) {
@@ -234,6 +242,15 @@ export class RequestResourceTabComponent
 
         this.editingRows[index][field] = false;
         abp.notify.success("Updated Status!");
+        const rs = await this.resourceRequestService.getResouceRequestCV(item.resourceRequestId).toPromise();
+        if (rs && rs.success) {
+          const index = this.listRequest.findIndex(res => res.id === item.resourceRequestId);
+          if (index !== -1) {
+            this.listRequest[index].resCV = rs.result as ResourceRequestCVDto[];
+          }
+        } else {
+          console.error('Unexpected response:', rs);
+        }
       },
       error => {
         abp.notify.error("Failed to update status");
@@ -268,7 +285,7 @@ export class RequestResourceTabComponent
     }
     const res = {
       resourceRequestCVId: item.id,
-      sendCVDate: this.formatDateToYYYYMMddHHmmss(item.interviewDate),
+      sendCVDate: item.sendCVDate ? this.formatDateToYYYYMMddHHmmss(item.sendCVDate) : null,
     }
 
     this.resourceRequestService.updateSendCVDateResourceRequestCV(res).subscribe(
@@ -288,7 +305,7 @@ export class RequestResourceTabComponent
      }
       const res = {
         resourceRequestCVId: item.id,
-        interviewDate: this.formatDateToYYYYMMddHHmmss(item.interviewDate)
+        interviewDate: item.interviewDate ? this.formatDateToYYYYMMddHHmmss(item.interviewDate) : null
       }
       this.resourceRequestService.updateInterviewTimeResourceRequestCV(res).subscribe(
         result => {
@@ -332,6 +349,10 @@ export class RequestResourceTabComponent
 
   getIconClass(entity: RequestResourceDto): string {
     return this.isRowExpand[entity.id] ? 'pi pi-chevron-down' : 'pi pi-chevron-right';
+  }
+
+  getIconExpand(): string {
+    return (this.isExpand = !this.isExpand) ? 'fas fa-caret-down' : 'fas fa-caret-up';
   }
 
   async getResourceRequestCVExpand(entity: RequestResourceDto) {
@@ -1224,6 +1245,42 @@ export class RequestResourceTabComponent
 
   extractEmailName(emailAddress) {
     return emailAddress.split('@')[0];
+  }
+
+  getAllCVStatus() {
+    this.cvStatusService.getAll().subscribe(res => {
+      this.cVStatusList = res.result;
+    });
+  }
+
+  refreshDate(index: number, item: ResourceRequestCVDto, field: string) {
+    if(field == 'sendCVDate') {
+      item.sendCVDate = null;
+      this.updateSendCVDate(index, item, field);
+    }
+    else {
+      item.interviewDate = null;
+      this.updateInterviewTimeCV(index, item, field);
+    }
+  }
+
+  getResourceRequestCVExpandAll() {
+    if (this.isExpand) {
+      this.listRequest.forEach((item) => {
+        if (!this.isRowExpand[item.id]) {
+          this.getResourceRequestCVExpand(item);
+        }
+      });
+    } else {
+      this.listRequest.forEach((item) => {
+        delete this.isRowExpand[item.id];
+        const rowIndex = this.expandedRows.indexOf(item.id);
+        if (rowIndex !== -1) {
+          this.expandedRows.splice(rowIndex, 1);
+        }
+      });
+    }
+    this.getIconExpand();
   }
 }
 

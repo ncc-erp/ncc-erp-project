@@ -98,6 +98,7 @@ namespace ProjectManagement.EntityFrameworkCore
         public DbSet<LinkedResource> LinkedResources { get; set; }
 
         public DbSet<ResourceRequestCV> ResourceRequestCVs { get; set; }
+        public DbSet<CvStatus> CvStatus { get; set; }
         public ProjectManagementDbContext(DbContextOptions<ProjectManagementDbContext> options)
             : base(options)
         {

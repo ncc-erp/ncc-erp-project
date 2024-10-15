@@ -6,3 +6,13 @@
     padding: 0;
     align-items: center;
 }
+
+@media screen and (max-width: 600px) {
+  :host ::ng-deep .description-popup .modal-header {
+    align-items: baseline;
+  }
+
+  .note-description {
+    max-height: 450px !important;
+  }
+}

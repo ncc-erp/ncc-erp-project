@@ -1,0 +1,52 @@
+<form class="form-horizontal" autocomplete="off" #resourceRequestForm="ngForm" novalidate>
+    <abp-modal-header title="{{
+            data.command == 'create'
+            ? 'Create new CV Status'
+            : 'Edit CV Status: ' + title
+        }}"
+        (onCloseClick)="dialogRef.close()"
+    >
+    </abp-modal-header>
+    <div class="modal-body">
+        <div class="form-group row required">
+            <label class="col-form-label col-12">Name:</label>
+            <input name="cvstatusName"
+                class="form-control"
+                type="text"
+                placeholder="Name"
+                required
+                [(ngModel)]="cvstatus.name"
+                #name="ngModel"
+                #nameEl
+                suffix="%"
+            />
+            <abp-validation-summary [control]="name" [controlEl]="nameEl">
+            </abp-validation-summary>
+        </div>
+        <div class="form-group row required">
+            <label class="col-12 col-form-label">Color:</label>
+            <input name="color"
+                class="form-control col-10"
+                type="text"
+                placeholder="Color"
+                required
+                [(ngModel)]="cvstatus.color"
+                #color="ngModel"
+                #colorEl
+                suffix="%"
+            />
+            <div class="d-flex align-items-center col-2 justify-content-center">
+                <input class="color-picker" name="color" type="color" [(ngModel)]="cvstatus.color">
+            </div>
+            <abp-validation-summary [control]="color" [controlEl]="colorEl">
+            </abp-validation-summary>
+        </div>
+    </div>
+    <div align="end" class="row justify-content-end">
+        <button name="btn-cancel" class="btn btn-secondary mr-2 btn-action" mat-dialog-close>Cancel</button>
+        <button name="btn-save" class="btn btn-primary btn-action" [disabled]="!resourceRequestForm.valid || isLoading"
+            (click)="SaveAndClose()">
+            Save
+        </button>
+    </div>
+</form>

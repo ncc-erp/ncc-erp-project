@@ -98,7 +98,7 @@
                         class="btn bg-blue ml-2 btn-s mb-2 add-bill-desktop" (click)="addUserBill(); userBillCurrentPage=1; $event.stopPropagation()">
                             <i class="fa fa-plus m-0"></i>
                         </button>
-                        <div class="col-lg-4 mb-2 bill-search" (click)="$event.stopPropagation()" [hidden]="!showSearchAndFilter">
+                        <div class="col-lg-4 mb-2 bill-search" (click)="$event.stopPropagation()" [hidden]="!showSearchAndFilter || isShowUserBill">
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <button name="btn-search" type="button" class="btn bg-blue" (click)="searchContext(); $event.stopPropagation()" [hidden]="!showSearchAndFilter">
@@ -185,10 +185,13 @@
                         <thead>
                             <tr>
                                 <th style="border-left: 10px solid #fff" class="align stt">#</th>
-                                    <th class="align" (click)="sortData('emailAddress')" style="cursor: pointer;">{{ "Employee" | localize }}
-                                    {{ "Employee" | localize }}
-                                    <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'emailAddress'"></i>
-                                    <i *ngIf="sortColumn !== 'emailAddress'" class="fas fa-sort"></i>
+                                    <th class="align" (click)="sortData('emailAddress')" style="cursor: pointer;">
+                                        <div class="col-bill-account">
+                                            {{ "Employee" | localize }}
+                                            {{ "Employee" | localize }}
+                                            <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'emailAddress'"></i>
+                                            <i *ngIf="sortColumn !== 'emailAddress'" class="fas fa-sort"></i>
+                                        </div>
                                 </th> 
                                 <th class="align " (click)="sortData('billAccountName')" style="cursor: pointer;">
                                     <div class="col-bill-account">
@@ -204,11 +207,14 @@
                                         <i *ngIf="sortColumn !== 'billRole'" class="fas fa-sort"></i>
                                     </div>  
                                 </th>
-                                    <th class="align" (click)="orderLinkedResourcesOnTop('linkedResources')" style="cursor: pointer;">{{ "Linked Resources" | localize }}
-                                    <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'linkedResources'"></i>
-                                    <i *ngIf="sortColumn !== 'linkedResources'" class="fas fa-sort"></i>
+                                    <th class="align" (click)="orderLinkedResourcesOnTop('linkedResources')" style="cursor: pointer;">
+                                        <div class="col-bill-account">
+                                            {{ "Linked Resources" | localize }}
+                                            <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'linkedResources'"></i>
+                                            <i *ngIf="sortColumn !== 'linkedResources'" class="fas fa-sort"></i>
+                                        </div>
                                 </th>
-                                <th class="align" (click)="sortData('billRate')" style="cursor: pointer; min-width: 100px;"
+                                <th class="align column-rate" (click)="sortData('billRate')" style="cursor: pointer; min-width: 100px;"
                                     *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Rate_View) && !isHideRates">
                                     <div class="col-bill-account"> 
                                         {{ "Rate" | localize }}
@@ -301,7 +307,7 @@
 
                                     <div *ngIf="bill.createMode">
 
-                                        <input style="min-width: 100px;" class="form-control mt-1"
+                                        <input style="min-width: 100px;" class="form-control mt-1 form-change-name"
                                                 #accountName="ngModel" #accountNameEl type="text"
                                                 placeholder="Charge Name" name="accountName"
                                                 [(ngModel)]="bill.accountName" [value]="bill.billAccountName"/>
@@ -316,7 +322,7 @@
 
                                     <div *ngIf="bill.createMode">
 
-                                        <input style="min-width: 60px;" required class="form-control mt-1"
+                                        <input style="min-width: 60px;" required class="form-control form-charge-role mt-1"
                                             #billRole="ngModel" #billRoleEl type="text" placeholder="Charge role *"
                                             name="billRole" [(ngModel)]="bill.billRole" />
 
@@ -416,7 +422,7 @@
                                 <td class="text-center">
                                     <span class="text-center" *ngIf="!bill.createMode">
                                         {{bill.chargeTypeName}}</span>
-                                    <div *ngIf="bill.createMode" style="width: 100px; ">
+                                    <div *ngIf="bill.createMode" style="width: 100px; " class="input-charge">
                                         <mat-form-field class="w-100" appearance="outline">
                                             <mat-select (closed)="focusOut()" [(ngModel)]="bill.chargeType"
                                                     name="chargeTypes" placeholder="select Charge"

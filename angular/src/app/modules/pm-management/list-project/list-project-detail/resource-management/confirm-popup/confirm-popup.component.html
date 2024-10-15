@@ -18,7 +18,7 @@
     <div *ngIf="!allowConfirm">
         <p style="font-size: 20px;" class="text-danger"><strong>{{user.fullName}}</strong> is working on the following
             projects:</p>
-        <ul>
+        <ul class="working-project">
             <li *ngFor="let project of workingProject">
                 <strong>{{project.projectName}}</strong> (pm:
                 <strong>{{project.pmName}}</strong>) <strong
@@ -34,7 +34,7 @@
     <div *ngIf="workingProject.length >0 && user.allocatePercentage > 0 && allowConfirm">
         <p style="font-size: 20px;" class="text-danger"><strong>{{user.fullName}}</strong> is working on the following
             projects:</p>
-        <ul>
+        <ul class="working-project">
             <li *ngFor="let project of workingProject">
                 <strong>{{project.projectName}}</strong> (pm:
                 <strong>{{project.pmName}}</strong>) <strong
@@ -51,7 +51,7 @@
 
     </div>
 
-    <div class="d-flex justify-content-end" *ngIf="allowConfirm">
+    <div class="d-flex justify-content-end footer" *ngIf="allowConfirm">
         <button class="btn btn-secondary btn-action mr-2" mat-dialog-close="">
             Cancel
         </button>
@@ -59,7 +59,7 @@
             Confirm
         </button>
     </div>
-    <div class="d-flex justify-content-end" *ngIf="!allowConfirm">
+    <div class="d-flex justify-content-end footer" *ngIf="!allowConfirm">
         <button class="btn btn-secondary btn-action mr-2" mat-dialog-close="">
             Cancel
         </button>

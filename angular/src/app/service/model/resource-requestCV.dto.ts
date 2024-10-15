@@ -11,4 +11,12 @@ export class ResourceRequestCVDto{
     interviewDate ?: Date;
     sendCVDate ?: Date;
     resourceRequestId: number;
+    cvStatusId:number;
+    cvStatus: CVStatus;
+}
+
+interface CVStatus {
+    id: number;
+    name: string;
+    color: string;
 }

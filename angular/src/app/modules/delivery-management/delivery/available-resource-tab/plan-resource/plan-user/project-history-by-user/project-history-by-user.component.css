@@ -1,17 +1,11 @@
 @media screen and (max-width: 600px) {
     :host ::ng-deep .modal-header-project-history {
         .modal-header {
-            padding: 0;
             align-items: baseline;
         }
     }
 
-    .modal-body {
-        padding-right: 0;
-    }
-
     .fixTableHead {
-        padding-right: 1rem;
         max-height: 50vh;
     }
 }

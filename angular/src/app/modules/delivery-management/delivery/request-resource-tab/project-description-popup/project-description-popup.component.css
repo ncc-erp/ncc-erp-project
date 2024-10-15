@@ -26,6 +26,11 @@
         margin-right: 10px;
         margin-top: 10px;
         margin-bottom: 0;
+        gap: 10px;
+    }
+
+    .modal-footer-project-desc button {
+        margin: 0 !important;
     }
 
     .desc-short-prj {

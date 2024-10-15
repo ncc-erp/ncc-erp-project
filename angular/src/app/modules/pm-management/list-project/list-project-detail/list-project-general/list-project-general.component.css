@@ -84,4 +84,10 @@
         display: inline-flex;
         align-items: baseline;
     }
+
+    .form-project {
+        max-height: 76vh;
+        overflow: auto;
+        margin-bottom: 10px;
+    }
 }

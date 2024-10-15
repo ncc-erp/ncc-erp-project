@@ -1,0 +1,119 @@
+<div *ngIf="permission.isGranted(Admin_CVStatus_View)">
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row">
+            <h1>CV Status</h1>
+        </div>
+    </div>
+</section>
+<section class="content px-2">
+    <div class="container-fluid table-branch">
+        <div class="card">
+            <div class="card-header">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <button type="button" class="btn bg-blue" (click)="getDataPage(1)">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <input type="text" 
+                        class="form-control col-6"
+                        name="keyword"
+                        placeholder="Search by Name"
+                        [(ngModel)]="searchText"
+                        (keyup.enter)="getDataPage(1)"
+                    />
+                    <div class="text-right col-6">
+                        <button name="btn-create" class="btn bg-blue"
+                            (click)="createCVStatus()"
+                            *ngIf="permission.isGranted(Admin_CVStatus_Create)">
+                            <i class="fa fa-plus-square"></i>
+                            Create
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body table-responsive p-4">
+                <div class="fixHead">
+                    <table name="tbl_cvstatus" style="border-collapse: collapse" class="table table-hover text-nowrap">
+                        <thead class="bg-light">
+                            <tr>
+                                <th style="width: 100px">#</th>
+                                <th class="col-6">Name</th>
+                                <th class="col-6">Color</th>
+                                <th style="width: 100px">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of cVStatusList
+                                | paginate: { 
+                                    id: 'server',
+                                    itemsPerPage: pageSize,
+                                    currentPage: pageNumber,
+                                    totalItems: totalItems 
+                                };
+                                let i = index"
+                            >
+                                <td class="text-center stt">
+                                    <span>{{ i + 1 + pageSize * (pageNumber - 1) }}</span>
+                                </td>
+                                <td>{{ item.name }}</td>
+                                <td class="text-center">
+                                    <span class="badge badge-pill text-white" [style.backgroundColor]="item.color"> {{ item.color }}</span>
+                                </td>
+                                <td class="text-center">
+                                    <div style="visibility: hidden; position: fixed"
+                                        [matMenuTriggerFor]="menu"></div>
+                                    <button mat-button [matMenuTriggerFor]="menu">
+                                        <i class="fas fa-bars fa-lg"></i>
+                                    </button>
+                                    <mat-menu #menu="matMenu" class="p-2">
+                                        <button class="mat-menu-item  w-100 " (click)="editCVStatus(item)" *ngIf="permission.isGranted(Admin_CVStatus_Edit)">
+                                            <i class="fas fa-pencil-alt mr-1"></i>
+                                            Edit
+                                        </button>
+                                        <button class="mat-menu-item  w-100 " (click)="delete(item)" *ngIf="permission.isGranted(Admin_CVStatus_Delete)">
+                                            <i class="fas fa-trash fa-lg mr-1"></i>
+                                            Delete
+                                        </button>
+                                    </mat-menu>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer bg-light border-top">
+                <div class="row container-pagination">
+                    <div class="col-sm-4 col-12 text-sm-left text-center number-items-pagination">
+                        <button class="btn btn-secondary mb-2" (click)="refresh()">
+                            <i class="fas fa-redo-alt"></i>
+                        </button>
+                        <mat-form-field style="width: 20%; margin-left: 30px" class="form-number-items">
+                            <mat-label>Number items</mat-label>
+                            <mat-select panelClass="options-number-item" [(ngModel)]="pageSizeType" (ngModelChange)="changePageSize()">
+                                <mat-option [value]="5"> 5 </mat-option>
+                                <mat-option [value]="10"> 10 </mat-option>
+                                <mat-option [value]="20"> 20 </mat-option>
+                                <mat-option [value]="50"> 50 </mat-option>
+                                <mat-option [value]="100"> 100 </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-sm-4 col-12 text-center total-pagination">
+                        <p class="mb-0 my-2">
+                            {{ "TotalRecordsCount" | localize: totalItems }}
+                        </p>
+                    </div>
+                    <div class="col-sm-4 col-12 pagination-control">
+                        <div class="float-sm-right m-auto">
+                        <abp-pagination-controls id="server" (pageChange)="getDataPage($event)">
+                        </abp-pagination-controls>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</div>

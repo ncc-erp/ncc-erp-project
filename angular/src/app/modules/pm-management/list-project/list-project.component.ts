@@ -125,7 +125,7 @@ export class ListProjectComponent extends PagedListingComponentBase<any> impleme
   constructor(injector: Injector, public dialog: MatDialog, private userService: UserService,
     public listProjectService: ListProjectService ,
     public sessionService:AppSessionService,
-    public projectUserBillService: ProjectUserBillService
+    public projectUserBillService: ProjectUserBillService,
     ) {
     super(injector);
     this.pmId = Number(this.sessionService.userId);

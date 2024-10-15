@@ -38,6 +38,7 @@ import { ConfirmPlanDialogComponent } from "./plan-user/confirm-plan-dialog/conf
 import { ConfirmFromPage } from "@app/modules/pm-management/list-project/list-project-detail/resource-management/confirm-popup/confirm-popup.component";
 import { BranchService } from "@app/service/api/branch.service";
 import { APP_ENUMS } from "@shared/AppEnums";
+import { getValueByEnum } from "../enum-until";
 @Component({
   selector: "app-plan-resource",
   templateUrl: "./plan-resource.component.html",
@@ -655,11 +656,8 @@ export class PlanResourceComponent
     window.open(url, "_blank");
   }
 
-  getValueByEnum(enumValue: number, enumObject) {
-    for (const key in enumObject) {
-      if (enumObject[key] == enumValue) {
-        return '[' + key + ']';
-      }
-    }
+  getEnumValue(enumValue: number, enumObject) {
+    return getValueByEnum(enumValue, enumObject);
   }
+  
 }

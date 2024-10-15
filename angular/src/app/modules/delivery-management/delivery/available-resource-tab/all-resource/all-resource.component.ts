@@ -32,6 +32,8 @@ import { ProjectHistoryByUserComponent } from "./../plan-resource/plan-user/proj
 import { result } from 'lodash-es';
 import { APP_ENUMS } from '@shared/AppEnums';
 import { AddNoteDialogComponent } from '../plan-resource/add-note-dialog/add-note-dialog.component';
+import { getValueByEnum } from '../enum-until';
+
 
 @Component({
   selector: 'app-all-resource',
@@ -730,11 +732,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     );
   }
 
-  getValueByEnum(enumValue: number, enumObject) {
-    for (const key in enumObject) {
-      if (enumObject[key] == enumValue) {
-        return '[' + key + ']';
-      }
-    }
+  getEnumValue(enumValue: number, enumObject) {
+    return getValueByEnum(enumValue, enumObject);
   }
 }

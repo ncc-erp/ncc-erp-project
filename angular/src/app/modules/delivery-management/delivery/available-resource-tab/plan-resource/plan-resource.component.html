@@ -161,7 +161,7 @@
                                                             {{plan.workType}}
                                                         </strong>
                                                         <strong [ngClass]="plan.isPool?'text-secondary' : 'text-primary'" class=" mr-1">
-                                                            {{getValueByEnum(plan.workingType, APP_ENUM.ProjectUserWorkingType)}}
+                                                            {{ getEnumValue(plan.workingType, APP_ENUM.ProjectUserWorkingType) }}
                                                         </strong>
                                                         <strong
                                                             [ngClass]="plan.allocatePercentage > 0?'badge-success' : 'badge-danger'"

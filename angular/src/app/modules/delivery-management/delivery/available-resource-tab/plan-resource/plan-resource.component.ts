@@ -280,6 +280,7 @@ export class PlanResourceComponent
       allocatePercentage: user.allocatePercentage,
       isPool: user.isPool,
       projectUserId: user.projectUserId,
+      workingType: user.workingType
     };
 
     const show = this.dialog.open(PlanUserComponent, {
@@ -652,5 +653,13 @@ export class PlanResourceComponent
       })
     );
     window.open(url, "_blank");
+  }
+
+  getValueByEnum(enumValue: number, enumObject) {
+    for (const key in enumObject) {
+      if (enumObject[key] == enumValue) {
+        return '[' + key + ']';
+      }
+    }
   }
 }

@@ -179,7 +179,8 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
       startTime: user.startTime,
       allocatePercentage: user.allocatePercentage,
       isPool: user.isPool,
-      projectUserId: user.projectUserId
+      projectUserId: user.projectUserId,
+      workingType: user.workingType
     };
 
     const show = this.dialog.open(PlanUserComponent, {
@@ -727,5 +728,13 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
         }
       }
     );
+  }
+
+  getValueByEnum(enumValue: number, enumObject) {
+    for (const key in enumObject) {
+      if (enumObject[key] == enumValue) {
+        return '[' + key + ']';
+      }
+    }
   }
 }

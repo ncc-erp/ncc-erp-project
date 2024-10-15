@@ -68,6 +68,7 @@ export class projectUserDto {
   viewMode?: boolean;
   workType:boolean;
   isPool?: boolean;
+  workingType: number;
 }
 
 export class projectResourceRequestDto {

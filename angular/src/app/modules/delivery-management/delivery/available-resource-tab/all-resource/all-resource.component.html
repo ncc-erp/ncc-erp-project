@@ -335,9 +335,12 @@
                                                         [matMenuTriggerFor]="planMenu">
                                                     <span [ngClass]="plan.onHover?'on-hover-plan':''">
                                                         <strong class="mr-1">{{plan.projectName }} ({{plan.resourceRequestCode}})</strong>
-                                                        <strong [ngClass]="plan.isPool?'text-secondary'
-                                                            : 'text-primary'" class=" mr-1">
-                                                            {{plan.workType}}</strong>
+                                                        <strong style="display: none;" [ngClass]="plan.isPool?'text-secondary' : 'text-primary'" class=" mr-1">
+                                                            {{plan.workType}}
+                                                        </strong>
+                                                        <strong [ngClass]="plan.isPool?'text-secondary' : 'text-primary'" class=" mr-1">
+                                                            {{getValueByEnum(plan.workingType, APP_ENUM.ProjectUserWorkingType)}}
+                                                        </strong>
                                                         <strong [ngClass]="plan.allocatePercentage>
                                                             0?'badge-success' :
                                                             'badge-danger'" class="badge mr-1">

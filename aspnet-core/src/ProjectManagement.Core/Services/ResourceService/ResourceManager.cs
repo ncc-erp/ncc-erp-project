@@ -750,6 +750,7 @@ namespace ProjectManagement.Services.ResourceManager
             projectUser.Note = input.Note;
             projectUser.IsPool = input.IsPool;
             projectUser.ProjectRole = input.ProjectRole;
+            projectUser.WorkingType = input.WorkingType;
             await _workScope.UpdateAsync(projectUser);
         }
 
@@ -822,6 +823,7 @@ namespace ProjectManagement.Services.ResourceManager
                                AllocatePercentage = pu.AllocatePercentage,
                                ProjectType = pu.Project.ProjectType,
                                ProjectCode = pu.Project.Code,
+                               WorkingType = pu.WorkingType,
 
                                ResourceRequestCode = pu.ResourceRequest.Code,
                                ResourceRequestNote = pu.ResourceRequest.DMNote,
@@ -976,6 +978,7 @@ namespace ProjectManagement.Services.ResourceManager
                                IsPool = pu.IsPool,
                                ProjectType = pu.Project.ProjectType,
                                ProjectCode = pu.Project.Code,
+                               WorkingType = pu.WorkingType,
 
                                ResourceRequestCode = pu.ResourceRequest.Code,
                                ResourceRequestNote = pu.ResourceRequest.DMNote,

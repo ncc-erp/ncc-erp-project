@@ -57,7 +57,7 @@
                 <div class="col-md-9">
                     <mat-radio-group [(ngModel)]="planUser.workingType" aria-label="Select an option" name="allocatePercentage">
                         <ng-container *ngFor="let type of workingTypeList">
-                            <mat-radio-button [value]="APP_ENUM.ProjectUserWorkingType[type]" class="mt-2 mr-3">
+                            <mat-radio-button [value]="APP_ENUM.ProjectUserWorkingType[type]" class="mt-2 mr-3" [checked]="planUser.workingType == APP_ENUM.ProjectUserWorkingType[type]">
                                 {{ type }}
                             </mat-radio-button>
                         </ng-container>

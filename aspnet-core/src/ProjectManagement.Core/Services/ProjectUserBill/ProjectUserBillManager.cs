@@ -107,7 +107,8 @@ namespace ProjectManagement.Services.ProjectUserBills
                                IsPool = pu.IsPool,
                                AllocatePercentage = pu.AllocatePercentage,
                                ProjectType = pu.Project.ProjectType,
-                               ProjectCode = pu.Project.Code
+                               ProjectCode = pu.Project.Code,
+                               WorkingType = pu.WorkingType
                            })
                            .ToList(),
 

@@ -331,39 +331,47 @@
 
                                     </div>
                                 </td>
-                                <td style="width: 280px;">
-                                    <div class="d-flex align-items-start justify-content-end">
-                                        <div class="d-flex" style="flex-direction: column;">
+                                <td style="width: 450px;">
+                                    <div class="d-flex col-12" >
+                                        <div class="d-flex col-11 px-0" style="flex-direction: column;" [ngClass]="{'col-12': bill.createLinkResourceMode}">
                                             <div *ngIf="bill.createLinkResourceMode" class="row">
-                                                <div class="col-10 mb-2 position-relative">
-                                                        <mat-form-field style="max-width: 100%;" class="w-100" appearance="outline">
-                                                            <mat-select panelClass="custom-panel-class" (closed)="focusOut()"
-                                                                        [(ngModel)]="selectedResource"
-                                                                        name="userBill"
-                                                                        placeholder="select a resource *"
-                                                                        required
+                                                <div class="col-10 mb-2 position-relative px-0">
+                                                    <mat-form-field appearance="outline" class="col-9">
+                                                        <mat-select panelClass="custom-panel-class" (closed)="focusOut()"
+                                                            [(ngModel)]="selectedResource"
+                                                            name="userBill"
+                                                            placeholder="select a resource *"
+                                                            required
                                                             #userBill="ngModel">
-                                                                <mat-form-field class="w-100 px-3" style="position: sticky; top: 0; z-index: 2; background-color: white;">
+                                                            <mat-form-field class="w-100 px-3" style="position: sticky; top: 0; z-index: 2; background-color: white;">
                                                                 <input matInput [(ngModel)]="searchResource"
                                                                     placeholder="search"
                                                                     (keydown)="$event.stopPropagation()"
-                                                                           name="searchResource"
-                                                                           #search>{{search.focus()}}
+                                                                        name="searchResource"
+                                                                        #search>{{search.focus()}}
                                                             </mat-form-field>
-                                                                <mat-option *ngFor="let resource of listAvailableResource | listFilter: 'fullName' : searchResource : 'emailAddress' " [value]="resource.id">
+                                                            <mat-option *ngFor="let resource of listAvailableResource | listFilter: 'fullName' : searchResource : 'emailAddress' " [value]="resource.id">
                                                                 <div class="mat-option-text">
-                                                                    <span class="data-name" class="user-info">
-                                                                            {{resource.fullName}} - ({{resource.emailAddress}})
+                                                                    <span class="data-name" class="user-info">                                                                                {{resource.fullName}} - ({{resource.emailAddress}})
                                                                     </span>
                                                                 </div>
                                                             </mat-option>
                                                         </mat-select>
                                                     </mat-form-field>
+                                                    <input                
+                                                        type="number"
+                                                        class="col-3"
+                                                        min="0"
+                                                        max="100"
+                                                        [defaultValue]="0"
+                                                        appFocus
+                                                        [(ngModel)]="bill.contribute"
+                                                    />   
                                                         <mat-error class="mt-1" *ngIf="userBill.hasError('required') && userBill.touched" style="font-size: 13px;">
                                                         This field is required
                                                     </mat-error>
                                                 </div>
-                                                    <div class="col-2 d-flex align-items-center" style="flex-direction: column;">
+                                                <div class="col-2 d-flex align-items-center" style="flex-direction: column;">
                                                     <button [disabled]="selectedResource == null"
                                                         class="mb-1 submit-btn" style="background: none; border: none;"
                                                                 [hidden]="showSearchAndFilter"
@@ -375,22 +383,56 @@
                                                         (click)="cancelLinkResource(bill)"></i>
                                                 </div>
                                             </div>
-                                                <div *ngFor="let resource of bill.linkedResources" class="mb-2 position-relative">
+                                            <div *ngFor="let resource of bill.linkedResources; let i = index" class="mb-2 d-flex px-0">
+                                                <div class="col-8 d-flex px-0" [ngClass]="{ 'col-10': isAddingResource }">
                                                     <app-user-info [isSmallerDiv]="true"
-                                                                   [userData]="resource"
-                                                                   [isWeeklyReport]="false"
-                                                                   [viewMode]="1">
-                                                </app-user-info>
-                                                    <i *ngIf="!isAddingOrEditingUserBill && !isAddingResource" (click)="removeLinkResource(resource.id, bill.id)"
-                                                       class="fa fa-times position-absolute" style="top:32px; right: -28px;"></i>
+                                                        [userData]="resource"
+                                                        [isWeeklyReport]="false"
+                                                        [viewMode]="1"
+                                                        >
+                                                     </app-user-info>
+                                                </div>
+                                                <div class="col-4 d-flex px-0">
+                                                    <div class="col-6 align-items-end d-flex" [ngClass]="{ 'col-12': isAddingResource }">
+                                                        <span *ngIf="!editingRows[bill.id] || !editingRows[bill.id][i]?.contribute || isAddingOrEditingUserBill || isAddingResource"  class="badge bg-info">{{resource.contribute + '%'}}</span>
+                                                        <input  
+                                                            *ngIf="editingRows[bill.id] && editingRows[bill.id][i]?.contribute && !isAddingOrEditingUserBill && !isAddingResource" 
+                                                            type="number"
+                                                            placeholder="contribute %"
+                                                            min="0"
+                                                            max="100"
+                                                            [defaultValue]="0"
+                                                            [value]="resource.contribute"
+                                                            [(ngModel)]="resource.contribute"
+                                                            appFocus
+                                                        />      
+                                                    </div>
+                                                    <div class="col-6 align-items-end d-flex" *ngIf="!isAddingOrEditingUserBill && !isAddingResource">
+                                                        <i *ngIf="!editingRows[bill.id] || !editingRows[bill.id][i]?.contribute" 
+                                                            (click)="edit(bill.id, i, 'contribute')" 
+                                                            class="fa fa-pencil-alt col-6"></i>
+                                                        <i *ngIf="!editingRows[bill.id] || !editingRows[bill.id][i]?.contribute" 
+                                                            (click)="removeLinkResource(resource.id, bill.id)"
+                                                            class="fa fa-times col-6"></i>  
+                                                        <i *ngIf="editingRows[bill.id] && editingRows[bill.id][i]?.contribute" 
+                                                            style="color: green;"
+                                                            (click)="updateContribute(bill.id, resource.id, resource.contribute)" class="fas fa-check col-6"></i>
+                                                        <i *ngIf="editingRows[bill.id] && editingRows[bill.id][i]?.contribute"
+                                                            style="color: red;"
+                                                            (click)="cancelUpdate(bill.id)"
+                                                            class="fa fa-times col-6"></i> 
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                        <i *ngIf="!isAddingResource && !isAddingOrEditingUserBill && permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount)"
+                                        <div class="text-center col-1" *ngIf="!isAddingOrEditingUserBill && !isAddingResource">
+                                            <button *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount)"
                                                (click)="addLinkResource(bill)"
                                                class="btn bg-blue ml-2 btn-sm mb-2"
-                                            style="cursor: pointer; font-size: 10px;">
-                                            <i class="fa fa-plus fa-s m-0"></i>
-                                        </i>
+                                                style="cursor: pointer; font-size: 10px;">
+                                                <i class="fa fa-plus fa-s m-0"></i>
+                                            </button>
+                                        </div>
                                     </div>
                                 </td>
                                 <td class="text-center"

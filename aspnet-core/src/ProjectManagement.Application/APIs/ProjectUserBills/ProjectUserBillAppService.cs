@@ -111,6 +111,11 @@ namespace ProjectManagement.APIs.ProjectUserBills
             await projectUserBillManager.LinkOneLinkedResource(input);
         }
 
+        [HttpPost]
+        public async Task UpdateLinkOneProjectUserBillAccount(LinkedResourceDto input)
+        {
+            await projectUserBillManager.UpdateLinkOneLinkedResource(input);
+        }
 
         [HttpGet]
         public async Task<List<UserDto>> GetAllUser(bool onlyStaff, long projectId, long? currentUserId, bool isIncludedUserInPUB)

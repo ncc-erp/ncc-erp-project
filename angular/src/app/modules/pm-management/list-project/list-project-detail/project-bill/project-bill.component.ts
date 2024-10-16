@@ -101,6 +101,9 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   public listAllResource = []
   public listAvailableResource = []
 
+  editingRows: { [key: number]: { [key: number]: { [key: string]: boolean } } } = {};
+
+
   Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_View = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_View;
   Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Create = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Create;
   Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Edit = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Edit;
@@ -623,7 +626,8 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     this.isLoading = true
     const reqAdd = {
       projectUserBillId: userBill.id,
-      userId: this.selectedResource
+      userId: this.selectedResource,
+      contribute: userBill.contribute || 0
     };
     
     this.projectUserBillService.LinkOneProjectUserBillAccount(reqAdd).pipe(
@@ -793,6 +797,39 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
 
   getValueStatusUser(isActive: boolean){
     return isActive?"Active":"InActive"
+  }
+
+  edit(source: number, index: number, field: string): void {
+    this.editingRows[source] = this.editingRows[source] || {};
+    this.editingRows[source] = { [index]: { [field]: true } };
+  }
+
+  cancelUpdate(source: number): void {
+    this.editingRows[source] = {};
+    this.getUpdatedProjectUserBill(source);
+  }
+
+  updateContribute(projectUserBillId: number, userId: number, contribute: number) {
+    this.isLoading = true
+    const reqAdd = {
+      projectUserBillId,
+      userId,
+      contribute
+    };
+    
+    this.projectUserBillService.UpdateLinkOneProjectUserBillAccount(reqAdd).pipe(
+      catchError(this.projectUserBillService.handleError)
+    ).subscribe(() => {
+      abp.notify.success("Linked resources updated successfully");
+      this.getUpdatedProjectUserBill(projectUserBillId)
+      this.selectedResource = null
+      this.userBillProcess = false;
+      this.searchResource = "";
+      this.showSearchAndFilter = true;
+      this.isAddingResource = false;
+      this.isLoading = false;
+      this.cancelUpdate(projectUserBillId);
+    }, () => { this.isLoading = false; });
   }
 }
 

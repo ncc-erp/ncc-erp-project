@@ -113,7 +113,8 @@ namespace ProjectManagement.Services.ResourceManager
                     SkillName = s.Skill.Name,
                     SkillRank = s.SkillRank,
                     SkillNote = s.Note
-                }).ToList()
+                }).ToList(),
+                WorkingType = s.WorkingType,
             })
             .OrderByDescending(s => s.PUStatus == ProjectUserStatus.Present && s.AllocatePercentage > 0)
             .ThenByDescending(s => s.StartTime);
@@ -343,6 +344,7 @@ namespace ProjectManagement.Services.ResourceManager
                 StartTime = input.StartTime,
                 PMReportId = activeReportId,
                 ProjectRole = input.ProjectRole,
+                WorkingType = input.WorkingType
             };
 
             var sbKomuMessage = await releaseUserFromAllWorkingProjects(sessionUser, employee, projectToJoin, activeReportId, input.IsPool, allowConfirmMoveEmployeeToOtherProject, joinPU);

@@ -284,7 +284,8 @@ namespace ProjectManagement.APIs.ProjectUserBills
                     BranchColor = lr.User.Branch.Color,
                     BranchDisplayName = lr.User.Branch.DisplayName,
                     IsActive = lr.User.IsActive,
-                    FullName = lr.User.FullName
+                    FullName = lr.User.FullName,
+                    Contribute = lr.Contribute
                 })
             },
             IsCharge = x.isActive

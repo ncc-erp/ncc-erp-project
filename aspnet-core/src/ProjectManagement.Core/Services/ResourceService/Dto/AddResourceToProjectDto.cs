@@ -12,6 +12,7 @@ namespace ProjectManagement.Services.ResourceManager.Dto
         public DateTime StartTime { get; set; }
         public bool IsPool { get; set; }
         public ProjectUserRole ProjectRole { get; set; }
+        public ProjectUserWorkingType WorkingType { get; set; }
 
     }
 }

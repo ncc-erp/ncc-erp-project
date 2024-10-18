@@ -27,5 +27,8 @@ namespace ProjectManagement.Services.ProjectUserBill.Dto
 
         [Required]
         public long ProjectUserBillId { get; set; }
+
+        [Range(0, 100)]
+        public byte Contribute {  get; set; }
     }
 }

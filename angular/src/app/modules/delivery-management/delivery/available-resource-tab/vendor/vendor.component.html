@@ -178,9 +178,14 @@
                                                     [matMenuTriggerFor]="planMenu">
                                                     <span [ngClass]="plan.onHover?'on-hover-plan':''">
                                                         <strong class="mr-1">{{ plan.projectName }}</strong><strong
+                                                            style="display: none;"
                                                             [ngClass]="plan.isPool?'text-secondary' : 'text-primary'"
                                                             class=" mr-1">
-                                                            {{plan.workType}}</strong> <strong
+                                                            {{plan.workType}}</strong>
+                                                            <strong [ngClass]="plan.isPool?'text-secondary' : 'text-primary'"
+                                                            class=" mr-1">
+                                                            {{ getEnumValue(plan.workingType, APP_ENUM.ProjectUserWorkingType) }}</strong>
+                                                             <strong
                                                             [ngClass]="plan.allocatePercentage > 0?'badge-success' : 'badge-danger'"
                                                             class="badge mr-1">
                                                             {{plan.allocatePercentage > 0 ? 'Join' : 'Out'}}</strong> {{

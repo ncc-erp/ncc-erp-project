@@ -92,6 +92,10 @@
     width: 100%;
 }
 
+.button-action{
+    background: none;
+    border: none;
+}
 @media screen and (max-width: 600px) {
     .invoice-setting, .bill-account {
         height: 100% !important;

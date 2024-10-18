@@ -22,6 +22,7 @@ export class PlanUserComponent extends AppComponentBase implements OnInit {
   public projectRoleList = Object.keys(this.APP_ENUM.ProjectUserRole);
   public searchProject: string = ""
   public tomorrowDate = new Date();
+  public workingTypeList = Object.keys(this.APP_ENUM.ProjectUserWorkingType);
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any,
     private listProjectService: ListProjectService,
@@ -37,10 +38,12 @@ export class PlanUserComponent extends AppComponentBase implements OnInit {
       this.planUser.startTime = moment(this.tomorrowDate).format("YYYY-MM-DD");
       this.planUser.isPool = false
       this.planUser.allocatePercentage = 100
+      this.planUser.workingType = 0
     }
     else {
       this.planUser.startTime = moment(this.planUser.startTime).format("YYYY-MM-DD");
       this.planUser = this.data.item
+      this.planUser.isPool = false
     }
     this.planUser.userId = this.data.item.userId;
     this.planUser.fullName = this.data.item.fullName;
@@ -72,5 +75,5 @@ export class PlanUserComponent extends AppComponentBase implements OnInit {
     user.percentUsage = data
   }
 
-
+  
 }

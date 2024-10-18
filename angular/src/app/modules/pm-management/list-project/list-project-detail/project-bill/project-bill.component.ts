@@ -101,6 +101,9 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   public listAllResource = []
   public listAvailableResource = []
 
+  editingRows: { [key: number]: { [key: number]: { [key: string]: boolean } } } = {};
+  originalContribute: { [key: number]: { [key: number]: { [key: string]: number } } } = {};
+
   Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_View = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_View;
   Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Create = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Create;
   Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Edit = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Edit;
@@ -619,11 +622,12 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     this.isAddingResource = true;
   }
 
-  public saveLinkResource(userBill): void {
+  public saveLinkResource(userBill, contribute: number): void {
     this.isLoading = true
     const reqAdd = {
       projectUserBillId: userBill.id,
-      userId: this.selectedResource
+      userId: this.selectedResource,
+      contribute: userBill.contribute || 0
     };
     
     this.projectUserBillService.LinkOneProjectUserBillAccount(reqAdd).pipe(
@@ -793,6 +797,36 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
 
   getValueStatusUser(isActive: boolean){
     return isActive?"Active":"InActive"
+  }
+
+  edit(source: number, index: number, field: string, contribute: number): void {
+
+    this.editingRows[source] = {};
+    this.originalContribute[source] = {};
+    this.editingRows[source][index] = { [field]: true };
+    this.originalContribute[source] = { [index]: { [field]: contribute }};
+  }
+
+  cancelUpdate(source: number, resource: any, index: number): void {
+    this.editingRows[source] = {};
+    resource.contribute = this.originalContribute[source][index]?.contribute;
+  }
+
+  updateContribute(projectUserBillId: number, userId: number, contribute: number) {
+    this.isLoading = true
+    const reqAdd = {
+      projectUserBillId,
+      userId,
+      contribute
+    };
+    
+    this.projectUserBillService.UpdateLinkOneProjectUserBillAccount(reqAdd).pipe(
+      catchError(this.projectUserBillService.handleError)
+    ).subscribe(() => {
+      abp.notify.success("Linked resources updated successfully");
+      this.isLoading = false;
+      this.editingRows[projectUserBillId] = {};
+    }, () => { this.isLoading = false; });
   }
 }
 

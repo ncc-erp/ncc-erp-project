@@ -60,6 +60,7 @@ namespace ProjectManagement.Services.ProjectUserBill.Dto
         public string PositionColor { get; set; }
 
         public string PositionName { get; set; }
+        public byte Contribute { get; set; }
     }
 
     public class LinkedResourceInfoDto

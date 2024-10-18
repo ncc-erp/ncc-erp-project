@@ -367,9 +367,10 @@
                                             <input                
                                                 type="number"
                                                 class="col-4"
-                                                placeholder="%"
+                                                placeholder="% contribute"
                                                 min="0"
                                                 max="100"
+                                                [value]="bill.contribute || 0"
                                                 [(ngModel)]="bill.contribute"
                                             />   
                                                 <mat-error class="mt-1" *ngIf="userBill.hasError('required') && userBill.touched" style="font-size: 13px;">
@@ -400,33 +401,34 @@
                                                      </app-user-info>
                                                 </div>
                                                 <div class="col-4 d-flex px-0">
-                                                    <div class="col-6 align-items-end d-flex">
+                                                    <div class="col-6 align-items-end d-flex" [ngClass]="{'col-12': editingRows[bill.id] && editingRows[bill.id][i]?.contribute}">
                                                         <span *ngIf="!editingRows[bill.id] || !editingRows[bill.id][i]?.contribute"  class="badge bg-info">{{resource.contribute + '%'}}</span>
                                                         <input  
                                                             *ngIf="editingRows[bill.id] && editingRows[bill.id][i]?.contribute" 
                                                             type="number"
-                                                            placeholder="%"
+                                                            placeholder="% contribute"
                                                             class="col-12 px-0"
                                                             min="0"
                                                             max="100"
+                                                            [value]="resource.contribute || 0"
                                                             [(ngModel)]="resource.contribute"
+                                                            (focusout)="cancelUpdate(bill.id, resource, i, 'contribute')"
+                                                            (keydown.enter)="updateContribute(bill.id, resource.id, resource.contribute)" 
+                                                            (keydown.esc)="cancelUpdate(bill.id, resource, i, 'contribute')" 
                                                             appFocus
                                                         />      
                                                     </div>
                                                     <div class="col-6 align-items-end d-flex">
-                                                        <i *ngIf="!editingRows[bill.id] || !editingRows[bill.id][i]?.contribute" 
-                                                            (click)="edit(bill.id, i, 'contribute', resource.contribute)" 
-                                                            class="fa fa-pencil-alt col-6"></i>
-                                                        <i *ngIf="!editingRows[bill.id] || !editingRows[bill.id][i]?.contribute" 
+                                                        <button *ngIf="!editingRows[bill.id] || !editingRows[bill.id][i]?.contribute"
+                                                            (click)="edit(bill.id, i, 'contribute', resource.contribute)"
+                                                            class="col-6 button-action">
+                                                            <i class="fa fa-pencil-alt"></i>
+                                                        </button>
+                                                        <button *ngIf="!editingRows[bill.id] || !editingRows[bill.id][i]?.contribute" 
                                                             (click)="removeLinkResource(resource.id, bill.id)"
-                                                            class="fa fa-times col-6"></i>  
-                                                        <i *ngIf="editingRows[bill.id] && editingRows[bill.id][i]?.contribute" 
-                                                            style="color: green;"
-                                                            (click)="updateContribute(bill.id, resource.id, resource.contribute, resource, i)" class="fas fa-check col-6"></i>
-                                                        <i *ngIf="editingRows[bill.id] && editingRows[bill.id][i]?.contribute"
-                                                            style="color: red;"
-                                                            (click)="cancelUpdate(bill.id, resource, i)"
-                                                            class="fa fa-times col-6"></i> 
+                                                            class="col-6 button-action">
+                                                            <i class="fa fa-times"></i>  
+                                                        </button>
                                                     </div>
                                                 </div>
                                             </div>

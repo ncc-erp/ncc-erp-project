@@ -622,7 +622,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     this.isAddingResource = true;
   }
 
-  public saveLinkResource(userBill): void {
+  public saveLinkResource(userBill, contribute: number): void {
     this.isLoading = true
     const reqAdd = {
       projectUserBillId: userBill.id,
@@ -800,6 +800,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   }
 
   edit(source: number, index: number, field: string, contribute: number): void {
+
     this.editingRows[source] = {};
     this.originalContribute[source] = {};
     this.editingRows[source][index] = { [field]: true };
@@ -811,7 +812,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     resource.contribute = this.originalContribute[source][index]?.contribute;
   }
 
-  updateContribute(projectUserBillId: number, userId: number, contribute: number, resource: any, index: number) {
+  updateContribute(projectUserBillId: number, userId: number, contribute: number) {
     this.isLoading = true
     const reqAdd = {
       projectUserBillId,

@@ -369,23 +369,35 @@
                               </app-user-info>
                             </div>
                             <div class="col-4 d-flex px-0">
-                              <div class="col-6 align-items-end d-flex">
+                              <div class="col-6 align-items-end d-flex" [ngClass]="{'col-12': editingRows[project.billId] && editingRows[project.billId][i]?.contribute}">
                                 <span *ngIf="!editingRows[project.billId] || !editingRows[project.billId][i]?.contribute"
                                   class="badge bg-info">{{resource.contribute + '%'}}
                                 </span>
-                                <input *ngIf="editingRows[project.billId] && editingRows[project.billId][i]?.contribute" type="number" placeholder="%"
-                                  class="col-12 px-0" min="0" max="100" [(ngModel)]="resource.contribute" appFocus />
+                                <input *ngIf="editingRows[project.billId] && editingRows[project.billId][i]?.contribute" 
+                                  type="number" 
+                                  placeholder="% contribute"
+                                  class="col-12 px-0" 
+                                  min="0" 
+                                  max="100" 
+                                  [value]="resource.contribute || 0"
+                                  [(ngModel)]="resource.contribute" 
+                                  appFocus 
+                                  (focusout)="cancelUpdate(project.billId, resource, i)"
+                                  (keydown.enter)="updateContribute(project.billId, resource.id, resource.contribute)" 
+                                  (keydown.esc)="cancelUpdate(project.billId, resource, i)"
+                                />
                               </div>
                               <div class="col-6 align-items-end d-flex">
-                                <i *ngIf="!editingRows[project.billId] || !editingRows[project.billId][i]?.contribute"
-                                 (click)="edit(project.billId, i, 'contribute', resource.contribute)" class="fa fa-pencil-alt col-6"></i>
-                                <i *ngIf="!editingRows[project.billId] || !editingRows[project.billId][i]?.contribute" 
-                                  (click)="removeLinkResource(resource.id, project.billId)" class="fa fa-times col-6"></i>
-                                <i *ngIf="editingRows[project.billId] && editingRows[project.billId][i]?.contribute" style="color: green;"
-                                  (click)="updateContribute(project.billId, resource.id, resource.contribute)"
-                                  class="fas fa-check col-6"></i>
-                                <i *ngIf="editingRows[project.billId] && editingRows[project.billId][i]?.contribute" style="color: red;"
-                                  (click)="cancelUpdate(project.billId, resource, i)" class="fa fa-times col-6"></i>
+                                <button *ngIf="!editingRows[project.billId] || !editingRows[project.billId][i]?.contribute"
+                                  (click)="edit(project.billId, i, 'contribute', resource.contribute)"
+                                  class="col-6 button-active">
+                                  <i class="fa fa-pencil-alt "></i>
+                                </button>
+                                <button *ngIf="!editingRows[project.billId] || !editingRows[project.billId][i]?.contribute" 
+                                  (click)="removeLinkResource(resource.id, project.billId)"
+                                  class="col-6 button-active">
+                                  <i class="fa fa-times"></i>
+                                </button>
                               </div>
                             </div>
                           </div>

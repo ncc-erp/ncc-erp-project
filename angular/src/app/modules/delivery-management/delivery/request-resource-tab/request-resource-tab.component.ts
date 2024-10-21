@@ -349,14 +349,17 @@ export class RequestResourceTabComponent
       this.isRowExpand[entity.id] = true;
       this.expandedRows.push(entity.id);
     }
+    const index = this.listRequest.findIndex(res => res.id === entity.id);
+    if (index !== -1 && this.listRequest[index].resCV) {
+      return;
+    }
     const rs = await this.resourceRequestService.getResouceRequestCV(entity.id).toPromise();
-    if (rs && rs.success) {
-      const index = this.listRequest.findIndex(res => res.id === entity.id);
-      if (index !== -1) {
+    if (!rs || !rs.success) {
+        console.error('Unexpected response:', rs);
+        return;
+    }
+    if (index !== -1) {
         this.listRequest[index].resCV = rs.result as ResourceRequestCVDto[];
-      }
-    } else {
-      console.error('Unexpected response:', rs);
     }
   }
 

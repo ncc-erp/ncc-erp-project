@@ -134,8 +134,8 @@ export class RequestResourceTabComponent
   public listResourceRequestCV: ResourceRequestCVDto[] = [];
   public isRowExpand: { [key: number]: boolean } = {};
   public expandedRows: number[] = [];
-  public editingRows: { [key: number]: { [key: string]: boolean } } = {};
-  public originalValues: { [index: number]: { [field: string]: any } } = {};
+  public editingRows: { [key: number]: { [key: number]: { [key: string]: boolean } } } = {};
+  public originalValues: { [key: number]: { [index: number]: { [field: string]: any } } } = {};
   public cvStatusList: string[] = Object.keys(this.APP_ENUM.CVStatus)
   public cVStatusList: CVStatusDto[] = [];
 
@@ -205,64 +205,39 @@ export class RequestResourceTabComponent
     }
   }
 
-  edit(index: number, field: string, item: ResourceRequestCVDto, request: RequestResourceDto): void {
-    if (!this.editingRows[index]) {
-      this.editingRows[index] = {};
-    }
-    if (!this.originalValues[index]) {
-      this.originalValues[index] = {};
-    }
-    if (!this.originalValues[index][field]) {
-      this.originalValues[index][field] = item[field];
-    }
-    this.editingRows[index][field] = true;
+  edit(index: number, field: string, item: ResourceRequestCVDto, requestId: number): void {
+    this.editingRows = {};
+    this.originalValues = {};
+    this.originalValues[requestId] = { [index]: { [field]: item[field] } };
+    this.editingRows[requestId] = { [index]: { [field]: true } };
   }
-  async updateStatusCV(index: number, item: ResourceRequestCVDto, field: string) {
-    if (!this.editingRows[index]) {
-      return;
-    }
-
+  updateStatusCV(index: number, item: ResourceRequestCVDto, field: string, requestId: number) {
     const res = {
       resourceRequestCVId: item.id,
       status: item.status,
       cvStatusId: item.cvStatusId
     };
     this.resourceRequestService.updateStatusResourceRequestCV(res).subscribe(
-      async result => {
-
-        const request = this.listRequest.find(req => req.id === item.resourceRequestId);
-        if (request == null) {
-          console.error(" Not Found Resource Request with Id ", item.resourceRequestId);
-          return;
+      result => {
+        abp.notify.success("Updated CV Status");
+        if (this.editingRows[requestId][index]) {
+          delete this.editingRows[requestId][index][field];
         }
-
-        if (result.result.getResourceRequestDto) {
-          Object.assign(request, result.result.getResourceRequestDto);
-        }
-
-        this.editingRows[index][field] = false;
-        abp.notify.success("Updated Status!");
-        const rs = await this.resourceRequestService.getResouceRequestCV(item.resourceRequestId).toPromise();
-        if (rs && rs.success) {
-          const index = this.listRequest.findIndex(res => res.id === item.resourceRequestId);
-          if (index !== -1) {
-            this.listRequest[index].resCV = rs.result as ResourceRequestCVDto[];
-          }
-        } else {
-          console.error('Unexpected response:', rs);
+        if (this.originalValues[requestId][index]) {
+          this.originalValues[requestId][index][field] = item.cvStatus;
+          const cvStatus = this.cVStatusList.find(res => res.id === item.cvStatusId);
+          const po = this.listRequest.findIndex(res => res.id === requestId);
+          this.listRequest[po].resCV[index][field]  = cvStatus;
         }
       },
       error => {
-        abp.notify.error("Failed to update status");
+        abp.notify.error("Failed to update CV Status");
       }
     );
 
   }
 
-  updateKpiPointCV(index: number, item: ResourceRequestCVDto, field: string) {
-    if (!this.editingRows[index]) {
-      return;
-    }
+  updateKpiPointCV(index: number, item: ResourceRequestCVDto, field: string, requestId: number) {
     const res = {
       resourceRequestCVId: item.id,
       kpiPoint: item.kpiPoint,
@@ -271,7 +246,12 @@ export class RequestResourceTabComponent
     this.resourceRequestService.updateKpiPointResourceRequestCV(res).subscribe(
       result => {
         abp.notify.success("Updated KPI Point");
-        this.editingRows[index][field] = false;
+        if (this.editingRows[requestId][index]) {
+          delete this.editingRows[requestId][index][field];
+        }
+        if (this.originalValues[requestId][index]) {
+          this.originalValues[requestId][index][field] = res.kpiPoint;
+        }
       },
       error => {
         abp.notify.error("Failed to update KPI Point ");
@@ -279,10 +259,7 @@ export class RequestResourceTabComponent
     );
   }
 
-  updateSendCVDate(index: number, item: ResourceRequestCVDto, field: string) {
-    if (!this.editingRows[index]) {
-      return;
-    }
+  updateSendCVDate(index: number, item: ResourceRequestCVDto, field: string, requestId: number) {
     const res = {
       resourceRequestCVId: item.id,
       sendCVDate: item.sendCVDate ? this.formatDateToYYYYMMddHHmmss(item.sendCVDate) : null,
@@ -291,7 +268,12 @@ export class RequestResourceTabComponent
     this.resourceRequestService.updateSendCVDateResourceRequestCV(res).subscribe(
       result => {
         abp.notify.success("Update SendCVDate successfully");
-        this.editingRows[index][field] = false;
+        if (this.editingRows[requestId][index]) {
+          delete this.editingRows[requestId][index][field];
+        }
+        if (this.originalValues[requestId][index]) {
+          this.originalValues[requestId][index][field] = res.sendCVDate;
+        }
       },
       error => {
         console.error("Failed to update SendCVDate");
@@ -299,60 +281,60 @@ export class RequestResourceTabComponent
     );   
   }
 
-  updateInterviewTimeCV(index: number, item: ResourceRequestCVDto, field: string) {
-     if (!this.editingRows[index]) {
-        return;
-     }
-      const res = {
-        resourceRequestCVId: item.id,
-        interviewDate: item.interviewDate ? this.formatDateToYYYYMMddHHmmss(item.interviewDate) : null
-      }
-      this.resourceRequestService.updateInterviewTimeResourceRequestCV(res).subscribe(
-        result => {
-          abp.notify.success("Update InterviewTime successfully");
-          this.editingRows[index][field] = false;
-        },
-        error => {
-          console.error("Failed to update InterviewTime");
+  updateInterviewTimeCV(index: number, item: ResourceRequestCVDto, field: string, requestId: number) {
+    const res = {
+      resourceRequestCVId: item.id,
+      interviewDate: item.interviewDate ? this.formatDateToYYYYMMddHHmmss(item.interviewDate) : null
+    }
+    this.resourceRequestService.updateInterviewTimeResourceRequestCV(res).subscribe(
+      result => {
+        abp.notify.success("Update InterviewTime successfully");
+        if (this.editingRows[requestId][index]) {
+          delete this.editingRows[requestId][index][field];
         }
-      );     
+        if (this.originalValues[requestId][index]) {
+          this.originalValues[requestId][index][field] = res.interviewDate;
+        }
+      },
+      error => {
+        console.error("Failed to update InterviewTime");
+      }
+    );
   }
-  updateNoteCV(index: number, item: ResourceRequestCVDto, field: string) {
-      if (!this.editingRows[index]) {
-        return;
-      }
-      const res = {
-        resourceRequestCVId: item.id,
-        note: item.note,
-      }
-      this.resourceRequestService.updateNoteResourceRequestCV(res).subscribe(
-        result => {
-          abp.notify.success("Update Note ResourceRequest successfully");
-           this.editingRows[index][field] = false;
-        },
-        error => {
-          console.error("Failed to update Note");
+  updateNoteCV(index: number, item: ResourceRequestCVDto, field: string, requestId: number) {
+    const res = {
+      resourceRequestCVId: item.id,
+      note: item.note,
+    }
+    this.resourceRequestService.updateNoteResourceRequestCV(res).subscribe(
+      result => {
+        abp.notify.success("Update Note ResourceRequest successfully");
+        if (this.editingRows[requestId][index]) {
+          delete this.editingRows[requestId][index][field];
         }
-      );    
-    
+        if (this.originalValues[requestId][index]) {
+          this.originalValues[requestId][index][field] = res.note;
+        }
+      },
+      error => {
+        console.error("Failed to update Note");
+      }
+    );
+
   }
 
   cancelEdit(index: number, field: string, request: RequestResourceDto): void {
-    if (this.editingRows[index]) {
+    if (this.editingRows[request.id][index]) {
       const po = this.listRequest.findIndex(res => res.id === request.id);
-      this.listRequest[po].resCV[index][field] = this.originalValues[index][field];
-      Object.keys(this.editingRows[index]).forEach(field => {
-        this.editingRows[index][field] = false;
-      });
+      if (this.originalValues[request.id] && this.originalValues[request.id][index]) {
+        this.listRequest[po].resCV[index][field] = this.originalValues[request.id][index][field];
+      }
+      delete this.editingRows[request.id][index][field];
     }
   }
 
   getIconClass(entity: RequestResourceDto): string {
     return this.isRowExpand[entity.id] ? 'pi pi-chevron-down' : 'pi pi-chevron-right';
-  }
-
-  getIconExpand(): string {
-    return (this.isExpand = !this.isExpand) ? 'fas fa-caret-down' : 'fas fa-caret-up';
   }
 
   async getResourceRequestCVExpand(entity: RequestResourceDto) {
@@ -1253,18 +1235,19 @@ export class RequestResourceTabComponent
     });
   }
 
-  refreshDate(index: number, item: ResourceRequestCVDto, field: string) {
+  refreshDate(index: number, item: ResourceRequestCVDto, field: string, requestId: number) {
     if(field == 'sendCVDate') {
       item.sendCVDate = null;
-      this.updateSendCVDate(index, item, field);
+      this.updateSendCVDate(index, item, field, requestId);
     }
     else {
       item.interviewDate = null;
-      this.updateInterviewTimeCV(index, item, field);
+      this.updateInterviewTimeCV(index, item, field, requestId);
     }
   }
 
   getResourceRequestCVExpandAll() {
+    this.isExpand = !this.isExpand;
     if (this.isExpand) {
       this.listRequest.forEach((item) => {
         if (!this.isRowExpand[item.id]) {
@@ -1280,7 +1263,6 @@ export class RequestResourceTabComponent
         }
       });
     }
-    this.getIconExpand();
   }
 }
 

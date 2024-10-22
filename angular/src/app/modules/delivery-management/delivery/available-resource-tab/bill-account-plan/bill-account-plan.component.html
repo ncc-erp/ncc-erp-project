@@ -353,7 +353,7 @@
                       <div class="d-flex align-items-start justify-content-end">
                         <button
                           (click)="handleOpenDialogShadowAccount(project.projectId, item.userInfor.userId, project.linkedResources, project.billId)"
-                          *ngIf="true" class="btn bg-blue btn-sm" style="cursor: pointer; font-size: 10px;">
+                          class="btn bg-blue btn-sm" style="cursor: pointer; font-size: 10px;">
                           <i class="fa fa-plus fa-s m-0"></i>
                         </button>
                       </div>
@@ -379,7 +379,6 @@
                                   class="col-12 px-0" 
                                   min="0" 
                                   max="100" 
-                                  [value]="resource.contribute || 0"
                                   [(ngModel)]="resource.contribute" 
                                   appFocus 
                                   (focusout)="cancelUpdate(project.billId, resource, i)"

@@ -221,7 +221,7 @@ export class TrainingResourceManagementComponent extends AppComponentBase implem
     newUser.createMode = true;
     this.projectUserList.unshift(newUser)
     this.projectUserProcess = true;
-    newUser.workingType = 0;
+    newUser.workingType = this.APP_ENUM.ProjectUserWorkingType.Offical;
   }
 
   saveProjectUser(user: any) {
@@ -469,7 +469,7 @@ export class TrainingResourceManagementComponent extends AppComponentBase implem
     newPlan.createMode = true;
     this.plannedUserList.unshift(newPlan)
     this.planResourceProcess = true;
-    newPlan.workingType = 0;
+    newPlan.workingType = this.APP_ENUM.ProjectUserWorkingType.Offical;
   }
   cancelPlanResourceProcess(user) {
     this.getPlannedtUser();

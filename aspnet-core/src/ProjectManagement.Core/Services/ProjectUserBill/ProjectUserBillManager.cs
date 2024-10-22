@@ -407,7 +407,7 @@ namespace ProjectManagement.Services.ProjectUserBills
 
             if (await CheckTotalContribute(input.ProjectUserBillId, input.Contribute, input.UserId))
             {
-                throw new UserFriendlyException("Total contribute cannot be more than 100%");
+                throw new UserFriendlyException("Total contribution cannot exceed 100%.");
             }
 
             var newLinkedResource = new LinkedResource
@@ -427,7 +427,7 @@ namespace ProjectManagement.Services.ProjectUserBills
                 .FirstOrDefaultAsync();
             if(await CheckTotalContribute(input.ProjectUserBillId, input.Contribute, input.UserId))
             {
-                throw new UserFriendlyException("Total contribute cannot be more than 100%");
+                throw new UserFriendlyException("Total contribution cannot exceed 100%.");
             }
             checkExist.Contribute = input.Contribute;
             await _workScope.UpdateAsync(checkExist);

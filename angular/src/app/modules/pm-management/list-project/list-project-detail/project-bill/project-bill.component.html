@@ -370,7 +370,6 @@
                                                 placeholder="% contribute"
                                                 min="0"
                                                 max="100"
-                                                [value]="bill.contribute || 0"
                                                 [(ngModel)]="bill.contribute"
                                             />   
                                                 <mat-error class="mt-1" *ngIf="userBill.hasError('required') && userBill.touched" style="font-size: 13px;">

@@ -220,14 +220,18 @@ export class RequestResourceTabComponent
     this.resourceRequestService.updateStatusResourceRequestCV(res).subscribe(
       result => {
         abp.notify.success("Updated CV Status");
-        if (this.editingRows[requestId][index]) {
+        if (this.editingRows[requestId]?.[index]) {
           delete this.editingRows[requestId][index][field];
         }
-        if (this.originalValues[requestId][index]) {
+        if (this.originalValues[requestId]?.[index]) {
           this.originalValues[requestId][index][field] = item.cvStatus;
-          const cvStatus = this.cVStatusList.find(res => res.id === item.cvStatusId);
+        }
+        const cvStatus = this.cVStatusList.find(res => res.id === item.cvStatusId);
+        if(cvStatus){
           const po = this.listRequest.findIndex(res => res.id === requestId);
-          this.listRequest[po].resCV[index][field]  = cvStatus;
+          if (po !== -1) {
+            this.listRequest[po].resCV[index][field]  = cvStatus;
+          }
         }
       },
       error => {
@@ -276,7 +280,7 @@ export class RequestResourceTabComponent
         }
       },
       error => {
-        console.error("Failed to update SendCVDate");
+        abp.notify.error("Failed to update SendCVDate");
       }
     );   
   }
@@ -297,7 +301,7 @@ export class RequestResourceTabComponent
         }
       },
       error => {
-        console.error("Failed to update InterviewTime");
+        abp.notify.error("Failed to update InterviewTime");
       }
     );
   }
@@ -317,14 +321,14 @@ export class RequestResourceTabComponent
         }
       },
       error => {
-        console.error("Failed to update Note");
+        abp.notify.error("Failed to update Note");
       }
     );
 
   }
 
   cancelEdit(index: number, field: string, request: RequestResourceDto): void {
-    if (this.editingRows[request.id][index]) {
+    if (this.editingRows[request.id]?.[index]) {
       const po = this.listRequest.findIndex(res => res.id === request.id);
       if (this.originalValues[request.id] && this.originalValues[request.id][index]) {
         this.listRequest[po].resCV[index][field] = this.originalValues[request.id][index][field];

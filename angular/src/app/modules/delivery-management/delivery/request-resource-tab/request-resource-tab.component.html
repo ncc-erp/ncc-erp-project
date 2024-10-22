@@ -781,11 +781,16 @@
                           (selectionChange)="updateStatusCV(a, c, 'cvStatus', item.id)"
                           (keydown.esc)="cancelEdit(a,'cvStatus',item)"
                         >
-                          <ng-container *ngFor="let status of cVStatusList">
-                            <mat-option [value]="status.id">
-                              <p class="badge text-white" [style.backgroundColor]="status?.color">{{ status?.name }}</p>
-                            </mat-option>
+                          <ng-container *ngIf="cVStatusList.length > 0; else noStatusOptions">
+                            <ng-container *ngFor="let status of cVStatusList">
+                              <mat-option [value]="status.id">
+                                <p class="badge text-white" [style.backgroundColor]="status?.color">{{ status?.name }}</p>
+                              </mat-option>
+                            </ng-container>
                           </ng-container>
+                          <ng-template #noStatusOptions>
+                            <mat-option disabled>No CV Status available</mat-option>
+                          </ng-template>
                         </mat-select>
                       </mat-form-field>
                     </ng-container>

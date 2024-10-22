@@ -39,6 +39,7 @@ namespace ProjectManagement.Services.ResourceRequestService.Dto
 
         public int Quantity { get; set; }
         public string LinkCv { get; set; }
+        public List<ResourceRequestCvDto> ResCV { get; set; }
 
         public string ProjectTypeName
         {

@@ -348,7 +348,7 @@
                       </mat-radio-group>
                     </div>
                     <div class="table-vertical" *ngIf="!user.createMode">
-                      <strong [ngClass]="user.isPool ? 'text-secondary' : 'text-primary'">
+                      <strong class="text-primary">
                         {{ getEnumValue(user.workingType, APP_ENUM.ProjectUserWorkingType) }}
                       </strong>
                     </div>
@@ -754,7 +754,7 @@
                       </mat-radio-group>
                     </div>
                     <div class="table-vertical" *ngIf="!user.createMode && !user.editMode">
-                      <strong [ngClass]="user.isPool ? 'text-secondary' : 'text-primary'">
+                      <strong class="text-primary">
                         {{ getEnumValue(user.workingType, APP_ENUM.ProjectUserWorkingType) }}
                       </strong>
                     </div>

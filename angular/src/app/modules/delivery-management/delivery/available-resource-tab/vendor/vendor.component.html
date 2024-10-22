@@ -177,20 +177,17 @@
                                                 <button class="btn p-0 text-left text-nowrap" matTooltip="Click to show action"
                                                     [matMenuTriggerFor]="planMenu">
                                                     <span [ngClass]="plan.onHover?'on-hover-plan':''">
-                                                        <strong class="mr-1">{{ plan.projectName }}</strong><strong
-                                                            style="display: none;"
-                                                            [ngClass]="plan.isPool?'text-secondary' : 'text-primary'"
-                                                            class=" mr-1">
-                                                            {{plan.workType}}</strong>
-                                                            <strong [ngClass]="plan.isPool?'text-secondary' : 'text-primary'"
-                                                            class=" mr-1">
-                                                            {{ getEnumValue(plan.workingType, APP_ENUM.ProjectUserWorkingType) }}</strong>
-                                                             <strong
-                                                            [ngClass]="plan.allocatePercentage > 0?'badge-success' : 'badge-danger'"
-                                                            class="badge mr-1">
-                                                            {{plan.allocatePercentage > 0 ? 'Join' : 'Out'}}</strong> {{
-                                                        plan.startTime | date:
-                                                        'dd/MM/yyyy' }}
+                                                        <strong class="mr-1">{{ plan.projectName }}</strong>
+                                                        <strong style="display: none;" [ngClass]="plan.isPool?'text-secondary' : 'text-primary'" class=" mr-1">
+                                                            {{plan.workType}}
+                                                        </strong>
+                                                        <strong class="mr-1 text-primary">
+                                                            {{ getEnumValue(plan.workingType, APP_ENUM.ProjectUserWorkingType) }}
+                                                        </strong>
+                                                        <strong [ngClass]="plan.allocatePercentage > 0?'badge-success' : 'badge-danger'" class="badge mr-1">
+                                                            {{plan.allocatePercentage > 0 ? 'Join' : 'Out'}}
+                                                        </strong>
+                                                        {{plan.startTime | date:'dd/MM/yyyy' }}
                                                     </span>
                                                 </button>
                                                 <mat-menu #planMenu="matMenu">

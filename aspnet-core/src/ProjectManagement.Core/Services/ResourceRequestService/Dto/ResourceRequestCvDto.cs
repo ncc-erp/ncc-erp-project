@@ -1,31 +1,32 @@
-﻿using Abp.Domain.Entities.Auditing;
-using ProjectManagement.Authorization.Users;
+﻿using Abp.Application.Services.Dto;
+using ProjectManagement.Utils;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 using static ProjectManagement.Constants.Enum.ProjectEnum;
 
-namespace ProjectManagement.Entities
+namespace ProjectManagement.Services.ResourceRequestService.Dto
 {
-    public class ResourceRequestCV : FullAuditedEntity<long>
+    public class ResourceRequestCvDto : EntityDto<long>
     {
         public long UserId { get; set; }
-        [ForeignKey(nameof(UserId))]
-        public User User { get; set; }
+        public UserBaseDto User { get; set; }
         public CVStatus? Status { get; set; }
         public long ResourceRequestId { get; set; }
-        [ForeignKey(nameof(ResourceRequestId))]
-        public ResourceRequest ResourceRequest { get; set; }
         public string CVName { get; set; }
         public string CVPath { get; set; }
+        public string LinkCVPath { get => FileUtils.FullFilePath(CVPath); }
         public string Note { get; set; }
-        public double KpiPoint { get; set; }
+        public double? KpiPoint { get; set; }
         public DateTime? InterviewDate { get; set; }
         public DateTime? SendCVDate { get; set; }
         public long? CvStatusId { get; set; }
-        [ForeignKey(nameof(CvStatusId))]
-        public CvStatus CvStatus { get; set; }
+        public CvStatusDto CvStatus { get; set; }
     }
 
+    public class CvStatusDto : EntityDto<long>
+    {
+        public string Name { get; set; }
+        public string Color { get; set; }
+    }
 }

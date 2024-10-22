@@ -43,7 +43,7 @@ namespace ProjectManagement.Entities
 
         public ICollection<ResourceRequestSkill> ResourceRequestSkills { get; set; }
         public string LinkCV { get; set; }
-        
+        public ICollection<ResourceRequestCV> ResourceRequestCVs { get; set; }
 
         public ICollection<ProjectUser> ProjectUsers { get; set; }
     }

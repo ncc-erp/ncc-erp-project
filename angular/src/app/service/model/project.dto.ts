@@ -114,6 +114,7 @@ export class projectUserBillDto {
   createLinkResourceMode?: boolean;
   linkCV: string;
   totalHeadCount:number;
+  contribute: number;
 }
 
 export class ProjectRateDto {

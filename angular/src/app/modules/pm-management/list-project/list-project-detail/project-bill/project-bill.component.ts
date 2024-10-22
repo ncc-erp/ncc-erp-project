@@ -431,7 +431,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
             if (item.id === id && userIdNew) {
                 return { ...item, createMode: status, userId: userIdNew };
             }
-            return { ...item, createMode: false };
+            return { ...item, createMode: false, contribute: 0 };
         });
 
         this.filteredUserBillList = _.cloneDeep(this.userBillList);
@@ -652,6 +652,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     this.searchResource = "";
     this.showSearchAndFilter = true;
     this.isAddingResource = false;
+    userBill.contribute = 0;
   }
 
   openInvoiceSettingDialog(){

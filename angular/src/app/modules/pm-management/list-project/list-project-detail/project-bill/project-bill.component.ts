@@ -620,9 +620,10 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     this.userBillProcess = true;
     this.showSearchAndFilter = false;
     this.isAddingResource = true;
+    userBill.contribute = 0;
   }
 
-  public saveLinkResource(userBill, contribute: number): void {
+  public saveLinkResource(userBill): void {
     this.isLoading = true
     const reqAdd = {
       projectUserBillId: userBill.id,

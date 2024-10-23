@@ -751,4 +751,8 @@ export class ProductResourceManagementComponent extends AppComponentBase impleme
   getEnumValue(enumValue: number, enumObject) {
     return getValueByEnum(enumValue, enumObject);
   }
+
+  getColorWorkingType(workingType: number): string {
+    return this.workingTypeColorMap[workingType] || 'black';
+  }
 }

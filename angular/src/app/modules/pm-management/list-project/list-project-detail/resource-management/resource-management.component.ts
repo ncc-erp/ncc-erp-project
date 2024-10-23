@@ -788,5 +788,9 @@ export class ResourceManagementComponent extends AppComponentBase implements OnI
   getEnumValue(enumValue: number, enumObject) {
     return getValueByEnum(enumValue, enumObject);
   }
+
+  getColorWorkingType(workingType: number): string {
+    return this.workingTypeColorMap[workingType] || 'black';
+  }
 }
 

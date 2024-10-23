@@ -404,7 +404,7 @@
                       </mat-radio-group>
                     </div>
                     <div *ngIf="!user.createMode" class="table-vertical">
-                      <strong class="text-primary">
+                      <strong [style.color] = "getColorWorkingType(user.workingType)">
                         {{ getEnumValue(user.workingType, APP_ENUM.ProjectUserWorkingType) }}
                       </strong>
                     </div>
@@ -843,7 +843,7 @@
                       </mat-radio-group>
                     </div>
                     <div class="table-vertical" *ngIf="!user.createMode && !user.editMode">
-                      <strong class="text-primary">
+                      <strong [style.color] = "getColorWorkingType(user.workingType)">
                         {{ getEnumValue(user.workingType, APP_ENUM.ProjectUserWorkingType) }}
                       </strong>
                     </div>

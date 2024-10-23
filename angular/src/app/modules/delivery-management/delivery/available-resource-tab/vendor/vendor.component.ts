@@ -395,4 +395,8 @@ export class VendorComponent extends PagedListingComponentBase<PlanResourceCompo
   getEnumValue(enumValue: number, enumObject) {
     return getValueByEnum(enumValue, enumObject);
   }
+
+  getColorWorkingType(workingType: number): string {
+    return this.workingTypeColorMap[workingType] || 'black';
+  }
 }

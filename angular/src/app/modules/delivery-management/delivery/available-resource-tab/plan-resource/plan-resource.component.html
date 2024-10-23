@@ -160,7 +160,7 @@
                                                         <strong style="display: none;" [ngClass]="plan.isPool?'text-secondary' : 'text-primary'" class=" mr-1">
                                                             {{plan.workType}}
                                                         </strong>
-                                                        <strong class=" mr-1 text-primary">
+                                                        <strong class="mr-1" [style.color] = "getColorWorkingType(plan.workingType)">
                                                             {{ getEnumValue(plan.workingType, APP_ENUM.ProjectUserWorkingType) }}
                                                         </strong>
                                                         <strong

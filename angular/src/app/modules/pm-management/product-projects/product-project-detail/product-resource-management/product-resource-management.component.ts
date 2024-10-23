@@ -218,7 +218,7 @@ export class ProductResourceManagementComponent extends AppComponentBase impleme
     newUser.createMode = true;
     this.projectUserList.unshift(newUser)
     this.projectUserProcess = true;
-    newUser.workingType = this.APP_ENUM.ProjectUserWorkingType.Offical;
+    newUser.workingType = this.APP_ENUM.ProjectUserWorkingType.Official;
   }
 
   saveProjectUser(user: any) {
@@ -467,7 +467,7 @@ export class ProductResourceManagementComponent extends AppComponentBase impleme
     newPlan.createMode = true;
     this.plannedUserList.unshift(newPlan)
     this.planResourceProcess = true;
-    newPlan.workingType = this.APP_ENUM.ProjectUserWorkingType.Offical;
+    newPlan.workingType = this.APP_ENUM.ProjectUserWorkingType.Official;
   }
   cancelPlanResourceProcess(user) {
     this.getPlannedtUser();

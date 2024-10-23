@@ -319,7 +319,7 @@ export const APP_ENUMS = {
         "Onboarded" : 9
     },
     ProjectUserWorkingType: {
-        Offical : 0,
+        Official : 0,
         Support : 1,
         Training : 2
     }

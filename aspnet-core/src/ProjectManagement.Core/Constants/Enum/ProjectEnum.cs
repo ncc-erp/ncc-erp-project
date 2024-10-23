@@ -364,7 +364,7 @@
 
         public enum ProjectUserWorkingType
         {
-            Offical = 0,
+            Official = 0,
             Support = 1,
             Training = 2
         }

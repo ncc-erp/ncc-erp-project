@@ -55,7 +55,7 @@
                     <label class="col-md-2 col-form-label" for="technologyUsed">
                         Công nghệ sử dụng:
                     </label>
-                    <div *ngIf="readMode && projectDetail.technologyUsed" class="col-md-9 mt-2 text-description">
+                    <div *ngIf="readMode" class="col-md-9 mt-2 text-description">
                         <pre *ngIf="projectDetail.technologyUsed" class="mb-0 p-0  ml-2 pre-text">
                             {{projectDetail.technologyUsed}}
                         </pre>

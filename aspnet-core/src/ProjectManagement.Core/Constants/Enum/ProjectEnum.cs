@@ -362,7 +362,7 @@
             Onboarded = 9,
         }
 
-        public enum ProjectUserWorkingType
+        public enum ProjectUserWorkingType: byte
         {
             Official = 0,
             Support = 1,

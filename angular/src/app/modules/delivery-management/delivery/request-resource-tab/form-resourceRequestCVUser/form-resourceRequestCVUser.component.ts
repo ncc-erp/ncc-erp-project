@@ -10,6 +10,7 @@ import { ResourcePlanDto } from './../../../../../service/model/resource-plan.dt
 import { concat, forkJoin } from 'rxjs';
 import { catchError, startWith } from 'rxjs/operators';
 import { FormsModule } from '@angular/forms';
+import { ResourceRequestCVDto } from '@app/service/model/resource-requestCV.dto';
 @Component({
   selector: 'app-form-resourceRequestCVUser',
   templateUrl: './form-resourceRequestCVUser.component.html',
@@ -36,10 +37,10 @@ export class FormResourceRequestCVUserComponent extends AppComponentBase impleme
 
   ngOnInit(): void {
     this.billInfoPlan = {
-                         resourceRequestId: this.input.resourceRequestId,
-                         userId : this.input.billUserInfo ? this.input.resourceRequestCV.userId : undefined,
-                         cvName: this.input.cvName,
-                         };
+      resourceRequestId: this.input.resourceRequestId,
+      userId: this.input.billUserInfo ? this.input.resourceRequestCV.userId : undefined,
+      cvName: this.input.cvName,
+    };
 
     this.resourceRequestCV = this.input.resourceRequestCV;
     this.listUsers = this.input.listUsers;
@@ -50,16 +51,26 @@ export class FormResourceRequestCVUserComponent extends AppComponentBase impleme
     this.ref.detectChanges()
   }
 
-  SaveAndClose(){
-   
+  SaveAndClose() {
     this.billInfoPlan.cvName = this.cvName;
-    const input = {...this.resourceRequestCV,cvName: this.cvName,userId : this.billInfoPlan.userId };
-    this.resourceRequestService.updateResourceRequestCV(input).subscribe((res:any) => {
-      if(res.success){
+    let resourceCv = new ResourceRequestCVDto();
+    resourceCv.id = this.resourceRequestCV.id;
+    resourceCv.userId = this.billInfoPlan.userId;
+    resourceCv.cvName = this.cvName;
+    resourceCv.cvPath = this.resourceRequestCV.cvPath;
+    resourceCv.status = this.resourceRequestCV.status;
+    resourceCv.note = this.resourceRequestCV.note;
+    resourceCv.kpiPoint = this.resourceRequestCV.kpiPoint;
+    resourceCv.resourceRequestId = this.resourceRequestCV.resourceRequestId;
+    resourceCv.sendCVDate = this.resourceRequestCV.sendCVDate;
+    resourceCv.interviewDate = this.resourceRequestCV.interviewDate;
+    resourceCv.cvStatusId = this.resourceRequestCV.cvStatusId;
+    this.resourceRequestService.updateResourceRequestCV(resourceCv).subscribe((res: any) => {
+      if (res.success) {
         abp.notify.success("Update successfully")
-        this.dialogRef.close({ type: 'update', data: res.result})
+        this.dialogRef.close({ type: 'update', data: res.result })
       }
-      else{
+      else {
         abp.notify.error(res.result)
       }
     })

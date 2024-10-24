@@ -98,4 +98,10 @@ export abstract class AppComponentBase {
         .tz('Asia/Ho_Chi_Minh')
         .format('YYYY-MM-DD HH:mm:ss')
     }
+
+    workingTypeColorMap = {
+      [this.APP_ENUM.ProjectUserWorkingType.Official]: 'blue',
+      [this.APP_ENUM.ProjectUserWorkingType.Support]: 'orange',
+      [this.APP_ENUM.ProjectUserWorkingType.Training]: '#dbc314'
+  };
 }

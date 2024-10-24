@@ -22,6 +22,7 @@ import { Component, OnInit, Injector } from '@angular/core';
 import * as moment from 'moment';
 import { ConfirmFromPage, ConfirmPopupComponent } from '@app/modules/pm-management/list-project/list-project-detail/resource-management/confirm-popup/confirm-popup.component';
 import { RequestResourceDto } from '@app/service/model/delivery-management.dto';
+import { getValueByEnum } from '@app/modules/delivery-management/delivery/available-resource-tab/enum-until';
 
 @Component({
   selector: 'app-product-resource-management',
@@ -106,6 +107,9 @@ export class ProductResourceManagementComponent extends AppComponentBase impleme
   public listSkills: any[] = []
   public listLevels: any[] = []
   public listProjectUserRoles: IDNameDto[] = []
+
+  public workingTypeList = Object.keys(this.APP_ENUM.ProjectUserWorkingType);
+
 
   constructor(
     injector: Injector,
@@ -214,6 +218,7 @@ export class ProductResourceManagementComponent extends AppComponentBase impleme
     newUser.createMode = true;
     this.projectUserList.unshift(newUser)
     this.projectUserProcess = true;
+    newUser.workingType = this.APP_ENUM.ProjectUserWorkingType.Official;
   }
 
   saveProjectUser(user: any) {
@@ -462,6 +467,7 @@ export class ProductResourceManagementComponent extends AppComponentBase impleme
     newPlan.createMode = true;
     this.plannedUserList.unshift(newPlan)
     this.planResourceProcess = true;
+    newPlan.workingType = this.APP_ENUM.ProjectUserWorkingType.Official;
   }
   cancelPlanResourceProcess(user) {
     this.getPlannedtUser();
@@ -479,7 +485,8 @@ export class ProductResourceManagementComponent extends AppComponentBase impleme
         allocatePercentage: projectUser.allocatePercentage,
         note: projectUser.note,
         isPool: projectUser.isPool,
-        projectRole: projectUser.projectRole
+        projectRole: projectUser.projectRole,
+        workingType: projectUser.workingType
       }
       this.projectUserService.EditProjectUserPlan(requestBody).pipe(catchError(this.projectUserService.handleError)).subscribe(rs => {
         abp.notify.success(`Edited plan for user ${projectUser.fullName}`)
@@ -497,7 +504,8 @@ export class ProductResourceManagementComponent extends AppComponentBase impleme
         allocatePercentage: projectUser.allocatePercentage,
         startTime: moment(projectUser.startTime).format("YYYY-MM-DD"),
         note: projectUser.note,
-        projectRole: projectUser.projectRole
+        projectRole: projectUser.projectRole,
+        workingType: projectUser.workingType
       }
       this.projectUserService.PlanNewResourceToProject(requestBody).pipe(catchError(this.projectUserService.handleError)).subscribe(rs => {
         abp.notify.success("added new plan to project")
@@ -739,4 +747,12 @@ export class ProductResourceManagementComponent extends AppComponentBase impleme
   IsSkillNoteExist = (user) => user.userSkills && user.userSkills[0]?.skillNote ? true : false;
 
   GetUserSkillNote = (user) => user.userSkills[0]?.skillNote;
+
+  getEnumValue(enumValue: number, enumObject) {
+    return getValueByEnum(enumValue, enumObject);
+  }
+
+  getColorWorkingType(workingType: number): string {
+    return this.workingTypeColorMap[workingType] || 'black';
+  }
 }

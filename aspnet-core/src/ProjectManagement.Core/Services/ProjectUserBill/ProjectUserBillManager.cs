@@ -107,7 +107,8 @@ namespace ProjectManagement.Services.ProjectUserBills
                                IsPool = pu.IsPool,
                                AllocatePercentage = pu.AllocatePercentage,
                                ProjectType = pu.Project.ProjectType,
-                               ProjectCode = pu.Project.Code
+                               ProjectCode = pu.Project.Code,
+                               WorkingType = pu.WorkingType
                            })
                            .ToList(),
 
@@ -197,6 +198,7 @@ namespace ProjectManagement.Services.ProjectUserBills
                             BranchDisplayName = lr.User.Branch.DisplayName,
                             IsActive = lr.User.IsActive,
                             FullName = lr.User.FullName,
+                            Contribute = lr.Contribute
                         }).ToList()
                 });
 
@@ -270,6 +272,7 @@ namespace ProjectManagement.Services.ProjectUserBills
                             BranchDisplayName = lr.User.Branch.DisplayName,
                             IsActive = lr.User.IsActive,
                             FullName = lr.User.FullName,
+                            Contribute = lr.Contribute
                         }).ToList()
                 }).FirstOrDefault();
         }
@@ -402,14 +405,45 @@ namespace ProjectManagement.Services.ProjectUserBills
 
             ValidateUser(input.UserId);
 
+            if (await CheckTotalContribute(input.ProjectUserBillId, input.Contribute, input.UserId))
+            {
+                throw new UserFriendlyException("Total contribution cannot exceed 100%.");
+            }
 
             var newLinkedResource = new LinkedResource
             {
                 UserId = input.UserId,
                 ProjectUserBillId = input.ProjectUserBillId,
+                Contribute = input.Contribute
             };
 
             await _workScope.InsertAsync(newLinkedResource);
+        }
+
+        public async Task UpdateLinkOneLinkedResource(LinkedResourceDto input)
+        {
+            var checkExist = await _workScope.GetAll<LinkedResource>()
+                .Where(lr => lr.ProjectUserBillId == input.ProjectUserBillId && lr.UserId == input.UserId)
+                .FirstOrDefaultAsync();
+            if(await CheckTotalContribute(input.ProjectUserBillId, input.Contribute, input.UserId))
+            {
+                throw new UserFriendlyException("Total contribution cannot exceed 100%.");
+            }
+            checkExist.Contribute = input.Contribute;
+            await _workScope.UpdateAsync(checkExist);
+        }
+
+        private async Task<bool> CheckTotalContribute(long projectUserBillId, byte contribute, long userId)
+        {
+            var totalContribute = await _workScope.GetAll<LinkedResource>()
+                .Where(lr => lr.ProjectUserBillId == projectUserBillId && lr.UserId != userId)
+                .SumAsync(lr => lr.Contribute);
+
+            if (totalContribute + contribute > 100)
+            {
+                return true;
+            }
+            return false;
         }
 
         public async Task RemoveLinkedResource(LinkedResourcesDto input)

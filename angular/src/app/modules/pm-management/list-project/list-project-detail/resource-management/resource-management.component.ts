@@ -26,6 +26,7 @@ import { FormPlanUserComponent } from '@app/modules/delivery-management/delivery
 import { RequestResourceDto } from '@app/service/model/delivery-management.dto';
 import { FormSetDoneComponent } from '@app/modules/delivery-management/delivery/request-resource-tab/form-set-done/form-set-done.component';
 import { EditNoteResourceComponent } from '@app/modules/delivery-management/delivery/weekly-report-tab/weekly-report-tab-detail/edit-note-resource/edit-note-resource.component';
+import { getValueByEnum } from '@app/modules/delivery-management/delivery/available-resource-tab/enum-until';
 
 @Component({
   selector: 'app-resource-management',
@@ -111,6 +112,8 @@ export class ResourceManagementComponent extends AppComponentBase implements OnI
   public listLevels: any[] = []
   public listProjectUserRoles: IDNameDto[] = []
   public isViewAllSkillInfo: boolean = false
+
+  public workingTypeList = Object.keys(this.APP_ENUM.ProjectUserWorkingType);
 
   constructor(
     injector: Injector,
@@ -221,6 +224,7 @@ export class ResourceManagementComponent extends AppComponentBase implements OnI
     newUser.createMode = true;
     this.projectUserList.unshift(newUser)
     this.projectUserProcess = true;
+    newUser.workingType = 0;
   }
 
   saveProjectUser(user: any) {
@@ -469,6 +473,7 @@ export class ResourceManagementComponent extends AppComponentBase implements OnI
     newPlan.createMode = true;
     this.plannedUserList.unshift(newPlan)
     this.planResourceProcess = true;
+    newPlan.workingType = 0;
   }
   cancelPlanResourceProcess(user) {
     this.getPlannedtUser();
@@ -486,7 +491,8 @@ export class ResourceManagementComponent extends AppComponentBase implements OnI
         allocatePercentage: projectUser.allocatePercentage,
         note: projectUser.note,
         isPool: projectUser.isPool,
-        projectRole: projectUser.projectRole
+        projectRole: projectUser.projectRole,
+        workingType: projectUser.workingType
       }
       this.projectUserService.EditProjectUserPlan(requestBody).pipe(catchError(this.projectUserService.handleError)).subscribe(rs => {
         abp.notify.success(`Edited plan for user ${projectUser.fullName}`)
@@ -504,7 +510,8 @@ export class ResourceManagementComponent extends AppComponentBase implements OnI
         allocatePercentage: projectUser.allocatePercentage,
         startTime: moment(projectUser.startTime).format("YYYY-MM-DD"),
         note: projectUser.note,
-        projectRole: projectUser.projectRole
+        projectRole: projectUser.projectRole,
+        workingType: projectUser.workingType
       }
       this.projectUserService.PlanNewResourceToProject(requestBody).pipe(catchError(this.projectUserService.handleError)).subscribe(rs => {
         abp.notify.success("added new plan to project")
@@ -776,6 +783,14 @@ export class ResourceManagementComponent extends AppComponentBase implements OnI
     }
   }
     return skillInfoAfterFilter
+  }
+
+  getEnumValue(enumValue: number, enumObject) {
+    return getValueByEnum(enumValue, enumObject);
+  }
+
+  getColorWorkingType(workingType: number): string {
+    return this.workingTypeColorMap[workingType] || 'black';
   }
 }
 

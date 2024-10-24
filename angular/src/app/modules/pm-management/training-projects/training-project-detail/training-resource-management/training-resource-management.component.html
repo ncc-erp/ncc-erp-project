@@ -331,30 +331,34 @@
                   </td>
 
                   <td>
-                    <div *ngIf="!user.createMode" class="table-vertical">
-                      <strong
-                        [ngClass]="
-                          user.isPool ? 'text-secondary' : 'text-primary'
-                        "
-                      >
+                    <div style="display: none;" *ngIf="!user.createMode" class="table-vertical">
+                      <strong [ngClass]="user.isPool ? 'text-secondary' : 'text-primary'">
                         {{ user.workType }}
                       </strong>
                     </div>
-                    <div *ngIf="user.createMode">
-                      <mat-radio-group
-                        aria-label="Select an option"
-                        [(ngModel)]="user.isPool"
-                      >
+                    <div style="display: none;" *ngIf="user.createMode">
+                      <mat-radio-group aria-label="Select an option" [(ngModel)]="user.isPool">
                         <div class="text-left">
-                          <mat-radio-button class="mr-2" [value]="false"
-                            >Offical
+                          <mat-radio-button class="mr-2" [value]="false">Offical
                           </mat-radio-button>
                         </div>
-                        <div class="text-left">
-                          <mat-radio-button [value]="true"
-                            >Temp</mat-radio-button
-                          >
+                        <div class="text-left" style="display: none;">
+                          <mat-radio-button [value]="true">Temp</mat-radio-button>
                         </div>
+                      </mat-radio-group>
+                    </div>
+                    <div class="table-vertical" *ngIf="!user.createMode">
+                      <strong [style.color] = "getColorWorkingType(user.workingType)">
+                        {{ getEnumValue(user.workingType, APP_ENUM.ProjectUserWorkingType) }}
+                      </strong>
+                    </div>
+                    <div *ngIf="user.createMode" class="text-left">
+                      <mat-radio-group [(ngModel)]="user.workingType" aria-label="Select an option">
+                        <ng-container *ngFor="let type of workingTypeList">
+                          <mat-radio-button [value]="APP_ENUM.ProjectUserWorkingType[type]">
+                            {{ type }}
+                          </mat-radio-button>
+                        </ng-container>
                       </mat-radio-group>
                     </div>
                   </td>
@@ -736,34 +740,31 @@
                     </div>
                   </td>
 
-                  <td class="text-center">
-                    <div
-                      class="table-vertical"
-                      *ngIf="!user.createMode && !user.editMode"
-                    >
-                      <strong
-                        [ngClass]="
-                          user.isPool ? 'text-secondary' : 'text-primary'
-                        "
-                      >
-                        {{ user.workType }}</strong
-                      >
+                  <td>
+                    <div style="display: none;" class="table-vertical" *ngIf="!user.createMode && !user.editMode">
+                      <strong [ngClass]="user.isPool ? 'text-secondary' : 'text-primary'">
+                        {{ user.workType }}
+                      </strong>
                     </div>
-                    <div
-                      *ngIf="user.createMode || user.editMode"
-                      class="text-center"
-                    >
-                      <mat-radio-group
-                        [disabled]="user.allocatePercentage <= 0"
-                        aria-label="Select an option"
-                        [(ngModel)]="user.isPool"
-                      >
-                        <mat-radio-button class="mr-2 d-block" [value]="false"
-                          >Offical
+                    <div style="display: none;" *ngIf="user.createMode || user.editMode" class="text-center">
+                      <mat-radio-group [disabled]="user.allocatePercentage <= 0" aria-label="Select an option" [(ngModel)]="user.isPool">
+                        <mat-radio-button class="mr-2 d-block" [value]="false">Offical
                         </mat-radio-button>
-                        <mat-radio-button class="d-block" [value]="true"
-                          >Temp</mat-radio-button
-                        >
+                        <mat-radio-button style="display: none;" [value]="true">Temp</mat-radio-button>
+                      </mat-radio-group>
+                    </div>
+                    <div class="table-vertical" *ngIf="!user.createMode && !user.editMode">
+                      <strong [style.color] = "getColorWorkingType(user.workingType)">
+                        {{ getEnumValue(user.workingType, APP_ENUM.ProjectUserWorkingType) }}
+                      </strong>
+                    </div>
+                    <div *ngIf="user.createMode || user.editMode" class="text-left">
+                      <mat-radio-group [(ngModel)]="user.workingType" aria-label="Select an option">
+                        <ng-container *ngFor="let type of workingTypeList">
+                          <mat-radio-button [value]="APP_ENUM.ProjectUserWorkingType[type]">
+                            {{ type }}
+                          </mat-radio-button>
+                        </ng-container>
                       </mat-radio-group>
                     </div>
                   </td>

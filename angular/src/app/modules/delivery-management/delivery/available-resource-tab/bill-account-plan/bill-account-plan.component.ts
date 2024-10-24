@@ -11,6 +11,7 @@ import { PlanningBillInfoService } from "../../../../../service/api/bill-account
 import { THeadTable } from "../../request-resource-tab/request-resource-tab.component";
 import { MatDialog } from "@angular/material/dialog";
 import { HandleLinkedResourcesDialogComponent } from './handle-linked-resources-dialog/handle-linked-resources-dialog.component';
+import { ProjectUserBillService } from '@app/service/api/project-user-bill.service';
 
 @Component({
   selector: "app-bill-account-plan",
@@ -67,9 +68,14 @@ export class BillAccountPlanComponent
    { text: "Exposed", value: true },
    { text: "UnExposed", value: false },
   ];
+
+  editingRows: { [key: number]: { [key: number]: { [key: string]: boolean } } } = {};
+  originalContribute: { [key: number]: { [key: number]: { [key: string]: number } } } = {};
+
   constructor(
     injector: Injector,
     private planningBillInfoService: PlanningBillInfoService,
+    private projectUserBillService: ProjectUserBillService,
     private dialog: MatDialog,
     ) {
     super(injector);
@@ -156,7 +162,6 @@ export class BillAccountPlanComponent
         () => {}
       );
     }
-
     handleOpenDialogShadowAccount(projectId, userId, listResource, id) {
         const show = this.dialog.open(HandleLinkedResourcesDialogComponent, {
             data: {
@@ -321,5 +326,34 @@ export class BillAccountPlanComponent
     addOrEditNoteDialog.afterClosed().subscribe(() => {
       this.refresh();
     });
+  }
+
+  edit(source: number, index: number, field: string, contribute: number): void {
+    this.editingRows[source] = {};
+    this.originalContribute[source] = {};
+    this.editingRows[source][index] = { [field]: true };
+    this.originalContribute[source] = { [index]: { [field]: contribute }};
+  }
+
+  updateContribute(projectUserBillId: number, userId: number, contribute: number) {
+    this.isLoading = true
+    const reqAdd = {
+      projectUserBillId,
+      userId,
+      contribute
+    };
+    
+    this.projectUserBillService.UpdateLinkOneProjectUserBillAccount(reqAdd).pipe(
+      catchError(this.projectUserBillService.handleError)
+    ).subscribe(() => {
+      abp.notify.success("Linked resources updated successfully");
+      this.isLoading = false;
+      this.editingRows[projectUserBillId] = {};
+    }, () => { this.isLoading = false; });
+  }
+
+  cancelUpdate(source: number, resource: any, index: number): void {
+    this.editingRows[source] = {};
+    resource.contribute = this.originalContribute[source][index]?.contribute;
   }
 }

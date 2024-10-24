@@ -14,6 +14,7 @@ namespace ProjectManagement.Services.ResourceService.Dto
         public string Note { get; set; }
         public bool IsPool { get; set; }
         public ProjectUserRole ProjectRole { get; set; }
+        public ProjectUserWorkingType WorkingType { get; set; }
 
     }
 }

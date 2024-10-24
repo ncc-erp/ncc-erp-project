@@ -505,11 +505,18 @@ export class RequestResourceTabComponent
             resourceRequestId: rs.resourceRequestId,
             userId: rs.userId
           }
-          this.resourceRequestService.UpdateBillInfoPlan(req).pipe(catchError(this.resourceRequestService.handleError)).subscribe(data => {
-            const res = (data as any).result;
-            request.billUserInfo = res.billUserInfo;
-            request.cvName = res.cvName
-          });
+          this.resourceRequestService.UpdateBillInfoPlan(req)
+            .pipe(catchError(this.resourceRequestService.handleError))
+            .subscribe({
+              next: (data: { result: { billUserInfo: any; cvName: string } }) => {
+                if(data?.result) {
+                  request.billUserInfo = data.result.billUserInfo;
+                  request.cvName = data.result.cvName;
+                }
+              },
+              error: () => {},
+              complete: () => {}
+            });
         }
       }
     })

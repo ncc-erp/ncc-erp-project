@@ -38,7 +38,7 @@ export class FormResourceRequestCVUserComponent extends AppComponentBase impleme
   ngOnInit(): void {
     this.billInfoPlan = {
       resourceRequestId: this.input.resourceRequestId,
-      userId: this.input.billUserInfo ? this.input.resourceRequestCV.userId : undefined,
+      userId: this.input?.billUserInfo ? this.input?.resourceRequestCV?.userId : undefined,
       cvName: this.input.cvName,
     };
 
@@ -54,17 +54,17 @@ export class FormResourceRequestCVUserComponent extends AppComponentBase impleme
   SaveAndClose() {
     this.billInfoPlan.cvName = this.cvName;
     let resourceCv = new ResourceRequestCVDto();
-    resourceCv.id = this.resourceRequestCV.id;
+    resourceCv.id = this.resourceRequestCV?.id;
     resourceCv.userId = this.billInfoPlan.userId;
     resourceCv.cvName = this.cvName;
-    resourceCv.cvPath = this.resourceRequestCV.cvPath;
-    resourceCv.status = this.resourceRequestCV.status;
-    resourceCv.note = this.resourceRequestCV.note;
-    resourceCv.kpiPoint = this.resourceRequestCV.kpiPoint;
-    resourceCv.resourceRequestId = this.resourceRequestCV.resourceRequestId;
-    resourceCv.sendCVDate = this.resourceRequestCV.sendCVDate;
-    resourceCv.interviewDate = this.resourceRequestCV.interviewDate;
-    resourceCv.cvStatusId = this.resourceRequestCV.cvStatusId;
+    resourceCv.cvPath = this.resourceRequestCV?.cvPath;
+    resourceCv.status = this.resourceRequestCV?.status;
+    resourceCv.note = this.resourceRequestCV?.note;
+    resourceCv.kpiPoint = this.resourceRequestCV?.kpiPoint;
+    resourceCv.resourceRequestId = this.resourceRequestCV?.resourceRequestId;
+    resourceCv.sendCVDate = this.resourceRequestCV?.sendCVDate;
+    resourceCv.interviewDate = this.resourceRequestCV?.interviewDate;
+    resourceCv.cvStatusId = this.resourceRequestCV?.cvStatusId;
     this.resourceRequestService.updateResourceRequestCV(resourceCv).subscribe((res: any) => {
       if (res.success) {
         abp.notify.success("Update successfully")

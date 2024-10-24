@@ -79,6 +79,8 @@ namespace ProjectManagement.Services.ResourceManager.Dto
             }
         }
 
+        public ProjectUserWorkingType WorkingType { get; set; }
+
     }
     public class ProjectStatusUser
     {

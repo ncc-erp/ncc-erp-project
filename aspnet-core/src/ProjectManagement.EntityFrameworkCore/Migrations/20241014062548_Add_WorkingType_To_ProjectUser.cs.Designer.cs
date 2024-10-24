@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectManagement.EntityFrameworkCore;
 
 namespace ProjectManagement.Migrations
 {
     [DbContext(typeof(ProjectManagementDbContext))]
-    partial class ProjectManagementDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241014062548_Add_WorkingType_To_ProjectUser.cs")]
+    partial class Add_WorkingType_To_ProjectUsercs
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2400,9 +2402,6 @@ namespace ProjectManagement.Migrations
                         .HasColumnType("bigint")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<byte>("Contribute")
-                        .HasColumnType("tinyint");
-
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("datetime2");
 
@@ -3836,8 +3835,6 @@ namespace ProjectManagement.Migrations
 
                     b.HasIndex("CvStatusId");
 
-                    b.HasIndex("ResourceRequestId");
-
                     b.ToTable("ResourceRequestCVs");
                 });
 
@@ -4947,12 +4944,6 @@ namespace ProjectManagement.Migrations
                     b.HasOne("ProjectManagement.Entities.CvStatus", "CvStatus")
                         .WithMany()
                         .HasForeignKey("CvStatusId");
-
-                    b.HasOne("ProjectManagement.Entities.ResourceRequest", "ResourceRequest")
-                        .WithMany("ResourceRequestCVs")
-                        .HasForeignKey("ResourceRequestId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("ProjectManagement.Entities.ResourceRequestSkill", b =>

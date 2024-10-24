@@ -32,6 +32,8 @@ import { ProjectHistoryByUserComponent } from "./../plan-resource/plan-user/proj
 import { result } from 'lodash-es';
 import { APP_ENUMS } from '@shared/AppEnums';
 import { AddNoteDialogComponent } from '../plan-resource/add-note-dialog/add-note-dialog.component';
+import { getValueByEnum } from '../enum-until';
+
 
 @Component({
   selector: 'app-all-resource',
@@ -179,7 +181,8 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
       startTime: user.startTime,
       allocatePercentage: user.allocatePercentage,
       isPool: user.isPool,
-      projectUserId: user.projectUserId
+      projectUserId: user.projectUserId,
+      workingType: user.workingType
     };
 
     const show = this.dialog.open(PlanUserComponent, {
@@ -727,5 +730,13 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
         }
       }
     );
+  }
+
+  getEnumValue(enumValue: number, enumObject) {
+    return getValueByEnum(enumValue, enumObject);
+  }
+
+  getColorWorkingType(workingType: number): string {
+    return this.workingTypeColorMap[workingType] || 'black';
   }
 }

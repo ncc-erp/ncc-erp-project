@@ -68,6 +68,7 @@ export class projectUserDto {
   viewMode?: boolean;
   workType:boolean;
   isPool?: boolean;
+  workingType: number;
 }
 
 export class projectResourceRequestDto {
@@ -113,6 +114,7 @@ export class projectUserBillDto {
   createLinkResourceMode?: boolean;
   linkCV: string;
   totalHeadCount:number;
+  contribute: number;
 }
 
 export class ProjectRateDto {

@@ -78,11 +78,11 @@ export class ResourceRequestCVComponent extends AppComponentBase implements OnIn
       this.listUsers = this.input.listUsers;
       this.resourceRequestCV.sendCVDate = this.input.sendCVDate || null;
       this.resourceRequestCV.status= this.APP_ENUM.CVStatus['Chưa làm CV'];
-      this.resourceRequestCV.cvPath = this.input.cvPath? this.input.cvPath: " ";
-      this.resourceRequestCV.note = this.input.note? this.input.note: " ";
+      this.resourceRequestCV.cvPath = this.input.cvPath? this.input.cvPath: null;
+      this.resourceRequestCV.note = this.input.note? this.input.note: null;
       this.resourceRequestCV.kpiPoint = this.input.kpiPoint;
-      this.resourceRequestCV.cvName = this.input.cvName? this.input.cvName: " ";
-      this.resourceRequestCV.linkCVPath = this.input.linkCVPath? this.input.linkCVPath: " ";
+      this.resourceRequestCV.cvName = this.input.cvName? this.input.cvName: null;
+      this.resourceRequestCV.linkCVPath = this.input.linkCVPath? this.input.linkCVPath: null;
       this.requestResourceDto = this.input.item1.requestResource;
       this.code = this.input.code;
       this.resourceRequestCV.cvStatusId = this.input.cvStatusId? this.input.cvStatusId: 1;
@@ -120,37 +120,57 @@ export class ResourceRequestCVComponent extends AppComponentBase implements OnIn
     };
   }
 
- SaveAndClose(){
-   this.isLoading = true;
-   let resourceCv = new ResourceRequestCVDto();
-   resourceCv.id = this.resourceRequestCV.id;
-   resourceCv.userId = this.billInfoPlan.userId;
-   resourceCv.cvName = this.resourceRequestCV.cvName;
-   resourceCv.cvPath = this.resourceRequestCV.cvPath;
-   resourceCv.status = this.resourceRequestCV.status;
-   resourceCv.note = this.resourceRequestCV.note;
-   resourceCv.kpiPoint = this.resourceRequestCV.kpiPoint;
-   resourceCv.resourceRequestId =this.resourceRequestCV.resourceRequestId;
-   resourceCv.sendCVDate = this.resourceRequestCV.sendCVDate;
-   resourceCv.interviewDate = this.resourceRequestCV.interviewDate;
-   resourceCv.cvStatusId = this.resourceRequestCV.cvStatusId;
-
-   if(this.input.command=="create"){
-       resourceCv.id =0
-       let createResourceRequestCV = this.formatInterviewDateToVN(resourceCv);
-       this.resourceRequestService.addCV(createResourceRequestCV).pipe(catchError(this.resourceRequestService.handleError)).subscribe((res)=>{
-          abp.notify.success("Create SuccessFully");
-       
-          this.dialogRef.close(this.resourceRequestCV);
-       },()=> this.isLoading = false)
-   }else{
-     let createResourceRequestCV = this.formatInterviewDateToVN(resourceCv);
-    this.resourceRequestService.updateResourceRequestCV(createResourceRequestCV).pipe(catchError(this.resourceRequestService.handleError)).subscribe((res)=>{
-      abp.notify.success("Update Successfully!");
-      this.dialogRef.close(res.result);
-    }, () => this.isLoading = false)
-   }
- }
+  SaveAndClose() {
+    this.isLoading = true;
+    let resourceCv = new ResourceRequestCVDto();
+    resourceCv.id = this.resourceRequestCV.id;
+    resourceCv.userId = this.billInfoPlan.userId;
+    resourceCv.cvName = this.resourceRequestCV.cvName;
+    resourceCv.cvPath = this.resourceRequestCV.cvPath;
+    resourceCv.status = this.resourceRequestCV.status;
+    resourceCv.note = this.resourceRequestCV.note;
+    resourceCv.kpiPoint = this.resourceRequestCV.kpiPoint;
+    resourceCv.resourceRequestId = this.resourceRequestCV.resourceRequestId;
+    resourceCv.sendCVDate = this.resourceRequestCV.sendCVDate;
+    resourceCv.interviewDate = this.resourceRequestCV.interviewDate;
+    resourceCv.cvStatusId = this.resourceRequestCV.cvStatusId;
+    if (this.input.command == "create") {
+      resourceCv.id = 0
+      const formattedResourceCV = this.formatInterviewDateToVN(resourceCv);
+      this.resourceRequestService.addCV(formattedResourceCV)
+        .pipe(catchError(this.resourceRequestService.handleError))
+        .subscribe({
+          next: () => {
+            abp.notify.success("Create SuccessFully");
+            this.dialogRef.close(formattedResourceCV);
+          },
+          error: () => {
+            this.isLoading = false;
+            abp.notify.error("Failed to create resource request CV");
+          },
+          complete: () => {
+            this.isLoading = false
+          }
+        });
+    } else {
+      const formattedResourceCV = this.formatInterviewDateToVN(resourceCv);
+      this.resourceRequestService.updateResourceRequestCV(formattedResourceCV)
+        .pipe(catchError(this.resourceRequestService.handleError))
+        .subscribe({
+          next: (res) => {
+            abp.notify.success("Update Successfully!");
+            this.dialogRef.close(res.result);
+          },
+          error: () => {
+            this.isLoading = false;
+            abp.notify.error("Failed to update resource request CV");
+          },
+          complete: () => {
+            this.isLoading = false
+          }
+        });
+    }
+  }
  checkNullOrEmpty(a : string):boolean{
   return a===null|| a===undefined|| a.trim().length===0;
 }
@@ -164,7 +184,5 @@ export class ResourceRequestCVComponent extends AppComponentBase implements OnIn
   getValueStatusUser(isActive: boolean){
     return isActive?"Active":"InActive"
   }
-
-
  
 }

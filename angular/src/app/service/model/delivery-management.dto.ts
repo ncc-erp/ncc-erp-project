@@ -114,6 +114,7 @@ export class planUserDto {
   isPool: boolean;
   allocatePercentage: number;
   disabled: boolean;
+  workingType: number;
 }
 export class editFutureResourceDto {
   fullName: string;

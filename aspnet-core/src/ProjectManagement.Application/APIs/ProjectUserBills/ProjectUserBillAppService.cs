@@ -111,6 +111,11 @@ namespace ProjectManagement.APIs.ProjectUserBills
             await projectUserBillManager.LinkOneLinkedResource(input);
         }
 
+        [HttpPost]
+        public async Task UpdateLinkOneProjectUserBillAccount(LinkedResourceDto input)
+        {
+            await projectUserBillManager.UpdateLinkOneLinkedResource(input);
+        }
 
         [HttpGet]
         public async Task<List<UserDto>> GetAllUser(bool onlyStaff, long projectId, long? currentUserId, bool isIncludedUserInPUB)
@@ -220,7 +225,8 @@ namespace ProjectManagement.APIs.ProjectUserBills
                     BranchColor = lr.User.Branch.Color,
                     BranchDisplayName = lr.User.Branch.DisplayName,
                     IsActive = lr.User.IsActive,
-                    FullName = lr.User.FullName
+                    FullName = lr.User.FullName,
+                    Contribute = lr.Contribute
                 }).ToListAsync();
         }
 
@@ -279,7 +285,8 @@ namespace ProjectManagement.APIs.ProjectUserBills
                     BranchColor = lr.User.Branch.Color,
                     BranchDisplayName = lr.User.Branch.DisplayName,
                     IsActive = lr.User.IsActive,
-                    FullName = lr.User.FullName
+                    FullName = lr.User.FullName,
+                    Contribute = lr.Contribute
                 })
             },
             IsCharge = x.isActive

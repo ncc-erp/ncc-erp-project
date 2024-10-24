@@ -499,6 +499,25 @@ export class RequestResourceTabComponent
             console.error('Error fetching resource request CV', error);
           }
         );
+        if (request.billUserInfo == null) {
+          const req = {
+            cvName: rs.cvName,
+            resourceRequestId: rs.resourceRequestId,
+            userId: rs.userId
+          }
+          this.resourceRequestService.UpdateBillInfoPlan(req)
+            .pipe(catchError(this.resourceRequestService.handleError))
+            .subscribe({
+              next: (data: { result: { billUserInfo: any; cvName: string } }) => {
+                if(data?.result) {
+                  request.billUserInfo = data.result.billUserInfo;
+                  request.cvName = data.result.cvName;
+                }
+              },
+              error: () => {},
+              complete: () => {}
+            });
+        }
       }
     })
   }

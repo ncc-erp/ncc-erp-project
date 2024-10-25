@@ -184,4 +184,28 @@ export class Utils {
       }
     }
   }
+  
+  public static getColorContribute(contribute: number): string {
+    // https://github.com/orgs/community/discussions/7078
+    // Category: Winter color
+    const COLORS = {
+      LEVEL_1: "#b6e3ff", // blue level 1
+      LEVEL_2: "#54aeff", // blue level 2
+      LEVEL_3: "#0969da", // blue level 3
+      LEVEL_4: "#0a3069"  // blue level 4
+    };
+
+    if (contribute < 0 || contribute > 100) {
+      return ""; // out-of-bounds case
+    } else if (contribute < 25) {
+      return COLORS.LEVEL_1;
+    } else if (contribute < 50) {
+      return COLORS.LEVEL_2;
+    } else if (contribute < 75) {
+      return COLORS.LEVEL_3;
+    } else {
+      return COLORS.LEVEL_4;
+    }
+  }
+
 }

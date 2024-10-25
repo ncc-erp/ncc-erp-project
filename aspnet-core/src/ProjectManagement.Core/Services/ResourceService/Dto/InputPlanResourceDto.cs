@@ -15,7 +15,7 @@ namespace ProjectManagement.Services.ResourceService.Dto
 
         public DateTime StartTime { get; set; }
         public string Note { get; set; }
-    
+        public ProjectUserWorkingType WorkingType { get; set; }
 
     }
 }

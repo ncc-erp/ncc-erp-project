@@ -38,6 +38,7 @@ import { ConfirmPlanDialogComponent } from "./plan-user/confirm-plan-dialog/conf
 import { ConfirmFromPage } from "@app/modules/pm-management/list-project/list-project-detail/resource-management/confirm-popup/confirm-popup.component";
 import { BranchService } from "@app/service/api/branch.service";
 import { APP_ENUMS } from "@shared/AppEnums";
+import { getValueByEnum } from "../enum-until";
 @Component({
   selector: "app-plan-resource",
   templateUrl: "./plan-resource.component.html",
@@ -280,6 +281,7 @@ export class PlanResourceComponent
       allocatePercentage: user.allocatePercentage,
       isPool: user.isPool,
       projectUserId: user.projectUserId,
+      workingType: user.workingType
     };
 
     const show = this.dialog.open(PlanUserComponent, {
@@ -653,4 +655,13 @@ export class PlanResourceComponent
     );
     window.open(url, "_blank");
   }
+
+  getEnumValue(enumValue: number, enumObject) {
+    return getValueByEnum(enumValue, enumObject);
+  }
+
+  getColorWorkingType(workingType: number): string {
+    return this.workingTypeColorMap[workingType] || 'black';
+  }
+  
 }

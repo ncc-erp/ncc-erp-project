@@ -1,0 +1,10 @@
+table{
+    border-collapse: collapse;
+}
+
+.no-data{
+    text-align: center;
+    font-weight: 500;
+    font-size: 24px;
+    margin: 50px 0;
+}

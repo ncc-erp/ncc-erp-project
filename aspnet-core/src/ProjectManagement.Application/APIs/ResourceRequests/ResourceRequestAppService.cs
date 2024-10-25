@@ -96,23 +96,21 @@ namespace ProjectManagement.APIs.ResourceRequests
                    .Select(s => new ResourceRequestCVDto
                    {
                        UserId = s.UserId,
-                       User = WorkScope.GetAll<User>().Where(u => u.Id == s.UserId).Select(
-                             ru => new UserBaseDto
-                             {
-                                 EmailAddress = ru.EmailAddress,
-                                 AvatarPath = ru.AvatarPath,
-                                 UserType = ru.UserType,
-                                 BranchColor = ru.Branch.Color,
-                                 BranchDisplayName = ru.Branch.DisplayName,
-                                 PositionColor = ru.Position.Color,
-                                 PositionName = ru.Position.Name,
-                                 PositionId = ru.Position.Id,
-                                 UserLevel = ru.UserLevel,
-                                 FullName = ru.FullName,
-                                 Branch = ru.BranchOld,
-                                 Id = ru.Id,
-                             }
-                           ).FirstOrDefault(),
+                       User = new UserBaseDto
+                       {
+                           EmailAddress = s.User.EmailAddress,
+                           AvatarPath = s.User.AvatarPath,
+                           UserType = s.User.UserType,
+                           BranchColor = s.User.Branch.Color,
+                           BranchDisplayName = s.User.Branch.DisplayName,
+                           PositionColor = s.User.Position.Color,
+                           PositionName = s.User.Position.Name,
+                           PositionId = s.User.Position.Id,
+                           UserLevel = s.User.UserLevel,
+                           FullName = s.User.FullName,
+                           Branch = s.User.BranchOld,
+                           Id = s.User.Id,
+                       },
                        ResourceRequestId = s.ResourceRequestId,
                        Status = s.Status,
                        CVName = s.CVName,
@@ -124,7 +122,8 @@ namespace ProjectManagement.APIs.ResourceRequests
                        Id = s.Id,
                        CvStatusId = s.CvStatusId,
                        CvStatus = s.CvStatus,
-                   }).ToListAsync();
+                   })
+                   .ToListAsync();
         }
         [HttpGet]
         public async Task<ResourceRequestCV> GetResourceRequestCVById(long resourceRequestCVId)
@@ -206,7 +205,7 @@ namespace ProjectManagement.APIs.ResourceRequests
                 var resourceRequestDto = await UpdateBillInfoTemp(newBillAcount);
                 result.getResourceRequestDto = resourceRequestDto;
             }
-           
+
             await WorkScope.UpdateAsync(resourceRequestCV);
             result.updateResouceRequestCVStatus = input;
 
@@ -264,7 +263,7 @@ namespace ProjectManagement.APIs.ResourceRequests
                 query = query.Where(s => s.ProjectType == ProjectType.TRAINING);
             }
 
-            if(input.FilterRequestCode != null && input.FilterRequestCode.Any()) 
+            if (input.FilterRequestCode != null && input.FilterRequestCode.Any())
             {
                 query = query.Where(s => input.FilterRequestCode.Contains(s.Code));
             }
@@ -390,7 +389,7 @@ namespace ProjectManagement.APIs.ResourceRequests
             ObjectMapper.Map(input, resourceRequest);
             resourceRequest.Quantity = 1;
             // update project Id in ProjectUser
-            var projectUser = WorkScope.GetAll<ProjectUser>().Where(p=> p.ResourceRequestId == input.Id).FirstOrDefault();
+            var projectUser = WorkScope.GetAll<ProjectUser>().Where(p => p.ResourceRequestId == input.Id).FirstOrDefault();
             if (projectUser != null)
                 projectUser.ProjectId = input.ProjectId;
             await WorkScope.UpdateAsync(resourceRequest);

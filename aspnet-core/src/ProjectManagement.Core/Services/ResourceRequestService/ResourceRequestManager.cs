@@ -35,7 +35,7 @@ namespace ProjectManagement.Services.ResourceRequestService
         {
             if (query == null || sortParams == null) return query;
             var isOrder = true;
-            var queryOrder = (IOrderedQueryable<GetResourceRequestDto>) query;
+            var queryOrder = (IOrderedQueryable<GetResourceRequestDto>)query;
             foreach (var param in sortParams)
             {
                 queryOrder = OrderResourceRequest(queryOrder, param.Key, param.Value, isOrder);
@@ -98,55 +98,90 @@ namespace ProjectManagement.Services.ResourceRequestService
                             Quantity = request.Quantity,
                             ProjectCode = request.Project.Code,
                             CVName = request.CVName,
-                            LinkCv= request.LinkCV,
+                            LinkCv = request.LinkCV,
+                            ResCV = request.ResourceRequestCVs.Select(r => new ResourceRequestCvDto()
+                            {
+                                UserId = r.UserId,
+                                User = new UserBaseDto
+                                {
+                                    EmailAddress = r.User.EmailAddress,
+                                    AvatarPath = r.User.AvatarPath,
+                                    UserType = r.User.UserType,
+                                    BranchColor = r.User.Branch.Color,
+                                    BranchDisplayName = r.User.Branch.DisplayName,
+                                    PositionColor = r.User.Position.Color,
+                                    PositionName = r.User.Position.Name,
+                                    PositionId = r.User.Position.Id,
+                                    UserLevel = r.User.UserLevel,
+                                    FullName = r.User.FullName,
+                                    Branch = r.User.BranchOld,
+                                    Id = r.User.Id,
+                                },
+                                ResourceRequestId = r.ResourceRequestId,
+                                Status = r.Status,
+                                CVName = r.CVName,
+                                CVPath = r.CVPath,
+                                Note = r.Note,
+                                KpiPoint = r.KpiPoint,
+                                InterviewDate = r.InterviewDate,
+                                SendCVDate = r.SendCVDate,
+                                Id = r.Id,
+                                CvStatusId = r.CvStatusId,
+                                CvStatus = new CvStatusDto
+                                {
+                                    Id = r.CvStatus.Id,
+                                    Name = r.CvStatus.Name,
+                                    Color = r.CvStatus.Color
+                                },
+                            }).ToList(),
                             Skills = request.ResourceRequestSkills.Select(p => new ResourceRequestSkillDto() { Id = p.SkillId, Name = p.Skill.Name }).ToList(),
 
                             PlanUserInfo = request.ProjectUsers.Where(x => x.Status == ProjectUserStatus.Future)
                                                                .OrderByDescending(q => q.CreationTime)
                                                                .Select(s => new PlanUserInfoDto
-                                                                {
-                                                                    ProjectUserId = s.Id,
-                                                                    Employee = new UserBaseDto
-                                                                    {
-                                                                        PositionId = s.User.PositionId,
-                                                                        PositionName = s.User.Position.ShortName,
-                                                                        PositionColor = s.User.Position.Color,
-                                                                        Branch = s.User.BranchOld,
-                                                                        BranchColor = s.User.Branch.Color,
-                                                                        BranchDisplayName = s.User.Branch.DisplayName,
-                                                                        UserLevel = s.User.UserLevel,
-                                                                        UserType = s.User.UserType,
-                                                                        FullName = s.User.FullName,
-                                                                        EmailAddress = s.User.EmailAddress,
-                                                                        Id = s.UserId,
-                                                                        AvatarPath = s.User.AvatarPath,
-                                                                    },
-                                                                    Role = s.ProjectRole,
-                                                                    PlannedDate = s.StartTime,
-                                                                    UserSkill = !userSkills.ContainsKey(s.UserId) ? null : userSkills[s.UserId]
-                                                                }).FirstOrDefault(),
+                                                               {
+                                                                   ProjectUserId = s.Id,
+                                                                   Employee = new UserBaseDto
+                                                                   {
+                                                                       PositionId = s.User.PositionId,
+                                                                       PositionName = s.User.Position.ShortName,
+                                                                       PositionColor = s.User.Position.Color,
+                                                                       Branch = s.User.BranchOld,
+                                                                       BranchColor = s.User.Branch.Color,
+                                                                       BranchDisplayName = s.User.Branch.DisplayName,
+                                                                       UserLevel = s.User.UserLevel,
+                                                                       UserType = s.User.UserType,
+                                                                       FullName = s.User.FullName,
+                                                                       EmailAddress = s.User.EmailAddress,
+                                                                       Id = s.UserId,
+                                                                       AvatarPath = s.User.AvatarPath,
+                                                                   },
+                                                                   Role = s.ProjectRole,
+                                                                   PlannedDate = s.StartTime,
+                                                                   UserSkill = !userSkills.ContainsKey(s.UserId) ? null : userSkills[s.UserId]
+                                                               }).FirstOrDefault(),
 
                             BillUserInfo = request.User != null ? new PlanUserInfoDto
-                                                                   {
-                                                                       Employee = new UserBaseDto
-                                                                       {
-                                                                           PositionId = request.User.PositionId,
-                                                                           PositionName = request.User.Position.ShortName,
-                                                                           PositionColor = request.User.Position.Color,
-                                                                           Branch = request.User.BranchOld,
-                                                                           BranchColor = request.User.Branch.Color,
-                                                                           BranchDisplayName = request.User.Branch.DisplayName,
-                                                                           UserLevel = request.User.UserLevel,
-                                                                           UserType = request.User.UserType,
-                                                                           FullName = request.User.FullName,
-                                                                           EmailAddress = request.User.EmailAddress,
-                                                                           Id = request.BillAccountId ?? default,
-                                                                           AvatarPath = request.User.AvatarPath
-                                                                       },
-                                                                       PlannedDate = request.BillStartDate ?? null,
-                                                                       UserSkill = request.BillAccountId.HasValue &&
+                            {
+                                Employee = new UserBaseDto
+                                {
+                                    PositionId = request.User.PositionId,
+                                    PositionName = request.User.Position.ShortName,
+                                    PositionColor = request.User.Position.Color,
+                                    Branch = request.User.BranchOld,
+                                    BranchColor = request.User.Branch.Color,
+                                    BranchDisplayName = request.User.Branch.DisplayName,
+                                    UserLevel = request.User.UserLevel,
+                                    UserType = request.User.UserType,
+                                    FullName = request.User.FullName,
+                                    EmailAddress = request.User.EmailAddress,
+                                    Id = request.BillAccountId ?? default,
+                                    AvatarPath = request.User.AvatarPath
+                                },
+                                PlannedDate = request.BillStartDate ?? null,
+                                UserSkill = request.BillAccountId.HasValue &&
                                                                        userSkills.ContainsKey(request.BillAccountId.Value) ? userSkills[request.BillAccountId.Value] : null
-                                                                   } : null,
+                            } : null,
 
                             BillCVEmail = request.User.EmailAddress,
                             PlanUserEmail = request.ProjectUsers.FirstOrDefault() != null ? request.ProjectUsers.FirstOrDefault().User.EmailAddress : null,
@@ -162,7 +197,7 @@ namespace ProjectManagement.Services.ResourceRequestService
 
         public async Task RemoveResourceRequestPlan(long requestId)
         {
-            var request =  await _workScope.GetAll<ResourceRequest>()
+            var request = await _workScope.GetAll<ResourceRequest>()
                .Where(s => s.Id == requestId)
                .Select(s => new
                {
@@ -180,7 +215,7 @@ namespace ProjectManagement.Services.ResourceRequestService
                 throw new UserFriendlyException("Request already DONE. You can't delete Planned Resource");
             }
 
-            request.PUs.ForEach(p => {p.IsDeleted = true;});
+            request.PUs.ForEach(p => { p.IsDeleted = true; });
 
         }
     }

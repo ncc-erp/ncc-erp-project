@@ -19,5 +19,7 @@ namespace ProjectManagement.Entities
         [ForeignKey(nameof(ProjectUserBillId))]
         public ProjectUserBill ProjectUserBill { get; set; }
         public long ProjectUserBillId { get; set; }
+
+        public byte Contribute { get; set; }
     }
 }

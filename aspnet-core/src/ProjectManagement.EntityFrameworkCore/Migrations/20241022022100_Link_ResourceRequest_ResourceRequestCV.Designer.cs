@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectManagement.EntityFrameworkCore;
 
 namespace ProjectManagement.Migrations
 {
     [DbContext(typeof(ProjectManagementDbContext))]
-    partial class ProjectManagementDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241022022100_Link_ResourceRequest_ResourceRequestCV")]
+    partial class Link_ResourceRequest_ResourceRequestCV
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2400,9 +2402,6 @@ namespace ProjectManagement.Migrations
                         .HasColumnType("bigint")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<byte>("Contribute")
-                        .HasColumnType("tinyint");
-
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("datetime2");
 
@@ -3526,9 +3525,6 @@ namespace ProjectManagement.Migrations
                     b.Property<long>("UserId")
                         .HasColumnType("bigint");
 
-                    b.Property<byte>("WorkingType")
-                        .HasColumnType("tinyint");
-
                     b.HasKey("Id");
 
                     b.HasIndex("PMReportId");
@@ -3837,8 +3833,6 @@ namespace ProjectManagement.Migrations
                     b.HasIndex("CvStatusId");
 
                     b.HasIndex("ResourceRequestId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("ResourceRequestCVs");
                 });
@@ -4953,12 +4947,6 @@ namespace ProjectManagement.Migrations
                     b.HasOne("ProjectManagement.Entities.ResourceRequest", "ResourceRequest")
                         .WithMany("ResourceRequestCVs")
                         .HasForeignKey("ResourceRequestId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ProjectManagement.Authorization.Users.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

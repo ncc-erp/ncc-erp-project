@@ -10,6 +10,10 @@
     }
 }
 
+table > thead:first-child{
+    z-index: 10;
+}
+
 .fixed-width-field {
     max-width: 150px;
 }
@@ -151,6 +155,15 @@ table td {
 .col-skill {
     padding: 5px 4px;
     min-width: 180px;
+}
+
+.cv-info-width{
+    width: 250px;
+}
+
+.code-style{
+    color: white;
+    background-color: chocolate;
 }
 
 

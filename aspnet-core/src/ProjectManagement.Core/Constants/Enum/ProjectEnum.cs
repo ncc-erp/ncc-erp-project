@@ -361,5 +361,12 @@
             Fail = 8,
             Onboarded = 9,
         }
+
+        public enum ProjectUserWorkingType: byte
+        {
+            Official = 0,
+            Support = 1,
+            Training = 2
+        }
     }
 }

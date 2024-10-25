@@ -141,6 +141,21 @@ export class RequestResourceTabComponent
 
   public isExpand: boolean = false;
 
+  public codeColors = [
+    '#8B0000', // Dark Red
+    '#4B8B3D', // Dark Green
+    '#B8860B', // Dark Goldenrod
+    '#8B008B', // Dark Magenta
+    '#2F4F4F', // Dark Slate Gray
+    '#4B0082', // Indigo
+    '#5C4033', // Dark Brown
+    '#2F4F2F', // Dark Forest Green
+    '#3B3B3B', // Dark Silver
+    '#2E2A29'  // Dark Charcoal
+  ];
+  public codeColorMap: { [key: string]: string } = {};
+  public trackColor: number = 0;
+
   ResourceRequest_View = PERMISSIONS_CONSTANT.ResourceRequest_View;
   ResourceRequest_PlanNewResourceForRequest = PERMISSIONS_CONSTANT.ResourceRequest_PlanNewResourceForRequest;
   ResourceRequest_UpdateResourceRequestPlan = PERMISSIONS_CONSTANT.ResourceRequest_UpdateResourceRequestPlan;
@@ -1289,6 +1304,14 @@ export class RequestResourceTabComponent
         }
       });
     }
+  }
+
+  getColorForCode(code: string): string {
+    if (!this.codeColorMap[code]) {
+      this.codeColorMap[code] = this.codeColors[this.trackColor];
+      this.trackColor = (this.trackColor + 1) % this.codeColors.length;
+    }
+    return this.codeColorMap[code];
   }
 }
 

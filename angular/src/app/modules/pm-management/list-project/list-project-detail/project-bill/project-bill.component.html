@@ -331,7 +331,7 @@
 
                                     </div>
                                 </td>
-                                <td>
+                                <td style="width: 400px;">
                                     <div class="text-right" *ngIf="!bill.createLinkResourceMode">
                                         <button *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount)"
                                            (click)="addLinkResource(bill)"
@@ -401,7 +401,12 @@
                                                 </div>
                                                 <div class="col-4 d-flex px-0">
                                                     <div class="col-6 align-items-end d-flex" [ngClass]="{'col-12': editingRows[bill.id] && editingRows[bill.id][i]?.contribute}">
-                                                        <span *ngIf="!editingRows[bill.id] || !editingRows[bill.id][i]?.contribute"  class="badge bg-info">{{resource.contribute + '%'}}</span>
+                                                        <span *ngIf="!editingRows[bill.id] || !editingRows[bill.id][i]?.contribute"  
+                                                            class="badge text-white" 
+                                                            [style.backgroundColor]="Utils.getColorContribute(resource.contribute)"
+                                                            matTooltip="Contribute account">
+                                                            {{resource.contribute + '%'}}
+                                                        </span>
                                                         <input  
                                                             *ngIf="editingRows[bill.id] && editingRows[bill.id][i]?.contribute" 
                                                             type="number"

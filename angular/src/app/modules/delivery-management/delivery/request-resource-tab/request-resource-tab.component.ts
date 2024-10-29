@@ -544,9 +544,10 @@ export class RequestResourceTabComponent
           this.resourceRequestService.UpdateBillInfoPlan(req)
             .pipe(catchError(this.resourceRequestService.handleError))
             .subscribe({
-              next: (data: { result: { billUserInfo: any; cvName: string } }) => {
+              next: (data: { result: { billUserInfo: any; cvName: string; planUserInfo: any } }) => {
                 if(data?.result) {
                   request.billUserInfo = data.result.billUserInfo;
+                  request.planUserInfo = data.result.planUserInfo;
                   request.cvName = data.result.cvName;
                 }
               },

@@ -156,6 +156,9 @@ export class RequestResourceTabComponent
   public codeColorMap: { [key: string]: string } = {};
   public trackColor: number = 0;
 
+  public hoveredRow: { [key: number]: { [key: number]: { [key: string]: boolean } } } = {}
+
+
   ResourceRequest_View = PERMISSIONS_CONSTANT.ResourceRequest_View;
   ResourceRequest_PlanNewResourceForRequest = PERMISSIONS_CONSTANT.ResourceRequest_PlanNewResourceForRequest;
   ResourceRequest_UpdateResourceRequestPlan = PERMISSIONS_CONSTANT.ResourceRequest_UpdateResourceRequestPlan;
@@ -220,12 +223,30 @@ export class RequestResourceTabComponent
     }
   }
 
-  edit(index: number, field: string, item: ResourceRequestCVDto, requestId: number): void {
+  edit(index: number, field: string, item: ResourceRequestCVDto, requestId: number, resCv: ResourceRequestCVDto[]): void {
+    if (this.originalValues !== undefined) {
+      const originalRequestId = Object.keys(this.originalValues).map(Number);
+      if(originalRequestId.length > 0)
+      {
+        const originalIndex = Object.keys(this.originalValues[originalRequestId[0]]);
+        const originalField = Object.keys(this.originalValues[originalRequestId[0]][originalIndex[0]]);
+        if(requestId === originalRequestId[0]) {
+          resCv[originalIndex[0]][originalField] = this.originalValues[requestId][originalIndex[0]][originalField[0]];
+        }
+        else{
+          const po = this.listRequest.findIndex(res => res.id === originalRequestId[0]);
+          if (po !== -1) {
+            this.listRequest[po].resCV[originalIndex[0]][originalField[0]]  = this.originalValues[originalRequestId[0]][originalIndex[0]][originalField[0]];
+          }
+        }
+      }
+    } 
     this.editingRows = {};
     this.originalValues = {};
     this.originalValues[requestId] = { [index]: { [field]: item[field] } };
     this.editingRows[requestId] = { [index]: { [field]: true } };
   }
+
   updateStatusCV(index: number, item: ResourceRequestCVDto, field: string, requestId: number) {
     const res = {
       resourceRequestCVId: item.id,
@@ -291,7 +312,7 @@ export class RequestResourceTabComponent
           delete this.editingRows[requestId][index][field];
         }
         if (this.originalValues[requestId][index]) {
-          this.originalValues[requestId][index][field] = res.sendCVDate;
+          this.originalValues[requestId][index][field] = result.result.sendCVDate;
         }
       },
       error => {
@@ -312,7 +333,7 @@ export class RequestResourceTabComponent
           delete this.editingRows[requestId][index][field];
         }
         if (this.originalValues[requestId][index]) {
-          this.originalValues[requestId][index][field] = res.interviewDate;
+          this.originalValues[requestId][index][field] = result.result.interviewDate;
         }
       },
       error => {
@@ -1277,6 +1298,9 @@ export class RequestResourceTabComponent
   }
 
   refreshDate(index: number, item: ResourceRequestCVDto, field: string, requestId: number) {
+    if (this.originalValues[requestId] && this.originalValues[requestId][index]) {
+      this.originalValues[requestId][index][field] = null;
+    }
     if(field == 'sendCVDate') {
       item.sendCVDate = null;
       this.updateSendCVDate(index, item, field, requestId);
@@ -1313,6 +1337,22 @@ export class RequestResourceTabComponent
     }
     return this.codeColorMap[code];
   }
+
+  onMouseOverInput(index: number, field: string, requestId: number): void {
+    if (!this.hoveredRow[requestId]) {
+      this.hoveredRow[requestId] = {};
+    }
+    if (!this.hoveredRow[requestId][index]) {
+      this.hoveredRow[requestId][index] = {};
+    }
+    this.hoveredRow[requestId][index][field] = true;
+  }
+
+  onMouseLeaveInput(index: number, field: string, requestId: number): void {
+    if (this.hoveredRow[requestId] && this.hoveredRow[requestId][index]) {
+      delete this.hoveredRow[requestId][index][field];
+    }
+  } 
 }
 
 export class THeadTable {

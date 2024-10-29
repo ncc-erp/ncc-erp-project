@@ -142,16 +142,16 @@ export class RequestResourceTabComponent
   public isExpand: boolean = false;
 
   public codeColors = [
-    '#8B0000', // Dark Red
-    '#4B8B3D', // Dark Green
-    '#B8860B', // Dark Goldenrod
-    '#8B008B', // Dark Magenta
-    '#2F4F4F', // Dark Slate Gray
-    '#4B0082', // Indigo
-    '#5C4033', // Dark Brown
-    '#2F4F2F', // Dark Forest Green
-    '#3B3B3B', // Dark Silver
-    '#2E2A29'  // Dark Charcoal
+    '#343434',
+    '#055E68',
+    '#62A388',
+    '#B9D2D2',
+    '#430D27',
+    '#C94E4E',
+    '#0E1555',
+    '#4B2B30',
+    '#241E92',
+    '#FF9898'
   ];
   public codeColorMap: { [key: string]: string } = {};
   public trackColor: number = 0;
@@ -822,9 +822,11 @@ export class RequestResourceTabComponent
       maxHeight: "90vh",
     });
     show.afterClosed().subscribe((rs) => {
-      item.billUserInfo = rs.data.billUserInfo;
-      item.planUserInfo = rs.data.planUserInfo;
-      item.cvName = rs.data.cvName;
+      if(rs) {
+        item.billUserInfo = rs.data.billUserInfo;
+        item.planUserInfo = rs.data.planUserInfo;
+        item.cvName = rs.data.cvName;
+      }
     });
   }
 
@@ -857,6 +859,7 @@ export class RequestResourceTabComponent
           this.resourceRequestService.UpdateBillInfoPlan(input).pipe(catchError(this.resourceRequestService.handleError)).subscribe(data => {
             abp.notify.success(` Bill Account Removed Successfully!`);
             item.billUserInfo = null;
+            item.cvName = "";
           }, () => {
           })
         }

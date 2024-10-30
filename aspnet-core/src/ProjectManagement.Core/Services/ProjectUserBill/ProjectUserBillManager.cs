@@ -181,7 +181,14 @@ namespace ProjectManagement.Services.ProjectUserBills
                     ChargeType = x.ChargeType ?? x.Project.ChargeType,
                     CreationTime = x.CreationTime,
                     LinkCV = x.LinkCV,
-
+                    UserSkills = x.User.UserSkills.Select(us => new UserSkillDto
+                    {
+                        UserId = us.UserId,
+                        SkillId = us.SkillId,
+                        SkillName = us.Skill.Name,
+                        SkillRank = us.SkillRank,
+                        SkillNote = us.Note
+                    }).ToList(),
                     LinkedResources = x.LinkedResources
                         .Select(lr => new GetUserInfo
                         {

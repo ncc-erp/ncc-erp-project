@@ -104,6 +104,9 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   editingRows: { [key: number]: { [key: number]: { [key: string]: boolean } } } = {};
   originalContribute: { [key: number]: { [key: number]: { [key: string]: number } } } = {};
 
+  private numberSkill: number = 4;
+  private isViewAllUserSkill: { [userId: number] : boolean } = {}; 
+
   Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_View = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_View;
   Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Create = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Create;
   Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Edit = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Edit;
@@ -829,6 +832,10 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
       this.isLoading = false;
       this.editingRows[projectUserBillId] = {};
     }, () => { this.isLoading = false; });
+  }
+
+  expandUserSkill(billId: number) {
+    this.isViewAllUserSkill[billId] = !this.isViewAllUserSkill[billId];
   }
 }
 

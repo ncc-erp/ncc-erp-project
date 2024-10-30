@@ -115,6 +115,15 @@ export class projectUserBillDto {
   linkCV: string;
   totalHeadCount:number;
   contribute: number;
+  userSkills: ProjectUserSkillDto[];
+}
+
+export class ProjectUserSkillDto{
+  userId: number;
+  skillId: number;
+  skillName: string;
+  skillRank: number;
+  skillNote: string;
 }
 
 export class ProjectRateDto {

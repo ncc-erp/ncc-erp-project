@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ProjectManagement.Services.ProjectUserBill.Dto;
 using static ProjectManagement.Constants.Enum.ProjectEnum;
 using PMUnsentWeeklyReportDto = ProjectManagement.Services.PmReports.Dto.PMUnsentWeeklyReportDto;
 
@@ -194,7 +195,27 @@ namespace ProjectManagement.APIs.PMReportProjects
                                                             UserLevel = pub.User.UserLevel,
                                                             ChargeType = pub.ChargeType.HasValue ? pub.ChargeType : pub.Project.ChargeType,
                                                             CreationTime = pub.CreationTime,
-                                                        }).ToList()
+                                                            HeadCount = pub.HeadCount,
+                                                            LinkedResources = pub.LinkedResources
+                                                                .Select(lr => new GetUserInfo
+                                                                {
+                                                                    Id = lr.UserId,
+                                                                    EmailAddress = lr.User.EmailAddress,
+                                                                    UserName = lr.User.UserName,
+                                                                    AvatarPath = lr.User.AvatarPath ?? "",
+                                                                    UserType = lr.User.UserType,
+                                                                    PositionId = lr.User.PositionId,
+                                                                    PositionColor = lr.User.Position.Color,
+                                                                    PositionName = lr.User.Position.ShortName,
+                                                                    UserLevel = lr.User.UserLevel,
+                                                                    BranchColor = lr.User.Branch.Color,
+                                                                    BranchDisplayName = lr.User.Branch.DisplayName,
+                                                                    IsActive = lr.User.IsActive,
+                                                                    FullName = lr.User.FullName,
+                                                                    Contribute = lr.Contribute
+                                                                }).ToList()
+                                                        }).ToList(),
+                                    TotalHeadCount = projectUserBill.Where(b => b.ProjectId == x.ProjectId).Sum(b => b.HeadCount)
                                 });
 
             return await query.FirstOrDefaultAsync();

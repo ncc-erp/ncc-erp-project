@@ -545,22 +545,56 @@
                                             [(ngModel)]="bill.isActive">
                                         </mat-checkbox>
                                     </td> -->
-                                <td style="min-width: 200px; position: relative;"
-                                    (click)="bill.userSkills.length > numberSkill ? expandUserSkill(bill.id) : null">
+                                <td style="min-width: 250px; width: max-content; max-width: 350px; position: relative;">
                                     <div *ngFor="let skill of (isViewAllUserSkill[bill.id] ? bill.userSkills : bill.userSkills.slice(0, numberSkill))" style="width: 90%;">
-                                        <span>- {{skill.skillName}}</span>
+                                        <span>
+                                            - {{skill.skillName}}
+                                            <strong *ngIf="skill.skillRank && permission.isGranted(Resource_TabAllResource_ViewUserStarSkill)">
+                                                - {{skill.skillRank}}
+                                                <i class="fa fa-star"
+                                                    [ngStyle]="{
+                                                        color: skill.skillRank === 5 ? 'crimson' :
+                                                            skill.skillRank === 4 ? 'orange' :
+                                                            skill.skillRank === 3 ? 'yellow' :
+                                                            skill.skillRank === 1 || skill.skillRank === 2 ? 'grey' : 'inherit'
+                                                    }"
+                                                    style="font-size: 13px;">
+                                                </i>
+                                            </strong>
+                                        </span>
                                         <ng-container *ngIf="!isViewAllUserSkill[bill.id] && bill.userSkills.length > numberSkill && skill === (bill.userSkills.slice(0, numberSkill)[numberSkill - 1])">
-                                            <i class="fas fa-ellipsis-h pl-3"></i>
+                                            <button class="btn btn-sm"
+                                                (click)="expandCollapseUserSkill(bill.id);">
+                                                <i class="fas fa-ellipsis-h"></i>
+                                            </button>
                                         </ng-container>
                                         <ng-container *ngIf="isViewAllUserSkill[bill.id] && skill === (bill.userSkills[bill.userSkills.length - 1])">
-                                            <i class="fas fa-chevron-up pl-3"></i>
+                                            <button class="btn btn-sm"
+                                                (click)="expandCollapseUserSkill(bill.id);">
+                                                <i class="fas fa-chevron-up"></i>
+                                            </button>
                                         </ng-container>
                                     </div>
-                                    <button class="btn btn-sm" style="position: absolute; top: 0; right: 0;">
+                                    <div *ngIf="bill.skillNote">
+                                        <pre class="mb-0 p-0 max-line-content-2"
+                                             PrjResizeContent
+                                             [collapseLine]="2"
+                                             style="
+                                               white-space: pre-line;
+                                               font-family: sans-serif;
+                                               align-self: flex-start;
+                                               line-height: initial;
+                                             ">
+                                                <strong>Note: </strong> {{bill.skillNote}}
+                                          </pre>
+                                    </div>
+                                    <button class="btn btn-sm" style="position: absolute; top: 0; right: 0;"
+                                        *ngIf="permission.isGranted(Resource_TabAllResource_UpdateSkill)"
+                                        (click)="updateUserSkill(bill, bill.skillNote)">
                                         <i class="fas fa-edit"></i>
                                     </button>
                                 </td>
-                                    <td style="white-space: break-spaces;">
+                                <td style="white-space: break-spaces;">
                                     <div class="d-flex align-items-center" style="width: 100%;">
                                             <p style="flex: 1; min-width: 200px; max-width: 100%;"
                                             class="mb-0 p-0 ml-2 ">{{ bill.note }}</p>

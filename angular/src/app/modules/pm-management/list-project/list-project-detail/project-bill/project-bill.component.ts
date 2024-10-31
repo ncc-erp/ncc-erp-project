@@ -30,6 +30,7 @@ import { optionDto } from '@shared/components/multiple-select/multiple-select.co
 import * as _ from 'lodash';
 import { ResourceManagerService } from '@app/service/api/resource-manager.service';
 import * as FileSaver from 'file-saver';
+import { UpdateUserSkillDialogComponent } from '@app/users/update-user-skill-dialog/update-user-skill-dialog.component';
 
 
 @Component({
@@ -104,8 +105,8 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   editingRows: { [key: number]: { [key: number]: { [key: string]: boolean } } } = {};
   originalContribute: { [key: number]: { [key: number]: { [key: string]: number } } } = {};
 
-  private numberSkill: number = 4;
-  private isViewAllUserSkill: { [userId: number] : boolean } = {}; 
+  private numberSkill: number = 3;
+  private isViewAllUserSkill: { [userId: number] : boolean } = {};
 
   Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_View = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_View;
   Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Create = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Create;
@@ -115,8 +116,10 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Note_Edit = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Note_Edit;
   Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport;
   Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_View = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_View;
-  Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount
-
+  Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount;
+  Resource_TabAllResource_ViewUserStarSkill = PERMISSIONS_CONSTANT.Resource_TabAllResource_ViewUserStarSkill;
+  Resource_TabAllResource_UpdateSkill = PERMISSIONS_CONSTANT.Resource_TabAllResource_UpdateSkill;
+  
   constructor(private router: Router,
     private projectUserBillService: ProjectUserBillService,
     private route: ActivatedRoute,
@@ -834,8 +837,27 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     }, () => { this.isLoading = false; });
   }
 
-  expandUserSkill(billId: number) {
+  expandCollapseUserSkill(billId: number) {
     this.isViewAllUserSkill[billId] = !this.isViewAllUserSkill[billId];
+  }
+
+  updateUserSkill(projectUserBill: projectUserBillDto, note: string) {
+    let ref = this.dialog.open(UpdateUserSkillDialogComponent, {
+      width: "700px",
+      data: {
+        userSkills: projectUserBill.userSkills,
+        id: projectUserBill.userId,
+        fullName: projectUserBill.billAccountName,
+        note: note,
+        viewStarSkillUser: this.permission.isGranted(this.Resource_TabAllResource_ViewUserStarSkill),
+      }
+
+    });
+    ref.afterClosed().subscribe(rs => {
+      if (rs) {
+        this.refresh()
+      }
+    })
   }
 }
 

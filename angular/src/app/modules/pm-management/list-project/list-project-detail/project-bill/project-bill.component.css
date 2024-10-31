@@ -96,6 +96,11 @@
     background: none;
     border: none;
 }
+
+.btn-sm:hover {
+    background: #c3c3c3;
+    border-radius: 5px;
+}
 @media screen and (max-width: 600px) {
     .invoice-setting, .bill-account {
         height: 100% !important;

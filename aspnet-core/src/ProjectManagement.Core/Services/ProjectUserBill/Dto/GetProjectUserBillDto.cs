@@ -53,5 +53,6 @@ namespace ProjectManagement.Services.ProjectUserBill.Dto
         public GridParam GridParam { get; set; }
         public string LinkCV { get; set; }
         public List<UserSkillDto> UserSkills { get; set; }
+        public string SkillNote { get; set; }
     }
 }

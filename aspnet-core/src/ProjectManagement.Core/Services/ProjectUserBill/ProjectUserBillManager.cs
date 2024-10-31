@@ -206,7 +206,8 @@ namespace ProjectManagement.Services.ProjectUserBills
                             IsActive = lr.User.IsActive,
                             FullName = lr.User.FullName,
                             Contribute = lr.Contribute
-                        }).ToList()
+                        }).ToList(),
+                    SkillNote = x.User.UserSkills.Select(s => s.Note).FirstOrDefault() ?? ""
                 });
 
 

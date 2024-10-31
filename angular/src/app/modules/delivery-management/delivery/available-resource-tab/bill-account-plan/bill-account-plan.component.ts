@@ -12,6 +12,9 @@ import { THeadTable } from "../../request-resource-tab/request-resource-tab.comp
 import { MatDialog } from "@angular/material/dialog";
 import { HandleLinkedResourcesDialogComponent } from './handle-linked-resources-dialog/handle-linked-resources-dialog.component';
 import { ProjectUserBillService } from '@app/service/api/project-user-bill.service';
+import { PERMISSIONS_CONSTANT } from '@app/constant/permission.constant';
+import { projectUserBillDto } from '@app/service/model/project.dto';
+import { UpdateUserSkillDialogComponent } from '@app/users/update-user-skill-dialog/update-user-skill-dialog.component';
 
 @Component({
   selector: "app-bill-account-plan",
@@ -41,15 +44,16 @@ export class BillAccountPlanComponent
   public listAllResource = []
 
   public theadTable: THeadTable[] = [
-    { name: "#", width: "30px" },
-    { name: "Bill Account"},
-    { name: "Client", width: "140px"},
-    { name: "Projects"},
+    { name: "#", width: "30px", maxWidth: "50px" },
+    { name: "Bill Account", width: "250px", maxWidth: "300px"},
+    { name: "Client", width: "100px", maxWidth: "150px"},
+    { name: "Projects", width: "100px", maxWidth: "150px"},
+    { name: "Skills", width: "300px", maxWidth: "300px"},
     { name: "Is Charge", width: "70px", padding : "12px 10px", whiteSpace: "nowrap" },
     { name: "Is Expose", width: "70px", padding : "12px 10px", whiteSpace: "nowrap" },
     { name: "Head Count", width: "100px" },
     { name: "Bill Date", width: "100px" },
-    { name: "Linked Resource", width: "280px" },
+    { name: "Linked Resource"},
     { name: "Note" },
   ];
 
@@ -71,6 +75,13 @@ export class BillAccountPlanComponent
 
   editingRows: { [key: number]: { [key: number]: { [key: string]: boolean } } } = {};
   originalContribute: { [key: number]: { [key: number]: { [key: string]: number } } } = {};
+
+  Resource_TabAllResource_ViewUserStarSkill = PERMISSIONS_CONSTANT.Resource_TabAllResource_ViewUserStarSkill;
+  Resource_TabAllResource_UpdateSkill = PERMISSIONS_CONSTANT.Resource_TabAllResource_UpdateSkill;
+
+  private numberSkill: number = 3;
+  private isViewAllUserSkill: { [userId: number] : boolean } = {};
+
 
   constructor(
     injector: Injector,
@@ -355,5 +366,28 @@ export class BillAccountPlanComponent
   cancelUpdate(source: number, resource: any, index: number): void {
     this.editingRows[source] = {};
     resource.contribute = this.originalContribute[source][index]?.contribute;
+  }
+
+  expandCollapseUserSkill(billId: number) {
+    this.isViewAllUserSkill[billId] = !this.isViewAllUserSkill[billId];
+  }
+
+  updateUserSkill(projectUserBill: projectUserBillDto, note: string) {
+    let ref = this.dialog.open(UpdateUserSkillDialogComponent, {
+      width: "700px",
+      data: {
+        userSkills: projectUserBill.userSkills,
+        id: projectUserBill.userId,
+        fullName: projectUserBill.billAccountName,
+        note: note,
+        viewStarSkillUser: this.permission.isGranted(this.Resource_TabAllResource_ViewUserStarSkill),
+      }
+
+    });
+    ref.afterClosed().subscribe(rs => {
+      if (rs) {
+        this.refresh()
+      }
+    })
   }
 }

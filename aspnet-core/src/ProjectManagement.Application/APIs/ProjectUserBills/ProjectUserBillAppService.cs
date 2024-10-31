@@ -251,6 +251,15 @@ namespace ProjectManagement.APIs.ProjectUserBills
                 EmailAddress = x.User.EmailAddress,
                 UserType = x.User.UserType,
                 UserLevel = x.User.UserLevel,
+                UserSkills = x.User.UserSkills.Select(s => new UserSkillDto()
+                {
+                    UserId = s.UserId,
+                    SkillId = s.SkillId,
+                    SkillName = s.Skill.Name,
+                    SkillRank = s.SkillRank,
+                    SkillNote = s.Note
+                }).ToList(),
+                SkillNote = x.User.UserSkills.Select(s => s.Note).FirstOrDefault() ?? ""
             },
             Project = new GetProjectBillDto
             {

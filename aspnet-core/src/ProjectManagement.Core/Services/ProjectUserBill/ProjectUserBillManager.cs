@@ -281,7 +281,16 @@ namespace ProjectManagement.Services.ProjectUserBills
                             IsActive = lr.User.IsActive,
                             FullName = lr.User.FullName,
                             Contribute = lr.Contribute
-                        }).ToList()
+                        }).ToList(),
+                    UserSkills = x.User.UserSkills.Select(us => new UserSkillDto
+                    {
+                        UserId = us.UserId,
+                        SkillId = us.SkillId,
+                        SkillName = us.Skill.Name,
+                        SkillRank = us.SkillRank,
+                        SkillNote = us.Note
+                    }).ToList(),
+                    SkillNote = x.User.UserSkills.Select(s => s.Note).FirstOrDefault() ?? ""
                 }).FirstOrDefault();
         }
          

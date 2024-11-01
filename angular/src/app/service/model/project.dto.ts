@@ -116,7 +116,8 @@ export class projectUserBillDto {
   totalHeadCount:number;
   contribute: number;
   userSkills: ProjectUserSkillDto[];
-  skillNote: string; 
+  skillNote: string;
+  initialIsExpose: boolean;
 }
 
 export class ProjectUserSkillDto{

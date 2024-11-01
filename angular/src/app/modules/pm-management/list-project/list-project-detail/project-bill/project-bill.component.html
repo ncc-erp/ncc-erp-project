@@ -519,12 +519,20 @@
                                         </mat-form-field>
                                     </div>
                                 </td>
-                                <td class="text-center">
+                                <td class="text-center" style="position: relative;">
                                     <span class="text-center">
-                                        <mat-checkbox [disabled]="!bill.createMode" [(ngModel)]="bill.isExpose">
+                                        <mat-checkbox [disabled]="!permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Edit)"
+                                            [(ngModel)]="bill.isExpose">
                                         </mat-checkbox>
                                     </span>
-                                     
+                                    <div *ngIf="bill.isExpose != bill.initialIsExpose && !bill.createMode">
+                                        <button class="btn btn-success" (click)="onConfirmUpdateIsExpose(bill)">
+                                            <i class="fa fa-check" aria-hidden="true"></i>
+                                        </button>
+                                        <button class="btn btn-danger" (click)="onCancelUpdateIsExpose(bill)">
+                                            <i class="fa fa-times" aria-hidden="true"></i>
+                                        </button>
+                                    </div>
                                 </td>
                                 <!-- <td class="text-center">
                                         <span class="text-center" *ngIf="!bill.createMode">{{bill.endTime

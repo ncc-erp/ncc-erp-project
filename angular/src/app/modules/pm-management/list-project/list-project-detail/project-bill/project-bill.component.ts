@@ -410,6 +410,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     this.searchUserBill = "";
     this.showSearchAndFilter = true;
     this.isAddingOrEditingUserBill = false;
+    userBill.isExpose = userBill.initialIsExpose;
   }
   public editUserBill(userBill: projectUserBillDto): void {
     this.userIdOld = userBill.userId
@@ -418,6 +419,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     this.isEditUserBill = true;
     this.showSearchAndFilter = false;
     this.isAddingOrEditingUserBill = true;
+    userBill.isExpose = userBill.initialIsExpose;
   }
   private getUserBill(id?: number, status?: boolean, userIdNew?: number): void {
     this.isLoading = true;
@@ -435,9 +437,9 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
       this.totalHeadCount = data.result.reduce((sum, item) => sum + item.headCount, 0);
         this.userBillList = data.result.map(item => {
             if (item.id === id && userIdNew) {
-                return { ...item, createMode: status, userId: userIdNew };
+                return { ...item, createMode: status, userId: userIdNew, initialIsExpose: item.isExpose };
             }
-            return { ...item, createMode: false, contribute: 0 };
+            return { ...item, createMode: false, contribute: 0, initialIsExpose: item.isExpose };
         });
 
         this.filteredUserBillList = _.cloneDeep(this.userBillList);
@@ -858,6 +860,15 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
         this.refresh()
       }
     })
+  }
+
+  onConfirmUpdateIsExpose(userBill: projectUserBillDto) {
+    this.updateUserBill(userBill);
+    userBill.initialIsExpose = userBill.isExpose;
+  }
+
+  onCancelUpdateIsExpose(userBill: projectUserBillDto) {
+    userBill.isExpose = userBill.initialIsExpose;
   }
 }
 

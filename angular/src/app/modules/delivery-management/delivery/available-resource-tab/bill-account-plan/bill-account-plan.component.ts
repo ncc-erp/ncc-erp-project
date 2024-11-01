@@ -15,6 +15,7 @@ import { ProjectUserBillService } from '@app/service/api/project-user-bill.servi
 import { PERMISSIONS_CONSTANT } from '@app/constant/permission.constant';
 import { projectUserBillDto } from '@app/service/model/project.dto';
 import { UpdateUserSkillDialogComponent } from '@app/users/update-user-skill-dialog/update-user-skill-dialog.component';
+import { IBillInfo, IUserInfor } from '@app/service/model/bill-info.interface';
 
 @Component({
   selector: "app-bill-account-plan",
@@ -38,7 +39,7 @@ export class BillAccountPlanComponent
   public totalHeadCount: number=0;
   public projectId;
   public clientId;
-  public billInfoList = [];
+  public billInfoList: IBillInfo[] = [];
   public projectList = [];
   public clientList = [];
   public listAllResource = []
@@ -372,13 +373,13 @@ export class BillAccountPlanComponent
     this.isViewAllUserSkill[billId] = !this.isViewAllUserSkill[billId];
   }
 
-  updateUserSkill(projectUserBill: projectUserBillDto, note: string) {
+  updateUserSkill(userInfo: IUserInfor, note: string) {
     let ref = this.dialog.open(UpdateUserSkillDialogComponent, {
       width: "700px",
       data: {
-        userSkills: projectUserBill.userSkills,
-        id: projectUserBill.userId,
-        fullName: projectUserBill.billAccountName,
+        userSkills: userInfo.userSkills,
+        id: userInfo.userId,
+        fullName: userInfo.fullName,
         note: note,
         viewStarSkillUser: this.permission.isGranted(this.Resource_TabAllResource_ViewUserStarSkill),
       }

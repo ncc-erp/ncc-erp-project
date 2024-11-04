@@ -87,14 +87,14 @@
                     <div class="header-bill-account">
                         <h4 class="d-inline label-bill-account" style="margin-top: 5px;">Bill accounts ({{ filteredUserBillList.length }}):</h4>
                         <button name="btn-createUserBill" *ngIf="!userBillProcess && permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Create)"
-                            [hidden]="isShowUserBill" style="border: none; height: fit-content;"
+                            [hidden]="isShowUserBill || !showSearchAndFilter" style="border: none; height: fit-content;"
                             class="btn bg-blue ml-2 btn-s mb-2 add-bill-mobile" (click)="addUserBill(); userBillCurrentPage=1; $event.stopPropagation()">
                             <i class="fa fa-plus m-0"></i>
                         </button>
                     </div>
                     <div class="d-flex flex-wrap justify-content-start align-items-center list-filter" style="flex-grow: 1;">
                         <button name="btn-createUserBill" *ngIf="!userBillProcess && permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Create)"
-                            [hidden]="isShowUserBill" style="border: none; height: fit-content;"
+                            [hidden]="isShowUserBill || !showSearchAndFilter" style="border: none; height: fit-content;"
                         class="btn bg-blue ml-2 btn-s mb-2 add-bill-desktop" (click)="addUserBill(); userBillCurrentPage=1; $event.stopPropagation()">
                             <i class="fa fa-plus m-0"></i>
                         </button>
@@ -242,6 +242,7 @@
                                     
                                     <i  class="fas fa-sort"></i>
                                 </th>
+                                <th class="align">Skills</th>
                                 <th class="align">Note</th>
                                 <th class="align">Action</th>
                             </tr>
@@ -331,18 +332,18 @@
 
                                     </div>
                                 </td>
-                                <td style="width: 400px;">
+                                <td style="max-width: 400px;">
                                     <div class="text-right" *ngIf="!bill.createLinkResourceMode">
-                                        <button *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount)"
-                                           (click)="addLinkResource(bill)"
-                                           class="btn bg-blue btn-sm"
+                                        <button class="btn bg-blue btn-sm"
+                                            (click)="addLinkResource(bill)"
+                                            [disabled]="bill.createMode || userBillProcess || !permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount)"
                                             style="cursor: pointer; font-size: 10px;">
                                             <i class="fa fa-plus fa-s m-0"></i>
                                         </button>
                                     </div>
-                                    <div *ngIf="bill.createLinkResourceMode" style="width: 400px;" class="row d-flex">
+                                    <div *ngIf="bill.createLinkResourceMode" style="max-width: 400px;" class="row d-flex">
                                         <div class="col-10 mb-2 px-0">
-                                            <mat-form-field appearance="outline" class="col-8">
+                                            <mat-form-field appearance="outline" class="col-9">
                                                 <mat-select panelClass="custom-panel-class" (closed)="focusOut()"
                                                     [(ngModel)]="selectedResource"
                                                     name="userBill"
@@ -366,10 +367,11 @@
                                             </mat-form-field>
                                             <input                
                                                 type="number"
-                                                class="col-4"
+                                                class="col-3"
                                                 placeholder="% contribute"
                                                 min="0"
                                                 max="100"
+                                                matTooltip="% contribute"
                                                 [(ngModel)]="bill.contribute"
                                             />   
                                             <mat-error class="mt-1" *ngIf="userBill.hasError('required') && userBill.touched" style="font-size: 13px;">
@@ -388,10 +390,10 @@
                                                 (click)="cancelLinkResource(bill)"></i>
                                         </div>
                                     </div>
-                                    <div class="d-flex row" style="width: 400px;">
+                                    <div class="d-flex row" style="max-width: 400px;">  
                                         <div class="d-flex col-12 px-0" style="flex-direction: column;">
                                             <div *ngFor="let resource of bill.linkedResources; let i = index" class="mb-2 d-flex px-0">
-                                                <div class="col-8 d-flex px-0">
+                                                <div class="px-0" style="width: 280px;">
                                                     <app-user-info [isSmallerDiv]="true"
                                                         [userData]="resource"
                                                         [isWeeklyReport]="false"
@@ -399,11 +401,12 @@
                                                         >
                                                      </app-user-info>
                                                 </div>
-                                                <div class="col-4 d-flex px-0">
-                                                    <div class="col-6 align-items-end d-flex" [ngClass]="{'col-12': editingRows[bill.id] && editingRows[bill.id][i]?.contribute}">
+                                                <div class="d-flex px-0" style="max-width: 110px;">
+                                                    <div class="align-items-end d-flex mr-1" [ngClass]="{'col-12': editingRows[bill.id] && editingRows[bill.id][i]?.contribute}">
                                                         <span *ngIf="!editingRows[bill.id] || !editingRows[bill.id][i]?.contribute"  
                                                             class="badge text-white" 
                                                             [style.backgroundColor]="Utils.getColorContribute(resource.contribute)"
+                                                            style="width: 40px;"
                                                             matTooltip="Contribute account">
                                                             {{resource.contribute + '%'}}
                                                         </span>
@@ -422,15 +425,17 @@
                                                             appFocus
                                                         />      
                                                     </div>
-                                                    <div class="col-6 align-items-end d-flex">
+                                                    <div class="align-items-end d-flex">
                                                         <button *ngIf="!editingRows[bill.id] || !editingRows[bill.id][i]?.contribute"
                                                             (click)="edit(bill.id, i, 'contribute', resource.contribute)"
-                                                            class="col-6 button-action">
+                                                            [disabled]="bill.createMode || userBillProcess"
+                                                            class="col-6 button-action d-flex justify-content-end">
                                                             <i class="fa fa-pencil-alt"></i>
                                                         </button>
                                                         <button *ngIf="!editingRows[bill.id] || !editingRows[bill.id][i]?.contribute" 
                                                             (click)="removeLinkResource(resource.id, bill.id)"
-                                                            class="col-6 button-action">
+                                                            [disabled]="bill.createMode || userBillProcess"
+                                                            class="col-6 button-action d-flex justify-content-end">
                                                             <i class="fa fa-times"></i>  
                                                         </button>
                                                     </div>
@@ -518,12 +523,22 @@
                                         </mat-form-field>
                                     </div>
                                 </td>
-                                <td class="text-center">
+                                <td class="text-center" style="min-width: 100px;">
                                     <span class="text-center">
-                                        <mat-checkbox [disabled]="!bill.createMode" [(ngModel)]="bill.isExpose">
+                                        <mat-checkbox  [disabled]="!permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Edit) || (userBillProcess && !bill.createMode && bill.isExpose === bill.initialIsExpose)"
+                                            [(ngModel)]="bill.isExpose"
+                                            (change)="!bill.createMode ? onUpdateIsExpose(bill) : null">
                                         </mat-checkbox>
                                     </span>
-                                     
+                                    <div *ngIf="bill.isExpose != bill.initialIsExpose && !bill.createMode"
+                                        class="d-flex justify-content-center">
+                                        <button class="text-success btn btn-sm btn-hover" (click)="onConfirmUpdateIsExpose(bill)">
+                                            <i class="fa fa-check" aria-hidden="true"></i>
+                                        </button>
+                                        <button class="text-danger btn btn-sm btn-hover" (click)="onCancelUpdateIsExpose(bill)">
+                                            <i class="fa fa-times" aria-hidden="true"></i>
+                                        </button>
+                                    </div>
                                 </td>
                                 <!-- <td class="text-center">
                                         <span class="text-center" *ngIf="!bill.createMode">{{bill.endTime
@@ -544,11 +559,67 @@
                                             [(ngModel)]="bill.isActive">
                                         </mat-checkbox>
                                     </td> -->
+                                <td style="min-width: 250px; width: max-content; max-width: 350px; position: relative;">
+                                    <div *ngIf="bill.userSkills">
+                                        <div *ngFor="let skill of (isViewAllUserSkill[bill.id] ? bill.userSkills : bill.userSkills.slice(0, numberSkill))" style="width: 90%;">
+                                            <span>
+                                                - {{skill.skillName}}
+                                                <strong *ngIf="skill.skillRank && permission.isGranted(Resource_TabAllResource_ViewUserStarSkill)">
+                                                    - {{skill.skillRank}}
+                                                    <i class="fa fa-star"
+                                                        [ngStyle]="{
+                                                            color: skill.skillRank === 5 ? 'crimson' :
+                                                                skill.skillRank === 4 ? 'orange' :
+                                                                skill.skillRank === 3 ? 'yellow' :
+                                                                skill.skillRank === 1 || skill.skillRank === 2 ? 'grey' : 'inherit'
+                                                        }"
+                                                        style="font-size: 13px;">
+                                                    </i>
+                                                </strong>
+                                            </span>
+                                            <ng-container *ngIf="!isViewAllUserSkill[bill.id] && bill.userSkills.length > numberSkill && skill === (bill.userSkills.slice(0, numberSkill)[numberSkill - 1])">
+                                                <button class="btn btn-sm btn-hover"
+                                                    (click)="expandCollapseUserSkill(bill.id);">
+                                                    <i class="fas fa-ellipsis-h"></i>
+                                                </button>
+                                            </ng-container>
+                                            <ng-container *ngIf="isViewAllUserSkill[bill.id] && skill === (bill.userSkills[bill.userSkills.length - 1])">
+                                                <button class="btn btn-sm btn-hover"
+                                                    (click)="expandCollapseUserSkill(bill.id);">
+                                                    <i class="fas fa-chevron-up"></i>
+                                                </button>
+                                            </ng-container>
+                                        </div>
+                                        <div *ngIf="bill.skillNote">
+                                            <pre class="mb-0 p-0 max-line-content-2"
+                                                 PrjResizeContent
+                                                 [collapseLine]="2"
+                                                 style="
+                                                   white-space: pre-line;
+                                                   font-family: sans-serif;
+                                                   align-self: flex-start;
+                                                   line-height: initial;
+                                                 ">
+                                                    <strong>Note: </strong> {{bill.skillNote}}
+                                              </pre>
+                                        </div>
+                                        <button class="btn btn-sm" style="position: absolute; top: 0; right: 0;"
+                                            [disabled]="!permission.isGranted(Resource_TabAllResource_UpdateSkill) || userBillProcess"
+                                            (click)="updateUserSkill(bill, bill.skillNote)">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                    </div>
+                                </td>
                                 <td style="white-space: break-spaces;">
                                     <div class="d-flex align-items-center" style="width: 100%;">
                                             <p style="flex: 1; min-width: 200px; max-width: 100%;"
                                             class="mb-0 p-0 ml-2 ">{{ bill.note }}</p>
-                                            <i style="color: #585858;" class="fas fa-ellipsis-v ml-1" [matMenuTriggerFor]="menu3"></i>
+                                            <button *ngIf="!bill.createMode"
+                                                class="btn btn-sm"
+                                                [disabled]="userBillProcess"
+                                                [matMenuTriggerFor]="menu3">
+                                                <i class="fas fa-ellipsis-v ml-1"></i>
+                                            </button>
                                         <mat-menu #menu3="matMenu">
                                             <button class="mat-menu-item" (click)="editBillNote(bill)">
                                                 <i class="fas fa-edit mr-2 fa-lg"></i>
@@ -563,7 +634,7 @@
                                               [disabled]="userBillProcess" mat-button [matMenuTriggerFor]="actionMenu"><i class="fas fa-bars fa-lg"></i></button>
                                         <!-- Define the mat-menu and its content -->
                                         <mat-menu #actionMenu="matMenu">
-                                              <button mat-menu-item (click)="editUserBill(bill)" [hidden]="!showSearchAndFilter">
+                                              <button mat-menu-item (click)="editUserBill(bill)">
                                                 <i class="fas fa-pencil-alt"></i> Edit
                                             </button>
                                             <button mat-menu-item (click)="removeUserBill(bill)">
@@ -572,17 +643,21 @@
                                         </mat-menu>
                                     </div>
 
-                                    <div *ngIf="bill.createMode" class="pt-1 d-flex" style="flex-direction: column;">
-                                        <button
-                                            [disabled]="!bill?.userId || !bill?.billRole || !bill?.startTime  || bill?.billRate<0 || !bill?.billRate || !bill?.headCount || bill?.headCount<0 || bill?.headCount>1  "
-                                            class="mb-3 submit-btn" style="background: none; border: none;"
-                                                [hidden]="showSearchAndFilter"
-                                                (click)="saveUserBill(bill)">
-                                            <i style="color: green; font-size: 30px;" class="fas fa-check fa-2x "></i>
+                                    <div *ngIf="bill.createMode"
+                                        class="pt-1 d-flex"
+                                        style="flex-direction: column;">
+                                        <button class="mb-3 submit-btn"
+                                            [disabled]="!bill?.userId || !bill?.billRole || !bill?.startTime || bill?.billRate<0 || !bill?.billRate || !bill?.headCount || bill?.headCount<0 || bill?.headCount>1"
+                                            style="background: none; border: none;"
+                                            (click)="saveUserBill(bill)">
+                                            <i style="color: green; font-size: 30px;"
+                                                class="fas fa-check fa-2x">
+                                            </i>
                                         </button>
-                                        <i style="color: red; font-size: 30px;" class="fas fa-undo fa-2x"
-                                                [hidden]="showSearchAndFilter"
-                                                (click)="cancelUserBill(bill)"></i>
+                                        <i style="color: red; font-size: 30px;"
+                                            class="fas fa-undo fa-2x"
+                                            (click)="cancelUserBill(bill)">
+                                        </i>
                                     </div>
                                 </td>
                             </tr>

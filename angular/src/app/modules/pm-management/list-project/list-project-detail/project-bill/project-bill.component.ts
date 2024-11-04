@@ -30,6 +30,7 @@ import { optionDto } from '@shared/components/multiple-select/multiple-select.co
 import * as _ from 'lodash';
 import { ResourceManagerService } from '@app/service/api/resource-manager.service';
 import * as FileSaver from 'file-saver';
+import { UpdateUserSkillDialogComponent } from '@app/users/update-user-skill-dialog/update-user-skill-dialog.component';
 
 
 @Component({
@@ -104,6 +105,9 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   editingRows: { [key: number]: { [key: number]: { [key: string]: boolean } } } = {};
   originalContribute: { [key: number]: { [key: number]: { [key: string]: number } } } = {};
 
+  private numberSkill: number = 3;
+  private isViewAllUserSkill: { [userId: number] : boolean } = {};
+
   Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_View = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_View;
   Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Create = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Create;
   Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Edit = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Edit;
@@ -112,8 +116,10 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Note_Edit = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Note_Edit;
   Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport;
   Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_View = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_View;
-  Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount
-
+  Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount;
+  Resource_TabAllResource_ViewUserStarSkill = PERMISSIONS_CONSTANT.Resource_TabAllResource_ViewUserStarSkill;
+  Resource_TabAllResource_UpdateSkill = PERMISSIONS_CONSTANT.Resource_TabAllResource_UpdateSkill;
+  
   constructor(private router: Router,
     private projectUserBillService: ProjectUserBillService,
     private route: ActivatedRoute,
@@ -278,6 +284,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
               this.userBillProcess = true;
               this.showSearchAndFilter = false;
               this.isAddingOrEditingUserBill = true;
+              userBill.initialIsExpose = userBill.isExpose;
             }
           }
         );
@@ -315,7 +322,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
       },
         () => {
           userBill.createMode = true;
-          this.isLoading = false
+          this.isLoading = false;
         }
         )
       }
@@ -404,6 +411,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     this.searchUserBill = "";
     this.showSearchAndFilter = true;
     this.isAddingOrEditingUserBill = false;
+    userBill.isExpose = userBill.initialIsExpose;
   }
   public editUserBill(userBill: projectUserBillDto): void {
     this.userIdOld = userBill.userId
@@ -412,6 +420,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     this.isEditUserBill = true;
     this.showSearchAndFilter = false;
     this.isAddingOrEditingUserBill = true;
+    userBill.isExpose = userBill.initialIsExpose;
   }
   private getUserBill(id?: number, status?: boolean, userIdNew?: number): void {
     this.isLoading = true;
@@ -429,9 +438,9 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
       this.totalHeadCount = data.result.reduce((sum, item) => sum + item.headCount, 0);
         this.userBillList = data.result.map(item => {
             if (item.id === id && userIdNew) {
-                return { ...item, createMode: status, userId: userIdNew };
+                return { ...item, createMode: status, userId: userIdNew, initialIsExpose: item.isExpose };
             }
-            return { ...item, createMode: false, contribute: 0 };
+            return { ...item, createMode: false, contribute: 0, initialIsExpose: item.isExpose };
         });
 
         this.filteredUserBillList = _.cloneDeep(this.userBillList);
@@ -444,8 +453,13 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     this.projectUserBillService.GetProjectUserBillById(id).pipe(
       catchError(this.projectUserBillService.handleError)
     ).subscribe(data => {
-        let updated = data.result;
-        this.filteredUserBillList = this.filteredUserBillList.map(item => (item.userId === updated.userId ? updated : item));
+        let updated = data.result as projectUserBillDto;
+        this.filteredUserBillList = this.filteredUserBillList.map(item => {
+          if (item.id === id) {
+            return { ...updated, initialIsExpose: updated.isExpose };
+          }
+          return {...item, initialIsExpose: item.isExpose};
+        });
         this.isLoading = false;
     }, () => { this.isLoading = false; });
   }
@@ -829,6 +843,46 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
       this.isLoading = false;
       this.editingRows[projectUserBillId] = {};
     }, () => { this.isLoading = false; });
+  }
+
+  expandCollapseUserSkill(billId: number) {
+    this.isViewAllUserSkill[billId] = !this.isViewAllUserSkill[billId];
+  }
+
+  updateUserSkill(projectUserBill: projectUserBillDto, note: string) {
+    let ref = this.dialog.open(UpdateUserSkillDialogComponent, {
+      width: "700px",
+      data: {
+        userSkills: projectUserBill.userSkills,
+        id: projectUserBill.userId,
+        fullName: projectUserBill.billAccountName,
+        note: note,
+        viewStarSkillUser: this.permission.isGranted(this.Resource_TabAllResource_ViewUserStarSkill),
+      }
+
+    });
+    ref.afterClosed().subscribe(rs => {
+      if (rs) {
+        this.refresh()
+      }
+    })
+  }
+
+  onConfirmUpdateIsExpose(userBill: projectUserBillDto) {
+    this.updateUserBill(userBill);
+    userBill.initialIsExpose = userBill.isExpose;
+  }
+
+  onCancelUpdateIsExpose(userBill: projectUserBillDto) {
+    userBill.isExpose = userBill.initialIsExpose;
+    this.userBillProcess = false;
+    this.showSearchAndFilter = true;
+  }
+
+  onUpdateIsExpose(userBill: projectUserBillDto) {
+    const hasChanged = userBill.isExpose !== userBill.initialIsExpose;
+    this.userBillProcess = hasChanged;
+    this.showSearchAndFilter = !hasChanged;
   }
 }
 

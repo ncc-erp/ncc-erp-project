@@ -201,7 +201,7 @@
         </div>
       </div>
 
-      <div class="table-responsive py-4 all-resource-table">
+      <div class="py-4 all-resource-table">
         <div class="fixTableHead">
           <table style="border-collapse: collapse" class="table text-nowrap">
             <thead>
@@ -209,6 +209,7 @@
                 <th
                   *ngFor="let thead of theadTable; let i = index"
                   [style.width]="thead.width"
+                  [style.maxWidth]="thead?.maxWidth"
                   [style.padding]="thead?.padding"
                   [style.whiteSpace]="thead?.whiteSpace"
                   class="text-center"
@@ -219,9 +220,7 @@
                   >
                     <div class="rsp-th-name">
                       <ng-container *ngIf="thead.name === 'Head Count'; else defaultThead" >
-                       <div style="margin-top: 26px;">
                         {{ thead.name }} ({{ totalHeadCount }})
-                      </div>
                       </ng-container>
                       <ng-template #defaultThead>
                         {{ thead.name }}
@@ -271,95 +270,118 @@
                 
                 <tr *ngFor="let project of item.projects; let j = index">
                     <td>
-                        <span>{{ project.clientName }}</span>
+                        {{ project.clientName }}
                     </td>
-
-                    <td style="width: 180px; padding: 3px">
+                    <td class="p-1">
+                      <div class="d-flex flex-column">
                         <div class="d-flex flex-column">
-                            <div>
-                                <div class="d-flex flex-column">
-                                    <div class="project_link--wapper">
-                                        <a href="{{ viewProjectDetail(project) }}"
-                                           class="project-link">
-                                            <strong>{{ project.projectName }}</strong>
-                                        </a>
-                                        <span [outerHTML]="
-                                project.projectStatus | projectStatusPipe
-                              "></span>
-                                    </div>
-                                    <span>{{ project.accountName }}</span>
-                                    <span *ngIf="isShowBillRate">{{project.rateDisplay}}</span>
-                                </div>
-                            </div>
+                          <div class="project_link--wapper">
+                            <a href="{{ viewProjectDetail(project) }}" class="project-link">
+                              <strong>{{ project.projectName }}</strong>
+                            </a>
+                            <span [outerHTML]="project.projectStatus | projectStatusPipe"></span>
+                          </div>
+                          <span>{{ project.accountName }}</span>
+                          <span *ngIf="isShowBillRate">{{project.rateDisplay}}</span>
                         </div>
+                      </div>
                     </td>
-
-                    <td>
-                        <span class="d-flex flex-column align-items-center">
-                            <mat-checkbox color="primary"
-                                          [disabled]="true"
-                                          [(ngModel)]="project.isActive"></mat-checkbox>
+                    <td *ngIf="j === 0"
+                      [attr.rowspan]="item.projects.length"
+                      style="max-width: 300px; position: relative; vertical-align: top;">
+                      <div *ngFor="let skill of (isViewAllUserSkill[item.userInfor.userId] ? item.userInfor.userSkills : item.userInfor.userSkills.slice(0, numberSkill))">
+                        <span>
+                          - {{skill.skillName}}
+                          <strong *ngIf="skill.skillRank && permission.isGranted(Resource_TabAllResource_ViewUserStarSkill)">
+                            - {{skill.skillRank}}
+                            <i class="fa fa-star"
+                              [ngStyle]="{color: skill.skillRank === 5 ? 'crimson' :
+                                skill.skillRank === 4 ? 'orange' :
+                                skill.skillRank === 3 ? 'yellow' :
+                                skill.skillRank === 1 || skill.skillRank === 2 ? 'grey' : 'inherit'
+                              }"
+                              style="font-size: 13px;">
+                            </i>
+                          </strong>
                         </span>
+                        <ng-container
+                          *ngIf="!isViewAllUserSkill[item.userInfor.userId] && item.userInfor.userSkills.length > numberSkill && skill === (item.userInfor.userSkills.slice(0, numberSkill)[numberSkill - 1])">
+                          <button class="btn btn-sm"
+                            (click)="expandCollapseUserSkill(item.userInfor.userId);">
+                            <i class="fas fa-ellipsis-h"></i>
+                          </button>
+                        </ng-container>
+                        <ng-container
+                          *ngIf="isViewAllUserSkill[item.userInfor.userId] && skill === (item.userInfor.userSkills[item.userInfor.userSkills.length - 1])">
+                          <button class="btn btn-sm"
+                            (click)="expandCollapseUserSkill(item.userInfor.userId);">
+                            <i class="fas fa-chevron-up"></i>
+                          </button>
+                        </ng-container>
+                      </div>
+                      <div *ngIf="item.userInfor.skillNote">
+                        <pre class="mb-0 p-0 max-line-content-2" PrjResizeContent [collapseLine]="2" style="
+                                                    white-space: pre-line;
+                                                    font-family: sans-serif;
+                                                    align-self: flex-start;
+                                                    line-height: initial;
+                                                  ">
+                                                      <strong>Note: </strong> {{item.userInfor.skillNote}}
+                                                </pre>
+                      </div>
+                      <button class="btn btn-sm"
+                        style="position: absolute; top: 0; right: 0;"
+                        *ngIf="permission.isGranted(Resource_TabAllResource_UpdateSkill)"
+                        (click)="updateUserSkill(item.userInfor, item.userInfor.skillNote)">
+                        <i class="fas fa-edit"></i>
+                      </button>
                     </td>
-
                     <td>
                       <span class="d-flex flex-column align-items-center">
-                          <mat-checkbox color="primary"
-                                        [disabled]="true"
-                                        [(ngModel)]="project.isExpose"></mat-checkbox>
+                        <mat-checkbox color="primary"
+                          [disabled]="true"
+                          [(ngModel)]="project.isActive">
+                        </mat-checkbox>
                       </span>
-                  </td>
-
-                <td >
-                    <span class="d-flex flex-column align-items-center"[(ngModel)]="project.headCount">
-                       {{project.headCount}}
-                    </span>
-                </td>
-
+                    </td>
                     <td>
-                        <span class="d-flex flex-column align-items-center"
-                              [ngClass]="{
-                        redColor: checkTimeInFilterDate(project.startTime)
-                      }">{{ project.startTime | date : "dd-MM-yyyy" }}</span>
-                        <span class="d-flex flex-column align-items-center"
-                              [ngClass]="{
-                        redColor: checkTimeInFilterDate(project.endTime)
-                      }">{{ project.endTime | date : "dd-MM-yyyy" }}</span>
+                      <span class="d-flex flex-column align-items-center">
+                        <mat-checkbox color="primary"
+                          [disabled]="true"
+                          [(ngModel)]="project.isExpose">
+                        </mat-checkbox>
+                      </span>
                     </td>
-
-                    <td style="display: none;">
-                        <div class="d-flex align-items-start justify-content-end">
-                            <div class="d-flex" style="flex-direction: column;">
-                                  <div *ngFor="let resource of  project.linkedResources" class="mb-2 position-relative">
-                                      <app-user-info [userData]="resource"
-                                                    [isHideEmail]="true"
-                                                    [isWeeklyReport]="false"
-                                                    [isSmallerDiv]="true"
-                                                    [viewMode] ="1">
-                                      </app-user-info>
-                                      <i *ngIf="true" (click)="removeLinkResource(resource.id, project.billId)"
-                                        class="fa fa-times position-absolute" style="top:32px; right: -28px;"></i>
-                                  </div>
-                            </div>
-                            <i *ngIf="true"
-                               (click)="handleOpenDialogShadowAccount(project.projectId, item.userInfor.userId, project.linkedResources, project.billId)"
-                               class="btn bg-blue ml-2 btn-sm mb-2"
-                               style="cursor: pointer; font-size: 10px;">
-                                <i class="fa fa-plus fa-s m-0"></i>
-                            </i>
-                        </div>
+                    <td>
+                      <span class="d-flex flex-column align-items-center"
+                        [(ngModel)]="project.headCount">
+                        {{project.headCount}}
+                      </span>
                     </td>
+                    <td>
+                      <span class="d-flex flex-column align-items-center"
+                        [ngClass]="{redColor: checkTimeInFilterDate(project.startTime)}">
+                        {{ project.startTime | date : "dd-MM-yyyy" }}
+                      </span>
+                      <span class="d-flex flex-column align-items-center"
+                        [ngClass]="{redColor: checkTimeInFilterDate(project.endTime)}">
+                        {{ project.endTime | date : "dd-MM-yyyy" }}
+                      </span>
+                    </td>              
                     <td style="width: 380px;">
                       <div class="d-flex align-items-start justify-content-end">
-                        <button
+                        <button class="btn bg-blue btn-sm"
                           (click)="handleOpenDialogShadowAccount(project.projectId, item.userInfor.userId, project.linkedResources, project.billId)"
-                          class="btn bg-blue btn-sm" style="cursor: pointer; font-size: 10px;">
+                          style="cursor: pointer; font-size: 10px;">
                           <i class="fa fa-plus fa-s m-0"></i>
                         </button>
                       </div>
-                      <div class="d-flex row" style="width: 380px;">
-                        <div class="d-flex col-12 px-0" style="flex-direction: column;">
-                          <div *ngFor="let resource of  project.linkedResources; let i = index" class="mb-2 d-flex px-0">
+                      <div class="d-flex row"
+                        style="width: 380px;">
+                        <div class="d-flex col-12 px-0"
+                          style="flex-direction: column;">
+                          <div *ngFor="let resource of  project.linkedResources; let i = index"
+                            class="mb-2 d-flex px-0">
                             <div class="col-8 d-flex px-0">
                               <app-user-info [userData]="resource" 
                                 [isHideEmail]="true" 
@@ -369,7 +391,8 @@
                               </app-user-info>
                             </div>
                             <div class="col-4 d-flex px-0">
-                              <div class="col-6 align-items-end d-flex" [ngClass]="{'col-12': editingRows[project.billId] && editingRows[project.billId][i]?.contribute}">
+                              <div class="col-6 align-items-end d-flex"
+                                [ngClass]="{'col-12': editingRows[project.billId] && editingRows[project.billId][i]?.contribute}">
                                 <span *ngIf="!editingRows[project.billId] || !editingRows[project.billId][i]?.contribute"
                                   class="badge text-white" 
                                   [style.backgroundColor]="Utils.getColorContribute(resource.contribute)"
@@ -406,20 +429,14 @@
                         </div>
                       </div>
                     </td>
-
-                    <td class="note-edit" style="padding: 3px">
-                        <div class="d-flex">
-                            <span>{{ project.note }}</span>
-                            <i class="fas fa-edit note_edit--icon"
-                               (click)="
-                          UpdateBillNote(
-                            item.userInfor,
-                            project.projectId,
-                            project.note,
-                            project.projectName
-                          )
-                        "></i>
-                        </div>
+                    <td class="note-edit"
+                      style="padding: 3px; min-width: 200px; width: 100%">
+                      <div class="d-flex">
+                          <span>{{ project.note }}</span>
+                          <i class="fas fa-edit note_edit--icon"
+                            (click)="UpdateBillNote(item.userInfor,project.projectId,project.note,project.projectName)">
+                          </i>
+                      </div>
                     </td>
                 </tr>
               </ng-container>

@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Net.Sockets;
 using System.Text;
+using ProjectManagement.Services.ResourceService.Dto;
 using static ProjectManagement.Constants.Enum.ClientEnum;
 using static ProjectManagement.Constants.Enum.ProjectEnum;
 
@@ -39,6 +40,8 @@ namespace ProjectManagement.APIs.ProjectUserBills.Dto
         public string SimplizeEmailAddress => this.EmailAddress.Split('@')[0];
         public UserType UserType { get; set; }
         public UserLevel UserLevel { get; set; }
+        public List<UserSkillDto> UserSkills { get; set; }
+        public string SkillNote { get; set; }
 
         public bool Equals(GetUserBillDto other)
         {

@@ -284,6 +284,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
               this.userBillProcess = true;
               this.showSearchAndFilter = false;
               this.isAddingOrEditingUserBill = true;
+              userBill.initialIsExpose = userBill.isExpose;
             }
           }
         );
@@ -321,7 +322,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
       },
         () => {
           userBill.createMode = true;
-          this.isLoading = false
+          this.isLoading = false;
         }
         )
       }
@@ -452,8 +453,13 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     this.projectUserBillService.GetProjectUserBillById(id).pipe(
       catchError(this.projectUserBillService.handleError)
     ).subscribe(data => {
-        let updated = data.result;
-        this.filteredUserBillList = this.filteredUserBillList.map(item => (item.userId === updated.userId ? updated : item));
+        let updated = data.result as projectUserBillDto;
+        this.filteredUserBillList = this.filteredUserBillList.map(item => {
+          if (item.id === id) {
+            return { ...updated, initialIsExpose: updated.isExpose };
+          }
+          return {...item, initialIsExpose: item.isExpose};
+        });
         this.isLoading = false;
     }, () => { this.isLoading = false; });
   }
@@ -869,6 +875,14 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
 
   onCancelUpdateIsExpose(userBill: projectUserBillDto) {
     userBill.isExpose = userBill.initialIsExpose;
+    this.userBillProcess = false;
+    this.showSearchAndFilter = true;
+  }
+
+  onUpdateIsExpose(userBill: projectUserBillDto) {
+    const hasChanged = userBill.isExpose !== userBill.initialIsExpose;
+    this.userBillProcess = hasChanged;
+    this.showSearchAndFilter = !hasChanged;
   }
 }
 

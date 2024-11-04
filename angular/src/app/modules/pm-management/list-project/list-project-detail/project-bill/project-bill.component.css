@@ -97,7 +97,7 @@
     border: none;
 }
 
-.btn-sm:hover {
+.btn-hover:hover {
     background: #c3c3c3;
     border-radius: 5px;
 }

@@ -39,14 +39,14 @@ export class CreateUpdateCvstatusComponent extends AppComponentBase implements O
 
   SaveAndClose() {
     if (this.data.command == AppConsts.CommandTypes.CREATE) {
-      this.cvStatusService.create(this.cvStatus).pipe(catchError(this.cvStatusService.handleError)).subscribe(() => {
+      this.cvStatusService.create(this.cvStatus).pipe(catchError(this.cvStatusService.handleError)).subscribe((res) => {
         abp.notify.success("Create CV Status Successfully!");
-        this.dialogRef.close(this.cvStatus);
+        this.dialogRef.close(res.result);
       })
     } else {
-      this.cvStatusService.update(this.cvStatus).pipe(catchError(this.cvStatusService.handleError)).subscribe(() => {
+      this.cvStatusService.update(this.cvStatus).pipe(catchError(this.cvStatusService.handleError)).subscribe((res) => {
         abp.notify.success("Update CV Status Successfully!");
-        this.dialogRef.close(this.cvStatus);
+        this.dialogRef.close(res.result);
       })
     }
   }

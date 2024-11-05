@@ -28,7 +28,7 @@ namespace ProjectManagement.APIs.CvStatus
             {
                 throw new UserFriendlyException("Name already exists !");
             }
-            await WorkScope.InsertAsync(ObjectMapper.Map<Entities.CvStatus>(input));
+            input.Id = await WorkScope.InsertAndGetIdAsync(ObjectMapper.Map<Entities.CvStatus>(input));
             return input;
         }
 
@@ -57,7 +57,7 @@ namespace ProjectManagement.APIs.CvStatus
             {
                 throw new UserFriendlyException("Name already exists !");
             }
-            await WorkScope.UpdateAsync(ObjectMapper.Map<CvStatusCreateEditDto, Entities.CvStatus>(input, cvStatus));
+            input.Id = await WorkScope.InsertOrUpdateAndGetIdAsync(ObjectMapper.Map<CvStatusCreateEditDto, Entities.CvStatus>(input, cvStatus));
             return input;
         }
 

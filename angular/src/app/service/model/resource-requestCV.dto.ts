@@ -1,3 +1,5 @@
+import { CVStatusDto } from "./cvstatus.dto";
+
 export class ResourceRequestCVDto{
     id : number;
     userId: number;
@@ -12,11 +14,5 @@ export class ResourceRequestCVDto{
     sendCVDate ?: Date;
     resourceRequestId: number;
     cvStatusId:number;
-    cvStatus: CVStatus;
-}
-
-interface CVStatus {
-    id: number;
-    name: string;
-    color: string;
+    cvStatus: CVStatusDto;
 }

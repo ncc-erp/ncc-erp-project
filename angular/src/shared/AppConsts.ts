@@ -194,7 +194,8 @@ export class AppConsts {
 
     static readonly CommandTypes = {
         CREATE: 'create',
-        UPDATE: 'update'
+        UPDATE: 'update',
+        EDIT: 'edit'
     }
 
 }

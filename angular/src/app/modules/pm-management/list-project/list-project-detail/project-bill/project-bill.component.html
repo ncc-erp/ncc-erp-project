@@ -647,7 +647,7 @@
                                         class="pt-1 d-flex"
                                         style="flex-direction: column;">
                                         <button class="mb-3 submit-btn"
-                                            [disabled]="!bill?.userId || !bill?.billRole || !bill?.startTime || bill?.billRate<0 || !bill?.billRate || !bill?.headCount || bill?.headCount<0 || bill?.headCount>1"
+                                            [disabled]="!bill?.userId || !bill?.billRole || !bill?.startTime || bill?.billRate<0 || !bill?.headCount || bill?.headCount<0 || bill?.headCount>1"
                                             style="background: none; border: none;"
                                             (click)="saveUserBill(bill)">
                                             <i style="color: green; font-size: 30px;"

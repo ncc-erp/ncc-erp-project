@@ -54,6 +54,7 @@ import { of } from 'rxjs';
 import 'moment-timezone';
 import { CvstatusService } from '@app/service/api/cvstatus.service';
 import { CVStatusDto } from '@app/service/model/cvstatus.dto';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
   selector: "app-request-resource-tab",
@@ -256,25 +257,23 @@ export class RequestResourceTabComponent
     this.resourceRequestService.updateStatusResourceRequestCV(res).subscribe(
       result => {
         abp.notify.success("Updated CV Status");
-        if (this.editingRows[requestId]?.[index]) {
-          delete this.editingRows[requestId][index][field];
-        }
-        if (this.originalValues[requestId]?.[index]) {
-          this.originalValues[requestId][index][field] = item.cvStatus;
-        }
-        const cvStatus = this.cVStatusList.find(res => res.id === item.cvStatusId);
-        if(cvStatus){
-          const po = this.listRequest.findIndex(res => res.id === requestId);
-          if (po !== -1) {
-            this.listRequest[po].resCV[index][field]  = cvStatus;
+        this.editingRows = {};
+        this.originalValues = {};
+        const po = this.listRequest.findIndex(res => res.id === requestId);
+        if (po === -1) return;
+        if (result.result.getResourceRequestDto) {
+          this.listRequest[po] = result.result.getResourceRequestDto;
+        } else {
+          const cvStatus = this.cVStatusList.find(res => res.id == item.cvStatusId);
+          if (cvStatus) {
+            this.listRequest[po].resCV[index][field] = cvStatus;
           }
         }
       },
-      error => {
+      () => {
         abp.notify.error("Failed to update CV Status");
       }
     );
-
   }
 
   updateKpiPointCV(index: number, item: ResourceRequestCVDto, field: string, requestId: number) {
@@ -493,12 +492,12 @@ export class RequestResourceTabComponent
   }
 
   public AddCV(request: RequestResourceDto) {
-    this.showModalResourceRequestCV("create", {}, request);
+    this.showModalResourceRequestCV(AppConsts.CommandTypes.CREATE, new ResourceRequestCVDto(), request);
   }
-  public EditCV(item: any, request: RequestResourceDto) {
-    this.showModalResourceRequestCV("edit", item, request);
+  public EditCV(item: ResourceRequestCVDto, request: RequestResourceDto) {
+    this.showModalResourceRequestCV(AppConsts.CommandTypes.EDIT, item, request);
   }
-  async showModalResourceRequestCV(command: string, item: any, request: RequestResourceDto) {
+  async showModalResourceRequestCV(command: string, item: ResourceRequestCVDto, request: RequestResourceDto) {
     let resourceRequestCV = {
       id: item.id ? item.id : null,
       requestResource: request,
@@ -517,7 +516,7 @@ export class RequestResourceTabComponent
         note: item.note,
         code: request.code,
         kpiPoint: item.kpiPoint,
-        inteviewDate: item.inteviewDate,
+        inteviewDate: item.interviewDate,
         sendCVDate: item.sendCVDate,
         listUsers: this.listUsers,
       },
@@ -535,29 +534,45 @@ export class RequestResourceTabComponent
             console.error('Error fetching resource request CV', error);
           }
         );
-        if (request.billUserInfo == null) {
-          const req = {
-            cvName: rs.cvName,
-            resourceRequestId: rs.resourceRequestId,
-            userId: rs.userId
-          }
-          this.resourceRequestService.UpdateBillInfoPlan(req)
-            .pipe(catchError(this.resourceRequestService.handleError))
-            .subscribe({
-              next: (data: { result: { billUserInfo: any; cvName: string; planUserInfo: any } }) => {
-                if(data?.result) {
-                  request.billUserInfo = data.result.billUserInfo;
-                  request.planUserInfo = data.result.planUserInfo;
-                  request.cvName = data.result.cvName;
-                }
-              },
-              error: () => {},
-              complete: () => {}
-            });
+        const getCvStatusTriggerAction = this.cVStatusList.find(cvStatus => cvStatus.id == rs.cvStatusId)?.triggerAction;
+        switch (getCvStatusTriggerAction) {
+          case this.APP_ENUM.CvStatusTriggerAction['Create Bill Account of Request if empty']:
+            if (request.billUserInfo == null) {
+              this.updateBillInfo(request, rs);
+            }
+            break;
+          case this.APP_ENUM.CvStatusTriggerAction['Create/Update Bill Account of Request']:
+            this.updateBillInfo(request, rs);
+            break;
+          case null:
+            break;
         }
       }
     })
   }
+
+  private updateBillInfo(request: RequestResourceDto, rs: any): void {
+    const req = {
+      cvName: rs.cvName,
+      resourceRequestId: rs.resourceRequestId,
+      userId: rs.userId
+    };
+  
+    this.resourceRequestService.UpdateBillInfoPlan(req)
+      .pipe(catchError(this.resourceRequestService.handleError))
+      .subscribe({
+        next: (data: { result: { billUserInfo: any; cvName: string; planUserInfo: any } }) => {
+          if (data?.result) {
+            request.billUserInfo = data.result.billUserInfo;
+            request.planUserInfo = data.result.planUserInfo;
+            request.cvName = data.result.cvName;
+          }
+        },
+        error: () => {},
+        complete: () => {}
+      });
+  }
+  
 
   uploadCVPath(item: ResourceRequestCVDto, request: RequestResourceDto) {
     const dialogRef = this.dialog.open(UploadCVPathResourceRequestCV, {
@@ -1296,7 +1311,7 @@ export class RequestResourceTabComponent
   }
 
   getAllCVStatus() {
-    this.cvStatusService.getAll().subscribe(res => {
+    this.cvStatusService.getAll().pipe(catchError(this.resourceRequestService.handleError)).subscribe(res => {
       this.cVStatusList = res.result;
     });
   }

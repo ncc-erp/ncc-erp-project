@@ -1,9 +1,10 @@
 import { Component, Inject, Injector, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { AppComponentBase } from '@shared/app-component-base';
-import { CVStatusDto } from '@app/service/model/cvstatus.dto';
+import { CvStatusCreateEditDto, CVStatusDto } from '@app/service/model/cvstatus.dto';
 import { CvstatusService } from '@app/service/api/cvstatus.service';
 import { catchError } from 'rxjs/operators';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
   selector: 'app-create-update-cvstatus',
@@ -12,39 +13,41 @@ import { catchError } from 'rxjs/operators';
 })
 export class CreateUpdateCvstatusComponent extends AppComponentBase implements OnInit {
 
-  title:string =""
-  public cvstatus = {} as CVStatusDto
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any,
+  public cvStatus: CVStatusDto = new CVStatusDto();
+  public titleName: string = "";
+  public triggerActionList = Object.keys(this.APP_ENUM.CvStatusTriggerAction);
+  constructor(@Inject(MAT_DIALOG_DATA) public data: CvStatusCreateEditDto,
     public injector: Injector,
     public dialogRef: MatDialogRef<CreateUpdateCvstatusComponent>,
     public cvStatusService: CvstatusService
   ) { super(injector) }
 
   ngOnInit(): void {
-    if(this.data.command == 'update') {
-      this.cvstatus = this.data.item;
-      this.title = this.data.item.name ? this.data.item.name : ''
+    if(this.data.command == AppConsts.CommandTypes.UPDATE) {
+      this.cvStatus = this.data?.cvStatus;
+      this.titleName = this.cvStatus.name ?? "";
     } else {
+      this.cvStatus.triggerAction = null;
       this.setRandomColor();
     }
   }
 
   setRandomColor(): void {
     const randomColor = Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
-    this.cvstatus.color = `#${randomColor}`;
+    this.cvStatus.color = `#${randomColor}`;
   }
 
   SaveAndClose() {
-    if (this.data.command == "create") {
-      this.cvStatusService.create(this.cvstatus).pipe(catchError(this.cvStatusService.handleError)).subscribe((res) => {
+    if (this.data.command == AppConsts.CommandTypes.CREATE) {
+      this.cvStatusService.create(this.cvStatus).pipe(catchError(this.cvStatusService.handleError)).subscribe((res) => {
         abp.notify.success("Create CV Status Successfully!");
-        this.dialogRef.close(this.cvstatus);
-      }, () => { this.isLoading = false })
+        this.dialogRef.close(res.result);
+      })
     } else {
-      this.cvStatusService.update(this.cvstatus).pipe(catchError(this.cvStatusService.handleError)).subscribe((res) => {
+      this.cvStatusService.update(this.cvStatus).pipe(catchError(this.cvStatusService.handleError)).subscribe((res) => {
         abp.notify.success("Update CV Status Successfully!");
-        this.dialogRef.close(this.cvstatus);
-      }, () => { this.isLoading = false })
+        this.dialogRef.close(res.result);
+      })
     }
   }
 }

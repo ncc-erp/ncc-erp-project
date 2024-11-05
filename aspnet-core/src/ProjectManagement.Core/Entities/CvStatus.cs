@@ -9,5 +9,12 @@ namespace ProjectManagement.Entities
     {
         public string Name { get; set; }
         public string Color { get; set; }
+        public CvStatusTriggerAction? TriggerAction { get; set; }
+    }
+
+    public enum CvStatusTriggerAction : byte
+    {
+        CreateBillAccountIfEmpty = 0,    // Create Bill Account of Request if empty
+        CreateOrUpdateBillAccount = 1     // Create/Update Bill Account of Request
     }
 }

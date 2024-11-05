@@ -42,6 +42,7 @@ namespace ProjectManagement.APIs.CvStatus
                     Id = cv.Id,
                     Name = cv.Name,
                     Color = cv.Color,
+                    TriggerAction = cv.TriggerAction
                 });
             return await query.GetGridResult(query, input);
         }
@@ -82,6 +83,7 @@ namespace ProjectManagement.APIs.CvStatus
                     Id = s.Id,
                     Name = s.Name,
                     Color = s.Color,
+                    TriggerAction = s.TriggerAction
                 }).ToListAsync();
 
         }

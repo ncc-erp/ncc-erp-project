@@ -16,5 +16,6 @@ namespace ProjectManagement.APIs.CvStatus.Dto
         public string Name { get; set; }
         [Required]
         public string Color { get; set; }
+        public CvStatusTriggerAction? TriggerAction { get; set; }
     }
 }

@@ -192,4 +192,9 @@ export class AppConsts {
         { value: 0, text: 'Sunday' },
       ];
 
+    static readonly CommandTypes = {
+        CREATE: 'create',
+        UPDATE: 'update'
+    }
+
 }

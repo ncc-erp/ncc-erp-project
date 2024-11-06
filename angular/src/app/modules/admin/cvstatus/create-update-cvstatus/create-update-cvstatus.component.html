@@ -41,13 +41,14 @@
             <abp-validation-summary [control]="color" [controlEl]="colorEl">
             </abp-validation-summary>
         </div>
-        <div class="form-group row required">
+        <div class="form-group row">
+            <label class="col-12 col-form-label border-bottom" for="triggerAction">Trigger Action:</label>
             <mat-radio-group [(ngModel)]="cvStatus.triggerAction"
                 aria-label="Select an option"
                 name="triggerAction"
-                class="d-flex flex-column">
+                class="d-flex flex-column p-2">
                 <mat-radio-button [value]="null">
-                    Default
+                    No Action
                 </mat-radio-button>
                 <ng-container *ngFor="let trigger of triggerActionList">
                     <mat-radio-button [value]="APP_ENUM.CvStatusTriggerAction[trigger]">

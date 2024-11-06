@@ -768,11 +768,11 @@
                    </div>
                   </td>
                   <td class="text-left p-1 px-2"
-                    (mouseenter)="onMouseOverInput(a, 'cvStatus', item.id)"
-                    (mouseleave)="onMouseLeaveInput(a, 'cvStatus', item.id)"
-                    (click)="edit(a, 'cvStatus', c, item.id, item.resCV)">
-                    <ng-container *ngIf="!(editingRows[item.id] && editingRows[item.id][a]?.cvStatus); else editingCVStatus">
-                      <div [ngClass]="{'p-2 border border-secondary rounded cursor-pointer': hoveredRow[item.id] && hoveredRow[item.id][a]?.cvStatus}">
+                    (mouseenter)="onMouseOverInput(a, 'cvStatusId', item.id)"
+                    (mouseleave)="onMouseLeaveInput(a, 'cvStatusId', item.id)"
+                    (click)="edit(a, 'cvStatusId', c, item.id, item.resCV)">
+                    <ng-container *ngIf="!(editingRows[item.id] && editingRows[item.id][a]?.cvStatusId); else editingCVStatus">
+                      <div [ngClass]="{'p-2 border border-secondary rounded cursor-pointer': hoveredRow[item.id] && hoveredRow[item.id][a]?.cvStatusId}">
                         <span class="badge text-white"
                           [style.backgroundColor]="c.cvStatus?.color">
                           {{ c.cvStatus?.name }}
@@ -782,7 +782,7 @@
                     <ng-template #editingCVStatus>
                       <ng-container>
                         <mat-form-field appearance="outline" class="fixed-width-field" floatLabel="never">
-                          <mat-select [(ngModel)]="c.cvStatusId" placeholder="Select Status" (keydown.esc)="cancelEdit(a, 'cvStatus', item)">
+                          <mat-select [(ngModel)]="c.cvStatusId" placeholder="Select Status" (keydown.esc)="cancelEdit(a, 'cvStatusId', item)">
                             <ng-container *ngIf="cVStatusList.length > 0; else noStatusOptions">
                               <ng-container *ngFor="let status of cVStatusList">
                                 <mat-option [value]="status.id">
@@ -795,12 +795,13 @@
                             </ng-template>
                           </mat-select>
                         </mat-form-field>
-                        <div class="d-flex">
-                          <button (click)="updateStatusCV(a, c, 'cvStatus', item.id); $event.stopPropagation()"
+                        <div class="d-flex"
+                          *ngIf="c.cvStatusId != originalValues[item.id][a]?.cvStatusId">
+                          <button (click)="updateStatusCV(a, c, item.id); $event.stopPropagation()"
                             class="text-success button-action">
                             <i class="fa fa-check"></i>
                           </button>
-                          <button (click)="cancelEdit(a, 'cvStatus', item); $event.stopPropagation()"
+                          <button (click)="cancelEdit(a, 'cvStatusId', item); $event.stopPropagation()"
                             class="text-danger button-action">
                             <i class="fa fa-times"></i>
                           </button>
@@ -825,7 +826,8 @@
                       (keydown.enter)="updateKpiPointCV(a, c, 'kpiPoint', item.id)"
                       (keydown.esc)="cancelEdit(a,'kpiPoint',item)"
                     />
-                    <div class="d-flex mt-1">
+                    <div class="d-flex mt-1"
+                      *ngIf="c.kpiPoint != originalValues[item.id][a]?.kpiPoint">
                       <button (click)="updateKpiPointCV(a, c, 'kpiPoint', item.id); $event.stopPropagation()" class="text-success button-action">
                         <i class="fa fa-check"></i>
                       </button>
@@ -875,7 +877,8 @@
                         </owl-date-time>
                       </mat-form-field>
                     </ng-container>
-                    <div class="d-flex">
+                    <div class="d-flex"
+                      *ngIf="c.sendCVDate != originalValues[item.id][a]?.sendCVDate">
                       <button (click)="updateSendCVDate(a, c, 'sendCVDate', item.id); $event.stopPropagation()"
                         class="text-success button-action">
                         <i class="fa fa-check"></i>
@@ -923,7 +926,8 @@
                         <owl-date-time #dt1></owl-date-time>
                       </mat-form-field>
                     </ng-container>
-                    <div class="d-flex">
+                    <div class="d-flex"
+                      *ngIf="c.interviewDate != originalValues[item.id][a]?.interviewDate">
                       <button (click)="updateInterviewTimeCV(a, c,'interviewDate', item.id); $event.stopPropagation()"
                         class="text-success button-action">
                         <i class="fa fa-check"></i>
@@ -951,7 +955,8 @@
                       *ngIf="editingRows[item.id] && editingRows[item.id][a]?.note" [(ngModel)]="c.note"
                       (keydown.esc)="cancelEdit(a,'note',item)">
                     </textarea>
-                    <div class="d-flex">
+                    <div class="d-flex"
+                      *ngIf="c.note != originalValues[item.id][a]?.note">
                       <button (click)="updateNoteCV(a, c, 'note', item.id); $event.stopPropagation()"
                         class="text-success button-action">
                         <i class="fa fa-check"></i>

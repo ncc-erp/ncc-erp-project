@@ -248,25 +248,23 @@ export class RequestResourceTabComponent
     this.editingRows[requestId] = { [index]: { [field]: true } };
   }
 
-  updateStatusCV(index: number, item: ResourceRequestCVDto, field: string, requestId: number) {
-    const res = {
-      resourceRequestCVId: item.id,
-      status: item.status,
-      cvStatusId: item.cvStatusId
-    };
-    this.resourceRequestService.updateStatusResourceRequestCV(res).subscribe(
+  updateStatusCV(index: number, item: ResourceRequestCVDto, requestId: number) {
+    const { id, status, cvStatusId } = item;
+    const req = { resourceRequestCVId: id, status, cvStatusId };
+    this.resourceRequestService.updateStatusResourceRequestCV(req).subscribe(
       result => {
         abp.notify.success("Updated CV Status");
         this.editingRows = {};
         this.originalValues = {};
         const po = this.listRequest.findIndex(res => res.id === requestId);
         if (po === -1) return;
-        if (result.result.getResourceRequestDto) {
-          this.listRequest[po] = result.result.getResourceRequestDto;
+        const resourceRequestResponse = result.result.getResourceRequestDto;
+        if (resourceRequestResponse) {
+          this.listRequest[po] = resourceRequestResponse;
         } else {
           const cvStatus = this.cVStatusList.find(res => res.id == item.cvStatusId);
           if (cvStatus) {
-            this.listRequest[po].resCV[index][field] = cvStatus;
+            this.listRequest[po].resCV[index].cvStatus = cvStatus;
           }
         }
       },

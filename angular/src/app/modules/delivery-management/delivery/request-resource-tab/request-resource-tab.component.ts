@@ -249,13 +249,14 @@ export class RequestResourceTabComponent
   }
 
   updateStatusCV(index: number, item: ResourceRequestCVDto, requestId: number) {
+    this.editingRows = {};
+    this.originalValues = {};
     const { id, status, cvStatusId } = item;
     const req = { resourceRequestCVId: id, status, cvStatusId };
     this.resourceRequestService.updateStatusResourceRequestCV(req).subscribe(
       result => {
         abp.notify.success("Updated CV Status");
-        this.editingRows = {};
-        this.originalValues = {};
+        
         const po = this.listRequest.findIndex(res => res.id === requestId);
         if (po === -1) return;
         const resourceRequestResponse = result.result.getResourceRequestDto;
@@ -274,90 +275,69 @@ export class RequestResourceTabComponent
     );
   }
 
-  updateKpiPointCV(index: number, item: ResourceRequestCVDto, field: string, requestId: number) {
-    const res = {
-      resourceRequestCVId: item.id,
-      kpiPoint: item.kpiPoint,
-    }
-
-    this.resourceRequestService.updateKpiPointResourceRequestCV(res).subscribe(
-      result => {
+  updateKpiPointCV(item: ResourceRequestCVDto) {
+    this.editingRows = {};
+    this.originalValues = {};
+    const { id, kpiPoint } = item;
+    const req = { resourceRequestCVId: id, kpiPoint };
+    this.resourceRequestService.updateKpiPointResourceRequestCV(req).subscribe(
+      () => {
         abp.notify.success("Updated KPI Point");
-        if (this.editingRows[requestId][index]) {
-          delete this.editingRows[requestId][index][field];
-        }
-        if (this.originalValues[requestId][index]) {
-          this.originalValues[requestId][index][field] = res.kpiPoint;
-        }
       },
-      error => {
+      () => {
         abp.notify.error("Failed to update KPI Point ");
       }
     );
   }
 
-  updateSendCVDate(index: number, item: ResourceRequestCVDto, field: string, requestId: number) {
-    const res = {
-      resourceRequestCVId: item.id,
-      sendCVDate: item.sendCVDate ? this.formatDateToYYYYMMddHHmmss(item.sendCVDate) : null,
+  updateSendCVDate(item: ResourceRequestCVDto) {
+    this.editingRows = {};
+    this.originalValues = {};
+    const { id, sendCVDate } = item;
+    const req = {
+      resourceRequestCVId: id,
+      sendCVDate: sendCVDate ? this.formatDateToYYYYMMddHHmmss(sendCVDate) : null,
     }
-
-    this.resourceRequestService.updateSendCVDateResourceRequestCV(res).subscribe(
-      result => {
+    this.resourceRequestService.updateSendCVDateResourceRequestCV(req).subscribe(
+      () => {
         abp.notify.success("Update SendCVDate successfully");
-        if (this.editingRows[requestId][index]) {
-          delete this.editingRows[requestId][index][field];
-        }
-        if (this.originalValues[requestId][index]) {
-          this.originalValues[requestId][index][field] = result.result.sendCVDate;
-        }
       },
-      error => {
+      () => {
         abp.notify.error("Failed to update SendCVDate");
       }
     );   
   }
 
-  updateInterviewTimeCV(index: number, item: ResourceRequestCVDto, field: string, requestId: number) {
-    const res = {
-      resourceRequestCVId: item.id,
-      interviewDate: item.interviewDate ? this.formatDateToYYYYMMddHHmmss(item.interviewDate) : null
+  updateInterviewTimeCV(item: ResourceRequestCVDto) {
+    this.editingRows = {};
+    this.originalValues = {};
+    const { id, interviewDate } = item;
+    const req = {
+      resourceRequestCVId: id,
+      interviewDate: interviewDate ? this.formatDateToYYYYMMddHHmmss(interviewDate) : null
     }
-    this.resourceRequestService.updateInterviewTimeResourceRequestCV(res).subscribe(
-      result => {
+    this.resourceRequestService.updateInterviewTimeResourceRequestCV(req).subscribe(
+      () => {
         abp.notify.success("Update InterviewTime successfully");
-        if (this.editingRows[requestId][index]) {
-          delete this.editingRows[requestId][index][field];
-        }
-        if (this.originalValues[requestId][index]) {
-          this.originalValues[requestId][index][field] = result.result.interviewDate;
-        }
       },
-      error => {
+      () => {
         abp.notify.error("Failed to update InterviewTime");
       }
     );
   }
-  updateNoteCV(index: number, item: ResourceRequestCVDto, field: string, requestId: number) {
-    const res = {
-      resourceRequestCVId: item.id,
-      note: item.note,
-    }
-    this.resourceRequestService.updateNoteResourceRequestCV(res).subscribe(
-      result => {
+  updateNoteCV(item: ResourceRequestCVDto) {
+    this.editingRows = {};
+    this.originalValues = {};
+    const { id, note } = item;
+    const req = { resourceRequestCVId: id, note }
+    this.resourceRequestService.updateNoteResourceRequestCV(req).subscribe(
+      () => {
         abp.notify.success("Update Note ResourceRequest successfully");
-        if (this.editingRows[requestId][index]) {
-          delete this.editingRows[requestId][index][field];
-        }
-        if (this.originalValues[requestId][index]) {
-          this.originalValues[requestId][index][field] = res.note;
-        }
       },
-      error => {
+      () => {
         abp.notify.error("Failed to update Note");
       }
     );
-
   }
 
   cancelEdit(index: number, field: string, request: RequestResourceDto): void {
@@ -1314,17 +1294,14 @@ export class RequestResourceTabComponent
     });
   }
 
-  refreshDate(index: number, item: ResourceRequestCVDto, field: string, requestId: number) {
-    if (this.originalValues[requestId] && this.originalValues[requestId][index]) {
-      this.originalValues[requestId][index][field] = null;
-    }
+  refreshDate(item: ResourceRequestCVDto, field: string) {
     if(field == 'sendCVDate') {
       item.sendCVDate = null;
-      this.updateSendCVDate(index, item, field, requestId);
+      this.updateSendCVDate(item);
     }
     else {
       item.interviewDate = null;
-      this.updateInterviewTimeCV(index, item, field, requestId);
+      this.updateInterviewTimeCV(item);
     }
   }
 

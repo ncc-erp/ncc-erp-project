@@ -108,6 +108,8 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   private numberSkill: number = 3;
   private isViewAllUserSkill: { [userId: number] : boolean } = {};
 
+  private oldUserBill: projectUserBillDto;
+
   Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_View = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_View;
   Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Create = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Create;
   Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Edit = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Edit;
@@ -299,8 +301,8 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
           projectId : userBill.projectId,
           userId: userBill.userId,
           billRole: userBill.billRole,
-          billRate: userBill.billRate,
-          headCount: userBill.headCount,
+          billRate: userBill.billRate || 0,
+          headCount: userBill.headCount || 0,
           startTime: userBill.startTime,
           endTime: userBill.endTime,
           note: userBill.note,
@@ -405,13 +407,15 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
           this.filteredUserBillList.splice(index, 1);
       }
     }   
+    Object.assign(userBill, this.oldUserBill);
+    userBill.isExpose = userBill.initialIsExpose;
+    this.oldUserBill = null;
     userBill.createMode = false;
     this.userBillProcess = false;
     this.isEditUserBill = false;
     this.searchUserBill = "";
     this.showSearchAndFilter = true;
     this.isAddingOrEditingUserBill = false;
-    userBill.isExpose = userBill.initialIsExpose;
   }
   public editUserBill(userBill: projectUserBillDto): void {
     this.userIdOld = userBill.userId
@@ -421,6 +425,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     this.showSearchAndFilter = false;
     this.isAddingOrEditingUserBill = true;
     userBill.isExpose = userBill.initialIsExpose;
+    this.oldUserBill = { ...userBill };
   }
   private getUserBill(id?: number, status?: boolean, userIdNew?: number): void {
     this.isLoading = true;

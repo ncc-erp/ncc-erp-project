@@ -1,6 +1,6 @@
 <form class="form-horizontal" autocomplete="off" #resourceRequestForm="ngForm" novalidate style="width: 100%;">
     <abp-modal-header title="{{
-            data.command == 'create'
+            data?.command == 'create'
             ? 'Create new CV Status'
             : 'Edit CV Status: ' + titleName
         }}"
@@ -18,7 +18,6 @@
                 [(ngModel)]="cvStatus.name"
                 #name="ngModel"
                 #nameEl
-                suffix="%"
             />
             <abp-validation-summary [control]="name" [controlEl]="nameEl">
             </abp-validation-summary>
@@ -33,7 +32,6 @@
                 [(ngModel)]="cvStatus.color"
                 #color="ngModel"
                 #colorEl
-                suffix="%"
             />
             <div class="d-flex align-items-center col-2 justify-content-center">
                 <input class="color-picker" name="color" type="color" [(ngModel)]="cvStatus.color">

@@ -7,6 +7,8 @@ import { SkillService } from '@app/service/api/skill.service';
 import { UserService } from '@app/service/api/user.service';
 import { Subscription } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { AppConsts } from '@shared/AppConsts';
+import { ProjectUserBillService } from '@app/service/api/project-user-bill.service';
 
 @Component({
   selector: 'app-update-user-skill-dialog',
@@ -27,8 +29,12 @@ export class UpdateUserSkillDialogComponent implements OnInit {
   viewStarSkillUser = false;
   public snackBarDuration: number = 2000;
   public ratingArr = [];
-  public searchSkill: string = ""
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any, private userService: UserService,private snackBar: MatSnackBar,
+  public searchSkill: string = "";
+  private typeUpdate: string = AppConsts.UpdateUserSkillType.DEFAULT;
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any,
+    private userService: UserService,
+    private snackBar: MatSnackBar,
+    private projectUserBillService: ProjectUserBillService,
     public dialogRef: MatDialogRef<UpdateUserSkillDialogComponent>,
     private skillService: SkillService) { }
 
@@ -40,7 +46,10 @@ export class UpdateUserSkillDialogComponent implements OnInit {
     this.isNotUpdate = this.data.isNotUpdate
     this.userSkillList = this.data.userSkills.map(skill => skill.skillId)
     this.userSkillListCr = this.data.userSkills.map(skill => skill.skillId)
-    this.getAllSkill()
+    this.getAllSkill();
+    if(this.data.typeUpdate && this.data.typeUpdate !== this.typeUpdate) {
+      this.typeUpdate = this.data.typeUpdate;
+    }
   }
 
   getAllSkill() {
@@ -100,18 +109,30 @@ export class UpdateUserSkillDialogComponent implements OnInit {
   }
 
   saveAndClose() {
-    const userSkills = this.skillRankList.map(skill => { return {skillId:skill.skillId,skillRank:skill.skillRank}})
+    const userSkills = this.skillRankList.map(skill => { return {skillId:skill.skillId,skillRank:skill.skillRank}});
     let requestBody = {
-      userId: this.data.id,
+      id: this.data.id,
       userSkills: userSkills,
       note: this.data.note
     }
-    this.subscription.push(
-      this.userService.updateUserSkills(requestBody).pipe(catchError(this.userService.handleError)).subscribe(rs => {
-        abp.notify.success(`Update skill for user ${this.data.fullName}`)
-        this.dialogRef.close(true)
-      })
-    )
+    switch(this.typeUpdate){
+      case AppConsts.UpdateUserSkillType.DEFAULT:  
+        this.subscription.push(
+          this.userService.updateUserSkills(requestBody).pipe(catchError(this.userService.handleError)).subscribe(() => {
+            abp.notify.success(`Update skill for user ${this.data.fullName}`)
+            this.dialogRef.close(true)
+          })
+        )
+        break;
+      case AppConsts.UpdateUserSkillType.PROJECT:
+        this.subscription.push(
+          this.projectUserBillService.UpdateBillUserSkill(requestBody).pipe(catchError(this.projectUserBillService.handleError)).subscribe(() => {
+            abp.notify.success(`Update skill for user ${this.data.fullName}`)
+            this.dialogRef.close(true)
+          })
+        )
+        break;
+    }
   }
 
   onClick(rating:number,item) {

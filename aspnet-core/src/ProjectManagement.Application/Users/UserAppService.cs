@@ -187,13 +187,13 @@ namespace ProjectManagement.Users
 
         public async Task updateUserSkill(UpdateUserSkillDto input)
         {
-            var user = await _workScope.GetAsync<User>(input.UserId);
+            var user = await _workScope.GetAsync<User>(input.Id);
             if (user == default)
-                throw new UserFriendlyException($"Can not found user with Id = {input.UserId}");
+                throw new UserFriendlyException($"Can not found user with Id = {input.Id}");
             // check exception
             if (input.UserSkills.Any(i => i.SkillRank < SkillRank.None || i.SkillRank > SkillRank.Expert))
                 throw new UserFriendlyException("Skill rank must be from 1 to 5!");
-            var userSkills = await _workScope.GetAll<UserSkill>().Where(x => x.UserId == input.UserId).ToListAsync();
+            var userSkills = await _workScope.GetAll<UserSkill>().Where(x => x.UserId == input.Id).ToListAsync();
             var currenUserSkillId = userSkills.Select(x => x.SkillId);
 
             var deleteSkillId = currenUserSkillId.Except(input.UserSkills.Select(u => u.SkillId));
@@ -207,14 +207,14 @@ namespace ProjectManagement.Users
             }
 
             var userSkillInserts = listSkillInsert.Select(x => new UserSkill
-            { UserId = input.UserId, SkillId = x.SkillId, SkillRank = x.SkillRank, Note = input.Note });
+            { UserId = input.Id, SkillId = x.SkillId, SkillRank = x.SkillRank, Note = input.Note });
             await _workScope.InsertRangeAsync(userSkillInserts);
 
             var userSkillUpdates = new List<UserSkill>();
             foreach (var item in listSkillUpdate)
             {
                 var userSkill = _workScope.GetAll<UserSkill>()
-                .Where(u => u.UserId == input.UserId && u.SkillId == item.SkillId).FirstOrDefault();
+                .Where(u => u.UserId == input.Id && u.SkillId == item.SkillId).FirstOrDefault();
                 userSkill.SkillRank = item.SkillRank;
                 userSkill.Note = input.Note;
                 userSkillUpdates.Add(userSkill);

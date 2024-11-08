@@ -36,5 +36,6 @@ namespace ProjectManagement.Entities
         public string LinkCV { get; set; }
 
         public virtual ICollection<LinkedResource> LinkedResources { get; set; }
+        public virtual ICollection<BillUserSkill> BillUserSkills { get; set; }
     }
 }

@@ -18,12 +18,9 @@ export interface IUserInfor {
     simplizeEmailAddress: string;
     userType: number;
     userLevel: number;
-    userSkills: IUserSkill[];
-    skillNote: string;
 }
 
 export interface IUserSkill {
-    userId: number;
     skillId: number;
     skillName: string;
     skillRank: number;
@@ -51,6 +48,8 @@ export interface IProject {
     clientName: string;
     rateDisplay: string;
     linkedResources: ILinkedResource[];
+    userSkills: IUserSkill[];
+    skillNote: string;
 }
 
 export interface ILinkedResource {

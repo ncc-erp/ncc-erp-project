@@ -5,7 +5,7 @@ using ProjectManagement.Utils;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ProjectManagement.Services.ResourceService.Dto;
+using ProjectManagement.Constants.Enum;
 using static ProjectManagement.Constants.Enum.ProjectEnum;
 
 namespace ProjectManagement.Services.ProjectUserBill.Dto
@@ -52,7 +52,7 @@ namespace ProjectManagement.Services.ProjectUserBill.Dto
         public float totalHeadCount { get; set; }
         public GridParam GridParam { get; set; }
         public string LinkCV { get; set; }
-        public List<UserSkillDto> UserSkills { get; set; }
+        public List<BillUserSkillDto> UserSkills { get; set; }
         public string SkillNote { get; set; }
     }
 }

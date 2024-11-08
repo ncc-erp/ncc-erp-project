@@ -250,16 +250,7 @@ namespace ProjectManagement.APIs.ProjectUserBills
                 PositionColor = x.User.Position.Color,
                 EmailAddress = x.User.EmailAddress,
                 UserType = x.User.UserType,
-                UserLevel = x.User.UserLevel,
-                UserSkills = x.User.UserSkills.Select(s => new UserSkillDto()
-                {
-                    UserId = s.UserId,
-                    SkillId = s.SkillId,
-                    SkillName = s.Skill.Name,
-                    SkillRank = s.SkillRank,
-                    SkillNote = s.Note
-                }).ToList(),
-                SkillNote = x.User.UserSkills.Select(s => s.Note).FirstOrDefault() ?? ""
+                UserLevel = x.User.UserLevel
             },
             Project = new GetProjectBillDto
             {
@@ -296,7 +287,15 @@ namespace ProjectManagement.APIs.ProjectUserBills
                     IsActive = lr.User.IsActive,
                     FullName = lr.User.FullName,
                     Contribute = lr.Contribute
-                })
+                }),
+                UserSkills = x.BillUserSkills.Where(us => us.BillId == x.Id).Select(s => new BillUserSkillDto()
+                {
+                    SkillId = s.SkillId,
+                    SkillName = s.Skill.Name,
+                    SkillRank = s.SkillRank,
+                    SkillNote = s.Note
+                }).ToList(),
+                SkillNote = x.BillUserSkills.Select(s => s.Note).FirstOrDefault() ?? ""
             },
             IsCharge = x.isActive
         })
@@ -786,6 +785,45 @@ namespace ProjectManagement.APIs.ProjectUserBills
                 .FirstOrDefaultAsync(x => x.UserId == input.UserId && x.ProjectId == input.ProjectId);
             item.Note = input.Note;
             await WorkScope.UpdateAsync(item);
+        }
+        
+       [HttpPost]
+       [AbpAuthorize]
+        public async Task UpdateBillUserSkill(UpdateUserBillSkillDto input)
+        {
+            var user = await WorkScope.GetAsync<ProjectUserBill>(input.Id);
+            if (user == default)
+                throw new UserFriendlyException($"Can not found project user bill with Id = {input.Id}");
+            // check exception
+            if (input.UserSkills.Any(i => i.SkillRank < SkillRank.None || i.SkillRank > SkillRank.Expert))
+                throw new UserFriendlyException("Skill rank must be from 1 to 5!");
+            var userSkills = await WorkScope.GetAll<BillUserSkill>().Where(x => x.BillId == input.Id).ToListAsync();
+            var currenUserSkillId = userSkills.Select(x => x.SkillId);
+
+            var deleteSkillId = currenUserSkillId.Except(input.UserSkills.Select(u => u.SkillId));
+            var listSkillDelete = userSkills.Where(x => deleteSkillId.Contains(x.SkillId));
+            var listSkillInsert = input.UserSkills.Where(x => !currenUserSkillId.Contains(x.SkillId));
+            var listSkillUpdate = input.UserSkills.Where(x => !listSkillInsert.Contains(x));
+
+            foreach (var item in listSkillDelete)
+            {
+                await WorkScope.DeleteAsync<BillUserSkill>(item);
+            }
+
+            var userSkillInserts = listSkillInsert.Select(x => new BillUserSkill
+            { BillId = input.Id, SkillId = x.SkillId, SkillRank = x.SkillRank, Note = input.Note });
+            await WorkScope.InsertRangeAsync(userSkillInserts);
+
+            var userSkillUpdates = new List<BillUserSkill>();
+            foreach (var item in listSkillUpdate)
+            {
+                var userSkill = WorkScope
+                    .GetAll<BillUserSkill>().FirstOrDefault(u => u.BillId == input.Id && u.SkillId == item.SkillId);
+                userSkill.SkillRank = item.SkillRank;
+                userSkill.Note = input.Note;
+                userSkillUpdates.Add(userSkill);
+            }
+            await WorkScope.UpdateRangeAsync(userSkillUpdates);
         }
     }
 }

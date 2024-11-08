@@ -15,7 +15,8 @@ import { ProjectUserBillService } from '@app/service/api/project-user-bill.servi
 import { PERMISSIONS_CONSTANT } from '@app/constant/permission.constant';
 import { projectUserBillDto } from '@app/service/model/project.dto';
 import { UpdateUserSkillDialogComponent } from '@app/users/update-user-skill-dialog/update-user-skill-dialog.component';
-import { IBillInfo, IUserInfor } from '@app/service/model/bill-info.interface';
+import { IBillInfo, IProject } from '@app/service/model/bill-info.interface';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
   selector: "app-bill-account-plan",
@@ -49,7 +50,7 @@ export class BillAccountPlanComponent
     { name: "Bill Account", width: "250px", maxWidth: "300px"},
     { name: "Client", width: "100px", maxWidth: "150px"},
     { name: "Projects", width: "100px", maxWidth: "150px"},
-    { name: "Skills", width: "300px", maxWidth: "300px"},
+    { name: "Skills"},
     { name: "Is Charge", width: "70px", padding : "12px 10px", whiteSpace: "nowrap" },
     { name: "Is Expose", width: "70px", padding : "12px 10px", whiteSpace: "nowrap" },
     { name: "Head Count", width: "100px" },
@@ -81,7 +82,7 @@ export class BillAccountPlanComponent
   Resource_TabAllResource_UpdateSkill = PERMISSIONS_CONSTANT.Resource_TabAllResource_UpdateSkill;
 
   private numberSkill: number = 3;
-  private isViewAllUserSkill: { [userId: number] : boolean } = {};
+  private isViewAllUserSkill: { [billId: number] : boolean } = {};
 
 
   constructor(
@@ -373,17 +374,17 @@ export class BillAccountPlanComponent
     this.isViewAllUserSkill[billId] = !this.isViewAllUserSkill[billId];
   }
 
-  updateUserSkill(userInfo: IUserInfor, note: string) {
+  updateUserSkill(project: IProject, fullName: string) {
     let ref = this.dialog.open(UpdateUserSkillDialogComponent, {
       width: "700px",
       data: {
-        userSkills: userInfo.userSkills,
-        id: userInfo.userId,
-        fullName: userInfo.fullName,
-        note: note,
+        userSkills: project.userSkills,
+        id: project.billId,
+        fullName: project.accountName || fullName,
+        note: project.skillNote,
         viewStarSkillUser: this.permission.isGranted(this.Resource_TabAllResource_ViewUserStarSkill),
-      }
-
+        typeUpdate: AppConsts.UpdateUserSkillType.PROJECT
+      },
     });
     ref.afterClosed().subscribe(rs => {
       if (rs) {

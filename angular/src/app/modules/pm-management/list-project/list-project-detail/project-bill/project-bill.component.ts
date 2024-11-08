@@ -31,6 +31,7 @@ import * as _ from 'lodash';
 import { ResourceManagerService } from '@app/service/api/resource-manager.service';
 import * as FileSaver from 'file-saver';
 import { UpdateUserSkillDialogComponent } from '@app/users/update-user-skill-dialog/update-user-skill-dialog.component';
+import { AppConsts } from '@shared/AppConsts';
 
 
 @Component({
@@ -859,10 +860,11 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
       width: "700px",
       data: {
         userSkills: projectUserBill.userSkills,
-        id: projectUserBill.userId,
+        id: projectUserBill.id,
         fullName: projectUserBill.billAccountName,
         note: note,
         viewStarSkillUser: this.permission.isGranted(this.Resource_TabAllResource_ViewUserStarSkill),
+        typeUpdate: AppConsts.UpdateUserSkillType.PROJECT
       }
 
     });

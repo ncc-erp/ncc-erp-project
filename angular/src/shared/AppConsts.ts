@@ -198,4 +198,9 @@ export class AppConsts {
         EDIT: 'edit'
     }
 
+    static readonly UpdateUserSkillType = {
+        DEFAULT: 'default',
+        PROJECT: 'project'
+    }
+
 }

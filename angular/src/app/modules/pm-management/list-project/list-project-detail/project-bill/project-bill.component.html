@@ -590,7 +590,7 @@
                                                         <i class="fas fa-ellipsis-h"></i>
                                                     </button>
                                                 </ng-container>
-                                                <ng-container *ngIf="isViewAllUserSkill[bill.id] && skill === (bill.userSkills[bill.userSkills.length - 1])">
+                                                <ng-container *ngIf="isViewAllUserSkill[bill.id] && bill.userSkills.length > numberSkill && skill === (bill.userSkills[bill.userSkills.length - 1])">
                                                     <button class="btn btn-sm btn-hover"
                                                         (click)="expandCollapseUserSkill(bill.id);">
                                                         <i class="fas fa-chevron-up"></i>

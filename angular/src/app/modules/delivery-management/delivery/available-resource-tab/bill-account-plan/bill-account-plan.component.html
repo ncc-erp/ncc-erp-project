@@ -317,7 +317,7 @@
                               </button>
                             </ng-container>
                             <ng-container
-                              *ngIf="isViewAllUserSkill[project.billId] && skill === (project.userSkills[project.userSkills.length - 1])">
+                              *ngIf="isViewAllUserSkill[project.billId] && project.userSkills.length > numberSkill && skill === (project.userSkills[project.userSkills.length - 1])">
                               <button class="btn btn-sm btn-hover" (click)="expandCollapseUserSkill(project.billId);">
                                 <i class="fas fa-chevron-up"></i>
                               </button>

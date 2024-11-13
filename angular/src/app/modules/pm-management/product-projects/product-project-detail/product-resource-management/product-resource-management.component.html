@@ -91,10 +91,16 @@
                                                     <p class="m-0" *ngFor="let item of user.userSkills">
                                                         - {{item.skillName}}
                                                         <strong *ngIf="item.skillRank && permission.isGranted(Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserStarSkill)">- {{item.skillRank}} <i class="fa fa-star"
-                                                            [ngClass] = '{crimson: item.skillRank == 5, grey: item.skillRank == 1 || item.skillRank == 2,
-                                                            yellow: item.skillRank == 3, orange: item.skillRank == 4}' style="
-                                                            font-size: 16px;"></i> </strong>
+                                                            [ngClass]="{
+                                                                grey: item.skillRank >= 1 && item.skillRank <= 2,
+                                                                yellow: item.skillRank > 2 && item.skillRank <= 3,
+                                                                orange: item.skillRank > 3 && item.skillRank <= 4,
+                                                                crimson: item.skillRank > 4 && item.skillRank <= 5
+                                                              }"
+                                                            style="font-size: 16px;"></i>
+                                                        </strong>
                                                     </p>
+                                                            
                                                     <div style="white-space: pre-line" *ngIf="IsSkillNoteExist(user)"><strong>Note:</strong> {{GetUserSkillNote(user)}}</div>
                                                 </div>
                                                 <div style="width: 10%; text-align: right;"
@@ -343,9 +349,14 @@
                                                     <p class="m-0" *ngFor="let item of user.userSkills">
                                                         - {{item.skillName}}
                                                         <strong *ngIf="item.skillRank && permission.isGranted(Projects_ProductProjects_ProjectDetail_TabResourceManagement_PlannedResource_ViewUserStarSkill)">- {{item.skillRank}} <i class="fa fa-star"
-                                                            [ngClass] = '{crimson: item.skillRank == 5, grey: item.skillRank == 1 || item.skillRank == 2,
-                                                            yellow: item.skillRank == 3, orange: item.skillRank == 4}' style="
-                                                            font-size: 20px;"></i> </strong>
+                                                            [ngClass]="{
+                                                                grey: item.skillRank >= 1 && item.skillRank <= 2,
+                                                                yellow: item.skillRank > 2 && item.skillRank <= 3,
+                                                                orange: item.skillRank > 3 && item.skillRank <= 4,
+                                                                crimson: item.skillRank > 4 && item.skillRank <= 5
+                                                            }"
+                                                            style="font-size: 16px;"></i>
+                                                        </strong>
                                                     </p>
                                                     <div style="white-space: pre-line" *ngIf="IsSkillNoteExist(user)"><strong>Note:</strong> {{GetUserSkillNote(user)}}</div>
                                                 </div>

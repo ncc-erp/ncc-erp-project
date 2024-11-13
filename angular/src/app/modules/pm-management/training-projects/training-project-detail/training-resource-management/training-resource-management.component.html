@@ -202,11 +202,10 @@
                               <i
                                 class="fa fa-star"
                                 [ngClass]="{
-                                  crimson: item.skillRank == 5,
-                                  grey:
-                                    item.skillRank == 1 || item.skillRank == 2,
-                                  yellow: item.skillRank == 3,
-                                  orange: item.skillRank == 4
+                                  grey: item.skillRank >= 1 && item.skillRank <= 2,
+                                  yellow: item.skillRank > 2 && item.skillRank <= 3,
+                                  orange: item.skillRank > 3 && item.skillRank <= 4,
+                                  crimson: item.skillRank > 4 && item.skillRank <= 5
                                 }"
                                 style="font-size: 16px"
                               ></i>
@@ -622,13 +621,12 @@
                               <i
                                 class="fa fa-star"
                                 [ngClass]="{
-                                  crimson: item.skillRank == 5,
-                                  grey:
-                                    item.skillRank == 1 || item.skillRank == 2,
-                                  yellow: item.skillRank == 3,
-                                  orange: item.skillRank == 4
+                                  grey: item.skillRank >= 1 && item.skillRank <= 2,
+                                  yellow: item.skillRank > 2 && item.skillRank <= 3,
+                                  orange: item.skillRank > 3 && item.skillRank <= 4,
+                                  crimson: item.skillRank > 4 && item.skillRank <= 5
                                 }"
-                                style="font-size: 20px"
+                                style="font-size: 16px"
                               ></i>
                             </strong>
                           </p>

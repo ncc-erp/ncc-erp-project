@@ -295,10 +295,11 @@
                               <strong *ngIf="skill.skillRank && permission.isGranted(Resource_TabAllResource_ViewUserStarSkill)">
                                 - {{skill.skillRank}}
                                 <i class="fa fa-star"
-                                  [ngStyle]="{color: skill.skillRank === 5 ? 'crimson' :
-                                    skill.skillRank === 4 ? 'orange' :
-                                    skill.skillRank === 3 ? 'yellow' :
-                                    skill.skillRank === 1 || skill.skillRank === 2 ? 'grey' : 'inherit'
+                                  [ngStyle]="{
+                                    color: skill.skillRank >= 1 && skill.skillRank <= 2 ? 'grey' :
+                                      skill.skillRank <= 3 ? 'yellow' :
+                                      skill.skillRank <= 4 ? 'orange' :
+                                      skill.skillRank <= 5 ? 'crimson' : 'inherit'
                                   }"
                                   style="font-size: 16px;">
                                 </i>

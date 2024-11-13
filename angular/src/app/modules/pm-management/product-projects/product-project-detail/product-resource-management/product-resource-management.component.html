@@ -93,7 +93,7 @@
                                                         <strong *ngIf="item.skillRank && permission.isGranted(Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserStarSkill)">- {{item.skillRank}} <i class="fa fa-star"
                                                             [ngClass] = '{crimson: item.skillRank == 5, grey: item.skillRank == 1 || item.skillRank == 2,
                                                             yellow: item.skillRank == 3, orange: item.skillRank == 4}' style="
-                                                            font-size: 13px;"></i> </strong>
+                                                            font-size: 16px;"></i> </strong>
                                                     </p>
                                                     <div style="white-space: pre-line" *ngIf="IsSkillNoteExist(user)"><strong>Note:</strong> {{GetUserSkillNote(user)}}</div>
                                                 </div>
@@ -345,7 +345,7 @@
                                                         <strong *ngIf="item.skillRank && permission.isGranted(Projects_ProductProjects_ProjectDetail_TabResourceManagement_PlannedResource_ViewUserStarSkill)">- {{item.skillRank}} <i class="fa fa-star"
                                                             [ngClass] = '{crimson: item.skillRank == 5, grey: item.skillRank == 1 || item.skillRank == 2,
                                                             yellow: item.skillRank == 3, orange: item.skillRank == 4}' style="
-                                                            font-size: 13px;"></i> </strong>
+                                                            font-size: 20px;"></i> </strong>
                                                     </p>
                                                     <div style="white-space: pre-line" *ngIf="IsSkillNoteExist(user)"><strong>Note:</strong> {{GetUserSkillNote(user)}}</div>
                                                 </div>

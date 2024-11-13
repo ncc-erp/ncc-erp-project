@@ -795,7 +795,7 @@ namespace ProjectManagement.APIs.ProjectUserBills
             if (user == default)
                 throw new UserFriendlyException($"Can not found project user bill with Id = {input.Id}");
             // check exception
-            if (input.UserSkills.Any(i => i.SkillRank < SkillRank.None || i.SkillRank > SkillRank.Expert))
+            if (input.UserSkills.Any(i => i.SkillRank < 0 || i.SkillRank > 5))
                 throw new UserFriendlyException("Skill rank must be from 1 to 5!");
             var userSkills = await WorkScope.GetAll<BillUserSkill>().Where(x => x.BillId == input.Id).ToListAsync();
             var currenUserSkillId = userSkills.Select(x => x.SkillId);

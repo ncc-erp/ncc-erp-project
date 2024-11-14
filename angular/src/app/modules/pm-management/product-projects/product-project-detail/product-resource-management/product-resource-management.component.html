@@ -92,7 +92,7 @@
                                                         - {{item.skillName}}
                                                         <strong *ngIf="item.skillRank && permission.isGranted(Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserStarSkill)">- {{item.skillRank}} <i class="fa fa-star"
                                                             [ngClass]="{
-                                                                grey: item.skillRank >= 1 && item.skillRank <= 2,
+                                                                grey: item.skillRank >= 0 && item.skillRank <= 2,
                                                                 yellow: item.skillRank > 2 && item.skillRank <= 3,
                                                                 orange: item.skillRank > 3 && item.skillRank <= 4,
                                                                 crimson: item.skillRank > 4 && item.skillRank <= 5
@@ -350,7 +350,7 @@
                                                         - {{item.skillName}}
                                                         <strong *ngIf="item.skillRank && permission.isGranted(Projects_ProductProjects_ProjectDetail_TabResourceManagement_PlannedResource_ViewUserStarSkill)">- {{item.skillRank}} <i class="fa fa-star"
                                                             [ngClass]="{
-                                                                grey: item.skillRank >= 1 && item.skillRank <= 2,
+                                                                grey: item.skillRank >= 0 && item.skillRank <= 2,
                                                                 yellow: item.skillRank > 2 && item.skillRank <= 3,
                                                                 orange: item.skillRank > 3 && item.skillRank <= 4,
                                                                 crimson: item.skillRank > 4 && item.skillRank <= 5

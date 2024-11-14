@@ -226,7 +226,7 @@
                                                 - {{skill.skillName}}
                                                 <strong *ngIf="skill.skillRank && permission.isGranted(Resource_TabVendor_ViewUserStarSkill)">- {{skill.skillRank}} <i class="fa fa-star"
                                                     [ngClass]="{
-                                                        grey: skill.skillRank >= 1 && skill.skillRank <= 2,
+                                                        grey: skill.skillRank >= 0 && skill.skillRank <= 2,
                                                         yellow: skill.skillRank > 2 && skill.skillRank <= 3,
                                                         orange: skill.skillRank > 3 && skill.skillRank <= 4,
                                                         crimson: skill.skillRank > 4 && skill.skillRank <= 5

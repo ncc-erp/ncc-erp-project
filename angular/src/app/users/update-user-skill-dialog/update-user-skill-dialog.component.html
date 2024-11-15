@@ -42,14 +42,23 @@
         </div>
     </div > 
     <div *ngIf="!isNotUpdate && viewStarSkillUser" style="width: 100%; margin-top: 15px; height: 350px; overflow-y: auto; overflow-x: hidden" class="skill-rank">
-            <div *ngFor="let item of skillRankList " class="row align-items-center">
+            <div *ngFor="let item of skillRankList; index as i" class="row align-items-center my-3">
                 <span class="col-md-2">{{item.name}}</span>
                 <div class="col-md-10">
-                    <button mat-icon-button [color]="color" *ngFor="let ratingId of ratingArr; index as i" (click)="onClick(i+1, item)">
-                        <i style="font-size: 16px; color: #ffd740;" [class]="showIcon(i, item)"></i>
-                    </button>
-                </div>
-               
+                    <fieldset class="rating">
+                        <ng-container *ngFor="let rating of ratingArr">
+                            <input type="radio"
+                                [id]="'star' + (rating.toString().replace('.', '_')) + '_' + i"
+                                [name]="'rating_' + i"
+                                [value]="rating"
+                                (change)="onChangeRating(rating, item)"
+                                [checked]="item.skillRank === rating"/>
+                            <label [for]="'star' + (rating.toString().replace('.', '_')) + '_' + i"
+                                [title]="rating + ' stars'"
+                                [class]="rating % 1 === 0 ? 'full' : 'half'">
+                            </label>
+                        </ng-container>
+                    </fieldset>
             </div>
     </div>
     <div *ngIf="isNotUpdate && viewStarSkillUser" style="width: 100%; margin-top: 15px; height: 350px; overflow-y: auto; overflow-x: hidden" class="skill-rank">

@@ -16,3 +16,52 @@
         padding: 0 !important;
     }
 }
+
+/* ========================
+   Rating star
+   ======================== */
+.rating {
+    border: none;
+    float:left;
+}
+
+.rating input {
+    display: none;
+}
+
+.rating > label::before {
+    content: "\f005";
+    display: inline-block;
+    font-family: 'Font Awesome 5 Free';
+    font-size: 1.5em;
+    margin-right: .5em;
+    clip-path:inset(0 0 0 50%);
+}
+
+.rating > .half::before {
+    clip-path:inset(0 50% 0 0);
+    position: absolute;
+}
+
+.rating > label {
+    text-align: center;
+    cursor: pointer;
+    color: #ccc;
+    float: right;
+}
+
+.rating > input:checked ~ label,
+.rating:not(:checked) > label:hover,
+.rating:not(:checked) > label:hover ~ label {
+    color: #FFD700;
+}
+
+.rating > input:checked + label:hover,
+.rating > input:checked ~ label:hover,
+.rating > label:hover ~ input:checked ~ label,
+.rating > input:checked ~ label:hover ~ label {
+    color:#FFED85;
+}
+/* ========================
+   End rating star
+   ======================== */

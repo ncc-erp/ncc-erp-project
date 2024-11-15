@@ -28,7 +28,7 @@ export class UpdateUserSkillDialogComponent implements OnInit {
   starCount:number = 5;
   viewStarSkillUser = false;
   public snackBarDuration: number = 2000;
-  public ratingArr = [];
+  public ratingArr = [5, 4.5, 4, 3.5, 3, 2.5, 2, 1.5, 1, 0.5];
   public searchSkill: string = "";
   private typeUpdate: string = AppConsts.UpdateUserSkillType.DEFAULT;
   constructor(@Inject(MAT_DIALOG_DATA) public data: any,
@@ -39,9 +39,6 @@ export class UpdateUserSkillDialogComponent implements OnInit {
     private skillService: SkillService) { }
 
   ngOnInit(): void {
-    for (let index = 0; index < this.starCount; index++) {
-      this.ratingArr.push(index);
-    }
     this.viewStarSkillUser = this.data.viewStarSkillUser
     this.isNotUpdate = this.data.isNotUpdate
     this.userSkillList = this.data.userSkills.map(skill => skill.skillId)
@@ -135,20 +132,12 @@ export class UpdateUserSkillDialogComponent implements OnInit {
     }
   }
 
-  onClick(rating:number,item) {
+  onChangeRating(rating:number, item: any) {
     this.snackBar.open('You rated ' + rating + ' / ' + this.starCount, '', {
       duration: this.snackBarDuration
     });
     item.skillRank=rating
     return false;
-  }
-
-  showIcon(index:number,item) {
-    if (item.skillRank>= index + 1) {
-      return 'fa fa-star';
-    } else {
-      return 'far fa-star';
-    }
   }
 
   selectAll(){

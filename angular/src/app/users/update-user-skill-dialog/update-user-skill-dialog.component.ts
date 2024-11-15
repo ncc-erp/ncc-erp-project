@@ -28,7 +28,7 @@ export class UpdateUserSkillDialogComponent implements OnInit {
   starCount:number = 5;
   viewStarSkillUser = false;
   public snackBarDuration: number = 2000;
-  public ratingArr = [5, 4.5, 4, 3.5, 3, 2.5, 2, 1.5, 1, 0.5];
+  public ratingArr = [5, 4.5, 4, 3.5, 3, 2.5, 2, 1.5, 1, 0.5, 0];
   public searchSkill: string = "";
   private typeUpdate: string = AppConsts.UpdateUserSkillType.DEFAULT;
   constructor(@Inject(MAT_DIALOG_DATA) public data: any,

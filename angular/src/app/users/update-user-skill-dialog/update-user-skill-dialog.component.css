@@ -38,6 +38,11 @@
     clip-path:inset(0 0 0 50%);
 }
 
+.rating > label:last-child::before {
+    font-weight: 400;
+    clip-path:inset(0 0 0 0);
+}
+
 .rating > .half::before {
     clip-path:inset(0 50% 0 0);
     position: absolute;

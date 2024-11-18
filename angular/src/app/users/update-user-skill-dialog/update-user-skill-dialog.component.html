@@ -51,11 +51,14 @@
                                 [id]="'star' + (rating.toString().replace('.', '_')) + '_' + i"
                                 [name]="'rating_' + i"
                                 [value]="rating"
-                                (change)="onChangeRating(rating, item)"
-                                [checked]="item.skillRank === rating"/>
+                                (click)="onChangeRating(rating, item)"
+                                [(ngModel)]="item.skillRank"/>
                             <label [for]="'star' + (rating.toString().replace('.', '_')) + '_' + i"
                                 [title]="rating + ' stars'"
-                                [class]="rating % 1 === 0 ? 'full' : 'half'">
+                                [ngClass]="{
+                                'half': rating % 1 !== 0,
+                                'reset-rating': item.skillRank === 0
+                                }">
                             </label>
                         </ng-container>
                     </fieldset>

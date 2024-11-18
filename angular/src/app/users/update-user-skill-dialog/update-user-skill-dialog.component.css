@@ -38,11 +38,6 @@
     clip-path:inset(0 0 0 50%);
 }
 
-.rating > label:last-child::before {
-    font-weight: 400;
-    clip-path:inset(0 0 0 0);
-}
-
 .rating > .half::before {
     clip-path:inset(0 50% 0 0);
     position: absolute;
@@ -55,17 +50,21 @@
     float: right;
 }
 
+.rating > .reset-rating {
+    color: #ccc !important;
+}
+
 .rating > input:checked ~ label,
 .rating:not(:checked) > label:hover,
 .rating:not(:checked) > label:hover ~ label {
-    color: #FFD700;
+    color: #FFD700 !important;
 }
 
 .rating > input:checked + label:hover,
 .rating > input:checked ~ label:hover,
 .rating > label:hover ~ input:checked ~ label,
 .rating > input:checked ~ label:hover ~ label {
-    color:#FFED85;
+    color:#FFED85 !important;
 }
 /* ========================
    End rating star

@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Net.Sockets;
 using System.Text;
+using ProjectManagement.Services.ResourceService.Dto;
 using static ProjectManagement.Constants.Enum.ClientEnum;
 using static ProjectManagement.Constants.Enum.ProjectEnum;
 
@@ -39,7 +40,6 @@ namespace ProjectManagement.APIs.ProjectUserBills.Dto
         public string SimplizeEmailAddress => this.EmailAddress.Split('@')[0];
         public UserType UserType { get; set; }
         public UserLevel UserLevel { get; set; }
-
         public bool Equals(GetUserBillDto other)
         {
             if (other == null) return false;
@@ -97,7 +97,8 @@ namespace ProjectManagement.APIs.ProjectUserBills.Dto
         public string ClientName { get; set; }
         public string RateDisplay => $"{CommonUtil.FormatMoney(this.BillRate)} {this.CurrencyCode}/{CommonUtil.ChargeTypeShortName(this.ChargeType)}";
         public IEnumerable<GetUserInfo> LinkedResources { get; set; }
-
+        public List<BillUserSkillDto> UserSkills { get; set; }
+        public string SkillNote { get; set; }
     }
 
     public class InputGetBillInfoDto : GridParam

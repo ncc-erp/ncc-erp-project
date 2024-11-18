@@ -187,29 +187,40 @@ namespace ProjectManagement.APIs.ResourceRequests
         [HttpPost]
         public async Task<UpdateStatusResultDto> UpdateStatusResourceRequestCV(UpdateResouceRequestCVStatusDto input)
         {
-            var resourceRequestCV = await WorkScope.GetAsync<ResourceRequestCV>(input.ResourceRequestCVId);
-            resourceRequestCV.Status = input.Status;
-            resourceRequestCV.CvStatusId = input.CvStatusId;
+            var resourceRequestCv = await WorkScope.GetAsync<ResourceRequestCV>(input.ResourceRequestCVId);
+            resourceRequestCv.Status = input.Status;
+            resourceRequestCv.CvStatusId = input.CvStatusId;
 
-            var resourceRequest = await WorkScope.GetAsync<ResourceRequest>(resourceRequestCV.ResourceRequestId);
-            var getCvStatusId = await WorkScope.GetAll<Entities.CvStatus>().Where(s => s.Name == "Pass").Select(s => s.Id).FirstOrDefaultAsync();
+            var resourceRequest = await WorkScope.GetAsync<ResourceRequest>(resourceRequestCv.ResourceRequestId);
+            var getCvStatusTriggerAction =  await WorkScope.GetAll<Entities.CvStatus>().Where(cv => cv.Id == input.CvStatusId).Select(cv => cv.TriggerAction).SingleAsync();
             var result = new UpdateStatusResultDto();
-            if (input.CvStatusId == getCvStatusId && !resourceRequest.BillAccountId.HasValue)
+            switch (getCvStatusTriggerAction)
             {
-                var newBillAcount = new UpdateResourceRequestPlanForBillInfoDto();
-                newBillAcount.StartTime = resourceRequestCV.InterviewDate;
-                newBillAcount.ResourceRequestId = resourceRequestCV.ResourceRequestId;
-                newBillAcount.CVName = resourceRequestCV.CVName;
-                newBillAcount.UserId = resourceRequestCV.UserId;
-                newBillAcount.CVPath = resourceRequestCV.CVPath;
-                var resourceRequestDto = await UpdateBillInfoTemp(newBillAcount);
-                result.getResourceRequestDto = resourceRequestDto;
+                case CvStatusTriggerAction.CreateBillAccountIfEmpty:
+                    if (!resourceRequest.BillAccountId.HasValue)
+                    {
+                        result.getResourceRequestDto = await CreateOrUpdateBillAccountAsync(resourceRequestCv);
+                    }
+                    break;
+                case CvStatusTriggerAction.CreateOrUpdateBillAccount:
+                    result.getResourceRequestDto = await CreateOrUpdateBillAccountAsync(resourceRequestCv);
+                    break;
             }
-
-            await WorkScope.UpdateAsync(resourceRequestCV);
+            await WorkScope.UpdateAsync(resourceRequestCv);
             result.updateResouceRequestCVStatus = input;
-
             return result;
+        }
+        private async Task<GetResourceRequestDto> CreateOrUpdateBillAccountAsync(ResourceRequestCV resourceRequestCv)
+        {
+            var newBillAccount = new UpdateResourceRequestPlanForBillInfoDto
+            {
+                StartTime = resourceRequestCv.InterviewDate,
+                ResourceRequestId = resourceRequestCv.ResourceRequestId,
+                CVName = resourceRequestCv.CVName,
+                UserId = resourceRequestCv.UserId,
+                CVPath = resourceRequestCv.CVPath
+            };
+            return await UpdateBillInfoTemp(newBillAccount);
         }
 
         [HttpPost]

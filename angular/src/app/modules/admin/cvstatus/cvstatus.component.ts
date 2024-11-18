@@ -5,7 +5,8 @@ import { PagedListingComponentBase, PagedRequestDto } from '@shared/paged-listin
 import { CvstatusService } from '../../../service/api/cvstatus.service';
 import { catchError, finalize } from 'rxjs/operators';
 import { PERMISSIONS_CONSTANT } from '@app/constant/permission.constant';
-import { CVStatusDto } from '@app/service/model/cvstatus.dto';
+import { CVStatusDto, CvStatusCreateEditDto } from '@app/service/model/cvstatus.dto';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
   selector: 'app-cvstatus',
@@ -27,9 +28,9 @@ export class CVStatusComponent extends PagedListingComponentBase<CVStatusCompone
       "",
       (result: boolean) => {
         if (result) {
-          this.cvStatusService.delete(cvstatus.id).pipe(catchError(this.cvStatusService.handleError)).subscribe((res) => {
+          this.cvStatusService.delete(cvstatus.id).pipe(catchError(this.cvStatusService.handleError)).subscribe(() => {
             abp.notify.success("Delete CV Status " + cvstatus.name);
-            this.refresh()
+            this.cVStatusList = this.cVStatusList.filter(cvStatus => cvStatus.id !== cvstatus.id);
           })
         }
       }
@@ -54,32 +55,35 @@ export class CVStatusComponent extends PagedListingComponentBase<CVStatusCompone
     this.refresh();
   }
 
-  public showDialog(command: string, cvstatus: any) {
-    let item = {
-      name: cvstatus.name || '',
-      color: cvstatus.color || '',
-      id: cvstatus.id || null,
-    };
+  public showDialog(cvStatusCreateEditDto: CvStatusCreateEditDto) {
     const show = this.dialog.open(CreateUpdateCvstatusComponent, {
-      data: {
-        item: item,
-        command: command
-      },
-      width: "700px"
+      data: cvStatusCreateEditDto,
+      width: "50%"
     });
-    show.afterClosed().subscribe((res) => {
+    show.afterClosed().subscribe((res: CVStatusDto) => {
       if (res) {
-        this.refresh();
+        const existingIndex = this.cVStatusList.findIndex(cvStatus => cvStatus.id === res.id);
+        if(existingIndex !== - 1) {
+          this.cVStatusList[existingIndex] = { ...res };
+        } else {
+          this.cVStatusList.push({ ...res });
+        }
       }
     });
   }
 
   public createCVStatus() {
-    this.showDialog("create", {});
+    let cvStatusCreateEditDto = new CvStatusCreateEditDto();
+    cvStatusCreateEditDto.command = AppConsts.CommandTypes.CREATE;
+    cvStatusCreateEditDto.cvStatus = new CVStatusDto();
+    this.showDialog(cvStatusCreateEditDto);
   }
 
-  public editCVStatus(cvstatus) {
-    this.showDialog("update", cvstatus);
+  public editCVStatus(cVStatus: CVStatusDto) {
+    let cvStatusCreateEditDto = new CvStatusCreateEditDto();
+    cvStatusCreateEditDto.command = AppConsts.CommandTypes.UPDATE;
+    cvStatusCreateEditDto.cvStatus = { ...cVStatus };
+    this.showDialog(cvStatusCreateEditDto);
   }
 
 }

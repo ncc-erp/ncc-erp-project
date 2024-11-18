@@ -44,6 +44,7 @@ namespace ProjectManagement.APIs.PMReportProjects.Dto
         public string PositionName { get; set; }
         public string PositionColor { get; set; }
         public DateTime CreationTime { get; set; }
-        public List<GetAllUserDto> LinkedResources { get; set; }
+        public List<GetUserInfo> LinkedResources { get; set; }
+        public float HeadCount { get; set; }
     }
 }

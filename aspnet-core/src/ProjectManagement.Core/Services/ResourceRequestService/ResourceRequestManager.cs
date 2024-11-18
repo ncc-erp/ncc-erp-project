@@ -131,7 +131,8 @@ namespace ProjectManagement.Services.ResourceRequestService
                                 {
                                     Id = r.CvStatus.Id,
                                     Name = r.CvStatus.Name,
-                                    Color = r.CvStatus.Color
+                                    Color = r.CvStatus.Color,
+                                    TriggerAction = r.CvStatus.TriggerAction
                                 },
                             }).ToList(),
                             Skills = request.ResourceRequestSkills.Select(p => new ResourceRequestSkillDto() { Id = p.SkillId, Name = p.Skill.Name }).ToList(),

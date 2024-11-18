@@ -20,6 +20,7 @@ import * as momentTime from "moment-timezone";
 import { UploadCVPathResourceRequestCV } from './../upload-cvPath-resource-requestCV/upload-cvPath-resource-requestCV.component';
 import { CVStatusDto } from '@app/service/model/cvstatus.dto';
 import { CvstatusService } from '@app/service/api/cvstatus.service';
+import { AppConsts } from '@shared/AppConsts';
 @Component({
     selector : 'app-form-resource-requestCV',
     templateUrl:'./form-resource-requestCV.component.html',
@@ -134,7 +135,7 @@ export class ResourceRequestCVComponent extends AppComponentBase implements OnIn
     resourceCv.sendCVDate = this.resourceRequestCV.sendCVDate;
     resourceCv.interviewDate = this.resourceRequestCV.interviewDate;
     resourceCv.cvStatusId = this.resourceRequestCV.cvStatusId;
-    if (this.input.command == "create") {
+    if (this.input.command == AppConsts.CommandTypes.CREATE) {
       resourceCv.id = 0
       const formattedResourceCV = this.formatInterviewDateToVN(resourceCv);
       this.resourceRequestService.addCV(formattedResourceCV)

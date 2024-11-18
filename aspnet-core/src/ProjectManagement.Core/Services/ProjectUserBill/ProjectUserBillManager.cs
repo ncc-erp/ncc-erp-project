@@ -181,7 +181,13 @@ namespace ProjectManagement.Services.ProjectUserBills
                     ChargeType = x.ChargeType ?? x.Project.ChargeType,
                     CreationTime = x.CreationTime,
                     LinkCV = x.LinkCV,
-
+                    UserSkills = x.BillUserSkills.Select(us => new BillUserSkillDto
+                    {
+                        SkillId = us.SkillId,
+                        SkillName = us.Skill.Name,
+                        SkillRank = us.SkillRank,
+                        SkillNote = us.Note
+                    }).ToList(),
                     LinkedResources = x.LinkedResources
                         .Select(lr => new GetUserInfo
                         {
@@ -199,7 +205,8 @@ namespace ProjectManagement.Services.ProjectUserBills
                             IsActive = lr.User.IsActive,
                             FullName = lr.User.FullName,
                             Contribute = lr.Contribute
-                        }).ToList()
+                        }).ToList(),
+                    SkillNote = x.BillUserSkills.Select(s => s.Note).FirstOrDefault() ?? ""
                 });
 
 
@@ -273,7 +280,15 @@ namespace ProjectManagement.Services.ProjectUserBills
                             IsActive = lr.User.IsActive,
                             FullName = lr.User.FullName,
                             Contribute = lr.Contribute
-                        }).ToList()
+                        }).ToList(),
+                    UserSkills = x.BillUserSkills.Select(us => new BillUserSkillDto
+                    {
+                        SkillId = us.SkillId,
+                        SkillName = us.Skill.Name,
+                        SkillRank = us.SkillRank,
+                        SkillNote = us.Note
+                    }).ToList(),
+                    SkillNote = x.BillUserSkills.Select(s => s.Note).FirstOrDefault() ?? ""
                 }).FirstOrDefault();
         }
          

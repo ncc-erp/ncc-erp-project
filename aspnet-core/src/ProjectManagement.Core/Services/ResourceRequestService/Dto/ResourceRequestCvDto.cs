@@ -3,6 +3,7 @@ using ProjectManagement.Utils;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ProjectManagement.Entities;
 using static ProjectManagement.Constants.Enum.ProjectEnum;
 
 namespace ProjectManagement.Services.ResourceRequestService.Dto
@@ -28,5 +29,6 @@ namespace ProjectManagement.Services.ResourceRequestService.Dto
     {
         public string Name { get; set; }
         public string Color { get; set; }
+        public CvStatusTriggerAction? TriggerAction { get; set; }
     }
 }

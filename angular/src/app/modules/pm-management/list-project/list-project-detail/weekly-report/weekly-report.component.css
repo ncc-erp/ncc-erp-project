@@ -376,6 +376,12 @@ button {
     width: 700px;
 }
 
+.td-fixed-width-100 {
+    width: 100px;
+    box-sizing: border-box;
+    white-space: break-spaces;
+}
+
 @media screen and (max-width: 600px) {
     .weekly-report-left, .weekly-report-right {
         width: 100%;

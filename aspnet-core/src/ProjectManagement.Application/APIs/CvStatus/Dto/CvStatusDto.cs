@@ -4,6 +4,7 @@ using NccCore.Anotations;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ProjectManagement.Entities;
 
 namespace ProjectManagement.APIs.CvStatus.Dto
 {
@@ -13,5 +14,6 @@ namespace ProjectManagement.APIs.CvStatus.Dto
         [ApplySearchAttribute]
         public string Name { get; set; }
         public string Color { get; set; }
+        public CvStatusTriggerAction? TriggerAction { get; set; }
     }
 }

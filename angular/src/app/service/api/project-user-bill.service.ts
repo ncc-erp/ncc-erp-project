@@ -113,5 +113,9 @@ export class ProjectUserBillService extends BaseApiService {
     return this.http.get<any>(this.rootUrl + `/GetAllLinkedResourcesByProject?projectId=${projectId}`);
   }
 
+  UpdateBillUserSkill(request): Observable<any>{
+    return this.http.post<any>(this.rootUrl + '/UpdateBillUserSkill', request);
+  }
+
   //#endregion
 }

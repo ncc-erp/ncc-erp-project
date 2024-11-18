@@ -11,7 +11,7 @@ namespace ProjectManagement.Entities
         public long SkillId { get; set; }
         [ForeignKey(nameof(SkillId))]
         public Skill Skill { get; set; }
-        public ProjectEnum.SkillRank SkillRank { get; set; }
+        public float SkillRank { get; set; }
         public long BillId { get; set; }
         [ForeignKey(nameof(BillId))]
         public ProjectUserBill Bill { get; set; }

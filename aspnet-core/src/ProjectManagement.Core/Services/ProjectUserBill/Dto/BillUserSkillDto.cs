@@ -6,7 +6,7 @@ namespace ProjectManagement.Services.ProjectUserBill.Dto
     {
         public long SkillId { get; set; }
         public string SkillName { get; set; }
-        public SkillRank SkillRank { get; set; }
+        public float SkillRank { get; set; }
         public string SkillNote { get; set; }
     }
 }

@@ -14,6 +14,6 @@ namespace ProjectManagement.APIs.ProjectUserBills.Dto
     public struct SkillPoint
     {
         public long SkillId { get; set; }
-        public SkillRank SkillRank { get; set; }
+        public float SkillRank { get; set; }
     }
 }

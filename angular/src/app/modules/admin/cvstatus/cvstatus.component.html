@@ -39,8 +39,9 @@
                         <thead class="bg-light">
                             <tr>
                                 <th style="width: 100px">#</th>
-                                <th class="col-6">Name</th>
-                                <th class="col-6">Color</th>
+                                <th class="col-4">Name</th>
+                                <th class="col-4">Color</th>
+                                <th class="col-2">Trigger Action</th>
                                 <th style="width: 100px">Actions</th>
                             </tr>
                         </thead>
@@ -61,6 +62,7 @@
                                 <td class="text-center">
                                     <span class="badge badge-pill text-white" [style.backgroundColor]="item.color"> {{ item.color }}</span>
                                 </td>
+                                <td>{{ getByEnum(item.triggerAction, APP_ENUM.CvStatusTriggerAction) }}</td>
                                 <td class="text-center">
                                     <div style="visibility: hidden; position: fixed"
                                         [matMenuTriggerFor]="menu"></div>

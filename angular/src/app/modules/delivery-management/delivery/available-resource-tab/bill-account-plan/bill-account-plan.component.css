@@ -47,6 +47,11 @@
   border: none;
 }
 
+.btn-hover:hover{
+  background: #c3c3c3;
+  border-radius: 5px;
+}
+
 @media screen and (max-width: 600px) {
   .content {
     padding-left: 0 !important;

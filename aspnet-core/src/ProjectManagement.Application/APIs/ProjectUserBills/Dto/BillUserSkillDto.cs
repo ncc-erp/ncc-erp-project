@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using static ProjectManagement.Constants.Enum.ProjectEnum;
 
-namespace ProjectManagement.Users.Dto
+namespace ProjectManagement.APIs.ProjectUserBills.Dto
 {
-    public class UpdateUserSkillDto
+    public class UpdateUserBillSkillDto
     {
         public long Id { get; set; }
         public List<SkillPoint> UserSkills { get; set; }

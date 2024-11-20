@@ -180,6 +180,7 @@ namespace ProjectManagement.Services.ProjectUserBills
                     UserLevel = x.User.UserLevel,
                     ChargeType = x.ChargeType ?? x.Project.ChargeType,
                     CreationTime = x.CreationTime,
+                    NameCv = x.NameCv,
                     LinkCV = x.LinkCV,
                     UserSkills = x.BillUserSkills.Select(us => new BillUserSkillDto
                     {

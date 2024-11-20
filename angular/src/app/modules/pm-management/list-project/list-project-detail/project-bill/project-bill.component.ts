@@ -32,6 +32,7 @@ import { ResourceManagerService } from '@app/service/api/resource-manager.servic
 import * as FileSaver from 'file-saver';
 import { UpdateUserSkillDialogComponent } from '@app/users/update-user-skill-dialog/update-user-skill-dialog.component';
 import { AppConsts } from '@shared/AppConsts';
+import { UploadCvBillAccountComponent } from '@shared/components/upload-cv-bill-account/upload-cv-bill-account.component';
 
 
 @Component({
@@ -890,6 +891,12 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     const hasChanged = userBill.isExpose !== userBill.initialIsExpose;
     this.userBillProcess = hasChanged;
     this.showSearchAndFilter = !hasChanged;
+  }
+
+  openUploadCvDialog() {
+    const dialogRef = this.dialog.open(UploadCvBillAccountComponent, {
+      // data: { id: item.id, width: '500px' }
+    });
   }
 }
 

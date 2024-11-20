@@ -51,6 +51,7 @@ namespace ProjectManagement.Services.ProjectUserBill.Dto
         public List<GetUserInfo> LinkedResources { get; set; }
         public float totalHeadCount { get; set; }
         public GridParam GridParam { get; set; }
+        public string NameCv { get; set; }
         public string LinkCV { get; set; }
         public List<BillUserSkillDto> UserSkills { get; set; }
         public string SkillNote { get; set; }

@@ -300,22 +300,39 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <span *ngIf="!bill.createMode" (click)="downloadFile(bill.id)"
-                                    (contextmenu)="openInNewTab($event,bill.id)"
-                                    [ngStyle]="{'color': bill.linkCV ? 'blue' : 'black'}" 
-                                    style="width: 100%; justify-content: space-between; display: flex ;white-space: nowrap;
-                           ;cursor: pointer; overflow: hidden; " class="cv-link">{{ bill.billAccountName }}</span>
-
+                                    <div *ngIf="!bill.createMode">
+                                        <span class="text-nowrap">{{ bill.billAccountName }}</span>
+                                        <div class="d-flex col-12 p-0">
+                                            <span (click)="bill.linkCV ? downloadFile(bill.id) : null"
+                                                [ngStyle]="{
+                                                    'color': bill.linkCV && bill.nameCv ? 'blue' : 
+                                                            (bill.linkCV && !bill.nameCv ? 'red' : 'black'),
+                                                    'max-width': '150px',
+                                                    'cursor': bill.linkCV ? 'pointer' : 'auto'
+                                                }"
+                                                class="text-nowrap w-100 text-truncate"
+                                                [class.cv-link]="bill.linkCV"
+                                                matTooltip="{{bill.linkCV && bill.nameCv ? bill.nameCv : null}}">
+                                                {{ bill.linkCV ? (bill.nameCv || 'Empty CV Name') : 'No CV' }}
+                                            </span>
+                                            <button class="btn btn-sm py-0 pr-0"
+                                                (click)="openUploadCvDialog(); $event.stopPropagation()">
+                                                <i class="fa fa-upload " title="Upload CV"></i>
+                                            </button>
+                                        </div>
+                                    </div>
                                     <div *ngIf="bill.createMode">
-
-                                        <input style="min-width: 100px;" class="form-control mt-1 form-change-name"
-                                                #accountName="ngModel" #accountNameEl type="text"
-                                                placeholder="Charge Name" name="accountName"
-                                                [(ngModel)]="bill.accountName" [value]="bill.billAccountName"/>
-
-                                        <abp-validation-summary [control]="accountName" [controlEl]="accountNameEl">
+                                        <input style="min-width: 100px;"
+                                            class="form-control mt-1 form-change-name"
+                                            #accountName="ngModel"
+                                            #accountNameEl
+                                            type="text"
+                                            placeholder="Charge Name"
+                                            name="accountName"
+                                            [(ngModel)]="bill.accountName"/>
+                                        <abp-validation-summary [control]="accountName"
+                                            [controlEl]="accountNameEl">
                                         </abp-validation-summary>
-
                                     </div>
                                 </td>
                                 <td>

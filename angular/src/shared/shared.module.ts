@@ -81,6 +81,7 @@ import { DateSelectorComponent } from './date-selector/date-selector/date-select
 import { CustomTimeComponent } from './date-selector/custom-time/custom-time.component';
 import { MultipleSelectStringValueComponent } from './components/multiple-select-string-value/multiple-select-string-value.component';
 import { MultipleSelectComponent } from './components/multiple-select/multiple-select.component';
+import { UploadCvBillAccountComponent } from './components/upload-cv-bill-account/upload-cv-bill-account.component';
 
 // import {DialogComponentModule} from './dialog-component/dialog-component.module';
 // import { ErrorPermissionComponent } from './interceptor-errors/error-permission/error-permission.component'
@@ -164,7 +165,8 @@ import { MultipleSelectComponent } from './components/multiple-select/multiple-s
         SelectClearOptionComponent,
         LineBreakPipe,
         MultipleSelectStringValueComponent,
-        MultipleSelectComponent
+        MultipleSelectComponent,
+        UploadCvBillAccountComponent
 
     ],
     exports: [

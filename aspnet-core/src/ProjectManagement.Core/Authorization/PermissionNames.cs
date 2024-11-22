@@ -615,6 +615,7 @@ namespace ProjectManagement.Authorization
         //public const string Resource_TabPlanningBillAcccount = "Resource.TabPlanning.BillAccount";
         public const string Resource_TabAllBillAccount = "Resource.TabAll.BillAccount";
         public const string Resource_ViewUserLevel = "Resource.ViewUserLevel";
+        public const string Resource_TabWillPool = "Resource.TabWillPool";
         #endregion Resource
 
         #region Timesheet
@@ -1331,6 +1332,8 @@ namespace ProjectManagement.Authorization
                     PermissionNames.ResourceRequest_CreateBillResourceForRequest,
                     PermissionNames.ResourceRequest_UpdateUserBillResourceSkill,
                     PermissionNames.ResourceRequest_ViewUserResourceStarSkill,
+                    
+                    PermissionNames.Resource_TabWillPool,
                     #endregion Resource
 
                     #region Timesheet
@@ -2062,6 +2065,7 @@ namespace ProjectManagement.Authorization
                  //new SystemPermission{ Name =  PermissionNames.Resource_TabPlanningBillAcccount ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Planning Bill Account"},
                  new SystemPermission{ Name =  PermissionNames.Resource_TabAllBillAccount ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "All Bill Account"},
                  new SystemPermission{ Name =  PermissionNames.Resource_ViewUserLevel ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View User Level"},
+                 new SystemPermission{ Name =  PermissionNames.Resource_TabWillPool ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View All Will Pool"},
                  #endregion Resource
 
                  #region Timesheet
@@ -3829,6 +3833,9 @@ namespace ProjectManagement.Authorization
                             },
                             new SystemPermission {
                                 Name = PermissionNames.Resource_ViewUserLevel, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View User Level",
+                            },
+                            new SystemPermission {
+	                            Name = PermissionNames.Resource_TabWillPool, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Tab Will Pool",
                             }
                         }
                 },

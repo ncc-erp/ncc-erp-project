@@ -15,6 +15,9 @@
                     <a *ngIf="permission.isGranted(Resource_TabAllBillAccount)"   [ngClass]="currentUrl.includes('bill-account-plan') ? 'active':''" mat-tab-link (click)="routingBillAccountPlanTab()">
                        Bill accounts
                     </a>
+                    <a *ngIf="permission.isGranted(Resource_TabWillPool)" [ngClass]="currentUrl.includes('will-pool') ? 'active':''" mat-tab-link (click)="routingWillPoolTab()">
+                        Will pool
+                     </a>
                 </nav>
                 <router-outlet></router-outlet>
             </div>

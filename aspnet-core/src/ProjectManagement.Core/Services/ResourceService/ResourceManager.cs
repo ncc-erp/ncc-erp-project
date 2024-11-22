@@ -1401,8 +1401,14 @@ namespace ProjectManagement.Services.ResourceManager
 
         public async Task<GridResult<GetAllWillPoolResourceDto>> GetAllWillPoolResource(InputGetAllWillPoolResourceDto input)
         {
+            ValidationInputFilters(input);
             // handle filter will pool
             var query = _workScope.GetAll<LinkedResource>()
+                .Include(lr => lr.User)
+                    .ThenInclude(u => u.Branch)
+                .Include(lr => lr.User)
+                    .ThenInclude(u => u.Position)
+                .Include(lr => lr.ProjectUserBill)
                 .Where(lr => lr.Contribute > 0)
                 .Where(lr => lr.ProjectUserBill.EndTime >= input.EndChargeDateFrom && lr.ProjectUserBill.EndTime <= input.EndChargeDateTo)
                 .WhereIf(input.UserName.HasValue(), lr => lr.User.UserName.Contains(input.UserName))
@@ -1472,6 +1478,27 @@ namespace ProjectManagement.Services.ResourceManager
                 }
             }
             return new GridResult<GetAllWillPoolResourceDto>(groupResource, groupResource.Count);
+        }
+        
+        private static void ValidationInputFilters(InputGetAllWillPoolResourceDto input)
+        {
+            if (input.EndChargeDateFrom == default(DateTime) && input.EndChargeDateTo == default(DateTime))
+            {
+                input.EndChargeDateFrom = DateTime.Today;
+                input.EndChargeDateTo = input.EndChargeDateFrom.AddDays(30);
+            }
+            else if (input.EndChargeDateFrom == default(DateTime))
+            {
+                input.EndChargeDateFrom = input.EndChargeDateTo.AddDays(-30);
+            }
+            else if (input.EndChargeDateTo == default(DateTime))
+            {
+                input.EndChargeDateTo = input.EndChargeDateFrom.AddDays(30);
+            }
+            if (input.EndChargeDateFrom > input.EndChargeDateTo)
+            {
+                throw new UserFriendlyException("The 'End Charge Date From' must be earlier than the 'End Charge Date To'. Please check the date range and try again.");
+            }
         }
     }
 }

@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ProjectManagement.Services.ProjectUserBill.Dto;
 using static ProjectManagement.Constants.Enum.ProjectEnum;
 
 namespace ProjectManagement.Services.ResourceManager
@@ -1396,6 +1397,81 @@ namespace ProjectManagement.Services.ResourceManager
                 .ThenBy(x => x.EmailWithoutDomain)
                 .ToList();
             return query;
+        }
+
+        public async Task<GridResult<GetAllWillPoolResourceDto>> GetAllWillPoolResource(InputGetAllWillPoolResourceDto input)
+        {
+            // handle filter will pool
+            var query = _workScope.GetAll<LinkedResource>()
+                .Where(lr => lr.Contribute > 0)
+                .Where(lr => lr.ProjectUserBill.EndTime >= input.EndChargeDateFrom && lr.ProjectUserBill.EndTime <= input.EndChargeDateTo)
+                .WhereIf(input.UserName.HasValue(), lr => lr.User.UserName.Contains(input.UserName))
+                .WhereIf(input.BranchIds != null && input.BranchIds.Any(),
+                    lr => lr.User.BranchId.HasValue && input.BranchIds.Contains(lr.User.BranchId.Value))
+                .WhereIf(input.UserTypes != null && input.UserTypes.Any(),
+                    lr => input.UserTypes.Contains(lr.User.UserType));
+            // get data will pool
+            var listLinkedResource = await query
+                .Select(lr => new 
+                {
+                    Resource = new GetUserInfo()
+                    {
+                        Id = lr.UserId,
+                        EmailAddress = lr.User.EmailAddress,
+                        AvatarPath = lr.User.AvatarPath,
+                        UserType = lr.User.UserType,
+                        UserLevel = lr.User.UserLevel,
+                        IsActive = lr.User.IsActive,
+                        FullName = lr.User.FullName,
+                        UserName = lr.User.UserName,
+                        BranchColor = lr.User.Branch.Color,
+                        BranchDisplayName = lr.User.Branch.DisplayName,
+                        PositionColor = lr.User.Position.Color,
+                        PositionName = lr.User.Position.ShortName,
+                    },
+                    Accounts = new AccountDto()
+                    {
+                        ChargeName = lr.ProjectUserBill.AccountName ?? lr.ProjectUserBill.User.FullName,
+                        HeadCount = lr.ProjectUserBill.HeadCount,
+                        EndChargeDate = lr.ProjectUserBill.EndTime,
+                        Contribute = lr.Contribute,
+                        Note = lr.ProjectUserBill.Note
+                    }
+                })
+                .ToListAsync();
+            // group by resource
+            var groupResource = listLinkedResource
+                .GroupBy(gr => gr.Resource.Id)
+                .Select(gr => new GetAllWillPoolResourceDto()
+                {
+                    Resource = gr.First().Resource,
+                    Accounts = gr.Select(s => s.Accounts).ToList(),
+                    TotalContribute = gr.Sum(s => s.Accounts.Contribute)
+                }).ToList();
+            // sort with contribute
+            groupResource = input.SortContribute
+                ? groupResource.OrderByDescending(gr => gr.TotalContribute).ToList()
+                : groupResource.OrderBy(gr => gr.TotalContribute).ToList();
+            // sort with end charge date
+            if (input.SortEndChargeDate)
+            {
+                foreach (var group in groupResource)
+                {
+                    group.Accounts = group.Accounts
+                        .OrderByDescending(ac => ac.EndChargeDate)
+                        .ToList();
+                }
+            }
+            else
+            {
+                foreach (var group in groupResource)
+                {
+                    group.Accounts = group.Accounts
+                        .OrderBy(ac => ac.EndChargeDate)
+                        .ToList();
+                }
+            }
+            return new GridResult<GetAllWillPoolResourceDto>(groupResource, groupResource.Count);
         }
     }
 }

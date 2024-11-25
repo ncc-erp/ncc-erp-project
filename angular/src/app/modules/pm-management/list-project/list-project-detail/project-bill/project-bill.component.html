@@ -560,7 +560,7 @@
                                         </mat-checkbox>
                                     </td> -->
                                 <td class="text-nowrap" style="max-width: 300px;">
-                                    <div *ngIf="bill.userSkills.length > 0; else noUserSkill" style="max-width: 300px;">
+                                    <div *ngIf="bill.userSkills?.length > 0; else noUserSkill" style="max-width: 300px;">
                                         <div *ngFor="let skill of (isViewAllUserSkill[bill.id] ? bill.userSkills : bill.userSkills.slice(0, numberSkill)); index as index">
                                             <div class="d-flex col-12 p-0 justify-content-between">
                                                 <span>

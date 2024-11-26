@@ -1401,100 +1401,65 @@ namespace ProjectManagement.Services.ResourceManager
 
         public async Task<GridResult<GetAllWillPoolResourceDto>> GetAllWillPoolResource(InputGetAllWillPoolResourceDto input)
         {
+            // validation for input datetime
             ValidationInputFilters(input);
-            // handle filter will pool
-            var query = _workScope.GetAll<LinkedResource>()
-                .Include(lr => lr.User)
-                    .ThenInclude(u => u.Branch)
-                .Include(lr => lr.User)
-                    .ThenInclude(u => u.Position)
-                .Include(lr => lr.ProjectUserBill)
-                .Where(lr => lr.Contribute > 0)
-                .Where(lr => lr.ProjectUserBill.EndTime >= input.EndChargeDateFrom && lr.ProjectUserBill.EndTime <= input.EndChargeDateTo)
-                .WhereIf(input.UserName.HasValue(), lr => lr.User.UserName.Contains(input.UserName))
-                .WhereIf(input.BranchIds != null && input.BranchIds.Any(),
-                    lr => lr.User.BranchId.HasValue && input.BranchIds.Contains(lr.User.BranchId.Value))
+            // query get all user
+            var qUserHasLinked = _workScope.GetAll<User>()
+                .Where(u => u.IsActive)
+                .Where(u => u.UserType != UserType.FakeUser)
+                .Where(u => u.LinkedResources.Any(lr => lr.ProjectUserBill.EndTime.HasValue &&
+                                                        lr.ProjectUserBill.EndTime >= input.EndChargeDateFrom.Date &&
+                                                        lr.ProjectUserBill.EndTime.Value.Date <= input.EndChargeDateTo));
+            // apply select user
+            var qUser = qUserHasLinked.Select(u => new GetAllWillPoolResourceDto
+            {
+                Resource = new GetUserInfo
+                {
+                    Id = u.Id,
+                    EmailAddress = u.EmailAddress,
+                    AvatarPath = u.AvatarPath,
+                    UserType = u.UserType,
+                    UserLevel = u.UserLevel,
+                    IsActive = u.IsActive,
+                    FullName = u.FullName,
+                    UserName = u.UserName,
+                    BranchId = u.BranchId,
+                    BranchColor = u.Branch.Color,
+                    BranchDisplayName = u.Branch.DisplayName,
+                    PositionColor = u.Position.Color,
+                    PositionName = u.Position.ShortName,
+                },
+                ResourceNote = u.PoolNote,
+                Accounts = u.LinkedResources
+                    .Select(ulr => new AccountDto()
+                    {
+                        Id = ulr.UserId,
+                        ProjectName = ulr.ProjectUserBill.Project.Name,
+                        ChargeName = ulr.ProjectUserBill.AccountName ?? ulr.ProjectUserBill.User.FullName,
+                        HeadCount = ulr.ProjectUserBill.HeadCount,
+                        EndChargeDate = ulr.ProjectUserBill.EndTime,
+                        Contribute = ulr.Contribute,
+                    })
+                    .ToList(),
+                ProjectNames = u.ProjectUsers
+                    .Where(s => s.Status == ProjectUserStatus.Present &&
+                                s.AllocatePercentage > 0 &&
+                                s.Project.Status != ProjectStatus.Closed)
+                    .Select(pu => pu.Project.Name)
+                    .ToList(),
+            });
+            // apply filter username
+            qUser = qUser.WhereIf(input.UserName.HasValue(), u => u.Resource.UserName.Contains(input.UserName));
+            // apply filter branch and user type
+            qUser = qUser.WhereIf(input.BranchIds != null && input.BranchIds.Any(),
+                    u => input.BranchIds.Contains(u.Resource.BranchId.Value))
                 .WhereIf(input.UserTypes != null && input.UserTypes.Any(),
-                    lr => input.UserTypes.Contains(lr.User.UserType));
-            // get data will pool
-            var listLinkedResource = await query
-                .Select(lr => new 
-                {
-                    Resource = new GetUserInfo()
-                    {
-                        Id = lr.UserId,
-                        EmailAddress = lr.User.EmailAddress,
-                        AvatarPath = lr.User.AvatarPath,
-                        UserType = lr.User.UserType,
-                        UserLevel = lr.User.UserLevel,
-                        IsActive = lr.User.IsActive,
-                        FullName = lr.User.FullName,
-                        UserName = lr.User.UserName,
-                        BranchColor = lr.User.Branch.Color,
-                        BranchDisplayName = lr.User.Branch.DisplayName,
-                        PositionColor = lr.User.Position.Color,
-                        PositionName = lr.User.Position.ShortName,
-                    },
-                    Accounts = new AccountDto()
-                    {
-                        ChargeName = lr.ProjectUserBill.AccountName ?? lr.ProjectUserBill.User.FullName,
-                        HeadCount = lr.ProjectUserBill.HeadCount,
-                        EndChargeDate = lr.ProjectUserBill.EndTime,
-                        Contribute = lr.Contribute,
-                        Note = lr.ProjectUserBill.Note
-                    }
-                })
-                .ToListAsync();
-            // group by resource
-            var groupResource = listLinkedResource
-                .GroupBy(gr => gr.Resource.Id)
-                .Select(gr => new GetAllWillPoolResourceDto()
-                {
-                    Resource = gr.First().Resource,
-                    Accounts = gr.Select(s => s.Accounts).ToList(),
-                    TotalContribute = gr.Sum(s => s.Accounts.Contribute)
-                }).ToList();
-            // sort with contribute
-            groupResource = input.SortContribute
-                ? groupResource.OrderByDescending(gr => gr.TotalContribute).ToList()
-                : groupResource.OrderBy(gr => gr.TotalContribute).ToList();
-            // sort with end charge date
-            if (input.SortEndChargeDate)
-            {
-                foreach (var group in groupResource)
-                {
-                    group.Accounts = group.Accounts
-                        .OrderByDescending(ac => ac.EndChargeDate)
-                        .ToList();
-                }
-            }
-            else
-            {
-                foreach (var group in groupResource)
-                {
-                    group.Accounts = group.Accounts
-                        .OrderBy(ac => ac.EndChargeDate)
-                        .ToList();
-                }
-            }
-            return new GridResult<GetAllWillPoolResourceDto>(groupResource, groupResource.Count);
+                    u => input.UserTypes.Contains(u.Resource.UserType));
+            return qUser.GetGridResultWithoutSearchAndFilter(input);
         }
         
         private static void ValidationInputFilters(InputGetAllWillPoolResourceDto input)
         {
-            if (input.EndChargeDateFrom == default(DateTime) && input.EndChargeDateTo == default(DateTime))
-            {
-                input.EndChargeDateFrom = DateTime.Today;
-                input.EndChargeDateTo = input.EndChargeDateFrom.AddDays(30);
-            }
-            else if (input.EndChargeDateFrom == default(DateTime))
-            {
-                input.EndChargeDateFrom = input.EndChargeDateTo.AddDays(-30);
-            }
-            else if (input.EndChargeDateTo == default(DateTime))
-            {
-                input.EndChargeDateTo = input.EndChargeDateFrom.AddDays(30);
-            }
             if (input.EndChargeDateFrom > input.EndChargeDateTo)
             {
                 throw new UserFriendlyException("The 'End Charge Date From' must be earlier than the 'End Charge Date To'. Please check the date range and try again.");

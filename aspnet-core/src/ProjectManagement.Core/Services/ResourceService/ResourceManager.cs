@@ -1431,6 +1431,9 @@ namespace ProjectManagement.Services.ResourceManager
                 },
                 ResourceNote = u.PoolNote,
                 Accounts = u.LinkedResources
+                    .Where(lr => lr.ProjectUserBill.EndTime.HasValue &&
+                            lr.ProjectUserBill.EndTime >= input.EndChargeDateFrom.Date &&
+                            lr.ProjectUserBill.EndTime.Value.Date <= input.EndChargeDateTo)
                     .Select(ulr => new AccountDto()
                     {
                         Id = ulr.UserId,

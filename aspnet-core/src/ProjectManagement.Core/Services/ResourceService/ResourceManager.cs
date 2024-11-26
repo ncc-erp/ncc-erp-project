@@ -1409,7 +1409,17 @@ namespace ProjectManagement.Services.ResourceManager
                 .Where(u => u.UserType != UserType.FakeUser)
                 .Where(u => u.LinkedResources.Any(lr => lr.ProjectUserBill.EndTime.HasValue &&
                                                         lr.ProjectUserBill.EndTime >= input.EndChargeDateFrom.Date &&
-                                                        lr.ProjectUserBill.EndTime.Value.Date <= input.EndChargeDateTo));
+                                                        lr.ProjectUserBill.EndTime.Value.Date <= input.EndChargeDateTo))
+                .WhereIf(input.UserName.HasValue(), u => u.UserName.Contains(input.UserName))
+                .WhereIf(input.BranchIds != null && input.BranchIds.Any(),
+                    u => input.BranchIds.Contains(u.BranchId.Value))
+                .WhereIf(input.UserTypes != null && input.UserTypes.Any(),
+                    u => input.UserTypes.Contains(u.UserType));
+            // query get all project user
+            var qProjectUser = _workScope.GetAll<ProjectUser>()
+                .Where(s => s.Status == ProjectUserStatus.Present &&
+                            s.AllocatePercentage > 0 &&
+                            s.Project.Status != ProjectStatus.Closed);
             // apply select user
             var qUser = qUserHasLinked.Select(u => new GetAllWillPoolResourceDto
             {
@@ -1431,9 +1441,6 @@ namespace ProjectManagement.Services.ResourceManager
                 },
                 ResourceNote = u.PoolNote,
                 Accounts = u.LinkedResources
-                    .Where(lr => lr.ProjectUserBill.EndTime.HasValue &&
-                            lr.ProjectUserBill.EndTime >= input.EndChargeDateFrom.Date &&
-                            lr.ProjectUserBill.EndTime.Value.Date <= input.EndChargeDateTo)
                     .Select(ulr => new AccountDto()
                     {
                         Id = ulr.UserId,
@@ -1444,20 +1451,11 @@ namespace ProjectManagement.Services.ResourceManager
                         Contribute = ulr.Contribute,
                     })
                     .ToList(),
-                ProjectNames = u.ProjectUsers
-                    .Where(s => s.Status == ProjectUserStatus.Present &&
-                                s.AllocatePercentage > 0 &&
-                                s.Project.Status != ProjectStatus.Closed)
+                ProjectNames = qProjectUser
+                    .Where(pu => pu.UserId == u.Id)
                     .Select(pu => pu.Project.Name)
                     .ToList(),
             });
-            // apply filter username
-            qUser = qUser.WhereIf(input.UserName.HasValue(), u => u.Resource.UserName.Contains(input.UserName));
-            // apply filter branch and user type
-            qUser = qUser.WhereIf(input.BranchIds != null && input.BranchIds.Any(),
-                    u => input.BranchIds.Contains(u.Resource.BranchId.Value))
-                .WhereIf(input.UserTypes != null && input.UserTypes.Any(),
-                    u => input.UserTypes.Contains(u.Resource.UserType));
             return qUser.GetGridResultWithoutSearchAndFilter(input);
         }
         

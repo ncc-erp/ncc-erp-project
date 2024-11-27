@@ -1405,11 +1405,12 @@ namespace ProjectManagement.Services.ResourceManager
             ValidationInputFilters(input);
             // query get all user
             var qUserHasLinked = _workScope.GetAll<User>()
-                .Where(u => u.IsActive)
-                .Where(u => u.UserType != UserType.FakeUser)
-                .Where(u => u.LinkedResources.Any(lr => lr.ProjectUserBill.EndTime.HasValue &&
-                                                        lr.ProjectUserBill.EndTime >= input.EndChargeDateFrom.Date &&
-                                                        lr.ProjectUserBill.EndTime.Value.Date <= input.EndChargeDateTo))
+                .AsNoTracking()
+                .Where(u => u.IsActive && u.UserType != UserType.FakeUser)
+                .Where(u => u.LinkedResources
+                    .Any(lr => lr.ProjectUserBill.EndTime.HasValue &&
+                               lr.ProjectUserBill.EndTime >= input.EndChargeDateFrom.Date &&
+                               lr.ProjectUserBill.EndTime.Value.Date <= input.EndChargeDateTo))
                 .WhereIf(input.UserName.HasValue(), u => u.UserName.Contains(input.UserName))
                 .WhereIf(input.BranchIds != null && input.BranchIds.Any(),
                     u => input.BranchIds.Contains(u.BranchId.Value))
@@ -1417,9 +1418,17 @@ namespace ProjectManagement.Services.ResourceManager
                     u => input.UserTypes.Contains(u.UserType));
             // query get all project user
             var qProjectUser = _workScope.GetAll<ProjectUser>()
+                .AsNoTracking()
                 .Where(s => s.Status == ProjectUserStatus.Present &&
                             s.AllocatePercentage > 0 &&
                             s.Project.Status != ProjectStatus.Closed);
+            // query get all linked resource
+            var qUserEndChargeDate = _workScope.GetAll<LinkedResource>()
+                .AsNoTracking()
+                .Where(lr => lr.ProjectUserBill.EndTime.HasValue &&
+                             lr.ProjectUserBill.EndTime >= input.EndChargeDateFrom.Date &&
+                             lr.ProjectUserBill.EndTime.Value.Date <= input.EndChargeDateTo ||
+                             lr.ProjectUserBill.EndTime == null);
             // apply select user
             var qUser = qUserHasLinked.Select(u => new GetAllWillPoolResourceDto
             {
@@ -1440,7 +1449,8 @@ namespace ProjectManagement.Services.ResourceManager
                     PositionName = u.Position.ShortName,
                 },
                 ResourceNote = u.PoolNote,
-                Accounts = u.LinkedResources
+                Accounts = qUserEndChargeDate
+                    .Where(ulr => ulr.UserId == u.Id)
                     .Select(ulr => new AccountDto()
                     {
                         Id = ulr.UserId,
@@ -1456,7 +1466,8 @@ namespace ProjectManagement.Services.ResourceManager
                     .Select(pu => pu.Project.Name)
                     .ToList(),
             });
-            return qUser.GetGridResultWithoutSearchAndFilter(input);
+            var result = await qUser.ToListAsync();
+            return new GridResult<GetAllWillPoolResourceDto>(result, result.Count);
         }
         
         private static void ValidationInputFilters(InputGetAllWillPoolResourceDto input)

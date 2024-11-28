@@ -1,5 +1,299 @@
-<section class="content px-2 mt-2" *ngIf="permission.isGranted(Resource_TabWillPool)">
+<section *ngIf="permission.isGranted(Resource_TabWillPool)"
+    class="content my-2">
     <div class="container-fluid">
-        <p>will-pool works!</p>
+        <!-- FILTER BAR -->
+        <div class="row mt-2">
+            <!-- Search by username -->
+            <div class="col-4 d-flex input-group align-items-center">
+                <div class="input-group-prepend">
+                    <button type="button"
+                        class="btn bg-blue">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                <input type="text"
+                    class="form-control"
+                    name="keyword"
+                    placeholder="Search by Username"/>
+            </div>
+            <!-- filter by branch -->
+            <div class="col-2">
+                <mat-form-field appearance="outline"
+                    class="w-100">
+                    <mat-label>Branch:</mat-label>
+                    <mat-select placeholder="Select branch"
+                        multiple
+                        [(ngModel)]="selectedBranchIds"
+                        (openedChange)="openedChange($event, 'Branch')"
+                        #selectBranch>
+                        <div class="popup-filter">
+                            <mat-form-field class="w-100 px-2">
+                                <input matInput
+                                    [(ngModel)]="searchBranch"
+                                    placeholder="Search"
+                                    #search
+                                    (keydown)="$event.stopPropagation()"
+                                    class="w-100">
+                            </mat-form-field>
+                            <div class="px-2 mb-2">
+                                <app-select-clear-option [type]="'Branch'"
+                                    [listOption]="listBranchsId"
+                                    (newListEvent)="actionSelect($event)"
+                                    (doneEvent)="selectDone($event)">
+                                </app-select-clear-option>
+                            </div>
+                        </div>
+                        <mat-option *ngFor="let branch of listBranchs | listFilter: 'name' : searchBranch"
+                            [value]="branch.id"
+                            (click)="onSelectChangeBranch(branch.id)">
+                            {{branch.name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <!-- filter by user type -->
+            <div class="col-2">
+                <mat-form-field appearance="outline"
+                    class="w-100">
+                    <mat-label>User Type:</mat-label>
+                    <mat-select #selectUserType
+                        placeholder="Select user type"
+                        [(ngModel)]="selectedUserTypes"
+                        multiple
+                        (openedChange)="openedChange($event, 'UserType')">
+                        <div class="popup-filter">
+                            <mat-form-field class="w-100 px-2">
+                                <input matInput
+                                    [(ngModel)]="searchUserType"
+                                    placeholder="Search"
+                                    #search
+                                    (keydown)="$event.stopPropagation()"
+                                    class="w-100">
+                            </mat-form-field>
+                            <div class="px-2 mb-2">
+                                <app-select-clear-option
+                                    [type]="'UserType'"
+                                    [listOption]="listUserTypesId"
+                                    (newListEvent)="actionSelect($event)"
+                                    (doneEvent)="selectDone($event)">
+                                </app-select-clear-option>
+                            </div>
+                        </div>
+                        <mat-option *ngFor="let userType of listUserTypes | listFilter: 'displayName' : searchUserType"
+                            [value]="userType.value"
+                            (click)="onSelectChangeUserType(userType.value)">
+                            {{userType.displayName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <!-- filter by end charge date from -->
+            <div class="col-2">
+                <mat-form-field appearance="outline"
+                    class="w-100">
+                    <mat-label>End Charge Date From:</mat-label>
+                    <input matInput
+                        [matDatepicker]="endChargeDateFrom"
+                        name="endChargeDateFrom"
+                        [(ngModel)]="endChargeDateFromValue" />
+                    <mat-datepicker-toggle matSuffix
+                        [for]="endChargeDateFrom">
+                    </mat-datepicker-toggle>
+                    <mat-datepicker #endChargeDateFrom></mat-datepicker>
+                </mat-form-field>
+            </div>
+            <!-- filter by end charge date to -->
+            <div class="col-2">
+                <mat-form-field appearance="outline"
+                    class="w-100">
+                    <mat-label>End Charge Date To:</mat-label>
+                    <input matInput
+                        [matDatepicker]="endChargeDateTo"
+                        name="endChargeDateTo"
+                        [(ngModel)]="endChargeDateToValue" />
+                    <mat-datepicker-toggle matSuffix
+                        [for]="endChargeDateTo">
+                    </mat-datepicker-toggle>
+                    <mat-datepicker #endChargeDateTo></mat-datepicker>
+                </mat-form-field>
+            </div>
+        </div>
+        <!-- END FILTER BAR -->
+        <!-- CONTENT -->
+        <div class="row">
+            <div class="card-body table-responsive p-1">
+                <div class="fixTableHead">
+                    <table class="table table-hover table-border-collapse text-nowrap mt-2">
+                        <thead>
+                            <tr>
+                                <th class="text-center rsp-th-name">#
+                                    <button *ngIf="showIconExpandCollapeAll"
+                                        class="btn btn-sm p-0 expand-icon"
+                                        (click)="expandCollapseAll()">
+                                        <i [class]="isExpandAll 
+                                            ? 'fas fa-expand-alt text-primary'
+                                            : 'fas fa-compress-alt'">
+                                        </i>
+                                    </button>
+                                </th>
+                                <th class="text-center rsp-th-name">Resource</th>
+                                <th class="text-center rsp-th-name">Projects</th>
+                                <th class="text-center rsp-th-name">Contribute
+                                    <button class="btn btn-sm p-0 sort-button"
+                                        (click)="onClickSortDirection(sortProperties.Contribute)">
+                                        <i class="pi text-primary"
+                                            [class]="fieldSortDirection[sortProperties.Contribute]
+                                                ? 'pi-sort-amount-up'
+                                                : 'pi-sort-amount-down'">
+                                        </i>
+                                    </button>
+                                </th>
+                                <th class="text-center rsp-th-name">Accounts
+                                    <button class="btn btn-sm p-0 sort-button"
+                                        (click)="onClickSortDirection(sortProperties.EndChargeDate)">
+                                        <i class="pi text-primary"
+                                            [class]="fieldSortDirection[sortProperties.EndChargeDate] ? 'pi-sort-amount-up' : 'pi-sort-amount-down'">
+                                        </i>
+                                    </button>
+                                </th>
+                                <th class="text-center rsp-th-name">Note</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <ng-container *ngFor="
+                                let willPool of listWillPool | paginate :   {
+                                                                                id: 'server',
+                                                                                itemsPerPage: pageSize,
+                                                                                currentPage: pageNumber,
+                                                                                totalItems: totalItems
+                                                                            };
+                                let i = index;">
+                                <tr>
+                                    <td class="text-center"
+                                        style="width: 50px; max-width: 100px !important">
+                                        <span>{{ i + 1 + pageSize * (pageNumber - 1) }}</span>
+                                        <button *ngIf="willPool.projectNames?.length > numberDataRow 
+                                                    || willPool.accounts?.length > numberDataRow"
+                                            (click)="expandCollapseDataRow(willPool.resource.id)"
+                                            class="btn btn-sm expand-icon">
+                                            <i *ngIf="!isExpands[willPool.resource.id]"
+                                                class="fas fa-compress-alt">
+                                            </i>
+                                            <i *ngIf="isExpands[willPool.resource.id]"
+                                                class="fas fa-expand-alt text-primary">
+                                            </i>
+                                        </button>
+                                    </td>
+                                    <td class="text-center"
+                                        style="width: 270px; max-width: 350px !important">
+                                        <app-user-info [userData]="willPool.resource"
+                                            [isSimplizeEmailAddress]="true"
+                                            [isSmallerDiv]="true"
+                                            class="w-100">
+                                        </app-user-info>
+                                    </td>
+                                    <td style="width: 150px; max-width: 300px;"
+                                        class="project-name">
+                                        <div class="d-flex flex-row"
+                                            *ngFor="let project of (isExpands[willPool.resource.id] 
+                                                                    ? willPool.projectNames 
+                                                                    : willPool.projectNames.slice(0, numberDataRow))">
+                                            <span PrjResizeContent
+                                                [collapseLine]="1"
+                                                class="max-line-content-1 text-truncate">
+                                                - {{ project }}
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td class="text-center"
+                                        style="width: 130px !important;">
+                                        <span class="badge text-white bg-blue" 
+                                            style="width: 40px;">
+                                            {{willPool.totalContribute + '%'}}
+                                        </span>
+                                    </td>
+                                    <td style="width: 300px; max-width: 500px !important;">
+                                        <div *ngFor="let account of (isExpands[willPool.resource.id] 
+                                                                    ? willPool.accounts
+                                                                    : willPool.accounts.slice(0, numberDataRow));
+                                                    let j = index"
+                                            class="d-flex flex-row">
+                                            <div class="flex-grow-1 charge-name text-nowrap font-weight-bold">
+                                                {{ account.chargeName }}
+                                            </div>
+                                            <div class="d-flex flex-row">
+                                                <div class="text-center ml-2"
+                                                    style="width: 40px;">
+                                                    <span class="badge badge-warning text-white w-100"
+                                                        matTooltip="Head Count">
+                                                        {{ account.headCount }}
+                                                    </span>
+                                                </div>
+                                                <div style="width: 100px;"
+                                                    class="text-center">
+                                                    {{ account.endChargeDate | date: 'dd/MM/yyyy' }}
+                                                </div>
+                                                <div>
+                                                    <span [ngStyle]="{
+                                                        'width': '40px',
+                                                        'backgroundColor': Utils.getColorContribute(account.contribute)}"
+                                                        class="badge text-white"
+                                                        matTooltip="Contribute">
+                                                        {{ account.contribute }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span PrjResizeContent
+                                            [collapseLine]="getCollapseLine(willPool)"
+                                            [class]="'max-line-content-' + getCollapseLine(willPool)">
+                                            {{willPool.resourceNote}}
+                                        </span>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- END CONTENT -->
+        <!-- PAGINATION FOOTER -->
+        <div class="card-footer bg-light border-top">
+            <div class="row container-pagination align-items-center">
+                <div class="col-4 d-flex align-items-center">
+                    <button class="btn btn-secondary align-items-center col-2" (click)="refresh()">
+                        <i class="fas fa-redo-alt"></i>
+                    </button>
+                    <mat-form-field 
+                        appearance="outline"    
+                        class="form-number-items col-4">
+                        <mat-label>Number items</mat-label>
+                        <mat-select panelClass="options-number-item" 
+                            [(ngModel)]="pageSizeType"
+                            (ngModelChange)="changePageSize()"
+                            class="p-0">
+                            <mat-option [value]="5"> 5 </mat-option>
+                            <mat-option [value]="10"> 10 </mat-option>
+                            <mat-option [value]="20"> 20 </mat-option>
+                            <mat-option [value]="50"> 50 </mat-option>
+                            <mat-option [value]="100"> 100 </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="col-4 text-center font-weight-bold">
+                    {{ "TotalRecordsCount" | localize: totalItems }}
+                </div>
+                <div class="col-4 pagination-control">
+                    <div class="float-sm-right m-auto">
+                    <abp-pagination-controls id="server" (pageChange)="getDataPage($event)">
+                    </abp-pagination-controls>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- END PAGINATION FOOTER -->
     </div>
 </section>

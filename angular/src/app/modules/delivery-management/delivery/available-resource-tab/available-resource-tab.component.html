@@ -3,7 +3,7 @@
         <div class="row mb-4 card">
             <div class="col-12">
                 <nav mat-tab-nav-bar>
-                    <a *ngIf="permission.isGranted(Resource_TabPool)" [ngClass]="currentUrl.includes('pool')?'active':''" mat-tab-link (click)="routingPlanResourceTab()">
+                    <a *ngIf="permission.isGranted(Resource_TabPool)" [ngClass]="currentUrl.includes('pool') && !currentUrl.includes('will-pool')?'active':''" mat-tab-link (click)="routingPlanResourceTab()">
                        Pool
                     </a>
                     <a *ngIf="permission.isGranted(Resource_TabAllResource)" [ngClass]="currentUrl.includes('all-resource')?'active':''" mat-tab-link (click)="routingAllResourceTab()">

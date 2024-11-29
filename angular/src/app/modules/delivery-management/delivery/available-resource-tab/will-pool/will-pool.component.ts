@@ -180,11 +180,12 @@ export class WillPoolComponent extends PagedListingComponentBase<any> implements
   }
 
   sortDataByEndChargeDate(direction: boolean) {
+    const defaultGetTime = 1;
     this.listWillPool.forEach(item => {
       item.accounts.sort((a, b) => {
         const getValidTimestamp = (dateString: string): number => {
           const date = new Date(dateString);
-          return isNaN(date.getTime()) ? 1 : date.getTime();
+          return isNaN(date.getTime()) ? defaultGetTime : date.getTime();
         };
         const dateA = getValidTimestamp(a.endChargeDate);
         const dateB = getValidTimestamp(b.endChargeDate);
@@ -207,11 +208,13 @@ export class WillPoolComponent extends PagedListingComponentBase<any> implements
   }
 
   getCollapseLine(willPool: GetAllWillPoolResourceDto): number {
+    const maxLengthClassNumber = 5;
+    const defaultCollapseLine = 3;
     const maxLength = Math.max(willPool.projectNames?.length, willPool.accounts?.length);
     if (this.isExpands[willPool.resource.id]) {
-      return maxLength > this.numberDataRow ? maxLength : this.numberDataRow + 5;
+      return maxLength > this.numberDataRow ? maxLength : this.numberDataRow + maxLengthClassNumber;
     }
-    return 3;
+    return defaultCollapseLine;
   }
   
 }

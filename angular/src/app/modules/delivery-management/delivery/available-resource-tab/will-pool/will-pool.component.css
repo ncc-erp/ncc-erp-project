@@ -21,13 +21,20 @@
     max-width: 300px;
 }
 
-@media screen and (min-width: 1500px) and (max-width: 2400px) {
+.note {
+    white-space: pre-line;
+    font-family: sans-serif;
+    align-self: flex-start;
+    line-height: initial;
+}
+
+@media screen and (min-width: 1500px) and (max-width: 1700px) {
     .project-name {
         width: 250px !important;
     }
 }
 
-@media screen and (min-width: 2401px) {
+@media screen and (min-width: 1701px) {
     .project-name {
         width: 300px !important;
     }

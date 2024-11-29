@@ -246,11 +246,12 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <span PrjResizeContent
+                                        <pre [class]="'max-line-content-' + getCollapseLine(willPool)"
+                                            PrjResizeContent
                                             [collapseLine]="getCollapseLine(willPool)"
-                                            [class]="'max-line-content-' + getCollapseLine(willPool)">
+                                            class="note p-0 m-0">
                                             {{willPool.resourceNote}}
-                                        </span>
+                                        </pre>
                                     </td>
                                 </tr>
                             </ng-container>

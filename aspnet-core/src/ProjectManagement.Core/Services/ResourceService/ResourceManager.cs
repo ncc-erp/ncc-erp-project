@@ -1453,17 +1453,29 @@ namespace ProjectManagement.Services.ResourceManager
                     .Where(ulr => ulr.UserId == u.Id)
                     .Select(ulr => new AccountDto()
                     {
-                        Id = ulr.UserId,
-                        ProjectName = ulr.ProjectUserBill.Project.Name,
+                        Id = ulr.ProjectUserBill.UserId,
+                        Project = new ShortInfoProjectDto()
+                        {
+                            Id = ulr.ProjectUserBill.ProjectId,
+                            ProjectName = ulr.ProjectUserBill.Project.Name,
+                            ProjectType = ulr.ProjectUserBill.Project.ProjectType,
+                            ProjectCode = ulr.ProjectUserBill.Project.Code
+                        },
                         ChargeName = ulr.ProjectUserBill.AccountName ?? ulr.ProjectUserBill.User.FullName,
                         HeadCount = ulr.ProjectUserBill.HeadCount,
                         EndChargeDate = ulr.ProjectUserBill.EndTime,
                         Contribute = ulr.Contribute,
                     })
                     .ToList(),
-                ProjectNames = qProjectUser
+                Projects = qProjectUser
                     .Where(pu => pu.UserId == u.Id)
-                    .Select(pu => pu.Project.Name)
+                    .Select(pu => new ShortInfoProjectDto()
+                    {
+                        Id = pu.ProjectId,
+                        ProjectName = pu.Project.Name,
+                        ProjectType = pu.Project.ProjectType,
+                        ProjectCode = pu.Project.Code
+                    })
                     .ToList(),
             });
             var result = await qUser.ToListAsync();

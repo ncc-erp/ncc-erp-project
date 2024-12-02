@@ -123,10 +123,13 @@
         <div class="row">
             <div class="card-body table-responsive p-1">
                 <div class="fixTableHead">
-                    <table class="table table-hover table-border-collapse text-nowrap mt-2">
+                    <table class="table table-border-collapse text-nowrap mt-2">
                         <thead>
                             <tr>
-                                <th class="text-center rsp-th-name">#
+                                <th class="text-center rsp-th-name"
+                                    rowspan="2"
+                                    scope="col">
+                                    #
                                     <button *ngIf="showIconExpandCollapeAll"
                                         class="btn btn-sm p-0 expand-icon"
                                         (click)="expandCollapseAll()">
@@ -136,9 +139,20 @@
                                         </i>
                                     </button>
                                 </th>
-                                <th class="text-center rsp-th-name">Resource</th>
-                                <th class="text-center rsp-th-name">Projects</th>
-                                <th class="text-center rsp-th-name">Contribute
+                                <th class="text-center rsp-th-name"
+                                    rowspan="2"
+                                    scope="col">
+                                    Resource
+                                </th>
+                                <th class="text-center rsp-th-name"
+                                    rowspan="2"
+                                    scope="col">
+                                    Current Project
+                                </th>
+                                <th class="text-center rsp-th-name"
+                                    rowspan="2"
+                                    scope="col">
+                                    Contribute
                                     <button class="btn btn-sm p-0 sort-button"
                                         (click)="onClickSortDirection(sortProperties.Contribute)">
                                         <i class="pi text-primary"
@@ -148,7 +162,23 @@
                                         </i>
                                     </button>
                                 </th>
-                                <th class="text-center rsp-th-name">Accounts
+                                <th class="text-center rsp-th-name"
+                                    colspan="5"
+                                    scope="colgroup">
+                                    Account
+                                </th>
+                                <th class="text-center rsp-th-name"
+                                    rowspan="2"
+                                    scope="col">
+                                    Note
+                                </th>
+                            </tr>
+                            <tr>
+                                <th scope="col">Charge Name</th>
+                                <th scope="col">Project</th>
+                                <th scope="col">Head Count</th>
+                                <th scope="col">
+                                    End Date
                                     <button class="btn btn-sm p-0 sort-button"
                                         (click)="onClickSortDirection(sortProperties.EndChargeDate)">
                                         <i class="pi text-primary"
@@ -156,12 +186,11 @@
                                         </i>
                                     </button>
                                 </th>
-                                <th class="text-center rsp-th-name">Note</th>
+                                <th scope="col">Contribute</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <ng-container *ngFor="
-                                let willPool of listWillPool | paginate :   {
+                            <ng-container *ngFor="let willPool of listWillPool | paginate :   {
                                                                                 id: 'server',
                                                                                 itemsPerPage: pageSize,
                                                                                 currentPage: pageNumber,
@@ -170,9 +199,10 @@
                                 let i = index;">
                                 <tr>
                                     <td class="text-center"
-                                        style="width: 50px; max-width: 100px !important">
+                                        style="width: 50px; max-width: 100px !important"
+                                        [attr.rowspan]="getRowSpanAccount(willPool)">
                                         <span>{{ i + 1 + pageSize * (pageNumber - 1) }}</span>
-                                        <button *ngIf="willPool.projectNames?.length > numberDataRow 
+                                        <button *ngIf="willPool.projects?.length > numberDataRow 
                                                     || willPool.accounts?.length > numberDataRow"
                                             (click)="expandCollapseDataRow(willPool.resource.id)"
                                             class="btn btn-sm expand-icon">
@@ -185,75 +215,111 @@
                                         </button>
                                     </td>
                                     <td class="text-center"
-                                        style="width: 270px; max-width: 350px !important">
+                                        style="width: 270px; max-width: 350px !important"
+                                        [attr.rowspan]="getRowSpanAccount(willPool)">
                                         <app-user-info [userData]="willPool.resource"
                                             [isSimplizeEmailAddress]="true"
                                             [isSmallerDiv]="true"
                                             class="w-100">
                                         </app-user-info>
                                     </td>
-                                    <td style="width: 150px; max-width: 300px;"
-                                        class="project-name">
+                                    <td class="project-name width-150"
+                                        [attr.rowspan]="getRowSpanAccount(willPool)">
                                         <div class="d-flex flex-row"
                                             *ngFor="let project of (isExpands[willPool.resource.id] 
-                                                                    ? willPool.projectNames 
-                                                                    : willPool.projectNames.slice(0, numberDataRow))">
-                                            <span PrjResizeContent
-                                                [collapseLine]="1"
-                                                class="max-line-content-1 text-truncate">
-                                                - {{ project }}
+                                                                    ? willPool.projects 
+                                                                    : willPool.projects.slice(0, numberDataRow))">
+                                            <span (click)="viewProjectDetail(project)">
+                                                - <strong class="hyperlink">
+                                                    {{ project.projectName }}
+                                                </strong>
                                             </span>
                                         </div>
                                     </td>
-                                    <td class="text-center"
-                                        style="width: 130px !important;">
+                                    <td class="text-center width-130-max"
+                                        [attr.rowspan]="getRowSpanAccount(willPool)">
                                         <span class="badge text-white bg-blue" 
                                             style="width: 40px;">
                                             {{willPool.totalContribute + '%'}}
                                         </span>
                                     </td>
-                                    <td style="width: 300px; max-width: 500px !important;">
-                                        <div *ngFor="let account of (isExpands[willPool.resource.id] 
-                                                                    ? willPool.accounts
-                                                                    : willPool.accounts.slice(0, numberDataRow));
-                                                    let j = index"
-                                            class="d-flex flex-row">
-                                            <div class="flex-grow-1 charge-name text-nowrap font-weight-bold">
-                                                {{ account.chargeName }}
+                                    <td colspan="5" class="p-0 border-0"></td>
+                                    <td class="note-width"
+                                        [attr.rowspan]="getRowSpanAccount(willPool)">
+                                        <ng-container *ngIf="!isEditNote[willPool.resource.id]; else editingNote">
+                                            <div class="d-flex justify-content-between align-items-center w-100 h-100">
+                                                <pre [class]="'max-line-content-' + getCollapseLine(willPool)"
+                                                    PrjResizeContent
+                                                    [collapseLine]="getCollapseLine(willPool)"
+                                                    class="note p-0 m-0 flex-grow-1">
+                                                    {{willPool.resourceNote}}
+                                                </pre>
+                                                <button *ngIf="permission.isGranted(Resource_TabWillPool_EditNote)" 
+                                                    class="btn btn-sm p-0 pl-1 d-flex justify-content-end"
+                                                    (click)="onEditNote(willPool)">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
                                             </div>
-                                            <div class="d-flex flex-row">
-                                                <div class="text-center ml-2"
-                                                    style="width: 40px;">
-                                                    <span class="badge badge-warning text-white w-100"
-                                                        matTooltip="Head Count">
-                                                        {{ account.headCount }}
-                                                    </span>
-                                                </div>
-                                                <div style="width: 100px;"
-                                                    class="text-center">
-                                                    {{ account.endChargeDate | date: 'dd/MM/yyyy' }}
-                                                </div>
-                                                <div>
-                                                    <span [ngStyle]="{
-                                                        'width': '40px',
-                                                        'backgroundColor': Utils.getColorContribute(account.contribute)}"
-                                                        class="badge text-white"
-                                                        matTooltip="Contribute">
-                                                        {{ account.contribute }}
-                                                    </span>
-                                                </div>
+                                        </ng-container>
+                                        <ng-template #editingNote>
+                                            <mat-form-field appearance="outline" class="w-100">
+                                                <textarea matInput
+                                                    appFocus
+                                                    placeholder="Enter note"
+                                                    [(ngModel)]="willPool.resourceNote"
+                                                    (keydown.esc)="onEditNote(willPool)"
+                                                    (focusout)="willPool.resourceNote != originalNoteValue ? updateNoteResource(willPool) : onEditNote(willPool)">
+                                                </textarea>
+                                            </mat-form-field>
+                                            <div *ngIf="willPool.resourceNote != originalNoteValue"
+                                                class="d-flex">
+                                                <button (mousedown)="updateNoteResource(willPool); $event.stopPropagation()"
+                                                    class="text-success button-action">
+                                                    <i class="fa fa-check"></i>
+                                                </button>
+                                                <button (mousedown)="onEditNote(willPool); $event.stopPropagation()"
+                                                    class="text-danger button-action">
+                                                    <i class="fa fa-times"></i>
+                                                </button>
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <pre [class]="'max-line-content-' + getCollapseLine(willPool)"
-                                            PrjResizeContent
-                                            [collapseLine]="getCollapseLine(willPool)"
-                                            class="note p-0 m-0">
-                                            {{willPool.resourceNote}}
-                                        </pre>
+                                        </ng-template>
                                     </td>
                                 </tr>
+                                <ng-container *ngFor="let account of (isExpands[willPool.resource.id] 
+                                                                        ? willPool.accounts 
+                                                                        : willPool.accounts.slice(0, numberDataRow));
+                                                                        let j = index">
+                                    <tr>
+                                        <td class="charge-name width-120">
+                                            <span PrjResizeContent [collapseLine]="1" class="max-line-content-1 text-truncate">
+                                                {{account.chargeName}}
+                                            </span>
+                                        </td>
+                                        <td class="project-name width-120">
+                                            <span (click)="viewProjectDetail(account.project)">
+                                                <strong class="hyperlink">
+                                                    {{ account.project.projectName }}
+                                                </strong>
+                                            </span>
+                                        </td>
+                                        <td class="text-center width-120">
+                                            <span style="width: 40px;">
+                                                {{ account.headCount | number: '1.2-2':'en-US' }}
+                                            </span>
+                                        </td>
+                                        <td class="text-center width-120">
+                                            {{account.endChargeDate | date: 'dd/MM/yyyy'}}
+                                        </td>
+                                        <td class="text-center width-120">
+                                            <span [ngStyle]="{
+                                                        'width': '40px',
+                                                        'backgroundColor': Utils.getColorContribute(account.contribute)}"
+                                                class="badge text-white">
+                                                {{ account.contribute }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </ng-container>
                             </ng-container>
                         </tbody>
                     </table>

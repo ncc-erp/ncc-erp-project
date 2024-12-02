@@ -4,8 +4,9 @@ import { BranchService } from '@app/service/api/branch.service';
 import { BranchDto } from '@app/service/model/branch.dto';
 import { PagedListingComponentBase, PagedRequestDto } from '@shared/paged-listing-component-base';
 import { catchError } from 'rxjs/operators';
-import { GetAllWillPoolResourceDto } from '@app/service/model/will-pool.dto';
+import { GetAllWillPoolResourceDto, ShortInfoProjectDto } from '@app/service/model/will-pool.dto';
 import { LISTWILLPOOL } from './data';
+import { ResourceManagerService } from '@app/service/api/resource-manager.service';
 
 @Component({
   selector: 'app-will-pool',
@@ -15,6 +16,13 @@ import { LISTWILLPOOL } from './data';
 export class WillPoolComponent extends PagedListingComponentBase<any> implements OnInit {
   // PERMISSIONS
   Resource_TabWillPool = PERMISSIONS_CONSTANT.Resource_TabWillPool;
+  Resource_TabWillPool_EditNote = PERMISSIONS_CONSTANT.Resource_TabAllResource_EditNote;
+  Projects_TrainingProjects_ProjectDetail_TabWeeklyReport = PERMISSIONS_CONSTANT.Projects_TrainingProjects_ProjectDetail_TabWeeklyReport;
+  Projects_TrainingProjects_ProjectDetail_TabWeeklyReport_View = PERMISSIONS_CONSTANT.Projects_TrainingProjects_ProjectDetail_TabWeeklyReport_View;
+  Projects_ProductProjects_ProjectDetail_TabWeeklyReport = PERMISSIONS_CONSTANT.Projects_ProductProjects_ProjectDetail_TabWeeklyReport;
+  Projects_ProductProjects_ProjectDetail_TabWeeklyReport_View = PERMISSIONS_CONSTANT.Projects_ProductProjects_ProjectDetail_TabWeeklyReport_View;
+  Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport;
+  Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_View = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_View;
   // branch filter
   public listBranchs: BranchDto[] = [];
   public selectedBranchIds: number[] = [];
@@ -46,8 +54,11 @@ export class WillPoolComponent extends PagedListingComponentBase<any> implements
   // expand collapse row
   public isExpands: { [id: number]: boolean } = {};
   public numberDataRow: number = 3;
-  private showIconExpandCollapeAll: boolean;
-  private isExpandAll: boolean = false;
+  public showIconExpandCollapeAll: boolean;
+  public isExpandAll: boolean = false;
+  // edit note
+  public isEditNote: { [id: number]: boolean } = {};
+  public originalNoteValue: string = "";
 
   protected list(request: PagedRequestDto, pageNumber: number, finishedCallback: Function): void {
   }
@@ -56,6 +67,7 @@ export class WillPoolComponent extends PagedListingComponentBase<any> implements
 
   constructor(public injector: Injector,
     private branchService: BranchService,
+    private resourceService: ResourceManagerService
   ) {
     super(injector);
   }
@@ -70,10 +82,10 @@ export class WillPoolComponent extends PagedListingComponentBase<any> implements
     this.sortDataByEndChargeDate(this.fieldSortDirection[this.sortProperties.Contribute]);
     this.sortDataByTotalContribute(this.fieldSortDirection[this.sortProperties.EndChargeDate]);
     this.showIconExpandCollapeAll = this.listWillPool.some(item => 
-      (item.projectNames?.length > this.numberDataRow || 
+      (item.projects?.length > this.numberDataRow || 
        item.accounts?.length > this.numberDataRow)
     );
-    this.totalItems = 13;
+    this.totalItems = 6;
     this.refresh();
   }
 
@@ -210,13 +222,95 @@ export class WillPoolComponent extends PagedListingComponentBase<any> implements
   getCollapseLine(willPool: GetAllWillPoolResourceDto): number {
     const maxLengthClassNumber = 5;
     const defaultCollapseLine = 3;
-    const maxLength = Math.max(willPool.projectNames?.length, willPool.accounts?.length);
+    const maxLength = Math.max(willPool.projects?.length, willPool.accounts?.length);
     if (this.isExpands[willPool.resource.id]) {
       return maxLength > this.numberDataRow ? maxLength : this.numberDataRow + maxLengthClassNumber;
     }
     return defaultCollapseLine;
   }
-  
+
+  getRowSpanAccount(willPool: GetAllWillPoolResourceDto): number {
+    const accountCount = willPool.accounts?.length;
+    if (accountCount <= this.numberDataRow) {
+      return accountCount + 1;
+    }
+    return this.isExpands[willPool.resource.id] ? accountCount + 1 : this.numberDataRow + 1;
+  }
+
+  onEditNote(willPool: GetAllWillPoolResourceDto) {
+    const resourceId = willPool.resource.id;
+    const currentNote = willPool.resourceNote;
+    this.isEditNote[resourceId] = !this.isEditNote[resourceId];
+    if (this.isEditNote[resourceId]) {
+      this.originalNoteValue = currentNote;
+    } else {
+      willPool.resourceNote = this.originalNoteValue;
+      this.originalNoteValue = "";
+    }
+  }
+
+  updateNoteResource(willPool: GetAllWillPoolResourceDto) {
+    const requestBody = { userId: willPool.resource.id, note: willPool.resourceNote };
+    this.resourceService.updatePoolNote(requestBody).subscribe({
+      next: () => {
+        abp.notify.success("Update Note Successful");
+        this.isEditNote[willPool.resource.id] = false;
+        this.originalNoteValue = "";
+      },
+      error: (err: { message: string; }) => {
+        abp.notify.error("Update Failed: " + (err.message || "An error occurred"));
+      }
+    });
+  }
+
+  viewProjectDetail(project: ShortInfoProjectDto) {
+    let routingToUrl: string = '';
+    let projectPermissionKey = '';
+    switch (project.projectType) {
+      case 5:
+        projectPermissionKey = this.Projects_TrainingProjects_ProjectDetail_TabWeeklyReport;
+        routingToUrl = this.getProjectDetailUrl(
+          projectPermissionKey,
+          this.Projects_TrainingProjects_ProjectDetail_TabWeeklyReport_View,
+          "/app/training-project-detail/training-weekly-report",
+          "/app/training-project-detail/training-project-general"
+        );
+        break;
+      case 3:
+        projectPermissionKey = this.Projects_ProductProjects_ProjectDetail_TabWeeklyReport;
+        routingToUrl = this.getProjectDetailUrl(
+          projectPermissionKey,
+          this.Projects_ProductProjects_ProjectDetail_TabWeeklyReport_View,
+          "/app/product-project-detail/product-weekly-report",
+          "/app/product-project-detail/product-project-general"
+        );
+        break;
+      default:
+        projectPermissionKey = this.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport;
+        routingToUrl = this.getProjectDetailUrl(
+          projectPermissionKey,
+          this.Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_View,
+          "/app/list-project-detail/weeklyreport",
+          "/app/list-project-detail/list-project-general"
+        );
+        break;
+    }
+    const url = this.router.serializeUrl(this.router.createUrlTree([routingToUrl], {
+      queryParams: {
+        id: project.id,
+        type: project.projectType,
+        projectName: project.projectName,
+        projectCode: project.projectCode
+      }
+    }));
+    window.open(url, '_blank');
+  }
+
+  getProjectDetailUrl(permissionKey: string, viewPermissionKey: string, permissionUrl: string, defaultUrl: string) {
+    return (this.permission.isGranted(permissionKey) && this.permission.isGranted(viewPermissionKey))
+      ? permissionUrl
+      : defaultUrl;
+  }
 }
 
 export interface IEventObject {

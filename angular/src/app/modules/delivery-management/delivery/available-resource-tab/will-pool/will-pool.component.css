@@ -17,10 +17,6 @@
     font-size: 16px;
 }
 
-.charge-name {
-    max-width: 300px;
-}
-
 .note {
     white-space: pre-line;
     font-family: sans-serif;
@@ -28,14 +24,49 @@
     line-height: initial;
 }
 
+.note-width {
+    max-width: 300px;
+}
+
+.width-150 {
+    min-width: 150px;
+    width: 150px;
+}
+
+.width-120 {
+    min-width: 120px;
+    width: 120px;
+}
+
+.width-130-max {
+    min-width: 130px;
+    width: 130px;
+    max-width: 130px;
+}
+
+.button-action {
+    border: none;
+    background-color: transparent;
+    border-radius: 5px;
+    width: 30px;
+}
+
+.button-action:hover{
+    background-color: #c3c3c3;
+}
+
 @media screen and (min-width: 1500px) and (max-width: 1700px) {
-    .project-name {
+    .project-name, .charge-name {
         width: 250px !important;
     }
 }
 
 @media screen and (min-width: 1701px) {
-    .project-name {
+    .project-name, .charge-name {
         width: 300px !important;
+    }
+
+    .note-width {
+        max-width: 500px;
     }
 }

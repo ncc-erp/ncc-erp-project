@@ -1408,9 +1408,11 @@ namespace ProjectManagement.Services.ResourceManager
                 .AsNoTracking()
                 .Where(u => u.IsActive && u.UserType != UserType.FakeUser)
                 .Where(u => u.LinkedResources
-                    .Any(lr => lr.ProjectUserBill.EndTime.HasValue &&
-                               lr.ProjectUserBill.EndTime >= input.EndChargeDateFrom.Date &&
-                               lr.ProjectUserBill.EndTime.Value.Date <= input.EndChargeDateTo))
+                    .Any(lr => (
+                                   lr.ProjectUserBill.EndTime >= input.EndChargeDateFrom.Date &&
+                                   lr.ProjectUserBill.EndTime.Value.Date <= input.EndChargeDateTo
+                               ) ||
+                               lr.ProjectUserBill.EndTime == null))
                 .WhereIf(input.UserName.HasValue(), u => u.UserName.Contains(input.UserName))
                 .WhereIf(input.BranchIds != null && input.BranchIds.Any(),
                     u => input.BranchIds.Contains(u.BranchId.Value))
@@ -1425,10 +1427,12 @@ namespace ProjectManagement.Services.ResourceManager
             // query get all linked resource
             var qUserEndChargeDate = _workScope.GetAll<LinkedResource>()
                 .AsNoTracking()
-                .Where(lr => lr.ProjectUserBill.EndTime.HasValue &&
-                             lr.ProjectUserBill.EndTime >= input.EndChargeDateFrom.Date &&
-                             lr.ProjectUserBill.EndTime.Value.Date <= input.EndChargeDateTo ||
-                             lr.ProjectUserBill.EndTime == null);
+                .Where(lr =>
+                    (
+                        lr.ProjectUserBill.EndTime.Value.Date >= input.EndChargeDateFrom.Date &&
+                        lr.ProjectUserBill.EndTime.Value.Date <= input.EndChargeDateTo.Date
+                    ) ||
+                    lr.ProjectUserBill.EndTime == null);
             // apply select user
             var qUser = qUserHasLinked.Select(u => new GetAllWillPoolResourceDto
             {

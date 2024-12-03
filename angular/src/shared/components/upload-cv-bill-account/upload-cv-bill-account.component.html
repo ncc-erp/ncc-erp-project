@@ -3,21 +3,35 @@
     <form action="" class="py-2 border-top">
         <div class="d-flex flex-column">
             <label for="file">Choose file:</label>
-            <input type="file" class="form-group" id="file">
+            <input type="file"
+                class="form-group"
+                id="file"
+                required
+                (change)="handleFileInput($event)">
         </div>
         <div class="d-flex flex-column">
             <mat-form-field appearance="outline" floatLabel="auto">
                 <mat-label>Enter Name CV</mat-label>
-                <input
+                <input name="nameCv"
                     type="text"
                     matInput
                     required
+                    [(ngModel)]="billAccountCv.nameCv"
                 />
             </mat-form-field>
         </div>
-        <div class="d-flex justify-content-start">
-            <button mat-flat-button color="primary" class="btn btn-primary mr-2">Import</button>
-            <button mat-raised-button class="btn btn-secondary" mat-dialog-close>Cancel</button>
+        <div class="d-flex justify-content-start mt-2">
+            <button mat-flat-button color="primary"
+                class="btn btn-primary mr-2"
+                [disabled]="!billAccountCv.nameCv || !selectedFile"
+                (click)="onSubmit()">
+                Import
+            </button>
+            <button
+                mat-raised-button class="btn btn-secondary"
+                mat-dialog-close>
+                Cancel
+            </button>
         </div>
     </form>
 </div>

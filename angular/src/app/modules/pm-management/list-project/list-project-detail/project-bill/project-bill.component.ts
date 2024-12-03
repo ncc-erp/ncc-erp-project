@@ -33,7 +33,7 @@ import * as FileSaver from 'file-saver';
 import { UpdateUserSkillDialogComponent } from '@app/users/update-user-skill-dialog/update-user-skill-dialog.component';
 import { AppConsts } from '@shared/AppConsts';
 import { UploadCvBillAccountComponent } from '@shared/components/upload-cv-bill-account/upload-cv-bill-account.component';
-
+import { UploadCvBillAccountDto } from '@app/service/model/upload-cv.dto';
 
 @Component({
   selector: 'app-project-bill',
@@ -893,9 +893,14 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     this.showSearchAndFilter = !hasChanged;
   }
 
-  openUploadCvDialog() {
+  openUploadCvDialog(projectUserBill: projectUserBillDto) {
     const dialogRef = this.dialog.open(UploadCvBillAccountComponent, {
-      // data: { id: item.id, width: '500px' }
+      data: { 
+        id: projectUserBill.id, 
+        nameCv: projectUserBill.nameCv, 
+        linkCV: projectUserBill.linkCV
+      } as UploadCvBillAccountDto,
+      width: '700px',
     });
   }
 }

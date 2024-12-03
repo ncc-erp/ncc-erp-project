@@ -52,6 +52,10 @@
   border-radius: 5px;
 }
 
+.cv-link:hover{
+  text-decoration: underline;
+}
+
 @media screen and (max-width: 600px) {
   .content {
     padding-left: 0 !important;

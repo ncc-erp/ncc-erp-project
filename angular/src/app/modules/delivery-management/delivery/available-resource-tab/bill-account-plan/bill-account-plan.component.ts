@@ -17,6 +17,9 @@ import { projectUserBillDto } from '@app/service/model/project.dto';
 import { UpdateUserSkillDialogComponent } from '@app/users/update-user-skill-dialog/update-user-skill-dialog.component';
 import { IBillInfo, IProject } from '@app/service/model/bill-info.interface';
 import { AppConsts } from '@shared/AppConsts';
+import { UploadCvBillAccountComponent } from '@shared/components/upload-cv-bill-account/upload-cv-bill-account.component';
+import { GetCvBillAccountDto } from '@app/service/model/upload-cv.dto';
+import { FileHandlerService } from '@app/service/utility/file-handler.service';
 
 @Component({
   selector: "app-bill-account-plan",
@@ -90,6 +93,7 @@ export class BillAccountPlanComponent
     private planningBillInfoService: PlanningBillInfoService,
     private projectUserBillService: ProjectUserBillService,
     private dialog: MatDialog,
+    private fileHandlerService: FileHandlerService
     ) {
     super(injector);
   }
@@ -391,5 +395,24 @@ export class BillAccountPlanComponent
         this.refresh()
       }
     })
+  }
+
+  openUploadCvDialog(project: IProject, itemIndex: number, projectIndex: number): void {
+    const dialogRef = this.dialog.open(UploadCvBillAccountComponent, {
+      data: { ...project, id: project.billId } as GetCvBillAccountDto,
+      width: '700px',
+    });
+    dialogRef.afterClosed().subscribe((result?: GetCvBillAccountDto) => {
+      if (result && this.billInfoList[itemIndex]?.projects[projectIndex]) {
+        const updatedProject = { ...this.billInfoList[itemIndex].projects[projectIndex], ...result };
+        this.billInfoList[itemIndex].projects[projectIndex] = updatedProject;
+      }
+    });
+  }
+
+  downloadFile(id: number){
+    this.projectUserBillService.DownloadCVLink(id).subscribe(data => {
+      this.fileHandlerService.downloadFile(data.result.data, data.result.fileName);
+    });
   }
 }

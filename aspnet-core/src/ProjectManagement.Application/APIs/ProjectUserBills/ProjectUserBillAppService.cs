@@ -295,7 +295,9 @@ namespace ProjectManagement.APIs.ProjectUserBills
                     SkillRank = s.SkillRank,
                     SkillNote = s.Note
                 }).ToList(),
-                SkillNote = x.BillUserSkills.Select(s => s.Note).FirstOrDefault() ?? ""
+                SkillNote = x.BillUserSkills.Select(s => s.Note).FirstOrDefault() ?? "",
+                LinkCV = x.LinkCV,
+                NameCv = x.NameCv
             },
             IsCharge = x.isActive
         })

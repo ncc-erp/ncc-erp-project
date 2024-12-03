@@ -50,6 +50,8 @@ export interface IProject {
     linkedResources: ILinkedResource[];
     userSkills: IUserSkill[];
     skillNote: string;
+    linkCV: string;
+    nameCv: string;
 }
 
 export interface ILinkedResource {

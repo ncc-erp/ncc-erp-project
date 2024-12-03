@@ -825,5 +825,12 @@ namespace ProjectManagement.APIs.ProjectUserBills
             }
             await WorkScope.UpdateRangeAsync(userSkillUpdates);
         }
+        
+        [HttpPost]
+        [AbpAuthorize]
+        public async Task<GetCvBillAccountDto> UploadCvBillAccount([FromForm] UploadCvBillAccountDto input)
+        {
+            return await projectUserBillManager.UploadCvBillAccount(input);
+        }
     }
 }

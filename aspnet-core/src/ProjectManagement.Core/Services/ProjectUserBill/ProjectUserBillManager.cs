@@ -25,16 +25,19 @@ using System;
 using ProjectManagement.Services.ProjectUserBill;
 using Abp.Linq.Extensions;
 using Abp.Extensions;
+using ProjectManagement.UploadFilesService;
 
 namespace ProjectManagement.Services.ProjectUserBills
 {
     public class ProjectUserBillManager : ApplicationService
     {
         private readonly IWorkScope _workScope;
+        private readonly UploadFileService _uploadFileService;
 
-        public ProjectUserBillManager(IWorkScope workScope)
+        public ProjectUserBillManager(IWorkScope workScope, UploadFileService uploadFileService)
         {
             _workScope = workScope;
+            _uploadFileService = uploadFileService;
         }
 
         public IQueryable<ProjectManagement.Entities.ProjectUserBill> GetSubProjectBills(long parentProjectId)
@@ -499,5 +502,24 @@ namespace ProjectManagement.Services.ProjectUserBills
                 throw new UserFriendlyException($"ProjectUserBill with Id {projectUserBillId} does not exist!");
         }
 
+        public async Task<GetCvBillAccountDto> UploadCvBillAccount(UploadCvBillAccountDto input)
+        {
+            var projectUserBill = await _workScope.GetAsync<Entities.ProjectUserBill>(input.Id);
+            projectUserBill.NameCv = input.NameCv;
+            var filename = input.Id + "_" + input.SelectedFile.FileName.Trim().Replace(" ", "");
+            var filePath = await _uploadFileService.UploadCvAsync(input.SelectedFile, filename);
+            if (string.IsNullOrEmpty(filePath))
+            {
+                throw new UserFriendlyException("File Upload Failed");
+            }
+            projectUserBill.LinkCV = filePath;
+            await _workScope.UpdateAsync(projectUserBill);
+            return new GetCvBillAccountDto()
+            {
+                Id = projectUserBill.Id,
+                NameCv = projectUserBill.NameCv,
+                LinkCV = projectUserBill.LinkCV
+            };
+        }
     }
 }

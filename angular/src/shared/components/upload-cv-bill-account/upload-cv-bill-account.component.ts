@@ -1,6 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { UploadCvBillAccountDto } from '@app/service/model/upload-cv.dto';
+import { ProjectUserBillService } from '@app/service/api/project-user-bill.service';
+import { GetCvBillAccountDto, UploadCvBillAccountDto } from '@app/service/model/upload-cv.dto';
+import { catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'app-upload-cv-bill-account',
@@ -9,11 +11,12 @@ import { UploadCvBillAccountDto } from '@app/service/model/upload-cv.dto';
 })
 
 export class UploadCvBillAccountComponent implements OnInit {
-  public billAccountCv: UploadCvBillAccountDto;
+  public billAccountCv: GetCvBillAccountDto;
   public selectedFile: File | null = null;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: UploadCvBillAccountDto,
-    private dialogRef: MatDialogRef<UploadCvBillAccountComponent>) {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: GetCvBillAccountDto,
+    private dialogRef: MatDialogRef<UploadCvBillAccountComponent>,
+    private projectUserBillService: ProjectUserBillService) {
   }
 
   ngOnInit(): void {
@@ -28,7 +31,21 @@ export class UploadCvBillAccountComponent implements OnInit {
     }
   }
 
-  onSubmit() {
-    this.dialogRef.close();
+  onSubmit(): void {
+    const request: UploadCvBillAccountDto = {
+      id: this.billAccountCv.id,
+      nameCv: this.billAccountCv.nameCv,
+      selectedFile: this.selectedFile
+    };
+    this.projectUserBillService.UploadCvBillAccount(request)
+      .pipe(catchError(error => this.projectUserBillService.handleError(error)))
+      .subscribe({
+        next: res => {
+          abp.notify.success("Upload CV successfully");
+          this.billAccountCv = res.result;
+          this.dialogRef.close(this.billAccountCv);
+        },
+        error: () => { this.dialogRef.close() }
+      });
   }
 }

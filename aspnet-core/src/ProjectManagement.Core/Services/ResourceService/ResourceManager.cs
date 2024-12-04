@@ -1401,18 +1401,23 @@ namespace ProjectManagement.Services.ResourceManager
 
         public async Task<GridResult<GetAllWillPoolResourceDto>> GetAllWillPoolResource(InputGetAllWillPoolResourceDto input)
         {
-            // validation for input datetime
-            ValidationInputFilters(input);
-            // query get all user
+            var startDate = input.EndChargeDateFrom.Date;
+            var endDate = input.EndChargeDateTo.Date.AddDays(1).AddTicks(-1);
+            // query get all linked resource
+            var qLinkedResourceWithinDate = _workScope.GetAll<LinkedResource>()
+                .AsNoTracking()
+                .Where(lr => !lr.ProjectUserBill.EndTime.HasValue || 
+                             (
+                                 lr.ProjectUserBill.EndTime >= startDate &&
+                                 lr.ProjectUserBill.EndTime <= endDate
+                             ));
+            var listIdLinkedResourceWithinDate = qLinkedResourceWithinDate.Select(lr => lr.Id);
+            // query get all user has linked
             var qUserHasLinked = _workScope.GetAll<User>()
                 .AsNoTracking()
                 .Where(u => u.IsActive && u.UserType != UserType.FakeUser)
                 .Where(u => u.LinkedResources
-                    .Any(lr => (
-                                   lr.ProjectUserBill.EndTime >= input.EndChargeDateFrom.Date &&
-                                   lr.ProjectUserBill.EndTime.Value.Date <= input.EndChargeDateTo
-                               ) ||
-                               lr.ProjectUserBill.EndTime == null))
+                    .Any(lr => listIdLinkedResourceWithinDate.Contains(lr.Id)))
                 .WhereIf(input.UserName.HasValue(), u => u.UserName.Contains(input.UserName))
                 .WhereIf(input.BranchIds != null && input.BranchIds.Any(),
                     u => input.BranchIds.Contains(u.BranchId.Value))
@@ -1424,15 +1429,6 @@ namespace ProjectManagement.Services.ResourceManager
                 .Where(s => s.Status == ProjectUserStatus.Present &&
                             s.AllocatePercentage > 0 &&
                             s.Project.Status != ProjectStatus.Closed);
-            // query get all linked resource
-            var qUserEndChargeDate = _workScope.GetAll<LinkedResource>()
-                .AsNoTracking()
-                .Where(lr =>
-                    (
-                        lr.ProjectUserBill.EndTime.Value.Date >= input.EndChargeDateFrom.Date &&
-                        lr.ProjectUserBill.EndTime.Value.Date <= input.EndChargeDateTo.Date
-                    ) ||
-                    lr.ProjectUserBill.EndTime == null);
             // apply select user
             var qUser = qUserHasLinked.Select(u => new GetAllWillPoolResourceDto
             {
@@ -1453,7 +1449,7 @@ namespace ProjectManagement.Services.ResourceManager
                     PositionName = u.Position.ShortName,
                 },
                 ResourceNote = u.PoolNote,
-                Accounts = qUserEndChargeDate
+                Accounts = qLinkedResourceWithinDate
                     .Where(ulr => ulr.UserId == u.Id)
                     .Select(ulr => new AccountDto()
                     {
@@ -1484,14 +1480,6 @@ namespace ProjectManagement.Services.ResourceManager
             });
             var result = await qUser.ToListAsync();
             return new GridResult<GetAllWillPoolResourceDto>(result, result.Count);
-        }
-        
-        private static void ValidationInputFilters(InputGetAllWillPoolResourceDto input)
-        {
-            if (input.EndChargeDateFrom > input.EndChargeDateTo)
-            {
-                throw new UserFriendlyException("The 'End Charge Date From' must be earlier than the 'End Charge Date To'. Please check the date range and try again.");
-            }
         }
     }
 }

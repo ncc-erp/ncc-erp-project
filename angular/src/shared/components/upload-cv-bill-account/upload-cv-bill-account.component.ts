@@ -26,6 +26,18 @@ export class UploadCvBillAccountComponent implements OnInit {
   handleFileInput(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.selectedFile = input?.files?.item(0) || null;
+    const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+    if (!allowedTypes.includes(this.selectedFile.type)) {
+      abp.notify.error("Only PDF and Word documents are allowed");
+      this.selectedFile = null;
+      return;
+    }
+    const maxSize = 5 * 1024 * 1024;
+    if (this.selectedFile.size > maxSize) {
+      abp.notify.error("File size should not exceed 5MB");
+      this.selectedFile = null;
+      return;
+    }
     if (this.selectedFile && !this.billAccountCv.nameCv) {
       this.billAccountCv.nameCv = this.selectedFile.name.replace(/\.[^/.]+$/, "");
     }

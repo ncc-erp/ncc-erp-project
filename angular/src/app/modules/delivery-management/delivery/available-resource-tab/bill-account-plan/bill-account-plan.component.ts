@@ -1,5 +1,5 @@
 import { BillAccountDialogNoteComponent } from './bill-account-dialog-note/bill-account-dialog-note.component';
-import {ChangeDetectorRef, Component, EventEmitter, Injector, OnInit, Output } from "@angular/core";
+import { Component, Injector, OnInit } from "@angular/core";
 import * as _moment from "moment";
 import { APP_ENUMS } from "@shared/AppEnums";
 import {
@@ -13,7 +13,6 @@ import { MatDialog } from "@angular/material/dialog";
 import { HandleLinkedResourcesDialogComponent } from './handle-linked-resources-dialog/handle-linked-resources-dialog.component';
 import { ProjectUserBillService } from '@app/service/api/project-user-bill.service';
 import { PERMISSIONS_CONSTANT } from '@app/constant/permission.constant';
-import { projectUserBillDto } from '@app/service/model/project.dto';
 import { UpdateUserSkillDialogComponent } from '@app/users/update-user-skill-dialog/update-user-skill-dialog.component';
 import { IBillInfo, IProject } from '@app/service/model/bill-info.interface';
 import { AppConsts } from '@shared/AppConsts';

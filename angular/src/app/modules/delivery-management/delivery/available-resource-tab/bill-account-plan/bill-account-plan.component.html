@@ -290,7 +290,7 @@
                                   'color': project.linkCV && project.nameCv ? 'blue' : 'red',
                                   'cursor': project.linkCV ? 'pointer' : 'auto'
                               }"
-                              class="text-nowrap w-100 text-truncate"
+                              class="w-100"
                               [class.cv-link]="project.linkCV">
                               {{ project.linkCV ? (project.nameCv || 'Empty CV Name') : 'No CV' }}
                           </span>

@@ -51,7 +51,7 @@ namespace ProjectManagement.Services.ProjectUserBill.Dto
         public string FullName { get; set; }
 
         public string UserName { get; set; }
-
+        public long? BranchId { get; set; }
         public string BranchColor { get; set; }
         public string BranchDisplayName { get; set; }
 

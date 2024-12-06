@@ -886,7 +886,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   openUploadCvDialog(projectUserBill: projectUserBillDto): void {
     const dialogRef = this.dialog.open(UploadCvBillAccountComponent, {
       data: { ...projectUserBill } as GetCvBillAccountDto,
-      width: '700px',
+      width: '500px',
     });
     dialogRef.afterClosed().subscribe((result?: GetCvBillAccountDto) => {
       if (result) {

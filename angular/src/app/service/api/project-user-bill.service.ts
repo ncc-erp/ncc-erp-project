@@ -121,7 +121,6 @@ export class ProjectUserBillService extends BaseApiService {
   UploadCvBillAccount(request: UploadCvBillAccountDto): Observable<any>{
     const formData = new FormData();
     formData.append('Id', request.id.toString());
-    formData.append('NameCv', request.nameCv);
     formData.append('SelectedFile', request.selectedFile);
     return this.http.post<any>(this.rootUrl + '/UploadCvBillAccount', formData);
   }

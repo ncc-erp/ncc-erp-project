@@ -38,15 +38,11 @@ export class UploadCvBillAccountComponent implements OnInit {
       this.selectedFile = null;
       return;
     }
-    if (this.selectedFile && !this.billAccountCv.nameCv) {
-      this.billAccountCv.nameCv = this.selectedFile.name.replace(/\.[^/.]+$/, "");
-    }
   }
 
   onSubmit(): void {
     const request: UploadCvBillAccountDto = {
       id: this.billAccountCv.id,
-      nameCv: this.billAccountCv.nameCv,
       selectedFile: this.selectedFile
     };
     this.projectUserBillService.UploadCvBillAccount(request)

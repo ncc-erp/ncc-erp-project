@@ -112,7 +112,6 @@ export class projectUserBillDto {
   chargeTypeName: string;
   linkedResources: any[];
   createLinkResourceMode?: boolean;
-  nameCv: string;
   linkCV: string;
   totalHeadCount:number;
   contribute: number;

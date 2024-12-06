@@ -11,21 +11,10 @@
                 aria-label="Choose CV file"
                 (change)="handleFileInput($event)">
         </div>
-        <div class="d-flex flex-column">
-            <mat-form-field appearance="outline" floatLabel="auto">
-                <mat-label>Enter Name CV</mat-label>
-                <input name="nameCv"
-                    type="text"
-                    matInput
-                    required
-                    [(ngModel)]="billAccountCv.nameCv"
-                />
-            </mat-form-field>
-        </div>
         <div class="d-flex justify-content-start mt-2">
             <button mat-flat-button color="primary"
                 class="btn btn-primary mr-2"
-                [disabled]="!billAccountCv.nameCv || !selectedFile"
+                [disabled]="!selectedFile"
                 (click)="onSubmit()">
                 Import
             </button>

@@ -399,7 +399,7 @@ export class BillAccountPlanComponent
   openUploadCvDialog(project: IProject, itemIndex: number, projectIndex: number): void {
     const dialogRef = this.dialog.open(UploadCvBillAccountComponent, {
       data: { ...project, id: project.billId } as GetCvBillAccountDto,
-      width: '700px',
+      width: '500px',
     });
     dialogRef.afterClosed().subscribe((result?: GetCvBillAccountDto) => {
       if (result && this.billInfoList[itemIndex]?.projects[projectIndex]) {

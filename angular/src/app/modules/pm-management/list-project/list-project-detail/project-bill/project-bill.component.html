@@ -301,16 +301,15 @@
                                 </td>
                                 <td>
                                     <div *ngIf="!bill.createMode">
-                                        <span class="text-nowrap">{{ bill.billAccountName }}</span>
-                                        <div class="d-flex col-12 p-0 mt-2">
-                                            <span (click)="bill.linkCV ? downloadFile(bill.id) : null"
+                                        <div class="d-flex col-12 p-0">
+                                            <span class="text-nowrap w-100 text-truncate"
+                                                (click)="bill.linkCV ? downloadFile(bill.id) : null"
+                                                [class.cv-link]="bill.linkCV"
                                                 [ngStyle]="{
-                                                    'color': bill.linkCV && bill.nameCv ? 'blue' : 'red',
+                                                    'color': bill.linkCV  ? 'blue' : '',
                                                     'cursor': bill.linkCV ? 'pointer' : 'auto'
-                                                }"
-                                                class="text-nowrap w-100 text-truncate"
-                                                [class.cv-link]="bill.linkCV">
-                                                {{ bill.linkCV ? (bill.nameCv || 'Empty CV Name') : 'No CV' }}
+                                                }">
+                                                {{ bill.billAccountName }}
                                             </span>
                                             <button class="btn btn-sm py-0 pr-0"
                                                 (click)="openUploadCvDialog(bill); $event.stopPropagation()">

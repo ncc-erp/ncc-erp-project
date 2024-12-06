@@ -1,20 +1,16 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Abp.Application.Services.Dto;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace ProjectManagement.Services.ProjectUserBill.Dto
 {
-    public class UploadCvBillAccountDto : EntityDto<long>
+    public class UploadCvBillAccountDto
     {
-        [Required]
-        public string NameCv { get; set; }
-        [Required]
+        public long Id { get; set; }
         public IFormFile SelectedFile { get; set; }
     }
 
-    public class GetCvBillAccountDto : EntityDto<long>
+    public class GetCvBillAccountDto
     {
-        public string NameCv { get; set; }
+        public long Id { get; set; }
         public string LinkCV { get; set; }
     }
 }

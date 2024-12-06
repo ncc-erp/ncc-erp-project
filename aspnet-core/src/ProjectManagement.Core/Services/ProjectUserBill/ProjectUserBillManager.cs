@@ -25,6 +25,7 @@ using System;
 using ProjectManagement.Services.ProjectUserBill;
 using Abp.Linq.Extensions;
 using Abp.Extensions;
+using NccCore.Uitls;
 using ProjectManagement.UploadFilesService;
 
 namespace ProjectManagement.Services.ProjectUserBills
@@ -160,7 +161,7 @@ namespace ProjectManagement.Services.ProjectUserBills
                     UserName = x.User.Name,
                     ProjectId = x.ProjectId,
                     ProjectName = x.Project.Name,
-                    AccountName = x.AccountName,
+                    AccountName = x.AccountName.IsEmpty() ? x.User.UserName : x.AccountName,
                     BillRole = x.BillRole,
                     BillRate = isViewRate ? x.BillRate : 0,
                     HeadCount = x.HeadCount,
@@ -183,7 +184,6 @@ namespace ProjectManagement.Services.ProjectUserBills
                     UserLevel = x.User.UserLevel,
                     ChargeType = x.ChargeType ?? x.Project.ChargeType,
                     CreationTime = x.CreationTime,
-                    NameCv = x.NameCv,
                     LinkCV = x.LinkCV,
                     UserSkills = x.BillUserSkills.Select(us => new BillUserSkillDto
                     {
@@ -505,8 +505,7 @@ namespace ProjectManagement.Services.ProjectUserBills
         public async Task<GetCvBillAccountDto> UploadCvBillAccount(UploadCvBillAccountDto input)
         {
             var projectUserBill = await _workScope.GetAsync<Entities.ProjectUserBill>(input.Id);
-            projectUserBill.NameCv = input.NameCv;
-            var filename = input.Id + "_" + input.SelectedFile.FileName.Trim().Replace(" ", "");
+            var filename = DateTimeUtils.NowToyyyyMMddHHmmssfff() + "_" + input.SelectedFile.FileName.Replace(" ", "_");
             var filePath = await _uploadFileService.UploadCvAsync(input.SelectedFile, filename);
             if (string.IsNullOrEmpty(filePath))
             {
@@ -517,7 +516,6 @@ namespace ProjectManagement.Services.ProjectUserBills
             return new GetCvBillAccountDto()
             {
                 Id = projectUserBill.Id,
-                NameCv = projectUserBill.NameCv,
                 LinkCV = projectUserBill.LinkCV
             };
         }

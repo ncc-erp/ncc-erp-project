@@ -3647,9 +3647,6 @@ namespace ProjectManagement.Migrations
                     b.Property<string>("LinkCV")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("NameCv")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 

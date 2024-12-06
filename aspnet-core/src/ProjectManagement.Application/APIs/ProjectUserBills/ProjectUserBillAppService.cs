@@ -258,7 +258,7 @@ namespace ProjectManagement.APIs.ProjectUserBills
                 ProjectStatus = x.Project.Status,
                 ProjectId = x.ProjectId,
                 ProjectName = x.Project.Name,
-                AccountName = x.AccountName,
+                AccountName = x.AccountName.IsEmpty() ? x.User.UserName : x.AccountName,
                 BillRate = x.BillRate,
                 HeadCount = x.HeadCount,
                 StartTime = x.StartTime,
@@ -297,7 +297,6 @@ namespace ProjectManagement.APIs.ProjectUserBills
                 }).ToList(),
                 SkillNote = x.BillUserSkills.Select(s => s.Note).FirstOrDefault() ?? "",
                 LinkCV = x.LinkCV,
-                NameCv = x.NameCv
             },
             IsCharge = x.isActive
         })

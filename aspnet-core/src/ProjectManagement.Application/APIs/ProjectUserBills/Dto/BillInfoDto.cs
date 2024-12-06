@@ -100,7 +100,6 @@ namespace ProjectManagement.APIs.ProjectUserBills.Dto
         public List<BillUserSkillDto> UserSkills { get; set; }
         public string SkillNote { get; set; }
         public string LinkCV { get; set; }
-        public string NameCv { get; set; }
     }
 
     public class InputGetBillInfoDto : GridParam

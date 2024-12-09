@@ -63,7 +63,7 @@ export class WillPoolComponent extends PagedListingComponentBase<any> implements
   public searchText: string = "";
   public oldSearchText: string = "";
 
-  protected list(_request: PagedRequestDto, pageNumber: number, _finishedCallback: Function): void {
+  protected list(_request: PagedRequestDto, pageNumber: number, _finishedCallback: () => void): void {
     this.isLoading = true;
     const requestBody = new InputGetAllWillPoolResourceDto();
     requestBody.userName = this.searchText;
@@ -233,7 +233,7 @@ export class WillPoolComponent extends PagedListingComponentBase<any> implements
       item.accounts.sort((a, b) => {
         const getValidTimestamp = (dateString: string): number => {
           const date = new Date(dateString);
-          return isNaN(date.getTime()) ? defaultGetTime : date.getTime();
+          return Number.isNaN(date.getTime()) ? defaultGetTime : date.getTime();
         };
         const dateA = getValidTimestamp(a.endChargeDate);
         const dateB = getValidTimestamp(b.endChargeDate);

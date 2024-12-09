@@ -254,7 +254,7 @@
                                     <td class="note-width"
                                         [attr.rowspan]="getRowSpanAccount(willPool)">
                                         <ng-container *ngIf="!isEditNote[willPool.resource.id]; else editingNote">
-                                            <div class="d-flex justify-content-between align-items-center w-100 h-100">
+                                            <div class="d-flex justify-content-between w-100 h-100">
                                                 <pre [class]="'max-line-content-' + getCollapseLine(willPool)"
                                                     PrjResizeContent
                                                     [collapseLine]="getCollapseLine(willPool)"

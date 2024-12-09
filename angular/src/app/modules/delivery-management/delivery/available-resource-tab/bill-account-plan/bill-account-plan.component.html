@@ -409,10 +409,11 @@
                           <div *ngFor="let resource of  project.linkedResources; let i = index"
                             class="mb-2 d-flex px-0">
                             <div class="col-8 d-flex px-0">
-                              <app-user-info [userData]="resource" 
-                                [isHideEmail]="true" 
-                                [isWeeklyReport]="false" 
-                                [isSmallerDiv]="true" 
+                              <app-user-info [userData]="resource"
+                                [isHideEmail]="true"
+                                [isWeeklyReport]="false"
+                                [isSmallerDiv]="true"
+                                [isHideLevel]="!isShowLevel"
                                 [viewMode]="1">
                               </app-user-info>
                             </div>

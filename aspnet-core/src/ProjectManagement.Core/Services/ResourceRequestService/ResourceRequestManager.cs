@@ -190,7 +190,9 @@ namespace ProjectManagement.Services.ResourceRequestService
                             UserRequestName = _workScope.Get<User>((long)request.CreatorUserId).Name,
                             CreateAt = request.CreationTime,
                             IsNewBillAccount = request.IsNewBillAccount,
-                            IsRequiredPlanResource = request.IsRequiredPlanResource
+                            IsRequiredPlanResource = request.IsRequiredPlanResource,
+                            ConfidenceLevel = request.ConfidenceLevel,
+                            HeadCount = request.HeadCount
                         };
 
             return query;

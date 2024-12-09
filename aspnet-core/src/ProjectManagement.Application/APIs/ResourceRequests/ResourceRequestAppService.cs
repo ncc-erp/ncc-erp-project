@@ -344,6 +344,12 @@ namespace ProjectManagement.APIs.ResourceRequests
             if (!input.SkillIds.Any())
                 throw new UserFriendlyException("Select at least 1 skill");
 
+            if (input.ConfidenceLevel < 0)
+                throw new UserFriendlyException("Confidence level cannot be negative. Please provide a value of 0 or higher.");
+
+            if (input.HeadCount < 0)
+                throw new UserFriendlyException("Head count cannot be negative. Please provide a value of 0 or higher.");
+
             List<long> createdRequestIds = new List<long>();
             for (int i = 0; i < input.Quantity; i++)
             {
@@ -395,6 +401,12 @@ namespace ProjectManagement.APIs.ResourceRequests
             {
                 throw new UserFriendlyException("Skill can't be null or empty");
             }
+            
+            if (input.ConfidenceLevel < 0)
+                throw new UserFriendlyException("Confidence level cannot be negative. Please provide a value of 0 or higher.");
+
+            if (input.HeadCount < 0)
+                throw new UserFriendlyException("Head count cannot be negative. Please provide a value of 0 or higher.");
 
             var resourceRequest = await WorkScope.GetAsync<ResourceRequest>(input.Id);
             ObjectMapper.Map(input, resourceRequest);

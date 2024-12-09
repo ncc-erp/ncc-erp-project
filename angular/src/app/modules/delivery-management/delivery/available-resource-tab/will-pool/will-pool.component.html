@@ -1,0 +1,373 @@
+<section *ngIf="permission.isGranted(Resource_TabWillPool)"
+    class="content my-2">
+    <div class="container-fluid">
+        <!-- FILTER BAR -->
+        <div class="row mt-2">
+            <!-- Search by username -->
+            <div class="col-4 d-flex input-group align-items-center">
+                <div class="input-group-prepend">
+                    <button type="button"
+                        class="btn bg-blue">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                <input type="text"
+                    class="form-control"
+                    name="keyword"
+                    [(ngModel)]="searchText"
+                    (focusout)="filterUsername()"
+                    (keyup.enter)="filterUsername()"
+                    placeholder="Search by Username"/>
+            </div>
+            <!-- filter by branch -->
+            <div class="col-2">
+                <mat-form-field appearance="outline"
+                    class="w-100">
+                    <mat-label>Branch:</mat-label>
+                    <mat-select placeholder="Select branch"
+                        multiple
+                        [(ngModel)]="selectedBranchIds"
+                        (openedChange)="openedChange($event, 'Branch')"
+                        #selectBranch>
+                        <div class="popup-filter">
+                            <mat-form-field class="w-100 px-2">
+                                <input matInput
+                                    [(ngModel)]="searchBranch"
+                                    placeholder="Search"
+                                    #search
+                                    (keydown)="$event.stopPropagation()"
+                                    class="w-100">
+                            </mat-form-field>
+                            <div class="px-2 mb-2">
+                                <app-select-clear-option [type]="'Branch'"
+                                    [listOption]="listBranchsId"
+                                    (newListEvent)="actionSelect($event)"
+                                    (doneEvent)="selectDone($event)">
+                                </app-select-clear-option>
+                            </div>
+                        </div>
+                        <mat-option *ngFor="let branch of listBranchs | listFilter: 'name' : searchBranch"
+                            [value]="branch.id"
+                            (click)="onSelectChangeBranch(branch.id)">
+                            {{branch.name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <!-- filter by user type -->
+            <div class="col-2">
+                <mat-form-field appearance="outline"
+                    class="w-100">
+                    <mat-label>User Type:</mat-label>
+                    <mat-select #selectUserType
+                        placeholder="Select user type"
+                        [(ngModel)]="selectedUserTypes"
+                        multiple
+                        (openedChange)="openedChange($event, 'UserType')">
+                        <div class="popup-filter">
+                            <mat-form-field class="w-100 px-2">
+                                <input matInput
+                                    [(ngModel)]="searchUserType"
+                                    placeholder="Search"
+                                    #search
+                                    (keydown)="$event.stopPropagation()"
+                                    class="w-100">
+                            </mat-form-field>
+                            <div class="px-2 mb-2">
+                                <app-select-clear-option
+                                    [type]="'UserType'"
+                                    [listOption]="listUserTypesId"
+                                    (newListEvent)="actionSelect($event)"
+                                    (doneEvent)="selectDone($event)">
+                                </app-select-clear-option>
+                            </div>
+                        </div>
+                        <mat-option *ngFor="let userType of listUserTypes | listFilter: 'displayName' : searchUserType"
+                            [value]="userType.value"
+                            (click)="onSelectChangeUserType(userType.value)">
+                            {{userType.displayName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <!-- filter by end charge date from -->
+            <div class="col-2">
+                <mat-form-field appearance="outline"
+                    class="w-100">
+                    <mat-label>End Charge Date From:</mat-label>
+                    <input matInput
+                        [matDatepicker]="endChargeDateFrom"
+                        readonly
+                        name="endChargeDateFrom"
+                        [(ngModel)]="endChargeDateFromValue"
+                        (ngModelChange)="filterEndChargeDate()"/>
+                    <mat-datepicker-toggle matSuffix
+                        [for]="endChargeDateFrom">
+                    </mat-datepicker-toggle>
+                    <mat-datepicker #endChargeDateFrom></mat-datepicker>
+                </mat-form-field>
+            </div>
+            <!-- filter by end charge date to -->
+            <div class="col-2">
+                <mat-form-field appearance="outline"
+                    class="w-100">
+                    <mat-label>End Charge Date To:</mat-label>
+                    <input matInput
+                        [matDatepicker]="endChargeDateTo"
+                        readonly
+                        name="endChargeDateTo"
+                        [(ngModel)]="endChargeDateToValue"
+                        (ngModelChange)="filterEndChargeDate()"/>
+                    <mat-datepicker-toggle matSuffix
+                        [for]="endChargeDateTo">
+                    </mat-datepicker-toggle>
+                    <mat-datepicker #endChargeDateTo></mat-datepicker>
+                </mat-form-field>
+            </div>
+        </div>
+        <!-- END FILTER BAR -->
+        <!-- CONTENT -->
+        <div class="row">
+            <div class="card-body table-responsive p-1">
+                <div class="fixTableHead">
+                    <table class="table table-border-collapse text-nowrap mt-2">
+                        <thead>
+                            <tr>
+                                <th class="text-center rsp-th-name"
+                                    rowspan="2"
+                                    scope="col">
+                                    #
+                                    <button *ngIf="showIconExpandCollapeAll"
+                                        class="btn btn-sm p-0 expand-icon"
+                                        (click)="expandCollapseAll()">
+                                        <i [class]="isExpandAll 
+                                            ? 'fas fa-expand-alt text-primary'
+                                            : 'fas fa-compress-alt'">
+                                        </i>
+                                    </button>
+                                </th>
+                                <th class="text-center rsp-th-name"
+                                    rowspan="2"
+                                    scope="col">
+                                    Resource
+                                </th>
+                                <th class="text-center rsp-th-name"
+                                    rowspan="2"
+                                    scope="col">
+                                    Current Project
+                                </th>
+                                <th class="text-center rsp-th-name"
+                                    rowspan="2"
+                                    scope="col">
+                                    Contribute
+                                    <button class="btn btn-sm p-0 sort-button"
+                                        (click)="onClickSortDirection(sortProperties.Contribute)">
+                                        <i class="pi text-primary"
+                                            [class]="fieldSortDirection[sortProperties.Contribute]
+                                                ? 'pi-sort-amount-up'
+                                                : 'pi-sort-amount-down'">
+                                        </i>
+                                    </button>
+                                </th>
+                                <th class="text-center rsp-th-name"
+                                    colspan="5"
+                                    scope="colgroup">
+                                    Account
+                                </th>
+                                <th class="text-center rsp-th-name"
+                                    rowspan="2"
+                                    scope="col">
+                                    Note
+                                </th>
+                            </tr>
+                            <tr>
+                                <th scope="col">Charge Name</th>
+                                <th scope="col">Project</th>
+                                <th scope="col">Head Count</th>
+                                <th scope="col">
+                                    End Date
+                                    <button class="btn btn-sm p-0 sort-button"
+                                        (click)="onClickSortDirection(sortProperties.EndChargeDate)">
+                                        <i class="pi text-primary"
+                                            [class]="fieldSortDirection[sortProperties.EndChargeDate] ? 'pi-sort-amount-up' : 'pi-sort-amount-down'">
+                                        </i>
+                                    </button>
+                                </th>
+                                <th scope="col">Contribute</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <ng-container *ngFor="let willPool of listWillPool | paginate :   {
+                                                                                id: 'server',
+                                                                                itemsPerPage: pageSize,
+                                                                                currentPage: pageNumber,
+                                                                                totalItems: totalItems
+                                                                            };
+                                let i = index;">
+                                <tr>
+                                    <td class="text-center"
+                                        style="width: 70px"
+                                        [attr.rowspan]="getRowSpanAccount(willPool)">
+                                        <span>{{ i + 1 + pageSize * (pageNumber - 1) }}</span>
+                                        <button *ngIf="willPool.projects?.length > numberDataRow 
+                                                    || willPool.accounts?.length > numberDataRow"
+                                            (click)="expandCollapseDataRow(willPool.resource.id)"
+                                            class="btn btn-sm expand-icon">
+                                            <i *ngIf="!isExpands[willPool.resource.id]"
+                                                class="fas fa-compress-alt">
+                                            </i>
+                                            <i *ngIf="isExpands[willPool.resource.id]"
+                                                class="fas fa-expand-alt text-primary">
+                                            </i>
+                                        </button>
+                                    </td>
+                                    <td class="text-center"
+                                        style="width: 270px; max-width: 350px !important"
+                                        [attr.rowspan]="getRowSpanAccount(willPool)">
+                                        <app-user-info [userData]="willPool.resource"
+                                            [isSimplizeEmailAddress]="true"
+                                            [isSmallerDiv]="true"
+                                            class="w-100">
+                                        </app-user-info>
+                                    </td>
+                                    <td class="project-name width-150"
+                                        [attr.rowspan]="getRowSpanAccount(willPool)">
+                                        <div class="d-flex flex-row"
+                                            *ngFor="let project of (isExpands[willPool.resource.id] 
+                                                                    ? willPool.projects 
+                                                                    : willPool.projects.slice(0, numberDataRow))">
+                                            <span (click)="viewProjectDetail(project)">
+                                                - <strong class="hyperlink">
+                                                    {{ project.projectName }}
+                                                </strong>
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td class="text-center width-130-max"
+                                        [attr.rowspan]="getRowSpanAccount(willPool)">
+                                        <span class="badge text-white bg-blue" 
+                                            style="width: 40px;">
+                                            {{willPool.totalContribute + '%'}}
+                                        </span>
+                                    </td>
+                                    <td colspan="5" class="p-0 border-0" style="height: 0px;"></td>
+                                    <td class="note-width"
+                                        [attr.rowspan]="getRowSpanAccount(willPool)">
+                                        <ng-container *ngIf="!isEditNote[willPool.resource.id]; else editingNote">
+                                            <div class="d-flex justify-content-between w-100 h-100">
+                                                <pre [class]="'max-line-content-' + getCollapseLine(willPool)"
+                                                    PrjResizeContent
+                                                    [collapseLine]="getCollapseLine(willPool)"
+                                                    class="note p-0 m-0 flex-grow-1">
+                                                    {{willPool.resourceNote}}
+                                                </pre>
+                                                <button *ngIf="permission.isGranted(Resource_TabWillPool_EditNote)" 
+                                                    class="btn btn-sm p-0 pl-1 d-flex justify-content-end"
+                                                    (click)="onEditNote(willPool)">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                            </div>
+                                        </ng-container>
+                                        <ng-template #editingNote>
+                                            <mat-form-field appearance="outline" class="w-100">
+                                                <textarea matInput
+                                                    appFocus
+                                                    placeholder="Enter note"
+                                                    [(ngModel)]="willPool.resourceNote"
+                                                    (keydown.esc)="onEditNote(willPool)"
+                                                    (focusout)="willPool.resourceNote != originalNoteValue ? updateNoteResource(willPool) : onEditNote(willPool)">
+                                                </textarea>
+                                            </mat-form-field>
+                                            <div *ngIf="willPool.resourceNote != originalNoteValue"
+                                                class="d-flex">
+                                                <button (mousedown)="updateNoteResource(willPool); $event.stopPropagation()"
+                                                    class="text-success button-action">
+                                                    <i class="fa fa-check"></i>
+                                                </button>
+                                                <button (mousedown)="onEditNote(willPool); $event.stopPropagation()"
+                                                    class="text-danger button-action">
+                                                    <i class="fa fa-times"></i>
+                                                </button>
+                                            </div>
+                                        </ng-template>
+                                    </td>
+                                </tr>
+                                <ng-container *ngFor="let account of (isExpands[willPool.resource.id] 
+                                                                        ? willPool.accounts 
+                                                                        : willPool.accounts.slice(0, numberDataRow));
+                                                                        let j = index">
+                                    <tr>
+                                        <td class="charge-name width-120">
+                                            <span PrjResizeContent [collapseLine]="1" class="max-line-content-1 text-truncate">
+                                                {{account.chargeName}}
+                                            </span>
+                                        </td>
+                                        <td class="project-name width-120">
+                                            <span (click)="viewProjectDetail(account.project)">
+                                                <strong class="hyperlink">
+                                                    {{ account.project.projectName }}
+                                                </strong>
+                                            </span>
+                                        </td>
+                                        <td class="text-center width-120">
+                                            <span style="width: 40px;">
+                                                {{ account.headCount | number: '1.2-2':'en-US' }}
+                                            </span>
+                                        </td>
+                                        <td class="text-center width-120">
+                                            {{account.endChargeDate | date: 'dd/MM/yyyy'}}
+                                        </td>
+                                        <td class="text-center width-120">
+                                            <span [ngStyle]="{
+                                                        'width': '40px',
+                                                        'backgroundColor': Utils.getColorContribute(account.contribute)}"
+                                                class="badge text-white">
+                                                {{ account.contribute + '%' }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </ng-container>
+                            </ng-container>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- END CONTENT -->
+        <!-- PAGINATION FOOTER -->
+        <div class="card-footer bg-light border-top">
+            <div class="row container-pagination align-items-center">
+                <div class="col-4 d-flex align-items-center">
+                    <button class="btn btn-secondary align-items-center col-2" (click)="refresh()">
+                        <i class="fas fa-redo-alt"></i>
+                    </button>
+                    <mat-form-field 
+                        appearance="outline"    
+                        class="form-number-items col-4">
+                        <mat-label>Number items</mat-label>
+                        <mat-select panelClass="options-number-item" 
+                            [(ngModel)]="pageSizeType"
+                            (ngModelChange)="changePageSize()"
+                            class="p-0">
+                            <mat-option [value]="5"> 5 </mat-option>
+                            <mat-option [value]="10"> 10 </mat-option>
+                            <mat-option [value]="20"> 20 </mat-option>
+                            <mat-option [value]="50"> 50 </mat-option>
+                            <mat-option [value]="100"> 100 </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="col-4 text-center font-weight-bold">
+                    {{ "TotalRecordsCount" | localize: totalItems }}
+                </div>
+                <div class="col-4 pagination-control">
+                    <div class="float-sm-right m-auto">
+                    <abp-pagination-controls id="server" (pageChange)="getDataPage($event)">
+                    </abp-pagination-controls>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- END PAGINATION FOOTER -->
+    </div>
+</section>

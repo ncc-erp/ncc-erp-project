@@ -25,16 +25,20 @@ using System;
 using ProjectManagement.Services.ProjectUserBill;
 using Abp.Linq.Extensions;
 using Abp.Extensions;
+using NccCore.Uitls;
+using ProjectManagement.UploadFilesService;
 
 namespace ProjectManagement.Services.ProjectUserBills
 {
     public class ProjectUserBillManager : ApplicationService
     {
         private readonly IWorkScope _workScope;
+        private readonly UploadFileService _uploadFileService;
 
-        public ProjectUserBillManager(IWorkScope workScope)
+        public ProjectUserBillManager(IWorkScope workScope, UploadFileService uploadFileService)
         {
             _workScope = workScope;
+            _uploadFileService = uploadFileService;
         }
 
         public IQueryable<ProjectManagement.Entities.ProjectUserBill> GetSubProjectBills(long parentProjectId)
@@ -157,7 +161,7 @@ namespace ProjectManagement.Services.ProjectUserBills
                     UserName = x.User.Name,
                     ProjectId = x.ProjectId,
                     ProjectName = x.Project.Name,
-                    AccountName = x.AccountName,
+                    AccountName = x.AccountName.IsEmpty() ? x.User.UserName : x.AccountName,
                     BillRole = x.BillRole,
                     BillRate = isViewRate ? x.BillRate : 0,
                     HeadCount = x.HeadCount,
@@ -498,5 +502,22 @@ namespace ProjectManagement.Services.ProjectUserBills
                 throw new UserFriendlyException($"ProjectUserBill with Id {projectUserBillId} does not exist!");
         }
 
+        public async Task<GetCvBillAccountDto> UploadCvBillAccount(UploadCvBillAccountDto input)
+        {
+            var projectUserBill = await _workScope.GetAsync<Entities.ProjectUserBill>(input.Id);
+            var filename = DateTimeUtils.NowToyyyyMMddHHmmssfff() + "_" + input.SelectedFile.FileName.Replace(" ", "_");
+            var filePath = await _uploadFileService.UploadCvAsync(input.SelectedFile, filename);
+            if (string.IsNullOrEmpty(filePath))
+            {
+                throw new UserFriendlyException("File Upload Failed");
+            }
+            projectUserBill.LinkCV = filePath;
+            await _workScope.UpdateAsync(projectUserBill);
+            return new GetCvBillAccountDto()
+            {
+                Id = projectUserBill.Id,
+                LinkCV = projectUserBill.LinkCV
+            };
+        }
     }
 }

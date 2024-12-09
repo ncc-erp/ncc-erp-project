@@ -32,7 +32,9 @@ import { ResourceManagerService } from '@app/service/api/resource-manager.servic
 import * as FileSaver from 'file-saver';
 import { UpdateUserSkillDialogComponent } from '@app/users/update-user-skill-dialog/update-user-skill-dialog.component';
 import { AppConsts } from '@shared/AppConsts';
-
+import { UploadCvBillAccountComponent } from '@shared/components/upload-cv-bill-account/upload-cv-bill-account.component';
+import { GetCvBillAccountDto } from '@app/service/model/upload-cv.dto';
+import { FileHandlerService } from '@app/service/utility/file-handler.service';
 
 @Component({
   selector: 'app-project-bill',
@@ -131,7 +133,8 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     private _modalService: BsModalService,
     private dialog: MatDialog,
     private projectService: ListProjectService,
-    private resourceManagerService: ResourceManagerService) {
+    private resourceManagerService: ResourceManagerService,
+    private fileHandlerService: FileHandlerService) {
     super(injector)
     this.projectId = Number(this.route.snapshot.queryParamMap.get("id"));
   }
@@ -519,34 +522,22 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
       const allOptions = select.options.toArray();
       return allOptions.filter(option => !option.disabled).map(option => option.value);
   }
+  
   downloadFile(id: number){
     this.projectUserBillService.DownloadCVLink(id).subscribe(data => {
-      const file = new Blob([this.s2ab(atob(data.result.data))],{
-        type: "application/vnd.ms-excel;charset=utf-8"
-      });
-      FileSaver.saveAs(file,data.result.fileName);
-    })
+      this.fileHandlerService.downloadFile(data.result.data, data.result.fileName);
+    });
   }
-  s2ab(s){
-    var buf = new ArrayBuffer(s.length);
-    var view = new Uint8Array(buf);
-    for (var i = 0; i != s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
-    return buf;
-  }
+
   openInNewTab(event: MouseEvent, id: any){
     event.preventDefault();
     if(id){
       this.projectUserBillService.DownloadCVLink(id).subscribe(data => {
-        const file = new Blob([this.s2ab(atob(data.result.data))],{
-          type: "application/vnd.ms-excel;charset=utf-8"
-          
-        });
-        FileSaver.saveAs(file,data.result.fileName);
+        this.fileHandlerService.downloadFile(data.result.data, data.result.fileName);
       })
       window.open('_blank');
     }
   }
-
 
   changePageSizeCurrent()
   {
@@ -890,6 +881,20 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     const hasChanged = userBill.isExpose !== userBill.initialIsExpose;
     this.userBillProcess = hasChanged;
     this.showSearchAndFilter = !hasChanged;
+  }
+
+  openUploadCvDialog(projectUserBill: projectUserBillDto): void {
+    const dialogRef = this.dialog.open(UploadCvBillAccountComponent, {
+      data: { ...projectUserBill } as GetCvBillAccountDto,
+      width: '500px',
+    });
+    dialogRef.afterClosed().subscribe((result?: GetCvBillAccountDto) => {
+      if (result) {
+        this.filteredUserBillList = this.filteredUserBillList.map(item =>
+          item.id === result.id ? { ...item, ...result } : item
+        );
+      }
+    });
   }
 }
 

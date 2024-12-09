@@ -283,5 +283,11 @@ namespace ProjectManagement.APIs.Resource
         {
             await _resourceManager.DeleteProjectNote(projectUserId);
         }
+        
+        [HttpPost]
+        public async Task<GridResult<GetAllWillPoolResourceDto>> GetAllWillPoolResource(InputGetAllWillPoolResourceDto input)
+        {
+            return await _resourceManager.GetAllWillPoolResource(input);
+        }
     }
 }

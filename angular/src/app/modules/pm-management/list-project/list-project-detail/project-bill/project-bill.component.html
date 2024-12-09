@@ -253,7 +253,7 @@
                                     itemsPerPage: maxBillUserCurrentPage,
                                     currentPage: userBillCurrentPage
                                 } ; let i = index">
-                                    <td style="border-left: 10px solid #b9b8b8;"
+                                <td style="border-left: 10px solid #b9b8b8;"
                                      [ngClass]="{'highLight': bill.linkedResources && bill.linkedResources.length > 1,
                                         'highLightOne': bill.linkedResources && bill.linkedResources.length == 1  }">
                                     <span>{{ i + 1 + maxBillUserCurrentPage * (userBillCurrentPage - 1) }}</span>
@@ -300,22 +300,35 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <span *ngIf="!bill.createMode" (click)="downloadFile(bill.id)"
-                                    (contextmenu)="openInNewTab($event,bill.id)"
-                                    [ngStyle]="{'color': bill.linkCV ? 'blue' : 'black'}" 
-                                    style="width: 100%; justify-content: space-between; display: flex ;white-space: nowrap;
-                           ;cursor: pointer; overflow: hidden; " class="cv-link">{{ bill.billAccountName }}</span>
-
+                                    <div *ngIf="!bill.createMode">
+                                        <div class="d-flex col-12 p-0">
+                                            <span class="text-nowrap w-100 text-truncate"
+                                                (click)="bill.linkCV ? downloadFile(bill.id) : null"
+                                                [class.cv-link]="bill.linkCV"
+                                                [ngStyle]="{
+                                                    'color': bill.linkCV  ? 'blue' : '',
+                                                    'cursor': bill.linkCV ? 'pointer' : 'auto'
+                                                }">
+                                                {{ bill.billAccountName }}
+                                            </span>
+                                            <button class="btn btn-sm py-0 pr-0"
+                                                (click)="openUploadCvDialog(bill); $event.stopPropagation()">
+                                                <i class="fa fa-upload " title="Upload CV"></i>
+                                            </button>
+                                        </div>
+                                    </div>
                                     <div *ngIf="bill.createMode">
-
-                                        <input style="min-width: 100px;" class="form-control mt-1 form-change-name"
-                                                #accountName="ngModel" #accountNameEl type="text"
-                                                placeholder="Charge Name" name="accountName"
-                                                [(ngModel)]="bill.accountName" [value]="bill.billAccountName"/>
-
-                                        <abp-validation-summary [control]="accountName" [controlEl]="accountNameEl">
+                                        <input style="min-width: 100px;"
+                                            class="form-control mt-1 form-change-name"
+                                            #accountName="ngModel"
+                                            #accountNameEl
+                                            type="text"
+                                            placeholder="Charge Name"
+                                            name="accountName"
+                                            [(ngModel)]="bill.accountName"/>
+                                        <abp-validation-summary [control]="accountName"
+                                            [controlEl]="accountNameEl">
                                         </abp-validation-summary>
-
                                     </div>
                                 </td>
                                 <td>

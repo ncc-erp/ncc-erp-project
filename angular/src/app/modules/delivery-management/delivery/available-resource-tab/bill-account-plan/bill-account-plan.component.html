@@ -281,7 +281,21 @@
                             </a>
                             <span [outerHTML]="project.projectStatus | projectStatusPipe"></span>
                           </div>
-                          <span>{{ project.accountName }}</span>
+                          <div class="d-flex">
+                            <span (click)="project.linkCV ? downloadFile(project.billId) : null"
+                              [ngStyle]="{
+                                  'color': project.linkCV ? 'blue' : '',
+                                  'cursor': project.linkCV ? 'pointer' : 'auto'
+                              }"
+                              [class.cv-link]="project.linkCV"
+                              class="w-100">
+                              {{ project.accountName }}
+                            </span>
+                            <button class="btn btn-sm py-0 pr-0"
+                                (click)="openUploadCvDialog(project, i, j); $event.stopPropagation()">
+                                <i class="fa fa-upload " title="Upload CV"></i>
+                            </button>
+                          </div>
                           <span *ngIf="isShowBillRate">{{project.rateDisplay}}</span>
                         </div>
                       </div>

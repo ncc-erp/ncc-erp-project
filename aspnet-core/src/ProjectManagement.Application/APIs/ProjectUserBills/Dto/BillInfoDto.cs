@@ -99,6 +99,7 @@ namespace ProjectManagement.APIs.ProjectUserBills.Dto
         public IEnumerable<GetUserInfo> LinkedResources { get; set; }
         public List<BillUserSkillDto> UserSkills { get; set; }
         public string SkillNote { get; set; }
+        public string LinkCV { get; set; }
     }
 
     public class InputGetBillInfoDto : GridParam

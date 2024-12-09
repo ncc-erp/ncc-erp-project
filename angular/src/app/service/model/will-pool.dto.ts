@@ -40,3 +40,11 @@ export class ShortInfoProjectDto {
     projectType: number;
 }
 
+export class InputGetAllWillPoolResourceDto {
+    userName: string;
+    branchIds: number[];
+    userTypes: number[];
+    endChargeDateFrom: Date;
+    endChargeDateTo: Date;
+}
+

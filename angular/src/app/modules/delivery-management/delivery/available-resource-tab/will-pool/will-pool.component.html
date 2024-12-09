@@ -14,6 +14,9 @@
                 <input type="text"
                     class="form-control"
                     name="keyword"
+                    [(ngModel)]="searchText"
+                    (focusout)="filterUsername()"
+                    (keyup.enter)="filterUsername()"
                     placeholder="Search by Username"/>
             </div>
             <!-- filter by branch -->
@@ -94,8 +97,10 @@
                     <mat-label>End Charge Date From:</mat-label>
                     <input matInput
                         [matDatepicker]="endChargeDateFrom"
+                        readonly
                         name="endChargeDateFrom"
-                        [(ngModel)]="endChargeDateFromValue" />
+                        [(ngModel)]="endChargeDateFromValue"
+                        (ngModelChange)="filterEndChargeDate()"/>
                     <mat-datepicker-toggle matSuffix
                         [for]="endChargeDateFrom">
                     </mat-datepicker-toggle>
@@ -109,8 +114,10 @@
                     <mat-label>End Charge Date To:</mat-label>
                     <input matInput
                         [matDatepicker]="endChargeDateTo"
+                        readonly
                         name="endChargeDateTo"
-                        [(ngModel)]="endChargeDateToValue" />
+                        [(ngModel)]="endChargeDateToValue"
+                        (ngModelChange)="filterEndChargeDate()"/>
                     <mat-datepicker-toggle matSuffix
                         [for]="endChargeDateTo">
                     </mat-datepicker-toggle>
@@ -199,7 +206,7 @@
                                 let i = index;">
                                 <tr>
                                     <td class="text-center"
-                                        style="width: 50px; max-width: 100px !important"
+                                        style="width: 70px"
                                         [attr.rowspan]="getRowSpanAccount(willPool)">
                                         <span>{{ i + 1 + pageSize * (pageNumber - 1) }}</span>
                                         <button *ngIf="willPool.projects?.length > numberDataRow 
@@ -243,7 +250,7 @@
                                             {{willPool.totalContribute + '%'}}
                                         </span>
                                     </td>
-                                    <td colspan="5" class="p-0 border-0"></td>
+                                    <td colspan="5" class="p-0 border-0" style="height: 0px;"></td>
                                     <td class="note-width"
                                         [attr.rowspan]="getRowSpanAccount(willPool)">
                                         <ng-container *ngIf="!isEditNote[willPool.resource.id]; else editingNote">
@@ -315,7 +322,7 @@
                                                         'width': '40px',
                                                         'backgroundColor': Utils.getColorContribute(account.contribute)}"
                                                 class="badge text-white">
-                                                {{ account.contribute }}
+                                                {{ account.contribute + '%' }}
                                             </span>
                                         </td>
                                     </tr>

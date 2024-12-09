@@ -4,8 +4,7 @@ import { BranchService } from '@app/service/api/branch.service';
 import { BranchDto } from '@app/service/model/branch.dto';
 import { PagedListingComponentBase, PagedRequestDto } from '@shared/paged-listing-component-base';
 import { catchError } from 'rxjs/operators';
-import { GetAllWillPoolResourceDto, ShortInfoProjectDto } from '@app/service/model/will-pool.dto';
-import { LISTWILLPOOL } from './data';
+import { GetAllWillPoolResourceDto, InputGetAllWillPoolResourceDto, ShortInfoProjectDto } from '@app/service/model/will-pool.dto';
 import { ResourceManagerService } from '@app/service/api/resource-manager.service';
 
 @Component({
@@ -13,6 +12,7 @@ import { ResourceManagerService } from '@app/service/api/resource-manager.servic
   templateUrl: './will-pool.component.html',
   styleUrls: ['./will-pool.component.css']
 })
+
 export class WillPoolComponent extends PagedListingComponentBase<any> implements OnInit {
   // PERMISSIONS
   Resource_TabWillPool = PERMISSIONS_CONSTANT.Resource_TabWillPool;
@@ -28,25 +28,25 @@ export class WillPoolComponent extends PagedListingComponentBase<any> implements
   public selectedBranchIds: number[] = [];
   public selectedBranchIdsOld: number[] = [];
   public searchBranch: string = '';
-  public listBranchsId: number[] = [];
   public selectedBranchIdsCr: number[] = [];
+  public listBranchsId: number[] = [];
   // usertype filter
   public listUserTypes: IUserType[] = [];
   public selectedUserTypes: number[] = [];
   public selectedUserTypesCr: number[] = [];
   public selectedUserTypesOld: number[] = [];
   public searchUserType: string = '';
+  public listUserTypesId: number[] = [];
   // end charge date filter
-  public endChargeDateFromValue: Date = new Date();
-  public endChargeDateToValue: Date = new Date(this.endChargeDateFromValue);
+  public endChargeDateFromValue: Date;
+  public endChargeDateToValue: Date;
   // list data will pool
-  public listWillPool: GetAllWillPoolResourceDto[] = LISTWILLPOOL;
-  public listWillPoolBeforeSort: GetAllWillPoolResourceDto[] = LISTWILLPOOL;
+  public listWillPool: GetAllWillPoolResourceDto[] = [];
   // sort filter
   private readonly sortProperties = {
     Contribute: 1,
     EndChargeDate: 2
-  }
+  };
   public fieldSortDirection: { [key: number]: boolean } = {
     [this.sortProperties.Contribute]: false,
     [this.sortProperties.EndChargeDate]: false
@@ -59,10 +59,34 @@ export class WillPoolComponent extends PagedListingComponentBase<any> implements
   // edit note
   public isEditNote: { [id: number]: boolean } = {};
   public originalNoteValue: string = "";
+  // search username
+  public searchText: string = "";
+  public oldSearchText: string = "";
 
-  protected list(request: PagedRequestDto, pageNumber: number, finishedCallback: Function): void {
+  protected list(_request: PagedRequestDto, pageNumber: number, _finishedCallback: Function): void {
+    this.isLoading = true;
+    const requestBody = new InputGetAllWillPoolResourceDto();
+    requestBody.userName = this.searchText;
+    requestBody.branchIds = this.selectedBranchIds;
+    requestBody.userTypes = this.selectedUserTypes;
+    requestBody.endChargeDateFrom = this.endChargeDateFromValue;
+    requestBody.endChargeDateTo = this.endChargeDateToValue;
+    this.resourceService.GetAllWillPoolResource(requestBody)
+      .pipe(catchError(this.resourceService.handleError))
+      .subscribe(data => {
+        this.listWillPool = data.result.items;
+        this.sortDataByTotalContribute(this.fieldSortDirection[this.sortProperties.Contribute]);
+        this.sortDataByEndChargeDate(this.fieldSortDirection[this.sortProperties.EndChargeDate]);
+        this.showPaging(data.result, pageNumber);
+        this.showIconExpandCollapeAll = this.listWillPool.some(item => 
+          (item.projects?.length > this.numberDataRow || 
+           item.accounts?.length > this.numberDataRow)
+        );
+        this.isLoading = false;
+      });
   }
-  protected delete(entity: WillPoolComponent): void {
+
+  protected delete(_entity: WillPoolComponent): void {
   }
 
   constructor(public injector: Injector,
@@ -75,103 +99,115 @@ export class WillPoolComponent extends PagedListingComponentBase<any> implements
   @ViewChild("selectBranch") selectBranch: { close: () => void; };
   @ViewChild("selectUserType") selectUserType: { close: () => void; };
 
-  ngOnInit(): void {
-    this.endChargeDateToValue.setMonth(this.endChargeDateFromValue.getMonth() + 1);
-    this.getAllBranchs();
+  async ngOnInit(): Promise<void> {
+    await this.getAllBranchs();
+    this.initialEndChargeDate();
     this.getAllUserTypes();
-    this.sortDataByEndChargeDate(this.fieldSortDirection[this.sortProperties.Contribute]);
-    this.sortDataByTotalContribute(this.fieldSortDirection[this.sortProperties.EndChargeDate]);
-    this.showIconExpandCollapeAll = this.listWillPool.some(item => 
-      (item.projects?.length > this.numberDataRow || 
-       item.accounts?.length > this.numberDataRow)
-    );
-    this.totalItems = 6;
     this.refresh();
   }
 
-  getAllBranchs() {
-    this.branchService.getAllNotPagging()
-      .pipe(catchError(this.branchService.handleError))
-      .subscribe((data) => {
-        this.listBranchs = data.result as BranchDto[];
-        this.listBranchsId = this.listBranchs.map(branch => branch.id)
-        this.selectedBranchIds = this.listBranchs.map(item => item.id)
-        this.selectedBranchIdsOld = [...this.selectedBranchIds]
-        this.selectedBranchIdsCr = this.selectedBranchIds
-      });
+  getAllBranchs(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.branchService.getAllNotPagging()
+        .pipe(catchError(this.branchService.handleError))
+        .subscribe(data => {
+          this.listBranchs = data.result as BranchDto[];
+          const listBranchIds = this.listBranchs.map(item => item.id);
+          this.selectedBranchIds = this.selectedBranchIdsCr = this.selectedBranchIdsOld = this.listBranchsId = listBranchIds;
+          resolve();
+        }, error => {
+          reject(error);
+        });
+    });
   }
 
-  openedChange(isOpen: boolean, field: string) {
+  openedChange(isOpen: boolean, field: string): void {
     if (!isOpen) {
       switch (field) {
         case 'Branch':
-          this.selectedBranchIds = [...this.selectedBranchIdsOld]
-          this.selectedBranchIdsCr = [...this.selectedBranchIdsOld]
+          this.selectedBranchIds = this.selectedBranchIdsCr = this.selectedBranchIdsOld;
           this.searchBranch = '';
           break;
         case 'UserType':
-          this.selectedUserTypes = [...this.selectedUserTypesOld]
-          this.selectedUserTypesCr = [...this.selectedUserTypesOld]
+          this.selectedUserTypes = this.selectedUserTypesCr = this.selectedUserTypesOld;
           this.searchUserType = '';
           break;
       }
     }
   }
 
-  actionSelect(event: IEventObject) {
+  actionSelect(event: IEventObject): void {
     switch (event.type) {
       case 'Branch':
-        this.selectedBranchIds = event.data
-        this.selectedBranchIdsCr = event.data
+        this.selectedBranchIds = this.selectedBranchIdsCr = event.data;
         break;
       case 'UserType':
-        this.selectedUserTypes = event.data
-        this.selectedUserTypesCr = event.data
+        this.selectedUserTypes = this.selectedUserTypesCr = event.data;
         break;
     }
   }
 
-  selectDone(field: string) {
+  selectDone(field: string): void {
     switch (field) {
       case 'Branch':
-        this.selectedBranchIdsOld = this.selectedBranchIds
-        this.selectBranch.close()
+        this.selectedBranchIdsOld = this.selectedBranchIds;
+        this.selectBranch.close();
         break;
       case 'UserType':
-        this.selectedUserTypesOld = this.selectedUserTypes
-        this.selectUserType.close()
+        this.selectedUserTypesOld = this.selectedUserTypes;
+        this.selectUserType.close();
         break;
     }
+    this.pageNumber = 1;
+    this.refresh();
   }
 
-  onSelectChangeBranch(id: number) {
-    const branch = this.onSelectChange(this.selectedBranchIdsCr, id)
-    this.selectedBranchIdsCr = branch
-    this.selectedBranchIds = [...branch]
-    this.listBranchs = this.orderList(this.listBranchs, this.selectedBranchIds)
+  onSelectChangeBranch(id: number): void {
+    this.selectedBranchIdsCr = this.selectedBranchIds = this.onSelectChange(this.selectedBranchIdsCr, id);
+    this.listBranchs = this.orderList(this.listBranchs, this.selectedBranchIds);
   }
 
-  getAllUserTypes() {
+  getAllUserTypes(): void {
     this.listUserTypes = Object.entries(this.APP_ENUM.UserTypeTabAllResource).map((item) => {
       return {
         displayName: item[0],
         value: item[1],
       };
     });
-    this.listUserTypesId = this.listUserTypes.map(item => item.value);
-    this.selectedUserTypes = this.listUserTypes.map(item => item.value);
-    this.selectedUserTypesOld = [...this.selectedUserTypes];
-    this.selectedUserTypesCr = this.selectedUserTypes;
+    const listUserTypeValues = this.listUserTypes.map(item => item.value);
+    this.selectedUserTypes = this.selectedUserTypesOld = this.selectedUserTypesCr = this.listUserTypesId = listUserTypeValues;
   }
 
-  onSelectChangeUserType(id: number) {
-    const userType = this.onSelectChange(this.selectedUserTypesCr, id)
-    this.selectedUserTypesCr = userType
-    this.selectedUserTypes = [...userType]
-    this.listUserTypes = this.orderList(this.listUserTypes, this.selectedUserTypes)
+  onSelectChangeUserType(id: number): void {
+    this.selectedUserTypesCr = this.selectedUserTypes = this.onSelectChange(this.selectedUserTypesCr, id);
+    this.listUserTypes = this.orderList(this.listUserTypes, this.selectedUserTypes);
   }
 
-  onClickSortDirection(field: number) {
+  onSelectChange(listSelect: number[], id: number): number[] {
+    if (listSelect.includes(id)) {
+      return listSelect.filter(res => res != id);
+    }
+    else {
+      listSelect.push(id);
+      return listSelect;
+    }
+  }
+
+  orderList(listAll: any[], listIdSelect: number[]): any[] {
+    const selectedSet = new Set(listIdSelect);
+    const listSelect: any[] = [];
+    const listUnSelect: any[] = [];
+    for (const item of listAll) {
+      if (selectedSet.has(item.id)) {
+        listSelect.push(item);
+      } else {
+        listUnSelect.push(item);
+      }
+    }
+    return [...listSelect, ...listUnSelect];
+  }
+
+  onClickSortDirection(field: number): void {
     this.fieldSortDirection[field] = !this.fieldSortDirection[field];
     switch(field) {
       case this.sortProperties.Contribute:
@@ -183,7 +219,7 @@ export class WillPoolComponent extends PagedListingComponentBase<any> implements
     }
   }
 
-  sortDataByTotalContribute(direction: boolean) {
+  sortDataByTotalContribute(direction: boolean): void {
     this.listWillPool = this.listWillPool.sort((a, b) => {
       return direction
         ? a.totalContribute - b.totalContribute
@@ -191,7 +227,7 @@ export class WillPoolComponent extends PagedListingComponentBase<any> implements
     });
   }
 
-  sortDataByEndChargeDate(direction: boolean) {
+  sortDataByEndChargeDate(direction: boolean): void {
     const defaultGetTime = 1;
     this.listWillPool.forEach(item => {
       item.accounts.sort((a, b) => {
@@ -208,11 +244,11 @@ export class WillPoolComponent extends PagedListingComponentBase<any> implements
     })
   }
 
-  expandCollapseDataRow(id: number) {
+  expandCollapseDataRow(id: number): void {
     this.isExpands[id] = !this.isExpands[id];
   }
 
-  expandCollapseAll() {
+  expandCollapseAll(): void {
     this.isExpandAll = !this.isExpandAll;
     this.listWillPool.forEach(item => {
       this.isExpands[item.resource.id] = this.isExpandAll;
@@ -237,7 +273,7 @@ export class WillPoolComponent extends PagedListingComponentBase<any> implements
     return this.isExpands[willPool.resource.id] ? accountCount + 1 : this.numberDataRow + 1;
   }
 
-  onEditNote(willPool: GetAllWillPoolResourceDto) {
+  onEditNote(willPool: GetAllWillPoolResourceDto): void {
     const resourceId = willPool.resource.id;
     const currentNote = willPool.resourceNote;
     this.isEditNote[resourceId] = !this.isEditNote[resourceId];
@@ -249,7 +285,7 @@ export class WillPoolComponent extends PagedListingComponentBase<any> implements
     }
   }
 
-  updateNoteResource(willPool: GetAllWillPoolResourceDto) {
+  updateNoteResource(willPool: GetAllWillPoolResourceDto): void {
     const requestBody = { userId: willPool.resource.id, note: willPool.resourceNote };
     this.resourceService.updatePoolNote(requestBody).subscribe({
       next: () => {
@@ -263,7 +299,7 @@ export class WillPoolComponent extends PagedListingComponentBase<any> implements
     });
   }
 
-  viewProjectDetail(project: ShortInfoProjectDto) {
+  viewProjectDetail(project: ShortInfoProjectDto): void {
     let routingToUrl: string = '';
     let projectPermissionKey = '';
     switch (project.projectType) {
@@ -306,10 +342,36 @@ export class WillPoolComponent extends PagedListingComponentBase<any> implements
     window.open(url, '_blank');
   }
 
-  getProjectDetailUrl(permissionKey: string, viewPermissionKey: string, permissionUrl: string, defaultUrl: string) {
+  getProjectDetailUrl(permissionKey: string, viewPermissionKey: string, permissionUrl: string, defaultUrl: string): string {
     return (this.permission.isGranted(permissionKey) && this.permission.isGranted(viewPermissionKey))
       ? permissionUrl
       : defaultUrl;
+  }
+
+  filterEndChargeDate(): void {
+    this.endChargeDateFromValue = this.formatDateToYYYYMMdd(this.endChargeDateFromValue);
+    this.endChargeDateToValue = this.formatDateToYYYYMMdd(this.endChargeDateToValue);
+    if(this.endChargeDateFromValue > this.endChargeDateToValue) {
+      abp.notify.error("End Charge Date From must be less than the End Charge Date To");
+      this.initialEndChargeDate();
+      return;
+    }
+    this.pageNumber = 1;
+    this.refresh();
+  }
+
+  filterUsername(): void {
+    if(this.searchText != this.oldSearchText) {
+      this.oldSearchText = this.searchText;
+      this.pageNumber = 1;
+      this.refresh();
+    }
+  }
+
+  initialEndChargeDate(): void {
+    this.endChargeDateFromValue = new Date();
+    this.endChargeDateToValue = new Date(this.endChargeDateFromValue);
+    this.endChargeDateToValue.setMonth(this.endChargeDateFromValue.getMonth() + 1);
   }
 }
 

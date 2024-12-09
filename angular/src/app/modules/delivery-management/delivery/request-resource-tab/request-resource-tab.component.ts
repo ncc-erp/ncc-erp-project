@@ -113,6 +113,8 @@ export class RequestResourceTabComponent
     { name: "Skill need" },
     { name: "Bill Account", sortName: "billCVEmail", defaultSort: "" },
     { name: "Code", sortName: "code", defaultSort: "ASC" },
+    { name: "Confidence Level" },
+    { name: "Head Count" },
     { name: "Resource" },
     { name: "Description" },
     { name: "Note" },
@@ -640,8 +642,6 @@ export class RequestResourceTabComponent
       id: request.id ? request.id : null,
       projectId: 0,
     };
-
-    console.log(command, 'command')
 
     const show = this.dialog.open(CreateUpdateResourceRequestComponent, {
       data: {

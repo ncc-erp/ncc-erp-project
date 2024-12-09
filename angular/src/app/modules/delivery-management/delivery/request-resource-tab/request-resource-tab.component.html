@@ -512,6 +512,8 @@
                   <td style="min-width:100px" class="p-1 text-center">
                     <span *ngIf="item.code" class="code-style badge" [style.backgroundColor]="getColorForCode(item.code)">{{ item.code }}</span>
                   </td>
+                  <td style="min-width: 120px;" class="p-1 text-bold text-center">{{ item.confidenceLevel }}</td>
+                  <td style="min-width: 120px;" class="p-1 text-bold text-center">{{ item.headCount }}</td>
                   <td style="min-width:230px" class="p-1">
                     <div class="row row-bill-account">
                       <div class="col-10">

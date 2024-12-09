@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { PagedRequestDto } from '../../../shared/paged-listing-component-base';
 import { BaseApiService } from './base-api.service';
 import { AppConsts } from '@shared/AppConsts';
+import { InputGetAllWillPoolResourceDto } from '../model/will-pool.dto';
 
 @Injectable({
   providedIn: 'root'
@@ -158,5 +159,7 @@ export class ResourceManagerService extends BaseApiService{
     return this.http.request(uploadReq);
   }
 
-  
+  public GetAllWillPoolResource(request: InputGetAllWillPoolResourceDto): Observable<any> {
+    return this.http.post<any>(this.rootUrl + '/GetAllWillPoolResource', request);
+  }
 }

@@ -222,7 +222,7 @@ namespace ProjectManagement.Services.ResourceRequestService
 
         }
 
-        public async Task UpdateConfidenceLevel(UpdateResoureRequestDto input)
+        public async Task UpdateConfidenceLevel(UpdateConfidenceLevelDto input)
         {
             if (input.ConfidenceLevel < 0)
                 throw new UserFriendlyException("Confidence level cannot be negative. Please provide a value of 0 or higher.");

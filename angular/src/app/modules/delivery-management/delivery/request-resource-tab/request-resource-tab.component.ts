@@ -1375,8 +1375,7 @@ export class RequestResourceTabComponent
     if (item) {
       item[field] = this.originalRequestValue[id][field];
     }
-    this.isEditRequest = {};
-    this.originalRequestValue = {};
+    this.resetEditRequestState();
   }
 
   updateRequestValue(id: number, field: string, value: number, title: string): void {

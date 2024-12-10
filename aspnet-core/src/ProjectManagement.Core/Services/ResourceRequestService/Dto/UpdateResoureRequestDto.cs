@@ -2,7 +2,7 @@
 
 namespace ProjectManagement.Services.ResourceRequestService.Dto
 {
-    public class UpdateResoureRequestDto: EntityDto<long>
+    public class UpdateConfidenceLevelDto: EntityDto<long>
     {
         public float ConfidenceLevel { get; set; }
     }

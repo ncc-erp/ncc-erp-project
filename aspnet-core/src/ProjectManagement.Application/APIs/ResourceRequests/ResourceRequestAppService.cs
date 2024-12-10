@@ -1052,7 +1052,7 @@ namespace ProjectManagement.APIs.ResourceRequests
 
         [HttpPut]
         [AbpAuthorize]
-        public async Task UpdateConfidenceLevel(UpdateResoureRequestDto input)
+        public async Task UpdateConfidenceLevel(UpdateConfidenceLevelDto input)
         {
             await _resourceRequestManager.UpdateConfidenceLevel(input);
         }

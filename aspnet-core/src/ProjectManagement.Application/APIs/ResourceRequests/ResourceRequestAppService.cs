@@ -1050,6 +1050,20 @@ namespace ProjectManagement.APIs.ResourceRequests
             return listRequestDto;
         }
 
+        [HttpPut]
+        [AbpAuthorize]
+        public async Task UpdateConfidenceLevel(UpdateResoureRequestDto input)
+        {
+            await _resourceRequestManager.UpdateConfidenceLevel(input);
+        }
+        
+        [HttpPut]
+        [AbpAuthorize]
+        public async Task UpdateHeadCount(UpdateHeadCountDto input)
+        { 
+            await _resourceRequestManager.UpdateHeadCount(input);
+        }
+
         private enum Action : byte
         {
             Create = 1,

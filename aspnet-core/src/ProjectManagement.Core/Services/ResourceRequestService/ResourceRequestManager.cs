@@ -221,5 +221,23 @@ namespace ProjectManagement.Services.ResourceRequestService
             request.PUs.ForEach(p => { p.IsDeleted = true; });
 
         }
+
+        public async Task UpdateConfidenceLevel(UpdateResoureRequestDto input)
+        {
+            if (input.ConfidenceLevel < 0)
+                throw new UserFriendlyException("Confidence level cannot be negative. Please provide a value of 0 or higher.");
+            var getResouceRequest = await _workScope.GetAsync<ResourceRequest>(input.Id);
+            getResouceRequest.ConfidenceLevel = input.ConfidenceLevel;
+            await _workScope.UpdateAsync(getResouceRequest);
+        }
+        
+        public async Task UpdateHeadCount(UpdateHeadCountDto input)
+        {
+            if (input.HeadCount < 0)
+                throw new UserFriendlyException("Head count cannot be negative. Please provide a value of 0 or higher.");
+            var getResouceRequest = await _workScope.GetAsync<ResourceRequest>(input.Id);
+            getResouceRequest.HeadCount = input.HeadCount;
+            await _workScope.UpdateAsync(getResouceRequest);
+        }
     }
 }

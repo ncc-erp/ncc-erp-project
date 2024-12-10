@@ -249,4 +249,12 @@ export class DeliveryResourceRequestService extends BaseApiService {
   public getListRequestCode(): Observable<any> {
     return this.http.get<any>(this.rootUrl + '/GetResourceRequestCode');
   }
+
+  public updateConfidenceLevel(request: {id: number, confidenceLevel: number}):Observable<any> {
+    return this.http.put<any>(this.rootUrl + '/UpdateConfidenceLevel', request);
+  }
+
+  public updateHeadCount(request: {id: number, headCount: number}):Observable<any> {
+    return this.http.put<any>(this.rootUrl + '/UpdateHeadCount', request);
+  }
 }

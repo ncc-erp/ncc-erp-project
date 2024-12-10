@@ -39,7 +39,7 @@ import { FormCvUserComponent } from "./form-cv-user/form-cv-user.component";
 import { ListProjectService } from "@app/service/api/list-project.service";
 import { DescriptionPopupComponent } from "./description-popup/description-popup.component";
 import { ProjectUserService } from "./../../../../service/api/project-user.service";
-import { concat, forkJoin, empty } from "rxjs";
+import { concat, forkJoin, empty, Observable } from "rxjs";
 import { UpdateUserSkillDialogComponent } from "@app/users/update-user-skill-dialog/update-user-skill-dialog.component";
 import { resourceRequestCodeDto } from './multiple-select-resource-request-code/multiple-select-resource-request-code.component';
 import { ResourceManagerService } from '../../../../service/api/resource-manager.service';
@@ -159,8 +159,10 @@ export class RequestResourceTabComponent
   public codeColorMap: { [key: string]: string } = {};
   public trackColor: number = 0;
 
-  public hoveredRow: { [key: number]: { [key: number]: { [key: string]: boolean } } } = {}
-
+  public hoveredRow: { [key: number]: { [key: number]: { [key: string]: boolean } } } = {};
+  public isHoveredRequest: { [key: number]: { [key: string]: boolean } } = {};
+  public isEditRequest: { [key: number]: { [key: string]: boolean } }  = {};
+  public originalRequestValue: { [key: number]: { [field: string]: any } } = {};
 
   ResourceRequest_View = PERMISSIONS_CONSTANT.ResourceRequest_View;
   ResourceRequest_PlanNewResourceForRequest = PERMISSIONS_CONSTANT.ResourceRequest_PlanNewResourceForRequest;
@@ -1346,7 +1348,88 @@ export class RequestResourceTabComponent
     if (this.hoveredRow[requestId] && this.hoveredRow[requestId][index]) {
       delete this.hoveredRow[requestId][index][field];
     }
-  } 
+  }
+
+  onHoverRequest(id: number, field: string): void {
+    if (!this.isHoveredRequest[id]) {
+      this.isHoveredRequest[id] = {}; 
+    }
+    this.isHoveredRequest[id][field] = true;
+  }
+
+  onLeaveRequest(id: number, field: string): void {
+    if (this.isHoveredRequest[id]) {
+      this.isHoveredRequest[id][field] = false;
+    }
+  }
+
+  editResourceRequest(id: number, field: string, value: any): void {
+    this.isEditRequest = {};
+    this.originalRequestValue = {};
+    this.originalRequestValue[id] = { [field]: value } ;
+    this.isEditRequest[id] = { [field]: true } ;
+  }
+
+  cancelEditRequest(id: number, field: string): void {
+    const item = this.listRequest.find(item => item.id === id);
+    if (item) {
+      item[field] = this.originalRequestValue[id][field];
+    }
+    this.isEditRequest = {};
+    this.originalRequestValue = {};
+  }
+
+  updateRequestValue(id: number, field: string, value: number, title: string): void {
+    if (value < 0 || value === null) {
+      abp.notify.error(`${title} cannot be negative. Please provide a value of 0 or higher.`);
+      this.restoreOriginalRequestValue(id, field);
+      this.resetEditRequestState();
+      return;
+    }
+    this.originalRequestValue[id][field] = value;
+    const request = { id, [field]: value };
+    let updateMethod: (request: { id: number, [key: string]: any }) => Observable<any>;
+    switch (field) {
+      case 'confidenceLevel':
+        updateMethod = this.resourceRequestService.updateConfidenceLevel;
+        break;
+      case 'headCount':
+        updateMethod = this.resourceRequestService.updateHeadCount;
+        break;
+      default:
+        abp.notify.error("Unknown field type");
+        this.resetEditRequestState();
+        return;
+    }
+    updateMethod.call(this.resourceRequestService, request)
+      .pipe(catchError(this.resourceRequestService.handleError))
+      .subscribe(
+        () => {
+          abp.notify.success(`${title} updated successfully!`);
+          this.resetEditRequestState();
+        }
+      );
+  }
+  
+  updateConfidenceLevel(id: number, confidenceLevel: number): void {
+    this.updateRequestValue(id, 'confidenceLevel', confidenceLevel, 'Confidence level');
+  }
+  
+  updateHeadCount(id: number, headCount: number, event): void {
+    this.updateRequestValue(id, 'headCount', headCount, 'Head count');
+  }
+
+  private resetEditRequestState(): void {
+    this.isEditRequest = {};
+    this.originalRequestValue = {};
+  }
+
+  private restoreOriginalRequestValue(id: number, field: string): void {
+    const item = this.listRequest.find(item => item.id === id);
+    if (item && this.originalRequestValue[id] && this.originalRequestValue[id][field] !== undefined) {
+      item[field] = this.originalRequestValue[id][field];
+    }
+  }
 }
 
 export class THeadTable {

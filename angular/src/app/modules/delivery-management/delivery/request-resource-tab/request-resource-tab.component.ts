@@ -657,11 +657,15 @@ export class RequestResourceTabComponent
       width: "700px",
       maxHeight: "90vh",
     });
-    show.afterClosed().subscribe((rs) => {
-      if (rs) {
-        this.refresh();
-        this.getAllRequestCode();
+    show.afterClosed().subscribe(rs => {
+      if (!rs) return;
+      this.getAllRequestCode();
+      const index = this.listRequest.findIndex(item => item.id === rs.id);
+      if (index !== -1) {
+        this.listRequest[index] = rs;
+        return;
       }
+      this.refresh();
     });
   }
 

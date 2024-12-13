@@ -29,9 +29,15 @@ namespace ProjectManagement.Services.HRM
         {
             return await GetAsync<List<AutoUpdateUserDto>>($"/api/services/app/ProjectManagement/GetAllUser");
         }
+
         public async Task<AutoUpdateUserDto> GetUserFromHRMByEmail(string email)
         {
-            return await GetAsync<AutoUpdateUserDto>($"/api/services/app/ProjectManagement/GetUserByEmail?email={email}");
+            return await GetAsync<AutoUpdateUserDto>($"api/services/app/ProjectManagement/GetUserByEmail?email={email}");
+        }
+
+        public async Task<AutoUpdatePhoneNumberDto> GetPhoneNumberFromHRMByEmail(string email)
+        {
+            return await GetAsync<AutoUpdatePhoneNumberDto>($"/api/services/app/Public/GetEmployeePhone?email={email}");
         }
     }
 }

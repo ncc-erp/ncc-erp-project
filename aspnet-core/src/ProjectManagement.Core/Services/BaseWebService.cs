@@ -37,7 +37,7 @@ namespace ProjectManagement.Services
         }
         protected virtual async Task<T> GetAsync<T>(string url)
         {
-            var fullUrl = $"{httpClient.BaseAddress}/{url}";
+            var fullUrl = $"{httpClient.BaseAddress}{url}";
             try
             {
                 logger.LogInformation($"Get: {fullUrl}");

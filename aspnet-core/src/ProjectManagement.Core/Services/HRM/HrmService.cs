@@ -32,7 +32,7 @@ namespace ProjectManagement.Services.HRM
 
         public async Task<AutoUpdateUserDto> GetUserFromHRMByEmail(string email)
         {
-            return await GetAsync<AutoUpdateUserDto>($"api/services/app/ProjectManagement/GetUserByEmail?email={email}");
+            return await GetAsync<AutoUpdateUserDto>($"/api/services/app/ProjectManagement/GetUserByEmail?email={email}");
         }
 
         public async Task<AutoUpdatePhoneNumberDto> GetPhoneNumberFromHRMByEmail(string email)

@@ -381,7 +381,7 @@ namespace ProjectManagement.Users
             }
             var user = userAndBranch.User;
 
-            if (string.IsNullOrEmpty(user.PhoneNumber) || !user.DOB.HasValue || !user.Job.HasValue)
+            if (string.IsNullOrEmpty(user.PhoneNumber))
             {
                 await UpdateInfomationFromHRM(user);
             }
@@ -1044,22 +1044,18 @@ namespace ProjectManagement.Users
         }
         private async Task UpdateInfomationFromHRM(User user)
         {
-            var userFromHRM = await _hrmService.GetUserFromHRMByEmail(user.EmailAddress);
+            var userFromHRM = await _hrmService.GetPhoneNumberFromHRMByEmail(user.EmailAddress);
             if (userFromHRM == null)
             {
                 return;
             }
 
-            if (string.IsNullOrEmpty(userFromHRM.PhoneNumber) &&
-                    !userFromHRM.DOB.HasValue &&
-                    !userFromHRM.Job.HasValue)
+            if (string.IsNullOrEmpty(userFromHRM.PhoneNumber))
             {
                 return;
             }
 
             user.PhoneNumber = userFromHRM.PhoneNumber;
-            user.DOB = userFromHRM.DOB;
-            user.Job = userFromHRM.Job;
             await _workScope.UpdateAsync(user);
         }
 

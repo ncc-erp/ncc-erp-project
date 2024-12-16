@@ -1401,13 +1401,14 @@ namespace ProjectManagement.Services.ResourceManager
 
         public async Task<GridResult<GetAllWillPoolResourceDto>> GetAllWillPoolResource(InputGetAllWillPoolResourceDto input)
         {
-            var startDate = input.EndChargeDateFrom.Date;
-            var endDate = input.EndChargeDateTo.Date.AddDays(1).AddTicks(-1);
+            var startDate = input.EndChargeDateFrom?.Date;
+            var endDate = input.EndChargeDateTo?.Date.AddDays(1).AddTicks(-1);
             // query get all linked resource
             var qLinkedResourceWithinDate = _workScope.GetAll<LinkedResource>()
                 .AsNoTracking()
-                .Where(lr => lr.ProjectUserBill.EndTime >= startDate &&
-                             lr.ProjectUserBill.EndTime <= endDate);
+                .WhereIf(input.EndChargeDateFrom.HasValue && input.EndChargeDateTo.HasValue,
+                    lr => lr.ProjectUserBill.EndTime >= startDate &&
+                          lr.ProjectUserBill.EndTime <= endDate);
             var listIdLinkedResourceWithinDate = qLinkedResourceWithinDate.Select(lr => lr.Id);
             // query get all user has linked
             var qUserHasLinked = _workScope.GetAll<User>()

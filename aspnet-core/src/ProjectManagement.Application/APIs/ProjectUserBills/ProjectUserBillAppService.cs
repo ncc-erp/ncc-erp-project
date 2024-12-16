@@ -258,7 +258,7 @@ namespace ProjectManagement.APIs.ProjectUserBills
                 ProjectStatus = x.Project.Status,
                 ProjectId = x.ProjectId,
                 ProjectName = x.Project.Name,
-                AccountName = x.AccountName,
+                AccountName = x.AccountName.IsEmpty() ? x.User.UserName : x.AccountName,
                 BillRate = x.BillRate,
                 HeadCount = x.HeadCount,
                 StartTime = x.StartTime,
@@ -295,7 +295,8 @@ namespace ProjectManagement.APIs.ProjectUserBills
                     SkillRank = s.SkillRank,
                     SkillNote = s.Note
                 }).ToList(),
-                SkillNote = x.BillUserSkills.Select(s => s.Note).FirstOrDefault() ?? ""
+                SkillNote = x.BillUserSkills.Select(s => s.Note).FirstOrDefault() ?? "",
+                LinkCV = x.LinkCV,
             },
             IsCharge = x.isActive
         })
@@ -824,6 +825,13 @@ namespace ProjectManagement.APIs.ProjectUserBills
                 userSkillUpdates.Add(userSkill);
             }
             await WorkScope.UpdateRangeAsync(userSkillUpdates);
+        }
+        
+        [HttpPost]
+        [AbpAuthorize]
+        public async Task<GetCvBillAccountDto> UploadCvBillAccount([FromForm] UploadCvBillAccountDto input)
+        {
+            return await projectUserBillManager.UploadCvBillAccount(input);
         }
     }
 }

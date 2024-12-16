@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ProjectManagement.Services.ProjectUserBill.Dto;
 using static ProjectManagement.Constants.Enum.ProjectEnum;
 
 namespace ProjectManagement.Services.ResourceManager
@@ -1396,6 +1397,86 @@ namespace ProjectManagement.Services.ResourceManager
                 .ThenBy(x => x.EmailWithoutDomain)
                 .ToList();
             return query;
+        }
+
+        public async Task<GridResult<GetAllWillPoolResourceDto>> GetAllWillPoolResource(InputGetAllWillPoolResourceDto input)
+        {
+            var startDate = input.EndChargeDateFrom.Date;
+            var endDate = input.EndChargeDateTo.Date.AddDays(1).AddTicks(-1);
+            // query get all linked resource
+            var qLinkedResourceWithinDate = _workScope.GetAll<LinkedResource>()
+                .AsNoTracking()
+                .Where(lr => lr.ProjectUserBill.EndTime >= startDate &&
+                             lr.ProjectUserBill.EndTime <= endDate);
+            var listIdLinkedResourceWithinDate = qLinkedResourceWithinDate.Select(lr => lr.Id);
+            // query get all user has linked
+            var qUserHasLinked = _workScope.GetAll<User>()
+                .AsNoTracking()
+                .Where(u => u.IsActive && u.UserType != UserType.FakeUser)
+                .Where(u => u.LinkedResources
+                    .Any(lr => listIdLinkedResourceWithinDate.Contains(lr.Id)))
+                .WhereIf(input.UserName.HasValue(), u => u.UserName.Contains(input.UserName))
+                .WhereIf(input.BranchIds != null && input.BranchIds.Any(),
+                    u => input.BranchIds.Contains(u.BranchId.Value))
+                .WhereIf(input.UserTypes != null && input.UserTypes.Any(),
+                    u => input.UserTypes.Contains(u.UserType));
+            // query get all project user
+            var qProjectUser = _workScope.GetAll<ProjectUser>()
+                .AsNoTracking()
+                .Where(s => s.Status == ProjectUserStatus.Present &&
+                            s.AllocatePercentage > 0 &&
+                            s.Project.Status != ProjectStatus.Closed);
+            // apply select user
+            var qUser = qUserHasLinked.Select(u => new GetAllWillPoolResourceDto
+            {
+                Resource = new GetUserInfo
+                {
+                    Id = u.Id,
+                    EmailAddress = u.EmailAddress,
+                    AvatarPath = u.AvatarPath,
+                    UserType = u.UserType,
+                    UserLevel = u.UserLevel,
+                    IsActive = u.IsActive,
+                    FullName = u.FullName,
+                    UserName = u.UserName,
+                    BranchId = u.BranchId,
+                    BranchColor = u.Branch.Color,
+                    BranchDisplayName = u.Branch.DisplayName,
+                    PositionColor = u.Position.Color,
+                    PositionName = u.Position.ShortName,
+                },
+                ResourceNote = u.PoolNote,
+                Accounts = qLinkedResourceWithinDate
+                    .Where(ulr => ulr.UserId == u.Id)
+                    .Select(ulr => new AccountDto()
+                    {
+                        Id = ulr.ProjectUserBill.UserId,
+                        Project = new ShortInfoProjectDto()
+                        {
+                            Id = ulr.ProjectUserBill.ProjectId,
+                            ProjectName = ulr.ProjectUserBill.Project.Name,
+                            ProjectType = ulr.ProjectUserBill.Project.ProjectType,
+                            ProjectCode = ulr.ProjectUserBill.Project.Code
+                        },
+                        ChargeName = ulr.ProjectUserBill.AccountName ?? ulr.ProjectUserBill.User.FullName,
+                        HeadCount = ulr.ProjectUserBill.HeadCount,
+                        EndChargeDate = ulr.ProjectUserBill.EndTime,
+                        Contribute = ulr.Contribute,
+                    })
+                    .ToList(),
+                Projects = qProjectUser
+                    .Where(pu => pu.UserId == u.Id)
+                    .Select(pu => new ShortInfoProjectDto()
+                    {
+                        Id = pu.ProjectId,
+                        ProjectName = pu.Project.Name,
+                        ProjectType = pu.Project.ProjectType,
+                        ProjectCode = pu.Project.Code
+                    })
+                    .ToList(),
+            });
+            var result = await qUser.ToListAsync();
+            return new GridResult<GetAllWillPoolResourceDto>(result, result.Count);
         }
     }
 }

@@ -99,6 +99,12 @@ export abstract class AppComponentBase {
         .format('YYYY-MM-DD HH:mm:ss')
     }
 
+    formatDateToYYYYMMdd(date: Date ) {
+      return momentTime(date)
+        .tz('Asia/Ho_Chi_Minh')
+        .format('YYYY-MM-DD')
+    }
+
     workingTypeColorMap = {
       [this.APP_ENUM.ProjectUserWorkingType.Official]: 'blue',
       [this.APP_ENUM.ProjectUserWorkingType.Support]: 'orange',

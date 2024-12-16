@@ -9,6 +9,7 @@ import { ParentInvoice } from '../model/bill-info.model';
 import { ApiResponse } from '../model/api-response.dto';
 import {UpdateInvoiceDto} from '../model/updateInvoice.dto'
 import { ProjectInvoiceSettingDto } from '@app/service/model/project-invoice-setting.dto';
+import { UploadCvBillAccountDto } from '../model/upload-cv.dto';
 @Injectable({
   providedIn: 'root'
 })
@@ -117,5 +118,11 @@ export class ProjectUserBillService extends BaseApiService {
     return this.http.post<any>(this.rootUrl + '/UpdateBillUserSkill', request);
   }
 
+  UploadCvBillAccount(request: UploadCvBillAccountDto): Observable<any>{
+    const formData = new FormData();
+    formData.append('Id', request.id.toString());
+    formData.append('SelectedFile', request.selectedFile);
+    return this.http.post<any>(this.rootUrl + '/UploadCvBillAccount', formData);
+  }
   //#endregion
 }

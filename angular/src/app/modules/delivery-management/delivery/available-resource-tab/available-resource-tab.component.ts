@@ -18,6 +18,7 @@ export class AvailableResourceTabComponent extends AppComponentBase implements O
   Resource_TabVendor = PERMISSIONS_CONSTANT.Resource_TabVendor
   Resource_TabPlanningBillAccount = PERMISSIONS_CONSTANT.Resource_TabPlanningBillAccount
   Resource_TabAllBillAccount = PERMISSIONS_CONSTANT.Resource_TabAllBillAccount
+  Resource_TabWillPool = PERMISSIONS_CONSTANT.Resource_TabWillPool
   sortResource = { }
 
   constructor(injector: Injector, private router: Router, private route: ActivatedRoute) {
@@ -63,6 +64,11 @@ export class AvailableResourceTabComponent extends AppComponentBase implements O
   }
   routingBillAccountPlanTab(){
     this.router.navigate(['bill-account-plan'],{
+      relativeTo:this.route
+    })
+  }
+  routingWillPoolTab(){
+    this.router.navigate(['will-pool'],{
       relativeTo:this.route
     })
   }

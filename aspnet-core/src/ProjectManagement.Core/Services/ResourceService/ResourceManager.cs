@@ -1406,11 +1406,8 @@ namespace ProjectManagement.Services.ResourceManager
             // query get all linked resource
             var qLinkedResourceWithinDate = _workScope.GetAll<LinkedResource>()
                 .AsNoTracking()
-                .Where(lr => !lr.ProjectUserBill.EndTime.HasValue || 
-                             (
-                                 lr.ProjectUserBill.EndTime >= startDate &&
-                                 lr.ProjectUserBill.EndTime <= endDate
-                             ));
+                .Where(lr => lr.ProjectUserBill.EndTime >= startDate &&
+                             lr.ProjectUserBill.EndTime <= endDate);
             var listIdLinkedResourceWithinDate = qLinkedResourceWithinDate.Select(lr => lr.Id);
             // query get all user has linked
             var qUserHasLinked = _workScope.GetAll<User>()

@@ -13,7 +13,7 @@ import * as moment from 'moment';
 import * as _ from 'lodash'
 import { PERMISSIONS_CONSTANT } from '@app/constant/permission.constant';
 import { Observable } from 'rxjs';
-import { FormControl } from '@angular/forms';
+import { FormControl, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-create-update-resource-request',
@@ -50,7 +50,9 @@ export class CreateUpdateResourceRequestComponent extends AppComponentBase imple
 
   filteredOptions: Observable<any[]>;
   myControl = new FormControl('');
-
+  confidenceLevelControl = new FormControl('', [Validators.min(0)]);
+  headCountControl = new FormControl('', [Validators.min(0)]);
+  
   ngOnInit(): void {
     this.listRequestCode = this.data.listRequestCode
     this.getAllProject();
@@ -117,7 +119,9 @@ export class CreateUpdateResourceRequestComponent extends AppComponentBase imple
       skillIds: this.resourceRequestDto.skillIds,
       isNewBillAccount: this.resourceRequestDto.isNewBillAccount,
       isRequiredPlanResource: this.resourceRequestDto.isRequiredPlanResource,
-      code: this.myControl.value
+      code: this.myControl.value,
+      confidenceLevel: this.resourceRequestDto.confidenceLevel,
+      headCount: this.resourceRequestDto.headCount
     }
 
     if (this.data.command == "create") {

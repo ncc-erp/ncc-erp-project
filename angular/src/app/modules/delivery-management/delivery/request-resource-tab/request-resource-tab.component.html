@@ -512,6 +512,80 @@
                   <td style="min-width:100px" class="p-1 text-center">
                     <span *ngIf="item.code" class="code-style badge" [style.backgroundColor]="getColorForCode(item.code)">{{ item.code }}</span>
                   </td>
+                  <td style="min-width: 120px;"
+                    class="p-1 text-bold text-center"
+                    (mouseenter)="onHoverRequest(item.id, 'confidenceLevel')"
+                    (mouseleave)="onLeaveRequest(item.id, 'confidenceLevel')"
+                    (click)="editResourceRequest(item.id, 'confidenceLevel', item.confidenceLevel)">
+                    <ng-container *ngIf="!(isEditRequest[item.id] && isEditRequest[item.id]?.confidenceLevel); else updateConfidenceLevelTemplate">
+                      <div [ngClass]="{'input-hover': isHoveredRequest[item.id]?.confidenceLevel}">
+                        {{ item.confidenceLevel }}
+                      </div>
+                    </ng-container>
+                    <ng-template #updateConfidenceLevelTemplate>
+                      <input type="number"
+                        class="form-control"
+                        name="confidenceLevel"
+                        appFocus
+                        min="0"
+                        step="0.01"
+                        [(ngModel)]="item.confidenceLevel"
+                        (keydown.enter)="updateConfidenceLevel(item.id, item.confidenceLevel)"
+                        (keydown.esc)="cancelEditRequest(item.id, 'confidenceLevel')"
+                        (focusout)="item.confidenceLevel != this.originalRequestValue[item.id]?.confidenceLevel
+                                  ? updateConfidenceLevel(item.id, item.confidenceLevel)
+                                  : resetEditRequestState()"
+                        (click)="$event.stopPropagation()">
+                      <div *ngIf="item.confidenceLevel != originalRequestValue[item.id]?.confidenceLevel"
+                        class="d-flex mt-1">
+                        <button class="text-success button-action"
+                          (mousedown)="updateConfidenceLevel(item.id, item.confidenceLevel); $event.stopPropagation()">
+                          <i class="fa fa-check"></i>
+                        </button>
+                        <button class="ml-1 text-danger button-action"
+                          (mousedown)="cancelEditRequest(item.id, 'confidenceLevel'); $event.stopPropagation()">
+                          <i class="fa fa-times"></i>
+                        </button>
+                      </div>     
+                    </ng-template>
+                  </td>
+                  <td style="min-width: 120px;"
+                    class="p-1 text-bold text-center"
+                    (mouseenter)="onHoverRequest(item.id, 'headCount')"
+                    (mouseleave)="onLeaveRequest(item.id, 'headCount')"
+                    (click)="editResourceRequest(item.id, 'headCount', item.headCount)">
+                    <ng-container *ngIf="!(isEditRequest[item.id] && isEditRequest[item.id]?.headCount); else updateHeadCountTemplate">
+                      <div [ngClass]="{'input-hover': isHoveredRequest[item.id]?.headCount}">
+                        {{ item.headCount }}
+                      </div>
+                    </ng-container>
+                    <ng-template #updateHeadCountTemplate>
+                      <input type="number"
+                        name="headCount"
+                        class="form-control"
+                        appFocus
+                        min="0"
+                        step="0.01"
+                        [(ngModel)]="item.headCount"
+                        (keydown.enter)="updateHeadCount(item.id, item.headCount)"
+                        (keydown.esc)="cancelEditRequest(item.id, 'headCount')"
+                        (focusout)="item.headCount != this.originalRequestValue[item.id]?.headCount
+                                  ? updateHeadCount(item.id, item.headCount)
+                                  : resetEditRequestState()"
+                        (click)="$event.stopPropagation()">
+                      <div *ngIf="item.headCount != originalRequestValue[item.id]?.headCount"
+                        class="d-flex mt-1">
+                        <button class="text-success button-action"
+                          (mousedown)="updateHeadCount(item.id, item.headCount); $event.stopPropagation()">
+                          <i class="fa fa-check"></i>
+                        </button>
+                        <button class="ml-1 text-danger button-action"
+                          (mousedown)="cancelEditRequest(item.id, 'headCount'); $event.stopPropagation()">
+                          <i class="fa fa-times"></i>
+                        </button>
+                      </div>     
+                    </ng-template>
+                  </td>
                   <td style="min-width:230px" class="p-1">
                     <div class="row row-bill-account">
                       <div class="col-10">

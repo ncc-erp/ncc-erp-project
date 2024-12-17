@@ -418,7 +418,7 @@ namespace ProjectManagement.Services.ProjectUserBills
             return listLinkedResources;
         }
 
-        public async Task LinkOneLinkedResource(LinkedResourceDto input)
+        public async Task<GetUserInfo> LinkOneLinkedResource(LinkedResourceDto input)
         {
             ValidateProjectUserBill(input.ProjectUserBillId);
 
@@ -436,7 +436,28 @@ namespace ProjectManagement.Services.ProjectUserBills
                 Contribute = input.Contribute
             };
 
-            await _workScope.InsertAsync(newLinkedResource);
+            var linkedId = await _workScope.InsertAndGetIdAsync(newLinkedResource);
+            var userInfo = await _workScope.GetAll<LinkedResource>()
+                .Where( lr => lr.Id == linkedId)
+                .Select(lr => new GetUserInfo()
+                {
+                    Id = lr.UserId,
+                    EmailAddress = lr.User.EmailAddress,
+                    UserName = lr.User.UserName,
+                    AvatarPath = lr.User.AvatarPath ?? String.Empty,
+                    UserType = lr.User.UserType,
+                    PositionId = lr.User.PositionId,
+                    PositionColor = lr.User.Position.Color,
+                    PositionName = lr.User.Position.ShortName,
+                    UserLevel = lr.User.UserLevel,
+                    BranchColor = lr.User.Branch.Color,
+                    BranchDisplayName = lr.User.Branch.DisplayName,
+                    IsActive = lr.User.IsActive,
+                    FullName = lr.User.FullName,
+                    Contribute = lr.Contribute
+                })
+                .FirstOrDefaultAsync();
+            return userInfo;
         }
 
         public async Task UpdateLinkOneLinkedResource(LinkedResourceDto input)

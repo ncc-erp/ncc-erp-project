@@ -1,3 +1,5 @@
+import { IGetUserInfo } from "./user.inteface";
+
 export class ProjectDto {
   name: string;
   code: string;
@@ -110,7 +112,7 @@ export class projectUserBillDto {
   userList?: any[];
   chargeType?: number;
   chargeTypeName: string;
-  linkedResources: any[];
+  linkedResources: IGetUserInfo[];
   createLinkResourceMode?: boolean;
   linkCV: string;
   totalHeadCount:number;

@@ -361,7 +361,7 @@ namespace ProjectManagement.APIs.ProjectUserBills
         [AbpAuthorize()]
         public async Task<List<GetAllResourceDto>> GetAllResource()
         {
-            return await projectUserBillManager.QueryAllResource(false);
+            return await projectUserBillManager.QueryAllResource();
         }
 
         [HttpPut]

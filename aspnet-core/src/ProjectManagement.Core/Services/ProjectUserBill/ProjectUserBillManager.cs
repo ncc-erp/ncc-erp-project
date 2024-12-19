@@ -51,7 +51,7 @@ namespace ProjectManagement.Services.ProjectUserBills
             return query.OrderBy(p => p.Project.Name).ThenBy(p => p.User.EmailAddress);
         }
 
-        public async Task<List<GetAllResourceDto>> QueryAllResource()
+        public async Task<List<GetAllResourceDto>> QueryAllResource(bool isVendor, bool showVendor)
         {
             // get current user and view user level permission
             // if user level = intern => all show no matter the permission
@@ -67,6 +67,7 @@ namespace ProjectManagement.Services.ProjectUserBills
             var quser = _workScope.GetAll<User>()
                        .Where(x => x.IsActive)
                        .Where(x => x.UserType != UserType.FakeUser)
+                       .WhereIf(!showVendor, u => isVendor ? u.UserType == UserType.Vendor : u.UserType != UserType.Vendor)
                        .Select(x => new GetAllResourceDto
                        {
                            UserId = x.Id,

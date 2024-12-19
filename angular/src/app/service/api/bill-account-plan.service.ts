@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BaseApiService } from './base-api.service';
 import { PagedRequestDto } from '@shared/paged-listing-component-base';
@@ -36,9 +36,13 @@ export class PlanningBillInfoService extends BaseApiService {
   public Get(userId,projectId):Observable<any>{
     return this.http.get<any>(this.rootUrl + `/Get?userId=${userId}&projectId=${projectId}`)
     }
-    public GetAllResource(): Observable<any> {
-        return this.http.get<any>(this.rootUrl + '/GetAllResource');
+  public GetAllResource(showVendor?: boolean): Observable<any> {
+    let params = new HttpParams();
+    if (showVendor !== undefined) {
+      params = params.set('showVendor', String(showVendor));
     }
+    return this.http.get<any>(this.rootUrl + '/GetAllResource', { params });
+  }
     public RemoveLinkedResource(input): Observable<any> {
         return this.http.post<any>(this.rootUrl + '/RemoveLinkedResource', input);
     }

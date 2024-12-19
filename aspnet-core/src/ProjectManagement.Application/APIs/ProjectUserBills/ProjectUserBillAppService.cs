@@ -106,9 +106,9 @@ namespace ProjectManagement.APIs.ProjectUserBills
         }
 
         [HttpPost]
-        public async Task LinkOneProjectUserBillAccount(LinkedResourceDto input)
+        public async Task<GetUserInfo> LinkOneProjectUserBillAccount(LinkedResourceDto input)
         {
-            await projectUserBillManager.LinkOneLinkedResource(input);
+            return await projectUserBillManager.LinkOneLinkedResource(input);
         }
 
         [HttpPost]

@@ -679,4 +679,8 @@ export const PERMISSIONS_CONSTANT = {
        Admin_CVStatus_Edit: "Admin.CVStatus.Edit",
        Admin_CVStatus_Delete: "Admin.CVStatus.Delete",
        // #endregion
+
+       // #region Backup
+       Admin_Backup: "Admin.Backup"
+       // #endregion
 }

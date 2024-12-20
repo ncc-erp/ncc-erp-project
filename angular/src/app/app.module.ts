@@ -236,6 +236,7 @@ import { ImportFileResourceComponent } from './modules/delivery-management/deliv
 import { CVStatusComponent } from './modules/admin/cvstatus/cvstatus.component';
 import { CreateUpdateCvstatusComponent } from './modules/admin/cvstatus/create-update-cvstatus/create-update-cvstatus.component';
 import { WillPoolComponent } from './modules/delivery-management/delivery/available-resource-tab/will-pool/will-pool.component';
+import { BackupContributionComponent } from './modules/admin/backup-contribution/backup-contribution.component';
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, "./assets/i18n/", ".json");
 }
@@ -456,6 +457,7 @@ export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
     CVStatusComponent,
     CreateUpdateCvstatusComponent,
     WillPoolComponent,
+    BackupContributionComponent,
   ],
   imports: [
     CommonModule,

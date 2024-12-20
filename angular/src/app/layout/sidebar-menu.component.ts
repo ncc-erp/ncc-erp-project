@@ -135,6 +135,12 @@ export class SidebarMenuComponent extends AppComponentBase implements OnInit {
             '/app/cvstatus',
             'fas fa-file',
             'Admin.CVStatus'
+          ),
+          new MenuItem(
+            this.l('Backup Contribution'),
+            '/app/backup-contribution',
+            'fas fa-sync-alt',
+            'Admin.Backup'
           )
         ]
       ),

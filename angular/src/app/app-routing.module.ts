@@ -87,6 +87,7 @@ import { BillAccountPlanComponent } from './modules/delivery-management/delivery
 import { GeneralInformationComponent } from './modules/pm-management/list-project/list-project-detail/general-information/general-information.component';
 import { CVStatusComponent } from './modules/admin/cvstatus/cvstatus.component';
 import { WillPoolComponent } from './modules/delivery-management/delivery/available-resource-tab/will-pool/will-pool.component';
+import { BackupContributionComponent } from './modules/admin/backup-contribution/backup-contribution.component';
 @NgModule({
   imports: [
     RouterModule.forChild([
@@ -519,6 +520,11 @@ import { WillPoolComponent } from './modules/delivery-management/delivery/availa
             component:CVStatusComponent,
             canActivate:[AppRouteGuard]
           },
+          {
+            path:"backup-contribution",
+            component:BackupContributionComponent,
+            canActivate:[AppRouteGuard]
+          }
         ]
       }
     ])

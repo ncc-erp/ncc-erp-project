@@ -2,7 +2,9 @@
 using System.Threading.Tasks;
 using Abp.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NccCore.Paging;
 using ProjectManagement.Services.Backup;
+using ProjectManagement.Services.Backup.Dto;
 
 namespace ProjectManagement.APIs.Backup
 {
@@ -20,6 +22,12 @@ namespace ProjectManagement.APIs.Backup
         public async Task BackupMonthlyUserContribution([FromForm] DateTime monthYearTime)
         {
              await _backupManager.BackupMonthlyUserContribution(monthYearTime);
+        }
+        
+        [HttpPost]
+        public async Task<GridResult<InfoMonthlyUserContributionDto>> GetAllBackupMonthlyUserContribution(FilterMonthlyUserContributionDto input)
+        {
+            return await _backupManager.GetAllBackupMonthlyUserContribution(input);
         }
     }
 }

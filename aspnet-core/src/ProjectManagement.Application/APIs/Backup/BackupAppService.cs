@@ -3,12 +3,13 @@ using System.Threading.Tasks;
 using Abp.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NccCore.Paging;
+using ProjectManagement.Authorization;
 using ProjectManagement.Services.Backup;
 using ProjectManagement.Services.Backup.Dto;
 
 namespace ProjectManagement.APIs.Backup
 {
-    [AbpAuthorize]
+    [AbpAuthorize(PermissionNames.Admin_Backup)]
     public class BackupAppService : ProjectManagementAppServiceBase
     {
         private readonly BackupManager _backupManager;

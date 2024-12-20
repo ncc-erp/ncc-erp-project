@@ -711,7 +711,14 @@ namespace ProjectManagement.Authorization
         public const string Admin_CVStatus_Create = "Admin.CVStatus.Create";
         public const string Admin_CVStatus_Edit = "Admin.CVStatus.Edit";
         public const string Admin_CVStatus_Delete = "Admin.CVStatus.Delete";
+
         #endregion CVStatus
+        
+        #region Backup
+        
+        public const string Admin_Backup = "Admin.Backup";
+        
+        #endregion Backup
     }
 
     public class GrantPermissionRoles
@@ -1432,6 +1439,12 @@ namespace ProjectManagement.Authorization
                     PermissionNames.Admin_CVStatus_Edit,
                     PermissionNames.Admin_CVStatus_Delete,
                     #endregion CVStatus
+
+                    #region Backup
+
+                    PermissionNames.Admin_Backup
+                    
+                    #endregion Backup
                 }
             }
         };
@@ -2159,6 +2172,12 @@ namespace ProjectManagement.Authorization
                  new SystemPermission{ Name =  PermissionNames.Admin_CVStatus_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit" },
                  new SystemPermission{ Name =  PermissionNames.Admin_CVStatus_Delete, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Delete" },
                 #endregion CVStatus
+
+                #region Backup
+
+	             new SystemPermission{ Name =  PermissionNames.Admin_Backup, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Backup" },
+
+                #endregion Backup
             };
             public static List<SystemPermission> TreePermissions = new List<SystemPermission>() {
 

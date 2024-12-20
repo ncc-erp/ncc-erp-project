@@ -104,6 +104,14 @@ namespace NccCore.IoC
             return updatedEntities;
         }
 
+        async Task IWorkScope.DeleteRangeAsync<TEntity>(IEnumerable<long> ids)
+        {
+            foreach (var id in ids)
+            {
+                await (this as IWorkScope).DeleteAsync<TEntity>(id);
+            }
+        }
+
         Task<TEntity> IWorkScope.InsertAsync<TEntity, TPrimaryKey>(TEntity entity)
         {
             var repo = (this as IWorkScope).GetRepo<TEntity, TPrimaryKey>();

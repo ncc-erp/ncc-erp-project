@@ -25,6 +25,7 @@ namespace NccCore.IoC
 
         IEnumerable<TEntity> InsertRange<TEntity>(IEnumerable<TEntity> entities) where TEntity : class, IEntity<long>;
         Task<IEnumerable<TEntity>> InsertRangeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : class, IEntity<long>;
+        Task DeleteRangeAsync<TEntity>(IEnumerable<long> ids) where TEntity : class, IEntity<long>;
         TEntity Insert<TEntity>(TEntity entity) where TEntity : class, IEntity<long>;
         Task<TEntity> InsertAsync<TEntity>(TEntity entity) where TEntity : class, IEntity<long>;
         long InsertAndGetId<TEntity>(TEntity entity) where TEntity : class, IEntity<long>;

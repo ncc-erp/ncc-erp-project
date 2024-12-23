@@ -359,9 +359,9 @@ namespace ProjectManagement.APIs.ProjectUserBills
 
         [HttpGet]
         [AbpAuthorize()]
-        public async Task<List<GetAllResourceDto>> GetAllResource()
+        public async Task<List<GetAllResourceDto>> GetAllResource(bool isVendor = false, bool showVendor = false)
         {
-            return await projectUserBillManager.QueryAllResource(false);
+            return await projectUserBillManager.QueryAllResource(isVendor, showVendor);
         }
 
         [HttpPut]

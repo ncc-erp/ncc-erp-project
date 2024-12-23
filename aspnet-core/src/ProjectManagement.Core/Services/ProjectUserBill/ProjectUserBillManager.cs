@@ -51,7 +51,7 @@ namespace ProjectManagement.Services.ProjectUserBills
             return query.OrderBy(p => p.Project.Name).ThenBy(p => p.User.EmailAddress);
         }
 
-        public async Task<List<GetAllResourceDto>> QueryAllResource(bool isVendor, bool showVendor)
+        public async Task<List<GetAllResourceDto>> QueryAllResource(bool isVendor = false, bool showVendor = false)
         {
             // get current user and view user level permission
             // if user level = intern => all show no matter the permission

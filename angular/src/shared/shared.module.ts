@@ -82,6 +82,7 @@ import { CustomTimeComponent } from './date-selector/custom-time/custom-time.com
 import { MultipleSelectStringValueComponent } from './components/multiple-select-string-value/multiple-select-string-value.component';
 import { MultipleSelectComponent } from './components/multiple-select/multiple-select.component';
 import { UploadCvBillAccountComponent } from './components/upload-cv-bill-account/upload-cv-bill-account.component';
+import { MonthYearPickerComponent } from './components/month-year-picker/month-year-picker.component';
 
 // import {DialogComponentModule} from './dialog-component/dialog-component.module';
 // import { ErrorPermissionComponent } from './interceptor-errors/error-permission/error-permission.component'
@@ -166,7 +167,8 @@ import { UploadCvBillAccountComponent } from './components/upload-cv-bill-accoun
         LineBreakPipe,
         MultipleSelectStringValueComponent,
         MultipleSelectComponent,
-        UploadCvBillAccountComponent
+        UploadCvBillAccountComponent,
+        MonthYearPickerComponent
 
     ],
     exports: [
@@ -235,7 +237,8 @@ import { UploadCvBillAccountComponent } from './components/upload-cv-bill-accoun
         SelectClearOptionComponent,
         LineBreakPipe,
         MultipleSelectStringValueComponent,
-        MultipleSelectComponent
+        MultipleSelectComponent,
+        MonthYearPickerComponent
     ],
     providers: [
         { provide: TINYMCE_SCRIPT_SRC, useValue: 'tinymce/tinymce.min.js' }

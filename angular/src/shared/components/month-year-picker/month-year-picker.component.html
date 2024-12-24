@@ -1,0 +1,15 @@
+<mat-form-field appearance="outline" class="w-100">
+    <mat-label>{{ label }}</mat-label>
+    <input matInput
+        [matDatepicker]="monthYearPicker"
+        [formControl]="dateControl"
+        readonly
+        name="monthYear"
+        [(ngModel)]="selectedMonthYear"/>
+    <mat-datepicker-toggle matSuffix [for]="monthYearPicker"></mat-datepicker-toggle>
+    <mat-datepicker #monthYearPicker
+        startView="multi-year"
+        (monthSelected)="setMonthAndYear($event, monthYearPicker)"
+        (yearSelected)="chosenYearHandler($event)">
+    </mat-datepicker>
+</mat-form-field>

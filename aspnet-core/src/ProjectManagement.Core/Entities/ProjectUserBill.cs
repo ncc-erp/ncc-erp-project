@@ -34,6 +34,7 @@ namespace ProjectManagement.Entities
         public ChargeType? ChargeType { get; set; }
 
         public string LinkCV { get; set; }
+        public float Discount { get; set; }
 
         public virtual ICollection<LinkedResource> LinkedResources { get; set; }
         public virtual ICollection<BillUserSkill> BillUserSkills { get; set; }

@@ -83,6 +83,7 @@ import { MultipleSelectStringValueComponent } from './components/multiple-select
 import { MultipleSelectComponent } from './components/multiple-select/multiple-select.component';
 import { UploadCvBillAccountComponent } from './components/upload-cv-bill-account/upload-cv-bill-account.component';
 import { MonthYearPickerComponent } from './components/month-year-picker/month-year-picker.component';
+import { PaginationFooterComponent } from './components/pagination-footer/pagination-footer.component';
 
 // import {DialogComponentModule} from './dialog-component/dialog-component.module';
 // import { ErrorPermissionComponent } from './interceptor-errors/error-permission/error-permission.component'
@@ -168,7 +169,8 @@ import { MonthYearPickerComponent } from './components/month-year-picker/month-y
         MultipleSelectStringValueComponent,
         MultipleSelectComponent,
         UploadCvBillAccountComponent,
-        MonthYearPickerComponent
+        MonthYearPickerComponent,
+        PaginationFooterComponent
 
     ],
     exports: [
@@ -238,7 +240,8 @@ import { MonthYearPickerComponent } from './components/month-year-picker/month-y
         LineBreakPipe,
         MultipleSelectStringValueComponent,
         MultipleSelectComponent,
-        MonthYearPickerComponent
+        MonthYearPickerComponent,
+        PaginationFooterComponent
     ],
     providers: [
         { provide: TINYMCE_SCRIPT_SRC, useValue: 'tinymce/tinymce.min.js' }

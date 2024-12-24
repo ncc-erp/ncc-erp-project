@@ -1,0 +1,33 @@
+<div class="card-footer bg-light border-top">
+    <div class="row container-pagination align-items-center">
+        <div class="col-4 d-flex align-items-center">
+            <button class="btn btn-secondary align-items-center col-2" (click)="refresh()">
+                <i class="fas fa-redo-alt"></i>
+            </button>
+            <mat-form-field 
+                appearance="outline"    
+                class="form-number-items col-4">
+                <mat-label>Number items</mat-label>
+                <mat-select panelClass="options-number-item" 
+                    [(ngModel)]="pageSizeType"
+                    (ngModelChange)="changePageSize()"
+                    class="p-0">
+                    <mat-option [value]="5"> 5 </mat-option>
+                    <mat-option [value]="10"> 10 </mat-option>
+                    <mat-option [value]="20"> 20 </mat-option>
+                    <mat-option [value]="50"> 50 </mat-option>
+                    <mat-option [value]="100"> 100 </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div class="col-4 text-center font-weight-bold">
+            {{ "TotalRecordsCount" | localize: totalItems }}
+        </div>
+        <div class="col-4 pagination-control">
+            <div class="float-sm-right m-auto">
+            <abp-pagination-controls id="server" (pageChange)="getDataPage($event)">
+            </abp-pagination-controls>
+            </div>
+        </div>
+    </div>
+</div>

@@ -54,5 +54,6 @@ namespace ProjectManagement.Services.ProjectUserBill.Dto
         public string LinkCV { get; set; }
         public List<BillUserSkillDto> UserSkills { get; set; }
         public string SkillNote { get; set; }
+        public float Discount { get; set; }
     }
 }

@@ -210,7 +210,8 @@ namespace ProjectManagement.Services.ProjectUserBills
                             FullName = lr.User.FullName,
                             Contribute = lr.Contribute
                         }).ToList(),
-                    SkillNote = x.BillUserSkills.Select(s => s.Note).FirstOrDefault() ?? ""
+                    SkillNote = x.BillUserSkills.Select(s => s.Note).FirstOrDefault() ?? "",
+                    Discount = x.Discount
                 });
 
 
@@ -292,7 +293,8 @@ namespace ProjectManagement.Services.ProjectUserBills
                         SkillRank = us.SkillRank,
                         SkillNote = us.Note
                     }).ToList(),
-                    SkillNote = x.BillUserSkills.Select(s => s.Note).FirstOrDefault() ?? ""
+                    SkillNote = x.BillUserSkills.Select(s => s.Note).FirstOrDefault() ?? "",
+                    Discount = x.Discount
                 }).FirstOrDefault();
         }
          

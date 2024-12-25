@@ -870,6 +870,8 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   onConfirmUpdateIsExpose(userBill: projectUserBillDto) {
     this.updateUserBill(userBill);
     userBill.initialIsExpose = userBill.isExpose;
+    this.userBillProcess = false;
+    this.showSearchAndFilter = true;
   }
 
   onCancelUpdateIsExpose(userBill: projectUserBillDto) {

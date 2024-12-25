@@ -223,6 +223,11 @@
                                         <i *ngIf="sortColumn !== 'billRate'" class="fas fa-sort"></i>
                                     </div>
                                 </th>
+                                <th class="align"  style="min-width: 100px;">
+                                    <div class="col-bill-account"> 
+                                        Discount (%)
+                                    </div>
+                                </th>
                                 <th class="align" (click)="sortData('headCount')" style="cursor: pointer; min-width: 100px;">
                                 {{ "Head Count" | localize }}
                                 <br>({{totalHeadCount | number: '1.2-2'}})
@@ -473,6 +478,24 @@
                                     </div>
                                 </td>
                                 <td class="text-center">
+                                    <span class="text-center" *ngIf="!bill.createMode; else createEditDiscount">
+                                        {{ bill.discount }}
+                                    </span>
+                                    <ng-template #createEditDiscount>
+                                        <input style="min-width: 30px;"
+                                            class="form-control mt-1"
+                                            type="number"
+                                            min="0"
+                                            max="100"
+                                            placeholder="0 - 100"
+                                            [class]="bill.discount < 0 || bill.discount > 100 ? 'is-invalid' : ''"
+                                            [(ngModel)]="bill.discount" />
+                                        <div class="invalid-feedback" *ngIf="bill.discount < 0 || bill.discount > 100">
+                                            Discount must be between 0 and 100
+                                        </div>
+                                    </ng-template>
+                                </td>
+                                <td class="text-center">
                                     <span class="text-center" *ngIf="!bill.createMode">{{ bill.headCount | 
                                         number: '1.2-2':'en-US' }}</span>
                                 
@@ -672,7 +695,7 @@
                                         class="pt-1 d-flex"
                                         style="flex-direction: column;">
                                         <button class="mb-3 submit-btn"
-                                            [disabled]="!bill?.userId || !bill?.billRole || !bill?.startTime || bill?.headCount<0 || bill?.headCount>1"
+                                            [disabled]="!bill?.userId || !bill?.billRole || !bill?.startTime || bill?.headCount<0 || bill?.headCount>1 || bill.discount < 0 || bill.discount > 100"
                                             style="background: none; border: none;"
                                             (click)="saveUserBill(bill)">
                                             <i style="color: green; font-size: 30px;"

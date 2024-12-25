@@ -4,6 +4,7 @@ using ProjectManagement.Constants.Enum;
 using ProjectManagement.Entities;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 using static ProjectManagement.Constants.Enum.ProjectEnum;
 
@@ -25,6 +26,7 @@ namespace ProjectManagement.APIs.ProjectUserBills.Dto
         public bool isActive { get; set; }
         public string AccountName { get; set; }
         public ChargeType? ChargeType { get; set; }
+        [Range(0, 100, ErrorMessage = "Discount must be between 0 and 100")]
         public float Discount { get; set; }
-    } 
+    }
 }

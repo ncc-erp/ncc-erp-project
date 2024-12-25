@@ -317,6 +317,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
           accountName: userBill.accountName,
           chargeType: userBill.chargeType,
           linkedResources: userBill.linkedResources,
+          discount: userBill.discount || 0,
           id: userBill.id
         }
         this.projectUserBillService.update(userBillToUpdate).pipe(catchError(this.projectUserBillService.handleError)).subscribe(()=>{

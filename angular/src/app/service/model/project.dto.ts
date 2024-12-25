@@ -120,6 +120,7 @@ export class projectUserBillDto {
   userSkills: ProjectUserSkillDto[];
   skillNote: string;
   initialIsExpose: boolean;
+  discount: number;
 }
 
 export class ProjectUserSkillDto{

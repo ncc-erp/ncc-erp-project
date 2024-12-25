@@ -61,7 +61,6 @@ export class WillPoolComponent extends PagedListingComponentBase<any> implements
   public originalNoteValue: string = "";
   // search username
   public searchText: string = "";
-  public oldSearchText: string = "";
 
   protected list(_request: PagedRequestDto, pageNumber: number, _finishedCallback: () => void): void {
     this.isLoading = true;
@@ -361,11 +360,17 @@ export class WillPoolComponent extends PagedListingComponentBase<any> implements
   }
 
   filterUsername(): void {
-    if(this.searchText != this.oldSearchText) {
-      this.oldSearchText = this.searchText;
-      this.pageNumber = 1;
-      this.refresh();
+    if(this.searchText) {
+      this.selectedBranchIds = this.selectedBranchIdsCr = this.selectedBranchIdsOld = [];
+      this.selectedUserTypes = this.selectedUserTypesOld = this.selectedUserTypesCr = [];
+      this.endChargeDateFromValue = this.endChargeDateToValue = null;
+    } else {
+      this.selectedBranchIds = this.selectedBranchIdsCr = this.selectedBranchIdsOld = this.listBranchsId;
+      this.selectedUserTypes = this.selectedUserTypesOld = this.selectedUserTypesCr = this.listUserTypesId;
+      this.initialEndChargeDate();
     }
+    this.pageNumber = 1;
+    this.refresh();
   }
 
   initialEndChargeDate(): void {

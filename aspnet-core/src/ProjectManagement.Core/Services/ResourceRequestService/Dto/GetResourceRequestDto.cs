@@ -126,6 +126,8 @@ namespace ProjectManagement.Services.ResourceRequestService.Dto
         public PlanUserInfoDto BillUserInfo { get; set; }
         public bool IsNewBillAccount { get; set; }
         public bool IsRequiredPlanResource { get; set; }
+        public float ConfidenceLevel { get; set; }
+        public float HeadCount { get; set; }
     }
 
     public class PlanUserInfoDto

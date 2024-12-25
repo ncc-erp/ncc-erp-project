@@ -40,6 +40,8 @@ namespace ProjectManagement.Entities
         public Priority Priority { get; set; }
         public bool IsNewBillAccount { get; set; }
         public bool IsRequiredPlanResource { get; set; }
+        public float ConfidenceLevel { get; set; }
+        public float HeadCount { get; set; }
 
         public ICollection<ResourceRequestSkill> ResourceRequestSkills { get; set; }
         public string LinkCV { get; set; }

@@ -4,7 +4,9 @@ export class RequestResourceDto {
     this.level = 100;
     this.quantity = 1;
     this.priority = 1;
-    this.timeNeed = new Date()
+    this.timeNeed = new Date();
+    this.confidenceLevel = 0;
+    this.headCount = 0;
   }
   name: string;
   projectId: number;
@@ -29,6 +31,8 @@ export class RequestResourceDto {
   isRequiredPlanResource?: boolean;
   linkCv: string;
   resCV: ResourceRequestCVDto[];
+  confidenceLevel: number;
+  headCount: number;
 }
 
 export class TrainingRequestDto {

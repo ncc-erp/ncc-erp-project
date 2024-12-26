@@ -93,6 +93,7 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
         "id": tpb.id,
         "accountName": tpb.accountName,
         "chargeType": tpb.chargeType,
+        "discount": tpb.discount
       }]
       this.timesheetProjectBillService.updateProjectBill(bill)
       .pipe(catchError(this.timesheetProjectBillService.handleError))
@@ -137,7 +138,8 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
         isActive: tpb.isActive,
         workingTime: tpb.workingTime,
         id: tpb.id,
-        chargeType: tpb.chargeType
+        chargeType: tpb.chargeType,
+        discount: tpb.discount
       }
     })
 

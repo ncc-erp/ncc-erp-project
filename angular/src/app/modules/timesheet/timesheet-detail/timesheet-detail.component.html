@@ -301,7 +301,7 @@
                       </div>
                       <div class="col-1"><label style="font-weight: 500;">{{bill.workingTime}}d</label></div>
                       <div class="col-2" *ngIf="isGranted(Timesheets_TimesheetDetail_ViewBillRate)"><label
-                          class="ml-1">{{bill.roundAmount | number: "1.0":"en-US" }} {{item.currency}}</label></div>
+                          class="ml-1">{{bill.roundActualAmount | number: "1.0":"en-US" }} {{item.currency}}</label></div>
 
                       <div class="text-right note" [ngClass]="isGranted(Timesheets_TimesheetDetail_ViewBillRate)?'col-2 ml-4':'col-5'"
                         style="word-break: break-all; white-space: pre-line;">

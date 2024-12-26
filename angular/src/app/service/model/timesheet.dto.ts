@@ -51,6 +51,9 @@ export class ProjectBillInfoDto{
     workingTime: number;
     amout: number;
     roundAmount: number;
+    discount: number;
+    actualAmount: number;
+    roundActualAmount: number;
 }
 
 
@@ -111,6 +114,7 @@ export class TimesheetProjectBill {
     chargeTypeName: string
     isEditing: boolean
     isDisable: boolean
+    discount: number
 }
 export class TotalAmountByCurrencyDto{
     CurrencyName : string;

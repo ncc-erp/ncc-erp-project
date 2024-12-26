@@ -457,6 +457,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
                     IsActive = true,
                     ChargeType = pub.ChargeType,
                     CurrencyId = project.Project.CurrencyId,
+                    Discount = pub.Discount
                 };
                 listTimesheetProjectBill.Add(timesheetProjectBill);
             }

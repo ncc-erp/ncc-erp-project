@@ -134,6 +134,7 @@ namespace ProjectManagement.APIs.TimeSheetProjectBills
                     item.WorkingTime = dto.WorkingTime;
                     item.IsActive = dto.IsActive;
                     item.ChargeType = dto.ChargeType;
+                    item.Discount = dto.Discount;
                 }
             }
             await CurrentUnitOfWork.SaveChangesAsync();

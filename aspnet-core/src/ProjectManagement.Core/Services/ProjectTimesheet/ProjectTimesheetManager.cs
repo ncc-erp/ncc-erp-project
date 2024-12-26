@@ -187,7 +187,7 @@ namespace ProjectManagement.Services.ProjectTimesheet
                 EndTime = s.EndTime,
                 ChargeType = s.ChargeType.HasValue ? s.ChargeType : s.Project.ChargeType,
                 CurrencyId = s.Project.CurrencyId,
-                Discount = s.Project.Discount,
+                Discount = s.Discount,
                 TransferFee = s.Project.Client.TransferFee,
                 LastInvoiceNumber = s.Project.LastInvoiceNumber,
                 AccountName = s.AccountName,

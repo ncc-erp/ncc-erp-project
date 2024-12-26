@@ -93,6 +93,7 @@ namespace ProjectManagement.Services.ProjectTimesheet
                 ChargeType = pub.ChargeType.HasValue ? pub.ChargeType : project.ChargeType,
                 CurrencyId = project.CurrencyId,
                 AccountName = pub.AccountName,
+                Discount = pub.Discount
             };
 
             await _workScope.InsertAsync(tpb);
@@ -135,6 +136,7 @@ namespace ProjectManagement.Services.ProjectTimesheet
             tpb.BillRole = pub.BillRole;
             tpb.IsActive = pub.isActive;
             tpb.AccountName = pub.AccountName;
+            tpb.Discount = pub.Discount;
 
             await _workScope.UpdateAsync(tpb);
         }

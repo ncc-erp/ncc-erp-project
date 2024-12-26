@@ -67,6 +67,7 @@ namespace ProjectManagement.APIs.TimeSheetProjectBills
                              UserLevel = x.User.UserLevel,
                              Currency = x.CurrencyId == null ? x.Project.Currency.Name : x.Currency.Name,
                              ChargeType = x.ChargeType == null ? x.Project.ChargeType : x.ChargeType,
+                             Discount = x.Discount,
                              //ProjectBillInfomation = $"<b>{x.User.FullName}</b> - {x.BillRole} - {x.BillRate} - {x.Note} - {x.ShadowNote} <br>"
                          });
 

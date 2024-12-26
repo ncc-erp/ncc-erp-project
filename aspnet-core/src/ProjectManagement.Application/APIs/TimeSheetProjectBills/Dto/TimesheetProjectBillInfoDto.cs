@@ -24,6 +24,9 @@ namespace ProjectManagement.APIs.TimeSheetProjectBills.Dto
         public int DefaultWorkingHours { get; set; }
         public double Amount => GetWorkingTime() * BillRate;
         public double RoundAmount => Math.Round(Amount);
+        public float Discount { get; set; }
+        public double ActualAmount => Amount - (Amount * Discount / 100);
+        public double RoundActualAmount => Math.Round(ActualAmount);
         private double GetWorkingTime()
         {
             if (ChargeType == Constants.Enum.ProjectEnum.ChargeType.Daily)

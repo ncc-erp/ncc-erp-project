@@ -273,6 +273,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
                                                         ChargeType = x.ChargeType.HasValue ? x.ChargeType : x.Project.ChargeType,
                                                         DefaultWorkingHours = defaultWorkingHours,
                                                         TimeSheetWorkingDay = tsp.WorkingDay,
+                                                        Discount = x.Discount
                                                     }).ToList(),
                     ProjectCurrency = tsp.Project.Currency.Code,
                     ProjectChargeType = tsp.Project.ChargeType,
@@ -327,6 +328,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
                                                         ChargeType = x.ChargeType.HasValue ? x.ChargeType : x.Project.ChargeType,
                                                         DefaultWorkingHours = defaultWorkingHours,
                                                         TimeSheetWorkingDay = tsp.WorkingDay,
+                                                        Discount = x.Discount
                                                     }).ToList(),
                     Note = tsp.Note,
                     HistoryFile = tsp.HistoryFile,

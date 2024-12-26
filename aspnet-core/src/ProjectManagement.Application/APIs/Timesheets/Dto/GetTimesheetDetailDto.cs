@@ -91,11 +91,11 @@ namespace ProjectManagement.APIs.Timesheets.Dto
                 return 0;
             }
 
-            double amount = ProjectBillInfomation.Sum(x => x.Amount);
+            double amount = ProjectBillInfomation.Sum(x => x.ActualAmount);
 
             if (amount > 0)
             {
-                return (100 - Discount) / 100 * amount + TransferFee;
+                return amount + TransferFee;
             }
 
             return amount;

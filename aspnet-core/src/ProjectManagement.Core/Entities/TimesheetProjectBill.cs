@@ -37,6 +37,6 @@ namespace ProjectManagement.Entities
         public long? CurrencyId { get; set; }
         [ForeignKey(nameof(CurrencyId))]
         public Currency Currency { get; set; }
-
+        public float Discount { get; set; }
     }
 }

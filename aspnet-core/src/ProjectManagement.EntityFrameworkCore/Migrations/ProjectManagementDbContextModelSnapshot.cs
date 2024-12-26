@@ -4249,6 +4249,9 @@ namespace ProjectManagement.Migrations
                     b.Property<DateTime?>("DeletionTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<float>("Discount")
+                        .HasColumnType("real");
+
                     b.Property<DateTime?>("EndTime")
                         .HasColumnType("datetime2");
 

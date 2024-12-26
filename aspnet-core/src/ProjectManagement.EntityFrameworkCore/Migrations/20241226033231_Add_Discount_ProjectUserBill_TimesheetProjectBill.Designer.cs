@@ -10,8 +10,8 @@ using ProjectManagement.EntityFrameworkCore;
 namespace ProjectManagement.Migrations
 {
     [DbContext(typeof(ProjectManagementDbContext))]
-    [Migration("20241224095401_Add_Discount_Into_ProjectUserBill")]
-    partial class Add_Discount_Into_ProjectUserBill
+    [Migration("20241226033231_Add_Discount_ProjectUserBill_TimesheetProjectBill")]
+    partial class Add_Discount_ProjectUserBill_TimesheetProjectBill
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -4250,6 +4250,9 @@ namespace ProjectManagement.Migrations
 
                     b.Property<DateTime?>("DeletionTime")
                         .HasColumnType("datetime2");
+
+                    b.Property<float>("Discount")
+                        .HasColumnType("real");
 
                     b.Property<DateTime?>("EndTime")
                         .HasColumnType("datetime2");

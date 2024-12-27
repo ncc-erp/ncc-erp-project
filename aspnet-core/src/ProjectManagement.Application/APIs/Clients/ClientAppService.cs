@@ -7,14 +7,14 @@ using NccCore.Paging;
 using ProjectManagement.APIs.Clients.Dto;
 using ProjectManagement.Authorization;
 using ProjectManagement.Entities;
+using ProjectManagement.Services.Finance;
+using ProjectManagement.Services.Timesheet;
+using ProjectManagement.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ProjectManagement.Services.Timesheet;
-using ProjectManagement.Utils;
-using ProjectManagement.Services.Finance;
 
 namespace ProjectManagement.APIs.Clients
 {
@@ -44,6 +44,7 @@ namespace ProjectManagement.APIs.Clients
                     PaymentDueBy = s.PaymentDueBy,
                     InvoiceDateSetting = s.InvoiceDateSetting,
                     TransferFee = s.TransferFee,
+                    DisplayName = s.DisplayName,
                 });
             return await query.GetGridResult(query, input);
         }
@@ -57,6 +58,7 @@ namespace ProjectManagement.APIs.Clients
                   Id = s.Id,
                   Name = s.Name,
                   Code = s.Code,
+                  DisplayName = s.DisplayName,
                   Address = s.Address,
               });
             return await query.ToListAsync();
@@ -87,7 +89,7 @@ namespace ProjectManagement.APIs.Clients
         {
             var client = await WorkScope.GetAsync<Client>(input.Id);
 
-            var isExist = await WorkScope.GetAll<Client>().AnyAsync(x => x.Id != input.Id && (x.Name == input.Name || x.Code == input.Code));
+            var isExist = await WorkScope.GetAll<Client>().AnyAsync(x => x.Id != input.Id && (x.Name == input.Name || x.Code == input.Code || x.DisplayName == input.DisplayName));
 
             if (isExist)
                 throw new UserFriendlyException(String.Format("Name or Code already exist !"));

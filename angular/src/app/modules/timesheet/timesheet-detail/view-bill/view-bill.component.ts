@@ -28,6 +28,7 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
   tempUserList = []
   public chargeTypeList = [{name:'Daily', value: 0}, {name:'Monthly', value: 1}, {name:'Hourly', value: 2}];
   public updateAction = UpdateAction
+  public invalidForm: boolean = false;
 
   Timesheets_TimesheetDetail_UpdateBill_Edit = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_UpdateBill_Edit
   Timesheets_TimesheetDetail_UpdateBill_SetDone = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_UpdateBill_SetDone
@@ -162,6 +163,7 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
   public cancelUpdateAll(): void {
     this.getProjectBill();
     this.searchUserBill = "";
+    this.invalidForm = false;
   }
 
   public editUserBill(tpb: TimesheetProjectBill): void {
@@ -323,5 +325,9 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
 
   public getCurrencyName(){
     return this.billDetail && this.billDetail.length > 0 ? this.billDetail[0].currency : '';
+  }
+
+  checkValidDiscount(discount: number): void {
+    this.invalidForm = discount < 0 || discount > 100;
   }
 }

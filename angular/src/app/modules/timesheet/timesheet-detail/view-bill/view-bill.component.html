@@ -22,7 +22,7 @@
 
       <div *ngIf="isEditingAllRow()" class="pt-1 ml-4">
         <button *ngIf="isTSPopUp()"
-          [disabled]="!timesheetDetailForm.valid"
+          [disabled]="!timesheetDetailForm.valid || invalidForm"
           class="mr-3 submit-btn"  
           style="background: none; border: none"
           (click)="saveAllUpdateTS()"
@@ -32,7 +32,7 @@
 
         <button
         *ngIf="isBillPopUp()"
-          [disabled]="!timesheetDetailForm.valid"
+          [disabled]="!timesheetDetailForm.valid || invalidForm"
           class="mr-3 submit-btn"
           style="background: none; border: none"
           (click)="saveAllUpdateBill()"
@@ -79,7 +79,7 @@
               <th style="width: 200px;">Charge Name</th>
               <th style="width: 150px;">Charge Role</th>
               <th style="width: 100px;" *ngIf="isShowRate()">Rate<br>({{getCurrencyName()}})</th>
-              <th style="width: 100px;">Discount</th>
+              <th style="width: 100px;" *ngIf="isShowRate()">Discount (%)</th>
               <th style="width: 50px;">Charge Type</th>
               <th style="width: 90px; white-space: break-spaces;">Working Day</th>
               <th style="width: 50px;">Is Charge</th>
@@ -197,7 +197,8 @@
               </td>
 
               <!-- Discount -->
-              <td class="text-center">
+              <td class="text-center"
+                *ngIf="isShowRate()">
                 <span *ngIf="!bill.isEditing"
                   >{{ bill.discount }}
                 </span>
@@ -212,6 +213,7 @@
                     min="0"
                     max="100"
                     [(ngModel)]="bill.discount"
+                    (ngModelChange)="checkValidDiscount(bill.discount)"
                   />
                   <div class="invalid-feedback" *ngIf="bill.discount < 0 || bill.discount > 100">
                     Discount must be between 0 and 100
@@ -324,7 +326,7 @@
                 <div *ngIf="bill.isEditing" class="pt-1 mt-1">
                   <button
                   *ngIf="data.action == updateAction.UpdateBillInfo"
-                    [disabled]="!bill?.userId || !timesheetDetailForm.valid || bill.discount < 0 || bill.discount > 100"
+                    [disabled]="!bill?.userId || !timesheetDetailForm.valid || invalidForm"
                     class="mr-3 submit-btn"
                     style="background: none; border: none"
                     (click)="saveUserBill(bill)"
@@ -333,7 +335,7 @@
                   </button>
                   <button
                     *ngIf="data.action == updateAction.UpdateTimesheet"
-                    [disabled]="!bill?.userId || !timesheetDetailForm.valid"
+                    [disabled]="!bill?.userId || !timesheetDetailForm.valid || invalidForm"
                     class="mr-3 submit-btn"
                     style="background: none; border: none"
                     (click)="saveUpdateTS(bill)"

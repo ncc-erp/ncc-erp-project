@@ -20,6 +20,7 @@ export interface ProjectDto {
 export interface ClientDto {
     name: string;
     code: string;
+    displayName: string;
     id: number;
     address: string;
     invoiceDateSetting: number;

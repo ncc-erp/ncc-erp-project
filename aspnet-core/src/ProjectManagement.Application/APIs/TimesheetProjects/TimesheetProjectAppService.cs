@@ -1362,7 +1362,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
                     ProjectInfor = y.Select(z => new ProjectInfoForExportDto
                     {
                         ProjectName = z.ProjectName,
-                        ProjectBill = z.ProjectBillInfomation.Sum(x => x.Amount) * (1 - (z.Discount / 100)) + z.TransferFee,
+                        ProjectBill = z.ProjectBillInfomation.Sum(x => x.ActualAmount) + z.TransferFee,
                         Note = $"{z.ProjectBillInfomation.Count} accounts, transfer fee = {z.TransferFee}, discount = {z.Discount}%",
                     }).ToList()
                 }).ToList(),

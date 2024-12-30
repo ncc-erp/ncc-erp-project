@@ -33,6 +33,7 @@ namespace ProjectManagement.Helper
             StringBuilder footer = new StringBuilder();
 
             double sumLineTotal = 0;
+            double sumDiscountValue = 0;
             string currencyName = "";
             foreach (var tsUser in data.TimesheetUsers)
             {
@@ -50,12 +51,13 @@ namespace ProjectManagement.Helper
                 </tr>");
 
                 sumLineTotal += tsUser.LineTotal;
+                sumDiscountValue += tsUser.LineTotal - tsUser.ActualAmount;
                 currencyName = tsUser.CurrencyName;
             }
 
 
             double totalNet = sumLineTotal;
-            double invoiceTotal = totalNet + data.Info.TransferFee - (data.Info.Discount * totalNet) / 100;
+            double invoiceTotal = totalNet + data.Info.TransferFee - sumDiscountValue;
           
             long invoiceNumberHTML = data.Info.InvoiceNumber;
             string invoiceDateHTML = data.Info.InvoiceDateStr();
@@ -65,7 +67,7 @@ namespace ProjectManagement.Helper
             string clientAddressHTML = data.Info.ClientAddress;
             string totalNetHTML = totalNet.ToString("N2", CultureInfo.InvariantCulture);
             float discountHTML = data.Info.Discount;
-            string lineTotalDiscountHTML = ((data.Info.Discount * totalNet) / 100).ToString("N2", CultureInfo.InvariantCulture);
+            string lineTotalDiscountHTML = sumDiscountValue.ToString("N2", CultureInfo.InvariantCulture);
             string transferFeeHTML = (data.Info.TransferFee).ToString("N2", CultureInfo.InvariantCulture);
             string arrPaymentInfoHTML = data.Info.PaymentInfo.Replace("\n", "</br>");
 
@@ -439,7 +441,7 @@ body {{ margin-left: 0.25in; margin-right: 0.25in; margin-top: 0.5in; margin-bot
             <td class='column2 style21 null'></td>
             <td class='column3 style21 null'></td>
             <td class='column4 style22 null'></td>
-            <td class='column5 style20 s'>Discount ({discountHTML}%)</td>
+            <td class='column5 style20 s'>Discount</td>
             <td class='column6 style45 f' style='text-align: right;'>{lineTotalDiscountHTML}</td>
             <td class='column7'>&nbsp;</td>
            

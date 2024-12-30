@@ -167,6 +167,7 @@ namespace ProjectManagement.Services.Timesheet.Dto
             }
         }
         public float Discount { get; set; }
+        public double ActualAmount => LineTotal * (1 - Discount / 100);
     }
 
     public class TimesheetTaxDto

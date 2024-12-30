@@ -853,6 +853,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
             int rowIndex = tsTableStart.Row + 1;
 
             double sumLineTotal = 0;
+            double sumDiscountValue = 0;
             foreach (var tsUser in data.TimesheetUsers)
             {
                 //Fill data sheet invoice
@@ -863,11 +864,12 @@ namespace ProjectManagement.APIs.TimesheetProjects
                 invoiceSheet.Cells[rowIndex, 6].Value = tsUser.WorkingDayDisplay;
                 invoiceSheet.Cells[rowIndex, 7].Value = tsUser.LineTotal;
                 sumLineTotal += tsUser.LineTotal;
+                sumDiscountValue += tsUser.LineTotal - tsUser.ActualAmount;
                 rowIndex++;
             }
 
             var netTotal = sumLineTotal;
-            var invoiceTotal = netTotal + data.Info.TransferFee - (data.Info.Discount * netTotal) / 100;
+            var invoiceTotal = netTotal + data.Info.TransferFee - sumDiscountValue;
             invoiceSheet.Cells["ClientName"].Value = data.Info.ClientName;
             invoiceSheet.Cells["ClientAddress"].Value = data.Info.ClientAddress;
             invoiceSheet.Cells["InvoiceNumber"].Value = data.Info.InvoiceNumber;
@@ -875,8 +877,8 @@ namespace ProjectManagement.APIs.TimesheetProjects
             invoiceSheet.Cells["PaymentDueBy"].Value = $"PAYMENT DUE BY: {data.Info.PaymentDueByStr()}";
             invoiceSheet.Names["TransferFee"].Value = data.Info.TransferFee;
             invoiceSheet.Names["InvoiceNetTotal"].Value = netTotal;
-            invoiceSheet.Names["DiscountLabel"].Value = $"Discount ({data.Info.Discount}%)";
-            invoiceSheet.Names["Discount"].Value = (data.Info.Discount * netTotal) / 100;
+            invoiceSheet.Names["DiscountLabel"].Value = "Discount";
+            invoiceSheet.Names["Discount"].Value = sumDiscountValue;
             invoiceSheet.Names["InvoiceTotal"].Value = invoiceTotal;
             invoiceSheet.Names["InvoiceTotalTop"].Value = invoiceTotal;
             invoiceSheet.Cells["Currency"].Value = data.CurrencyName();

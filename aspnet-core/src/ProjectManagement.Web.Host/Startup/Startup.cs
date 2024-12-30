@@ -1,37 +1,38 @@
-﻿using System;
-using System.Linq;
-using System.Reflection;
+﻿using Abp.AspNetCore;
+using Abp.AspNetCore.Mvc.Antiforgery;
+using Abp.AspNetCore.SignalR.Hubs;
+using Abp.Castle.Logging.Log4Net;
+using Abp.Dependency;
+using Abp.Extensions;
+using Abp.Json;
+using Amazon;
+using Amazon.Runtime.CredentialManagement;
+using Amazon.S3;
+using Castle.Facilities.Logging;
+using Hangfire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Castle.Facilities.Logging;
-using Abp.AspNetCore;
-using Abp.AspNetCore.Mvc.Antiforgery;
-using Abp.Castle.Logging.Log4Net;
-using Abp.Extensions;
-using ProjectManagement.Configuration;
-using ProjectManagement.Identity;
-using Abp.AspNetCore.SignalR.Hubs;
-using Abp.Dependency;
-using Abp.Json;
 using Microsoft.OpenApi.Models;
+using Minio;
 using Newtonsoft.Json.Serialization;
-using ProjectManagement.Services.Finance;
-using ProjectManagement.Services.Timesheet;
-using ProjectManagement.Services.Komu;
-using ProjectManagement.Services.HRM;
+using ProjectManagement.Configuration;
 using ProjectManagement.Constants;
-using Amazon.Runtime.CredentialManagement;
-using Amazon.S3;
-using Amazon;
-using ProjectManagement.UploadFilesService;
-using ProjectManagement.Services.Talent;
-using ProjectManagement.Services;
-using Hangfire;
 using ProjectManagement.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
+using ProjectManagement.Identity;
+using ProjectManagement.Services;
+using ProjectManagement.Services.Finance;
+using ProjectManagement.Services.HRM;
+using ProjectManagement.Services.Komu;
+using ProjectManagement.Services.Talent;
+using ProjectManagement.Services.Timesheet;
+using ProjectManagement.UploadFilesService;
+using System;
+using System.Linq;
+using System.Reflection;
 
 namespace ProjectManagement.Web.Host.Startup
 {
@@ -149,7 +150,7 @@ namespace ProjectManagement.Web.Host.Startup
             );
         }
 
-        public void Configure(IApplicationBuilder app,  ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
         {
             app.UseAbp(options => { options.UseAbpRequestLocalization = false; }); // Initializes ABP framework.
 
@@ -202,13 +203,20 @@ namespace ProjectManagement.Web.Host.Startup
 
         private void LoadUploadFileConfig()
         {
-            ConstantAmazonS3.Profile = _appConfiguration.GetValue<string>("AWS:Profile");
-            ConstantAmazonS3.AccessKeyId = _appConfiguration.GetValue<string>("AWS:AccessKeyId");
-            ConstantAmazonS3.SecretKeyId = _appConfiguration.GetValue<string>("AWS:SecretKeyId");
-            ConstantAmazonS3.Region = _appConfiguration.GetValue<string>("AWS:Region");
-            ConstantAmazonS3.BucketName = _appConfiguration.GetValue<string>("AWS:BucketName");
-            ConstantAmazonS3.Prefix = _appConfiguration.GetValue<string>("AWS:Prefix");
-            ConstantAmazonS3.CloudFront = _appConfiguration.GetValue<string>("AWS:CloudFront");
+            ConstantMinio.Endpoint = _appConfiguration.GetValue<string>("Minio:Endpoint");
+            ConstantMinio.AccessKeyId = _appConfiguration.GetValue<string>("Minio:AccessKeyId");
+            ConstantMinio.SecretKeyId = _appConfiguration.GetValue<string>("Minio:SecretKeyId");
+            ConstantMinio.BucketName = _appConfiguration.GetValue<string>("Minio:BucketName");
+            ConstantMinio.Prefix = _appConfiguration.GetValue<string>("Minio:Prefix");
+            ConstantMinio.CloudFront = _appConfiguration.GetValue<string>("Minio:CloudFront");
+
+            //ConstantAmazonS3.Profile = _appConfiguration.GetValue<string>("AWS:Profile");
+            //ConstantAmazonS3.AccessKeyId = _appConfiguration.GetValue<string>("AWS:AccessKeyId");
+            //ConstantAmazonS3.SecretKeyId = _appConfiguration.GetValue<string>("AWS:SecretKeyId");
+            //ConstantAmazonS3.Region = _appConfiguration.GetValue<string>("AWS:Region");
+            //ConstantAmazonS3.BucketName = _appConfiguration.GetValue<string>("AWS:BucketName");
+            //ConstantAmazonS3.Prefix = _appConfiguration.GetValue<string>("AWS:Prefix");
+            //ConstantAmazonS3.CloudFront = _appConfiguration.GetValue<string>("AWS:CloudFront");
 
             ConstantUploadFile.AvatarFolder = _appConfiguration.GetValue<string>("UploadFile:AvatarFolder");
 
@@ -245,11 +253,35 @@ namespace ProjectManagement.Web.Host.Startup
                 services.AddAWSService<IAmazonS3>();
                 services.AddTransient<IUploadFileService, AmazonS3Service>();
             }
+            else if (ConstantUploadFile.Provider == ConstantUploadFile.MINIO)
+            {
+                RegisterMinio(services);
+                services.AddTransient<IUploadFileService, MinioService>();
+            }
             else
             {
                 services.AddTransient<IUploadFileService, InternalUploadFileService>();
             }
 
+        }
+
+        private void RegisterMinio(IServiceCollection services)
+        {
+            var minioConfig = _appConfiguration.GetSection("Minio");
+            var minioEndpoint = minioConfig.GetValue<string>("Endpoint");
+            var minioAccessKey = minioConfig.GetValue<string>("AccessKeyId");
+            var minioSecretKey = minioConfig.GetValue<string>("SecretKeyId");
+            var minioBucketName = minioConfig.GetValue<string>("BucketName");
+            var minioPrefix = minioConfig.GetValue<string>("Prefix");
+            var minioCloudFront = minioConfig.GetValue<string>("CloudFront");
+            var useSSL = minioConfig.GetValue<bool>("Secure");
+
+            var minioClient = new MinioClient(minioEndpoint, minioAccessKey, minioSecretKey);
+            if (useSSL)
+            {
+                minioClient = minioClient.WithSSL();
+            }
+            services.AddSingleton(minioClient);
         }
     }
 }

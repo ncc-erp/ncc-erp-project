@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ProjectManagement.Constants
+﻿namespace ProjectManagement.Constants
 {
     public class ConstantUploadFile
     {
@@ -13,6 +9,7 @@ namespace ProjectManagement.Constants
 
 
         public static readonly string AMAZONE_S3 = "AWS";
+        public static readonly string MINIO = "Minio";
         public static readonly string INTERNAL = "Internal";
         public const string Project_Tool = "project_tool";
         public static string AvatarFolder { get; set; }

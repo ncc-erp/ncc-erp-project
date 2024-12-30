@@ -1,10 +1,8 @@
 ﻿using Abp.Timing;
+using ProjectManagement.Utils;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Globalization;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
-using ProjectManagement.Utils;
 
 namespace NccCore.Uitls
 {
@@ -106,6 +104,12 @@ namespace NccCore.Uitls
         {
             return Clock.Provider.Now.ToString("yyyyMMddHHmmssfff");
         }
+
+        public static string NowToYYYYMMddHHmmss()
+        {
+            return Clock.Provider.Now.ToString("yyyyMMddHHmmss");
+        }
+
         public static int GetHourNow()
         {
             return Clock.Provider.Now.Hour;

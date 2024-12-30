@@ -1,10 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Abp.UI;
+using Microsoft.AspNetCore.Http;
 using OfficeOpenXml;
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace ProjectManagement.Utils
 {
@@ -19,6 +17,10 @@ namespace ProjectManagement.Utils
             if (Constants.ConstantUploadFile.Provider == Constants.ConstantUploadFile.AMAZONE_S3)
             {
                 return Constants.ConstantAmazonS3.CloudFront.TrimEnd('/') + "/" + filePath;
+            }
+            else if (Constants.ConstantUploadFile.Provider == Constants.ConstantUploadFile.MINIO)
+            {
+                return Constants.ConstantMinio.CloudFront.TrimEnd('/') + "/" + filePath;
             }
             else
             {
@@ -63,6 +65,12 @@ namespace ProjectManagement.Utils
                     excelPackage.Workbook.Worksheets.Delete(worksheetDel);
                 return excelPackage.GetAsByteArray();
             }
+        }
+        public static void CheckValidFile(IFormFile file, string[] allowFileTypes)
+        {
+            var fileExt = FileUtils.GetFileExtension(file);
+            if (!allowFileTypes.Contains(fileExt))
+                throw new UserFriendlyException($"Wrong file type {file.ContentType}. Allow file types: {string.Join(", ", allowFileTypes)}");
         }
     }
 }

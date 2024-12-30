@@ -166,6 +166,7 @@ namespace ProjectManagement.Services.Timesheet.Dto
                 return WorkingDayDisplay * BillRateDisplay;
             }
         }
+        public float Discount { get; set; }
     }
 
     public class TimesheetTaxDto

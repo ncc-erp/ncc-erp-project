@@ -836,6 +836,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
                                                ProjectCode = tpb.Project.Code,
                                                EndTime = tpb.EndTime,
                                                StartTime = tpb.StartTime,
+                                               Discount = tpb.Discount
                                            }).ToListAsync();
             result.ProjectCodes = result.TimesheetUsers.Select(x => x.ProjectCode).Union(listTSProjectCode).ToList();
             return result;

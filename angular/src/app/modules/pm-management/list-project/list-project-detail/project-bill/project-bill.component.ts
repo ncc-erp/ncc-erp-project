@@ -35,6 +35,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { UploadCvBillAccountComponent } from '@shared/components/upload-cv-bill-account/upload-cv-bill-account.component';
 import { GetCvBillAccountDto } from '@app/service/model/upload-cv.dto';
 import { FileHandlerService } from '@app/service/utility/file-handler.service';
+import { IGetUserInfo } from '@app/service/model/user.inteface';
 
 @Component({
   selector: 'app-project-bill',
@@ -634,8 +635,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     userBill.contribute = 0;
   }
 
-  public saveLinkResource(userBill): void {
-    this.isLoading = true
+  public saveLinkResource(userBill: projectUserBillDto): void {
     const reqAdd = {
       projectUserBillId: userBill.id,
       userId: this.selectedResource,
@@ -644,17 +644,17 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     
     this.projectUserBillService.LinkOneProjectUserBillAccount(reqAdd).pipe(
       catchError(this.projectUserBillService.handleError)
-    ).subscribe(() => {
+    ).subscribe((data) => {
+      const userInfo: IGetUserInfo = data.result;
       abp.notify.success("Linked resources updated successfully");
-      this.getUpdatedProjectUserBill(userBill.id)
+      userBill.linkedResources.push(userInfo);
       userBill.createLinkResourceMode = false;
       this.selectedResource = null
       this.userBillProcess = false;
       this.searchResource = "";
       this.showSearchAndFilter = true;
       this.isAddingResource = false;
-      this.isLoading = false;
-    }, () => { this.isLoading = false; });
+    });
   }
 
   public cancelLinkResource(userBill): void {

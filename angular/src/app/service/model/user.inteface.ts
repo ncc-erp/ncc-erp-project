@@ -27,3 +27,22 @@ export interface IUSerProjectHistory {
   allowcatePercentage: number;
   Status: number;
 }
+
+export interface IGetUserInfo {
+  emailAddress: string;
+  avatarPath: string;
+  avatarFullPath: string;
+  userType: number;
+  userLevel: number;
+  isActive: boolean;
+  fullName: string;
+  userName: string;
+  branchId: number;
+  branchColor: string;
+  branchDisplayName: string;
+  positionId: number;
+  positionColor: string;
+  positionName: string;
+  contribute: number;
+  id: number;
+}

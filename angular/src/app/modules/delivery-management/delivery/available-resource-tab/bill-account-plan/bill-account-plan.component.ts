@@ -123,7 +123,7 @@ export class BillAccountPlanComponent
     }
 
     getAllLinkResource() {
-        this.planningBillInfoService.GetAllResource().subscribe(res => {
+        this.planningBillInfoService.GetAllResource(true).subscribe(res => {
             this.listAllResource = res.result;
             this.isLoading = false;
         }, () => { this.isLoading = false; });

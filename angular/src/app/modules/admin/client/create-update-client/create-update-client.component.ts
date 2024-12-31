@@ -25,7 +25,7 @@ export class CreateUpdateClientComponent extends AppComponentBase implements OnI
   ngOnInit(): void {
     if(this.data.command == "update"){
       this.client = this.data.item;
-      this.title = this.data.item.name ? this.data.item.name : ''
+      this.title = this.data.item.name ? this.data.item.name : '';
     }
     else{
       //create

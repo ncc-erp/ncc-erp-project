@@ -86,6 +86,7 @@
             <tr>
               <th>STT</th>
               <th>Name</th>
+              <th>Display Name</th>
               <th>Code</th>
               <th>Address</th>
               <th>Invoice Date</th>
@@ -112,6 +113,7 @@
                 <span>{{ i + 1 + pageSize * (pageNumber - 1) }}</span>
               </td>
               <td >{{ item.name }}</td>
+              <td >{{ item.displayName}}</td>
               <td class="text-center">{{ item.code }}</td>
               <td style="white-space: pre-line; word-break: break-all; max-width: 200px; min-width: 200px;">{{ item.address }}</td>
               <td >{{item.invoiceDateSettingToString}}</td>

@@ -1,3 +1,4 @@
+import { ITypeEnum } from '@app/service/model/common.interface';
 import * as moment from 'moment';
 export class Utils {
   public static getUserLevel(level) {
@@ -206,6 +207,15 @@ export class Utils {
     } else {
       return COLORS.LEVEL_4;
     }
+  }
+
+  public static mapEnumToList(enumObj: object): ITypeEnum[] {
+    return Object.entries(enumObj).map((item) => {
+      return {
+        displayName: item[0],
+        id: item[1],
+      };
+    });
   }
 
 }

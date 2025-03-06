@@ -18,6 +18,7 @@ using ProjectManagement.Authorization.Users;
 using ProjectManagement.Models.TokenAuth;
 using ProjectManagement.MultiTenancy;
 using ProjectManagement.Controllers.Dto;
+using ProjectManagement.Services.Mezon;
 
 namespace ProjectManagement.Controllers
 {
@@ -31,6 +32,7 @@ namespace ProjectManagement.Controllers
         private readonly IExternalAuthConfiguration _externalAuthConfiguration;
         private readonly IExternalAuthManager _externalAuthManager;
         private readonly UserRegistrationManager _userRegistrationManager;
+        private readonly MezonService _mezonService;
 
         public TokenAuthController(
             LogInManager logInManager,
@@ -39,7 +41,8 @@ namespace ProjectManagement.Controllers
             TokenAuthConfiguration configuration,
             IExternalAuthConfiguration externalAuthConfiguration,
             IExternalAuthManager externalAuthManager,
-            UserRegistrationManager userRegistrationManager)
+            UserRegistrationManager userRegistrationManager,
+            MezonService mezonService)
         {
             _logInManager = logInManager;
             _tenantCache = tenantCache;
@@ -48,6 +51,7 @@ namespace ProjectManagement.Controllers
             _externalAuthConfiguration = externalAuthConfiguration;
             _externalAuthManager = externalAuthManager;
             _userRegistrationManager = userRegistrationManager;
+            _mezonService = mezonService;
         }
 
         [HttpPost]
@@ -91,6 +95,13 @@ namespace ProjectManagement.Controllers
                 ExpireInSeconds = (int)_configuration.Expiration.TotalSeconds,
                 UserId = loginResult.User.Id
             };
+        }
+
+        [HttpGet]
+        public IActionResult MezonRedirect()
+        {
+            var authUrl = _mezonService.GenerateOAuthUrl();
+            return Redirect(authUrl);
         }
 
         [HttpPost]

@@ -93,6 +93,37 @@ namespace ProjectManagement.Controllers
             };
         }
 
+        [HttpPost]
+        public async Task<AuthenticateResultModel> MezonAuthenticate([FromBody] MezonTokenDto model)
+        {
+
+            Logger.Info("MezonAuthenticate");
+            var tenancyName = GetTenancyNameOrNull();
+            var loginResult = await GetLoginResultMezonAsync(model.Token, tenancyName);
+            Logger.Info("MezonAuthenticate");
+            var accessToken = CreateAccessToken(CreateJwtClaims(loginResult.Identity));
+            return new AuthenticateResultModel
+            {
+                AccessToken = accessToken,
+                EncryptedAccessToken = GetEncryptedAccessToken(accessToken),
+                ExpireInSeconds = (int)_configuration.Expiration.TotalSeconds,
+                UserId = loginResult.User.Id
+            };
+        }
+
+        private async Task<AbpLoginResult<Tenant, User>> GetLoginResultMezonAsync(string token, string tenancyName)
+        {
+            Logger.Info("GetLoginResultMezonAsync");
+            var loginResult = await _logInManager.LoginOAuth2Async(token);
+            switch (loginResult.Result)
+            {
+                case AbpLoginResultType.Success:
+                    return loginResult;
+                default:
+                    throw _abpLoginResultTypeHelper.CreateExceptionForFailedLoginAttempt(loginResult.Result, null, tenancyName);
+            }
+        }
+
         private async Task<AbpLoginResult<Tenant, User>> GetLoginResultGoogleAsync(string token, string tenancyName, string secretCode)
         {
             Logger.Info("GetLoginResultGoogleAsync");

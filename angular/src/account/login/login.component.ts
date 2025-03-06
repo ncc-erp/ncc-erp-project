@@ -50,4 +50,8 @@ export class LoginComponent extends AppComponentBase {
   signInWithGoogle() {
     this.googleAuthService.signIn(GoogleLoginProvider.PROVIDER_ID);
   }
+
+  signInWithMezon() {
+    this.loginService.redirectToOAuth();
+  }
 }

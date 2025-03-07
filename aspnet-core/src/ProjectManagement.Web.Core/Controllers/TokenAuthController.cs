@@ -18,6 +18,7 @@ using ProjectManagement.Authorization.Users;
 using ProjectManagement.Models.TokenAuth;
 using ProjectManagement.MultiTenancy;
 using ProjectManagement.Controllers.Dto;
+using ProjectManagement.Services.Mezon;
 
 namespace ProjectManagement.Controllers
 {
@@ -31,6 +32,7 @@ namespace ProjectManagement.Controllers
         private readonly IExternalAuthConfiguration _externalAuthConfiguration;
         private readonly IExternalAuthManager _externalAuthManager;
         private readonly UserRegistrationManager _userRegistrationManager;
+        private readonly MezonService _mezonService;
 
         public TokenAuthController(
             LogInManager logInManager,
@@ -39,7 +41,8 @@ namespace ProjectManagement.Controllers
             TokenAuthConfiguration configuration,
             IExternalAuthConfiguration externalAuthConfiguration,
             IExternalAuthManager externalAuthManager,
-            UserRegistrationManager userRegistrationManager)
+            UserRegistrationManager userRegistrationManager,
+            MezonService mezonService)
         {
             _logInManager = logInManager;
             _tenantCache = tenantCache;
@@ -48,6 +51,7 @@ namespace ProjectManagement.Controllers
             _externalAuthConfiguration = externalAuthConfiguration;
             _externalAuthManager = externalAuthManager;
             _userRegistrationManager = userRegistrationManager;
+            _mezonService = mezonService;
         }
 
         [HttpPost]
@@ -91,6 +95,44 @@ namespace ProjectManagement.Controllers
                 ExpireInSeconds = (int)_configuration.Expiration.TotalSeconds,
                 UserId = loginResult.User.Id
             };
+        }
+
+        [HttpGet]
+        public IActionResult MezonRedirect()
+        {
+            var authUrl = _mezonService.GenerateOAuthUrl();
+            return Redirect(authUrl);
+        }
+
+        [HttpPost]
+        public async Task<AuthenticateResultModel> MezonAuthenticate([FromBody] MezonTokenDto model)
+        {
+
+            Logger.Info("MezonAuthenticate");
+            var tenancyName = GetTenancyNameOrNull();
+            var loginResult = await GetLoginResultMezonAsync(model.Token, tenancyName);
+            Logger.Info("MezonAuthenticate");
+            var accessToken = CreateAccessToken(CreateJwtClaims(loginResult.Identity));
+            return new AuthenticateResultModel
+            {
+                AccessToken = accessToken,
+                EncryptedAccessToken = GetEncryptedAccessToken(accessToken),
+                ExpireInSeconds = (int)_configuration.Expiration.TotalSeconds,
+                UserId = loginResult.User.Id
+            };
+        }
+
+        private async Task<AbpLoginResult<Tenant, User>> GetLoginResultMezonAsync(string token, string tenancyName)
+        {
+            Logger.Info("GetLoginResultMezonAsync");
+            var loginResult = await _logInManager.LoginOAuth2Async(token);
+            switch (loginResult.Result)
+            {
+                case AbpLoginResultType.Success:
+                    return loginResult;
+                default:
+                    throw _abpLoginResultTypeHelper.CreateExceptionForFailedLoginAttempt(loginResult.Result, null, tenancyName);
+            }
         }
 
         private async Task<AbpLoginResult<Tenant, User>> GetLoginResultGoogleAsync(string token, string tenancyName, string secretCode)

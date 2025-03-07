@@ -32,6 +32,7 @@ using ProjectManagement.Services;
 using Hangfire;
 using ProjectManagement.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using ProjectManagement.Services.Mezon;
 
 namespace ProjectManagement.Web.Host.Startup
 {
@@ -95,6 +96,7 @@ namespace ProjectManagement.Web.Host.Startup
             services.AddHttpClient<HRMService>();
             services.AddHttpClient<TalentService>();
             services.AddHttpClient<BaseWebService>();
+            services.AddHttpClient<MezonService>();
 
             RegisterFileService(services);
 

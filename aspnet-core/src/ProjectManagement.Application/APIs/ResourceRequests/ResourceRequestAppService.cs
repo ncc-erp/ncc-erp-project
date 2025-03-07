@@ -651,11 +651,11 @@ namespace ProjectManagement.APIs.ResourceRequests
                 throw new UserFriendlyException("Not found Request with Id " + input.RequestId);
             }
 
-            if (request.PlanUserInfo != null)
-            {
-                request.PlanUserInfo.Note = string.Empty;
-                await _resourceManager.ConfirmJoinProject(request.PlanUserInfo.Id, input.StartTime, true);
-            }
+            //if (request.PlanUserInfo != null)
+            //{
+            //    request.PlanUserInfo.Note = string.Empty;
+            //    await _resourceManager.ConfirmJoinProject(request.PlanUserInfo.Id, input.StartTime, true);
+            //}
 
             request.Request.Status = ResourceRequestStatus.DONE;
             request.Request.TimeDone = DateTimeUtils.GetNow();
@@ -663,35 +663,35 @@ namespace ProjectManagement.APIs.ResourceRequests
             await WorkScope.UpdateAsync(request.Request);
 
             // add user in cv column to project user bill table
-            if (request.Request.BillAccountId != null)
-            {
-                var existedPUB = await WorkScope.GetAll<ProjectUserBill>()
-                   .Where(x => x.ProjectId == request.Request.ProjectId && x.UserId == request.Request.BillAccountId)
-                   .FirstOrDefaultAsync();
-                if (existedPUB == null)
-                {
-                    existedPUB = await WorkScope.InsertAsync(new ProjectUserBill
-                    {
-                        UserId = request.Request.BillAccountId ?? default,
-                        StartTime = input.BillStartTime ?? default,
-                        ProjectId = request.Request.ProjectId,
-                        isActive = true,
-                        AccountName = request.Request.CVName,
-                        LinkCV = request.Request.LinkCV,
-                    });
-                    CurrentUnitOfWork.SaveChanges();
-                }
-                if (request.PlanUserInfo != null)
-                {
-                    var newLinkedResource = new LinkedResource
-                    {
-                        UserId = request.PlanUserInfo.UserId,
-                        ProjectUserBillId = existedPUB.Id,
-                    };
+            //if (request.Request.BillAccountId != null)
+            //{
+            //    var existedPUB = await WorkScope.GetAll<ProjectUserBill>()
+            //       .Where(x => x.ProjectId == request.Request.ProjectId && x.UserId == request.Request.BillAccountId)
+            //       .FirstOrDefaultAsync();
+            //    if (existedPUB == null)
+            //    {
+            //        existedPUB = await WorkScope.InsertAsync(new ProjectUserBill
+            //        {
+            //            UserId = request.Request.BillAccountId ?? default,
+            //            StartTime = input.BillStartTime ?? default,
+            //            ProjectId = request.Request.ProjectId,
+            //            isActive = true,
+            //            AccountName = request.Request.CVName,
+            //            LinkCV = request.Request.LinkCV,
+            //        });
+            //        CurrentUnitOfWork.SaveChanges();
+            //    }
+            //    if (request.PlanUserInfo != null)
+            //    {
+            //        var newLinkedResource = new LinkedResource
+            //        {
+            //            UserId = request.PlanUserInfo.UserId,
+            //            ProjectUserBillId = existedPUB.Id,
+            //        };
 
-                    await WorkScope.InsertAsync(newLinkedResource);
-                }
-            }
+            //        await WorkScope.InsertAsync(newLinkedResource);
+            //    }
+            //}
             return input;
         }
 

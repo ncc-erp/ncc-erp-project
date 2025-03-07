@@ -8,6 +8,7 @@ using ProjectManagement.MultiTenancy;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -63,9 +64,46 @@ namespace ProjectManagement.Services
             return default;
 
         }
+        protected virtual async Task<T> PostAsyncV2<T>(string url, object input = null, string token = null)
+        {
+            var fullUrl = $"{httpClient.BaseAddress}{url}";
+            try
+            {
+                using var request = new HttpRequestMessage(HttpMethod.Post, url);
+                if (!string.IsNullOrEmpty(token))
+                {
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                }
+                if (input != null)
+                {
+                    if (input is Dictionary<string, string> dictionaryInput)
+                    {
+                        request.Content = new FormUrlEncodedContent(dictionaryInput);
+                    }
+                    else
+                    {
+                        var jsonContent = JsonConvert.SerializeObject(input);
+                        request.Content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+                    }
+                }
+                var response = await httpClient.SendAsync(request);
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseContent = await response.Content.ReadAsStringAsync();
+                    logger.LogInformation($"Post: {fullUrl} input: {input} response: {responseContent}");
+                    return JsonConvert.DeserializeObject<T>(responseContent);
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"Post: {fullUrl} error: {ex.Message}");
+            }
+            return default;
+        }
+
         protected virtual async Task<T> PostAsync<T>(string url, object input)
         {
-            var fullUrl = $"{httpClient.BaseAddress}/{url}";
+            var fullUrl = $"{httpClient.BaseAddress}{url}";
             var strInput = JsonConvert.SerializeObject(input);
             var contentString = new StringContent(strInput, Encoding.UTF8, "application/json");
 

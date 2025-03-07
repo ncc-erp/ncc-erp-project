@@ -19,6 +19,7 @@ import { AccountFooterComponent } from './layout/account-footer.component';
 // tenants
 import { TenantChangeComponent } from './tenant/tenant-change.component';
 import { TenantChangeDialogComponent } from './tenant/tenant-change-dialog.component';
+import { CallbackComponent } from './callback/callback.component';
 
 @NgModule({
     imports: [
@@ -42,6 +43,7 @@ import { TenantChangeDialogComponent } from './tenant/tenant-change-dialog.compo
         // tenant
         TenantChangeComponent,
         TenantChangeDialogComponent,
+        CallbackComponent,
     ],
     providers: [
         {

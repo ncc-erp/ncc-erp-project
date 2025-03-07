@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { CallbackComponent } from 'account/callback/callback.component';
 
 const routes: Routes = [
     { path: '', redirectTo: '/app/home', pathMatch: 'full' },
@@ -12,7 +13,8 @@ const routes: Routes = [
         path: 'app',
         loadChildren: () => import('app/app.module').then(m => m.AppModule), // Lazy load account module
         data: { preload: true }
-    }
+    },
+    { path: 'account/login/callback', component: CallbackComponent },
 ];
 
 @NgModule({

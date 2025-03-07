@@ -1,7 +1,7 @@
 ﻿<div [@routerTransition]>
   <h4 class="text-center mb-3">{{ "LogIn" | localize }}</h4>
   <form novalidate autocomplete="off" #loginForm="ngForm" (ngSubmit)="login()">
-    <div class="form-group">
+    <!-- <div class="form-group">
       <div class="input-group">
         <input
           type="text"
@@ -73,10 +73,13 @@
           {{ "LogIn" | localize }}
         </button>
       </div>
-    </div>
+    </div> -->
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center" style="margin-top: 25px;">
-      <button mat-flat-button type="button" (click)="signInWithGoogle()" color="primary" style="width: 100%">
+      <!-- <button mat-flat-button type="button" (click)="signInWithGoogle()" color="primary" style="width: 100%">
           Log In With Google
+      </button> -->
+      <button mat-flat-button type="button" (click)="signInWithMezon()" color="primary" style="width: 100%" class="mt-2">
+        Log In With Mezon
       </button>
   </div>
   </form>

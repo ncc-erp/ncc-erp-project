@@ -5,6 +5,20 @@ using System.Text;
 
 namespace ProjectManagement.Services.Mezon.Dtos
 {
+    public class MezonUser : UserInfoResponse
+    {
+        [JsonProperty("id")]
+        public string Id { get; set; }
+        [JsonProperty("username")]
+        public string Username { get; set; }
+        [JsonProperty("display_name")]
+        public string DisplayName { get; set; }
+        [JsonProperty("avatar_url")]
+        public string AvatarUrl { get; set; }
+        [JsonProperty("mezon_id")]
+        public string MezonId { get; set; }
+    }
+
     public class UserInfoResponse
     {
         [JsonProperty("aud")]

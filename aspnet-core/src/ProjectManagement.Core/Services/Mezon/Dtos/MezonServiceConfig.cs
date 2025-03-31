@@ -10,5 +10,7 @@ namespace ProjectManagement.Services.Mezon.Dtos
         public string ClientId { get; set; }
         public string ClientSecret { get; set; }
         public string RedirectUri { get; set; }
+        public string AppId { get; set; }
+        public string AppToken { get; set; }
     }
 }

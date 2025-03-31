@@ -330,3 +330,11 @@ export const APP_ENUMS = {
 
 }
 
+export enum ToastMessageType {
+    WARN = 'warn',
+    ERROR = 'error',
+    SUCCESS = 'success',
+    INFO = 'info'
+}
+
+

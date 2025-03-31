@@ -20,6 +20,12 @@ using ProjectManagement.Configuration;
 using System.Linq;
 using Abp.UI;
 using ProjectManagement.Services.Mezon;
+using ProjectManagement.Authorization.Dto;
+using ProjectManagement.Utils;
+using ProjectManagement.Services.Mezon.Dtos;
+using System.Text;
+using System.Web;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 
 namespace ProjectManagement.Authorization
 {
@@ -85,7 +91,11 @@ namespace ProjectManagement.Authorization
             try
             {
                 var mezonConfig = _mezonService.GetConfig();
-                var tokenResponse = await _mezonService.GetTokenAsync(token);
+                var tokenResponse = await _mezonService.GetTokenAsync(new OAuth2Request
+                {
+                    Code = token,
+                    Scope = "openid offline"
+                });
                 if (tokenResponse == null || string.IsNullOrEmpty(tokenResponse.AccessToken))
                 {
                     return new AbpLoginResult<Tenant, User>(AbpLoginResultType.UnknownExternalLogin, null);
@@ -216,6 +226,110 @@ namespace ProjectManagement.Authorization
             {
                 return new AbpLoginResult<Tenant, User>(AbpLoginResultType.InvalidUserNameOrEmailAddress, null);
             }
+        }
+
+        [UnitOfWork]
+        public async Task<AbpLoginResult<Tenant, User>> LoginHashMezonAsnyc(MezonHashAuthDto hashAuthDto)
+        {
+            var result = await AuthMezonHashAsync(hashAuthDto);
+            var user = result.User;
+            SaveLoginAttempt(result, hashAuthDto.TenancyName, user == null ? null : user.EmailAddress);
+            return result;
+        }
+
+        private async Task<AbpLoginResult<Tenant, User>> AuthMezonHashAsync(MezonHashAuthDto hashAuthDto, bool shouldLockout = false)
+        {
+            if (hashAuthDto.HashData.IsNullOrEmpty())
+            {
+                return new AbpLoginResult<Tenant, User>(AbpLoginResultType.InvalidUserNameOrEmailAddress, null); ;
+            }
+            try
+            {
+                var mezonConfig = _mezonService.GetConfig();
+                var appToken = mezonConfig.AppToken ?? throw new UserFriendlyException("Invalid AppToken");
+                var rawHashData = hashAuthDto.HashData.DecodeBase64();
+
+                var delimiter = "&hash=";
+
+                var index = rawHashData.IndexOf(delimiter);
+                var queryId = rawHashData.Substring(0, index);
+                var mezonHash = rawHashData.Substring(index + delimiter.Length);
+                var hashData = HashParamsParser(queryId);
+
+                var mezonUser = JsonConvert.DeserializeObject<MezonUser>(hashData.user);
+
+                byte[] secretKey = HashingUtils.HMAC_SHA256(Encoding.UTF8.GetBytes(appToken), Encoding.UTF8.GetBytes("WebAppData"));
+                var hashedData = HashingUtils.HEX(HashingUtils.HMAC_SHA256(secretKey, Encoding.UTF8.GetBytes(queryId)));
+
+                if (mezonHash.Equals(hashedData) == false)
+                {
+                    return new AbpLoginResult<Tenant, User>(AbpLoginResultType.InvalidUserNameOrEmailAddress, null); ;
+                }
+
+                Tenant tenant = null;
+                using (UnitOfWorkManager.Current.SetTenantId(null))
+                {
+                    if (!MultiTenancyConfig.IsEnabled)
+                    {
+                        tenant = await GetDefaultTenantAsync();
+                    }
+                    else if (!string.IsNullOrWhiteSpace(hashAuthDto.TenancyName))
+                    {
+                        tenant = await TenantRepository.FirstOrDefaultAsync(t => t.TenancyName == hashAuthDto.TenancyName);
+                        if (tenant == null)
+                        {
+                            return new AbpLoginResult<Tenant, User>(AbpLoginResultType.InvalidTenancyName);
+                        }
+                        if (!tenant.IsActive)
+                        {
+                            return new AbpLoginResult<Tenant, User>(AbpLoginResultType.TenantIsNotActive, tenant);
+                        }
+                    }
+                }
+
+                var tenantId = tenant?.Id;
+                using (UnitOfWorkManager.Current.SetTenantId(tenantId))
+                {
+                    await UserManager.InitializeOptionsAsync(tenantId);
+                    var user = UserManager.Users.FirstOrDefault(x => x.EmailAddress == mezonUser.MezonId);
+                    if (user == null)
+                    {
+                        return new AbpLoginResult<Tenant, User>(AbpLoginResultType.InvalidUserNameOrEmailAddress, tenant);
+                    }
+
+                    if (await UserManager.IsLockedOutAsync(user))
+                    {
+                        return new AbpLoginResult<Tenant, User>(AbpLoginResultType.LockedOut, tenant, user);
+                    }
+
+                    if (shouldLockout && await TryLockOutAsync(tenantId, user.Id))
+                    {
+                        return new AbpLoginResult<Tenant, User>(AbpLoginResultType.LockedOut, tenant, user);
+                    }
+
+                    await UserManager.ResetAccessFailedCountAsync(user);
+                    return await CreateLoginResultAsync(user, tenant);
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Error("Authenticattion failed - Can't authenticate with Mezon server");
+                return new AbpLoginResult<Tenant, User>(AbpLoginResultType.UnknownExternalLogin, null);
+            }
+        }
+
+        private HashData HashParamsParser(string queryString)
+        {
+            var queryParams = HttpUtility.ParseQueryString(queryString);
+            var hashData = new HashData
+            {
+                query_id = queryParams["query_id"],
+                user = queryParams["user"],
+                auth_date = long.Parse(queryParams["auth_date"]),
+                signature = queryParams["signature"],
+                hash = queryParams["hash"]
+            };
+            return hashData;
         }
     }
 }

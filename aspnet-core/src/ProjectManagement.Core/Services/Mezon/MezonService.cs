@@ -9,7 +9,8 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using ProjectManagement.Services.Mezon.Dtos;
-
+using Amazon.Runtime.Internal;
+/*using ProjectManagement.WebServices.ExternalServices.Mezon.Dtos;*/
 namespace ProjectManagement.Services.Mezon
 {
     public class MezonService : BaseWebService
@@ -19,6 +20,8 @@ namespace ProjectManagement.Services.Mezon
         private readonly string _clientSecret;
         private readonly string _redirectUri;
         private readonly string _baseAddress;
+        private readonly string _appToken;
+        private readonly string _appId;
 
         public MezonService(HttpClient httpClient,
             IConfiguration configuration, 
@@ -29,14 +32,18 @@ namespace ProjectManagement.Services.Mezon
             _clientSecret = configuration.GetValue<string>($"{serviceName}:ClientSecret");
             _redirectUri = configuration.GetValue<string>($"{serviceName}:RedirectUri");
             _baseAddress = configuration.GetValue<string>($"{serviceName}:BaseAddress");
+            _appToken = configuration.GetValue<string>($"{serviceName}:AppToken");
+            _appId = configuration.GetValue<string>($"{serviceName}:AppId");
         }
         
-        public async Task<OAuth2TokenResponse> GetTokenAsync(string token)
+        public async Task<OAuth2TokenResponse> GetTokenAsync(OAuth2Request request)
         {
-            return await PostAsyncV2<OAuth2TokenResponse>("oauth2/token", new Dictionary<string, string>()
+            return await PostAsync<OAuth2TokenResponse>("oauth2/token", new Dictionary<string, string>()
             {
                 { "grant_type", "authorization_code" },
-                { "code", token },
+                { "code", request.Code },
+                { "scope", request.Scope },
+                { "state", request.State },
                 { "client_id", _clientId },
                 { "client_secret", _clientSecret },
                 { "redirect_uri", _redirectUri }
@@ -52,7 +59,7 @@ namespace ProjectManagement.Services.Mezon
         {
             var state = Guid.NewGuid().ToString("N").Truncate(11);
 
-            return $"{_baseAddress}/oauth2/auth?" +
+            return $"{HttpClient.BaseAddress}/oauth2/auth?" +
                    $"client_id={_clientId}&" +
                    $"redirect_uri={Uri.EscapeDataString(_redirectUri)}&" +
                    $"response_type=code&" +
@@ -67,7 +74,9 @@ namespace ProjectManagement.Services.Mezon
                 ServiceName = serviceName,
                 ClientId = _clientId,
                 ClientSecret = _clientSecret,
-                RedirectUri = _redirectUri
+                RedirectUri = _redirectUri,
+                AppId = _appId,
+                AppToken = _appToken
             };
         }
     }

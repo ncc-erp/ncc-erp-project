@@ -140,7 +140,7 @@
                                     <button *ngIf="showIconExpandCollapeAll"
                                         class="btn btn-sm p-0 expand-icon"
                                         (click)="expandCollapseAll()">
-                                        <i [class]="isExpandAll 
+                                        <i [class]="isExpandAll
                                             ? 'fas fa-expand-alt text-primary'
                                             : 'fas fa-compress-alt'">
                                         </i>
@@ -209,7 +209,7 @@
                                         style="width: 70px"
                                         [attr.rowspan]="getRowSpanAccount(willPool)">
                                         <span>{{ i + 1 + pageSize * (pageNumber - 1) }}</span>
-                                        <button *ngIf="willPool.projects?.length > numberDataRow 
+                                        <button *ngIf="willPool.projects?.length > numberDataRow
                                                     || willPool.accounts?.length > numberDataRow"
                                             (click)="expandCollapseDataRow(willPool.resource.id)"
                                             class="btn btn-sm expand-icon">
@@ -233,8 +233,8 @@
                                     <td class="project-name width-150"
                                         [attr.rowspan]="getRowSpanAccount(willPool)">
                                         <div class="d-flex flex-row"
-                                            *ngFor="let project of (isExpands[willPool.resource.id] 
-                                                                    ? willPool.projects 
+                                            *ngFor="let project of (isExpands[willPool.resource.id]
+                                                                    ? willPool.projects
                                                                     : willPool.projects.slice(0, numberDataRow))">
                                             <span (click)="viewProjectDetail(project)">
                                                 - <strong class="hyperlink">
@@ -245,7 +245,7 @@
                                     </td>
                                     <td class="text-center width-130-max"
                                         [attr.rowspan]="getRowSpanAccount(willPool)">
-                                        <span class="badge text-white bg-blue" 
+                                        <span class="badge text-white bg-blue"
                                             style="width: 40px;">
                                             {{willPool.totalContribute + '%'}}
                                         </span>
@@ -261,7 +261,7 @@
                                                     class="note p-0 m-0 flex-grow-1">
                                                     {{willPool.resourceNote}}
                                                 </pre>
-                                                <button *ngIf="permission.isGranted(Resource_TabWillPool_EditNote)" 
+                                                <button *ngIf="permission.isGranted(Resource_TabWillPool_EditNote)"
                                                     class="btn btn-sm p-0 pl-1 d-flex justify-content-end"
                                                     (click)="onEditNote(willPool)">
                                                     <i class="fas fa-edit"></i>
@@ -292,8 +292,8 @@
                                         </ng-template>
                                     </td>
                                 </tr>
-                                <ng-container *ngFor="let account of (isExpands[willPool.resource.id] 
-                                                                        ? willPool.accounts 
+                                <ng-container *ngFor="let account of (isExpands[willPool.resource.id]
+                                                                        ? willPool.accounts
                                                                         : willPool.accounts.slice(0, numberDataRow));
                                                                         let j = index">
                                     <tr>
@@ -327,6 +327,20 @@
                                         </td>
                                     </tr>
                                 </ng-container>
+                                <tr *ngIf="willPool.accounts.length > numberDataRow && !isExpands[willPool.resource.id]">
+                                    <td colspan="10" class="text-center" (click)="expandCollapseDataRow(willPool.resource.id)">
+                                        <button class="btn btn-sm p-0">
+                                            <i class="fas fa-chevron-down"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr *ngIf="willPool.accounts.length > numberDataRow && isExpands[willPool.resource.id]">
+                                    <td colspan="10" class="text-center" (click)="expandCollapseDataRow(willPool.resource.id)">
+                                        <button class="btn btn-sm p-0">
+                                            <i class="fas fa-chevron-up"></i>
+                                        </button>
+                                    </td>
+                                </tr>
                             </ng-container>
                         </tbody>
                     </table>
@@ -341,11 +355,11 @@
                     <button class="btn btn-secondary align-items-center col-2" (click)="refresh()">
                         <i class="fas fa-redo-alt"></i>
                     </button>
-                    <mat-form-field 
-                        appearance="outline"    
+                    <mat-form-field
+                        appearance="outline"
                         class="form-number-items col-4">
                         <mat-label>Number items</mat-label>
-                        <mat-select panelClass="options-number-item" 
+                        <mat-select panelClass="options-number-item"
                             [(ngModel)]="pageSizeType"
                             (ngModelChange)="changePageSize()"
                             class="p-0">

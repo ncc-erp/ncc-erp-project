@@ -77,8 +77,8 @@ export class WillPoolComponent extends PagedListingComponentBase<any> implements
         this.sortDataByTotalContribute(this.fieldSortDirection[this.sortProperties.Contribute]);
         this.sortDataByEndChargeDate(this.fieldSortDirection[this.sortProperties.EndChargeDate]);
         this.showPaging(data.result, pageNumber);
-        this.showIconExpandCollapeAll = this.listWillPool.some(item => 
-          (item.projects?.length > this.numberDataRow || 
+        this.showIconExpandCollapeAll = this.listWillPool.some(item =>
+          (item.projects?.length > this.numberDataRow ||
            item.accounts?.length > this.numberDataRow)
         );
         this.isLoading = false;
@@ -236,7 +236,7 @@ export class WillPoolComponent extends PagedListingComponentBase<any> implements
         };
         const dateA = getValidTimestamp(a.endChargeDate);
         const dateB = getValidTimestamp(b.endChargeDate);
-        return direction 
+        return direction
           ? dateA - dateB
           : dateB - dateA;
       })

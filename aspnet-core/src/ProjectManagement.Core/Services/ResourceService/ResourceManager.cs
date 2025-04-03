@@ -1406,9 +1406,10 @@ namespace ProjectManagement.Services.ResourceManager
             // query get all linked resource
             var qLinkedResourceWithinDate = _workScope.GetAll<LinkedResource>()
                 .AsNoTracking()
+                .Include(lr => lr.ProjectUserBill)
                 .WhereIf(input.EndChargeDateFrom.HasValue && input.EndChargeDateTo.HasValue,
                     lr => lr.ProjectUserBill.EndTime >= startDate &&
-                          lr.ProjectUserBill.EndTime <= endDate);
+                            lr.ProjectUserBill.EndTime <= endDate);
             var listIdLinkedResourceWithinDate = qLinkedResourceWithinDate.Select(lr => lr.Id);
             // query get all user has linked
             var qUserHasLinked = _workScope.GetAll<User>()
@@ -1427,6 +1428,10 @@ namespace ProjectManagement.Services.ResourceManager
                 .Where(s => s.Status == ProjectUserStatus.Present &&
                             s.AllocatePercentage > 0 &&
                             s.Project.Status != ProjectStatus.Closed);
+
+            var qProjectUserContribute = qLinkedResourceWithinDate
+                .Where(pr => qProjectUser.Select(x => x.ProjectId).Contains(pr.ProjectUserBill.ProjectId));
+
             // apply select user
             var qUser = qUserHasLinked.Select(u => new GetAllWillPoolResourceDto
             {
@@ -1447,7 +1452,7 @@ namespace ProjectManagement.Services.ResourceManager
                     PositionName = u.Position.ShortName,
                 },
                 ResourceNote = u.PoolNote,
-                Accounts = qLinkedResourceWithinDate
+                Accounts = qProjectUserContribute
                     .Where(ulr => ulr.UserId == u.Id)
                     .Select(ulr => new AccountDto()
                     {

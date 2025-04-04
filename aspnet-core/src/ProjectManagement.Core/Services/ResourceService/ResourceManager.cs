@@ -1015,24 +1015,24 @@ namespace ProjectManagement.Services.ResourceManager
                            UserCreationTime = u.CreationTime,
                            SkillNote = u.UserSkills.Select(s => s.Note).FirstOrDefault() ?? ""
                        });
-            
-                quser = ApplyFilterPlannedResource(quser, input);
-                if (input.SkillIds == null || input.SkillIds.IsEmpty())
-                {
-                    return  quser.GetGridResultSync(quser, input);
-                }
-                if (input.SkillIds.Count() == 1 || !input.IsAndCondition)
-                {
-                    var querySkillUserIds = queryUserIdsHaveAnySkill(input.SkillIds).Distinct();
-                    quser = from u in quser
-                            join userId in querySkillUserIds on u.UserId equals userId
-                            select u;
 
-                    return quser.GetGridResultSync(quser, input);
-                }
-                var userIdsHaveAllSkill = await getUserIdsHaveAllSkill(input.SkillIds);
-                quser = quser.Where(s => userIdsHaveAllSkill.Contains(s.UserId));
+            quser = ApplyFilterPlannedResource(quser, input);
+            if (input.SkillIds == null || input.SkillIds.IsEmpty())
+            {
                 return quser.GetGridResultSync(quser, input);
+            }
+            if (input.SkillIds.Count() == 1 || !input.IsAndCondition)
+            {
+                var querySkillUserIds = queryUserIdsHaveAnySkill(input.SkillIds).Distinct();
+                quser = from u in quser
+                        join userId in querySkillUserIds on u.UserId equals userId
+                        select u;
+
+                return quser.GetGridResultSync(quser, input);
+            }
+            var userIdsHaveAllSkill = await getUserIdsHaveAllSkill(input.SkillIds);
+            quser = quser.Where(s => userIdsHaveAllSkill.Contains(s.UserId));
+            return quser.GetGridResultSync(quser, input);
         }
 
         public async Task<GridResult<GetAllResourceDto>> GetResources(InputGetAllResourceDto input, bool isVendor)
@@ -1430,7 +1430,9 @@ namespace ProjectManagement.Services.ResourceManager
                             s.Project.Status != ProjectStatus.Closed);
 
             var qProjectUserContribute = qLinkedResourceWithinDate
-                .Where(pr => qProjectUser.Select(x => x.ProjectId).Contains(pr.ProjectUserBill.ProjectId));
+                .Where(pr => qProjectUser.Select(x => x.ProjectId).Contains(pr.ProjectUserBill.ProjectId)
+                            && pr.ProjectUserBill.EndTime <= endDate
+                            && pr.ProjectUserBill.isActive == true);
 
             // apply select user
             var qUser = qUserHasLinked.Select(u => new GetAllWillPoolResourceDto

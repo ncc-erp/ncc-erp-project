@@ -1430,7 +1430,9 @@ namespace ProjectManagement.Services.ResourceManager
                             s.Project.Status != ProjectStatus.Closed);
 
             var qProjectUserContribute = qLinkedResourceWithinDate
-                .Where(pr => qProjectUser.Select(x => x.ProjectId).Contains(pr.ProjectUserBill.ProjectId));
+                .Where(pr => qProjectUser.Select(x => x.ProjectId).Contains(pr.ProjectUserBill.ProjectId)
+                            && pr.ProjectUserBill.EndTime <= endDate
+                            && pr.ProjectUserBill.isActive == true);
 
             // apply select user
             var qUser = qUserHasLinked.Select(u => new GetAllWillPoolResourceDto

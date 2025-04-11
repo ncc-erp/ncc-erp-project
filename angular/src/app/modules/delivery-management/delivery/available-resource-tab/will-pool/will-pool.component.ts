@@ -73,7 +73,10 @@ export class WillPoolComponent extends PagedListingComponentBase<any> implements
     this.resourceService.GetAllWillPoolResource(requestBody)
       .pipe(catchError(this.resourceService.handleError))
       .subscribe(data => {
-        this.listWillPool = data.result.items;
+        this.listWillPool = data.result.items.map((willPool: GetAllWillPoolResourceDto) => ({
+          ...willPool,
+          accounts: willPool.accounts.sort((a, b) => Number(b.contribute) - Number(a.contribute)), // Sắp xếp accounts theo contribute giảm dần
+        }));
         this.sortDataByTotalContribute(this.fieldSortDirection[this.sortProperties.Contribute]);
         this.sortDataByEndChargeDate(this.fieldSortDirection[this.sortProperties.EndChargeDate]);
         this.showPaging(data.result, pageNumber);

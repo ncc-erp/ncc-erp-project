@@ -73,12 +73,15 @@ export class WillPoolComponent extends PagedListingComponentBase<any> implements
     this.resourceService.GetAllWillPoolResource(requestBody)
       .pipe(catchError(this.resourceService.handleError))
       .subscribe(data => {
-        this.listWillPool = data.result.items;
+        this.listWillPool = data.result.items.map((willPool: GetAllWillPoolResourceDto) => ({
+          ...willPool,
+          accounts: willPool.accounts.sort((a, b) => Number(b.contribute) - Number(a.contribute)), // Sắp xếp accounts theo contribute giảm dần
+        }));
         this.sortDataByTotalContribute(this.fieldSortDirection[this.sortProperties.Contribute]);
         this.sortDataByEndChargeDate(this.fieldSortDirection[this.sortProperties.EndChargeDate]);
         this.showPaging(data.result, pageNumber);
-        this.showIconExpandCollapeAll = this.listWillPool.some(item => 
-          (item.projects?.length > this.numberDataRow || 
+        this.showIconExpandCollapeAll = this.listWillPool.some(item =>
+          (item.projects?.length > this.numberDataRow ||
            item.accounts?.length > this.numberDataRow)
         );
         this.isLoading = false;
@@ -236,7 +239,7 @@ export class WillPoolComponent extends PagedListingComponentBase<any> implements
         };
         const dateA = getValidTimestamp(a.endChargeDate);
         const dateB = getValidTimestamp(b.endChargeDate);
-        return direction 
+        return direction
           ? dateA - dateB
           : dateB - dateA;
       })

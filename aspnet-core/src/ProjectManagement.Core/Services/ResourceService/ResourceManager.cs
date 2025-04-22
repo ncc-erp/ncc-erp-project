@@ -1457,7 +1457,7 @@ namespace ProjectManagement.Services.ResourceManager
                 },
                 ResourceNote = u.PoolNote,
                 Accounts = qLinkedResourceWithinDate
-                    .Where(ulr => ulr.UserId == u.Id)
+                    .Where(ulr => ulr.ProjectUserBill.UserId == u.Id)
                     .Select(ulr => new AccountDto()
                     {
                         Id = ulr.ProjectUserBill.UserId,

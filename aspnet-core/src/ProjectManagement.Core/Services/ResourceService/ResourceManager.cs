@@ -1407,9 +1407,11 @@ namespace ProjectManagement.Services.ResourceManager
             var qLinkedResourceWithinDate = _workScope.GetAll<LinkedResource>()
                 .AsNoTracking()
                 .Include(lr => lr.ProjectUserBill)
+                .Where(lr => lr.ProjectUserBill.Project.Status != ProjectStatus.Closed &&
+                             lr.ProjectUserBill.isActive == true)
                 .WhereIf(input.EndChargeDateFrom.HasValue && input.EndChargeDateTo.HasValue,
                     lr => lr.ProjectUserBill.EndTime >= startDate &&
-                            lr.ProjectUserBill.EndTime <= endDate);
+                            lr.ProjectUserBill.EndTime <= endDate );
             var listIdLinkedResourceWithinDate = qLinkedResourceWithinDate.Select(lr => lr.Id);
             // query get all user has linked
             var qUserHasLinked = _workScope.GetAll<User>()
@@ -1429,10 +1431,10 @@ namespace ProjectManagement.Services.ResourceManager
                             s.AllocatePercentage > 0 &&
                             s.Project.Status != ProjectStatus.Closed);
 
-            var qProjectUserContribute = qLinkedResourceWithinDate
+/*            var qProjectUserContribute = qLinkedResourceWithinDate
                 .Where(pr => qProjectUser.Select(x => x.ProjectId).Contains(pr.ProjectUserBill.ProjectId)
                             && pr.ProjectUserBill.EndTime <= endDate
-                            && pr.ProjectUserBill.isActive == true);
+                            && pr.ProjectUserBill.isActive == true);*/
 
             // apply select user
             var qUser = qUserHasLinked.Select(u => new GetAllWillPoolResourceDto
@@ -1454,8 +1456,8 @@ namespace ProjectManagement.Services.ResourceManager
                     PositionName = u.Position.ShortName,
                 },
                 ResourceNote = u.PoolNote,
-                Accounts = qProjectUserContribute
-                    .Where(ulr => ulr.UserId == u.Id)
+                Accounts = qLinkedResourceWithinDate
+                    .Where(ulr => ulr.ProjectUserBill.UserId == u.Id)
                     .Select(ulr => new AccountDto()
                     {
                         Id = ulr.ProjectUserBill.UserId,

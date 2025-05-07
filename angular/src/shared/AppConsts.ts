@@ -8,7 +8,7 @@ export class AppConsts {
     static configURI = {} as ConfigURIDto
 
     static localeMappings: any = [];
-
+    static mezonAppId: string;
     static readonly userManagement = {
         defaultAdminUserName: 'admin'
     };
@@ -181,7 +181,7 @@ export class AppConsts {
         'bg-warning',
         'bg-danger',
     ]
-    
+
     static readonly listDay = [
         { value: 1, text: 'Monday' },
         { value: 2, text: 'Tuesday' },

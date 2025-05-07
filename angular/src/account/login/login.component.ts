@@ -4,7 +4,8 @@ import { AppComponentBase } from '@shared/app-component-base';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
 import { AppAuthService } from '@shared/auth/app-auth.service';
 import { GoogleLoginProvider, SocialAuthService, SocialUser } from 'angularx-social-login';
-import { LoginService } from './login.service';
+import { IHashMezonAuthModel, LoginService } from './login.service';
+import { MezonLoginService } from '@app/service/mezon-login-service/mezon-login.service';
 @Component({
   templateUrl: './login.component.html',
   animations: [accountModuleAnimation()]
@@ -14,22 +15,31 @@ export class LoginComponent extends AppComponentBase {
   user: SocialUser
   tenancyName: string
   loggedIn: boolean;
+  hashData: string;
+
   constructor(
     injector: Injector,
     public authService: AppAuthService,
     private _sessionService: AbpSessionService,
     private googleAuthService: SocialAuthService,
-    private loginService: LoginService
+    private loginService: LoginService,
+    public mezonLoginService: MezonLoginService
   ) {
     super(injector);
   }
   ngOnInit(): void {
-    this.googleAuthService.authState.subscribe((user) => {
-      this.user = user;
-      this.loggedIn = (user != null);
-      if (this.loggedIn) {
-        this.loginService.authenticateGoogle(this.user.idToken);
-     }
+    // this.googleAuthService.authState.subscribe((user) => {
+    //   this.user = user;
+    //   this.loggedIn = (user != null);
+    //   if (this.loggedIn) {
+    //     this.loginService.authenticateGoogle(this.user.idToken);
+    //  }
+    // });
+
+    this.mezonLoginService.userHashData$.subscribe((userHashData) => {
+      this.isLoading = true;
+      this.hashData = userHashData;
+      this.loginWithHash(this.hashData);
     });
   }
   get multiTenancySideIsTeanant(): boolean {
@@ -47,11 +57,22 @@ export class LoginComponent extends AppComponentBase {
     this.submitting = true;
     this.authService.authenticate(() => (this.submitting = false));
   }
-  signInWithGoogle() {
-    this.googleAuthService.signIn(GoogleLoginProvider.PROVIDER_ID);
+  // signInWithGoogle() {
+  //   this.googleAuthService.signIn(GoogleLoginProvider.PROVIDER_ID);
+  // }
+
+  loginWithHash(hash: string) {
+    if (hash) {
+      const hashData: IHashMezonAuthModel = {
+        hashData: btoa(hash),
+        tenancyName: null
+      };
+
+      this.loginService.authenticateMezonHash(hashData).subscribe(data => this.isLoading = data.isLoading);
+    }
   }
 
   signInWithMezon() {
-    this.loginService.redirectToOAuth();
+    this.mezonLoginService.redirectToOAuth();
   }
 }

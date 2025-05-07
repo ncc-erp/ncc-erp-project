@@ -19,6 +19,7 @@ using ProjectManagement.Models.TokenAuth;
 using ProjectManagement.MultiTenancy;
 using ProjectManagement.Controllers.Dto;
 using ProjectManagement.Services.Mezon;
+using ProjectManagement.Authorization.Dto;
 
 namespace ProjectManagement.Controllers
 {
@@ -104,7 +105,7 @@ namespace ProjectManagement.Controllers
             return Redirect(authUrl);
         }
 
-        [HttpPost]
+        /*[HttpPost]
         public async Task<AuthenticateResultModel> MezonAuthenticate([FromBody] MezonTokenDto model)
         {
 
@@ -120,7 +121,7 @@ namespace ProjectManagement.Controllers
                 ExpireInSeconds = (int)_configuration.Expiration.TotalSeconds,
                 UserId = loginResult.User.Id
             };
-        }
+        }*/
 
         private async Task<AbpLoginResult<Tenant, User>> GetLoginResultMezonAsync(string token, string tenancyName)
         {
@@ -308,6 +309,60 @@ namespace ProjectManagement.Controllers
         private string GetEncryptedAccessToken(string accessToken)
         {
             return SimpleStringCipher.Instance.Encrypt(accessToken, AppConsts.DefaultPassPhrase);
+        }
+
+        private async Task<AbpLoginResult<Tenant, User>> GetLoginResultMezonHashAsync(MezonHashAuthDto authDto)
+        {
+            Logger.Info("GetLoginResultMezonHashAsync");
+            var loginResult = await _logInManager.LoginHashMezonAsnyc(authDto);
+
+            switch (loginResult.Result)
+            {
+                case AbpLoginResultType.Success:
+                    return loginResult;
+                default:
+                    throw _abpLoginResultTypeHelper.CreateExceptionForFailedLoginAttempt(loginResult.Result, null, authDto.TenancyName);
+            }
+        }
+
+
+        [HttpPost]
+        public async Task<AuthenticateResultModel> MezonHashAuthenticate([FromBody] MezonHashAuthDto model)
+        {
+            var loginResult = await GetLoginResultMezonHashAsync(
+               model
+            );
+
+            var accessToken = CreateAccessToken(CreateJwtClaims(loginResult.Identity));
+            return new AuthenticateResultModel
+            {
+                AccessToken = accessToken,
+                EncryptedAccessToken = GetEncryptedAccessToken(accessToken),
+                ExpireInSeconds = (int)_configuration.Expiration.TotalSeconds,
+                UserId = loginResult.User.Id
+            };
+        }
+
+        [HttpPost]
+        public async Task<AuthenticateResultModel> MezonAuthenticate([FromBody] OAuth2TokenDto model)
+        {
+            Logger.Info("MezonAuthenticate");
+            var loginResult = await GetLoginResultMezonAsync(
+                model.Token,
+                GetTenancyNameOrNull()
+            );
+
+            Logger.Info("MezonAuthenticate");
+
+            var accessToken = CreateAccessToken(CreateJwtClaims(loginResult.Identity));
+
+            return new AuthenticateResultModel
+            {
+                AccessToken = accessToken,
+                EncryptedAccessToken = GetEncryptedAccessToken(accessToken),
+                ExpireInSeconds = (int)_configuration.Expiration.TotalSeconds,
+                UserId = loginResult.User.Id
+            };
         }
     }
 }

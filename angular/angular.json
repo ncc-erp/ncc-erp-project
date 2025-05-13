@@ -57,7 +57,8 @@
               "src/assets/abp-web-resources/abp.freeze-ui.js",
               "node_modules/abp-web-resources/Abp/Framework/scripts/libs/abp.moment.js",
               "src/patches/abp.patch.js",
-              "src/assets/js/mezon-web-sdk.js"
+              "src/assets/js/mezon-web-sdk.js",
+              "node_modules/jquery/dist/jquery.min.js",
             ]
           },
           "configurations": {

@@ -5,6 +5,7 @@ import {
   Injector,
   Renderer2
 } from '@angular/core';
+import { MezonLoginService } from '@app/service/mezon-login-service/mezon-login.service';
 import { AppComponentBase } from '@shared/app-component-base';
 
 @Component({
@@ -12,8 +13,10 @@ import { AppComponentBase } from '@shared/app-component-base';
   encapsulation: ViewEncapsulation.None
 })
 export class AccountComponent extends AppComponentBase implements OnInit {
-  constructor(injector: Injector, private renderer: Renderer2) {
+  constructor(injector: Injector, private _mezonService: MezonLoginService,private renderer: Renderer2) {
     super(injector);
+
+    _mezonService.initMezonEventListeners();
   }
 
   showTenantChange(): boolean {

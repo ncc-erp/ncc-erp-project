@@ -17,6 +17,10 @@ namespace ProjectManagement.Services
     public abstract class BaseWebService
     {
         private readonly HttpClient httpClient;
+        public HttpClient HttpClient
+        {
+            get { return httpClient; }
+        }
         protected readonly ILogger logger;
         private string serviceName = string.Empty;
         private readonly IAbpSession _abpSession;
@@ -103,27 +107,18 @@ namespace ProjectManagement.Services
 
         protected virtual async Task<T> PostAsync<T>(string url, object input)
         {
-            var fullUrl = $"{httpClient.BaseAddress}{url}";
-            var strInput = JsonConvert.SerializeObject(input);
-            var contentString = new StringContent(strInput, Encoding.UTF8, "application/json");
+            var fullUrl = $"{HttpClient.BaseAddress}/{url}";
 
             try
             {
-                var response = await httpClient.PostAsync(url, contentString);
+                var body = new FormUrlEncodedContent(input as Dictionary<string, string>);
+
+                var response = await HttpClient.PostAsync(url, body);
                 if (response.IsSuccessStatusCode)
                 {
                     var responseContent = await response.Content.ReadAsStringAsync();
-                    logger.LogInformation($"Post: {fullUrl} input: {strInput} response: {responseContent}");
-                    JObject responseJObj = JObject.Parse(responseContent);
-                    if (responseJObj.ContainsKey("result"))
-                    {
-                        return JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(responseJObj["result"]));
-                    }
+                    logger.LogInformation($"Post: {fullUrl} input: {body} response: {responseContent}");
                     return JsonConvert.DeserializeObject<T>(responseContent);
-                }
-                else
-                {
-                    logger.LogError($"Post: {fullUrl} error: {response.Content}");
                 }
             }
             catch (Exception ex)

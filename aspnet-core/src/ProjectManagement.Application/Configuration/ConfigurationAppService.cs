@@ -34,6 +34,7 @@ using Abp.Domain.Uow;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
 using ProjectManagement.Manager.TimesheetManagers;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ProjectManagement.Configuration
 {
@@ -462,6 +463,14 @@ namespace ProjectManagement.Configuration
                     await _komuService.NotifyToChannelAwait(arr, channelId);
                 }
             }
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<string> GetMezonAppId()
+        {
+            var config = _appConfiguration.GetValue<string>("MezonService:AppId");
+            return config;
         }
 
     }

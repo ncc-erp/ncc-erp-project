@@ -7,10 +7,11 @@ import { AppConsts } from '@shared/AppConsts';
 import { AppSessionService } from '@shared/session/app-session.service';
 import { environment } from './environments/environment';
 import { ConfigUriService } from '@app/service/api/config-uri.service';
-
+declare var $: any;
 @Injectable({
   providedIn: 'root',
 })
+
 export class AppInitializer {
   constructor(
     private _injector: Injector,
@@ -26,6 +27,7 @@ export class AppInitializer {
         AppConsts.appBaseHref = this.getBaseHref();
         const appBaseUrl = this.getDocumentOrigin() + AppConsts.appBaseHref;
         this.getApplicationConfig(appBaseUrl, () => {
+          this.getMezonAppId();
           this.getUserConfiguration(() => {
             abp.event.trigger('abp.dynamicScriptsInitialized');
             // do not use constructor injection for AppSessionService
@@ -174,5 +176,18 @@ export class AppInitializer {
     this.configURIService.GetConfigUri(baseUrl).subscribe(data=>{
       AppConsts.configURI = data.result
     })
+  }
+
+  private getMezonAppId() {
+    return $.ajax({
+      url: AppConsts.remoteServiceBaseUrl + '/api/services/app/Configuration/GetMezonAppId',
+      method: 'GET',
+      headers: {
+        'Abp.TenantId': abp.multiTenancy.getTenantIdCookie()
+      }
+    }).done(res => {
+      AppConsts.mezonAppId = res.result;
+    });
+
   }
 }

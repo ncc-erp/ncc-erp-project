@@ -58,7 +58,6 @@ export class MezonLoginService extends BaseApiService {
       this.listenToPong();
       this.listenToUserHashInfo();
 
-      setTimeout(() => { window.location.href = '/account/login' }, 3000);
     }
   }
 

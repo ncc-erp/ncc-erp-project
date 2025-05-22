@@ -1513,7 +1513,6 @@ namespace ProjectManagement.Services.ResourceManager
                 lr.User.EmailAddress.ToLower().Contains(input.UserName));
             }
             var linkedResourceCount = await qLinkedResources.CountAsync();
-   
             var qUser = qLinkedResources
                 .Select(lr => lr.User)
                 .Distinct()

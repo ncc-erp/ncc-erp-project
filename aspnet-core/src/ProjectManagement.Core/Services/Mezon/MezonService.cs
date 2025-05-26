@@ -38,7 +38,7 @@ namespace ProjectManagement.Services.Mezon
         
         public async Task<OAuth2TokenResponse> GetTokenAsync(OAuth2Request request)
         {
-            return await PostAsync<OAuth2TokenResponse>("oauth2/token", new Dictionary<string, string>()
+            return await PostAsyncV3<OAuth2TokenResponse>("oauth2/token", new Dictionary<string, string>()
             {
                 { "grant_type", "authorization_code" },
                 { "code", request.Code },

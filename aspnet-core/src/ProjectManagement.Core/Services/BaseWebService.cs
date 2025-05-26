@@ -107,6 +107,38 @@ namespace ProjectManagement.Services
 
         protected virtual async Task<T> PostAsync<T>(string url, object input)
         {
+            var fullUrl = $"{httpClient.BaseAddress}{url}";
+            var strInput = JsonConvert.SerializeObject(input);
+            var contentString = new StringContent(strInput, Encoding.UTF8, "application/json");
+
+            try
+            {
+                var response = await httpClient.PostAsync(url, contentString);
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseContent = await response.Content.ReadAsStringAsync();
+                    logger.LogInformation($"Post: {fullUrl} input: {strInput} response: {responseContent}");
+                    JObject responseJObj = JObject.Parse(responseContent);
+                    if (responseJObj.ContainsKey("result"))
+                    {
+                        return JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(responseJObj["result"]));
+                    }
+                    return JsonConvert.DeserializeObject<T>(responseContent);
+                }
+                else
+                {
+                    logger.LogError($"Post: {fullUrl} error: {response.Content}");
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"Post: {fullUrl} error: {ex.Message}");
+            }
+            return default;
+        }
+
+        protected virtual async Task<T> PostAsyncV3<T>(string url, object input)
+        {
             var fullUrl = $"{HttpClient.BaseAddress}/{url}";
 
             try

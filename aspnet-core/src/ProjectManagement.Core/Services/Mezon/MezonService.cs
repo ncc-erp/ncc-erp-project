@@ -35,7 +35,7 @@ namespace ProjectManagement.Services.Mezon
             _appToken = configuration.GetValue<string>($"{serviceName}:AppToken");
             _appId = configuration.GetValue<string>($"{serviceName}:AppId");
         }
-        
+
         public async Task<OAuth2TokenResponse> GetTokenAsync(OAuth2Request request)
         {
             return await PostAsyncV3<OAuth2TokenResponse>("oauth2/token", new Dictionary<string, string>()

@@ -8,7 +8,7 @@ flex-direction: column;"
   <abp-modal-header
     [title]="'CreateNewUser' | localize"
     (onCloseClick)="dialogRef.close()"
-   
+
   ></abp-modal-header>
   <div class="modal-body">
     <tabset>
@@ -36,7 +36,7 @@ flex-direction: column;"
           </div>
         </div>
 
-      
+
         <div class="form-group row required">
           <label class="col-md-3 col-form-label" for="surname">
             {{ "Surname" | localize }}
@@ -133,10 +133,10 @@ flex-direction: column;"
             ></abp-validation-summary>
           </div>
         </div>
-         
-        
-      
-     
+
+
+
+
         <!-- <div class="form-group row ">
           <label class="col-md-3 col-form-label" for="userCode">
             {{ "userCode" | localize }}
@@ -152,7 +152,7 @@ flex-direction: column;"
           </div>
         </div> -->
 
-    
+
       <div class="form-group row required">
         <label class="col-md-3 col-form-label" for="branch">Branch:</label>
         <div class="col-md-9 ">
@@ -258,6 +258,30 @@ flex-direction: column;"
             ></abp-validation-summary>
           </div>
         </div>
+
+        <div class="form-group row required">
+          <label class="col-md-3 col-form-label" for="mezonId">
+            {{ "mezonId" | localize }}
+          </label>
+          <div class="col-md-9">
+            <input
+              type="text"
+              class="form-control"
+              name="mezonId"
+              id="mezonId"
+              required
+              maxlength="50"
+
+              [(ngModel)]="user.mezonId"
+              #mezonIdModel="ngModel"
+              #mezonIdModelEl
+            />
+            <abp-validation-summary
+              [control]="mezonIdModel"
+              [controlEl]="mezonIdModelEl"
+            ></abp-validation-summary>
+          </div>
+        </div>
         <!-- <div class="form-group row mb-0">
           <label class="col-md-3 col-form-label">
             {{ "IsActive" | localize }}
@@ -299,10 +323,10 @@ flex-direction: column;"
     </tabset>
   </div>
   <abp-modal-footer
-  
+
     [cancelDisabled]="saving"
     [saveDisabled]="!createUserModal.form.valid || saving"
     (onCancelClick)="dialogRef.close()"
-  
+
   ></abp-modal-footer>
 </form>

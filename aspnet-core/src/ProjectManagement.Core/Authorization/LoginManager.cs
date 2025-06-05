@@ -129,7 +129,8 @@ namespace ProjectManagement.Authorization
                 using (UnitOfWorkManager.Current.SetTenantId(tenantId))
                 {
                     await UserManager.InitializeOptionsAsync(tenantId);
-                    var user = UserManager.Users.FirstOrDefault(x => x.EmailAddress == userInfo.Subject);
+                    var user = UserManager.Users.FirstOrDefault(x => !string.IsNullOrEmpty(x.MezonId) && x.MezonId == userInfo.MezonId)
+                        ?? UserManager.Users.FirstOrDefault(x => x.EmailAddress == userInfo.Subject);
                     if (user == null)
                     {
                         return new AbpLoginResult<Tenant, User>(AbpLoginResultType.InvalidUserNameOrEmailAddress, tenant);
@@ -291,7 +292,8 @@ namespace ProjectManagement.Authorization
                 using (UnitOfWorkManager.Current.SetTenantId(tenantId))
                 {
                     await UserManager.InitializeOptionsAsync(tenantId);
-                    var user = UserManager.Users.FirstOrDefault(x => x.EmailAddress == mezonUser.MezonId);
+                    var user = UserManager.Users.FirstOrDefault(x => !string.IsNullOrEmpty(x.MezonId) && x.MezonId == mezonUser.Id)
+                    ?? UserManager.Users.FirstOrDefault(x => x.EmailAddress == mezonUser.MezonId);
                     if (user == null)
                     {
                         return new AbpLoginResult<Tenant, User>(AbpLoginResultType.InvalidUserNameOrEmailAddress, tenant);

@@ -34,7 +34,8 @@ namespace ProjectManagement.Authorization.Users
 
             return user;
         }
-
+        [MaxLength(64)]
+        public string MezonId { get; set; }
         [MaxLength(256)]
         public string UserCode { set; get; }
         public string AvatarPath { get; set; }

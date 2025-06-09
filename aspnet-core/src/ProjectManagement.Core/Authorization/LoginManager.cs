@@ -129,7 +129,7 @@ namespace ProjectManagement.Authorization
                 using (UnitOfWorkManager.Current.SetTenantId(tenantId))
                 {
                     await UserManager.InitializeOptionsAsync(tenantId);
-                    var user = UserManager.Users.FirstOrDefault(x => !string.IsNullOrEmpty(x.MezonId) && x.MezonId == userInfo.MezonId)
+                    var user = UserManager.Users.FirstOrDefault(x => !string.IsNullOrEmpty(x.MezonUserId) && x.MezonUserId == userInfo.MezonUserId)
                         ?? UserManager.Users.FirstOrDefault(x => x.EmailAddress == userInfo.Subject);
                     if (user == null)
                     {
@@ -292,7 +292,7 @@ namespace ProjectManagement.Authorization
                 using (UnitOfWorkManager.Current.SetTenantId(tenantId))
                 {
                     await UserManager.InitializeOptionsAsync(tenantId);
-                    var user = UserManager.Users.FirstOrDefault(x => !string.IsNullOrEmpty(x.MezonId) && x.MezonId == mezonUser.Id)
+                    var user = UserManager.Users.FirstOrDefault(x => !string.IsNullOrEmpty(x.MezonUserId) && x.MezonUserId == mezonUser.Id)
                     ?? UserManager.Users.FirstOrDefault(x => x.EmailAddress == mezonUser.MezonId);
                     if (user == null)
                     {

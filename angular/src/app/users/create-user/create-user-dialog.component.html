@@ -260,19 +260,19 @@ flex-direction: column;"
         </div>
 
         <div class="form-group row required">
-          <label class="col-md-3 col-form-label" for="mezonId">
-            {{ "mezonId" | localize }}
+          <label class="col-md-3 col-form-label" for="mezonUserId">
+            {{ "mezonUserId" | localize }}
           </label>
           <div class="col-md-9">
             <input
               type="text"
               class="form-control"
-              name="mezonId"
-              id="mezonId"
+              name="mezonUserId"
+              id="mezonUserId"
               required
               maxlength="50"
 
-              [(ngModel)]="user.mezonId"
+              [(ngModel)]="user.mezonUserId"
               #mezonIdModel="ngModel"
               #mezonIdModelEl
             />

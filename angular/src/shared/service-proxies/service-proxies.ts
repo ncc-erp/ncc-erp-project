@@ -4174,7 +4174,7 @@ export class CreateUserDto implements ICreateUserDto {
   userLevel: number | undefined;
   userCode: string | undefined;
   userSkills: any[] | undefined;
-  mezonId: string | undefined;
+  mezonUserId: string | undefined;
   constructor(data?: ICreateUserDto) {
     if (data) {
       for (var property in data) {
@@ -4199,7 +4199,7 @@ export class CreateUserDto implements ICreateUserDto {
       this.userLevel = data['userLevel'];
       this.userCode = data['userCode'];
       this.userSkills = data['userSkills'];
-      this.mezonId = data['mezonId'];
+      this.mezonUserId = data['mezonUserId'];
       if (Array.isArray(data['roleNames'])) {
         this.roleNames = [] as any;
         for (let item of data['roleNames']) this.roleNames.push(item);
@@ -4230,7 +4230,7 @@ export class CreateUserDto implements ICreateUserDto {
     data['userLevel'] = this.userLevel;
     data['userCode'] = this.userCode;
     data['userSkills'] = this.userSkills;
-    data['mezonId'] = this.mezonId;
+    data['mezonUserId'] = this.mezonUserId;
 
     if (Array.isArray(this.roleNames)) {
       data['roleNames'] = [];
@@ -4295,7 +4295,7 @@ export class UserDto implements IUserDto {
   branchDisplayName: string | undefined;
   userTypeName: string;
   branchId: number;
-  mezonId: string | undefined;
+  mezonUserId: string | undefined;
   constructor(data?: IUserDto) {
     if (data) {
       for (var property in data) {
@@ -4321,7 +4321,7 @@ export class UserDto implements IUserDto {
       this.userLevel = data['userLevel'];
       this.userCode = data['userCode'];
       this.userSkills = data['userSkills'];
-      this.mezonId = data['mezonId'];
+      this.mezonUserId = data['mezonUserId'];
 
       this.lastLoginTime = data['lastLoginTime']
         ? moment(data['lastLoginTime'].toString())
@@ -4366,7 +4366,7 @@ export class UserDto implements IUserDto {
     data['userLevel'] = this.userLevel;
     data['userCode'] = this.userCode;
     data['userSkills'] = this.userSkills;
-    data['mezonId'] = this.mezonId;
+    data['mezonUserId'] = this.mezonUserId;
 
     if (Array.isArray(this.roleNames)) {
       data['roleNames'] = [];

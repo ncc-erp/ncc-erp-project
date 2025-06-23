@@ -248,7 +248,7 @@ namespace ProjectManagement.APIs.Public
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<object> GetWeeklyReportSendTimeSlots()
+        public async Task<LateReportPMsByTimeSlotDto> GetWeeklyReportSendTimeSlots()
         {
             var activePMReport = await WorkScope.GetAll<PMReport>()
                 .Where(x => x.IsActive && x.Type == PMReportType.Weekly)
@@ -273,29 +273,29 @@ namespace ProjectManagement.APIs.Public
 
             var from15To17 = reportData
                 .Where(x => x.TimeSendReport != null && x.TimeSendReport.Value.Hour >= 15 && x.TimeSendReport.Value.Hour < 17)
-                .Select(x => new
+                .Select(x => new LateReportPMDto
                 {
-                    x.PMId,
-                    x.ProjectId,
-                    x.TimeSendReport,
-                    x.UserName,
-                    x.EmailAddress
+                    PMId = x.PMId,
+                    ProjectId = x.ProjectId,
+                    TimeSendReport = x.TimeSendReport,
+                    UserName = x.UserName,
+                    EmailAddress = x.EmailAddress
                 })
                 .ToList();
 
             var after17 = reportData
                 .Where(x => x.TimeSendReport == null || x.TimeSendReport.Value.Hour >= 17)
-                .Select(x => new
+                .Select(x => new LateReportPMDto
                 {
-                    x.PMId,
-                    x.ProjectId,
-                    x.TimeSendReport,
-                    x.UserName,
-                    x.EmailAddress
+                    PMId = x.PMId,
+                    ProjectId = x.ProjectId,
+                    TimeSendReport = x.TimeSendReport,
+                    UserName = x.UserName,
+                    EmailAddress = x.EmailAddress
                 })
                 .ToList();
 
-            return new
+            return new LateReportPMsByTimeSlotDto
             {
                 From15To17 = from15To17,
                 After17 = after17

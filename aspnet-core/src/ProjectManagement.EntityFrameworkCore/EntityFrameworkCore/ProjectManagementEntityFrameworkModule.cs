@@ -3,11 +3,12 @@ using Abp.Modules;
 using Abp.Reflection.Extensions;
 using Abp.Zero.EntityFrameworkCore;
 using ProjectManagement.EntityFrameworkCore.Seed;
+using System;
 
 namespace ProjectManagement.EntityFrameworkCore
 {
     [DependsOn(
-        typeof(ProjectManagementCoreModule), 
+        typeof(ProjectManagementCoreModule),
         typeof(AbpZeroCoreEntityFrameworkCoreModule))]
     public class ProjectManagementEntityFrameworkModule : AbpModule
     {
@@ -20,6 +21,7 @@ namespace ProjectManagement.EntityFrameworkCore
         {
             if (!SkipDbContextRegistration)
             {
+                Configuration.UnitOfWork.Timeout = TimeSpan.FromMinutes(3);
                 Configuration.Modules.AbpEfCore().AddDbContext<ProjectManagementDbContext>(options =>
                 {
                     if (options.ExistingConnection != null)

@@ -1,5 +1,6 @@
 ﻿using Abp.Authorization;
 using Abp.UI;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -243,6 +244,62 @@ namespace ProjectManagement.APIs.Public
                 }).ToList();
             result.AddRange(PMs);
             return result.Distinct().ToList();
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<LateReportPMDto> GetWeeklyReportSendTimeSlots()
+        {
+            var activePMReport = await WorkScope.GetAll<PMReport>()
+                .Where(x => x.IsActive && x.Type == PMReportType.Weekly)
+                .FirstOrDefaultAsync();
+
+            if (activePMReport == null)
+                throw new UserFriendlyException("No active weekly PMReport found");
+
+            var activePMReportId = activePMReport.Id;
+
+            var reportData = await (from r in WorkScope.GetAll<PMReportProject>()
+                                    join u in WorkScope.GetAll<User>() on r.PMId equals u.Id
+                                    where r.PMReportId == activePMReportId
+                                    select new
+                                    {
+                                        r.PMId,
+                                        r.ProjectId,
+                                        r.TimeSendReport,
+                                        UserName = u.UserName,
+                                        EmailAddress = u.EmailAddress
+                                    }).ToListAsync();
+
+            var from15To17 = reportData
+                .Where(x => x.TimeSendReport != null && x.TimeSendReport.Value.Hour >= 15 && x.TimeSendReport.Value.Hour < 17)
+                .Select(x => new PMReportDto
+                {
+                    PMId = x.PMId,
+                    ProjectId = x.ProjectId,
+                    TimeSendReport = x.TimeSendReport,
+                    UserName = x.UserName,
+                    EmailAddress = x.EmailAddress
+                })
+                .ToList();
+
+            var after17 = reportData
+                .Where(x => x.TimeSendReport == null || x.TimeSendReport.Value.Hour >= 17)
+                .Select(x => new PMReportDto
+                {
+                    PMId = x.PMId,
+                    ProjectId = x.ProjectId,
+                    TimeSendReport = x.TimeSendReport,
+                    UserName = x.UserName,
+                    EmailAddress = x.EmailAddress
+                })
+                .ToList();
+
+            return new LateReportPMDto
+            {
+                Between3To5PM = from15To17,
+                After5PMOrMissing = after17
+            };
         }
     }
 }

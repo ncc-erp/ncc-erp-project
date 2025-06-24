@@ -1,5 +1,5 @@
+﻿using Microsoft.EntityFrameworkCore;
 using System.Data.Common;
-using Microsoft.EntityFrameworkCore;
 
 namespace ProjectManagement.EntityFrameworkCore
 {
@@ -7,12 +7,18 @@ namespace ProjectManagement.EntityFrameworkCore
     {
         public static void Configure(DbContextOptionsBuilder<ProjectManagementDbContext> builder, string connectionString)
         {
-            builder.UseSqlServer(connectionString);
+            builder.UseSqlServer(connectionString, options =>
+            {
+                options.CommandTimeout(180);
+            });
         }
 
         public static void Configure(DbContextOptionsBuilder<ProjectManagementDbContext> builder, DbConnection connection)
         {
-            builder.UseSqlServer(connection);
+            builder.UseSqlServer(connection, options =>
+            {
+                options.CommandTimeout(180);
+            });
         }
     }
 }

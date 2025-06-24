@@ -248,7 +248,7 @@ namespace ProjectManagement.APIs.Public
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<LateReportPMsByTimeSlotDto> GetWeeklyReportSendTimeSlots()
+        public async Task<LateReportPMDto> GetWeeklyReportSendTimeSlots()
         {
             var activePMReport = await WorkScope.GetAll<PMReport>()
                 .Where(x => x.IsActive && x.Type == PMReportType.Weekly)
@@ -273,7 +273,7 @@ namespace ProjectManagement.APIs.Public
 
             var from15To17 = reportData
                 .Where(x => x.TimeSendReport != null && x.TimeSendReport.Value.Hour >= 15 && x.TimeSendReport.Value.Hour < 17)
-                .Select(x => new LateReportPMDto
+                .Select(x => new PMReportDto
                 {
                     PMId = x.PMId,
                     ProjectId = x.ProjectId,
@@ -285,7 +285,7 @@ namespace ProjectManagement.APIs.Public
 
             var after17 = reportData
                 .Where(x => x.TimeSendReport == null || x.TimeSendReport.Value.Hour >= 17)
-                .Select(x => new LateReportPMDto
+                .Select(x => new PMReportDto
                 {
                     PMId = x.PMId,
                     ProjectId = x.ProjectId,
@@ -295,10 +295,10 @@ namespace ProjectManagement.APIs.Public
                 })
                 .ToList();
 
-            return new LateReportPMsByTimeSlotDto
+            return new LateReportPMDto
             {
-                From15To17 = from15To17,
-                After17 = after17
+                Between3To5PM = from15To17,
+                After5PMOrMissing = after17
             };
         }
     }

@@ -117,6 +117,7 @@
 	  <text name="Clear">Clear</text>
 	  <text name="ResetPasswordStepOneInfo">1. Nhập mật khẩu quản trị viên của bạn</text>
 	  <text name="ResetPasswordStepTwoInfo">2. Sao chép mật khẩu ngẫu nhiên này để bạn có thể gửi cho người dùng</text>
+	  <text name="mezonUserId">Mezon ID</text>
 	  <!--/Default Abp-->
 
     <!--Filter Component-->

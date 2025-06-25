@@ -7,7 +7,7 @@
                         General
                     </a>
                     <a *ngIf="permission.isGranted(Projects_ProductProjects_ProjectDetail_TabResourceManagement)" [ngClass]="currentUrl.includes('product-resource-management')?'active':''" mat-tab-link (click)="routingResourceTab()">
-                        Resource Management 
+                        Resource Management
                     </a>
                     <!-- <a  *ngIf="permission.isGranted(PmManager_CanViewMenu_Milestone)"  [ngClass]="currentUrl.includes('product-milestone')?'active':''" mat-tab-link (click)="routingMilestoneTab()">
                         Milestone
@@ -23,7 +23,7 @@
                         Timesheet
                     </a>
                     <a *ngIf="permission.isGranted(Projects_ProductProjects_ProjectDetail_TabProjectDescription)" [ngClass]="currentUrl.includes('product-description-tab')?'active':''" mat-tab-link (click)="routingDescriptionTab()">
-                        Project Description 
+                        Project Description
                     </a>
                     <a *ngIf="permission.isGranted(Projects_ProductProjects_ProjectDetail_TabProjectFile)" [ngClass]="currentUrl.includes('project-file-tab')?'active':''" mat-tab-link (click)="routingFileTab()">
                         Project Files

@@ -23,7 +23,7 @@
       <div *ngIf="isEditingAllRow()" class="pt-1 ml-4">
         <button *ngIf="isTSPopUp()"
           [disabled]="!timesheetDetailForm.valid"
-          class="mr-3 submit-btn"
+          class="mr-3 submit-btn"  
           style="background: none; border: none"
           (click)="saveAllUpdateTS()"
         >
@@ -80,7 +80,7 @@
               <th style="width: 150px;">Charge Role</th>
               <th style="width: 100px;" *ngIf="isShowRate()">Rate<br>({{getCurrencyName()}})</th>
               <th style="width: 50px;">Charge Type</th>
-              <th style="min-width: 120px; white-space: break-spaces;">Working Day</th>
+              <th style="width: 90px; white-space: break-spaces;">Working Day</th>
               <th style="width: 50px;">Is Charge</th>
               <th>Note</th>
               <th style="width: 190px;">Action</th>

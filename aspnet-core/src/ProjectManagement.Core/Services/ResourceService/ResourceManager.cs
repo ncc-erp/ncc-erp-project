@@ -1015,24 +1015,24 @@ namespace ProjectManagement.Services.ResourceManager
                            UserCreationTime = u.CreationTime,
                            SkillNote = u.UserSkills.Select(s => s.Note).FirstOrDefault() ?? ""
                        });
+            
+                quser = ApplyFilterPlannedResource(quser, input);
+                if (input.SkillIds == null || input.SkillIds.IsEmpty())
+                {
+                    return  quser.GetGridResultSync(quser, input);
+                }
+                if (input.SkillIds.Count() == 1 || !input.IsAndCondition)
+                {
+                    var querySkillUserIds = queryUserIdsHaveAnySkill(input.SkillIds).Distinct();
+                    quser = from u in quser
+                            join userId in querySkillUserIds on u.UserId equals userId
+                            select u;
 
-            quser = ApplyFilterPlannedResource(quser, input);
-            if (input.SkillIds == null || input.SkillIds.IsEmpty())
-            {
+                    return quser.GetGridResultSync(quser, input);
+                }
+                var userIdsHaveAllSkill = await getUserIdsHaveAllSkill(input.SkillIds);
+                quser = quser.Where(s => userIdsHaveAllSkill.Contains(s.UserId));
                 return quser.GetGridResultSync(quser, input);
-            }
-            if (input.SkillIds.Count() == 1 || !input.IsAndCondition)
-            {
-                var querySkillUserIds = queryUserIdsHaveAnySkill(input.SkillIds).Distinct();
-                quser = from u in quser
-                        join userId in querySkillUserIds on u.UserId equals userId
-                        select u;
-
-                return quser.GetGridResultSync(quser, input);
-            }
-            var userIdsHaveAllSkill = await getUserIdsHaveAllSkill(input.SkillIds);
-            quser = quser.Where(s => userIdsHaveAllSkill.Contains(s.UserId));
-            return quser.GetGridResultSync(quser, input);
         }
 
         public async Task<GridResult<GetAllResourceDto>> GetResources(InputGetAllResourceDto input, bool isVendor)
@@ -1403,86 +1403,90 @@ namespace ProjectManagement.Services.ResourceManager
         {
             var startDate = input.EndChargeDateFrom?.Date;
             var endDate = input.EndChargeDateTo?.Date.AddDays(1).AddTicks(-1);
-
-            var qLinkedResources = await _workScope.GetAll<LinkedResource>()
+            // query get all linked resource
+            var qLinkedResourceWithinDate = _workScope.GetAll<LinkedResource>()
                 .AsNoTracking()
-                .Include(lr => lr.User)
-                    .ThenInclude(u => u.Branch)
-                .Include(lr => lr.User)
-                    .ThenInclude(u => u.Position)
                 .Include(lr => lr.ProjectUserBill)
-                    .ThenInclude(pub => pub.Project)
-                .Where(lr => !lr.IsDeleted &&
-                             lr.ProjectUserBill != null &&
-                             !lr.ProjectUserBill.IsDeleted &&
-                             lr.ProjectUserBill.isActive &&
-                             lr.ProjectUserBill.Project.Status != ProjectStatus.Closed)
-                .WhereIf(input.UserName.HasValue(), lr =>
-                    lr.User.UserName.ToLower().Contains(input.UserName.ToLower()) ||
-                    lr.User.EmailAddress.ToLower().Contains(input.UserName.ToLower()) ||
-                    lr.User.EmailAddress == $"{input.UserName.Replace("@", "")}@ncc.asia")
-                .WhereIf(input.BranchIds != null && input.BranchIds.Any(), lr => input.BranchIds.Contains(lr.User.BranchId ?? 0))
-                .WhereIf(input.UserTypes != null && input.UserTypes.Any(), lr => input.UserTypes.Contains(lr.User.UserType))
-                .WhereIf(startDate.HasValue && endDate.HasValue, lr =>
-                    lr.ProjectUserBill.EndTime >= startDate &&
-                    lr.ProjectUserBill.EndTime <= endDate)
-                .ToListAsync();
+                .Where(lr => lr.ProjectUserBill.Project.Status != ProjectStatus.Closed &&
+                             lr.ProjectUserBill.isActive == true)
+                .WhereIf(input.EndChargeDateFrom.HasValue && input.EndChargeDateTo.HasValue,
+                    lr => lr.ProjectUserBill.EndTime >= startDate &&
+                            lr.ProjectUserBill.EndTime <= endDate );
+            var listIdLinkedResourceWithinDate = qLinkedResourceWithinDate.Select(lr => lr.Id);
+            // query get all user has linked
+            var qUserHasLinked = _workScope.GetAll<User>()
+                .AsNoTracking()
+                .Where(u => u.IsActive && u.UserType != UserType.FakeUser)
+                .Where(u => u.LinkedResources
+                    .Any(lr => listIdLinkedResourceWithinDate.Contains(lr.Id)))
+                .WhereIf(input.UserName.HasValue(), u => u.UserName.Contains(input.UserName))
+                .WhereIf(input.BranchIds != null && input.BranchIds.Any(),
+                    u => input.BranchIds.Contains(u.BranchId.Value))
+                .WhereIf(input.UserTypes != null && input.UserTypes.Any(),
+                    u => input.UserTypes.Contains(u.UserType));
+            // query get all project user
+            var qProjectUser = _workScope.GetAll<ProjectUser>()
+                .AsNoTracking()
+                .Where(s => s.Status == ProjectUserStatus.Present &&
+                            s.AllocatePercentage > 0 &&
+                            s.Project.Status != ProjectStatus.Closed);
 
-            var groupedByUser = qLinkedResources
-                .GroupBy(lr => lr.UserId)
-                .Select(g =>
+/*            var qProjectUserContribute = qLinkedResourceWithinDate
+                .Where(pr => qProjectUser.Select(x => x.ProjectId).Contains(pr.ProjectUserBill.ProjectId)
+                            && pr.ProjectUserBill.EndTime <= endDate
+                            && pr.ProjectUserBill.isActive == true);*/
+
+            // apply select user
+            var qUser = qUserHasLinked.Select(u => new GetAllWillPoolResourceDto
+            {
+                Resource = new GetUserInfo
                 {
-                    var user = g.First().User;
-
-                    return new GetAllWillPoolResourceDto
+                    Id = u.Id,
+                    EmailAddress = u.EmailAddress,
+                    AvatarPath = u.AvatarPath,
+                    UserType = u.UserType,
+                    UserLevel = u.UserLevel,
+                    IsActive = u.IsActive,
+                    FullName = u.FullName,
+                    UserName = u.UserName,
+                    BranchId = u.BranchId,
+                    BranchColor = u.Branch.Color,
+                    BranchDisplayName = u.Branch.DisplayName,
+                    PositionColor = u.Position.Color,
+                    PositionName = u.Position.ShortName,
+                },
+                ResourceNote = u.PoolNote,
+                Accounts = qLinkedResourceWithinDate
+                    .Where(ulr => ulr.ProjectUserBill.UserId == u.Id)
+                    .Select(ulr => new AccountDto()
                     {
-                        Resource = new GetUserInfo
+                        Id = ulr.ProjectUserBill.UserId,
+                        Project = new ShortInfoProjectDto()
                         {
-                            Id = user.Id,
-                            EmailAddress = user.EmailAddress,
-                            AvatarPath = user.AvatarPath,
-                            UserType = user.UserType,
-                            UserLevel = user.UserLevel,
-                            IsActive = user.IsActive,
-                            FullName = user.FullName,
-                            UserName = user.UserName,
-                            BranchId = user.BranchId,
-                            BranchColor = user.Branch?.Color,
-                            BranchDisplayName = user.Branch?.DisplayName,
-                            PositionColor = user.Position?.Color,
-                            PositionName = user.Position?.ShortName,
+                            Id = ulr.ProjectUserBill.ProjectId,
+                            ProjectName = ulr.ProjectUserBill.Project.Name,
+                            ProjectType = ulr.ProjectUserBill.Project.ProjectType,
+                            ProjectCode = ulr.ProjectUserBill.Project.Code
                         },
-                        ResourceNote = g.First().ProjectUserBill?.Note,
-                        Accounts = g.Select(lr => new AccountDto
-                        {
-                            Id = lr.UserId,
-                            Project = new ShortInfoProjectDto
-                            {
-                                Id = lr.ProjectUserBill.ProjectId,
-                                ProjectName = lr.ProjectUserBill.Project.Name,
-                                ProjectType = lr.ProjectUserBill.Project.ProjectType,
-                                ProjectCode = lr.ProjectUserBill.Project.Code
-                            },
-                            ChargeName = lr.User.UserName ?? lr.User.FullName,
-                            HeadCount = lr.ProjectUserBill.HeadCount,
-                            EndChargeDate = lr.ProjectUserBill.EndTime,
-                            Contribute = lr.Contribute,
-                        }).ToList(),
-                        Projects = g
-                            .GroupBy(lr => lr.ProjectUserBill.ProjectId)
-                            .Select(g2 => g2.First())
-                            .Select(lr => new ShortInfoProjectDto
-                            {
-                                Id = lr.ProjectUserBill.ProjectId,
-                                ProjectName = lr.ProjectUserBill.Project.Name,
-                                ProjectType = lr.ProjectUserBill.Project.ProjectType,
-                                ProjectCode = lr.ProjectUserBill.Project.Code
-                            }).ToList()
-                    };
-                })
-                .ToList();
-
-            return new GridResult<GetAllWillPoolResourceDto>(groupedByUser, groupedByUser.Count);
+                        ChargeName = ulr.ProjectUserBill.AccountName ?? ulr.ProjectUserBill.User.FullName,
+                        HeadCount = ulr.ProjectUserBill.HeadCount,
+                        EndChargeDate = ulr.ProjectUserBill.EndTime,
+                        Contribute = ulr.Contribute,
+                    })
+                    .ToList(),
+                Projects = qProjectUser
+                    .Where(pu => pu.UserId == u.Id)
+                    .Select(pu => new ShortInfoProjectDto()
+                    {
+                        Id = pu.ProjectId,
+                        ProjectName = pu.Project.Name,
+                        ProjectType = pu.Project.ProjectType,
+                        ProjectCode = pu.Project.Code
+                    })
+                    .ToList(),
+            });
+            var result = await qUser.ToListAsync();
+            return new GridResult<GetAllWillPoolResourceDto>(result, result.Count);
         }
     }
 }

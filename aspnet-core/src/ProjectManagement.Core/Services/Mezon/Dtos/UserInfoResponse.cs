@@ -38,8 +38,7 @@ namespace ProjectManagement.Services.Mezon.Dtos
 
         [JsonProperty("sub")]
         public string Subject { get; set; }
-        [JsonProperty("user_id")]
-        public string MezonUserId { get; set; }
+
         public DateTime AuthTimeUtc => DateTimeOffset.FromUnixTimeSeconds(AuthTime).UtcDateTime;
         public DateTime IssuedAtUtc => DateTimeOffset.FromUnixTimeSeconds(IssuedAt).UtcDateTime;
         public DateTime RequestedAtUtc => DateTimeOffset.FromUnixTimeSeconds(RequestedAt).UtcDateTime;

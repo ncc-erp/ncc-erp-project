@@ -1470,10 +1470,6 @@ namespace ProjectManagement.Migrations
                     b.Property<DateTime?>("LockoutEndDateUtc")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("MezonUserId")
-                        .HasColumnType("nvarchar(64)")
-                        .HasMaxLength(64);
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(64)")

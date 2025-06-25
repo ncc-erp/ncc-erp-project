@@ -152,7 +152,6 @@ namespace ProjectManagement.APIs.HRMv2
                 //Password = input.Password,
                 BranchId = branch.Id,
                 PositionId = positionId,
-                MezonUserId = input.MezonUserId
             };
 
             user.Password = RandomPasswordHelper.CreateRandomPassword(8);
@@ -203,7 +202,6 @@ namespace ProjectManagement.APIs.HRMv2
                 user.UserLevel = input.Level;
                 user.BranchId = branch.Id;
                 user.PositionId = positionId;
-                user.MezonUserId = input.MezonUserId;
             }
             await WorkScope.UpdateAsync(user);
         }

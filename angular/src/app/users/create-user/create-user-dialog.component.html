@@ -275,30 +275,6 @@ flex-direction: column;"
             </div>
           </div>
         </div> -->
-
-        <div class="form-group row required">
-          <label class="col-md-3 col-form-label" for="mezonUserId">
-            {{ "mezonUserId" | localize }}
-          </label>
-          <div class="col-md-9">
-            <input
-              type="text"
-              class="form-control"
-              name="mezonUserId"
-              id="mezonUserId"
-              required
-              maxlength="50"
-
-              [(ngModel)]="user.mezonUserId"
-              #mezonIdModel="ngModel"
-              #mezonIdModelEl
-            />
-            <abp-validation-summary
-              [control]="mezonIdModel"
-              [controlEl]="mezonIdModelEl"
-            ></abp-validation-summary>
-          </div>
-        </div>
       </tab>
       <!-- <tab [heading]="'UserRoles' | localize" class="pt-3 px-2">
         <div class="form-group row mb-0">

@@ -29,6 +29,5 @@ namespace ProjectManagement.APIs.HRMv2.Dto
             }
         }
         public EmployeeStatus EmployeeStatus { get; set; }
-        public string MezonUserId { get; set; }
     }
 }

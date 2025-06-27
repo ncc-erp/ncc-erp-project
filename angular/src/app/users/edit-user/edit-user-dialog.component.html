@@ -99,7 +99,19 @@
                         <abp-validation-summary [control]="emailAddressModel" [controlEl]="emailAddressEl"></abp-validation-summary>
                     </div>
                 </div>
-              
+
+                <div class="form-group row required">
+                    <label class="col-md-3 col-form-label" for="mezonUserId">
+                        {{ "mezonUserId" | localize }}
+                    </label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control" name="mezonUserId" id="mezonUserId" required
+                            maxlength="256" [(ngModel)]="user.mezonUserId" #mezonUserIdModel="ngModel" #mezonUserIdEl />
+                        <abp-validation-summary [control]="mezonUserIdModel" [controlEl]="mezonUserIdEl"></abp-validation-summary>
+                    </div>
+                </div>
+
+
             </tab>
 
         </tabset>

@@ -4320,6 +4320,7 @@ export class UserDto implements IUserDto {
       this.userLevel = data['userLevel'];
       this.userCode = data['userCode'];
       this.userSkills = data['userSkills'];
+      this.mezonUserId = data['mezonUserId'];
 
       this.lastLoginTime = data['lastLoginTime']
         ? moment(data['lastLoginTime'].toString())
@@ -4400,6 +4401,7 @@ export interface IUserDto {
   userSkills: any[];
   branchId: number;
   positionId: number;
+  mezonUserId: string | undefined;
 }
 
 

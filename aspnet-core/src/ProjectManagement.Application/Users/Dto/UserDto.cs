@@ -59,5 +59,6 @@ namespace ProjectManagement.Users.Dto
         public long? BranchId { get; set; }
 
         public long? PositionId { get; set; }
+        public string? MezonUserId { get; set; }
     }
 }

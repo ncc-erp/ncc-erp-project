@@ -239,6 +239,7 @@ namespace ProjectManagement.APIs.HRMv2
                         Password = RandomPasswordHelper.CreateRandomPassword(8),
                         BranchId = branch.Id,
                         PositionId = positionId,
+                        MezonUserId = input.MezonUserId
                     };
                     var userId = await WorkScope.InsertAndGetIdAsync(newUser);
                     await AddUserSkills(userId, input.SkillNames);

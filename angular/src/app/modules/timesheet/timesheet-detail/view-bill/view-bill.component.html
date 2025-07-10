@@ -75,7 +75,7 @@
           <thead class="bg-light">
             <tr>
               <th class="stt">#</th>
-              <th style="width: 350px;">Employee</th>
+              <!-- <th style="width: 350px;">Employee</th> -->
               <th style="width: 200px;">Charge Name</th>
               <th style="width: 150px;">Charge Role</th>
               <th style="width: 100px;" *ngIf="isShowRate()">Rate<br>({{getCurrencyName()}})</th>
@@ -94,8 +94,8 @@
               <td>
                 <span>{{ i + 1 }}</span>
               </td>
-              <td class="text-left" style="min-width: 200px">
-                  <!-- <app-user-info
+              <!-- <td class="text-left" style="min-width: 200px">
+                  <app-user-info
                     [userData]="{
                       fullName: bill.fullName,
                       branch: bill.branch,
@@ -107,12 +107,12 @@
                       userLevel: bill.userLevel
                     }"
                   >
-                  </app-user-info> -->
+                  </app-user-info>
                   <app-user-info
                     [userData]="bill"
                   >
                   </app-user-info>
-              </td>
+              </td> -->
 
               <!-- Charge Name -->
               <td class="text-center">

@@ -12,6 +12,7 @@
     "outDir": "../dist/out-tsc",
     "sourceMap": true,
     "target": "es2015",
+    "types": ["node", "jasmine"],
     "typeRoots": [
       "../node_modules/@types"
     ],

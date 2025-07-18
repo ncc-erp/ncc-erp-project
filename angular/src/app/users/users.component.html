@@ -6,11 +6,11 @@
           <h1>{{ "Users" | localize }}</h1>
         </div>
         <div class="col-md-6 text-right action-user">
-          <button name="btn-sync" href="javascript:;" class="btn btn-success mr-2"
+          <!-- <button name="btn-sync" href="javascript:;" class="btn btn-success mr-2"
             *ngIf="permission.isGranted(Admin_Users_SyncDataFromHrm) " (click)="updateDataHRM()">
             <i class="fas fa-sync-alt mr-1"></i>
             {{ "Sync data from HRM" | localize }}
-          </button>
+          </button> -->
           <button name="btn-create" href="javascript:;" class="btn bg-blue" *ngIf="permission.isGranted(Admin_Users_Create) "
             (click)="createUser()">
             <i class="fa fa-plus-square"></i>

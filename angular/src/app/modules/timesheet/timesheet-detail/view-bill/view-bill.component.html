@@ -171,7 +171,7 @@
                 *ngIf="isShowRate()"
               >
                 <span *ngIf="!bill.isEditing"
-                  >{{ bill.billRate | number: "1.0":"en-US" }}
+                  >{{ bill.billRateDisplay | number: "1.0":"en-US" }}
                 </span>
                 <div *ngIf="bill.isEditing">
                   <input

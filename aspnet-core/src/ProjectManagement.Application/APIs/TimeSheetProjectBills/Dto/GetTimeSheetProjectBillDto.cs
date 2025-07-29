@@ -19,6 +19,7 @@ namespace ProjectManagement.APIs.TimeSheetProjectBills.Dto
         public string AccountName { get; set; }
         public string BillRole { get; set; }
         public float BillRate { get; set; }
+        public float BillRateDisplay { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime? EndTime { get; set; }
         //public CurrencyCode Currency { get; set; }

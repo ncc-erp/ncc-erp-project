@@ -89,6 +89,7 @@ export class TimesheetProjectBill {
     accountName: string
     billRole: string
     billRate: number
+    billRateDisplay: number;
     startTime: string
     endTime: string
     note: string

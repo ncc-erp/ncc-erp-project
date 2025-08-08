@@ -37,6 +37,24 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="">
+                            <div class="form-group row col-md-12">
+                                <label class="col-form-label col-md-6">OT Types: </label>
+                                <div class="col-md-6 d-flex align-items-center flex-wrap col-form-result">
+                                    <ng-container *ngIf="updateInvoiceDto.otTypes.length; else noOtTypes">
+                                        <span class="badge bg-secondary m-2"
+                                            *ngFor="let ot of updateInvoiceDto.otTypes"
+                                            style="cursor: default;">
+                                            {{ ot.otTypeName }} ({{ ot.multiplier }})
+                                        </span>
+                                    </ng-container>
+                                    <ng-template #noOtTypes>
+                                        <span>No OT types</span>
+                                    </ng-template>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="col-lg-8 col-md-12 item-invoice-setting">
                         <div class="form-group row col-md-12">

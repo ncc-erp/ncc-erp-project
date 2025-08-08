@@ -100,6 +100,7 @@ namespace ProjectManagement.EntityFrameworkCore
         public DbSet<ResourceRequestCV> ResourceRequestCVs { get; set; }
         public DbSet<CvStatus> CvStatus { get; set; }
         public DbSet<BillUserSkill> BillUserSkills { get; set; }
+        public DbSet<ProjectUserBillOtType> ProjectUserBillOtTypes { get; set; }
         public ProjectManagementDbContext(DbContextOptions<ProjectManagementDbContext> options)
             : base(options)
         {

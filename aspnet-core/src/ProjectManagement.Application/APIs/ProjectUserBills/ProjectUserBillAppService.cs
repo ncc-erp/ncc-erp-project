@@ -1,5 +1,6 @@
 ﻿using Abp.Authorization;
 using Abp.Collections.Extensions;
+using Abp.Domain.Entities;
 using Abp.UI;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -447,6 +448,15 @@ namespace ProjectManagement.APIs.ProjectUserBills
                     .Select(s => s.Name)
                     .FirstOrDefault();
             }
+            dto.OtTypes = await WorkScope.GetAll<ProjectUserBillOtType>()
+                .Where(p => p.ProjectId == projectId)
+                .Select(p => new OtTypeDto
+                {
+                    Id   = p.Id,
+                    OtTypeName = p.OtTypeName,
+                    Multiplier = p.Multiplier
+                })
+                .ToListAsync();
 
             return dto;
         }
@@ -620,7 +630,7 @@ namespace ProjectManagement.APIs.ProjectUserBills
 
         [HttpPost]
         [AbpAuthorize(PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_InvoiceSetting_Edit)]
-        public void UpdateInvoiceSetting(UpdateInvoiceDto input)
+        public async Task UpdateInvoiceSetting(UpdateInvoiceDto input)
         {
 
             var project = WorkScope.Get<Project>(input.ProjectId);
@@ -665,7 +675,41 @@ namespace ProjectManagement.APIs.ProjectUserBills
                 project.ParentInvoiceId = input.MainProjectId.Value;
             }
 
-            CurrentUnitOfWork.SaveChanges();
+            var existingOtTypes = WorkScope.GetAll<ProjectUserBillOtType>()
+                .Where(x => x.ProjectId == input.ProjectId)
+                .ToList();
+            var inputOtTypes = input.OtTypes ?? new List<OtTypeDto>();
+            var newOtTypes = inputOtTypes
+                .Where(x => x.Id == null)
+                .Select(x => new ProjectUserBillOtType
+                {
+                    ProjectId = input.ProjectId,
+                    OtTypeName = x.OtTypeName,
+                    Multiplier = x.Multiplier
+                })
+                .ToList();
+            var updateOtTypes = new List<ProjectUserBillOtType>();
+
+            foreach (var x in inputOtTypes.Where(x => x.Id != null))
+            {
+                updateOtTypes.Add(new ProjectUserBillOtType
+                {
+                    Id = x.Id.Value,
+                    ProjectId = input.ProjectId,
+                    OtTypeName = x.OtTypeName,
+                    Multiplier = x.Multiplier
+                });
+            }
+            var deleteOtTypes = existingOtTypes
+                .Where(x => !updateOtTypes.Any(i => i.Id == x.Id))
+                .ToList();
+            await WorkScope.InsertRangeAsync(newOtTypes);
+            await WorkScope.UpdateRangeAsync(updateOtTypes);
+            foreach (var item in deleteOtTypes)
+            {
+                await WorkScope.DeleteAsync(item);
+            }
+            await CurrentUnitOfWork.SaveChangesAsync();
         }
 
         [HttpGet]

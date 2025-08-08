@@ -616,6 +616,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
         mainProjectId: rs.result.mainProjectId,
         projectId: this.projectId,
         subProjectIds: rs.result.subProjectIds,
+        otTypes: rs.result.otTypes
       }
       this.rateInfo = {
         currencyName: rs.result.currencyName

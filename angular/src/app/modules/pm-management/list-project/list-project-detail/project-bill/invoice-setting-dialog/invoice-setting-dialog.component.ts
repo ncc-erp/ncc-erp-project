@@ -41,6 +41,7 @@ export class InvoiceSettingDialogComponent implements OnInit {
 
   ngOnInit(): void {
     Object.assign(this, this.data.dialogData);
+    this.updateInvoiceDto.otTypes = this.updateInvoiceDto.otTypes || [];
     this.getAvailableProjectForSettingInvoice();
   }
 
@@ -53,13 +54,23 @@ export class InvoiceSettingDialogComponent implements OnInit {
     }))
   }
   SaveAndClose() {
+    const invalidOt = this.updateInvoiceDto.otTypes?.find(ot => ot.multiplier == null || ot.multiplier <= 0);
+    if (invalidOt) {
+      abp.message.warn("Each OT Coefficient must be greater than 0.", "Invalid Input");
+      return;
+    }
+    const roundedOtTypes = this.updateInvoiceDto.otTypes?.map(ot => ({
+      ...ot,
+      multiplier: Math.round(ot.multiplier * 100) / 100 
+    }));
     let payload: UpdateInvoiceDto = {
       projectId: this.updateInvoiceDto.projectId,
       discount: this.updateInvoiceDto.discount,
       invoiceNumber: this.updateInvoiceDto.invoiceNumber,
       isMainProjectInvoice: this.updateInvoiceDto.isMainProjectInvoice,
       mainProjectId: this.updateInvoiceDto.mainProjectId,
-      subProjectIds: this.updateInvoiceDto.subProjectIds
+      subProjectIds: this.updateInvoiceDto.subProjectIds,
+      otTypes: roundedOtTypes
     };
     this.saving = true;
     this.subscription.push(
@@ -78,6 +89,14 @@ export class InvoiceSettingDialogComponent implements OnInit {
           abp.notify.success(message);
         })
     );
+  }
+
+  addOtType() {
+    this.updateInvoiceDto.otTypes.push({ otTypeName: '', multiplier: null });
+  }
+
+  removeOtType(index: number) {
+    this.updateInvoiceDto.otTypes.splice(index, 1);
   }
 
   ngOnDestroy() {

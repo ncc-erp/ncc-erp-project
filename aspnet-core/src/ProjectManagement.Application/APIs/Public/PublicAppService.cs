@@ -161,7 +161,7 @@ namespace ProjectManagement.APIs.Public
             {
                 return new BadRequestObjectResult("You do not have permission to retrieve clients.");
             }
-            var query =  WorkScope.GetAll<Client>()
+            var query = WorkScope.GetAll<Client>()
                .Where(p => !p.IsDeleted)
                .Select(p => p);
             var result = await query.ToListAsync();
@@ -220,7 +220,7 @@ namespace ProjectManagement.APIs.Public
         public List<PMsOfUsersDto> GetListPMsOfUsers(List<string> emails)
         {
             var result = WorkScope.GetAll<ProjectUser>()
-                .Where(x => emails.Contains(x.User.EmailAddress) )
+                .Where(x => emails.Contains(x.User.EmailAddress))
                 .Where(s => s.Status == ProjectUserStatus.Present && s.AllocatePercentage > 0)
                             .Where(s => s.Project.Status == ProjectStatus.InProgress)
                 .Select(x => new PMsOfUsersDto
@@ -231,8 +231,8 @@ namespace ProjectManagement.APIs.Public
                     PMFullName = x.Project.PM.FullName,
                     ProjectName = x.Project.Name,
                 }).ToList();
-            var PMs= WorkScope.GetAll<Project>()
-                .Where(x=>emails.Contains(x.PM.EmailAddress))
+            var PMs = WorkScope.GetAll<Project>()
+                .Where(x => emails.Contains(x.PM.EmailAddress))
                 .Where(s => s.Status == ProjectStatus.InProgress)
                 .Select(x => new PMsOfUsersDto
                 {
@@ -250,6 +250,7 @@ namespace ProjectManagement.APIs.Public
         [AllowAnonymous]
         public async Task<LateReportPMDto> GetWeeklyReportSendTimeSlots()
         {
+            // Get the active weekly PMReport
             var activePMReport = await WorkScope.GetAll<PMReport>()
                 .Where(x => x.IsActive && x.Type == PMReportType.Weekly)
                 .FirstOrDefaultAsync();
@@ -259,7 +260,10 @@ namespace ProjectManagement.APIs.Public
 
             var activePMReportId = activePMReport.Id;
 
-            var reportData = await (from r in WorkScope.GetAll<PMReportProject>()
+            // Get all PMReportProject entries for the active PMReport
+            // using a join to get User information
+            // Filter by projects that require weekly reports
+            var reportData = await (from r in WorkScope.GetAll<PMReportProject>().Where(x => x.Project.IsRequiredWeeklyReport == true)
                                     join u in WorkScope.GetAll<User>() on r.PMId equals u.Id
                                     where r.PMReportId == activePMReportId
                                     select new
@@ -271,6 +275,7 @@ namespace ProjectManagement.APIs.Public
                                         EmailAddress = u.EmailAddress
                                     }).ToListAsync();
 
+            // Group the report data by PMId and ProjectId
             var from15To17 = reportData
                 .Where(x => x.TimeSendReport != null && x.TimeSendReport.Value.Hour >= 15 && x.TimeSendReport.Value.Hour < 17)
                 .Select(x => new PMReportDto

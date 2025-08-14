@@ -63,9 +63,9 @@ export class InvoiceSettingDialogComponent implements OnInit {
       );
       return;
   }
-    const roundedOtTypes = this.updateInvoiceDto.otTypes?.map(({ id, ...rest }) => ({
-      ...rest,
-      multiplier: Math.round(rest.multiplier * 100) / 100 
+    const roundedOtTypes = this.updateInvoiceDto.otTypes?.map((ot) => ({
+      ...ot,
+      multiplier: Math.round(ot.multiplier * 100) / 100 
     }));
     let payload: UpdateInvoiceDto = {
       projectId: this.updateInvoiceDto.projectId,

@@ -688,20 +688,27 @@ namespace ProjectManagement.APIs.ProjectUserBills
                     Multiplier = x.Multiplier
                 })
                 .ToList();
-            var updateOtTypes = new List<ProjectUserBillOtType>();
-
-            foreach (var x in inputOtTypes.Where(x => x.Id != null))
-            {
-                updateOtTypes.Add(new ProjectUserBillOtType
+            var updateOtTypesList = inputOtTypes
+                .Where(x => x.Id != null)
+                .Select(x => new ProjectUserBillOtType
                 {
                     Id = x.Id.Value,
                     ProjectId = input.ProjectId,
                     OtTypeName = x.OtTypeName,
                     Multiplier = x.Multiplier
-                });
+                }).ToList();
+
+            var updateOtTypes = new List<ProjectUserBillOtType>();
+            foreach (var otTypes in updateOtTypesList)
+            {
+                var otType = await WorkScope.GetAsync<ProjectUserBillOtType>(otTypes.Id);
+                otType.OtTypeName = otTypes.OtTypeName;
+                otType.Multiplier = otTypes.Multiplier;
+                updateOtTypes.Add(otType);
             }
+            
             var deleteOtTypes = existingOtTypes
-                .Where(x => !updateOtTypes.Any(i => i.Id == x.Id))
+                .Where(x => !updateOtTypesList.Any(i => i.Id == x.Id))
                 .ToList();
             await WorkScope.InsertRangeAsync(newOtTypes);
             await WorkScope.UpdateRangeAsync(updateOtTypes);

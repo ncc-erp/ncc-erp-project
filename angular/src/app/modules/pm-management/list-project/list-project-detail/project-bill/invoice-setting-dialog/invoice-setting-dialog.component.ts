@@ -5,7 +5,6 @@ import { BsModalRef } from "ngx-bootstrap/modal";
 import { Subscription } from "rxjs";
 import { finalize } from "rxjs/operators";
 import { APP_ENUMS } from "@shared/AppEnums";
-import { SubInvoice } from "@app/service/model/bill-info.model";
 import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { DialogDataDto } from "@app/service/model/common-DTO";
 import { DropDownDataDto } from "@shared/filter/filter.component";
@@ -54,14 +53,19 @@ export class InvoiceSettingDialogComponent implements OnInit {
     }))
   }
   SaveAndClose() {
-    const invalidOt = this.updateInvoiceDto.otTypes?.find(ot => ot.multiplier == null || ot.multiplier <= 0);
-    if (invalidOt) {
-      abp.message.warn("Each OT Coefficient must be greater than 0.", "Invalid Input");
+    const invalidOt = this.updateInvoiceDto.otTypes?.find(ot => 
+      !ot.otTypeName || ot.multiplier == null || ot.multiplier < 0
+  );
+  if (invalidOt) {
+      abp.message.warn(
+          "Each OT must have a valid type name and a coefficient that is greater than or equal to 0.",
+          "Invalid Input"
+      );
       return;
-    }
-    const roundedOtTypes = this.updateInvoiceDto.otTypes?.map(ot => ({
-      ...ot,
-      multiplier: Math.round(ot.multiplier * 100) / 100 
+  }
+    const roundedOtTypes = this.updateInvoiceDto.otTypes?.map(({ id, ...rest }) => ({
+      ...rest,
+      multiplier: Math.round(rest.multiplier * 100) / 100 
     }));
     let payload: UpdateInvoiceDto = {
       projectId: this.updateInvoiceDto.projectId,

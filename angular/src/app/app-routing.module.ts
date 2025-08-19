@@ -87,6 +87,7 @@ import { BillAccountPlanComponent } from './modules/delivery-management/delivery
 import { GeneralInformationComponent } from './modules/pm-management/list-project/list-project-detail/general-information/general-information.component';
 import { CVStatusComponent } from './modules/admin/cvstatus/cvstatus.component';
 import { WillPoolComponent } from './modules/delivery-management/delivery/available-resource-tab/will-pool/will-pool.component';
+import { ProductAccountInfoComponent } from './modules/pm-management/product-projects/product-project-detail/product-account-info/product-account-info.component';
 @NgModule({
   imports: [
     RouterModule.forChild([
@@ -368,6 +369,11 @@ import { WillPoolComponent } from './modules/delivery-management/delivery/availa
               {
                 path: "project-bill-tab",
                 component: ProjectBillComponent,
+                canActivate: [AppRouteGuard]
+              },
+              {
+                path: "product-account-info",
+                component: ProductAccountInfoComponent,
                 canActivate: [AppRouteGuard]
               }
             ],

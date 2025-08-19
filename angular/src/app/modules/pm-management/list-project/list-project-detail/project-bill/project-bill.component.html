@@ -38,13 +38,13 @@
                             </div>
                         </div>
 
-                        <div class="">
+                        <div *ngIf="permission.isGranted(ResourceRequest)"  class="">
                             <div class="form-group row col-md-12">
                                 <label class="col-form-label col-md-6">OT Types: </label>
                                 <div class="col-md-6 d-flex align-items-center flex-wrap col-form-result">
-                                    <ng-container *ngIf="updateInvoiceDto.otTypes.length; else noOtTypes">
+                                    <ng-container *ngIf="updateInvoiceDto?.otTypes?.length; else noOtTypes">
                                         <span class="badge bg-secondary m-2"
-                                            *ngFor="let ot of updateInvoiceDto.otTypes"
+                                        *ngFor="let ot of (updateInvoiceDto?.otTypes || [])"
                                             style="cursor: default;">
                                             {{ ot.otTypeName }} ({{ ot.multiplier }})
                                         </span>

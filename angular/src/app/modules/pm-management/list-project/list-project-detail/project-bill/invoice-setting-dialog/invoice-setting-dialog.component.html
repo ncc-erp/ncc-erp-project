@@ -67,7 +67,7 @@
             
             <div class="col-md-8">
                 <div style="max-height: 200px; overflow-y: auto;">
-                    <div *ngFor="let ot of updateInvoiceDto.otTypes; let i = index" class="d-flex mb-2 align-items-center">
+                    <div *ngFor="let ot of (updateInvoiceDto?.otTypes || []); let i = index" class="d-flex mb-2 align-items-center">
                         <input
                             type="text"
                             class="form-control mr-2"

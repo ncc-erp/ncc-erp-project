@@ -1,18 +1,19 @@
-<section class="content px-2 mt-2">
+<section class="content px-2 mt-2"
+    *ngIf="permission.isGranted(Projects_ProductProjects_ProjectDetail_TabBillInfo_View)">
     <div class="container-fluid">
         <div class="card mt-2" [busy] = isLoading>
             <mat-expansion-panel [expanded]="!isShowUserBill">
                 <mat-expansion-panel-header name="pannel-userBill" class="mt-2 mb-2 d-flex align-items-center flex-wrap" (click)="isShowUserBill=!isShowUserBill" [ngClass]="{'bill-account': !isShowUserBill}">
                     <div class="header-bill-account">
                         <h4 class="d-inline label-bill-account" style="margin-top: 5px;">Accounts ({{ filteredUserBillList.length }}):</h4>
-                        <button name="btn-createUserBill" *ngIf="!userBillProcess && permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Create)"
+                        <button name="btn-createUserBill" *ngIf="!userBillProcess && permission.isGranted(Projects_ProductProjects_ProjectDetail_TabBillInfo_Create)"
                             [hidden]="isShowUserBill || !showSearchAndFilter" style="border: none; height: fit-content;"
                             class="btn bg-blue ml-2 btn-s mb-2 add-bill-mobile" (click)="addUserBill(); userBillCurrentPage=1; $event.stopPropagation()">
                             <i class="fa fa-plus m-0"></i>
                         </button>
                     </div>
                     <div class="d-flex flex-wrap justify-content-start align-items-center list-filter" style="flex-grow: 1;">
-                        <button name="btn-createUserBill" *ngIf="!userBillProcess && permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Create)"
+                        <button name="btn-createUserBill" *ngIf="!userBillProcess && permission.isGranted(Projects_ProductProjects_ProjectDetail_TabBillInfo_Create)"
                             [hidden]="isShowUserBill || !showSearchAndFilter" style="border: none; height: fit-content;"
                         class="btn bg-blue ml-2 btn-s mb-2 add-bill-desktop" (click)="addUserBill(); userBillCurrentPage=1; $event.stopPropagation()">
                             <i class="fa fa-plus m-0"></i>
@@ -132,15 +133,6 @@
                                             <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'linkedResources'"></i>
                                             <i *ngIf="sortColumn !== 'linkedResources'" class="fas fa-sort"></i>
                                         </div>
-                                </th>
-                                <th class="align column-rate" (click)="sortData('billRate')" style="cursor: pointer; min-width: 100px;"
-                                    *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Rate_View) && !isHideRates">
-                                    <div class="col-bill-account">
-                                        {{ "Rate" | localize }}
-                                        <br>({{rateInfo.currencyName}})
-                                        <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'billRate'"></i>
-                                        <i *ngIf="sortColumn !== 'billRate'" class="fas fa-sort"></i>
-                                    </div>
                                 </th>
                                 <th class="align" (click)="sortData('headCount')" style="cursor: pointer; min-width: 100px;">
                                 {{ "Head Count" | localize }}
@@ -268,7 +260,7 @@
                                     <div class="text-right" *ngIf="!bill.createLinkResourceMode">
                                         <button class="btn bg-blue btn-sm"
                                             (click)="addLinkResource(bill)"
-                                            [disabled]="bill.createMode || userBillProcess || !permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount)"
+                                            [disabled]="bill.createMode || userBillProcess || !permission.isGranted(Projects_ProductProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount)"
                                             style="cursor: pointer; font-size: 10px;">
                                             <i class="fa fa-plus fa-s m-0"></i>
                                         </button>
@@ -377,20 +369,6 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td class="text-center"
-                                    *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Rate_View) && !isHideRates">
-                                    <span class="text-center" *ngIf="!bill.createMode">{{bill.billRate |
-                                        number:'1.0':'en-US'}}
-                                    </span>
-                                    <div *ngIf="bill.createMode">
-                                        <input style="min-width: 30px;" class="form-control mt-1"
-                                            #billRate="ngModel" #billRateEl type="text" mask="separator"
-                                                thousandSeparator="." placeholder="number *"
-                                                [(ngModel)]="bill.billRate">
-                                        <abp-validation-summary [control]="billRate" [controlEl]="billRateEl">
-                                        </abp-validation-summary>
-                                    </div>
-                                </td>
                                 <td class="text-center">
                                     <span class="text-center" *ngIf="!bill.createMode">{{ bill.headCount |
                                         number: '1.2-2':'en-US' }}</span>
@@ -458,7 +436,7 @@
                                 </td>
                                 <td class="text-center" style="min-width: 100px;">
                                     <span class="text-center">
-                                        <mat-checkbox  [disabled]="!permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Edit) || (userBillProcess && !bill.createMode && bill.isExpose === bill.initialIsExpose)"
+                                        <mat-checkbox  [disabled]="!permission.isGranted(Projects_ProductProjects_ProjectDetail_TabBillInfo_Edit) || (userBillProcess && !bill.createMode && bill.isExpose === bill.initialIsExpose)"
                                             [(ngModel)]="bill.isExpose"
                                             (change)="!bill.createMode ? onUpdateIsExpose(bill) : null">
                                         </mat-checkbox>
@@ -574,7 +552,7 @@
                                 </td>
                                 <td class="text-center">
                                     <div *ngIf="!bill.createMode">
-                                            <button *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Edit)"
+                                            <button *ngIf="permission.isGranted(Projects_ProductProjects_ProjectDetail_TabBillInfo_Edit)"
                                               [disabled]="userBillProcess" mat-button [matMenuTriggerFor]="actionMenu"><i class="fas fa-bars fa-lg"></i></button>
                                         <!-- Define the mat-menu and its content -->
                                         <mat-menu #actionMenu="matMenu">

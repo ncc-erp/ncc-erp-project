@@ -222,6 +222,17 @@ namespace ProjectManagement.Services.ProjectUserBills
             var result = query.ToList();
             result = result.OrderByDescending(x => x.CreationTime).ToList();
 
+            if (input.ChargeStatusFilter != ChargeStatusFilter.All)
+            {
+                bool isCharge = input.ChargeStatusFilter == ChargeStatusFilter.IsCharge;
+                result = result.Where(x => x.isActive == isCharge).ToList();
+            }
+
+            if (input.ChargeRoleFilter != null && input.ChargeRoleFilter.Any())
+            {
+                result = result.Where(x => input.ChargeRoleFilter.Contains(x.BillRole)).ToList();
+            }
+
             if (!string.IsNullOrWhiteSpace(input.SearchText))
             {
                 var lowerSearch = input.SearchText.Trim().ToLower();

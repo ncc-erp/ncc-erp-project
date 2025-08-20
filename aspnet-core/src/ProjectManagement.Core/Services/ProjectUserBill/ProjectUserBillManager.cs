@@ -222,16 +222,16 @@ namespace ProjectManagement.Services.ProjectUserBills
             var result = query.ToList();
             result = result.OrderByDescending(x => x.CreationTime).ToList();
 
-            if (input.ChargeStatusFilter != ChargeStatusFilter.All)
-            {
-                bool isCharge = input.ChargeStatusFilter == ChargeStatusFilter.IsCharge;
-                result = result.Where(x => x.isActive == isCharge).ToList();
-            }
+            // if (input.ChargeStatusFilter != ChargeStatusFilter.All)
+            // {
+            //     bool isCharge = input.ChargeStatusFilter == ChargeStatusFilter.IsCharge;
+            //     result = result.Where(x => x.isActive == isCharge).ToList();
+            // }
 
-            if (input.ChargeRoleFilter != null && input.ChargeRoleFilter.Any())
-            {
-                result = result.Where(x => input.ChargeRoleFilter.Contains(x.BillRole)).ToList();
-            }
+            // if (input.ChargeRoleFilter != null && input.ChargeRoleFilter.Any())
+            // {
+            //     result = result.Where(x => input.ChargeRoleFilter.Contains(x.BillRole)).ToList();
+            // }
 
             if (!string.IsNullOrWhiteSpace(input.SearchText))
             {
@@ -240,8 +240,8 @@ namespace ProjectManagement.Services.ProjectUserBills
                     (!string.IsNullOrEmpty(x.UserName) && x.UserName.ToLower().Contains(lowerSearch)) ||
                     (!string.IsNullOrEmpty(x.EmailAddress) && x.EmailAddress.ToLower().Contains(lowerSearch)) ||
                     (!string.IsNullOrEmpty(x.FullName) && x.FullName.ToLower().Contains(lowerSearch)) ||
-                      (!string.IsNullOrEmpty(x.BillAccountName) && x.BillAccountName.ToLower().Contains(lowerSearch)) ||
-                     (!string.IsNullOrEmpty(x.BillRole) && x.BillRole.ToLower().Contains(lowerSearch)) ||
+                    // (!string.IsNullOrEmpty(x.BillAccountName) && x.BillAccountName.ToLower().Contains(lowerSearch)) ||
+                    // (!string.IsNullOrEmpty(x.BillRole) && x.BillRole.ToLower().Contains(lowerSearch)) ||
                     (!string.IsNullOrEmpty(x.Note) && x.Note.ToLower().Contains(lowerSearch))
                 ).ToList();
             }

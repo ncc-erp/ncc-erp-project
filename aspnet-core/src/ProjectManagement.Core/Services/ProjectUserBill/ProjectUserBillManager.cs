@@ -214,10 +214,37 @@ namespace ProjectManagement.Services.ProjectUserBills
                 });
 
 
-            var result = query.WhereIf(input.ChargeStatusFilter != ChargeStatusFilter.All, x => x.isActive == (input.ChargeStatusFilter == ChargeStatusFilter.IsCharge))
+            /*var result = query.WhereIf(input.ChargeStatusFilter != ChargeStatusFilter.All, x => x.isActive == (input.ChargeStatusFilter == ChargeStatusFilter.IsCharge))
                         .WhereIf(input.ChargeRoleFilter != null && input.ChargeRoleFilter.Any(), x => input.ChargeRoleFilter.Contains(x.BillRole))
                         .ApplySearch(input.SearchText).OrderByDescending(x => x.CreationTime)
-                        .ToList();
+                        .ToList();*/
+
+            var result = query.ToList();
+            result = result.OrderByDescending(x => x.CreationTime).ToList();
+
+            if (input.ChargeStatusFilter != ChargeStatusFilter.All)
+            {
+                bool isCharge = input.ChargeStatusFilter == ChargeStatusFilter.IsCharge;
+                result = result.Where(x => x.isActive == isCharge).ToList();
+            }
+
+            if (input.ChargeRoleFilter != null && input.ChargeRoleFilter.Any())
+            {
+                result = result.Where(x => input.ChargeRoleFilter.Contains(x.BillRole)).ToList();
+            }
+
+            if (!string.IsNullOrWhiteSpace(input.SearchText))
+            {
+                var lowerSearch = input.SearchText.Trim().ToLower();
+                result = result.Where(x =>
+                    (!string.IsNullOrEmpty(x.UserName) && x.UserName.ToLower().Contains(lowerSearch)) ||
+                    (!string.IsNullOrEmpty(x.EmailAddress) && x.EmailAddress.ToLower().Contains(lowerSearch)) ||
+                    (!string.IsNullOrEmpty(x.FullName) && x.FullName.ToLower().Contains(lowerSearch)) ||
+                      (!string.IsNullOrEmpty(x.BillAccountName) && x.BillAccountName.ToLower().Contains(lowerSearch)) ||
+                     (!string.IsNullOrEmpty(x.BillRole) && x.BillRole.ToLower().Contains(lowerSearch)) ||
+                    (!string.IsNullOrEmpty(x.Note) && x.Note.ToLower().Contains(lowerSearch))
+                ).ToList();
+            }
 
             if (input.LinkedResourcesFilter != null && input.LinkedResourcesFilter.Any())
             {

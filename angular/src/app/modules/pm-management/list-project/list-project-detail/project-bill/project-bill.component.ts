@@ -115,6 +115,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   private oldUserBill: projectUserBillDto;
 
   Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_View = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_View;
+  Projects_OutsourcingProjects_ViewBillInfo_OTType = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ViewBillInfo_OTType;
   Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Create = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Create;
   Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Edit = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Edit;
   Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Delete = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Delete;
@@ -159,6 +160,10 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     return this.isGranted(PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_InvoiceSetting_Edit)
   }
 
+  isShowOTType(){
+    return this.isGranted(PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ViewBillInfo_OTType)
+  }
+  
   getRate() {
     this.projectUserBillService.getRate(this.projectId).subscribe(data => {
       this.rateInfo = data.result;

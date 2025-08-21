@@ -680,7 +680,10 @@ namespace ProjectManagement.APIs.ProjectUserBills
             var existingOtTypes = await WorkScope.GetAll<ProjectOtType>()
                 .Where(x => x.ProjectId == input.ProjectId)
                 .ToListAsync();
+
             var inputOtTypes = input.OtTypes ?? new List<OtTypeDto>();
+            var inputIds = new HashSet<long>(inputOtTypes.Where(x => x.Id.HasValue).Select(x => x.Id.Value));
+
             var newOtTypes = inputOtTypes
                 .Where(x => x.Id == null)
                 .Select(x => new ProjectOtType
@@ -691,21 +694,23 @@ namespace ProjectManagement.APIs.ProjectUserBills
                 })
                 .ToList();
 
-            var updateOtTypes = inputOtTypes
-                .Where(x => x.Id != null)
-                .Join(existingOtTypes, input => input.Id, existing => existing.Id, (input, existing) =>
-                {
-                    existing.OtTypeName = input.OtTypeName;
-                    existing.Multiplier = input.Multiplier;
-                    return existing;
-                })
-                .ToList();
+            foreach (var existing in existingOtTypes.Where(e => inputIds.Contains(e.Id)))
+            {
+                var dto = inputOtTypes.First(i => i.Id == existing.Id);
+                existing.OtTypeName = dto.OtTypeName;
+                existing.Multiplier = dto.Multiplier;
+            }
 
             var deleteOtTypes = existingOtTypes
-                .Where(x => !inputOtTypes.Any(i => i.Id == x.Id))
+                .Where(x => !inputIds.Contains(x.Id))
                 .ToList();
-            await WorkScope.InsertRangeAsync(newOtTypes);
-            await WorkScope.UpdateRangeAsync(updateOtTypes);
+
+            if (newOtTypes.Any())
+                await WorkScope.InsertRangeAsync(newOtTypes);
+
+            if (existingOtTypes.Any())
+                await WorkScope.UpdateRangeAsync(existingOtTypes);
+
             foreach (var item in deleteOtTypes)
             {
                 await WorkScope.DeleteAsync(item);

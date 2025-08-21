@@ -236,36 +236,19 @@ namespace ProjectManagement.Services.ProjectUserBills
             if (!string.IsNullOrWhiteSpace(input.SearchText))
             {
                 var lowerSearch = input.SearchText.Trim().ToLower();
-                if (input.IsAccountInfoTab)
-                {
-                    result = result.Where(x =>
-                        (!string.IsNullOrEmpty(x.UserName) && x.UserName.ToLower().Contains(lowerSearch)) ||
-                        (!string.IsNullOrEmpty(x.EmailAddress) && x.EmailAddress.ToLower().Contains(lowerSearch)) ||
-                        (!string.IsNullOrEmpty(x.FullName) && x.FullName.ToLower().Contains(lowerSearch)) ||
-                        (!string.IsNullOrEmpty(x.BillAccountName) && x.BillAccountName.ToLower().Contains(lowerSearch)) ||
-                        (!string.IsNullOrEmpty(x.Note) && x.Note.ToLower().Contains(lowerSearch)) ||
-                        (x.HeadCount.ToString().Contains(lowerSearch)) ||
-                        (x.UserSkills != null && x.UserSkills.Any(us =>
-                            (!string.IsNullOrEmpty(us.SkillName) && us.SkillName.ToLower().Contains(lowerSearch))
-                        ))
-                    ).ToList();
-                }
+                result = result.Where(x =>
+                    (!string.IsNullOrEmpty(x.UserName) && x.UserName.ToLower().Contains(lowerSearch)) ||
+                    (!string.IsNullOrEmpty(x.EmailAddress) && x.EmailAddress.ToLower().Contains(lowerSearch)) ||
+                    (!string.IsNullOrEmpty(x.FullName) && x.FullName.ToLower().Contains(lowerSearch)) ||
+                    (!string.IsNullOrEmpty(x.BillAccountName) && x.BillAccountName.ToLower().Contains(lowerSearch)) ||
+                    (!string.IsNullOrEmpty(x.Note) && x.Note.ToLower().Contains(lowerSearch)) ||
 
-                else
-                {
-                    result = result.Where(x =>
-                        (!string.IsNullOrEmpty(x.UserName) && x.UserName.ToLower().Contains(lowerSearch)) ||
-                        (!string.IsNullOrEmpty(x.EmailAddress) && x.EmailAddress.ToLower().Contains(lowerSearch)) ||
-                        (!string.IsNullOrEmpty(x.FullName) && x.FullName.ToLower().Contains(lowerSearch)) ||
-                        (!string.IsNullOrEmpty(x.BillAccountName) && x.BillAccountName.ToLower().Contains(lowerSearch)) ||
-                        (!string.IsNullOrEmpty(x.Note) && x.Note.ToLower().Contains(lowerSearch)) ||
-                        (x.BillRate.ToString().Contains(lowerSearch)) ||
-                        (x.HeadCount.ToString().Contains(lowerSearch)) ||
-                        (x.UserSkills != null && x.UserSkills.Any(us =>
-                            (!string.IsNullOrEmpty(us.SkillName) && us.SkillName.ToLower().Contains(lowerSearch))
-                        ))
-                    ).ToList();
-                }     
+                    (x.HeadCount.ToString().Contains(lowerSearch)) ||
+                    (!input.IsAccountInfoTab && x.BillRate.ToString().Contains(lowerSearch)) ||
+                    (x.UserSkills != null && x.UserSkills.Any(us =>
+                        !string.IsNullOrEmpty(us.SkillName) && us.SkillName.ToLower().Contains(lowerSearch)
+                    )) 
+                ).ToList();
             }
 
             if (input.LinkedResourcesFilter != null && input.LinkedResourcesFilter.Any())

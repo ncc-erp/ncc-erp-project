@@ -3,12 +3,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ProjectManagement.Migrations
 {
-    public partial class Add_Table_ProjectUserBillOtType : Migration
+    public partial class Add_Table_ProjectOtType : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "ProjectUserBillOtTypes",
+                name: "ProjectOtTypes",
                 columns: table => new
                 {
                     Id = table.Column<long>(nullable: false)
@@ -27,9 +27,9 @@ namespace ProjectManagement.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProjectUserBillOtTypes", x => x.Id);
+                    table.PrimaryKey("PK_ProjectOtTypes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ProjectUserBillOtTypes_Projects_ProjectId",
+                        name: "FK_ProjectOtTypes_Projects_ProjectId",
                         column: x => x.ProjectId,
                         principalTable: "Projects",
                         principalColumn: "Id",
@@ -37,15 +37,15 @@ namespace ProjectManagement.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProjectUserBillOtTypes_ProjectId",
-                table: "ProjectUserBillOtTypes",
+                name: "IX_ProjectOtTypes_ProjectId",
+                table: "ProjectOtTypes",
                 column: "ProjectId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "ProjectUserBillOtTypes");
+                name: "ProjectOtTypes");
         }
     }
 }

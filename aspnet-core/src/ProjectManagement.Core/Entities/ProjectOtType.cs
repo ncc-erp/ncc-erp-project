@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProjectManagement.Entities
 {
-    public class ProjectUserBillOtType : FullAuditedEntity<long>, IMayHaveTenant
+    public class ProjectOtType : FullAuditedEntity<long>, IMayHaveTenant
     {
         public int? TenantId { get; set; }
         [ForeignKey(nameof(ProjectId))]

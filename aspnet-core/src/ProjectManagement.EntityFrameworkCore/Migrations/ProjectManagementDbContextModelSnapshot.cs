@@ -3308,6 +3308,53 @@ namespace ProjectManagement.Migrations
                     b.ToTable("ProjectMilestones");
                 });
 
+            modelBuilder.Entity("ProjectManagement.Entities.ProjectOtType", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("CreatorUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("DeleterUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("LastModifierUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<float>("Multiplier")
+                        .HasColumnType("real");
+
+                    b.Property<string>("OtTypeName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("ProjectId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int?>("TenantId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProjectId");
+
+                    b.ToTable("ProjectOtTypes");
+                });
+
             modelBuilder.Entity("ProjectManagement.Entities.ProjectProcessCriteria", b =>
                 {
                     b.Property<long>("Id")
@@ -3733,53 +3780,6 @@ namespace ProjectManagement.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("ProjectUserBillAccounts");
-                });
-
-            modelBuilder.Entity("ProjectManagement.Entities.ProjectUserBillOtType", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("CreationTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long?>("CreatorUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("DeleterUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime?>("DeletionTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LastModificationTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long?>("LastModifierUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<float>("Multiplier")
-                        .HasColumnType("real");
-
-                    b.Property<string>("OtTypeName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("ProjectId")
-                        .HasColumnType("bigint");
-
-                    b.Property<int?>("TenantId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProjectId");
-
-                    b.ToTable("ProjectUserBillOtTypes");
                 });
 
             modelBuilder.Entity("ProjectManagement.Entities.ResourceRequest", b =>
@@ -4951,6 +4951,15 @@ namespace ProjectManagement.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("ProjectManagement.Entities.ProjectOtType", b =>
+                {
+                    b.HasOne("ProjectManagement.Entities.Project", "Project")
+                        .WithMany("ProjectOtTypes")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("ProjectManagement.Entities.ProjectProcessCriteria", b =>
                 {
                     b.HasOne("ProjectManagement.Entities.ProcessCriteria", "ProcessCriteria")
@@ -5056,15 +5065,6 @@ namespace ProjectManagement.Migrations
                     b.HasOne("ProjectManagement.Authorization.Users.User", "User")
                         .WithMany("ProjectUserBillAccounts")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ProjectManagement.Entities.ProjectUserBillOtType", b =>
-                {
-                    b.HasOne("ProjectManagement.Entities.Project", "Project")
-                        .WithMany("ProjectUserBillOtTypes")
-                        .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

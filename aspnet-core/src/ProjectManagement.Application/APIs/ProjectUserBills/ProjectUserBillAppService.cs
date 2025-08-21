@@ -450,7 +450,7 @@ namespace ProjectManagement.APIs.ProjectUserBills
             }
             if (dto != null)
             {
-                dto.OtTypes = await WorkScope.GetAll<ProjectUserBillOtType>()
+                dto.OtTypes = await WorkScope.GetAll<ProjectOtType>()
                 .Where(p => p.ProjectId == projectId)
                 .Select(p => new OtTypeDto
                 {
@@ -677,13 +677,13 @@ namespace ProjectManagement.APIs.ProjectUserBills
                 project.ParentInvoiceId = input.MainProjectId.Value;
             }
 
-            var existingOtTypes = await WorkScope.GetAll<ProjectUserBillOtType>()
+            var existingOtTypes = await WorkScope.GetAll<ProjectOtType>()
                 .Where(x => x.ProjectId == input.ProjectId)
                 .ToListAsync();
             var inputOtTypes = input.OtTypes ?? new List<OtTypeDto>();
             var newOtTypes = inputOtTypes
                 .Where(x => x.Id == null)
-                .Select(x => new ProjectUserBillOtType
+                .Select(x => new ProjectOtType
                 {
                     ProjectId = input.ProjectId,
                     OtTypeName = x.OtTypeName,

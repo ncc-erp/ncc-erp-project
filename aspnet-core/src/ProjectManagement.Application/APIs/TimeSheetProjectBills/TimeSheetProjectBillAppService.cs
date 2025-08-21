@@ -69,6 +69,15 @@ namespace ProjectManagement.APIs.TimeSheetProjectBills
                              Currency = x.CurrencyId == null ? x.Project.Currency.Name : x.Currency.Name,
                              ChargeType = x.ChargeType == null ? x.Project.ChargeType : x.ChargeType,
                              //ProjectBillInfomation = $"<b>{x.User.FullName}</b> - {x.BillRole} - {x.BillRate} - {x.Note} - {x.ShadowNote} <br>"
+                             OtTypes = x.TimesheetProjectBillOtTypes
+                                        .Select(ot => new TimesheetProjectBillOtTypesDto
+                                        {
+                                            Id = ot.Id,
+                                            TimesheetProjectBillId = ot.TimesheetProjectBillId,
+                                            OtHours = ot.Hours,
+                                            Multiplier = ot.Multiplier,
+                                            OtType = ot.OtType
+                                        }).ToList()
                          });
 
             return await query.ToListAsync();
@@ -186,6 +195,49 @@ namespace ProjectManagement.APIs.TimeSheetProjectBills
                                     Email = x.EmailAddress
                                 }).ToList();
             return users;
+        }
+
+
+        [HttpPost]
+        public async Task CreateOtUser(TimesheetProjectBillOtTypesDto input)
+        {
+            var timesheetProjectBill = await WorkScope.GetAll<TimesheetProjectBill>()
+                .FirstOrDefaultAsync(x => x.Id == input.TimesheetProjectBillId)
+                ?? throw new UserFriendlyException("Not found TimesheetProjectBill");
+
+            var newOtUser = new TimesheetProjectBillOtTypes
+            {
+                TimesheetProjectBillId = input.TimesheetProjectBillId,
+                OtType = input.OtType,
+                Hours = input.OtHours,
+                Multiplier = input.Multiplier
+            };
+
+            await WorkScope.InsertAsync(newOtUser);
+        }
+
+        [HttpPut]
+        public async Task UpdateOtUser (UpdateOtUserDto input)
+        {
+            var timesheetProjectBillOtType = await WorkScope.GetAll<TimesheetProjectBillOtTypes>()
+                .FirstOrDefaultAsync(x => x.Id == input.OtId && x.TimesheetProjectBillId == input.TimesheetProjectBillId)
+                ?? throw new UserFriendlyException("Not found TimesheetProjectBillOtType");
+
+            timesheetProjectBillOtType.OtType = input.OtType;
+            timesheetProjectBillOtType.Hours = input.OtHours;
+            timesheetProjectBillOtType.Multiplier = input.Multiplier;
+
+            await WorkScope.UpdateAsync(timesheetProjectBillOtType);
+        }
+
+        [HttpDelete]
+        public async Task RemoveOtUser(RemoveOtUserDto input)
+        {
+            var timesheetProjectBillOtType = await WorkScope.GetAll<TimesheetProjectBillOtTypes>()
+                .FirstOrDefaultAsync(x => x.Id == input.OtId && x.TimesheetProjectBillId == input.TimesheetProjectBillId)
+                ?? throw new UserFriendlyException("Not found TimesheetProjectBillOtType");
+
+            await WorkScope.DeleteAsync(timesheetProjectBillOtType);
         }
     }
 }

@@ -40,4 +40,21 @@ export class TimeSheetProjectBillService extends BaseApiService {
         params: new HttpParams().set('id', id)
     })
   }
+
+  public createOtUser(billDetail: any): Observable<any> {
+    return this.http.post<any>(this.rootUrl + '/CreateOtUser', billDetail);
+  }
+
+  public updateOtUser(billDetail: any): Observable<any> {
+    return this.http.put<any>(this.rootUrl + '/UpdateOtUser', billDetail);
+  }
+
+  public removeOtUser(req: any): Observable<any> {
+    return this.http.delete<any>(this.rootUrl + '/RemoveOtUser', {
+      params: new HttpParams()
+        .set('TimesheetProjectBillId', req.timesheetProjectBillId.toString())
+        .set('OtId', req.otId.toString())
+    });
+  }
+
 }

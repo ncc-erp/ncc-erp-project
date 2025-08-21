@@ -46,6 +46,11 @@ button:disabled {
     justify-content: flex-end;
 }
 
+.button-action{
+    background: none;
+    border: none;
+}
+
 ::ng-deep #modal-bill-info .fixTableHead table tr th {
     vertical-align: middle !important;
 }

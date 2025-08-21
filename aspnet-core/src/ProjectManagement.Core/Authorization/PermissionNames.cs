@@ -138,9 +138,8 @@ namespace ProjectManagement.Authorization
         public const string Projects_OutsourcingProjects_ViewMyProjectOnly = "Projects.OutsourcingProjects.ViewMyProjectOnly";
         public const string Projects_OutsourcingProjects_ViewResource = "Projects.OutsourcingProjects.ViewResource";
         public const string Projects_OutsourcingProjects_ViewBillInfo = "Projects.OutsourcingProjects.ViewBillInfo";
-        public const string Projects_OutsourcingProjects_ViewBillInfo_OTType = "Projects.OutsourcingProjects.ViewBillInfo.OTType";
-        public const string Projects_OutsourcingProjects_ViewBillInfo_OTType_View = "Projects.OutsourcingProjects.ViewBillInfo.OTType.View";
-        public const string Projects_OutsourcingProjects_ViewBillInfo_OTType_Edit = "Projects.OutsourcingProjects.ViewBillInfo.OTType.Edit";
+        public const string Projects_OutsourcingProjects_ViewBillInfo_ViewOTType = "Projects.OutsourcingProjects.ViewBillInfo.ViewOTType";
+        public const string Projects_OutsourcingProjects_ViewBillInfo_EditOTType = "Projects.OutsourcingProjects.ViewBillInfo.EditOTType";
         public const string Projects_OutsourcingProjects_ViewBillAccount = "Projects.OutsourcingProjects.ViewBillAccount";
         public const string Projects_OutsourcingProjects_Create = "Projects.OutsourcingProjects.Create";
         public const string Projects_OutsourcingProjects_Edit = "Projects.OutsourcingProjects.Edit";
@@ -862,9 +861,8 @@ namespace ProjectManagement.Authorization
                     PermissionNames.Projects_OutsourcingProjects_ViewMyProjectOnly ,
                     PermissionNames.Projects_OutsourcingProjects_ViewResource ,
                      PermissionNames.Projects_OutsourcingProjects_ViewBillInfo ,
-                     PermissionNames.Projects_OutsourcingProjects_ViewBillInfo_OTType ,
-                     PermissionNames.Projects_OutsourcingProjects_ViewBillInfo_OTType_Edit ,
-                     PermissionNames.Projects_OutsourcingProjects_ViewBillInfo_OTType_View ,
+                     PermissionNames.Projects_OutsourcingProjects_ViewBillInfo_ViewOTType ,
+                     PermissionNames.Projects_OutsourcingProjects_ViewBillInfo_EditOTType ,
                     PermissionNames.Projects_OutsourcingProjects_ViewBillAccount ,
                     PermissionNames.Projects_OutsourcingProjects_Create ,
                     PermissionNames.Projects_OutsourcingProjects_Edit ,
@@ -1593,9 +1591,8 @@ namespace ProjectManagement.Authorization
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ViewMyProjectOnly ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View My Project Only" },
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ViewResource ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View Resource" },
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ViewBillInfo ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View Bill Info" },
-                 new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ViewBillInfo_OTType ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "OT Type" },
-                 new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ViewBillInfo_OTType_View ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View OT Type" },
-                 new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ViewBillInfo_OTType_Edit ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit OT Type" },
+                 new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ViewBillInfo_ViewOTType ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View OT Type" },
+                 new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ViewBillInfo_EditOTType ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit OT Type" },
 
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ViewBillAccount ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View Bill Account" },
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_Create, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Create" },
@@ -2538,19 +2535,14 @@ namespace ProjectManagement.Authorization
                                         },
                                         new SystemPermission {
                                             Name = PermissionNames.Projects_OutsourcingProjects_ViewBillInfo, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View Bill Info",
-                                               Childrens = new List < SystemPermission > () {
+                                                Childrens = new List < SystemPermission > () {
                                                     new SystemPermission {
-                                                        Name = PermissionNames.Projects_OutsourcingProjects_ViewBillInfo_OTType, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "OT Type",
-                                                            Childrens = new List < SystemPermission > () {
-                                                                new SystemPermission {
-                                                                    Name = PermissionNames.Projects_OutsourcingProjects_ViewBillInfo_OTType_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View"
-                                                                },
-                                                                new SystemPermission {
-                                                                    Name = PermissionNames.Projects_OutsourcingProjects_ViewBillInfo_OTType_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit"
-                                                                }
-                                                            },
+                                                        Name = PermissionNames.Projects_OutsourcingProjects_ViewBillInfo_ViewOTType, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View OT Type"
                                                     },
-                                               }
+                                                        new SystemPermission {
+                                                            Name = PermissionNames.Projects_OutsourcingProjects_ViewBillInfo_EditOTType, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit OT Type"
+                                                        }
+                                                },
                                         },
                                           new SystemPermission {
                                             Name = PermissionNames.Projects_OutsourcingProjects_ViewBillAccount, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View Bill Account"

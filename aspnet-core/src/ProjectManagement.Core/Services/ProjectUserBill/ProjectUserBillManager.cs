@@ -222,7 +222,7 @@ namespace ProjectManagement.Services.ProjectUserBills
             var result = query.ToList();
             result = result.OrderByDescending(x => x.CreationTime).ToList();
 
-            if (input.ChargeStatusFilter != ChargeStatusFilter.All)
+            if (input.ChargeStatusFilter != null  && input.ChargeStatusFilter  != ChargeStatusFilter.All)
             {
                 bool isCharge = input.ChargeStatusFilter == ChargeStatusFilter.IsCharge;
                 result = result.Where(x => x.isActive == isCharge).ToList();
@@ -240,9 +240,14 @@ namespace ProjectManagement.Services.ProjectUserBills
                     (!string.IsNullOrEmpty(x.UserName) && x.UserName.ToLower().Contains(lowerSearch)) ||
                     (!string.IsNullOrEmpty(x.EmailAddress) && x.EmailAddress.ToLower().Contains(lowerSearch)) ||
                     (!string.IsNullOrEmpty(x.FullName) && x.FullName.ToLower().Contains(lowerSearch)) ||
-                      (!string.IsNullOrEmpty(x.BillAccountName) && x.BillAccountName.ToLower().Contains(lowerSearch)) ||
-                     (!string.IsNullOrEmpty(x.BillRole) && x.BillRole.ToLower().Contains(lowerSearch)) ||
-                    (!string.IsNullOrEmpty(x.Note) && x.Note.ToLower().Contains(lowerSearch))
+                    (!string.IsNullOrEmpty(x.BillAccountName) && x.BillAccountName.ToLower().Contains(lowerSearch)) ||
+                    (!string.IsNullOrEmpty(x.Note) && x.Note.ToLower().Contains(lowerSearch)) ||
+
+                    (x.HeadCount.ToString().Contains(lowerSearch)) ||
+                    (!input.IsAccountInfoTab && x.BillRate.ToString().Contains(lowerSearch)) ||
+                    (x.UserSkills != null && x.UserSkills.Any(us =>
+                        !string.IsNullOrEmpty(us.SkillName) && us.SkillName.ToLower().Contains(lowerSearch)
+                    )) 
                 ).ToList();
             }
 

@@ -79,7 +79,7 @@ export class ProductAccountInfoComponent extends AppComponentBase implements OnI
 
   public selectedLinkedResources: number[] = [];
   public listSelectLinkedResources: optionDto[] = [];
-  public isHideRates:boolean = false;
+  // public isHideRates:boolean = false;
 
   public listAllResource: UserDto[] = [];
   public listAvailableResource: UserDto[] = [];
@@ -335,10 +335,9 @@ export class ProductAccountInfoComponent extends AppComponentBase implements OnI
     this.isLoading = true;
     const body = {
         projectId: this.projectId,
-        chargeStatusFilter: this.selectedIsCharge,
         linkedResourcesFilter: this.selectedLinkedResources,
-        chargeRoleFilter: this.selectedChargeRole,
         searchText: this.searchText,
+        isAccountInfoTab: true
     };
 
     this.projectUserBillService.getAllUserBill(body).pipe(

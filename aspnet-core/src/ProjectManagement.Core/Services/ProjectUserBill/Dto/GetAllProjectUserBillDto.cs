@@ -7,10 +7,11 @@ namespace ProjectManagement.Services.ProjectUserBill.Dto
     public class GetAllProjectUserBillDto
     {
         public long ProjectId { get; set; }
-        public ChargeStatusFilter ChargeStatusFilter { get; set; }
+        public ChargeStatusFilter? ChargeStatusFilter { get; set; }
         public List<long> LinkedResourcesFilter { get; set; }
-        public List<string> ChargeRoleFilter { get; set; }
+        public List<string>? ChargeRoleFilter { get; set; }
         public string SearchText { get; set; }
         public string LinkCv {  get; set; }
+        public bool IsAccountInfoTab { get; set; } = false;
     }
 }

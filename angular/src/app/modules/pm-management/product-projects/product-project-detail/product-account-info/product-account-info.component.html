@@ -25,14 +25,14 @@
                                         <i class="fas fa-search"></i>
                                     </button>
                                 </div>
-                                <input type="text" class="form-control" name="keyword" placeholder="Search by Email, Charge Name/Role, Note,..."
+                                <input type="text" class="form-control" name="keyword" placeholder="Search by Email, Skills, Note, ..."
                                 [hidden]="!showSearchAndFilter"
                                 [(ngModel)]="searchText"
                                     (keydown.space)="$event.stopPropagation()"
                                     (keydown.enter)="searchContext(); $event.stopPropagation()" />
                             </div>
                         </div>
-                        <div class="col-lg-1 mb-2 filter-change-status" (click)="$event.stopPropagation()" [hidden]="!showSearchAndFilter">
+                        <!-- <div class="col-lg-1 mb-2 filter-change-status" (click)="$event.stopPropagation()" [hidden]="!showSearchAndFilter">
                             <div class="input-group" [hidden]="isShowUserBill">
                                 <mat-form-field appearance="outline" style="width: 100%;">
                                     <mat-label>Charge Status</mat-label>
@@ -43,7 +43,7 @@
                                     </mat-select>
                                 </mat-form-field>
                             </div>
-                        </div>
+                        </div> -->
 
                         <div class="col-lg-4 mb-2 filter-link-resource" (click)="$event.stopPropagation()" [hidden]="!showSearchAndFilter">
                             <app-multiple-select
@@ -64,7 +64,7 @@
                             ></i>
                         </div>
 
-                        <div class="mb-2 change-role" (click)="$event.stopPropagation()" [hidden]="!showSearchAndFilter">
+                        <!-- <div class="mb-2 change-role" (click)="$event.stopPropagation()" [hidden]="!showSearchAndFilter">
                             <app-multiple-select-string-value
                             [hidden]="isShowUserBill"
                             #chargeRole
@@ -81,16 +81,16 @@
                             *ngIf="selectedChargeRole.length > 0"
                             (click)="onCancelFilterChargeRole()"
                             ></i>
-                        </div>
+                        </div> -->
 
-                        <div class="col-lg-1 checkbox-hide-rate" (click)="$event.stopPropagation()">
+                        <!-- <div class="col-lg-1 checkbox-hide-rate" (click)="$event.stopPropagation()">
                             <mat-checkbox
                               [hidden]="isShowUserBill"
                               name="cbx-hideRate"
                               [(ngModel)]="isHideRates">
                                 Hide rates
                             </mat-checkbox>
-                        </div>
+                        </div> -->
 
                         <div class="mb-2 ml-3 btn-refresh" style="display: flex; align-items: center;" (click)="$event.stopPropagation()" [hidden]="!showSearchAndFilter">
                             <button class="btn btn-primary" (click)="refresh()" [hidden]="isShowUserBill">
@@ -113,20 +113,20 @@
                                             <i *ngIf="sortColumn !== 'emailAddress'" class="fas fa-sort"></i>
                                         </div>
                                 </th>
-                                <th class="align " (click)="sortData('billAccountName')" style="cursor: pointer;">
+                                <!-- <th class="align " (click)="sortData('billAccountName')" style="cursor: pointer;">
                                     <div class="col-bill-account">
                                         {{ "Charge Name + CV" | localize }}
                                         <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'billAccountName'"></i>
                                         <i *ngIf="sortColumn !== 'billAccountName'" class="fas fa-sort"></i>
                                     </div>
-                                </th>
-                                <th class="align" (click)="sortData('billRole')" style="cursor: pointer;">
+                                </th> -->
+                                <!-- <th class="align" (click)="sortData('billRole')" style="cursor: pointer;">
                                     <div class="col-bill-account">
                                         {{ "Charge Role" | localize }}
                                         <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'billRole'"></i>
                                         <i *ngIf="sortColumn !== 'billRole'" class="fas fa-sort"></i>
                                     </div>
-                                </th>
+                                </th> -->
                                     <th class="align" (click)="orderLinkedResourcesOnTop('linkedResources')" style="cursor: pointer;">
                                         <div class="col-bill-account">
                                             {{ "Linked Resources" | localize }}
@@ -141,18 +141,18 @@
                                 <i *ngIf="sortColumn !== 'headCount'" class="fas fa-sort"></i>
                             </th>
 
-                                <th class="align">Charge Type</th>
-                                <th class="align" (click)="sortData('startTime')" style="cursor: pointer;">
+                                <!-- <th class="align">Charge Type</th> -->
+                                <!-- <th class="align" (click)="sortData('startTime')" style="cursor: pointer;">
                                     <div class="col-bill-account">
                                         {{ "Is Charge" | localize }}
                                         <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'startTime'"></i>
                                         <i *ngIf="sortColumn !== 'startTime'" class="fas fa-sort"></i>
                                     </div>
-                                </th>
-                                <th class="align"  style="cursor: pointer;">{{ "Is Expose" | localize }}
+                                </th> -->
+                                <!-- <th class="align"  style="cursor: pointer;">{{ "Is Expose" | localize }}
 
                                     <i  class="fas fa-sort"></i>
-                                </th>
+                                </th> -->
                                 <th class="align" style="max-width: 300px;">Skills</th>
                                 <th class="align">Note</th>
                                 <th class="align">Action</th>
@@ -210,7 +210,7 @@
                                         </mat-error>
                                     </div>
                                 </td>
-                                <td>
+                                <!-- <td>
                                     <div *ngIf="!bill.createMode">
                                         <div class="d-flex col-12 p-0">
                                             <span class="text-nowrap w-100 text-truncate"
@@ -241,8 +241,8 @@
                                             [controlEl]="accountNameEl">
                                         </abp-validation-summary>
                                     </div>
-                                </td>
-                                <td>
+                                </td> -->
+                                <!-- <td>
                                     <span *ngIf="!bill.createMode">{{bill.billRole}}</span>
 
                                     <div *ngIf="bill.createMode">
@@ -255,7 +255,7 @@
                                         </abp-validation-summary>
 
                                     </div>
-                                </td>
+                                </td> -->
                                 <td style="max-width: 400px;">
                                     <div class="text-right" *ngIf="!bill.createLinkResourceMode">
                                         <button class="btn bg-blue btn-sm"
@@ -381,7 +381,7 @@
                                         <abp-validation-summary [control]="headCount" [controlEl]="headCountEl"></abp-validation-summary>
                                     </div>
                                 </td>
-                                <td class="text-center">
+                                <!-- <td class="text-center">
                                     <span class="text-center" *ngIf="!bill.createMode">
                                         {{bill.chargeTypeName}}</span>
                                     <div *ngIf="bill.createMode" style="width: 100px; " class="input-charge">
@@ -396,8 +396,8 @@
                                             </mat-select>
                                         </mat-form-field>
                                     </div>
-                                </td>
-                                <td class="text-center">
+                                </td> -->
+                                <!-- <td class="text-center">
                                     <span class="text-center">
                                         <mat-checkbox [disabled]="!bill.createMode" [(ngModel)]="bill.isActive">
                                         </mat-checkbox>
@@ -433,8 +433,8 @@
                                             <mat-datepicker #billEndtimepicker></mat-datepicker>
                                         </mat-form-field>
                                     </div>
-                                </td>
-                                <td class="text-center" style="min-width: 100px;">
+                                </td> -->
+                                <!-- <td class="text-center" style="min-width: 100px;">
                                     <span class="text-center">
                                         <mat-checkbox  [disabled]="!permission.isGranted(Projects_ProductProjects_ProjectDetail_TabBillInfo_Edit) || (userBillProcess && !bill.createMode && bill.isExpose === bill.initialIsExpose)"
                                             [(ngModel)]="bill.isExpose"
@@ -450,7 +450,7 @@
                                             <i class="fa fa-times" aria-hidden="true"></i>
                                         </button>
                                     </div>
-                                </td>
+                                </td> -->
                                 <!-- <td class="text-center">
                                         <span class="text-center" *ngIf="!bill.createMode">{{bill.endTime
                                             |date:"dd/MM/yyyy"}}</span>
@@ -569,7 +569,7 @@
                                         class="pt-1 d-flex"
                                         style="flex-direction: column;">
                                         <button class="mb-3 submit-btn"
-                                            [disabled]="!bill?.userId || !bill?.billRole || !bill?.startTime || bill?.headCount<0 || bill?.headCount>1"
+                                            [disabled]="!bill?.userId || bill?.headCount<0 || bill?.headCount>1"
                                             style="background: none; border: none;"
                                             (click)="saveUserBill(bill)">
                                             <i style="color: green; font-size: 30px;"
@@ -622,7 +622,7 @@
                                 Total: {{ filteredUserBillList.length }}
                             </p>
                         </div>
-                        <div class="col-md-5 pagination-control">
+                        <div class="col-md-5 pagination-control d-flex justify-content-end">
                             <pagination-controls autoHide="true" id="billUserInfo"
                                 (pageChange)="userBillCurrentPage = $event">
                             </pagination-controls>

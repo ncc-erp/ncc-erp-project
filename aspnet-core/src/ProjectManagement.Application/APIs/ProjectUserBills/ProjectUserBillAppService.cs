@@ -439,6 +439,13 @@ namespace ProjectManagement.APIs.ProjectUserBills
                                     MainProjectId = x.ParentInvoiceId,
                                     IsMainProjectInvoice = !x.ParentInvoiceId.HasValue,
                                     SubProjects = subProjects,
+                                    OtTypes = x.ProjectOtTypes
+                                        .Select(p => new OtTypeDto
+                                        {
+                                            Id = p.Id,
+                                            OtTypeName = p.OtTypeName,
+                                            Multiplier = p.Multiplier
+                                        }).ToList()
                                 }).FirstOrDefaultAsync();
 
             if (dto != default && !dto.IsMainProjectInvoice)
@@ -447,18 +454,6 @@ namespace ProjectManagement.APIs.ProjectUserBills
                     .Where(s => s.Id == dto.MainProjectId.Value)
                     .Select(s => s.Name)
                     .FirstOrDefault();
-            }
-            if (dto != null)
-            {
-                dto.OtTypes = await WorkScope.GetAll<ProjectOtType>()
-                .Where(p => p.ProjectId == projectId)
-                .Select(p => new OtTypeDto
-                {
-                    Id = p.Id,
-                    OtTypeName = p.OtTypeName,
-                    Multiplier = p.Multiplier
-                })
-                .ToListAsync();
             }
             return dto;
         }

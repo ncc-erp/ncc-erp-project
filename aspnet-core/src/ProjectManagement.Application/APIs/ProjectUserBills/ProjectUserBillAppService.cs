@@ -708,7 +708,7 @@ namespace ProjectManagement.APIs.ProjectUserBills
 
             foreach (var item in deleteOtTypes)
             {
-                await WorkScope.DeleteAsync(item);
+                await WorkScope.SoftDeleteAsync(item);
             }
             await CurrentUnitOfWork.SaveChangesAsync();
         }

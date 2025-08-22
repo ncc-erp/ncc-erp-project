@@ -34,7 +34,7 @@ export class ProductProjectDetailComponent extends AppComponentBase implements O
     this.requestId = this.route.snapshot.queryParamMap.get("id");
     this.projectName = this.route.snapshot.queryParamMap.get("projectName");
     this.projectCode = this.route.snapshot.queryParamMap.get("projectCode");
- 
+
   }
   public routingGeneralTab(){
     this.router.navigate(['product-project-general'],{
@@ -55,10 +55,10 @@ export class ProductProjectDetailComponent extends AppComponentBase implements O
       },
       // replaceUrl: true
     })
-    
+
   }
 
- 
+
   public routingMilestoneTab() {
     this.router.navigate(['product-milestone'], {
       relativeTo: this.route, queryParams: {
@@ -99,7 +99,7 @@ export class ProductProjectDetailComponent extends AppComponentBase implements O
       // replaceUrl: true
     })
   }
-  
+
   public routingDescriptionTab(){
     this.router.navigate(['product-description-tab'],{
       relativeTo: this.route, queryParams:{
@@ -116,6 +116,16 @@ export class ProductProjectDetailComponent extends AppComponentBase implements O
         projectName: this.projectName,
         projectCode:this.projectCode
       }
+    })
+  }
+
+  public routingAccountInforTab(){
+    this.router.navigate(['product-account-info'], {
+      relativeTo: this.route, queryParams: {
+        id: this.requestId,
+        projectName: this.projectName,
+        projectCode: this.projectCode
+      },
     })
   }
 

@@ -16,6 +16,10 @@
                     && permission.isGranted(Projects_ProductProjects_ProjectDetail_TabWeeklyReport_View)" [ngClass]="currentUrl.includes('product-weekly-report')?'active':''" mat-tab-link (click)="routingWeeklyReportTab()">
                         Weekly Report
                     </a>
+
+                    <a [ngClass]="currentUrl.includes('product-account-info')?'active':''" mat-tab-link (click)="routingAccountInforTab()">
+                        Account Info
+                    </a>
                     <!-- <a *ngIf="permission.isGranted(PmManager_CanViewMenu_ProjectChecklist)"  [ngClass]="currentUrl.includes('training-timesheet-tab')?'active':''" mat-tab-link (click)="routingProjectChecklistTab()">
                         Project Checklist
                     </a> -->

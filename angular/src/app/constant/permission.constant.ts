@@ -315,7 +315,7 @@ export const PERMISSIONS_CONSTANT = {
        Projects_ProductProjects_ProjectDetail_TabBillInfo_Create: "Projects.ProductProjects.ProjectDetail.TabBillInfo.Create",
        Projects_ProductProjects_ProjectDetail_TabBillInfo_Edit: "Projects.ProductProjects.ProjectDetail.TabBillInfo.Edit",
        Projects_ProductProjects_ProjectDetail_TabBillInfo_Delete: "Projects.ProductProjects.ProjectDetail.TabBillInfo.Delete",
-
+       Projects_ProductProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount: "Projects.ProductProjects.ProjectDetail.TabBillInfo.UpdateUserToBillAccount",
        Projects_ProductProjects_ProjectDetail_TabTimesheet: "Projects.ProductProjects.ProjectDetail.TabTimesheet",
 
        Projects_ProductProjects_ProjectDetail_TabProjectDescription: "Projects.ProductProjects.ProjectDetail.TabProjectDescription",

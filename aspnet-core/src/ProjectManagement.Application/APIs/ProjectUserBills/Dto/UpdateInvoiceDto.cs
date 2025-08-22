@@ -7,6 +7,6 @@ namespace ProjectManagement.APIs.ProjectUserBills.Dto
     public class UpdateInvoiceDto: BaseInvoiceSettingDto
     {
         public long ProjectId { get; set; }
-        
+        public List<OtTypeDto> OtTypes { get; set; }
     }
 }

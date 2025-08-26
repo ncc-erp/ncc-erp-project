@@ -81,7 +81,7 @@
               <th style="width: 100px;" *ngIf="isShowRate()">Rate<br>({{getCurrencyName()}})</th>
               <th style="width: 50px;">Charge Type</th>
               <th style="width: 150px; white-space: break-spaces;">Working Day</th>
-              <th style="width: 300px; white-space: break-spaces;" *ngIf="data.action === updateAction.UpdateTimesheet">OT Type</th>
+              <th style="width: 300px; white-space: break-spaces;" *ngIf="data.action === updateAction.UpdateTimesheet && isShowOTType()">OT Type</th>
               <th style="width: 50px;">Is Charge</th>
               <th>Note</th>
               <th style="width: 190px;">Action</th>
@@ -234,7 +234,7 @@
               </td>
 
               <!-- OT Type -->
-              <td class="text-center" style="width:300px; " *ngIf="data.action === updateAction.UpdateTimesheet">
+              <td class="text-center" style="width:300px; " *ngIf="data.action === updateAction.UpdateTimesheet && isShowOTType()">
                 <!-- Add button -->
                 <div class="d-flex justify-content-end my-2" *ngIf="!bill.createOtUserMode">
                   <button
@@ -256,8 +256,8 @@
                             <input matInput [(ngModel)]="searchOtType" placeholder="search" (keydown)="$event.stopPropagation()"
                               name="searchOtType" #search>{{search.focus()}}
                           </mat-form-field>
-                          <mat-option *ngFor="let option of otTypeOptions | listFilter : 'otType' : searchOtType" [value]="option.otType">
-                            {{ option.otType }} - ({{ option.multiplier }})
+                          <mat-option *ngFor="let option of otTypeOptions | listFilter : 'otTypeName' : searchOtType" [value]="option.otTypeName">
+                            {{ option.otTypeName }} - ({{ option.multiplier }})
                           </mat-option>
                         </mat-select>
                       </mat-form-field>
@@ -306,8 +306,8 @@
                             <input matInput [(ngModel)]="searchOtType" placeholder="search" (keydown)="$event.stopPropagation()"
                               name="searchOtType" #search>{{search.focus()}}
                           </mat-form-field>
-                          <mat-option *ngFor="let option of otTypeOptions | listFilter : 'otType' : searchOtType" [value]="option.otType">
-                            {{ option.otType }} - ({{ option.multiplier }})
+                          <mat-option *ngFor="let option of otTypeOptions | listFilter : 'otTypeName' : searchOtType" [value]="option.otTypeName">
+                            {{ option.otTypeName }} - ({{ option.multiplier }})
                           </mat-option>
                         </mat-select>
                       </mat-form-field>

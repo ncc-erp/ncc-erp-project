@@ -239,5 +239,20 @@ namespace ProjectManagement.APIs.TimeSheetProjectBills
 
             await WorkScope.DeleteAsync(timesheetProjectBillOtType);
         }
+
+        [HttpGet]
+        public async Task<List<OtTypeDto>> GetProjectOtTypesById (int projectId)
+        {
+            var listProjectOtTypes = await WorkScope.GetAll<ProjectOtType>()
+                .Where(x => x.ProjectId == projectId)
+                .Select(x => new OtTypeDto
+                {
+                    Id = x.Id,
+                    OtTypeName = x.OtTypeName,
+                    Multiplier = x.Multiplier
+                }).ToListAsync();
+
+            return listProjectOtTypes;
+        }
     }
 }

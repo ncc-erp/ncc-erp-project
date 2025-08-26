@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectManagement.EntityFrameworkCore;
 
 namespace ProjectManagement.Migrations
 {
     [DbContext(typeof(ProjectManagementDbContext))]
-    partial class ProjectManagementDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250821071216_Add_Table_ProjectOtType")]
+    partial class Add_Table_ProjectOtType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -4351,53 +4353,6 @@ namespace ProjectManagement.Migrations
                     b.ToTable("TimesheetProjectBills");
                 });
 
-            modelBuilder.Entity("ProjectManagement.Entities.TimesheetProjectBillOtTypes", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("CreationTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long?>("CreatorUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("DeleterUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime?>("DeletionTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal>("Hours")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LastModificationTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long?>("LastModifierUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<float>("Multiplier")
-                        .HasColumnType("real");
-
-                    b.Property<string>("OtType")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("TimesheetProjectBillId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TimesheetProjectBillId");
-
-                    b.ToTable("TimesheetProjectBillOtTypes");
-                });
-
             modelBuilder.Entity("ProjectManagement.Entities.UserSkill", b =>
                 {
                     b.Property<long>("Id")
@@ -5197,15 +5152,6 @@ namespace ProjectManagement.Migrations
                     b.HasOne("ProjectManagement.Authorization.Users.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ProjectManagement.Entities.TimesheetProjectBillOtTypes", b =>
-                {
-                    b.HasOne("ProjectManagement.Entities.TimesheetProjectBill", "TimesheetProjectBill")
-                        .WithMany()
-                        .HasForeignKey("TimesheetProjectBillId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

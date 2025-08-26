@@ -57,4 +57,10 @@ export class TimeSheetProjectBillService extends BaseApiService {
     });
   }
 
+  public getProjectOtTypesById(projectId: any): Observable<any> {
+    return this.http.get<any>(this.rootUrl + '/GetProjectOtTypesById', {
+      params: { projectId: projectId }
+    });
+  }
+
 }

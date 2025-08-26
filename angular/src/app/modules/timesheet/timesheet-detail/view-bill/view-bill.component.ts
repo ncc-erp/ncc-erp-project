@@ -31,19 +31,14 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
   public chargeTypeList = [{name:'Daily', value: 0}, {name:'Monthly', value: 1}, {name:'Hourly', value: 2}];
   public updateAction = UpdateAction
 
-  otTypeOptions = [
-    { otType: 'OT weekday',       multiplier: 1.5 },
-    { otType: 'OT holiday',       multiplier: 2.0 },
-    { otType: 'OT night shift',   multiplier: 1.8 },
-    { otType: 'OT special event', multiplier: 2.5 }
-  ];
+  otTypeOptions = []
 
   Timesheets_TimesheetDetail_UpdateBill_Edit = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_UpdateBill_Edit
   Timesheets_TimesheetDetail_UpdateBill_SetDone = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_UpdateBill_SetDone
   Timesheets_TimesheetDetail_ViewBillRate = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_ViewBillRate
   Timesheets_TimesheetDetail_UpdateBill = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_UpdateBill
   Timesheets_TimesheetDetail_UpdateTimsheet = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_UpdateTimsheet
-  Timesheets_TimesheetDetail_RemoveAccount = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_RemoveAccount  
+  Timesheets_TimesheetDetail_RemoveAccount = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_RemoveAccount
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any, public dialogRef: MatDialogRef<ViewBillComponent>, private userService: UserService,
     private timesheetProjectService: TimesheetProjectService,
@@ -53,6 +48,7 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
 
   ngOnInit(): void {
     this.billDetail = this.data.billDetail
+    this.getProjectOtTypesById(this.data.billInfo.projectId);
   }
 
   public addOtUser(billDetail: TimesheetProjectBill) {
@@ -75,7 +71,7 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
   }
 
   public saveOtUser(billDetail: TimesheetProjectBill): void {
-    const ot = this.otTypeOptions.find(ot => ot.otType === billDetail.otType);
+    const ot = this.otTypeOptions.find(ot => ot.otTypeName === billDetail.otType);
     if (!ot) {
       abp.notify.error("Invalid OT type");
       return;
@@ -83,7 +79,7 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
 
     const newOtUser = {
       timesheetProjectBillId: billDetail.id,
-      otType: ot.otType,
+      otType: ot.otTypeName,
       otHours: billDetail.otHours,
       multiplier: ot.multiplier,
     };
@@ -111,7 +107,7 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
   }
 
   updateOtUser(billDetail: TimesheetProjectBill, ot: any) {
-    const otType = this.otTypeOptions.find(opt => opt.otType === ot.otType);
+    const otType = this.otTypeOptions.find(opt => opt.otTypeName === ot.otType);
     if (!ot.otType || ot.otHours == null) {
       return;
     }
@@ -119,7 +115,7 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
     const updatePayload = {
       otId: ot.id,
       timesheetProjectBillId: billDetail.id,
-      otType: otType.otType,
+      otType: otType.otTypeName,
       otHours: ot.otHours,
       multiplier: otType.multiplier,
     };
@@ -138,6 +134,21 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
           this.otTypeProcess = false;
         }
       });
+  }
+
+  getProjectOtTypesById(projectId: any) {
+    this.timesheetProjectBillService.getProjectOtTypesById(projectId)
+      .subscribe((res: any) => {
+        if (res.success) {
+          this.otTypeOptions = res.result;
+        } else {
+          abp.notify.error(res.message || "Failed to fetch OT types");
+        }
+      });
+  }
+
+  isShowOTType(){
+    return this.isGranted(PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ViewBillInfo_ViewOTType)
   }
 
   public removeOtUser(billDetail: TimesheetProjectBill, ot: any) {

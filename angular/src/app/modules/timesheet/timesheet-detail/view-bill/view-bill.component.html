@@ -240,7 +240,7 @@
                   <button
                     class="btn bg-blue btn-sm"
                     (click)="addOtUser(bill)" style="cursor: pointer; font-size: 10px;"
-                    [disabled]="bill.isEditing || otTypeProcess || data.billInfo.isComplete">
+                    [disabled]=" otTypeProcess || data.billInfo.isComplete">
                     <i class="fa fa-plus fa-s m-0"></i>
                   </button>
                 </div>
@@ -257,7 +257,7 @@
                               name="searchOtType" #search>{{search.focus()}}
                           </mat-form-field>
                           <mat-option *ngFor="let option of otTypeOptions | listFilter : 'otTypeName' : searchOtType" [value]="option.otTypeName">
-                            {{ option.otTypeName }} - ({{ option.multiplier }})
+                            {{ option.otTypeName }} ({{ option.multiplier }})
                           </mat-option>
                         </mat-select>
                       </mat-form-field>
@@ -295,7 +295,7 @@
                 <div class=" mb-1" *ngIf="bill.otTypes?.length">
                   <div *ngFor="let ot of bill.otTypes" class="me-1 my-2 d-flex justify-content-between">
                     <div class="otUser_lable" *ngIf="!ot.isEditing">
-                      {{ ot.otType }}: {{ ot.otHours }}h
+                      {{ ot.otType }} ({{ ot.multiplier }}): {{ ot.otHours }}h
                     </div>
 
                     <div class="flex-grow-1" *ngIf="ot.isEditing" >
@@ -324,7 +324,7 @@
                         <button class="button-action " [disabled]="bill.createOtUserMode || otTypeProcess || data.billInfo.isComplete" (click)="editOtUser(ot)">
                           <i class="fa fa-pencil-alt"></i>
                         </button>
-                        <button class="button-action " [disabled]="bill.createOtUserMode || bill.isEditing || otTypeProcess || data.billInfo.isComplete"
+                        <button class="button-action " [disabled]="bill.createOtUserMode || otTypeProcess || data.billInfo.isComplete"
                           (click)="removeOtUser(bill,ot)">
                           <i class="fa fa-times"></i>
                         </button>

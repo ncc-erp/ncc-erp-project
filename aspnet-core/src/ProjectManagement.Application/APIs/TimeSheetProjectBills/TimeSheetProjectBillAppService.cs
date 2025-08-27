@@ -73,10 +73,11 @@ namespace ProjectManagement.APIs.TimeSheetProjectBills
                                         .Select(ot => new TimesheetProjectBillOtTypesDto
                                         {
                                             Id = ot.Id,
+                                            ProjectOtTypeId = ot.ProjectOtTypeId,
                                             TimesheetProjectBillId = ot.TimesheetProjectBillId,
                                             OtHours = ot.Hours,
-                                            Multiplier = ot.Multiplier,
-                                            OtType = ot.OtType
+                                            Multiplier = ot.ProjectOtType.Multiplier,
+                                            OtType = ot.ProjectOtType.OtTypeName
                                         }).ToList()
                          });
 
@@ -198,38 +199,6 @@ namespace ProjectManagement.APIs.TimeSheetProjectBills
         }
 
 
-        [HttpPost]
-        public async Task CreateOtUser(TimesheetProjectBillOtTypesDto input)
-        {
-            var timesheetProjectBill = await WorkScope.GetAll<TimesheetProjectBill>()
-                .FirstOrDefaultAsync(x => x.Id == input.TimesheetProjectBillId)
-                ?? throw new UserFriendlyException("Not found TimesheetProjectBill");
-
-            var newOtUser = new TimesheetProjectBillOtTypes
-            {
-                TimesheetProjectBillId = input.TimesheetProjectBillId,
-                OtType = input.OtType,
-                Hours = input.OtHours,
-                Multiplier = input.Multiplier
-            };
-
-            await WorkScope.InsertAsync(newOtUser);
-        }
-
-        [HttpPut]
-        public async Task UpdateOtUser (UpdateOtUserDto input)
-        {
-            var timesheetProjectBillOtType = await WorkScope.GetAll<TimesheetProjectBillOtTypes>()
-                .FirstOrDefaultAsync(x => x.Id == input.OtId && x.TimesheetProjectBillId == input.TimesheetProjectBillId)
-                ?? throw new UserFriendlyException("Not found TimesheetProjectBillOtType");
-
-            timesheetProjectBillOtType.OtType = input.OtType;
-            timesheetProjectBillOtType.Hours = input.OtHours;
-            timesheetProjectBillOtType.Multiplier = input.Multiplier;
-
-            await WorkScope.UpdateAsync(timesheetProjectBillOtType);
-        }
-
         [HttpDelete]
         public async Task RemoveOtUser(RemoveOtUserDto input)
         {
@@ -238,6 +207,38 @@ namespace ProjectManagement.APIs.TimeSheetProjectBills
                 ?? throw new UserFriendlyException("Not found TimesheetProjectBillOtType");
 
             await WorkScope.DeleteAsync(timesheetProjectBillOtType);
+        }
+
+        [HttpPost]
+        public async Task CreateOrUpdateOtUser(CreateOrUpdateOtUserDto input)
+        {
+            var timesheetProjectBill = await WorkScope.GetAll<TimesheetProjectBill>()
+                .FirstOrDefaultAsync(x => x.Id == input.TimesheetProjectBillId)
+                ?? throw new UserFriendlyException("Not found TimesheetProjectBill");
+
+            if (input.Mode == OtUserActionMode.Update)
+            {
+                var entity = await WorkScope.GetAll<TimesheetProjectBillOtTypes>()
+                    .FirstOrDefaultAsync(x => x.Id == input.TimesheetProjectBillOtTypesId && x.TimesheetProjectBillId == input.TimesheetProjectBillId)
+                    ?? throw new UserFriendlyException("Not found TimesheetProjectBillOtType");
+
+                entity.ProjectOtTypeId = input.ProjectOtTypeId;
+                entity.Hours = input.Hours;
+
+                await WorkScope.UpdateAsync(entity);
+            }
+            else
+            {
+                var entity = new TimesheetProjectBillOtTypes
+                {
+                    TimesheetProjectBillId = input.TimesheetProjectBillId,
+                    ProjectOtTypeId = input.ProjectOtTypeId,
+                    Hours = input.Hours
+                };
+
+                await WorkScope.InsertAsync(entity);
+            }
+
         }
 
         [HttpGet]

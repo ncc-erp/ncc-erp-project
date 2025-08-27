@@ -77,14 +77,19 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
       return;
     }
 
+    const existed = billDetail.otTypes?.some(x => x.projectOtTypeId === ot.id);
+    if (existed) {
+      abp.notify.error("This OT type already exists for this bill");
+      return;
+    }
     const newOtUser = {
       timesheetProjectBillId: billDetail.id,
-      otType: ot.otTypeName,
-      otHours: billDetail.otHours,
-      multiplier: ot.multiplier,
+      projectOtTypeId: ot.id,
+      hours: billDetail.otHours,
+      mode: 0
     };
 
-    this.timesheetProjectBillService.createOtUser(newOtUser)
+    this.timesheetProjectBillService.createOrUpdateOtUser(newOtUser)
       .pipe(catchError(this.timesheetProjectBillService.handleError))
       .subscribe(() => {
         abp.notify.success("OT user added successfully");
@@ -112,16 +117,22 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
       return;
     }
 
+    const existed = billDetail.otTypes?.some(x => x.projectOtTypeId === otType.id && x.id !== ot.id);
+    if (existed) {
+      abp.notify.error("This OT type already exists for this bill");
+      return;
+    }
+
     const updatePayload = {
-      otId: ot.id,
+      timesheetProjectBillOtTypesId: ot.id,
       timesheetProjectBillId: billDetail.id,
-      otType: otType.otTypeName,
-      otHours: ot.otHours,
-      multiplier: otType.multiplier,
+      projectOtTypeId: otType.id,
+      hours: ot.otHours,
+      mode: 1
     };
 
     this.otTypeProcess = true;
-    this.timesheetProjectBillService.updateOtUser(updatePayload)
+    this.timesheetProjectBillService.createOrUpdateOtUser(updatePayload)
       .subscribe({
         next: (res: any) => {
           abp.notify.success("OT user updated successfully");
@@ -175,19 +186,13 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
 
   onHoursChange(target: any, event: any) {
     let inputValue = event.target.value;
-    if (inputValue.includes('.')) {
-      const [intPart, decimalPart] = inputValue.split('.');
-      if (decimalPart.length > 2) {
-        inputValue = `${intPart}.${decimalPart.slice(0, 2)}`;
-        event.target.value = inputValue;
-      }
-    }
     let value = parseFloat(inputValue);
     if (isNaN(value)) {
       value = null;
     } else {
       if (value < 0) value = 0;
       value = parseFloat(value.toFixed(2));
+      event.target.value = value;
     }
     if ('Hours' in target) {
       target.Hours = value;

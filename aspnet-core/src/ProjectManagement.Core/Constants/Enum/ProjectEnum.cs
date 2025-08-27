@@ -368,5 +368,11 @@
             Support = 1,
             Training = 2
         }
+
+        public enum OtUserActionMode
+        {
+            Create = 0,
+            Update = 1
+        }
     }
 }

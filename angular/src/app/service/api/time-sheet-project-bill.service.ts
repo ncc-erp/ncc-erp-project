@@ -41,13 +41,6 @@ export class TimeSheetProjectBillService extends BaseApiService {
     })
   }
 
-  public createOtUser(billDetail: any): Observable<any> {
-    return this.http.post<any>(this.rootUrl + '/CreateOtUser', billDetail);
-  }
-
-  public updateOtUser(billDetail: any): Observable<any> {
-    return this.http.put<any>(this.rootUrl + '/UpdateOtUser', billDetail);
-  }
 
   public removeOtUser(req: any): Observable<any> {
     return this.http.delete<any>(this.rootUrl + '/RemoveOtUser', {
@@ -63,4 +56,7 @@ export class TimeSheetProjectBillService extends BaseApiService {
     });
   }
 
+  public createOrUpdateOtUser(billDetail: any): Observable<any> {
+    return this.http.post<any>(this.rootUrl + '/CreateOrUpdateOtUser', billDetail);
+  }
 }

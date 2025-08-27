@@ -113,6 +113,7 @@ export class TimesheetProjectBill {
     isEditing: boolean
     isDisable: boolean
     otType?: string;
+    otTypes?:any[];
     otHours?: number;
     createOtUserMode?: boolean;
 }

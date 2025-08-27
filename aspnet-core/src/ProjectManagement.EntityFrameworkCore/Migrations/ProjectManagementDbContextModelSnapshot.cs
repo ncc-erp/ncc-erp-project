@@ -4382,16 +4382,15 @@ namespace ProjectManagement.Migrations
                     b.Property<long?>("LastModifierUserId")
                         .HasColumnType("bigint");
 
-                    b.Property<float>("Multiplier")
-                        .HasColumnType("real");
-
-                    b.Property<string>("OtType")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<long>("ProjectOtTypeId")
+                        .HasColumnType("bigint");
 
                     b.Property<long>("TimesheetProjectBillId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ProjectOtTypeId");
 
                     b.HasIndex("TimesheetProjectBillId");
 
@@ -5203,8 +5202,14 @@ namespace ProjectManagement.Migrations
 
             modelBuilder.Entity("ProjectManagement.Entities.TimesheetProjectBillOtTypes", b =>
                 {
-                    b.HasOne("ProjectManagement.Entities.TimesheetProjectBill", "TimesheetProjectBill")
+                    b.HasOne("ProjectManagement.Entities.ProjectOtType", "ProjectOtType")
                         .WithMany()
+                        .HasForeignKey("ProjectOtTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProjectManagement.Entities.TimesheetProjectBill", "TimesheetProjectBill")
+                        .WithMany("TimesheetProjectBillOtTypes")
                         .HasForeignKey("TimesheetProjectBillId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

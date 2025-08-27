@@ -11,5 +11,6 @@ namespace ProjectManagement.APIs.TimeSheetProjectBills.Dto
         public string OtType { get; set; }
         public decimal OtHours { get; set; }
         public float Multiplier { get; set; }
+        public long ProjectOtTypeId { get; set; }
     }
 }

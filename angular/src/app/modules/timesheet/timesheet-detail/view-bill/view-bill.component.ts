@@ -191,7 +191,6 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
       value = null;
     } else {
       if (value < 0) value = 0;
-      value = parseFloat(value.toFixed(2));
       event.target.value = value;
     }
     if ('Hours' in target) {

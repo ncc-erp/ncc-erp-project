@@ -319,7 +319,7 @@
                       </mat-form-field>
                     </div>
 
-                    <div class="otUser_action" >
+                    <div class="otUser_action" *ngIf="canEditOTType()">
                       <div *ngIf="!ot.isEditing">
                         <button class="button-action " [disabled]="bill.createOtUserMode || otTypeProcess || data.billInfo.isComplete" (click)="editOtUser(ot)">
                           <i class="fa fa-pencil-alt"></i>

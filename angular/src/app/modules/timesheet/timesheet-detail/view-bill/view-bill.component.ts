@@ -39,6 +39,8 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
   Timesheets_TimesheetDetail_UpdateBill = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_UpdateBill
   Timesheets_TimesheetDetail_UpdateTimsheet = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_UpdateTimsheet
   Timesheets_TimesheetDetail_RemoveAccount = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_RemoveAccount
+  Projects_OutsourcingProjects_ViewBillInfo_ViewOTType = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ViewBillInfo_ViewOTType
+  Projects_OutsourcingProjects_ViewBillInfo_EditOTType = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ViewBillInfo_EditOTType
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any, public dialogRef: MatDialogRef<ViewBillComponent>, private userService: UserService,
     private timesheetProjectService: TimesheetProjectService,
@@ -161,6 +163,11 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
   isShowOTType(){
     return this.isGranted(PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ViewBillInfo_ViewOTType)
   }
+
+  canEditOTType(){
+    return this.isGranted(PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ViewBillInfo_EditOTType)
+  }
+
 
   public removeOtUser(billDetail: TimesheetProjectBill, ot: any) {
     const req = {

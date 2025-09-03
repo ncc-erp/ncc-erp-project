@@ -303,9 +303,9 @@
                       <div class="col-2" *ngIf="isGranted(Timesheets_TimesheetDetail_ViewBillRate)"><label
                           class="ml-1">{{bill.roundAmount | number: "1.0":"en-US" }} {{item.currency}}</label></div>
 
-                      <div class="text-right note" [ngClass]="isGranted(Timesheets_TimesheetDetail_ViewBillRate)?'col-2 ml-4':'col-5'"
-                        style="word-break: break-all; white-space: pre-line;">
-                        <div title="{{bill.description?bill.description:''}}" class="no-expand-text">
+                      <div class="text-left note" [ngClass]="isGranted(Timesheets_TimesheetDetail_ViewBillRate)?'col-2 ml-4':'col-5'"
+                        style=" white-space: pre-line;">
+                        <div title="{{bill.description?bill.description:''}}" PrjResizeContent [collapseLine]="1">
                           {{bill.description?bill.description:''}}
                         </div>
                       </div>

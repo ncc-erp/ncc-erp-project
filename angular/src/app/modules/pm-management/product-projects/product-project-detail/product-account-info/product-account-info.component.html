@@ -1,4 +1,5 @@
-<section class="content px-2 mt-2">
+<section class="content px-2 mt-2"
+    *ngIf="permission.isGranted(Projects_ProductProjects_ProjectDetail_TabBillInfo_View)">
     <div class="container-fluid">
         <div class="card mt-2" [busy] = isLoading>
             <mat-expansion-panel [expanded]="!isShowUserBill">

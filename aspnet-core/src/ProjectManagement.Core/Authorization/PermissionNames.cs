@@ -343,6 +343,7 @@ namespace ProjectManagement.Authorization
         public const string Projects_ProductProjects_ProjectDetail_TabBillInfo_Create = "Projects.ProductProjects.ProjectDetail.TabBillInfo.Create";
         public const string Projects_ProductProjects_ProjectDetail_TabBillInfo_Edit = "Projects.ProductProjects.ProjectDetail.TabBillInfo.Edit";
         public const string Projects_ProductProjects_ProjectDetail_TabBillInfo_Delete = "Projects.ProductProjects.ProjectDetail.TabBillInfo.Delete";
+        public const string Projects_ProductProjects_ProjectDetail_TabBillInfo_Note_Edit = "Projects.ProductProjects.ProjectDetail.TabBillInfo.Note_Edit";
         public const string Projects_ProductProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount = "Projects.ProductProjects.ProjectDetail.TabBillInfo.UpdateUserToBillAccount";
 
         public const string Projects_ProductProjects_ProjectDetail_TabTimesheet = "Projects.ProductProjects.ProjectDetail.TabTimesheet";
@@ -1062,6 +1063,7 @@ namespace ProjectManagement.Authorization
                     PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo_Create ,
                     PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo_Edit ,
                     PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo_Delete ,
+                    PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo_Note_Edit ,
                     PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount,
 
                     PermissionNames.Projects_ProductProjects_ProjectDetail_TabTimesheet ,
@@ -1784,11 +1786,12 @@ namespace ProjectManagement.Authorization
                  new SystemPermission{ Name =  PermissionNames.Projects_ProductProjects_ProjectDetail_TabWeeklyReport_ProjectHealthCriteria_ChangeStatus, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Change Status" },
                  new SystemPermission{ Name =  PermissionNames.Projects_ProductProjects_ProjectDetail_TabWeeklyReport_ProjectHealthCriteria_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit" },
 
-                 new SystemPermission{ Name =  PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Tab Bill Info" },
+                 new SystemPermission{ Name =  PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Tab Account Info" },
                  new SystemPermission{ Name =  PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View" },
                  new SystemPermission{ Name =  PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo_Create, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Create" },
                  new SystemPermission{ Name =  PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit" },
                  new SystemPermission{ Name =  PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo_Delete, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Delete" },
+                 new SystemPermission{ Name =  PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo_Note_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit Note" },
                  new SystemPermission{ Name =  PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Update User To BillAccount" },
 
                  new SystemPermission{ Name =  PermissionNames.Projects_ProductProjects_ProjectDetail_TabTimesheet, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Tab Timesheet" },
@@ -3003,6 +3006,29 @@ namespace ProjectManagement.Authorization
                                                             }
                                                     },
                                                 },
+                                        },
+                                        new SystemPermission {
+                                            Name = PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Tab Account Info",
+                                                Childrens = new List < SystemPermission > () {
+                                                    new SystemPermission {
+                                                        Name = PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "view"
+                                                    },
+                                                    new SystemPermission {
+                                                        Name = PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo_Create, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Create"
+                                                    },
+                                                    new SystemPermission {
+                                                        Name = PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit"
+                                                    },
+                                                    new SystemPermission {
+                                                        Name = PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo_Delete, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Delete"
+                                                    },
+                                                     new SystemPermission {
+                                                        Name = PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo_Note_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit Note"
+                                                    },
+                                                    new SystemPermission {
+                                                        Name = PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Update User To Bill Account"
+                                                    }
+                                                }
                                         },
 
                                         new SystemPermission {

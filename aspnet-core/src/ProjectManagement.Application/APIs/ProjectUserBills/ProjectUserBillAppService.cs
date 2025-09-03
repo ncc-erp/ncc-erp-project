@@ -524,7 +524,7 @@ namespace ProjectManagement.APIs.ProjectUserBills
         }
 
         [HttpPut]
-        [AbpAuthorize(PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Note_Edit)]
+        [AbpAuthorize(PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Note_Edit, PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo_Note_Edit)]
         public async Task<UpdateNoteDto> UpdateNote(UpdateNoteDto input)
         {
             var projectUserBill = await WorkScope.GetAsync<ProjectUserBill>(input.Id);

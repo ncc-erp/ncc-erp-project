@@ -1,5 +1,6 @@
 ﻿using Abp.Authorization;
 using Abp.Collections.Extensions;
+using Abp.Domain.Entities;
 using Abp.UI;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -438,6 +439,13 @@ namespace ProjectManagement.APIs.ProjectUserBills
                                     MainProjectId = x.ParentInvoiceId,
                                     IsMainProjectInvoice = !x.ParentInvoiceId.HasValue,
                                     SubProjects = subProjects,
+                                    OtTypes = x.ProjectOtTypes
+                                        .Select(p => new OtTypeDto
+                                        {
+                                            Id = p.Id,
+                                            OtTypeName = p.OtTypeName,
+                                            Multiplier = p.Multiplier
+                                        }).ToList()
                                 }).FirstOrDefaultAsync();
 
             if (dto != default && !dto.IsMainProjectInvoice)
@@ -447,7 +455,6 @@ namespace ProjectManagement.APIs.ProjectUserBills
                     .Select(s => s.Name)
                     .FirstOrDefault();
             }
-
             return dto;
         }
 
@@ -620,7 +627,7 @@ namespace ProjectManagement.APIs.ProjectUserBills
 
         [HttpPost]
         [AbpAuthorize(PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_InvoiceSetting_Edit)]
-        public void UpdateInvoiceSetting(UpdateInvoiceDto input)
+        public async Task UpdateInvoiceSetting(UpdateInvoiceDto input)
         {
 
             var project = WorkScope.Get<Project>(input.ProjectId);
@@ -665,7 +672,45 @@ namespace ProjectManagement.APIs.ProjectUserBills
                 project.ParentInvoiceId = input.MainProjectId.Value;
             }
 
-            CurrentUnitOfWork.SaveChanges();
+            var existingOtTypes = await WorkScope.GetAll<ProjectOtType>()
+                .Where(x => x.ProjectId == input.ProjectId)
+                .ToListAsync();
+
+            var inputOtTypes = input.OtTypes ?? new List<OtTypeDto>();
+            var inputIds = new HashSet<long>(inputOtTypes.Where(x => x.Id.HasValue).Select(x => x.Id.Value));
+
+            var newOtTypes = inputOtTypes
+                .Where(x => x.Id == null)
+                .Select(x => new ProjectOtType
+                {
+                    ProjectId = input.ProjectId,
+                    OtTypeName = x.OtTypeName,
+                    Multiplier = x.Multiplier
+                })
+                .ToList();
+
+            foreach (var existing in existingOtTypes.Where(e => inputIds.Contains(e.Id)))
+            {
+                var dto = inputOtTypes.First(i => i.Id == existing.Id);
+                existing.OtTypeName = dto.OtTypeName;
+                existing.Multiplier = dto.Multiplier;
+            }
+
+            var deleteOtTypes = existingOtTypes
+                .Where(x => !inputIds.Contains(x.Id))
+                .ToList();
+
+            if (newOtTypes.Any())
+                await WorkScope.InsertRangeAsync(newOtTypes);
+
+            if (existingOtTypes.Any())
+                await WorkScope.UpdateRangeAsync(existingOtTypes);
+
+            foreach (var item in deleteOtTypes)
+            {
+                await WorkScope.SoftDeleteAsync(item);
+            }
+            await CurrentUnitOfWork.SaveChangesAsync();
         }
 
         [HttpGet]

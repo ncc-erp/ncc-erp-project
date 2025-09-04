@@ -536,7 +536,7 @@
                                 <td style="white-space: break-spaces; max-width: 100%;">
                                     <div class="col-12 p-0 d-flex justify-content-between" style="max-width: 100%;">
                                         <p class="mb-0 p-0">{{ bill.note || " " }}</p>
-                                        <button *ngIf="!bill.createMode"
+                                        <button *ngIf="!bill.createMode && permission.isGranted(Projects_ProductProjects_ProjectDetail_TabBillInfo_Note_Edit)" 
                                             class="btn btn-sm py-0 d-flex align-items-start"
                                             [disabled]="userBillProcess"
                                             [matMenuTriggerFor]="menu3">
@@ -559,7 +559,7 @@
                                               <button mat-menu-item (click)="editUserBill(bill)">
                                                 <i class="fas fa-pencil-alt"></i> Edit
                                             </button>
-                                            <button mat-menu-item (click)="removeUserBill(bill)">
+                                            <button mat-menu-item (click)="removeUserBill(bill)" *ngIf="permission.isGranted(Projects_ProductProjects_ProjectDetail_TabBillInfo_Delete)">
                                                 <i class="fas fa-trash"></i> Delete
                                             </button>
                                         </mat-menu>

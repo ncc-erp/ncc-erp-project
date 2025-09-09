@@ -259,8 +259,9 @@
                                 <td style="max-width: 400px;">
                                     <div class="text-right" *ngIf="!bill.createLinkResourceMode">
                                         <button class="btn bg-blue btn-sm"
+                                            *ngIf="permission.isGranted(Projects_ProductProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount)"
                                             (click)="addLinkResource(bill)"
-                                            [disabled]="bill.createMode || userBillProcess || !permission.isGranted(Projects_ProductProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount)"
+                                            [disabled]="bill.createMode || userBillProcess "
                                             style="cursor: pointer; font-size: 10px;">
                                             <i class="fa fa-plus fa-s m-0"></i>
                                         </button>

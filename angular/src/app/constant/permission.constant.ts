@@ -109,8 +109,6 @@ export const PERMISSIONS_CONSTANT = {
        Projects_OutsourcingProjects_ViewAllProject: "Projects.OutsourcingProjects.ViewAllProject",
        Projects_OutsourcingProjects_ViewMyProjectOnly: "Projects.OutsourcingProjects.ViewMyProjectOnly",
        Projects_OutsourcingProjects_ViewBillInfo: "Projects.OutsourcingProjects.ViewBillInfo",
-       Projects_OutsourcingProjects_ViewBillInfo_ViewOTType: "Projects.OutsourcingProjects.ViewBillInfo.ViewOTType",
-       Projects_OutsourcingProjects_ViewBillInfo_EditOTType: "Projects.OutsourcingProjects.ViewBillInfo.EditOTType",
        Projects_OutsourcingProjects_ViewResource: "Projects.OutsourcingProjects.ViewResource",
        Projects_OutsourcingProjects_ViewBillAccount: "Projects.OutsourcingProjects.ViewBillAccount",
        Projects_OutsourcingProjects_Create: "Projects.OutsourcingProjects.Create",
@@ -209,6 +207,8 @@ export const PERMISSIONS_CONSTANT = {
        Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Delete: "Projects.OutsourcingProjects.ProjectDetail.TabBillInfo.Delete",
        Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_InvoiceSetting_View: "Projects.OutsourcingProjects.ProjectDetail.TabBillInfo.InvoiceSetting_View",
        Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_InvoiceSetting_Edit: "Projects.OutsourcingProjects.ProjectDetail.TabBillInfo.InvoiceSetting_Edit",
+       Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_OTType_View: "Projects.OutsourcingProjects.ProjectDetail.TabBillInfo.OTType_View",
+       Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_OTType_Edit: "Projects.OutsourcingProjects.ProjectDetail.TabBillInfo.OTType_Edit",
        Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Rate_View: "Projects.OutsourcingProjects.ProjectDetail.TabBillInfo.Rate_View",
        Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Note_Edit: "Projects.OutsourcingProjects.ProjectDetail.TabBillInfo.Note_Edit",
 

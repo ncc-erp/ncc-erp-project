@@ -138,8 +138,6 @@ namespace ProjectManagement.Authorization
         public const string Projects_OutsourcingProjects_ViewMyProjectOnly = "Projects.OutsourcingProjects.ViewMyProjectOnly";
         public const string Projects_OutsourcingProjects_ViewResource = "Projects.OutsourcingProjects.ViewResource";
         public const string Projects_OutsourcingProjects_ViewBillInfo = "Projects.OutsourcingProjects.ViewBillInfo";
-        public const string Projects_OutsourcingProjects_ViewBillInfo_ViewOTType = "Projects.OutsourcingProjects.ViewBillInfo.ViewOTType";
-        public const string Projects_OutsourcingProjects_ViewBillInfo_EditOTType = "Projects.OutsourcingProjects.ViewBillInfo.EditOTType";
         public const string Projects_OutsourcingProjects_ViewBillAccount = "Projects.OutsourcingProjects.ViewBillAccount";
         public const string Projects_OutsourcingProjects_Create = "Projects.OutsourcingProjects.Create";
         public const string Projects_OutsourcingProjects_Edit = "Projects.OutsourcingProjects.Edit";
@@ -238,6 +236,8 @@ namespace ProjectManagement.Authorization
         public const string Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Create = "Projects.OutsourcingProjects.ProjectDetail.TabBillInfo.Create";
         public const string Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Edit = "Projects.OutsourcingProjects.ProjectDetail.TabBillInfo.Edit";
         public const string Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Delete = "Projects.OutsourcingProjects.ProjectDetail.TabBillInfo.Delete";
+        public const string Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_OTType_View = "Projects.OutsourcingProjects.ProjectDetail.TabBillInfo.OTType_View";
+        public const string Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_OTType_Edit = "Projects.OutsourcingProjects.ProjectDetail.TabBillInfo.OTType_Edit";
         public const string Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_InvoiceSetting_View = "Projects.OutsourcingProjects.ProjectDetail.TabBillInfo.InvoiceSetting_View";
         public const string Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_InvoiceSetting_Edit = "Projects.OutsourcingProjects.ProjectDetail.TabBillInfo.InvoiceSetting_Edit";
         public const string Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Rate_View = "Projects.OutsourcingProjects.ProjectDetail.TabBillInfo.Rate_View";
@@ -861,9 +861,7 @@ namespace ProjectManagement.Authorization
                     PermissionNames.Projects_OutsourcingProjects_ViewAllProject ,
                     PermissionNames.Projects_OutsourcingProjects_ViewMyProjectOnly ,
                     PermissionNames.Projects_OutsourcingProjects_ViewResource ,
-                     PermissionNames.Projects_OutsourcingProjects_ViewBillInfo ,
-                     PermissionNames.Projects_OutsourcingProjects_ViewBillInfo_ViewOTType ,
-                     PermissionNames.Projects_OutsourcingProjects_ViewBillInfo_EditOTType ,
+                    PermissionNames.Projects_OutsourcingProjects_ViewBillInfo ,
                     PermissionNames.Projects_OutsourcingProjects_ViewBillAccount ,
                     PermissionNames.Projects_OutsourcingProjects_Create ,
                     PermissionNames.Projects_OutsourcingProjects_Edit ,
@@ -960,6 +958,8 @@ namespace ProjectManagement.Authorization
                     PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Create ,
                     PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Edit ,
                     PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Delete ,
+                    PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_OTType_View ,
+                    PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_OTType_Edit ,
                     PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_InvoiceSetting_View ,
                     PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_InvoiceSetting_Edit ,
                     PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Rate_View ,
@@ -1593,9 +1593,6 @@ namespace ProjectManagement.Authorization
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ViewMyProjectOnly ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View My Project Only" },
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ViewResource ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View Resource" },
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ViewBillInfo ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View Bill Info" },
-                 new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ViewBillInfo_ViewOTType ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View OT Type" },
-                 new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ViewBillInfo_EditOTType ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit OT Type" },
-
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ViewBillAccount ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View Bill Account" },
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_Create, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Create" },
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit" },
@@ -1693,6 +1690,8 @@ namespace ProjectManagement.Authorization
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Create, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Create" },
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit" },
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Delete, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Delete" },
+                 new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_OTType_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "OTType: View" },
+                 new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_OTType_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "OTType: Edit" },
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_InvoiceSetting_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "InvoiceSetting: View" },
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_InvoiceSetting_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "InvoiceSetting: Edit" },
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Rate_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View Rate" },
@@ -2537,15 +2536,7 @@ namespace ProjectManagement.Authorization
                                             Name = PermissionNames.Projects_OutsourcingProjects_ViewResource, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View Resource"
                                         },
                                         new SystemPermission {
-                                            Name = PermissionNames.Projects_OutsourcingProjects_ViewBillInfo, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View Bill Info",
-                                                Childrens = new List < SystemPermission > () {
-                                                    new SystemPermission {
-                                                        Name = PermissionNames.Projects_OutsourcingProjects_ViewBillInfo_ViewOTType, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View OT Type"
-                                                    },
-                                                        new SystemPermission {
-                                                            Name = PermissionNames.Projects_OutsourcingProjects_ViewBillInfo_EditOTType, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit OT Type"
-                                                        }
-                                                },
+                                            Name = PermissionNames.Projects_OutsourcingProjects_ViewBillInfo, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View Bill Info"
                                         },
                                           new SystemPermission {
                                             Name = PermissionNames.Projects_OutsourcingProjects_ViewBillAccount, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View Bill Account"
@@ -2829,6 +2820,12 @@ namespace ProjectManagement.Authorization
                                                                 },
                                                                 new SystemPermission {
                                                                     Name = PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Delete, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Delete"
+                                                                },
+                                                                 new SystemPermission {
+                                                                    Name = PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_OTType_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "OTType: View"
+                                                                },
+                                                                new SystemPermission {
+                                                                    Name = PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_OTType_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "OTType: Edit"
                                                                 },
                                                                 new SystemPermission {
                                                                     Name = PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_InvoiceSetting_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "InvoiceSetting: View"

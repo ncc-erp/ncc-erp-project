@@ -34,7 +34,8 @@ export class InvoiceSettingDialogComponent extends AppComponentBase implements O
 
   subscription: Subscription[] = [];
   
-  Projects_OutsourcingProjects_ViewBillInfo_EditOTType = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ViewBillInfo_EditOTType;
+  Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_OTType_View = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_OTType_View;
+  Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_OTType_Edit = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_OTType_Edit;
 
   constructor(
     injector: Injector,
@@ -53,7 +54,7 @@ export class InvoiceSettingDialogComponent extends AppComponentBase implements O
   }
 
   canEditOTType(){
-    return this.isGranted(PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ViewBillInfo_EditOTType)
+    return this.isGranted(PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_OTType_Edit) && this.isGranted(PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_OTType_View) 
   }
 
   getAvailableProjectForSettingInvoice(){

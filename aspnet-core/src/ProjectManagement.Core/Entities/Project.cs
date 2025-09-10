@@ -46,6 +46,6 @@ namespace ProjectManagement.Entities
         public bool IsRequiredWeeklyReport { get; set; }
         public string ListProjectCodes { get; set; }
         public virtual ICollection<ProjectUserBillAccount> ProjectUserBillAccounts { get; set; }
-
+        public virtual ICollection<ProjectOtType> ProjectOtTypes { get; set; }
     }
 }

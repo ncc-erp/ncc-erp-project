@@ -18,7 +18,14 @@ namespace ProjectManagement.APIs.ProjectUserBills.Dto
         public List<IdNameDto> SubProjects { get; set; }
         public List<string> SubProjectNames => SubProjects.Select(s => s.Name).ToList();
         public List<long> SubProjectIds => SubProjects.Select(s => s.Id).ToList();
-
-
+        public List<OtTypeDto> OtTypes { get; set; }
     }
+
+    public class OtTypeDto
+    {
+        public long? Id { get; set; }
+        public string OtTypeName { get; set; }
+        public float Multiplier { get; set; }
+    }
+
 }

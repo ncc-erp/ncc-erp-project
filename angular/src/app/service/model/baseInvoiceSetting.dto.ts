@@ -4,4 +4,5 @@ export interface BaseInvoiceSettingDto {
     isMainProjectInvoice: boolean,
     mainProjectId: number;
     subProjectIds: number[]
+    otTypes?: { id?: number, otTypeName: string, multiplier: number }[]
 }

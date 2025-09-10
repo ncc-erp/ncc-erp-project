@@ -207,6 +207,8 @@ export const PERMISSIONS_CONSTANT = {
        Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Delete: "Projects.OutsourcingProjects.ProjectDetail.TabBillInfo.Delete",
        Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_InvoiceSetting_View: "Projects.OutsourcingProjects.ProjectDetail.TabBillInfo.InvoiceSetting_View",
        Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_InvoiceSetting_Edit: "Projects.OutsourcingProjects.ProjectDetail.TabBillInfo.InvoiceSetting_Edit",
+       Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_OTType_View: "Projects.OutsourcingProjects.ProjectDetail.TabBillInfo.OTType_View",
+       Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_OTType_Edit: "Projects.OutsourcingProjects.ProjectDetail.TabBillInfo.OTType_Edit",
        Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Rate_View: "Projects.OutsourcingProjects.ProjectDetail.TabBillInfo.Rate_View",
        Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Note_Edit: "Projects.OutsourcingProjects.ProjectDetail.TabBillInfo.Note_Edit",
 
@@ -315,6 +317,7 @@ export const PERMISSIONS_CONSTANT = {
        Projects_ProductProjects_ProjectDetail_TabBillInfo_Create: "Projects.ProductProjects.ProjectDetail.TabBillInfo.Create",
        Projects_ProductProjects_ProjectDetail_TabBillInfo_Edit: "Projects.ProductProjects.ProjectDetail.TabBillInfo.Edit",
        Projects_ProductProjects_ProjectDetail_TabBillInfo_Delete: "Projects.ProductProjects.ProjectDetail.TabBillInfo.Delete",
+       Projects_ProductProjects_ProjectDetail_TabBillInfo_Note_Edit: "Projects.ProductProjects.ProjectDetail.TabBillInfo.Note_Edit",
        Projects_ProductProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount: "Projects.ProductProjects.ProjectDetail.TabBillInfo.UpdateUserToBillAccount",
        Projects_ProductProjects_ProjectDetail_TabTimesheet: "Projects.ProductProjects.ProjectDetail.TabTimesheet",
 

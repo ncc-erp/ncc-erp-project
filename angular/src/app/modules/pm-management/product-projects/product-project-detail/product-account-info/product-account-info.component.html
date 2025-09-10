@@ -1,4 +1,5 @@
-<section class="content px-2 mt-2">
+<section class="content px-2 mt-2"
+    *ngIf="permission.isGranted(Projects_ProductProjects_ProjectDetail_TabBillInfo_View)">
     <div class="container-fluid">
         <div class="card mt-2" [busy] = isLoading>
             <mat-expansion-panel [expanded]="!isShowUserBill">
@@ -258,8 +259,9 @@
                                 <td style="max-width: 400px;">
                                     <div class="text-right" *ngIf="!bill.createLinkResourceMode">
                                         <button class="btn bg-blue btn-sm"
+                                            *ngIf="permission.isGranted(Projects_ProductProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount)"
                                             (click)="addLinkResource(bill)"
-                                            [disabled]="bill.createMode || userBillProcess || !permission.isGranted(Projects_ProductProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount)"
+                                            [disabled]="bill.createMode || userBillProcess "
                                             style="cursor: pointer; font-size: 10px;">
                                             <i class="fa fa-plus fa-s m-0"></i>
                                         </button>
@@ -352,13 +354,13 @@
                                                     <div class="col-6 align-items-end d-flex">
                                                         <button *ngIf="!editingRows[bill.id] || !editingRows[bill.id][i]?.contribute"
                                                             (click)="edit(bill.id, i, 'contribute', resource.contribute)"
-                                                            [disabled]="bill.createMode || userBillProcess"
+                                                            [disabled]="bill.createMode || userBillProcess  || !permission.isGranted(Projects_ProductProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount)"
                                                             class="col-6 button-action d-flex justify-content-end">
                                                             <i class="fa fa-pencil-alt"></i>
                                                         </button>
                                                         <button *ngIf="!editingRows[bill.id] || !editingRows[bill.id][i]?.contribute"
                                                             (click)="removeLinkResource(resource.id, bill.id)"
-                                                            [disabled]="bill.createMode || userBillProcess"
+                                                            [disabled]="bill.createMode || userBillProcess || !permission.isGranted(Projects_ProductProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount)"
                                                             class="col-6 button-action d-flex justify-content-end">
                                                             <i class="fa fa-times"></i>
                                                         </button>
@@ -535,7 +537,7 @@
                                 <td style="white-space: break-spaces; max-width: 100%;">
                                     <div class="col-12 p-0 d-flex justify-content-between" style="max-width: 100%;">
                                         <p class="mb-0 p-0">{{ bill.note || " " }}</p>
-                                        <button *ngIf="!bill.createMode"
+                                        <button *ngIf="!bill.createMode && permission.isGranted(Projects_ProductProjects_ProjectDetail_TabBillInfo_Note_Edit)"
                                             class="btn btn-sm py-0 d-flex align-items-start"
                                             [disabled]="userBillProcess"
                                             [matMenuTriggerFor]="menu3">
@@ -551,14 +553,14 @@
                                 </td>
                                 <td class="text-center">
                                     <div *ngIf="!bill.createMode">
-                                            <button *ngIf="permission.isGranted(Projects_ProductProjects_ProjectDetail_TabBillInfo_Edit)"
+                                            <button *ngIf="permission.isGranted(Projects_ProductProjects_ProjectDetail_TabBillInfo_Edit) || permission.isGranted(Projects_ProductProjects_ProjectDetail_TabBillInfo_Delete)"
                                               [disabled]="userBillProcess" mat-button [matMenuTriggerFor]="actionMenu"><i class="fas fa-bars fa-lg"></i></button>
                                         <!-- Define the mat-menu and its content -->
                                         <mat-menu #actionMenu="matMenu">
-                                              <button mat-menu-item (click)="editUserBill(bill)">
+                                              <button mat-menu-item (click)="editUserBill(bill)" *ngIf="permission.isGranted(Projects_ProductProjects_ProjectDetail_TabBillInfo_Edit)">
                                                 <i class="fas fa-pencil-alt"></i> Edit
                                             </button>
-                                            <button mat-menu-item (click)="removeUserBill(bill)">
+                                            <button mat-menu-item (click)="removeUserBill(bill)" *ngIf="permission.isGranted(Projects_ProductProjects_ProjectDetail_TabBillInfo_Delete)">
                                                 <i class="fas fa-trash"></i> Delete
                                             </button>
                                         </mat-menu>

@@ -39,6 +39,10 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
   Timesheets_TimesheetDetail_UpdateBill = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_UpdateBill
   Timesheets_TimesheetDetail_UpdateTimsheet = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_UpdateTimsheet
   Timesheets_TimesheetDetail_RemoveAccount = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_RemoveAccount
+  Timesheets_TimesheetDetail_OTType_View = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_OTType_View
+  Timesheets_TimesheetDetail_OTType_Edit = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_OTType_Edit
+  Timesheets_TimesheetDetail_OTType_Delete = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_OTType_Delete
+
   Projects_OutsourcingProjects_ViewBillInfo_ViewOTType = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ViewBillInfo_ViewOTType
   Projects_OutsourcingProjects_ViewBillInfo_EditOTType = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ViewBillInfo_EditOTType
 
@@ -161,11 +165,15 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
   }
 
   isShowOTType(){
-    return this.isGranted(PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ViewBillInfo_ViewOTType)
+    return this.isGranted(this.Timesheets_TimesheetDetail_OTType_View)
   }
 
   canEditOTType(){
-    return this.isGranted(PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ViewBillInfo_EditOTType)
+    return this.isGranted(this.Timesheets_TimesheetDetail_OTType_Edit)
+  }
+
+  canDeleteOTType(){
+    return this.isGranted(this.Timesheets_TimesheetDetail_OTType_Delete)
   }
 
 

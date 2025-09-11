@@ -236,7 +236,7 @@
               <!-- OT Type -->
               <td class="text-center" style="width:300px; " *ngIf="data.action === updateAction.UpdateTimesheet && isShowOTType()">
                 <!-- Add button -->
-                <div class="d-flex justify-content-end my-2" *ngIf="!bill.createOtUserMode">
+                <div class="d-flex justify-content-end my-2" *ngIf="!bill.createOtUserMode && canEditOTType()">
                   <button
                     class="btn bg-blue btn-sm"
                     (click)="addOtUser(bill)" style="cursor: pointer; font-size: 10px;"
@@ -319,12 +319,12 @@
                       </mat-form-field>
                     </div>
 
-                    <div class="otUser_action" *ngIf="canEditOTType()">
+                    <div class="otUser_action" >
                       <div *ngIf="!ot.isEditing">
-                        <button class="button-action " [disabled]="bill.createOtUserMode || otTypeProcess || data.billInfo.isComplete" (click)="editOtUser(ot)">
+                        <button *ngIf="canEditOTType()" class="button-action " [disabled]="bill.createOtUserMode || otTypeProcess || data.billInfo.isComplete" (click)="editOtUser(ot)">
                           <i class="fa fa-pencil-alt"></i>
                         </button>
-                        <button class="button-action " [disabled]="bill.createOtUserMode || otTypeProcess || data.billInfo.isComplete"
+                        <button *ngIf="canDeleteOTType()" class="button-action " [disabled]="bill.createOtUserMode || otTypeProcess || data.billInfo.isComplete"
                           (click)="removeOtUser(bill,ot)">
                           <i class="fa fa-times"></i>
                         </button>

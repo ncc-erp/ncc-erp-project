@@ -658,6 +658,11 @@ namespace ProjectManagement.Authorization
         public const string Timesheets_TimesheetDetail_ActiveProject = "Timesheets.TimesheetDetail.ActiveProject";
         public const string Timesheets_TimesheetDetail_DeActivateProject = "Timesheets.TimesheetDetail.DeActivateProject";
 
+        public const string Timesheets_TimesheetDetail_OTType = "Timesheets.TimesheetDetail.OTType";
+        public const string Timesheets_TimesheetDetail_OTType_View = "Timesheets.TimesheetDetail.OTType.View";
+        public const string Timesheets_TimesheetDetail_OTType_Edit = "Timesheets.TimesheetDetail.OTType.Edit";
+        public const string Timesheets_TimesheetDetail_OTType_Delete = "Timesheets.TimesheetDetail.OTType.Delete";
+
         #endregion Timesheet
 
         #region Criteria
@@ -1378,6 +1383,11 @@ namespace ProjectManagement.Authorization
 
                     PermissionNames.Timesheets_TimesheetDetail_ActiveProject,
                     PermissionNames.Timesheets_TimesheetDetail_DeActivateProject,
+
+                    PermissionNames.Timesheets_TimesheetDetail_OTType,
+                    PermissionNames.Timesheets_TimesheetDetail_OTType_View ,
+                    PermissionNames.Timesheets_TimesheetDetail_OTType_Edit ,
+                    PermissionNames.Timesheets_TimesheetDetail_OTType_Delete ,
 
                     #endregion Timesheet
 
@@ -2111,6 +2121,11 @@ namespace ProjectManagement.Authorization
 
                  new SystemPermission{ Name =  PermissionNames.Timesheets_TimesheetDetail_ActiveProject ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Active Timesheet Project"},
                  new SystemPermission{ Name =  PermissionNames.Timesheets_TimesheetDetail_DeActivateProject ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "DeActive Timesheet Project"},
+
+                 new SystemPermission{ Name =  PermissionNames.Timesheets_TimesheetDetail_OTType ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "OT type"},
+                 new SystemPermission{ Name =  PermissionNames.Timesheets_TimesheetDetail_OTType_View ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View"},
+                 new SystemPermission{ Name =  PermissionNames.Timesheets_TimesheetDetail_OTType_Edit ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit"},
+                 new SystemPermission{ Name =  PermissionNames.Timesheets_TimesheetDetail_OTType_Delete ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Delete"},
 
                  #endregion Timesheet
 
@@ -3946,6 +3961,23 @@ namespace ProjectManagement.Authorization
                                         new SystemPermission {
                                             Name = PermissionNames.Timesheets_TimesheetDetail_DeActivateProject, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "DeActivate Timesheet Project"
                                         },
+
+                                        new SystemPermission
+                                        {
+                                             Name = PermissionNames.Timesheets_TimesheetDetail_OTType, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "OT type",
+                                             Childrens = new List < SystemPermission > ()
+                                             {
+                                                 new SystemPermission {
+                                                    Name = PermissionNames.Timesheets_TimesheetDetail_OTType_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View"
+                                                },
+                                                new SystemPermission {
+                                                    Name = PermissionNames.Timesheets_TimesheetDetail_OTType_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit"
+                                                },
+                                                new SystemPermission {
+                                                    Name = PermissionNames.Timesheets_TimesheetDetail_OTType_Delete, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Delete"
+                                                }
+                                             }
+                                        }
                                     }
                             },
                         },

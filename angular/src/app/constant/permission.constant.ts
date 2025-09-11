@@ -629,6 +629,11 @@ export const PERMISSIONS_CONSTANT = {
        Timesheets_TimesheetDetail_UpdateProjectCodes: 'Timesheets.TimesheetDetail.UpdateProjectCodes',
        Timesheets_TimesheetDetail_UpdateTimsheet: "Timesheets.TimesheetDetail.UpdateTimsheet",
        Timesheets_TimesheetDetail_RemoveAccount: "Timesheets.TimesheetDetail.RemoveAccount",
+
+       Timesheets_TimesheetDetail_OTType : "Timesheets.TimesheetDetail.OTType",
+       Timesheets_TimesheetDetail_OTType_View : "Timesheets.TimesheetDetail.OTType.View",
+       Timesheets_TimesheetDetail_OTType_Edit : "Timesheets.TimesheetDetail.OTType.Edit",
+       Timesheets_TimesheetDetail_OTType_Delete : "Timesheets.TimesheetDetail.OTType.Delete",
        // #endregion
 
        // #region Criteria

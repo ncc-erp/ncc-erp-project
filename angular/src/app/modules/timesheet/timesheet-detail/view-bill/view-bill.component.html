@@ -266,7 +266,7 @@
                       <mat-form-field style="width: 100%;" appearance="outline">
                         <input type="number" matInput placeholder="Hours" step="0.1" min="0" [(ngModel)]="bill.otHours" name="otHours"
                            (input)="onHoursChange(bill,$event)" (keydown)="($event.key === '-') ? $event.preventDefault() : null"
-                          (keydown.enter)="$event.preventDefault(); saveOtUser(bill)">
+                          (keydown.enter)="$event.preventDefault(); saveTimesheetBillOt(bill)">
                       </mat-form-field>
                     </div>
 
@@ -276,7 +276,7 @@
                         class="mb-1 submit-btn"
                         style="background: none; border: none;"
                         [disabled]="!bill.otType || !bill.otHours"
-                        (click)="saveOtUser(bill)">
+                        (click)="saveTimesheetBillOt(bill)">
                         <i
                           [style.color]="bill.otType && bill.otHours ? 'green' : 'gray'"
                           class="fas fa-check fa-2x"></i>
@@ -315,7 +315,7 @@
                       <mat-form-field style="width: 100%;" appearance="outline">
                         <input type="number" matInput placeholder="Hours" step="0.1" min="0" [(ngModel)]="ot.otHours" name="otHours"
                           #otHours="ngModel" required (input)="onHoursChange(ot, $event)" (keydown)="($event.key === '-') ? $event.preventDefault() : null"
-                          (keydown.enter)="$event.preventDefault(); updateOtUser(bill, ot)">
+                          (keydown.enter)="$event.preventDefault(); updateTimesheetBillOt(bill, ot)">
                       </mat-form-field>
                     </div>
 
@@ -325,7 +325,7 @@
                           <i class="fa fa-pencil-alt"></i>
                         </button>
                         <button *ngIf="canDeleteOTType()" class="button-action " [disabled]="bill.createOtUserMode || otTypeProcess || data.billInfo.isComplete"
-                          (click)="removeOtUser(bill,ot)">
+                          (click)="removeTimesheetBillOt(bill,ot)">
                           <i class="fa fa-times"></i>
                         </button>
                       </div>
@@ -333,7 +333,7 @@
                       <div *ngIf="ot.isEditing">
                         <!-- Check -->
                         <button class="mb-1 submit-btn" style="background: none; border: none;" [disabled]="!ot.otHours || !ot.otType"
-                          (click)="updateOtUser(bill, ot)">
+                          (click)="updateTimesheetBillOt(bill, ot)">
                           <i [style.color]="ot.otHours && ot.otType ? 'green' : 'gray'" class="fas fa-check fa-2x"></i>
                         </button>
 

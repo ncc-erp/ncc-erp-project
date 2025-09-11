@@ -369,7 +369,7 @@
             Training = 2
         }
 
-        public enum OtUserActionMode
+        public enum TimesheetBillOtActionMode
         {
             Create = 0,
             Update = 1

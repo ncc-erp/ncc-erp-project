@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ProjectManagement.APIs.TimeSheetProjectBills.Dto
 {
-    public class RemoveOtUserDto
+    public class RemoveTimesheetOtDto
     {
         public int TimesheetProjectBillId { get; set; }
         public int OtId { get; set; }

@@ -76,7 +76,7 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
     this.otTypeProcess = false;
   }
 
-  public saveOtUser(billDetail: TimesheetProjectBill): void {
+  public saveTimesheetBillOt(billDetail: TimesheetProjectBill): void {
     const ot = this.otTypeOptions.find(ot => ot.otTypeName === billDetail.otType);
     if (!ot) {
       abp.notify.error("Invalid OT type");
@@ -95,7 +95,7 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
       mode: 0
     };
 
-    this.timesheetProjectBillService.createOrUpdateOtUser(newOtUser)
+    this.timesheetProjectBillService.createOrUpdateTimesheetBillOt(newOtUser)
       .pipe(catchError(this.timesheetProjectBillService.handleError))
       .subscribe(() => {
         abp.notify.success("OT user added successfully");
@@ -117,7 +117,7 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
     this.otTypeProcess = true;
   }
 
-  updateOtUser(billDetail: TimesheetProjectBill, ot: any) {
+  updateTimesheetBillOt(billDetail: TimesheetProjectBill, ot: any) {
     const otType = this.otTypeOptions.find(opt => opt.otTypeName === ot.otType);
     if (!ot.otType || ot.otHours == null) {
       return;
@@ -138,7 +138,7 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
     };
 
     this.otTypeProcess = true;
-    this.timesheetProjectBillService.createOrUpdateOtUser(updatePayload)
+    this.timesheetProjectBillService.createOrUpdateTimesheetBillOt(updatePayload)
       .subscribe({
         next: (res: any) => {
           abp.notify.success("OT user updated successfully");
@@ -177,7 +177,7 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
   }
 
 
-  public removeOtUser(billDetail: TimesheetProjectBill, ot: any) {
+  public removeTimesheetBillOt(billDetail: TimesheetProjectBill, ot: any) {
     const req = {
       otId: ot.id,
       timesheetProjectBillId: billDetail.id,
@@ -188,7 +188,7 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
       (result: boolean) => {
         if (result) {
           this.isLoading = true;
-          this.timesheetProjectBillService.removeOtUser(req).pipe(catchError(this.timesheetProjectBillService.handleError)).subscribe(data => {
+          this.timesheetProjectBillService.removeTimesheetBillOt(req).pipe(catchError(this.timesheetProjectBillService.handleError)).subscribe(data => {
             abp.notify.success(`OT user Removed Successfully!`)
             this.getProjectBill();
           }, () => {

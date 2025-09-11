@@ -200,7 +200,7 @@ namespace ProjectManagement.APIs.TimeSheetProjectBills
 
 
         [HttpDelete]
-        public async Task RemoveOtUser(RemoveOtUserDto input)
+        public async Task RemoveTimesheetBillOt(RemoveTimesheetOtDto input)
         {
             var timesheetProjectBillOtType = await WorkScope.GetAll<TimesheetProjectBillOtTypes>()
                 .FirstOrDefaultAsync(x => x.Id == input.OtId && x.TimesheetProjectBillId == input.TimesheetProjectBillId)
@@ -210,13 +210,13 @@ namespace ProjectManagement.APIs.TimeSheetProjectBills
         }
 
         [HttpPost]
-        public async Task CreateOrUpdateOtUser(CreateOrUpdateOtUserDto input)
+        public async Task CreateOrUpdateTimesheetBillOt(CreateOrUpdateTimesheetBillOtDto input)
         {
             var timesheetProjectBill = await WorkScope.GetAll<TimesheetProjectBill>()
                 .FirstOrDefaultAsync(x => x.Id == input.TimesheetProjectBillId)
                 ?? throw new UserFriendlyException("Not found TimesheetProjectBill");
 
-            if (input.Mode == OtUserActionMode.Update)
+            if (input.Mode == TimesheetBillOtActionMode.Update)
             {
                 var entity = await WorkScope.GetAll<TimesheetProjectBillOtTypes>()
                     .FirstOrDefaultAsync(x => x.Id == input.TimesheetProjectBillOtTypesId && x.TimesheetProjectBillId == input.TimesheetProjectBillId)

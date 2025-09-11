@@ -57,19 +57,19 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
     this.getProjectOtTypesById(this.data.billInfo.projectId);
   }
 
-  public addOtUser(billDetail: TimesheetProjectBill) {
-    billDetail.createOtUserMode = true;
+  public addTimesheetBillOt(billDetail: TimesheetProjectBill) {
+    billDetail.createTimesheetBillOtMode = true;
     this.otTypeProcess = true;
   }
 
-  public cancelCreateOtUser(billDetail: TimesheetProjectBill): void {
-    billDetail.createOtUserMode = false;
+  public cancelCreateTimesheetBillOt(billDetail: TimesheetProjectBill): void {
+    billDetail.createTimesheetBillOtMode = false;
     billDetail.otType = null;
     billDetail.otHours = null;
     this.otTypeProcess = false;
   }
 
-  public cancelEditeOtUser(ot: any) {
+  public cancelEditTimesheetBillOt(ot: any) {
     ot.isEditing = false;
     ot.otHours = ot.originalHours;
     ot.otType = ot.originalType;
@@ -88,28 +88,28 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
       abp.notify.error("This OT type already exists for this bill");
       return;
     }
-    const newOtUser = {
+    const newTimesheetBillOt = {
       timesheetProjectBillId: billDetail.id,
       projectOtTypeId: ot.id,
       hours: billDetail.otHours,
       mode: 0
     };
 
-    this.timesheetProjectBillService.createOrUpdateTimesheetBillOt(newOtUser)
+    this.timesheetProjectBillService.createOrUpdateTimesheetBillOt(newTimesheetBillOt)
       .pipe(catchError(this.timesheetProjectBillService.handleError))
       .subscribe(() => {
         abp.notify.success("OT user added successfully");
-        billDetail.createOtUserMode = false;
+        billDetail.createTimesheetBillOtMode = false;
         billDetail.otType = null;
         billDetail.otHours = null;
         this.otTypeProcess = false;
         this.getProjectBill();
       }, () => {
-        billDetail.createOtUserMode = true;
+        billDetail.createTimesheetBillOtMode = true;
       });
   }
 
-  public editOtUser(ot: any): void {
+  public editTimesheetBillOt(ot: any): void {
     ot.isEditing = true;
     ot.originalHours = ot.otHours;
     ot.originalType = ot.otType;

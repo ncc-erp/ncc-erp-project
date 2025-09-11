@@ -115,7 +115,7 @@ export class TimesheetProjectBill {
     otType?: string;
     otTypes?:any[];
     otHours?: number;
-    createOtUserMode?: boolean;
+    createTimesheetBillOtMode?: boolean;
 }
 export class TotalAmountByCurrencyDto{
     CurrencyName : string;

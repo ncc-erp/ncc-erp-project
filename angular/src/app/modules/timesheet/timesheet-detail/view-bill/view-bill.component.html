@@ -236,16 +236,16 @@
               <!-- OT Type -->
               <td class="text-center" style="width:300px; " *ngIf="data.action === updateAction.UpdateTimesheet && isShowOTType()">
                 <!-- Add button -->
-                <div class="d-flex justify-content-end my-2" *ngIf="!bill.createOtUserMode && canEditOTType()">
+                <div class="d-flex justify-content-end my-2" *ngIf="!bill.createTimesheetBillOtMode && canEditOTType()">
                   <button
                     class="btn bg-blue btn-sm"
-                    (click)="addOtUser(bill)" style="cursor: pointer; font-size: 10px;"
+                    (click)="addTimesheetBillOt(bill)" style="cursor: pointer; font-size: 10px;"
                     [disabled]=" otTypeProcess || data.billInfo.isComplete">
                     <i class="fa fa-plus fa-s m-0"></i>
                   </button>
                 </div>
 
-                <div *ngIf="bill.createOtUserMode">
+                <div *ngIf="bill.createTimesheetBillOtMode">
                   <!-- OT Type Autocomplete -->
                   <div class="d-flex ">
                     <div class="flex-grow-1 d-flex flex-column me-2">
@@ -286,7 +286,7 @@
                       <i
                         style="color: red; font-size: 20px; cursor: pointer;"
                         class="fas fa-undo fa-2x"
-                        (click)="cancelCreateOtUser(bill)">
+                        (click)="cancelCreateTimesheetBillOt(bill)">
                       </i>
                     </div>
                   </div>
@@ -294,7 +294,7 @@
 
                 <div class=" mb-1" *ngIf="bill.otTypes?.length">
                   <div *ngFor="let ot of bill.otTypes" class="me-1 my-2 d-flex justify-content-between">
-                    <div class="otUser_lable" *ngIf="!ot.isEditing">
+                    <div class="timesheetBillOt_lable" *ngIf="!ot.isEditing">
                       {{ ot.otType }} ({{ ot.multiplier }}): {{ ot.otHours }}h
                     </div>
 
@@ -319,12 +319,12 @@
                       </mat-form-field>
                     </div>
 
-                    <div class="otUser_action" >
+                    <div class="timesheetBillOt_action" >
                       <div *ngIf="!ot.isEditing">
-                        <button *ngIf="canEditOTType()" class="button-action " [disabled]="bill.createOtUserMode || otTypeProcess || data.billInfo.isComplete" (click)="editOtUser(ot)">
+                        <button *ngIf="canEditOTType()" class="button-action " [disabled]="bill.createTimesheetBillOtMode || otTypeProcess || data.billInfo.isComplete" (click)="editTimesheetBillOt(ot)">
                           <i class="fa fa-pencil-alt"></i>
                         </button>
-                        <button *ngIf="canDeleteOTType()" class="button-action " [disabled]="bill.createOtUserMode || otTypeProcess || data.billInfo.isComplete"
+                        <button *ngIf="canDeleteOTType()" class="button-action " [disabled]="bill.createTimesheetBillOtMode || otTypeProcess || data.billInfo.isComplete"
                           (click)="removeTimesheetBillOt(bill,ot)">
                           <i class="fa fa-times"></i>
                         </button>
@@ -338,7 +338,7 @@
                         </button>
 
                         <!-- Undo -->
-                        <i style="color: red; font-size: 20px; cursor: pointer;" class="fas fa-undo fa-2x" (click)="cancelEditeOtUser(ot)">
+                        <i style="color: red; font-size: 20px; cursor: pointer;" class="fas fa-undo fa-2x" (click)="cancelEditTimesheetBillOt(ot)">
                         </i>
                       </div>
                     </div>

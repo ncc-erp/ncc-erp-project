@@ -327,6 +327,14 @@ namespace ProjectManagement.APIs.TimesheetProjects
                                                         ChargeType = x.ChargeType.HasValue ? x.ChargeType : x.Project.ChargeType,
                                                         DefaultWorkingHours = defaultWorkingHours,
                                                         TimeSheetWorkingDay = tsp.WorkingDay,
+                                                        TimesheetProjectBillOtTypes = x.TimesheetProjectBillOtTypes
+                                                           .Select(ot => new TimesheetProjectBillOtTypeDto
+                                                           {
+                                                               Id = ot.Id,
+                                                               Hours = ot.Hours,
+                                                               Multiplier = ot.ProjectOtType.Multiplier,
+                                                               OtType = ot.ProjectOtType.OtTypeName,
+                                                           }).ToList()
                                                     }).ToList(),
                     Note = tsp.Note,
                     HistoryFile = tsp.HistoryFile,
@@ -833,6 +841,14 @@ namespace ProjectManagement.APIs.TimesheetProjects
                                                ProjectCode = tpb.Project.Code,
                                                EndTime = tpb.EndTime,
                                                StartTime = tpb.StartTime,
+                                               TimesheetProjectBillOtTypes = tpb.TimesheetProjectBillOtTypes
+                                                   .Select(ot => new TimesheetProjectBillOtTypeDto
+                                                   {
+                                                       Id = ot.Id,
+                                                       Hours = ot.Hours,
+                                                       Multiplier = ot.ProjectOtType.Multiplier,
+                                                       OtType = ot.ProjectOtType.OtTypeName,
+                                                   }).ToList()
                                            }).ToListAsync();
             result.ProjectCodes = result.TimesheetUsers.Select(x => x.ProjectCode).Union(listTSProjectCode).ToList();
             return result;

@@ -43,9 +43,6 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
   Timesheets_TimesheetDetail_OTType_Edit = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_OTType_Edit
   Timesheets_TimesheetDetail_OTType_Delete = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_OTType_Delete
 
-  Projects_OutsourcingProjects_ViewBillInfo_ViewOTType = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ViewBillInfo_ViewOTType
-  Projects_OutsourcingProjects_ViewBillInfo_EditOTType = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ViewBillInfo_EditOTType
-
   constructor(@Inject(MAT_DIALOG_DATA) public data: any, public dialogRef: MatDialogRef<ViewBillComponent>, private userService: UserService,
     private timesheetProjectService: TimesheetProjectService,
     private timesheetProjectBillService: TimeSheetProjectBillService, injector: Injector) {

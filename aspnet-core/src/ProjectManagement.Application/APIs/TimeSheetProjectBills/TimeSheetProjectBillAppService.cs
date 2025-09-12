@@ -69,6 +69,16 @@ namespace ProjectManagement.APIs.TimeSheetProjectBills
                              Currency = x.CurrencyId == null ? x.Project.Currency.Name : x.Currency.Name,
                              ChargeType = x.ChargeType == null ? x.Project.ChargeType : x.ChargeType,
                              //ProjectBillInfomation = $"<b>{x.User.FullName}</b> - {x.BillRole} - {x.BillRate} - {x.Note} - {x.ShadowNote} <br>"
+                             OtTypes = x.TimesheetProjectBillOtTypes
+                                        .Select(ot => new TimesheetProjectBillOtTypesDto
+                                        {
+                                            Id = ot.Id,
+                                            ProjectOtTypeId = ot.ProjectOtTypeId,
+                                            TimesheetProjectBillId = ot.TimesheetProjectBillId,
+                                            OtHours = ot.Hours,
+                                            Multiplier = ot.ProjectOtType.Multiplier,
+                                            OtType = ot.ProjectOtType.OtTypeName
+                                        }).ToList()
                          });
 
             return await query.ToListAsync();
@@ -186,6 +196,64 @@ namespace ProjectManagement.APIs.TimeSheetProjectBills
                                     Email = x.EmailAddress
                                 }).ToList();
             return users;
+        }
+
+
+        [HttpDelete]
+        public async Task RemoveTimesheetBillOt(RemoveTimesheetOtDto input)
+        {
+            var timesheetProjectBillOtType = await WorkScope.GetAll<TimesheetProjectBillOtTypes>()
+                .FirstOrDefaultAsync(x => x.Id == input.OtId && x.TimesheetProjectBillId == input.TimesheetProjectBillId)
+                ?? throw new UserFriendlyException("Not found TimesheetProjectBillOtType");
+
+            await WorkScope.DeleteAsync(timesheetProjectBillOtType);
+        }
+
+        [HttpPost]
+        public async Task CreateOrUpdateTimesheetBillOt(CreateOrUpdateTimesheetBillOtDto input)
+        {
+            var timesheetProjectBill = await WorkScope.GetAll<TimesheetProjectBill>()
+                .FirstOrDefaultAsync(x => x.Id == input.TimesheetProjectBillId)
+                ?? throw new UserFriendlyException("Not found TimesheetProjectBill");
+
+            if (input.Mode == TimesheetBillOtActionMode.Update)
+            {
+                var entity = await WorkScope.GetAll<TimesheetProjectBillOtTypes>()
+                    .FirstOrDefaultAsync(x => x.Id == input.TimesheetProjectBillOtTypesId && x.TimesheetProjectBillId == input.TimesheetProjectBillId)
+                    ?? throw new UserFriendlyException("Not found TimesheetProjectBillOtType");
+
+                entity.ProjectOtTypeId = input.ProjectOtTypeId;
+                entity.Hours = input.Hours;
+
+                await WorkScope.UpdateAsync(entity);
+            }
+            else
+            {
+                var entity = new TimesheetProjectBillOtTypes
+                {
+                    TimesheetProjectBillId = input.TimesheetProjectBillId,
+                    ProjectOtTypeId = input.ProjectOtTypeId,
+                    Hours = input.Hours
+                };
+
+                await WorkScope.InsertAsync(entity);
+            }
+
+        }
+
+        [HttpGet]
+        public async Task<List<OtTypeDto>> GetProjectOtTypesById (int projectId)
+        {
+            var listProjectOtTypes = await WorkScope.GetAll<ProjectOtType>()
+                .Where(x => x.ProjectId == projectId)
+                .Select(x => new OtTypeDto
+                {
+                    Id = x.Id,
+                    OtTypeName = x.OtTypeName,
+                    Multiplier = x.Multiplier
+                }).ToListAsync();
+
+            return listProjectOtTypes;
         }
     }
 }

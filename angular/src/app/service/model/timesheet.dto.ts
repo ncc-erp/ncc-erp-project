@@ -112,6 +112,10 @@ export class TimesheetProjectBill {
     chargeTypeName: string
     isEditing: boolean
     isDisable: boolean
+    otType?: string;
+    otTypes?:any[];
+    otHours?: number;
+    createTimesheetBillOtMode?: boolean;
 }
 export class TotalAmountByCurrencyDto{
     CurrencyName : string;

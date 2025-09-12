@@ -80,7 +80,8 @@
               <th style="width: 150px;">Charge Role</th>
               <th style="width: 100px;" *ngIf="isShowRate()">Rate<br>({{getCurrencyName()}})</th>
               <th style="width: 50px;">Charge Type</th>
-              <th style="min-width: 120px; white-space: break-spaces;">Working Day</th>
+              <th style="width: 150px; white-space: break-spaces;">Working Day</th>
+              <th style="width: 300px; white-space: break-spaces;" *ngIf="data.action === updateAction.UpdateTimesheet && isShowOTType()">OT Type</th>
               <th style="width: 50px;">Is Charge</th>
               <th>Note</th>
               <th style="width: 190px;">Action</th>
@@ -232,6 +233,119 @@
                 </div>
               </td>
 
+              <!-- OT Type -->
+              <td class="text-center" style="width:300px; " *ngIf="data.action === updateAction.UpdateTimesheet && isShowOTType()">
+                <!-- Add button -->
+                <div class="d-flex justify-content-end my-2" *ngIf="!bill.createTimesheetBillOtMode && canEditOTType()">
+                  <button
+                    class="btn bg-blue btn-sm"
+                    (click)="addTimesheetBillOt(bill)" style="cursor: pointer; font-size: 10px;"
+                    [disabled]=" otTypeProcess || data.billInfo.isComplete">
+                    <i class="fa fa-plus fa-s m-0"></i>
+                  </button>
+                </div>
+
+                <div *ngIf="bill.createTimesheetBillOtMode">
+                  <!-- OT Type Autocomplete -->
+                  <div class="d-flex ">
+                    <div class="flex-grow-1 d-flex flex-column me-2">
+                      <mat-form-field class="w-100" appearance="outline">
+                        <mat-select panelClass="custom-panel-class" (closed)="focusOut()" [(ngModel)]="bill.otType" name="otType"
+                          placeholder="Select OT Type">
+                          <mat-form-field class="w-100 px-3" style="position: sticky; top: 0; z-index: 2; background-color: white;">
+                            <input matInput [(ngModel)]="searchOtType" placeholder="search" (keydown)="$event.stopPropagation()"
+                              name="searchOtType" #search>{{search.focus()}}
+                          </mat-form-field>
+                          <mat-option *ngFor="let option of otTypeOptions | listFilter : 'otTypeName' : searchOtType" [value]="option.otTypeName">
+                            {{ option.otTypeName }} ({{ option.multiplier }})
+                          </mat-option>
+                        </mat-select>
+                      </mat-form-field>
+
+                      <!-- Hours Input -->
+                      <mat-form-field style="width: 100%;" appearance="outline">
+                        <input type="number" matInput placeholder="Hours" step="0.1" min="0" [(ngModel)]="bill.otHours" name="otHours"
+                           (input)="onHoursChange(bill,$event)" (keydown)="($event.key === '-') ? $event.preventDefault() : null"
+                          (keydown.enter)="$event.preventDefault(); saveTimesheetBillOt(bill)">
+                      </mat-form-field>
+                    </div>
+
+                    <div class="d-flex flex-column align-items-center justify-content-center">
+                      <!-- Check -->
+                      <button
+                        class="mb-1 submit-btn"
+                        style="background: none; border: none;"
+                        [disabled]="!bill.otType || !bill.otHours"
+                        (click)="saveTimesheetBillOt(bill)">
+                        <i
+                          [style.color]="bill.otType && bill.otHours ? 'green' : 'gray'"
+                          class="fas fa-check fa-2x"></i>
+                      </button>
+
+                      <!-- Undo -->
+                      <i
+                        style="color: red; font-size: 20px; cursor: pointer;"
+                        class="fas fa-undo fa-2x"
+                        (click)="cancelCreateTimesheetBillOt(bill)">
+                      </i>
+                    </div>
+                  </div>
+                </div>
+
+                <div class=" mb-1" *ngIf="bill.otTypes?.length">
+                  <div *ngFor="let ot of bill.otTypes" class="me-1 my-2 d-flex justify-content-between">
+                    <div class="timesheetBillOt_lable" *ngIf="!ot.isEditing">
+                      {{ ot.otType }} ({{ ot.multiplier }}): {{ ot.otHours }}h
+                    </div>
+
+                    <div class="flex-grow-1" *ngIf="ot.isEditing" >
+                      <mat-form-field class="w-100" appearance="outline">
+                        <mat-select panelClass="custom-panel-class" (closed)="focusOut()" [(ngModel)]="ot.otType" name="otType"
+                          placeholder="Select OT Type" required>
+                          <mat-form-field class="w-100 px-3" style="position: sticky; top: 0; z-index: 2; background-color: white;">
+                            <input matInput [(ngModel)]="searchOtType" placeholder="search" (keydown)="$event.stopPropagation()"
+                              name="searchOtType" #search>{{search.focus()}}
+                          </mat-form-field>
+                          <mat-option *ngFor="let option of otTypeOptions | listFilter : 'otTypeName' : searchOtType" [value]="option.otTypeName">
+                            {{ option.otTypeName }} - ({{ option.multiplier }})
+                          </mat-option>
+                        </mat-select>
+                      </mat-form-field>
+
+                      <mat-form-field style="width: 100%;" appearance="outline">
+                        <input type="number" matInput placeholder="Hours" step="0.1" min="0" [(ngModel)]="ot.otHours" name="otHours"
+                          #otHours="ngModel" required (input)="onHoursChange(ot, $event)" (keydown)="($event.key === '-') ? $event.preventDefault() : null"
+                          (keydown.enter)="$event.preventDefault(); updateTimesheetBillOt(bill, ot)">
+                      </mat-form-field>
+                    </div>
+
+                    <div class="timesheetBillOt_action" >
+                      <div *ngIf="!ot.isEditing">
+                        <button *ngIf="canEditOTType()" class="button-action " [disabled]="bill.createTimesheetBillOtMode || otTypeProcess || data.billInfo.isComplete" (click)="editTimesheetBillOt(ot)">
+                          <i class="fa fa-pencil-alt"></i>
+                        </button>
+                        <button *ngIf="canDeleteOTType()" class="button-action " [disabled]="bill.createTimesheetBillOtMode || otTypeProcess || data.billInfo.isComplete"
+                          (click)="removeTimesheetBillOt(bill,ot)">
+                          <i class="fa fa-times"></i>
+                        </button>
+                      </div>
+
+                      <div *ngIf="ot.isEditing">
+                        <!-- Check -->
+                        <button class="mb-1 submit-btn" style="background: none; border: none;" [disabled]="!ot.otHours || !ot.otType"
+                          (click)="updateTimesheetBillOt(bill, ot)">
+                          <i [style.color]="ot.otHours && ot.otType ? 'green' : 'gray'" class="fas fa-check fa-2x"></i>
+                        </button>
+
+                        <!-- Undo -->
+                        <i style="color: red; font-size: 20px; cursor: pointer;" class="fas fa-undo fa-2x" (click)="cancelEditTimesheetBillOt(ot)">
+                        </i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </td>
+
               <!-- Is Charge -->
               <td class="text-center pt-3">
                 <mat-checkbox
@@ -281,7 +395,7 @@
               <td class="text-center" *ngIf="!isEditingAllRow() || billDetail.length == 1" >
                 <div *ngIf="!bill.isEditing" style="width: 156px;">
                   <button *ngIf="isShowEditBtnOnRow()"
-                    [disabled]="data.billInfo.isComplete || isEditingAnyRow()"
+                    [disabled]="data.billInfo.isComplete || isEditingAnyRow() || otTypeProcess"
                     class="btn btn-sm btn-edit-neutral mr-1 mt-3"
                     (click)="editUserBill(bill)"
                   >
@@ -289,7 +403,7 @@
                   </button>
 
                   <button style="border:2px soild #dc3545;" *ngIf="isGranted(Timesheets_TimesheetDetail_RemoveAccount)"
-                  [disabled]="data.billInfo.isComplete || isEditingAnyRow()"
+                  [disabled]="data.billInfo.isComplete || isEditingAnyRow() || otTypeProcess"
                     class="btn btn-sm bg-danger ml-1 mt-3"
                     (click)="removeAccountTS(bill)"
                   >

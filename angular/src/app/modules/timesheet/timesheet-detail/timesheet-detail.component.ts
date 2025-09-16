@@ -210,6 +210,22 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
     })
   }
 
+  getOtDays(hours: number): number {
+    return parseFloat((hours / 8).toFixed(2));
+  }
+  
+  getTotalWorkingTime(item: any): number {
+    const normalWorkingTime = item.workingTime || 0;
+
+      if (!item.timesheetProjectBillOtTypes?.length) {
+      return normalWorkingTime;
+    }
+    const totalOtTime = item.timesheetProjectBillOtTypes.reduce((total: number, otType: any) => {
+      const otHours = otType.hours || 0;
+      return total + this.getOtDays(otHours);
+    }, 0);
+    return parseFloat((normalWorkingTime + totalOtTime).toFixed(2));  }
+
   isShowBtnExportTsDetail() {
     return this.isGranted(this.Timesheets_TimesheetDetail_ExportTSdetail)
   }

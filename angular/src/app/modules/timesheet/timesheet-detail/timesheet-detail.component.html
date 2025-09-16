@@ -280,30 +280,50 @@
                   <span>PM: <b>{{item.pmFullName}}</b></span>
                 </td>
                 <td class="text-left bill">
-                  <div *ngIf="item.projectBillInfomation" style="min-width: 840px;">
-
+                  <div *ngIf="item.projectBillInfomation" style="min-width: 1150px;">
                     <div class="row" [style.color]="getColorByCurrency(item.currency)">
-                      <div class="col-7"><label *ngIf="isGranted(Timesheets_TimesheetDetail_ViewBillRate)">Total:
+                      <div class="col-8"><label *ngIf="isGranted(Timesheets_TimesheetDetail_ViewBillRate)">Total:
                           {{item.projectBillInfomation.length}}</label></div>
-                      <div class="col-3 ml-4" *ngIf="isGranted(Timesheets_TimesheetDetail_ViewBillRate)">
+                      <div class="col-2" *ngIf="isGranted(Timesheets_TimesheetDetail_ViewBillRate)" style="margin-left: 50px;">
                         <label>{{item.roundTotalAmountProjectBillInfomation | number : "1.0":"en-US"}}
                           {{item.currency}}</label></div>
-                      <div [ngClass]="isGranted(Timesheets_TimesheetDetail_ViewBillRate)?'col-1':'col-5'" style="text-align: center;">
+                      <div [ngClass]="isGranted(Timesheets_TimesheetDetail_ViewBillRate)?'col-1
+                      ':'col-5'" style="text-align: center;">
                         Note</div>
                     </div>
                     <div class="row" *ngFor="let bill of item.projectBillInfomation; let i = index">
                       <div class="col-3 text-special"><label><span>{{i+1}}. &nbsp;</span>{{bill.fullName}}</label></div>
-                      <div class="col-2 text-special role"><span>{{bill.billRole}}</span></div>
+                      <div class="col-1 text-special role"><span>{{bill.billRole}}</span></div>
                       <div class="col-2 billRate" *ngIf="isGranted(Timesheets_TimesheetDetail_ViewBillRate)">
                         <label class="ml-1" style="font-weight: 500;">
                           {{(covertMoneyType(bill.billRate)+' '+item.currency + getChargeType(bill.chargeType))}}
                         </label>
                       </div>
-                      <div class="col-1"><label style="font-weight: 500;">{{bill.workingTime}}d</label></div>
+                      <div class="col-3">
+                        <label style="font-weight: 500;">
+                          <ng-container *ngIf="bill.timesheetProjectBillOtTypes && bill.timesheetProjectBillOtTypes.length > 0">
+                            <span>{{getTotalWorkingTime(bill)}}d</span>                           
+                            <span> (</span>
+                            <span [matTooltip]="'Normal working day'">{{bill.workingTime}}d</span>
+                            
+                            <ng-container *ngFor="let otType of bill.timesheetProjectBillOtTypes; let i = index">
+                              <span> / </span>
+                              <span [matTooltip]="'OT ' + (otType.otType || 'Type')">
+                                {{getOtDays(otType.hours)}}d x {{otType.multiplier}}
+                              </span>
+                            </ng-container>
+                            <span>)</span>
+                          </ng-container>
+                          
+                          <ng-container *ngIf="!bill.timesheetProjectBillOtTypes || bill.timesheetProjectBillOtTypes.length === 0">
+                            <span [matTooltip]="'Normal working day'">{{bill.workingTime}}d</span>
+                          </ng-container>
+                        </label>
+                      </div>
                       <div class="col-2" *ngIf="isGranted(Timesheets_TimesheetDetail_ViewBillRate)"><label
-                          class="ml-1">{{bill.roundAmount | number: "1.0":"en-US" }} {{item.currency}}</label></div>
-
-                      <div class="text-left note" [ngClass]="isGranted(Timesheets_TimesheetDetail_ViewBillRate)?'col-2 ml-4':'col-5'"
+                          class="ml-1">{{bill.roundAmount | number: "1.0":"en-US" }} {{item.currency}}</label>
+                      </div>
+                      <div class="text-left note" [ngClass]="isGranted(Timesheets_TimesheetDetail_ViewBillRate)?'col-1 ml-4':'col-5'"
                         style=" white-space: pre-line;">
                         <div title="{{bill.description?bill.description:''}}" PrjResizeContent [collapseLine]="1">
                           {{bill.description?bill.description:''}}

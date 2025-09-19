@@ -85,7 +85,7 @@ namespace ProjectManagement.APIs.ProjectUserBills
         [HttpPost]
         [AbpAuthorize(
             PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount,
-            PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount,
+ /*           PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount,*/
             PermissionNames.Projects_TrainingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount
         )]
         public async Task<bool> LinkUserToBillAccount(LinkedResourcesDto input)
@@ -97,7 +97,7 @@ namespace ProjectManagement.APIs.ProjectUserBills
         [HttpPost]
         [AbpAuthorize(
             PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount,
-            PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount,
+/*            PermissionNames.Projects_ProductProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount,*/
             PermissionNames.Projects_TrainingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount
         )]
         public async Task<bool> RemoveLinkedResource(LinkedResourcesDto input)

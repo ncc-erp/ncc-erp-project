@@ -23,6 +23,7 @@ import * as moment from 'moment';
 import { ConfirmFromPage, ConfirmPopupComponent } from '@app/modules/pm-management/list-project/list-project-detail/resource-management/confirm-popup/confirm-popup.component';
 import { RequestResourceDto } from '@app/service/model/delivery-management.dto';
 import { getValueByEnum } from '@app/modules/delivery-management/delivery/available-resource-tab/enum-until';
+import { OnboardUserDialogComponent } from '@app/modules/pm-management/list-project/list-project-detail/resource-management/onboard-user-dialog/onboard-user-dialog.component';
 
 @Component({
   selector: 'app-product-resource-management',
@@ -196,6 +197,22 @@ export class ProductResourceManagementComponent extends AppComponentBase impleme
   releaseUser(user) {
     let ref = this.dialog.open(ReleaseUserDialogComponent, {
       width: "700px",
+      data: {
+        user: user
+      }
+    })
+    ref.afterClosed().subscribe(rs => {
+      if (rs) {
+        this.getProjectUser()
+        this.getPlannedtUser()
+        this.planResourceProcess = false
+      }
+    })
+  }
+
+  onboardUser(user) {
+    let ref = this.dialog.open(OnboardUserDialogComponent, {
+      width: "450px",
       data: {
         user: user
       }

@@ -1,0 +1,5 @@
+.checklist-scroll {
+  max-height: 500px; /* tuỳ chỉnh theo chiều cao dialog */
+  overflow-y: auto;
+  padding-right: 5px; /* tránh che chữ khi scrollbar xuất hiện */
+}

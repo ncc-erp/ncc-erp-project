@@ -123,6 +123,11 @@ namespace ProjectManagement.Services.ResourceManager
             return queryPu;
         }
 
+/*        public IQueryable<ProjectUserOnboardStatusDto> GetProjectUserOnboardStatus (long projectId)
+        {
+
+        }*/
+
         public IQueryable<ProjectOfUserDto> QueryWorkingProjectsOfUser(long userId)
         {
             return _workScope.GetAll<ProjectUser>()

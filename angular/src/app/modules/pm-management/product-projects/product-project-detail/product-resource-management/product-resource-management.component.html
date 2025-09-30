@@ -100,7 +100,7 @@
                                                             style="font-size: 16px;"></i>
                                                         </strong>
                                                     </p>
-                                                            
+
                                                     <div style="white-space: pre-line" *ngIf="IsSkillNoteExist(user)"><strong>Note:</strong> {{GetUserSkillNote(user)}}</div>
                                                 </div>
                                                 <div style="width: 10%; text-align: right;"
@@ -206,6 +206,9 @@
                                                 <button *ngIf="permission.isGranted(Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_Release)" [disabled]="projectUserProcess" class="mat-menu-item  w-100"
                                                     (click)="releaseUser(user)">
                                                     <i class="fas fa-sign-out-alt mr-1"></i>Release</button>
+                                                <button *ngIf="permission.isGranted(Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_Release)" [disabled]="projectUserProcess" class="mat-menu-item  w-100"
+                                                    (click)="onboardUser(user)">
+                                                    <i class="fas fa-user-plus"></i>Onboard</button>
                                             </mat-menu>
 
                                         </div>

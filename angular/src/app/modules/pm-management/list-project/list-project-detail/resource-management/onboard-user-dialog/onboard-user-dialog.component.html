@@ -1,0 +1,34 @@
+<div class="container mt-3">
+  <h2 class="text-center mb-3">Onboard Checklist</h2>
+
+  <div class="form-group mb-3">
+    <label for="onboardCode"><strong>Mã Onboard</strong></label>
+    <input id="onboardCode" type="text" class="form-control" [(ngModel)]="onboardCode">
+  </div>
+
+  <!-- Scrollable checklist -->
+  <div class="checklist-scroll">
+    <div *ngFor="let item of checklist; let i = index" class="card mb-3 shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">Checklist {{ i + 1 }}: <span [innerHTML]="item.title "></span></h5>
+        <br>
+        <ul>
+          <li *ngFor="let step of item.steps" [innerHTML]="step"></li>
+        </ul>
+        <div class="form-check mt-2">
+          <input class="form-check-input" type="checkbox"
+                [(ngModel)]="item.done" [id]="'check-'+i">
+          <label class="form-check-label" [for]="'check-'+i">
+            Hoàn thành checklist {{ i + 1 }}
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Action buttons -->
+  <div class="d-flex justify-content-center gap-3 mt-3">
+    <button class="btn btn-primary w-100" (click)="confirmOnboard()">Confirm</button>
+    <button *ngIf="isAdmin" class="btn btn-success" (click)="markOnboardDone()">Onboard Done</button>
+  </div>
+</div>

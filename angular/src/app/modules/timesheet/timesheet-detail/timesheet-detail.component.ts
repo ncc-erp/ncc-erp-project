@@ -221,8 +221,8 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
       return normalWorkingTime;
     }
     const totalOtTime = item?.timesheetProjectBillOtTypes?.reduce((total: number, otType: any) => {
-      const hours = otType?.hours || 0;
-      const multiplier = otType?.multiplier || 0;
+      const hours = otType?.hours ?? 0;
+      const multiplier = otType?.multiplier ?? 1;
       const otHours = hours * multiplier;
       return total + this.getOtDays(otHours);
     }, 0) || 0;

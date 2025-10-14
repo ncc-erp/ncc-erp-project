@@ -211,7 +211,7 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
   }
 
   getOtDays(hours: number): number {
-    return parseFloat((hours / 8).toFixed(2));
+    return parseFloat((hours / 8).toFixed(3));
   }
   
   getTotalWorkingTime(item: any): number {
@@ -226,7 +226,7 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
       const otHours = hours * multiplier;
       return total + this.getOtDays(otHours);
     }, 0) || 0;
-    return parseFloat((normalWorkingTime + totalOtTime).toFixed(2));  }
+    return parseFloat((normalWorkingTime + totalOtTime).toFixed(3));  }
 
   isShowBtnExportTsDetail() {
     return this.isGranted(this.Timesheets_TimesheetDetail_ExportTSdetail)

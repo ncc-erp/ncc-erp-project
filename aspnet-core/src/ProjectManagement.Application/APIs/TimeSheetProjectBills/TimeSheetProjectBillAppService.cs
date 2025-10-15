@@ -210,7 +210,7 @@ namespace ProjectManagement.APIs.TimeSheetProjectBills
         }
 
         [HttpPost]
-        public async Task CreateOrUpdateTimesheetBillOt(CreateOrUpdateTimesheetBillOtDto input)
+        public async Task<long> CreateOrUpdateTimesheetBillOt(CreateOrUpdateTimesheetBillOtDto input)
         {
             var timesheetProjectBill = await WorkScope.GetAll<TimesheetProjectBill>()
                 .FirstOrDefaultAsync(x => x.Id == input.TimesheetProjectBillId)
@@ -224,8 +224,9 @@ namespace ProjectManagement.APIs.TimeSheetProjectBills
 
                 entity.ProjectOtTypeId = input.ProjectOtTypeId;
                 entity.Hours = input.Hours;
-
+            
                 await WorkScope.UpdateAsync(entity);
+                return entity.Id;
             }
             else
             {
@@ -236,7 +237,7 @@ namespace ProjectManagement.APIs.TimeSheetProjectBills
                     Hours = input.Hours
                 };
 
-                await WorkScope.InsertAsync(entity);
+                return await WorkScope.InsertAndGetIdAsync(entity);
             }
 
         }

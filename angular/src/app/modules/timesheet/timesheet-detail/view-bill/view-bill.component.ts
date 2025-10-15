@@ -73,51 +73,59 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
     this.otTypeProcess = false;
   }
 
-  public saveTimesheetBillOt(billDetail: TimesheetProjectBill): void {
-    const ot = this.otTypeOptions.find(ot => ot.otTypeName === billDetail.otType);
-    if (!ot) {
-      abp.notify.error("Invalid OT type");
-      return;
-    }
+private findOtTypeByName(otTypeName: string) {
+  return this.otTypeOptions.find(ot => ot.otTypeName === otTypeName);
+}
 
-    const existed = billDetail.otTypes?.some(x => x.projectOtTypeId === ot.id);
-    if (existed) {
-      abp.notify.error("This OT type already exists for this bill");
-      return;
-    }
-    const newTimesheetBillOt = {
-      timesheetProjectBillId: billDetail.id,
-      projectOtTypeId: ot.id,
-      hours: billDetail.otHours,
-      mode: 0
-    };
+private isOtTypeExisted(billDetail: TimesheetProjectBill, projectOtTypeId: any): boolean {
+  return billDetail.otTypes?.some(x => x.projectOtTypeId === projectOtTypeId) || false;
+}
 
-    this.timesheetProjectBillService.createOrUpdateTimesheetBillOt(newTimesheetBillOt)
+private buildTimesheetBillOtPayload(billDetail: TimesheetProjectBill, projectOtTypeId: any) {
+  return {
+    timesheetProjectBillId: billDetail.id,
+    projectOtTypeId: projectOtTypeId,
+    hours: billDetail.otHours,
+    mode: 0
+  };
+}
+
+private resetBillDetailOtForm(billDetail: TimesheetProjectBill): void {
+  billDetail.createTimesheetBillOtMode = false;
+  billDetail.otType = null;
+  billDetail.otHours = null;
+  this.otTypeProcess = false;
+}
+
+private createTimesheetBillOt(payload: any, billDetail: TimesheetProjectBill): void {
+  this.timesheetProjectBillService.createOrUpdateTimesheetBillOt(payload)
     .pipe(catchError(this.timesheetProjectBillService.handleError))
     .subscribe({
-      next: (res: any) => {
+      next: () => {
         abp.notify.success("OT user added successfully");
-        const newOt = {
-          id: res.result ,
-          projectOtTypeId: ot.id,
-          otType: ot.otTypeName,
-          otHours: billDetail.otHours,
-          isEditing: false
-        };
-
-        billDetail.otTypes = billDetail.otTypes || [];
-        billDetail.otTypes.push(newOt);
-        billDetail.createTimesheetBillOtMode = false;
-        billDetail.otType = null;
-        billDetail.otHours = null;
-        this.otTypeProcess = false;
+        this.resetBillDetailOtForm(billDetail);
+        this.getProjectBill();
       },
       error: () => {
         billDetail.createTimesheetBillOtMode = true;
-        this.otTypeProcess = false;
       }
     });
+}
+ 
+public saveTimesheetBillOt(billDetail: TimesheetProjectBill): void {
+  const ot = this.findOtTypeByName(billDetail.otType);
+  if (!ot) {
+    abp.notify.error("Invalid OT type");
+    return;
   }
+
+  if (this.isOtTypeExisted(billDetail, ot.id)) {
+    abp.notify.error("This OT type already exists for this bill");
+    return;
+  }
+  const newTimesheetBillOt = this.buildTimesheetBillOtPayload(billDetail, ot.id);
+  this.createTimesheetBillOt(newTimesheetBillOt, billDetail);
+}
 
   public editTimesheetBillOt(ot: any): void {
     ot.isEditing = true;
@@ -149,22 +157,18 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
 
     this.otTypeProcess = true;
     this.timesheetProjectBillService.createOrUpdateTimesheetBillOt(updatePayload)
-    .subscribe({
-      next: (res: any) => {
-        abp.notify.success("OT user updated successfully");
-
-        ot.id = res.result;
-        ot.projectOtTypeId = otType.id;
-        ot.otType = otType.otTypeName;
-        ot.otHours = updatePayload.hours;
-        ot.isEditing = false;
-        this.otTypeProcess = false;
-      },
-      error: (err) => {
-        console.error(err);
-        this.otTypeProcess = false;
-      }
-    });
+      .subscribe({
+        next: (res: any) => {
+          abp.notify.success("OT user updated successfully");
+          ot.isEditing = false;
+          this.otTypeProcess = false;
+          this.getProjectBill();
+        },
+        error: (err) => {
+          console.error(err);
+          this.otTypeProcess = false;
+        }
+      });
   }
 
   getProjectOtTypesById(projectId: any) {
@@ -204,7 +208,7 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
           this.isLoading = true;
           this.timesheetProjectBillService.removeTimesheetBillOt(req).pipe(catchError(this.timesheetProjectBillService.handleError)).subscribe(data => {
             abp.notify.success(`OT user Removed Successfully!`)
-            billDetail.otTypes = billDetail.otTypes?.filter(x => x.id !== ot.id);
+            this.getProjectBill();
           }, () => {
             this.isLoading = false
           })
@@ -425,7 +429,6 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
         abp.notify.success(response.result)
         this.setViewAllRow();
         this.getProjectBill();
-        this.otTypeProcess = false;
       }
       else{
         abp.notify.error(response.message)

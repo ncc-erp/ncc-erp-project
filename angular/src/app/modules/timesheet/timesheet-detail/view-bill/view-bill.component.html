@@ -20,6 +20,28 @@
         <i class="fas fa-pencil-alt mr-1"></i>Edit All
       </button>
 
+      <!-- Normal Unit Dropdown -->
+      <div class="ml-3" style="display: inline-block;">
+        <mat-form-field appearance="outline" style="width: 150px;">
+          <mat-label>Normal Unit</mat-label>
+          <mat-select [(ngModel)]="normalUnit" name="normalUnit">
+            <mat-option value="Day">Day</mat-option>
+            <mat-option value="Hour">Hour</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <!-- OT Unit Dropdown -->
+      <div class="ml-2" style="display: inline-block;">
+        <mat-form-field appearance="outline" style="width: 150px;">
+          <mat-label>OT Unit</mat-label>
+          <mat-select [(ngModel)]="otUnit" name="otUnit">
+            <mat-option value="Day">Day</mat-option>
+            <mat-option value="Hour">Hour</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
       <div *ngIf="isEditingAllRow()" class="pt-1 ml-4">
         <button *ngIf="isTSPopUp()"
           [disabled]="!timesheetDetailForm.valid"
@@ -80,8 +102,8 @@
               <th style="width: 150px;">Charge Role</th>
               <th style="width: 100px;" *ngIf="isShowRate()">Rate<br>({{getCurrencyName()}})</th>
               <th style="width: 50px;">Charge Type</th>
-              <th style="width: 150px; white-space: break-spaces;">Working Day</th>
-              <th style="width: 300px; white-space: break-spaces;" *ngIf="data.action === updateAction.UpdateTimesheet && isShowOTType()">OT Type</th>
+              <th style="width: 150px; white-space: break-spaces;">Working Time</th>
+              <th style="width: 300px; white-space: break-spaces;" *ngIf="data.action === updateAction.UpdateTimesheet && isShowOTType()">OT Time</th>
               <th style="width: 50px;">Is Charge</th>
               <th>Note</th>
               <th style="width: 190px;">Action</th>
@@ -95,25 +117,6 @@
               <td>
                 <span>{{ i + 1 }}</span>
               </td>
-              <!-- <td class="text-left" style="min-width: 200px">
-                  <app-user-info
-                    [userData]="{
-                      fullName: bill.fullName,
-                      branch: bill.branch,
-                      branchColor:bill.branchColor,
-                      branchDisplayName:bill.branchDisplayName,
-                      userType: bill.userType,
-                      emailAddress: bill.emailAddress,
-                      avatarFullPath: bill.avatarFullPath,
-                      userLevel: bill.userLevel
-                    }"
-                  >
-                  </app-user-info>
-                  <app-user-info
-                    [userData]="bill"
-                  >
-                  </app-user-info>
-              </td> -->
 
               <!-- Charge Name -->
               <td class="text-center">
@@ -216,10 +219,10 @@
                 </div>
             </td>
 
-            <!-- Working day -->
+            <!-- Working Time -->
               <td class="text-center">
                 <span *ngIf="!bill.isEditing">
-                  {{ bill.workingTime }}
+                  {{ getDisplayWorkingTime(bill.workingTime) }} {{ normalUnit == 'Day' ? 'days' : 'hours' }}
                 </span>
                 <div *ngIf="bill.isEditing">
                   <input
@@ -229,11 +232,12 @@
                     id=""
                     class="form-control mt-1"
                     [(ngModel)]="bill.workingTime"
+                    step="0.1"
                   />
                 </div>
               </td>
 
-              <!-- OT Type -->
+              <!-- OT Time -->
               <td class="text-center" style="width:300px; " *ngIf="data.action === updateAction.UpdateTimesheet && isShowOTType()">
                 <!-- Add button -->
                 <div class="d-flex justify-content-end my-2" *ngIf="!bill.createTimesheetBillOtMode && canEditOTType()">
@@ -264,7 +268,7 @@
 
                       <!-- Hours Input -->
                       <mat-form-field style="width: 100%;" appearance="outline">
-                        <input type="number" matInput placeholder="Hours" step="0.1" min="0" [(ngModel)]="bill.otHours" name="otHours"
+                        <input type="number" matInput [placeholder]="'Hours (' + (otUnit == 'Day' ? 'days' : 'hours') + ')'" step="0.1" min="0" [(ngModel)]="bill.otHours" name="otHours"
                            (input)="onHoursChange(bill,$event)" (keydown)="($event.key === '-') ? $event.preventDefault() : null"
                           (keydown.enter)="$event.preventDefault(); saveTimesheetBillOt(bill)">
                       </mat-form-field>
@@ -295,7 +299,7 @@
                 <div class=" mb-1" *ngIf="bill.otTypes?.length">
                   <div *ngFor="let ot of bill.otTypes" class="me-1 my-2 d-flex justify-content-between">
                     <div class="timesheetBillOt_lable" *ngIf="!ot.isEditing">
-                      {{ ot.otType }} ({{ ot.multiplier }}): {{ ot.otHours }}h
+                      {{ ot.otType }} ({{ ot.multiplier }}): {{ getDisplayOTTime(ot.otHours) }}{{ otUnit == 'Day' ? 'd' : 'h' }}
                     </div>
 
                     <div class="flex-grow-1" *ngIf="ot.isEditing" >
@@ -313,7 +317,7 @@
                       </mat-form-field>
 
                       <mat-form-field style="width: 100%;" appearance="outline">
-                        <input type="number" matInput placeholder="Hours" step="0.1" min="0" [(ngModel)]="ot.otHours" name="otHours"
+                        <input type="number" matInput [placeholder]="'Hours (' + (otUnit == 'Day' ? 'days' : 'hours') + ')'" step="0.1" min="0" [(ngModel)]="ot.otHours" name="otHours"
                           #otHours="ngModel" required (input)="onHoursChange(ot, $event)" (keydown)="($event.key === '-') ? $event.preventDefault() : null"
                           (keydown.enter)="$event.preventDefault(); updateTimesheetBillOt(bill, ot)">
                       </mat-form-field>

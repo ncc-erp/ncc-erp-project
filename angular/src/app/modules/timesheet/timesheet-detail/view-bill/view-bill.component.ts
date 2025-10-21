@@ -217,6 +217,36 @@ public saveTimesheetBillOt(billDetail: TimesheetProjectBill): void {
     )
   }
 
+
+readonly HOURS_PER_DAY = 8;
+
+normalUnit: 'Day' | 'Hour' = 'Day';
+otUnit: 'Day' | 'Hour' = 'Hour';
+
+private daysToHours(days: number): number {
+  return parseFloat((days * this.HOURS_PER_DAY).toFixed(2));
+}
+
+private hoursToDays(hours: number): number {
+  return parseFloat((hours / this.HOURS_PER_DAY).toFixed(2));
+}
+
+getDisplayWorkingTime(value: number): number {
+  if (!value) return 0;
+  if (this.normalUnit === 'Hour') {
+    return parseFloat(this.daysToHours(value).toFixed(2));
+  }
+  return parseFloat(value.toFixed(2));
+}
+
+getDisplayOTTime(value: number): number {
+  if (!value) return 0;
+  if (this.otUnit === 'Day') {
+    return parseFloat(this.hoursToDays(value).toFixed(2));
+  }
+  return parseFloat(value.toFixed(2));
+}
+
   onHoursChange(target: any, event: any) {
     let inputValue = event.target.value;
     let value = parseFloat(inputValue);

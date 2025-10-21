@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -12,6 +11,21 @@ namespace ProjectManagement.Utils
             using (var hmac = new HMACSHA256(key))
             {
                 return hmac.ComputeHash(data);
+            }
+        }
+
+        public static string MD5(string input)
+        {
+            using (var md5 = System.Security.Cryptography.MD5.Create())
+            {
+                var inputBytes = Encoding.UTF8.GetBytes(input);
+                var hashBytes = md5.ComputeHash(inputBytes);
+                var sb = new StringBuilder();
+                for (int i = 0; i < hashBytes.Length; i++)
+                {
+                    sb.Append(hashBytes[i].ToString("x2"));
+                }
+                return sb.ToString();
             }
         }
 

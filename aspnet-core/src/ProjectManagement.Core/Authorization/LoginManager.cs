@@ -1,31 +1,30 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Abp.Authorization;
+﻿using Abp.Authorization;
 using Abp.Authorization.Users;
 using Abp.Configuration;
 using Abp.Configuration.Startup;
 using Abp.Dependency;
 using Abp.Domain.Repositories;
 using Abp.Domain.Uow;
+using Abp.Extensions;
+using Abp.UI;
 using Abp.Zero.Configuration;
+using Castle.Core.Logging;
+using Google.Apis.Auth;
+using Microsoft.AspNetCore.Identity;
+using Newtonsoft.Json;
+using ProjectManagement.Authorization.Dto;
 using ProjectManagement.Authorization.Roles;
 using ProjectManagement.Authorization.Users;
-using ProjectManagement.MultiTenancy;
-using Castle.Core.Logging;
-using System.Threading.Tasks;
-using Abp.Extensions;
-using System;
-using Google.Apis.Auth;
-using Newtonsoft.Json;
 using ProjectManagement.Configuration;
-using System.Linq;
-using Abp.UI;
+using ProjectManagement.MultiTenancy;
 using ProjectManagement.Services.Mezon;
-using ProjectManagement.Authorization.Dto;
-using ProjectManagement.Utils;
 using ProjectManagement.Services.Mezon.Dtos;
+using ProjectManagement.Utils;
+using System;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 
 namespace ProjectManagement.Authorization
 {
@@ -259,7 +258,10 @@ namespace ProjectManagement.Authorization
 
                 var mezonUser = JsonConvert.DeserializeObject<MezonUser>(hashData.user);
 
-                byte[] secretKey = HashingUtils.HMAC_SHA256(Encoding.UTF8.GetBytes(appToken), Encoding.UTF8.GetBytes("WebAppData"));
+                string hashedBotToken = HashingUtils.MD5(appToken);
+
+                byte[] secretKey = HashingUtils.HMAC_SHA256(Encoding.UTF8.GetBytes(hashedBotToken), Encoding.UTF8.GetBytes("WebAppData"));
+
                 var hashedData = HashingUtils.HEX(HashingUtils.HMAC_SHA256(secretKey, Encoding.UTF8.GetBytes(queryId)));
 
                 if (mezonHash.Equals(hashedData) == false)

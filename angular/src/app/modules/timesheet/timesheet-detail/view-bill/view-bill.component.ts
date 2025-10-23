@@ -12,6 +12,15 @@ import { Component, OnInit, Inject, Injector } from '@angular/core';
 import * as moment from 'moment';
 import { UpdateAction } from '../timesheet-detail.component';
 
+interface ExtendedTimesheetProjectBill extends TimesheetProjectBill {
+  originalOtTypes?: any[];
+  pendingOtChanges?: {
+    added: any[];
+    updated: any[];
+    removed: number[];
+  };
+}
+
 @Component({
   selector: 'app-view-bill',
   templateUrl: './view-bill.component.html',
@@ -19,7 +28,7 @@ import { UpdateAction } from '../timesheet-detail.component';
 })
 
 export class ViewBillComponent extends AppComponentBase implements OnInit {
-  billDetail: TimesheetProjectBill[] = []
+  billDetail: ExtendedTimesheetProjectBill[] = []
   userForUserBill: UserDto[] = []
   searchUserBill: string = "";
   searchOtType: string = "";
@@ -51,19 +60,38 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
 
   ngOnInit(): void {
     this.billDetail = this.data.billDetail
+    // Backup original OT data for each bill
+    this.billDetail.forEach(bill => {
+      bill.originalOtTypes = bill.otTypes ? JSON.parse(JSON.stringify(bill.otTypes)) : [];
+      bill.pendingOtChanges = {
+        added: [],
+        updated: [],
+        removed: []
+      };
+    });
     this.getProjectOtTypesById(this.data.billInfo.projectId);
   }
 
-  public addTimesheetBillOt(billDetail: TimesheetProjectBill) {
+  // ADD OT - Only UI change
+  public addTimesheetBillOt(billDetail: ExtendedTimesheetProjectBill) {
     billDetail.createTimesheetBillOtMode = true;
     this.otTypeProcess = true;
   }
 
-  public cancelCreateTimesheetBillOt(billDetail: TimesheetProjectBill): void {
+  public cancelCreateTimesheetBillOt(billDetail: ExtendedTimesheetProjectBill): void {
     billDetail.createTimesheetBillOtMode = false;
     billDetail.otType = null;
     billDetail.otHours = null;
     this.otTypeProcess = false;
+  }
+
+  // EDIT OT - Only UI change
+  public editTimesheetBillOt(ot: any): void {
+    ot.isEditing = true;
+    ot.originalHours = ot.otHours;
+    ot.originalType = ot.otType;
+    ot.originalMultiplier = ot.multiplier;
+    this.otTypeProcess = true;
   }
 
   public cancelEditTimesheetBillOt(ot: any) {
@@ -73,69 +101,53 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
     this.otTypeProcess = false;
   }
 
-private findOtTypeByName(otTypeName: string) {
-  return this.otTypeOptions.find(ot => ot.otTypeName === otTypeName);
-}
-
-private isOtTypeExisted(billDetail: TimesheetProjectBill, projectOtTypeId: any): boolean {
-  return billDetail.otTypes?.some(x => x.projectOtTypeId === projectOtTypeId) || false;
-}
-
-private buildTimesheetBillOtPayload(billDetail: TimesheetProjectBill, projectOtTypeId: any) {
-  return {
-    timesheetProjectBillId: billDetail.id,
-    projectOtTypeId: projectOtTypeId,
-    hours: billDetail.otHours,
-    mode: 0
-  };
-}
-
-private resetBillDetailOtForm(billDetail: TimesheetProjectBill): void {
-  billDetail.createTimesheetBillOtMode = false;
-  billDetail.otType = null;
-  billDetail.otHours = null;
-  this.otTypeProcess = false;
-}
-
-private createTimesheetBillOt(payload: any, billDetail: TimesheetProjectBill): void {
-  this.timesheetProjectBillService.createOrUpdateTimesheetBillOt(payload)
-    .pipe(catchError(this.timesheetProjectBillService.handleError))
-    .subscribe({
-      next: () => {
-        abp.notify.success("OT user added successfully");
-        this.resetBillDetailOtForm(billDetail);
-        this.getProjectBill();
-      },
-      error: () => {
-        billDetail.createTimesheetBillOtMode = true;
-      }
-    });
-}
- 
-public saveTimesheetBillOt(billDetail: TimesheetProjectBill): void {
-  const ot = this.findOtTypeByName(billDetail.otType);
-  if (!ot) {
-    abp.notify.error("Invalid OT type");
-    return;
+  private findOtTypeByName(otTypeName: string) {
+    return this.otTypeOptions.find(ot => ot.otTypeName === otTypeName);
   }
 
-  if (this.isOtTypeExisted(billDetail, ot.id)) {
-    abp.notify.error("This OT type already exists for this bill");
-    return;
-  }
-  const newTimesheetBillOt = this.buildTimesheetBillOtPayload(billDetail, ot.id);
-  this.createTimesheetBillOt(newTimesheetBillOt, billDetail);
-}
-
-  public editTimesheetBillOt(ot: any): void {
-    ot.isEditing = true;
-    ot.originalHours = ot.otHours;
-    ot.originalType = ot.otType;
-    ot.originalMultiplier = ot.multiplier;
-    this.otTypeProcess = true;
+  private isOtTypeExisted(billDetail: ExtendedTimesheetProjectBill, projectOtTypeId: any): boolean {
+    return billDetail.otTypes?.some(x => x.projectOtTypeId === projectOtTypeId) || false;
   }
 
-  updateTimesheetBillOt(billDetail: TimesheetProjectBill, ot: any) {
+  // SAVE OT - Only update UI, mark as pending
+  public saveTimesheetBillOt(billDetail: ExtendedTimesheetProjectBill): void {
+    const ot = this.findOtTypeByName(billDetail.otType);
+    if (!ot) {
+      abp.notify.error("Invalid OT type");
+      return;
+    }
+
+    if (this.isOtTypeExisted(billDetail, ot.id)) {
+      abp.notify.error("This OT type already exists for this bill");
+      return;
+    }
+
+    const newOt = {
+      id: null, 
+      projectOtTypeId: ot.id,
+      otType: billDetail.otType,
+      otHours: billDetail.otHours,
+      multiplier: ot.multiplier,
+      isNew: true,
+      isEditing: false
+    };
+
+    if (!billDetail.otTypes) {
+      billDetail.otTypes = [];
+    }
+    billDetail.otTypes.push(newOt);
+
+    billDetail.pendingOtChanges.added.push(newOt);
+
+    // Reset form
+    billDetail.createTimesheetBillOtMode = false;
+    billDetail.otType = null;
+    billDetail.otHours = null;
+    this.otTypeProcess = false;
+  }
+
+  // UPDATE OT - Only update UI, mark as pending
+  updateTimesheetBillOt(billDetail: ExtendedTimesheetProjectBill, ot: any) {
     const otType = this.otTypeOptions.find(opt => opt.otTypeName === ot.otType);
     if (!ot.otType || ot.otHours == null) {
       return;
@@ -147,28 +159,110 @@ public saveTimesheetBillOt(billDetail: TimesheetProjectBill): void {
       return;
     }
 
-    const updatePayload = {
-      timesheetProjectBillOtTypesId: ot.id,
-      timesheetProjectBillId: billDetail.id,
-      projectOtTypeId: otType.id,
-      hours: ot.otHours,
-      mode: 1
-    };
+    // Update OT data in UI
+    ot.projectOtTypeId = otType.id;
+    ot.multiplier = otType.multiplier;
+    ot.isEditing = false;
 
-    this.otTypeProcess = true;
-    this.timesheetProjectBillService.createOrUpdateTimesheetBillOt(updatePayload)
-      .subscribe({
-        next: (res: any) => {
-          abp.notify.success("OT user updated successfully");
-          ot.isEditing = false;
-          this.otTypeProcess = false;
-          this.getProjectBill();
-        },
-        error: (err) => {
-          console.error(err);
-          this.otTypeProcess = false;
+    // Track pending change (only if it's not a new entry)
+    if (!ot.isNew) {
+      const existingUpdate = billDetail.pendingOtChanges.updated.find(u => u.id === ot.id);
+      if (existingUpdate) {
+        // Update existing pending change
+        existingUpdate.otType = ot.otType;
+        existingUpdate.otHours = ot.otHours;
+        existingUpdate.projectOtTypeId = otType.id;
+      } else {
+        // Add new pending change
+        billDetail.pendingOtChanges.updated.push({
+          id: ot.id,
+          otType: ot.otType,
+          otHours: ot.otHours,
+          projectOtTypeId: otType.id
+        });
+      }
+    }
+
+    this.otTypeProcess = false;
+  }
+
+  // REMOVE OT - Only update UI, mark as pending
+  public removeTimesheetBillOt(billDetail: ExtendedTimesheetProjectBill, ot: any) {
+    abp.message.confirm(
+      "Remove OT user?",
+      "",
+      (result: boolean) => {
+        if (result) {
+          // Find index and remove from UI
+          const index = billDetail.otTypes.findIndex(o => o === ot);
+          if (index !== -1) {
+            billDetail.otTypes.splice(index, 1);
+          }
+
+          // Track pending change
+          if (ot.isNew) {
+            // Remove from pending added list
+            const addedIndex = billDetail.pendingOtChanges.added.findIndex(a => a === ot);
+            if (addedIndex !== -1) {
+              billDetail.pendingOtChanges.added.splice(addedIndex, 1);
+            }
+          } else {
+            // Add to pending removed list
+            billDetail.pendingOtChanges.removed.push(ot.id);
+          }
         }
-      });
+      }
+    );
+  }
+
+  // ACTUAL API CALLS - Called when Save button is clicked
+  private async savePendingOtChanges(billDetail: ExtendedTimesheetProjectBill): Promise<void> {
+    const changes = billDetail.pendingOtChanges;
+
+    // Process removals
+    for (const otId of changes.removed) {
+      const req = {
+        otId: otId,
+        timesheetProjectBillId: billDetail.id,
+      };
+      await this.timesheetProjectBillService.removeTimesheetBillOt(req)
+        .pipe(catchError(this.timesheetProjectBillService.handleError))
+        .toPromise();
+    }
+
+    // Process additions
+    for (const newOt of changes.added) {
+      const payload = {
+        timesheetProjectBillId: billDetail.id,
+        projectOtTypeId: newOt.projectOtTypeId,
+        hours: newOt.otHours,
+        mode: 0
+      };
+      await this.timesheetProjectBillService.createOrUpdateTimesheetBillOt(payload)
+        .pipe(catchError(this.timesheetProjectBillService.handleError))
+        .toPromise();
+    }
+
+    // Process updates
+    for (const update of changes.updated) {
+      const payload = {
+        timesheetProjectBillOtTypesId: update.id,
+        timesheetProjectBillId: billDetail.id,
+        projectOtTypeId: update.projectOtTypeId,
+        hours: update.otHours,
+        mode: 1
+      };
+      await this.timesheetProjectBillService.createOrUpdateTimesheetBillOt(payload)
+        .pipe(catchError(this.timesheetProjectBillService.handleError))
+        .toPromise();
+    }
+
+    // Reset pending changes
+    billDetail.pendingOtChanges = {
+      added: [],
+      updated: [],
+      removed: []
+    };
   }
 
   getProjectOtTypesById(projectId: any) {
@@ -194,58 +288,34 @@ public saveTimesheetBillOt(billDetail: TimesheetProjectBill): void {
     return this.isGranted(this.Timesheets_TimesheetDetail_OTType_Delete)
   }
 
+  readonly HOURS_PER_DAY = 8;
 
-  public removeTimesheetBillOt(billDetail: TimesheetProjectBill, ot: any) {
-    const req = {
-      otId: ot.id,
-      timesheetProjectBillId: billDetail.id,
+  normalUnit: 'Day' | 'Hour' = 'Day';
+  otUnit: 'Day' | 'Hour' = 'Hour';
+
+  private daysToHours(days: number): number {
+    return parseFloat((days * this.HOURS_PER_DAY).toFixed(2));
+  }
+
+  private hoursToDays(hours: number): number {
+    return parseFloat((hours / this.HOURS_PER_DAY).toFixed(2));
+  }
+
+  getDisplayWorkingTime(value: number): number {
+    if (!value) return 0;
+    if (this.normalUnit === 'Hour') {
+      return parseFloat(this.daysToHours(value).toFixed(2));
     }
-    abp.message.confirm(
-      "Remove OT user?",
-      "",
-      (result: boolean) => {
-        if (result) {
-          this.isLoading = true;
-          this.timesheetProjectBillService.removeTimesheetBillOt(req).pipe(catchError(this.timesheetProjectBillService.handleError)).subscribe(data => {
-            abp.notify.success(`OT user Removed Successfully!`)
-            this.getProjectBill();
-          }, () => {
-            this.isLoading = false
-          })
-        }
-      }
-    )
+    return parseFloat(value.toFixed(2));
   }
 
-
-readonly HOURS_PER_DAY = 8;
-
-normalUnit: 'Day' | 'Hour' = 'Day';
-otUnit: 'Day' | 'Hour' = 'Hour';
-
-private daysToHours(days: number): number {
-  return parseFloat((days * this.HOURS_PER_DAY).toFixed(2));
-}
-
-private hoursToDays(hours: number): number {
-  return parseFloat((hours / this.HOURS_PER_DAY).toFixed(2));
-}
-
-getDisplayWorkingTime(value: number): number {
-  if (!value) return 0;
-  if (this.normalUnit === 'Hour') {
-    return parseFloat(this.daysToHours(value).toFixed(2));
+  getDisplayOTTime(value: number): number {
+    if (!value) return 0;
+    if (this.otUnit === 'Day') {
+      return parseFloat(this.hoursToDays(value).toFixed(2));
+    }
+    return parseFloat(value.toFixed(2));
   }
-  return parseFloat(value.toFixed(2));
-}
-
-getDisplayOTTime(value: number): number {
-  if (!value) return 0;
-  if (this.otUnit === 'Day') {
-    return parseFloat(this.hoursToDays(value).toFixed(2));
-  }
-  return parseFloat(value.toFixed(2));
-}
 
   onHoursChange(target: any, event: any) {
     let inputValue = event.target.value;
@@ -272,21 +342,34 @@ getDisplayOTTime(value: number): number {
     this.timesheetProjectBillService.getProjectBill(this.data.billInfo.projectId, this.data.billInfo.timesheetId)
     .subscribe(data => {
       this.billDetail = data.result
+      // Backup original OT data after loading
+      this.billDetail.forEach(bill => {
+        bill.originalOtTypes = bill.otTypes ? JSON.parse(JSON.stringify(bill.otTypes)) : [];
+        bill.pendingOtChanges = {
+          added: [],
+          updated: [],
+          removed: []
+        };
+      });
       this.isLoading = false
     },
       () => { this.dialogRef.close(); this.isLoading = false })
   }
 
-  public saveUserBill(tpb: TimesheetProjectBill): void {
+  public async saveUserBill(tpb: ExtendedTimesheetProjectBill): Promise<void> {
     delete tpb["isEditing"];
-    //tpb.isEditing = false;
-
+    
     tpb.startTime = moment(tpb.startTime).format("YYYY-MM-DD");
     if (tpb.endTime) {
       tpb.endTime = moment(tpb.endTime).format("YYYY-MM-DD");
     }
     tpb.timesheetId = this.data.billInfo.timesheetId;
     tpb.projectId = this.data.billInfo.projectId;
+
+    // Save pending OT changes first
+    if (tpb.pendingOtChanges) {
+      await this.savePendingOtChanges(tpb);
+    }
 
     if (!tpb.id) {
       tpb.projectId = this.data.billInfo.projectId;
@@ -340,7 +423,14 @@ getDisplayOTTime(value: number): number {
     })
   }
 
-  saveAllUpdateBill() {
+  async saveAllUpdateBill() {
+    // Save all pending OT changes for all bills
+    for (const bill of this.billDetail) {
+      if (bill.pendingOtChanges) {
+        await this.savePendingOtChanges(bill);
+      }
+    }
+
     let tpbList = this.billDetail.map((tpb) => {
       return {
         projectId: tpb.projectId,
@@ -379,14 +469,35 @@ getDisplayOTTime(value: number): number {
   }
 
   public cancelUpdateAll(): void {
+    // Restore original OT data
+    this.billDetail.forEach(bill => {
+      if (bill.originalOtTypes) {
+        bill.otTypes = JSON.parse(JSON.stringify(bill.originalOtTypes));
+        bill.pendingOtChanges = {
+          added: [],
+          updated: [],
+          removed: []
+        };
+      }
+      // Reset create mode
+      bill.createTimesheetBillOtMode = false;
+      bill.otType = null;
+      bill.otHours = null;
+      
+      // Reset editing state for all OT entries
+      bill.otTypes?.forEach(ot => {
+        ot.isEditing = false;
+      });
+    });
+    
     this.getProjectBill();
     this.searchUserBill = "";
     this.otTypeProcess = false;
   }
 
-  public editUserBill(tpb: TimesheetProjectBill): void {
+  public editUserBill(tpb: ExtendedTimesheetProjectBill): void {
     tpb.isEditing = true;
-    this.otTypeProcess = true;
+    // Không set otTypeProcess = true nữa, để user có thể thao tác với OT
   }
 
   searchUser(bill) {
@@ -423,10 +534,9 @@ getDisplayOTTime(value: number): number {
   }
 
   public create() {
-    let bill = {} as TimesheetProjectBill;
+    let bill = {} as ExtendedTimesheetProjectBill;
     this.billDetail.unshift(bill)
     bill.isEditing = true;
-
   }
 
   editAllRow() {
@@ -445,7 +555,12 @@ getDisplayOTTime(value: number): number {
     this.billDetail.forEach(s => s.isEditing = true);
   }
 
-  saveUpdateTS(data){
+  async saveUpdateTS(data){
+    // Save pending OT changes first
+    if (data.pendingOtChanges) {
+      await this.savePendingOtChanges(data);
+    }
+
     let request = [{
       Id: data.id,
       workingTime: data.workingTime,
@@ -466,7 +581,7 @@ getDisplayOTTime(value: number): number {
     })
   }
 
-  protected removeAccountTS(tpb:TimesheetProjectBill): void {
+  protected removeAccountTS(tpb: ExtendedTimesheetProjectBill): void {
     abp.message.confirm(
       "Remove account " + tpb.fullName + "?",
       "",
@@ -488,7 +603,14 @@ getDisplayOTTime(value: number): number {
     );
   }
 
-  saveAllUpdateTS(){
+  async saveAllUpdateTS(){
+    // Save all pending OT changes for all bills
+    for (const bill of this.billDetail) {
+      if (bill.pendingOtChanges) {
+        await this.savePendingOtChanges(bill);
+      }
+    }
+
     let arr = this.billDetail.map((tpb) => {
       return {
         note: tpb?.note,

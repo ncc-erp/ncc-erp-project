@@ -14,95 +14,97 @@
   >
   </abp-modal-header>
 
-  <div class="modal-body row" id="modal-bill-info" style="justify-content: end">
+  <div class="modal-body row" id="modal-bill-info">
     <div
       class="col-10 row mb-1"
       *ngIf="billDetail.length != 0 && billDetail.length != 1"
+      style="justify-content: space-between; align-items: center"
     >
-      <button
-        class="btn btn-editall-neutral ml-2"
-        *ngIf="isShowEditAllBtn()"
-        (click)="editAllRow()"
-        [disabled]="data.billInfo.isComplete"
-      >
-        <i class="fas fa-pencil-alt mr-1"></i>Edit All
-      </button>
-
-      <!-- Normal Unit Dropdown -->
-      <div class="ml-3" style="display: inline-block">
-        <mat-form-field appearance="outline" style="width: 150px">
-          <mat-label>Normal Unit</mat-label>
-          <mat-select [(ngModel)]="normalUnit" name="normalUnit">
-            <mat-option value="Day">Day</mat-option>
-            <mat-option value="Hour">Hour</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-
-      <!-- OT Unit Dropdown -->
-      <div class="ml-2" style="display: inline-block">
-        <mat-form-field appearance="outline" style="width: 150px">
-          <mat-label>OT Unit</mat-label>
-          <mat-select [(ngModel)]="otUnit" name="otUnit">
-            <mat-option value="Day">Day</mat-option>
-            <mat-option value="Hour">Hour</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-
-      <div *ngIf="isEditingAllRow()" class="pt-1 ml-4">
+      <div class="d-flex align-items-center">
         <button
-          *ngIf="isTSPopUp()"
-          [disabled]="!timesheetDetailForm.valid"
-          class="mr-3 submit-btn"
-          style="background: none; border: none"
-          (click)="saveAllUpdateTS()"
+          class="btn btn-editall-neutral ml-2"
+          *ngIf="isShowEditAllBtn()"
+          (click)="editAllRow()"
+          [disabled]="data.billInfo.isComplete"
         >
-          <i style="color: green" class="fas fa-check fa-2x"></i>
+          <i class="fas fa-pencil-alt mr-1"></i>Edit All
         </button>
 
-        <button
-          *ngIf="isBillPopUp()"
-          [disabled]="!timesheetDetailForm.valid"
-          class="mr-3 submit-btn"
-          style="background: none; border: none"
-          (click)="saveAllUpdateBill()"
-        >
-          <i style="color: green" class="fas fa-check fa-2x"></i>
-        </button>
-        <i
-          style="color: red"
-          class="fas fa-times fa-2x"
-          (click)="cancelUpdateAll()"
-        ></i>
-      </div>
+        <!-- Normal Unit Dropdown -->
+        <div class="ml-3" *ngIf="!isEditingAllRow()">
+          <mat-form-field appearance="outline" style="width: 150px">
+            <mat-label>Normal Unit</mat-label>
+            <mat-select [(ngModel)]="normalUnit" name="normalUnit">
+              <mat-option value="Day">Day</mat-option>
+              <mat-option value="Hour">Hour</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
 
-      <div
-        *ngIf="isEditingAllRow() && billDetail.length >= 20"
-        class="pt-1 ml-4"
-      >
-        <input
-          type="number"
-          (input)="updateAllWorkingTime($event.target.value)"
-          placeholder="Working Time For All"
-          style="min-width: 80px; margin-left: 800px"
-        />
+        <!-- OT Unit Dropdown -->
+        <div class="ml-2" *ngIf="!isEditingAllRow()">
+          <mat-form-field appearance="outline" style="width: 150px">
+            <mat-label>OT Unit</mat-label>
+            <mat-select [(ngModel)]="otUnit" name="otUnit">
+              <mat-option value="Day">Day</mat-option>
+              <mat-option value="Hour">Hour</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div *ngIf="isEditingAllRow()" class="pt-1 ml-4">
+          <button
+            *ngIf="isTSPopUp()"
+            [disabled]="!timesheetDetailForm.valid"
+            class="mr-3 submit-btn"
+            style="background: none; border: none"
+            (click)="saveAllUpdateTS()"
+          >
+            <i style="color: green" class="fas fa-check fa-2x"></i>
+          </button>
+
+          <button
+            *ngIf="isBillPopUp()"
+            [disabled]="!timesheetDetailForm.valid"
+            class="mr-3 submit-btn"
+            style="background: none; border: none"
+            (click)="saveAllUpdateBill()"
+          >
+            <i style="color: green" class="fas fa-check fa-2x"></i>
+          </button>
+          <i
+            style="color: red"
+            class="fas fa-times fa-2x"
+            (click)="cancelUpdateAll()"
+          ></i>
+        </div>
+
+        <div
+          *ngIf="isEditingAllRow() && billDetail.length >= 20"
+          class="pt-1 ml-4"
+        >
+          <input
+            type="number"
+            (input)="updateAllWorkingTime($event.target.value)"
+            placeholder="Working Time For All"
+            style="min-width: 80px; margin-left: 800px"
+          />
+        </div>
       </div>
+      <section
+        class="example-section col-2 text-center"
+        *ngIf="isGranted(Timesheets_TimesheetDetail_UpdateBill_SetDone)"
+      >
+        <mat-checkbox
+          id="done"
+          class="example-margin"
+          (change)="isComplete($event)"
+          [disabled]="isEditingAnyRow()"
+          [checked]="data.billInfo.isComplete"
+          >PM Confirm Timesheet Done
+        </mat-checkbox>
+      </section>
     </div>
-
-    <section
-      class="example-section col-2 text-center"
-      *ngIf="isGranted(Timesheets_TimesheetDetail_UpdateBill_SetDone)"
-    >
-      <mat-checkbox
-        id="done"
-        class="example-margin"
-        (change)="isComplete($event)"
-        [disabled]="isEditingAnyRow()"
-        [checked]="data.billInfo.isComplete"
-        >PM Confirm Timesheet Done
-      </mat-checkbox>
-    </section>
 
     <div class="table-responsive mb-1 p-2">
       <div class="fixTableHead">
@@ -256,7 +258,7 @@
               <td class="text-center">
                 <span *ngIf="!bill.isEditing">
                   {{ getDisplayWorkingTime(bill.workingTime) }}
-                  {{ normalUnit == "Day" ? "days" : "hours" }}
+                  {{ normalUnit == "Day" ? "d" : "h" }}
                 </span>
                 <div *ngIf="bill.isEditing">
                   <input

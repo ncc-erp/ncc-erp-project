@@ -16,7 +16,7 @@
 
   <div class="modal-body row" id="modal-bill-info">
     <div
-      class="col-10 row mb-1"
+      class="col-12 row mb-1"
       *ngIf="billDetail.length != 0 && billDetail.length != 1"
       style="justify-content: space-between; align-items: center"
     >
@@ -92,7 +92,7 @@
         </div>
       </div>
       <section
-        class="example-section col-2 text-center"
+        class="example-section text-center"
         *ngIf="isGranted(Timesheets_TimesheetDetail_UpdateBill_SetDone)"
       >
         <mat-checkbox

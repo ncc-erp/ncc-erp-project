@@ -1,11 +1,9 @@
 ﻿using NccCore.Uitls;
-using ProjectManagement.Entities;
 using ProjectManagement.Helper;
 using ProjectManagement.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using static ProjectManagement.Constants.Enum.ClientEnum;
 using static ProjectManagement.Constants.Enum.ProjectEnum;
 
@@ -97,10 +95,10 @@ namespace ProjectManagement.Services.Timesheet.Dto
                     date = new DateTime(Year, Month, 1).AddMonths(months + 1).AddDays(-1);
                 }
             }
-            if(PaymentDueBy > CommonUtil.LastDateNextThan2Month)
+            if (PaymentDueBy > CommonUtil.LastDateNextThan2Month)
             {
-                date = new DateTime(Year, Month, 1).AddMonths(PaymentDueBy%100).AddDays(-1);
-            }    
+                date = new DateTime(Year, Month, 1).AddMonths(PaymentDueBy % 100).AddDays(-1);
+            }
 
             return DateTimeUtils.FormatDateToInvoice(date);
         }
@@ -123,23 +121,30 @@ namespace ProjectManagement.Services.Timesheet.Dto
         public int DefaultWorkingHours { get; set; }
         public ExportInvoiceMode Mode { get; set; }
         public double TimesheetWorkingDay { get; set; }
+        public List<TimesheetProjectBillOtTypeDto> TimesheetProjectBillOtTypes { get; set; }
         public string FullName => string.IsNullOrEmpty(AccountName) ? UserFullName : AccountName;
         public double BillRateDisplay => (Mode == ExportInvoiceMode.MontlyToDaily && ChargeType == ChargeType.Monthly) ? BillRate / TimesheetWorkingDay : BillRate;
         public double WorkingDayDisplay
         {
             get
             {
+                var otHours = TimesheetProjectBillOtTypes?.Sum(item => (float)item.Hours * item.Multiplier) ?? 0;
+                double result;
+
                 if ((Mode == ExportInvoiceMode.MontlyToDaily && ChargeType == ChargeType.Monthly) || ChargeType == ChargeType.Daily)
                 {
-                    return WorkingDay;
+                    result = WorkingDay + otHours / DefaultWorkingHours;
                 }
-
-                if (ChargeType == ChargeType.Hourly)
+                else if (ChargeType == ChargeType.Hourly)
                 {
-                    return WorkingDay * DefaultWorkingHours;
+                    result = WorkingDay * DefaultWorkingHours + otHours;
+                }
+                else
+                {
+                    result = (WorkingDay + otHours / DefaultWorkingHours) / TimesheetWorkingDay;
                 }
 
-                return WorkingDay / TimesheetWorkingDay;
+                return Math.Round(result, 3);
             }
         }
         public string ChargeTypeDisplay
@@ -195,6 +200,14 @@ namespace ProjectManagement.Services.Timesheet.Dto
         Normal = 0,
         MontlyToDaily = 1
     }
+
+    public class TimesheetProjectBillOtTypeDto
+    {
+        public long Id { get; set; }
+        public decimal Hours { get; set; }
+        public float Multiplier { get; set; }
+        public string OtType { get; set; }
+    }
     #region Finfast Integrate
     public class InvoiceGeneralInfoForFinfast
     {
@@ -244,7 +257,7 @@ namespace ProjectManagement.Services.Timesheet.Dto
             }
             if (PaymentDueBy > CommonUtil.LastDateNextThan2Month)
             {
-                date = new DateTime(Year, Month, 1).AddMonths(PaymentDueBy%100).AddDays(-1);
+                date = new DateTime(Year, Month, 1).AddMonths(PaymentDueBy % 100).AddDays(-1);
             }
 
             return DateTimeUtils.FormatDateToInvoice(date);

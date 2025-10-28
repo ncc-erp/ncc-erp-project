@@ -45,5 +45,7 @@ namespace ProjectManagement.APIs.TimeSheetProjectBills.Dto
         public long? PositionId { get; set; }
         public string PositionColor { get; set; }
         public string PositionName { get; set; }
+        public List<TimesheetProjectBillOtTypesDto> OtTypes { get; set; }
+
     }
 }

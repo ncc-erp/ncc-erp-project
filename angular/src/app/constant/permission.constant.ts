@@ -318,7 +318,7 @@ export const PERMISSIONS_CONSTANT = {
        Projects_ProductProjects_ProjectDetail_TabBillInfo_Edit: "Projects.ProductProjects.ProjectDetail.TabBillInfo.Edit",
        Projects_ProductProjects_ProjectDetail_TabBillInfo_Delete: "Projects.ProductProjects.ProjectDetail.TabBillInfo.Delete",
        Projects_ProductProjects_ProjectDetail_TabBillInfo_Note_Edit: "Projects.ProductProjects.ProjectDetail.TabBillInfo.Note_Edit",
-       Projects_ProductProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount: "Projects.ProductProjects.ProjectDetail.TabBillInfo.UpdateUserToBillAccount",
+       // Projects_ProductProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount: "Projects.ProductProjects.ProjectDetail.TabBillInfo.UpdateUserToBillAccount",
        Projects_ProductProjects_ProjectDetail_TabTimesheet: "Projects.ProductProjects.ProjectDetail.TabTimesheet",
 
        Projects_ProductProjects_ProjectDetail_TabProjectDescription: "Projects.ProductProjects.ProjectDetail.TabProjectDescription",
@@ -630,6 +630,11 @@ export const PERMISSIONS_CONSTANT = {
        Timesheets_TimesheetDetail_UpdateProjectCodes: 'Timesheets.TimesheetDetail.UpdateProjectCodes',
        Timesheets_TimesheetDetail_UpdateTimsheet: "Timesheets.TimesheetDetail.UpdateTimsheet",
        Timesheets_TimesheetDetail_RemoveAccount: "Timesheets.TimesheetDetail.RemoveAccount",
+
+       Timesheets_TimesheetDetail_OTType : "Timesheets.TimesheetDetail.OTType",
+       Timesheets_TimesheetDetail_OTType_View : "Timesheets.TimesheetDetail.OTType.View",
+       Timesheets_TimesheetDetail_OTType_Edit : "Timesheets.TimesheetDetail.OTType.Edit",
+       Timesheets_TimesheetDetail_OTType_Delete : "Timesheets.TimesheetDetail.OTType.Delete",
        // #endregion
 
        // #region Criteria

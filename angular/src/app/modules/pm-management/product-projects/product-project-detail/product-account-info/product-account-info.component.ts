@@ -78,7 +78,7 @@ export class ProductAccountInfoComponent extends AppComponentBase implements OnI
   public listSelectChargeRole: string[] = [];
 
   public selectedLinkedResources: number[] = [];
-  public listSelectLinkedResources: optionDto[] = [];
+  // public listSelectLinkedResources: optionDto[] = [];
   // public isHideRates:boolean = false;
 
   public listAllResource: UserDto[] = [];
@@ -97,7 +97,7 @@ export class ProductAccountInfoComponent extends AppComponentBase implements OnI
   Projects_ProductProjects_ProjectDetail_TabBillInfo_Edit = PERMISSIONS_CONSTANT.Projects_ProductProjects_ProjectDetail_TabBillInfo_Edit;
   Projects_ProductProjects_ProjectDetail_TabBillInfo_Delete = PERMISSIONS_CONSTANT.Projects_ProductProjects_ProjectDetail_TabBillInfo_Delete;
   Projects_ProductProjects_ProjectDetail_TabBillInfo_Note_Edit = PERMISSIONS_CONSTANT.Projects_ProductProjects_ProjectDetail_TabBillInfo_Note_Edit;
-  Projects_ProductProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount = PERMISSIONS_CONSTANT.Projects_ProductProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount;
+  // Projects_ProductProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount = PERMISSIONS_CONSTANT.Projects_ProductProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount;
   Resource_TabAllResource_ViewUserStarSkill = PERMISSIONS_CONSTANT.Resource_TabAllResource_ViewUserStarSkill;
   Resource_TabAllResource_UpdateSkill = PERMISSIONS_CONSTANT.Resource_TabAllResource_UpdateSkill;
 
@@ -118,7 +118,7 @@ export class ProductAccountInfoComponent extends AppComponentBase implements OnI
   ngOnInit(): void {
     this.getUserBill();
     this.GetChargeRoleData();
-    this.GetLinkedResourcesData();
+    // this.GetLinkedResourcesData();
     this.getCurrentProjectInfo();
     this.getListUserAndResources();
   }
@@ -380,16 +380,16 @@ export class ProductAccountInfoComponent extends AppComponentBase implements OnI
     })
   }
 
-  GetLinkedResourcesData(){
-    this.projectUserBillService.GetAllLinkedResourcesByProject(this.projectId).subscribe(data => {
-      this.listSelectLinkedResources = data.result.map(item => {
-        return {
-          id: item.id,
-          name: `${item.fullName} (${item.emailAddress})`
-        };
-      });
-    })
-  }
+  // GetLinkedResourcesData(){
+  //   this.projectUserBillService.GetAllLinkedResourcesByProject(this.projectId).subscribe(data => {
+  //     this.listSelectLinkedResources = data.result.map(item => {
+  //       return {
+  //         id: item.id,
+  //         name: `${item.fullName} (${item.emailAddress})`
+  //       };
+  //     });
+  //   })
+  // }
 
   filterByIsCharge() {
     this.getUserBill()

@@ -327,6 +327,14 @@ namespace ProjectManagement.APIs.TimesheetProjects
                                                         ChargeType = x.ChargeType.HasValue ? x.ChargeType : x.Project.ChargeType,
                                                         DefaultWorkingHours = defaultWorkingHours,
                                                         TimeSheetWorkingDay = tsp.WorkingDay,
+                                                        TimesheetProjectBillOtTypes = x.TimesheetProjectBillOtTypes
+                                                           .Select(ot => new TimesheetProjectBillOtTypeDto
+                                                           {
+                                                               Id = ot.Id,
+                                                               Hours = ot.Hours,
+                                                               Multiplier = ot.ProjectOtType.Multiplier,
+                                                               OtType = ot.ProjectOtType.OtTypeName,
+                                                           }).ToList()
                                                     }).ToList(),
                     Note = tsp.Note,
                     HistoryFile = tsp.HistoryFile,
@@ -833,6 +841,14 @@ namespace ProjectManagement.APIs.TimesheetProjects
                                                ProjectCode = tpb.Project.Code,
                                                EndTime = tpb.EndTime,
                                                StartTime = tpb.StartTime,
+                                               TimesheetProjectBillOtTypes = tpb.TimesheetProjectBillOtTypes
+                                                   .Select(ot => new TimesheetProjectBillOtTypeDto
+                                                   {
+                                                       Id = ot.Id,
+                                                       Hours = ot.Hours,
+                                                       Multiplier = ot.ProjectOtType.Multiplier,
+                                                       OtType = ot.ProjectOtType.OtTypeName,
+                                                   }).ToList()
                                            }).ToListAsync();
             result.ProjectCodes = result.TimesheetUsers.Select(x => x.ProjectCode).Union(listTSProjectCode).ToList();
             return result;
@@ -856,7 +872,8 @@ namespace ProjectManagement.APIs.TimesheetProjects
                 invoiceSheet.Cells[rowIndex, 3].Value = tsUser.ProjectName;
                 invoiceSheet.Cells[rowIndex, 4].Value = tsUser.BillRateDisplay;
                 invoiceSheet.Cells[rowIndex, 5].Value = tsUser.CurrencyName + "/" + tsUser.ChargeTypeDisplay;
-                invoiceSheet.Cells[rowIndex, 6].Value = tsUser.WorkingDayDisplay;
+                invoiceSheet.Cells[rowIndex, 6].Value = Math.Round(tsUser.WorkingDayDisplay, 3);
+                invoiceSheet.Cells[rowIndex, 6].Style.Numberformat.Format = "0.000";
                 invoiceSheet.Cells[rowIndex, 7].Value = tsUser.LineTotal;
                 sumLineTotal += tsUser.LineTotal;
                 rowIndex++;
@@ -1474,10 +1491,10 @@ namespace ProjectManagement.APIs.TimesheetProjects
                             ProjectName = project.Key,
                             AccountsChangeInfor = project
                                 .SelectMany(x => x.ProjectBillInfomation)
-                                .Where(billInfo => (billInfo.EndTime.HasValue && 
-                                                    billInfo.EndTime.Value.Month == current.Month && 
+                                .Where(billInfo => (billInfo.EndTime.HasValue &&
+                                                    billInfo.EndTime.Value.Month == current.Month &&
                                                     billInfo.EndTime.Value.Year == current.Year) ||
-                                                   (billInfo.StartTime.Month == current.Month && 
+                                                   (billInfo.StartTime.Month == current.Month &&
                                                     billInfo.StartTime.Year == current.Year))
                                 .Select(billInfo => new AccountsChangeInforDto
                                 {
@@ -1641,10 +1658,10 @@ namespace ProjectManagement.APIs.TimesheetProjects
                             startRow += project.AccountsInfo.Count;
                         }
                     }
-                    if(clientStartRow < startRow)
+                    if (clientStartRow < startRow)
                     {
                         sheetAccountsNotWorkingFull.Cells[$"B{clientStartRow}:B{startRow - 1}"].Merge = true;
-                    }    
+                    }
                 }
                 sheetAccountsNotWorkingFull.Cells[$"A1:E{startRow - 1}"].Style.Border.Top.Style = ExcelBorderStyle.Thin;
                 sheetAccountsNotWorkingFull.Cells[$"A1:E{startRow - 1}"].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;

@@ -147,6 +147,7 @@ namespace ProjectManagement.Services.Timesheet.Dto
                 return Math.Round(result, 3);
             }
         }
+
         public string ChargeTypeDisplay
         {
             get
@@ -164,11 +165,49 @@ namespace ProjectManagement.Services.Timesheet.Dto
                 return "Month";
             }
         }
+
         public double LineTotal
         {
             get
             {
                 return WorkingDayDisplay * BillRateDisplay;
+            }
+        }
+
+        /// <summary>
+        /// Get Normal working day for invoice calculation
+        /// </summary>
+        public double NormalWorkingDay
+        {
+            get
+            {
+                double result;
+
+                if ((Mode == ExportInvoiceMode.MontlyToDaily && ChargeType == ChargeType.Monthly) || ChargeType == ChargeType.Daily)
+                {
+                    result = WorkingDay;
+                }
+                else if (ChargeType == ChargeType.Hourly)
+                {
+                    result = WorkingDay * DefaultWorkingHours;
+                }
+                else
+                {
+                    result = WorkingDay / TimesheetWorkingDay;
+                }
+
+                return Math.Round(result, 3);
+            }
+        }
+
+        /// <summary>
+        /// Get Normal line total with NormalWorkingDay
+        /// </summary>
+        public double NormalLineTotal
+        {
+            get
+            {
+                return NormalWorkingDay * BillRateDisplay;
             }
         }
     }

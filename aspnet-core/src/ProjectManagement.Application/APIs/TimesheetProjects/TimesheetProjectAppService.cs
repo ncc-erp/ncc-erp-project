@@ -861,22 +861,59 @@ namespace ProjectManagement.APIs.TimesheetProjects
 
             var tsTable = invoiceSheet.Tables.First();
             var tsTableStart = tsTable.Address.Start;
-            invoiceSheet.InsertRow(tsTableStart.Row + 1, data.TimesheetUsers.Count - 1, tsTableStart.Row + data.TimesheetUsers.Count);
             int rowIndex = tsTableStart.Row + 1;
-
+            bool isFirstRow = true;
             double sumLineTotal = 0;
+            var ivory = ColorTranslator.FromHtml("#f9f5ee");
+            var white = ColorTranslator.FromHtml("#ffffff");
             foreach (var tsUser in data.TimesheetUsers)
             {
+                if (!isFirstRow)
+                {
+                    invoiceSheet.InsertRow(rowIndex, 1, rowIndex - 1);
+                }
+                // Fill Color Normal working day line
+                var rowRange = invoiceSheet.Cells[rowIndex, 2, rowIndex, 7];
+                rowRange.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                rowRange.Style.Fill.BackgroundColor.SetColor(rowIndex % 2 == 0 ? white : ivory);
+
                 //Fill data sheet invoice
                 invoiceSheet.Cells[rowIndex, 2].Value = tsUser.FullName;
                 invoiceSheet.Cells[rowIndex, 3].Value = tsUser.ProjectName;
                 invoiceSheet.Cells[rowIndex, 4].Value = tsUser.BillRateDisplay;
                 invoiceSheet.Cells[rowIndex, 5].Value = tsUser.CurrencyName + "/" + tsUser.ChargeTypeDisplay;
-                invoiceSheet.Cells[rowIndex, 6].Value = Math.Round(tsUser.WorkingDayDisplay, 3);
+                invoiceSheet.Cells[rowIndex, 6].Value = Math.Round(tsUser.NormalWorkingDay, 3);
                 invoiceSheet.Cells[rowIndex, 6].Style.Numberformat.Format = "0.000";
-                invoiceSheet.Cells[rowIndex, 7].Value = tsUser.LineTotal;
-                sumLineTotal += tsUser.LineTotal;
+                invoiceSheet.Cells[rowIndex, 7].Value = tsUser.NormalLineTotal;
+                sumLineTotal += tsUser.NormalLineTotal;
                 rowIndex++;
+                isFirstRow = false;
+
+                if (tsUser.TimesheetProjectBillOtTypes.Count > 0)
+                {
+                    foreach (var ot in tsUser.TimesheetProjectBillOtTypes)
+                    {
+                        invoiceSheet.InsertRow(rowIndex, 1, rowIndex - 1);
+
+                        // Fill Color OT line
+                        rowRange = invoiceSheet.Cells[rowIndex, 2, rowIndex, 7];
+                        rowRange.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                        rowRange.Style.Fill.BackgroundColor.SetColor(rowIndex % 2 == 0 ? white : ivory);
+
+                        var workingDayOt = ExtensionMethod.GetWorkingDayOT(ot, tsUser);
+                        var lineTotalOt = workingDayOt * tsUser.BillRateDisplay;
+
+                        invoiceSheet.Cells[rowIndex, 2].Value = $"{tsUser.FullName} (OT {ot.OtType})";
+                        invoiceSheet.Cells[rowIndex, 3].Value = tsUser.ProjectName;
+                        invoiceSheet.Cells[rowIndex, 4].Value = tsUser.BillRateDisplay;
+                        invoiceSheet.Cells[rowIndex, 5].Value = tsUser.CurrencyName + "/" + tsUser.ChargeTypeDisplay;
+                        invoiceSheet.Cells[rowIndex, 6].Value = workingDayOt;
+                        invoiceSheet.Cells[rowIndex, 6].Style.Numberformat.Format = "0.000";
+                        invoiceSheet.Cells[rowIndex, 7].Value = lineTotalOt;
+                        sumLineTotal += lineTotalOt;
+                        rowIndex++;
+                    }
+                }
             }
 
             var netTotal = sumLineTotal;

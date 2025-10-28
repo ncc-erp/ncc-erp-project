@@ -45,7 +45,7 @@
                             </div>
                         </div> -->
 
-                        <div class="col-lg-4 mb-2 filter-link-resource" (click)="$event.stopPropagation()" [hidden]="!showSearchAndFilter">
+                        <!-- <div class="col-lg-4 mb-2 filter-link-resource" (click)="$event.stopPropagation()" [hidden]="!showSearchAndFilter">
                             <app-multiple-select
                             [hidden]="isShowUserBill"
                             #linkedResources
@@ -62,7 +62,7 @@
                                 *ngIf="selectedLinkedResources.length > 0"
                             (click)="onCancelFilterLinkedResources()"
                             ></i>
-                        </div>
+                        </div> -->
 
                         <!-- <div class="mb-2 change-role" (click)="$event.stopPropagation()" [hidden]="!showSearchAndFilter">
                             <app-multiple-select-string-value
@@ -127,13 +127,13 @@
                                         <i *ngIf="sortColumn !== 'billRole'" class="fas fa-sort"></i>
                                     </div>
                                 </th> -->
-                                    <th class="align" (click)="orderLinkedResourcesOnTop('linkedResources')" style="cursor: pointer;">
+                                    <!-- <th class="align" (click)="orderLinkedResourcesOnTop('linkedResources')" style="cursor: pointer;">
                                         <div class="col-bill-account">
                                             {{ "Linked Resources" | localize }}
                                             <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'linkedResources'"></i>
                                             <i *ngIf="sortColumn !== 'linkedResources'" class="fas fa-sort"></i>
                                         </div>
-                                </th>
+                                </th> -->
                                 <th class="align" (click)="sortData('headCount')" style="cursor: pointer; min-width: 100px;">
                                 {{ "Head Count" | localize }}
                                 <br>({{totalHeadCount | number: '1.2-2'}})
@@ -256,7 +256,7 @@
 
                                     </div>
                                 </td> -->
-                                <td style="max-width: 400px;">
+                                <!-- <td style="max-width: 400px;">
                                     <div class="text-right" *ngIf="!bill.createLinkResourceMode">
                                         <button class="btn bg-blue btn-sm"
                                             *ngIf="permission.isGranted(Projects_ProductProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount)"
@@ -369,7 +369,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </td>
+                                </td> -->
                                 <td class="text-center">
                                     <span class="text-center" *ngIf="!bill.createMode">{{ bill.headCount |
                                         number: '1.2-2':'en-US' }}</span>

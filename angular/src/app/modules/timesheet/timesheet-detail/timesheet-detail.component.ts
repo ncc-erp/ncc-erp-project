@@ -217,16 +217,16 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
   getTotalWorkingTime(item: any): number {
     const normalWorkingTime = item.workingTime || 0;
 
-      if (!item.timesheetProjectBillOtTypes?.length) {
+    if (!item.timesheetProjectBillOtTypes?.length) {
       return normalWorkingTime;
     }
-    const totalOtTime = item?.timesheetProjectBillOtTypes?.reduce((total: number, otType: any) => {
+    const totalOtTime = item.timesheetProjectBillOtTypes.reduce((total: number, otType: any) => {
       const hours = otType?.hours ?? 0;
-      const multiplier = otType?.multiplier ?? 1;
-      const otHours = hours * multiplier;
-      return total + this.getOtDays(otHours);
+      return total + this.getOtDays(hours);
     }, 0) || 0;
-    return parseFloat((normalWorkingTime + totalOtTime).toFixed(3));  }
+
+    return parseFloat((normalWorkingTime + totalOtTime).toFixed(3));  
+  }
 
   isShowBtnExportTsDetail() {
     return this.isGranted(this.Timesheets_TimesheetDetail_ExportTSdetail)

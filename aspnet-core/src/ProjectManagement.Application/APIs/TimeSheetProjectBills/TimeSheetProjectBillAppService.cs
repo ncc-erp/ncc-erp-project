@@ -1,20 +1,16 @@
 ﻿using Abp.Authorization;
-using Abp.Runtime.Session;
 using Abp.UI;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NccCore.Extension;
-using NccCore.Paging;
 using ProjectManagement.APIs.ProjectUserBills.Dto;
 using ProjectManagement.APIs.TimeSheetProjectBills.Dto;
 using ProjectManagement.Authorization;
-using ProjectManagement.Authorization.Roles;
 using ProjectManagement.Authorization.Users;
 using ProjectManagement.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using static ProjectManagement.Constants.Enum.ProjectEnum;
 
@@ -224,7 +220,7 @@ namespace ProjectManagement.APIs.TimeSheetProjectBills
 
                 entity.ProjectOtTypeId = input.ProjectOtTypeId;
                 entity.Hours = input.Hours;
-            
+
                 await WorkScope.UpdateAsync(entity);
                 return entity.Id;
             }
@@ -243,7 +239,7 @@ namespace ProjectManagement.APIs.TimeSheetProjectBills
         }
 
         [HttpGet]
-        public async Task<List<OtTypeDto>> GetProjectOtTypesById (int projectId)
+        public async Task<List<OtTypeDto>> GetProjectOtTypesById(int projectId)
         {
             var listProjectOtTypes = await WorkScope.GetAll<ProjectOtType>()
                 .Where(x => x.ProjectId == projectId)

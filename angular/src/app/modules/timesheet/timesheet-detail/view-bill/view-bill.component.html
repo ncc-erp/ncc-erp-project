@@ -42,7 +42,7 @@
         </div>
 
         <!-- OT Unit Dropdown -->
-        <div class="ml-2" *ngIf="!isEditingAllRow()">
+        <div class="ml-2" *ngIf="!isEditingAllRow() && hasOTTypes">
           <mat-form-field appearance="outline" style="width: 150px">
             <mat-label>OT Unit</mat-label>
             <mat-select [(ngModel)]="otUnit" name="otUnit">
@@ -128,7 +128,7 @@
               <th
                 style="width: 300px; white-space: break-spaces"
                 *ngIf="
-                  data.action === updateAction.UpdateTimesheet && isShowOTType()
+                  data.action === updateAction.UpdateTimesheet && isShowOTType() && hasOTTypes
                 "
               >
                 OT Time
@@ -274,12 +274,11 @@
               </td>
 
               <!-- OT Time -->
-              <!-- OT Time -->
               <td
                 class="text-center"
                 style="width: 300px"
                 *ngIf="
-                  data.action === updateAction.UpdateTimesheet && isShowOTType()
+                  data.action === updateAction.UpdateTimesheet && isShowOTType() && hasOTTypes
                 "
               >
                 <!-- Add button - CHỈ HIỆN KHI ĐANG EDIT -->

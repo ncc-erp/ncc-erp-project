@@ -36,6 +36,7 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
   public isCreate: boolean = false;
   public isEdit: boolean = false;
   public isEdittingRows: boolean = false;
+  public hasOTTypes: boolean  = false;
   tempUserList = []
   public chargeTypeList = [{name:'Daily', value: 0}, {name:'Monthly', value: 1}, {name:'Hourly', value: 2}];
   public updateAction = UpdateAction
@@ -270,6 +271,9 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
       .subscribe((res: any) => {
         if (res.success) {
           this.otTypeOptions = res.result;
+          if(this.otTypeOptions && this.otTypeOptions.length > 0){
+            this.hasOTTypes = true;
+          }
         } else {
           abp.notify.error(res.message || "Failed to fetch OT types");
         }

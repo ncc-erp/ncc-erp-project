@@ -1,20 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
-using NccCore.Helper;
-using System;
-using System.Collections.Generic;
+using ProjectManagement.Services.Timesheet.Dto;
 using System.Globalization;
 using System.Text;
-using ProjectManagement.Helper;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.RefAndLookup;
-using ProjectManagement.APIs.TimesheetProjects.Dto;
-using ProjectManagement.Services.Timesheet.Dto;
-using System.Net;
-using Microsoft.AspNetCore.Mvc;
-using System.Linq;
-using Abp.Extensions;
-using NccCore.Extension;
-using Amazon.Runtime.Internal.Util;
-using System.Drawing;
 
 namespace ProjectManagement.Helper
 {
@@ -25,7 +12,7 @@ namespace ProjectManagement.Helper
         {
             this._hostingEnvironment = webHostEnvironment;
         }
-        public FileExportInvoiceDto ExportInvoiceDataPdf( InvoiceData data)
+        public FileExportInvoiceDto ExportInvoiceDataPdf(InvoiceData data)
         {
             StringBuilder header = new StringBuilder();
             StringBuilder bodyPart1 = new StringBuilder();
@@ -44,7 +31,7 @@ namespace ProjectManagement.Helper
                     <td class='column2 style29{evenClass} null'>{tsUser.ProjectName}</td>
                     <td class='column3 style29{evenClass} null'>{tsUser.BillRateDisplay.ToString("N2", CultureInfo.InvariantCulture)}</td>
                     <td class='column4 style29{evenClass} null'>{tsUser.CurrencyName}/{tsUser.ChargeTypeDisplay}</td>
-                    <td class='column5 style29{evenClass} null'>{tsUser.WorkingDayDisplay.ToString("N2", CultureInfo.InvariantCulture)}</td>
+                    <td class='column5 style29{evenClass} null'>{tsUser.WorkingDayDisplay.ToString("N3", CultureInfo.InvariantCulture)}</td>
                     <td class='column6 style29{evenClass} null' style='text-align: right;'>{tsUser.LineTotal.ToString("N2", CultureInfo.InvariantCulture)}</td>
                     <td class='column7'>&nbsp;</td>
                 </tr>");
@@ -56,7 +43,7 @@ namespace ProjectManagement.Helper
 
             double totalNet = sumLineTotal;
             double invoiceTotal = totalNet + data.Info.TransferFee - (data.Info.Discount * totalNet) / 100;
-          
+
             long invoiceNumberHTML = data.Info.InvoiceNumber;
             string invoiceDateHTML = data.Info.InvoiceDateStr();
             string invoiceTotalHTML = invoiceTotal.ToString("N2", CultureInfo.InvariantCulture);
@@ -419,7 +406,7 @@ body {{ margin-left: 0.25in; margin-right: 0.25in; margin-top: 0.5in; margin-bot
 
             footer.Append(
             #region HTML_Template
-           
+
             $@"
           <tr class='row15'>
             <td class='column0'>&nbsp;</td>
@@ -529,14 +516,16 @@ body {{ margin-left: 0.25in; margin-right: 0.25in; margin-top: 0.5in; margin-bot
             #endregion
 
             string htmlDecode =
-                header.ToString().Replace("\r\n", "").Replace("\n", "") + 
-                bodyPart1.ToString().Replace("\r\n", "").Replace("\n", "") + 
-                builder.ToString().Replace("\r\n", "").Replace("\n", "") + 
+                header.ToString().Replace("\r\n", "").Replace("\n", "") +
+                bodyPart1.ToString().Replace("\r\n", "").Replace("\n", "") +
+                builder.ToString().Replace("\r\n", "").Replace("\n", "") +
                 footer.ToString().Replace("\r\n", "").Replace("\n", "");
-            return new FileExportInvoiceDto {
+            return new FileExportInvoiceDto
+            {
                 FileName = data.ExportFileNameAsPDF(),
                 Html = htmlDecode,
-                Message = "Success" };
+                Message = "Success"
+            };
         }
     }
 }

@@ -294,27 +294,27 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
   otUnit: 'Day' | 'Hour' = 'Hour';
 
   private daysToHours(days: number): number {
-    return parseFloat((days * this.HOURS_PER_DAY).toFixed(2));
+    return parseFloat((days * this.HOURS_PER_DAY).toFixed(3));
   }
 
   private hoursToDays(hours: number): number {
-    return parseFloat((hours / this.HOURS_PER_DAY).toFixed(2));
+    return parseFloat((hours / this.HOURS_PER_DAY).toFixed(3));
   }
 
   getDisplayWorkingTime(value: number): number {
     if (!value) return 0;
     if (this.normalUnit === 'Hour') {
-      return parseFloat(this.daysToHours(value).toFixed(2));
+      return parseFloat(this.daysToHours(value).toFixed(3));
     }
-    return parseFloat(value.toFixed(2));
+    return parseFloat(value.toFixed(3));
   }
 
   getDisplayOTTime(value: number): number {
     if (!value) return 0;
     if (this.otUnit === 'Day') {
-      return parseFloat(this.hoursToDays(value).toFixed(2));
+      return parseFloat(this.hoursToDays(value).toFixed(3));
     }
-    return parseFloat(value.toFixed(2));
+    return parseFloat(value.toFixed(3));
   }
 
   onHoursChange(target: any, event: any) {

@@ -68,8 +68,8 @@ export class WillPoolComponent extends PagedListingComponentBase<any> implements
     requestBody.userName = this.searchText;
     requestBody.branchIds = this.selectedBranchIds;
     requestBody.userTypes = this.selectedUserTypes;
-    requestBody.endChargeDateFrom = this.endChargeDateFromValue;
-    requestBody.endChargeDateTo = this.endChargeDateToValue;
+    requestBody.endChargeDateFrom = new Date(this.formatDateToYYYYMMdd(this.endChargeDateFromValue));
+    requestBody.endChargeDateTo = new Date(this.formatDateToYYYYMMdd(this.endChargeDateToValue));
     this.resourceService.GetAllWillPoolResource(requestBody)
       .pipe(catchError(this.resourceService.handleError))
       .subscribe(data => {
@@ -351,8 +351,6 @@ export class WillPoolComponent extends PagedListingComponentBase<any> implements
   }
 
   filterEndChargeDate(): void {
-    this.endChargeDateFromValue = this.formatDateToYYYYMMdd(this.endChargeDateFromValue);
-    this.endChargeDateToValue = this.formatDateToYYYYMMdd(this.endChargeDateToValue);
     if(this.endChargeDateFromValue > this.endChargeDateToValue) {
       abp.notify.error("End Charge Date From must be less than the End Charge Date To");
       this.initialEndChargeDate();

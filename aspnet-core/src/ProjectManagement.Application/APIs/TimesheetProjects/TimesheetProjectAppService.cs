@@ -872,7 +872,8 @@ namespace ProjectManagement.APIs.TimesheetProjects
                 invoiceSheet.Cells[rowIndex, 3].Value = tsUser.ProjectName;
                 invoiceSheet.Cells[rowIndex, 4].Value = tsUser.BillRateDisplay;
                 invoiceSheet.Cells[rowIndex, 5].Value = tsUser.CurrencyName + "/" + tsUser.ChargeTypeDisplay;
-                invoiceSheet.Cells[rowIndex, 6].Value = tsUser.WorkingDayDisplay;
+                invoiceSheet.Cells[rowIndex, 6].Value = Math.Round(tsUser.WorkingDayDisplay, 3);
+                invoiceSheet.Cells[rowIndex, 6].Style.Numberformat.Format = "0.000";
                 invoiceSheet.Cells[rowIndex, 7].Value = tsUser.LineTotal;
                 sumLineTotal += tsUser.LineTotal;
                 rowIndex++;
@@ -1490,10 +1491,10 @@ namespace ProjectManagement.APIs.TimesheetProjects
                             ProjectName = project.Key,
                             AccountsChangeInfor = project
                                 .SelectMany(x => x.ProjectBillInfomation)
-                                .Where(billInfo => (billInfo.EndTime.HasValue && 
-                                                    billInfo.EndTime.Value.Month == current.Month && 
+                                .Where(billInfo => (billInfo.EndTime.HasValue &&
+                                                    billInfo.EndTime.Value.Month == current.Month &&
                                                     billInfo.EndTime.Value.Year == current.Year) ||
-                                                   (billInfo.StartTime.Month == current.Month && 
+                                                   (billInfo.StartTime.Month == current.Month &&
                                                     billInfo.StartTime.Year == current.Year))
                                 .Select(billInfo => new AccountsChangeInforDto
                                 {
@@ -1657,10 +1658,10 @@ namespace ProjectManagement.APIs.TimesheetProjects
                             startRow += project.AccountsInfo.Count;
                         }
                     }
-                    if(clientStartRow < startRow)
+                    if (clientStartRow < startRow)
                     {
                         sheetAccountsNotWorkingFull.Cells[$"B{clientStartRow}:B{startRow - 1}"].Merge = true;
-                    }    
+                    }
                 }
                 sheetAccountsNotWorkingFull.Cells[$"A1:E{startRow - 1}"].Style.Border.Top.Style = ExcelBorderStyle.Thin;
                 sheetAccountsNotWorkingFull.Cells[$"A1:E{startRow - 1}"].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;

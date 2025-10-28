@@ -22,47 +22,66 @@ interface ExtendedTimesheetProjectBill extends TimesheetProjectBill {
 }
 
 @Component({
-  selector: 'app-view-bill',
-  templateUrl: './view-bill.component.html',
-  styleUrls: ['./view-bill.component.css']
+  selector: "app-view-bill",
+  templateUrl: "./view-bill.component.html",
+  styleUrls: ["./view-bill.component.css"],
 })
-
 export class ViewBillComponent extends AppComponentBase implements OnInit {
-  billDetail: ExtendedTimesheetProjectBill[] = []
-  userForUserBill: UserDto[] = []
+  billDetail: ExtendedTimesheetProjectBill[] = [];
+  userForUserBill: UserDto[] = [];
   searchUserBill: string = "";
   searchOtType: string = "";
   otTypeProcess: boolean = false;
   public isCreate: boolean = false;
   public isEdit: boolean = false;
   public isEdittingRows: boolean = false;
-  public hasOTTypes: boolean  = false;
-  tempUserList = []
-  public chargeTypeList = [{name:'Daily', value: 0}, {name:'Monthly', value: 1}, {name:'Hourly', value: 2}];
-  public updateAction = UpdateAction
+  public hasOTTypes: boolean = false;
+  tempUserList = [];
+  public chargeTypeList = [
+    { name: "Daily", value: 0 },
+    { name: "Monthly", value: 1 },
+    { name: "Hourly", value: 2 },
+  ];
+  public updateAction = UpdateAction;
 
-  otTypeOptions = []
+  otTypeOptions = [];
 
-  Timesheets_TimesheetDetail_UpdateBill_Edit = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_UpdateBill_Edit
-  Timesheets_TimesheetDetail_UpdateBill_SetDone = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_UpdateBill_SetDone
-  Timesheets_TimesheetDetail_ViewBillRate = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_ViewBillRate
-  Timesheets_TimesheetDetail_UpdateBill = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_UpdateBill
-  Timesheets_TimesheetDetail_UpdateTimsheet = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_UpdateTimsheet
-  Timesheets_TimesheetDetail_RemoveAccount = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_RemoveAccount
-  Timesheets_TimesheetDetail_OTType_View = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_OTType_View
-  Timesheets_TimesheetDetail_OTType_Edit = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_OTType_Edit
-  Timesheets_TimesheetDetail_OTType_Delete = PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_OTType_Delete
+  Timesheets_TimesheetDetail_UpdateBill_Edit =
+    PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_UpdateBill_Edit;
+  Timesheets_TimesheetDetail_UpdateBill_SetDone =
+    PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_UpdateBill_SetDone;
+  Timesheets_TimesheetDetail_ViewBillRate =
+    PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_ViewBillRate;
+  Timesheets_TimesheetDetail_UpdateBill =
+    PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_UpdateBill;
+  Timesheets_TimesheetDetail_UpdateTimsheet =
+    PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_UpdateTimsheet;
+  Timesheets_TimesheetDetail_RemoveAccount =
+    PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_RemoveAccount;
+  Timesheets_TimesheetDetail_OTType_View =
+    PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_OTType_View;
+  Timesheets_TimesheetDetail_OTType_Edit =
+    PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_OTType_Edit;
+  Timesheets_TimesheetDetail_OTType_Delete =
+    PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_OTType_Delete;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any, public dialogRef: MatDialogRef<ViewBillComponent>, private userService: UserService,
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    public dialogRef: MatDialogRef<ViewBillComponent>,
+    private userService: UserService,
     private timesheetProjectService: TimesheetProjectService,
-    private timesheetProjectBillService: TimeSheetProjectBillService, injector: Injector) {
-    super(injector)
+    private timesheetProjectBillService: TimeSheetProjectBillService,
+    injector: Injector
+  ) {
+    super(injector);
   }
 
   ngOnInit(): void {
     this.billDetail = this.data.billDetail
-    // Backup original OT data for each bill
     this.billDetail.forEach(bill => {
+      if (bill.otTypes) {
+        bill.otTypes = bill.otTypes.map(ot => ({ ...ot }));
+      }
       bill.originalOtTypes = bill.otTypes ? JSON.parse(JSON.stringify(bill.otTypes)) : [];
       bill.pendingOtChanges = {
         added: [],
@@ -79,7 +98,9 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
     this.otTypeProcess = true;
   }
 
-  public cancelCreateTimesheetBillOt(billDetail: ExtendedTimesheetProjectBill): void {
+  public cancelCreateTimesheetBillOt(
+    billDetail: ExtendedTimesheetProjectBill
+  ): void {
     billDetail.createTimesheetBillOtMode = false;
     billDetail.otType = null;
     billDetail.otHours = null;
@@ -103,11 +124,17 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
   }
 
   private findOtTypeByName(otTypeName: string) {
-    return this.otTypeOptions.find(ot => ot.otTypeName === otTypeName);
+    return this.otTypeOptions.find((ot) => ot.otTypeName === otTypeName);
   }
 
-  private isOtTypeExisted(billDetail: ExtendedTimesheetProjectBill, projectOtTypeId: any): boolean {
-    return billDetail.otTypes?.some(x => x.projectOtTypeId === projectOtTypeId) || false;
+  private isOtTypeExisted(
+    billDetail: ExtendedTimesheetProjectBill,
+    projectOtTypeId: any
+  ): boolean {
+    return (
+      billDetail.otTypes?.some((x) => x.projectOtTypeId === projectOtTypeId) ||
+      false
+    );
   }
 
   // SAVE OT - Only update UI, mark as pending
@@ -124,13 +151,13 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
     }
 
     const newOt = {
-      id: null, 
+      id: null,
       projectOtTypeId: ot.id,
       otType: billDetail.otType,
       otHours: billDetail.otHours,
       multiplier: ot.multiplier,
       isNew: true,
-      isEditing: false
+      isEditing: false,
     };
 
     if (!billDetail.otTypes) {
@@ -149,12 +176,16 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
 
   // UPDATE OT - Only update UI, mark as pending
   updateTimesheetBillOt(billDetail: ExtendedTimesheetProjectBill, ot: any) {
-    const otType = this.otTypeOptions.find(opt => opt.otTypeName === ot.otType);
+    const otType = this.otTypeOptions.find(
+      (opt) => opt.otTypeName === ot.otType
+    );
     if (!ot.otType || ot.otHours == null) {
       return;
     }
 
-    const existed = billDetail.otTypes?.some(x => x.projectOtTypeId === otType.id && x.id !== ot.id);
+    const existed = billDetail.otTypes?.some(
+      (x) => x.projectOtTypeId === otType.id && x.id !== ot.id
+    );
     if (existed) {
       abp.notify.error("This OT type already exists for this bill");
       return;
@@ -167,7 +198,9 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
 
     // Track pending change (only if it's not a new entry)
     if (!ot.isNew) {
-      const existingUpdate = billDetail.pendingOtChanges.updated.find(u => u.id === ot.id);
+      const existingUpdate = billDetail.pendingOtChanges.updated.find(
+        (u) => u.id === ot.id
+      );
       if (existingUpdate) {
         // Update existing pending change
         existingUpdate.otType = ot.otType;
@@ -179,7 +212,7 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
           id: ot.id,
           otType: ot.otType,
           otHours: ot.otHours,
-          projectOtTypeId: otType.id
+          projectOtTypeId: otType.id,
         });
       }
     }
@@ -188,36 +221,39 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
   }
 
   // REMOVE OT - Only update UI, mark as pending
-  public removeTimesheetBillOt(billDetail: ExtendedTimesheetProjectBill, ot: any) {
-    abp.message.confirm(
-      "Remove OT user?",
-      "",
-      (result: boolean) => {
-        if (result) {
-          // Find index and remove from UI
-          const index = billDetail.otTypes.findIndex(o => o === ot);
-          if (index !== -1) {
-            billDetail.otTypes.splice(index, 1);
-          }
+  public removeTimesheetBillOt(
+    billDetail: ExtendedTimesheetProjectBill,
+    ot: any
+  ) {
+    abp.message.confirm("Remove OT user?", "", (result: boolean) => {
+      if (result) {
+        // Find index and remove from UI
+        const index = billDetail.otTypes.findIndex((o) => o === ot);
+        if (index !== -1) {
+          billDetail.otTypes.splice(index, 1);
+        }
 
-          // Track pending change
-          if (ot.isNew) {
-            // Remove from pending added list
-            const addedIndex = billDetail.pendingOtChanges.added.findIndex(a => a === ot);
-            if (addedIndex !== -1) {
-              billDetail.pendingOtChanges.added.splice(addedIndex, 1);
-            }
-          } else {
-            // Add to pending removed list
-            billDetail.pendingOtChanges.removed.push(ot.id);
+        // Track pending change
+        if (ot.isNew) {
+          // Remove from pending added list
+          const addedIndex = billDetail.pendingOtChanges.added.findIndex(
+            (a) => a === ot
+          );
+          if (addedIndex !== -1) {
+            billDetail.pendingOtChanges.added.splice(addedIndex, 1);
           }
+        } else {
+          // Add to pending removed list
+          billDetail.pendingOtChanges.removed.push(ot.id);
         }
       }
-    );
+    });
   }
 
   // ACTUAL API CALLS - Called when Save button is clicked
-  private async savePendingOtChanges(billDetail: ExtendedTimesheetProjectBill): Promise<void> {
+  private async savePendingOtChanges(
+    billDetail: ExtendedTimesheetProjectBill
+  ): Promise<void> {
     const changes = billDetail.pendingOtChanges;
 
     // Process removals
@@ -226,7 +262,8 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
         otId: otId,
         timesheetProjectBillId: billDetail.id,
       };
-      await this.timesheetProjectBillService.removeTimesheetBillOt(req)
+      await this.timesheetProjectBillService
+        .removeTimesheetBillOt(req)
         .pipe(catchError(this.timesheetProjectBillService.handleError))
         .toPromise();
     }
@@ -237,9 +274,10 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
         timesheetProjectBillId: billDetail.id,
         projectOtTypeId: newOt.projectOtTypeId,
         hours: newOt.otHours,
-        mode: 0
+        mode: 0,
       };
-      await this.timesheetProjectBillService.createOrUpdateTimesheetBillOt(payload)
+      await this.timesheetProjectBillService
+        .createOrUpdateTimesheetBillOt(payload)
         .pipe(catchError(this.timesheetProjectBillService.handleError))
         .toPromise();
     }
@@ -251,9 +289,10 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
         timesheetProjectBillId: billDetail.id,
         projectOtTypeId: update.projectOtTypeId,
         hours: update.otHours,
-        mode: 1
+        mode: 1,
       };
-      await this.timesheetProjectBillService.createOrUpdateTimesheetBillOt(payload)
+      await this.timesheetProjectBillService
+        .createOrUpdateTimesheetBillOt(payload)
         .pipe(catchError(this.timesheetProjectBillService.handleError))
         .toPromise();
     }
@@ -262,16 +301,17 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
     billDetail.pendingOtChanges = {
       added: [],
       updated: [],
-      removed: []
+      removed: [],
     };
   }
 
   getProjectOtTypesById(projectId: any) {
-    this.timesheetProjectBillService.getProjectOtTypesById(projectId)
+    this.timesheetProjectBillService
+      .getProjectOtTypesById(projectId)
       .subscribe((res: any) => {
         if (res.success) {
           this.otTypeOptions = res.result;
-          if(this.otTypeOptions && this.otTypeOptions.length > 0){
+          if (this.otTypeOptions && this.otTypeOptions.length > 0) {
             this.hasOTTypes = true;
           }
         } else {
@@ -280,22 +320,22 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
       });
   }
 
-  isShowOTType(){
-    return this.isGranted(this.Timesheets_TimesheetDetail_OTType_View)
+  isShowOTType() {
+    return this.isGranted(this.Timesheets_TimesheetDetail_OTType_View);
   }
 
-  canEditOTType(){
-    return this.isGranted(this.Timesheets_TimesheetDetail_OTType_Edit)
+  canEditOTType() {
+    return this.isGranted(this.Timesheets_TimesheetDetail_OTType_Edit);
   }
 
-  canDeleteOTType(){
-    return this.isGranted(this.Timesheets_TimesheetDetail_OTType_Delete)
+  canDeleteOTType() {
+    return this.isGranted(this.Timesheets_TimesheetDetail_OTType_Delete);
   }
 
   readonly HOURS_PER_DAY = 8;
 
-  normalUnit: 'Day' | 'Hour' = 'Day';
-  otUnit: 'Day' | 'Hour' = 'Hour';
+  normalUnit: "Day" | "Hour" = "Day";
+  otUnit: "Day" | "Hour" = "Hour";
 
   private daysToHours(days: number): number {
     return parseFloat((days * this.HOURS_PER_DAY).toFixed(3));
@@ -306,16 +346,18 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
   }
 
   getDisplayWorkingTime(value: number): number {
-    if (!value) return 0;
-    if (this.normalUnit === 'Hour') {
+    if (value === null || value === undefined) return 0;
+
+    if (this.normalUnit === "Hour") {
       return parseFloat(this.daysToHours(value).toFixed(3));
     }
     return parseFloat(value.toFixed(3));
   }
 
   getDisplayOTTime(value: number): number {
-    if (!value) return 0;
-    if (this.otUnit === 'Day') {
+    if (value === null || value === undefined) return null;
+
+    if (this.otUnit === "Day") {
       return parseFloat(this.hoursToDays(value).toFixed(3));
     }
     return parseFloat(value.toFixed(3));
@@ -330,15 +372,15 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
       if (value < 0) value = 0;
       event.target.value = value;
     }
-    if ('Hours' in target) {
+    if ("Hours" in target) {
       target.Hours = value;
-    } else if ('otHours' in target) {
+    } else if ("otHours" in target) {
       target.otHours = value;
     }
   }
 
   public focusOut() {
-    this.searchOtType = '';
+    this.searchOtType = "";
   }
 
   public getProjectBill() {
@@ -346,8 +388,10 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
     this.timesheetProjectBillService.getProjectBill(this.data.billInfo.projectId, this.data.billInfo.timesheetId)
     .subscribe(data => {
       this.billDetail = data.result
-      // Backup original OT data after loading
       this.billDetail.forEach(bill => {
+        if (bill.otTypes) {
+          bill.otTypes = bill.otTypes.map(ot => ({ ...ot }));
+        }
         bill.originalOtTypes = bill.otTypes ? JSON.parse(JSON.stringify(bill.otTypes)) : [];
         bill.pendingOtChanges = {
           added: [],
@@ -357,12 +401,12 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
       });
       this.isLoading = false
     },
-      () => { this.dialogRef.close(); this.isLoading = false })
+     () => { this.dialogRef.close(); this.isLoading = false })
   }
 
   public async saveUserBill(tpb: ExtendedTimesheetProjectBill): Promise<void> {
     delete tpb["isEditing"];
-    
+
     tpb.startTime = moment(tpb.startTime).format("YYYY-MM-DD");
     if (tpb.endTime) {
       tpb.endTime = moment(tpb.endTime).format("YYYY-MM-DD");
@@ -377,41 +421,47 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
 
     if (!tpb.id) {
       tpb.projectId = this.data.billInfo.projectId;
-      delete tpb['userList'];
-      this.timesheetProjectBillService.createProjectBill(tpb)
-      .pipe(catchError(this.timesheetProjectBillService.handleError))
-      .subscribe(res => {
-        abp.notify.success(`Created successfull`);
-        this.getProjectBill();
-        this.searchUserBill = "";
-      },
-        () => {
-          tpb.isEditing = true;
-        })
-
+      delete tpb["userList"];
+      this.timesheetProjectBillService
+        .createProjectBill(tpb)
+        .pipe(catchError(this.timesheetProjectBillService.handleError))
+        .subscribe(
+          (res) => {
+            abp.notify.success(`Created successfull`);
+            this.getProjectBill();
+            this.searchUserBill = "";
+          },
+          () => {
+            tpb.isEditing = true;
+          }
+        );
     } else {
-      let bill =
-      [{
-        "userId": tpb.userId,
-        "billRole": tpb.billRole,
-        "billRate": tpb.billRate,
-        "note": tpb?.note,
-        "isActive": tpb.isActive,
-        "workingTime": tpb.workingTime,
-        "id": tpb.id,
-        "accountName": tpb.accountName,
-        "chargeType": tpb.chargeType,
-      }]
-      this.timesheetProjectBillService.updateProjectBill(bill)
-      .pipe(catchError(this.timesheetProjectBillService.handleError))
-      .subscribe(res => {
-        abp.notify.success(`Update successfull`)
-        this.getProjectBill();
-        this.searchUserBill = "";
-      },
-        () => {
-          tpb.isEditing = true;
-        })
+      let bill = [
+        {
+          userId: tpb.userId,
+          billRole: tpb.billRole,
+          billRate: tpb.billRate,
+          note: tpb?.note,
+          isActive: tpb.isActive,
+          workingTime: tpb.workingTime,
+          id: tpb.id,
+          accountName: tpb.accountName,
+          chargeType: tpb.chargeType,
+        },
+      ];
+      this.timesheetProjectBillService
+        .updateProjectBill(bill)
+        .pipe(catchError(this.timesheetProjectBillService.handleError))
+        .subscribe(
+          (res) => {
+            abp.notify.success(`Update successfull`);
+            this.getProjectBill();
+            this.searchUserBill = "";
+          },
+          () => {
+            tpb.isEditing = true;
+          }
+        );
     }
   }
 
@@ -419,12 +469,12 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
     this.data.billInfo.isComplete = e.checked;
     const input = {
       isComplete: this.data.billInfo.isComplete,
-      id: this.data.billInfo.id
-    }
+      id: this.data.billInfo.id,
+    };
 
-    this.timesheetProjectService.setComplete(input).subscribe(res => {
+    this.timesheetProjectService.setComplete(input).subscribe((res) => {
       abp.notify.success(`Update successfull`);
-    })
+    });
   }
 
   async saveAllUpdateBill() {
@@ -452,48 +502,64 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
         isActive: tpb.isActive,
         workingTime: tpb.workingTime,
         id: tpb.id,
-        chargeType: tpb.chargeType
-      }
-    })
+        chargeType: tpb.chargeType,
+      };
+    });
 
-    this.timesheetProjectBillService.updateProjectBill(tpbList)
-    .pipe(catchError(this.timesheetProjectBillService.handleError))
-    .subscribe(res => {
-      abp.notify.success(`Update successfull`)
-      this.getProjectBill();
-      this.searchUserBill = "";
-      this.isEdittingRows = false;
-    })
+    this.timesheetProjectBillService
+      .updateProjectBill(tpbList)
+      .pipe(catchError(this.timesheetProjectBillService.handleError))
+      .subscribe((res) => {
+        abp.notify.success(`Update successfull`);
+        this.getProjectBill();
+        this.searchUserBill = "";
+        this.isEdittingRows = false;
+      });
   }
 
-  updateAllWorkingTime(value: number) {
-    this.billDetail.forEach(tpb => {
-      tpb.workingTime = value;
+  updateAllWorkingTime(value: any) {
+    let valueAsNumber = parseFloat(value);
+    if (isNaN(valueAsNumber)) {
+      valueAsNumber = null;
+    }
+    let storedValue: number;
+    if (valueAsNumber === null) {
+      storedValue = null;
+    } else if (this.normalUnit === "Hour") {
+      storedValue = this.hoursToDays(valueAsNumber);
+    } else {
+      storedValue = valueAsNumber;
+    }
+
+    this.billDetail.forEach((tpb) => {
+      if (tpb.isEditing) {
+        tpb.workingTime = storedValue;
+      }
     });
   }
 
   public cancelUpdateAll(): void {
     // Restore original OT data
-    this.billDetail.forEach(bill => {
+    this.billDetail.forEach((bill) => {
       if (bill.originalOtTypes) {
         bill.otTypes = JSON.parse(JSON.stringify(bill.originalOtTypes));
         bill.pendingOtChanges = {
           added: [],
           updated: [],
-          removed: []
+          removed: [],
         };
       }
       // Reset create mode
       bill.createTimesheetBillOtMode = false;
       bill.otType = null;
       bill.otHours = null;
-      
+
       // Reset editing state for all OT entries
-      bill.otTypes?.forEach(ot => {
+      bill.otTypes?.forEach((ot) => {
         ot.isEditing = false;
       });
     });
-    
+
     this.getProjectBill();
     this.searchUserBill = "";
     this.otTypeProcess = false;
@@ -505,15 +571,27 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
   }
 
   searchUser(bill) {
-    bill.userList = this.tempUserList.filter(item =>
-      (this.removeAccents(item?.fullName.toLowerCase().replace(/\s/g, "")).includes(this.removeAccents(bill.searchText.toLowerCase().replace(/\s/g, ""))) || this.removeAccents(item.email?.toLowerCase().replace(/\s/g, "")).includes(this.removeAccents(bill.searchText.toLowerCase().replace(/\s/g, "")))))
+    bill.userList = this.tempUserList.filter(
+      (item) =>
+        this.removeAccents(
+          item?.fullName.toLowerCase().replace(/\s/g, "")
+        ).includes(
+          this.removeAccents(bill.searchText.toLowerCase().replace(/\s/g, ""))
+        ) ||
+        this.removeAccents(
+          item.email?.toLowerCase().replace(/\s/g, "")
+        ).includes(
+          this.removeAccents(bill.searchText.toLowerCase().replace(/\s/g, ""))
+        )
+    );
   }
 
   removeAccents(str) {
     var AccentsMap = [
       "aàảãáạăằẳẵắặâầẩẫấậ",
       "AÀẢÃÁẠĂẰẲẴẮẶÂẦẨẪẤẬ",
-      "dđ", "DĐ",
+      "dđ",
+      "DĐ",
       "eèẻẽéẹêềểễếệ",
       "EÈẺẼÉẸÊỀỂỄẾỆ",
       "iìỉĩíị",
@@ -523,10 +601,10 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
       "uùủũúụưừửữứự",
       "UÙỦŨÚỤƯỪỬỮỨỰ",
       "yỳỷỹýỵ",
-      "YỲỶỸÝỴ"
+      "YỲỶỸÝỴ",
     ];
     for (var i = 0; i < AccentsMap.length; i++) {
-      var re = new RegExp('[' + AccentsMap[i].substr(1) + ']', 'g');
+      var re = new RegExp("[" + AccentsMap[i].substr(1) + "]", "g");
       var char = AccentsMap[i][0];
       str = str.replace(re, char);
     }
@@ -534,12 +612,12 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
   }
 
   public onActiveChange(active, userBill) {
-    userBill.isActive = active.checked
+    userBill.isActive = active.checked;
   }
 
   public create() {
     let bill = {} as ExtendedTimesheetProjectBill;
-    this.billDetail.unshift(bill)
+    this.billDetail.unshift(bill);
     bill.isEditing = true;
   }
 
@@ -548,41 +626,42 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
   }
 
   onUserSelect(bill) {
-    bill.searchText = ""
+    bill.searchText = "";
   }
 
-  private setViewAllRow(){
-    this.billDetail.forEach(s => s.isEditing = false);
+  private setViewAllRow() {
+    this.billDetail.forEach((s) => (s.isEditing = false));
   }
 
-  private setEditingAllRow(){
-    this.billDetail.forEach(s => s.isEditing = true);
+  private setEditingAllRow() {
+    this.billDetail.forEach((s) => (s.isEditing = true));
   }
 
-  async saveUpdateTS(data){
+  async saveUpdateTS(data) {
     // Save pending OT changes first
     if (data.pendingOtChanges) {
       await this.savePendingOtChanges(data);
     }
 
-    let request = [{
-      Id: data.id,
-      workingTime: data.workingTime,
-      isActive: data.isActive,
-      note: data.note,
-      accountName: data.accountName
-    }]
+    let request = [
+      {
+        Id: data.id,
+        workingTime: data.workingTime,
+        isActive: data.isActive,
+        note: data.note,
+        accountName: data.accountName,
+      },
+    ];
 
-    this.timesheetProjectBillService.updateTS(request).subscribe((response) =>{
-      if(response.success){
-        abp.notify.success(response.result)
+    this.timesheetProjectBillService.updateTS(request).subscribe((response) => {
+      if (response.success) {
+        abp.notify.success(response.result);
         this.setViewAllRow();
         this.getProjectBill();
+      } else {
+        abp.notify.error(response.message);
       }
-      else{
-        abp.notify.error(response.message)
-      }
-    })
+    });
   }
 
   protected removeAccountTS(tpb: ExtendedTimesheetProjectBill): void {
@@ -591,23 +670,23 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
       "",
       (result: boolean) => {
         if (result) {
-          this.timesheetProjectBillService.removeAccountTS(tpb.id)
-          .pipe(catchError(this.timesheetProjectBillService.handleError))
-          .subscribe((response) => {
-            if(response.success){
-              abp.notify.success("Remove successfull")
-              this.getProjectBill();
-            }
-            else{
-              abp.notify.error(response.message)
-            }
-          });
+          this.timesheetProjectBillService
+            .removeAccountTS(tpb.id)
+            .pipe(catchError(this.timesheetProjectBillService.handleError))
+            .subscribe((response) => {
+              if (response.success) {
+                abp.notify.success("Remove successfull");
+                this.getProjectBill();
+              } else {
+                abp.notify.error(response.message);
+              }
+            });
         }
       }
     );
   }
 
-  async saveAllUpdateTS(){
+  async saveAllUpdateTS() {
     // Save all pending OT changes for all bills
     for (const bill of this.billDetail) {
       if (bill.pendingOtChanges) {
@@ -621,54 +700,107 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
         isActive: tpb.isActive,
         workingTime: tpb.workingTime,
         id: tpb.id,
-        accountName: tpb.accountName
-      }
-    })
+        accountName: tpb.accountName,
+      };
+    });
 
-    this.timesheetProjectBillService.updateTS(arr)
-    .pipe(catchError(this.timesheetProjectBillService.handleError))
-    .subscribe(res => {
-      abp.notify.success(`Update successfull`)
-      this.getProjectBill();
-      this.searchUserBill = "";
-      this.setViewAllRow()
-    })
+    this.timesheetProjectBillService
+      .updateTS(arr)
+      .pipe(catchError(this.timesheetProjectBillService.handleError))
+      .subscribe((res) => {
+        abp.notify.success(`Update successfull`);
+        this.getProjectBill();
+        this.searchUserBill = "";
+        this.setViewAllRow();
+      });
   }
 
-  public isShowRate(){
-    return this.isGranted(PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_ViewBillRate)
-     && this.data.action == this.updateAction.UpdateBillInfo
+  public isShowRate() {
+    return (
+      this.isGranted(
+        PERMISSIONS_CONSTANT.Timesheets_TimesheetDetail_ViewBillRate
+      ) && this.data.action == this.updateAction.UpdateBillInfo
+    );
   }
 
-  public isBillPopUp(){
+  public isBillPopUp() {
     return this.data.action == this.updateAction.UpdateBillInfo;
   }
 
-  public isTSPopUp(){
+  public isTSPopUp() {
     return this.data.action == this.updateAction.UpdateTimesheet;
   }
 
-  public isEditingAllRow(){
-    return this.billDetail.find(s => !s.isEditing) == undefined;
+  public isEditingAllRow() {
+    return this.billDetail.find((s) => !s.isEditing) == undefined;
   }
 
-  public isEditingAnyRow(){
-    return this.billDetail.find(s => s.isEditing) != undefined;
+  public isEditingAnyRow() {
+    return this.billDetail.find((s) => s.isEditing) != undefined;
   }
 
-  public isShowEditBtnOnRow(){
-    return this.isGranted(this.Timesheets_TimesheetDetail_UpdateBill)
-    || this.isGranted(this.Timesheets_TimesheetDetail_UpdateTimsheet)
+  public isShowEditBtnOnRow() {
+    return (
+      this.isGranted(this.Timesheets_TimesheetDetail_UpdateBill) ||
+      this.isGranted(this.Timesheets_TimesheetDetail_UpdateTimsheet)
+    );
   }
 
-  public isShowEditAllBtn(){
-    return !this.isEditingAllRow()
-    && this.billDetail
-    && this.billDetail.length
-    && this.isShowEditBtnOnRow()
+  public isShowEditAllBtn() {
+    return (
+      !this.isEditingAllRow() &&
+      this.billDetail &&
+      this.billDetail.length &&
+      this.isShowEditBtnOnRow()
+    );
   }
 
-  public getCurrencyName(){
-    return this.billDetail && this.billDetail.length > 0 ? this.billDetail[0].currency : '';
+  public getCurrencyName() {
+    return this.billDetail && this.billDetail.length > 0
+      ? this.billDetail[0].currency
+      : "";
+  }
+
+  // Working time change
+  public onWorkingTimeChange(
+    newValue: number,
+    bill: ExtendedTimesheetProjectBill
+  ) {
+    if (newValue === null || newValue === undefined) {
+      bill.workingTime = 0;
+      return;
+    }
+
+    let valueAsNumber = parseFloat(newValue.toString());
+    if (isNaN(valueAsNumber)) {
+      bill.workingTime = 0;
+      return;
+    }
+
+    if (this.normalUnit === "Hour") {
+      bill.workingTime = this.hoursToDays(valueAsNumber);
+    } else {
+      bill.workingTime = valueAsNumber;
+    }
+  }
+
+  // OT Hours change
+  public onOtHoursChange(newValue: number, target: any) {
+    if (newValue === null || newValue === undefined) {
+      target.otHours = 0;
+      return;
+    }
+
+    let valueAsNumber = parseFloat(newValue.toString());
+    if (isNaN(valueAsNumber)) {
+      target.otHours = 0;
+      return;
+    }
+
+    if (this.otUnit === 'Day') {
+      target.otHours = this.daysToHours(valueAsNumber);
+    } else {
+      target.otHours = valueAsNumber;
+    }
   }
 }

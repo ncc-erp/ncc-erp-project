@@ -21,9 +21,10 @@ namespace ProjectManagement.Helper
 
             double sumLineTotal = 0;
             string currencyName = "";
+            int rowIndex = 0;
             foreach (var tsUser in data.TimesheetUsers)
             {
-                var evenClass = (data.TimesheetUsers.IndexOf(tsUser) % 2 == 0) ? "" : "_even";
+                var evenClass = (rowIndex % 2 == 0) ? "" : "_even";
                 builder.Append($@"
                 <tr class='row14'>
                     <td class='column0'>&nbsp;</td>
@@ -31,12 +32,35 @@ namespace ProjectManagement.Helper
                     <td class='column2 style29{evenClass} null'>{tsUser.ProjectName}</td>
                     <td class='column3 style29{evenClass} null'>{tsUser.BillRateDisplay.ToString("N2", CultureInfo.InvariantCulture)}</td>
                     <td class='column4 style29{evenClass} null'>{tsUser.CurrencyName}/{tsUser.ChargeTypeDisplay}</td>
-                    <td class='column5 style29{evenClass} null'>{tsUser.WorkingDayDisplay.ToString("N3", CultureInfo.InvariantCulture)}</td>
-                    <td class='column6 style29{evenClass} null' style='text-align: right;'>{tsUser.LineTotal.ToString("N2", CultureInfo.InvariantCulture)}</td>
+                    <td class='column5 style29{evenClass} null'>{tsUser.NormalWorkingDay.ToString("N3", CultureInfo.InvariantCulture)}</td>
+                    <td class='column6 style29{evenClass} null' style='text-align: right;'>{tsUser.NormalLineTotal.ToString("N2", CultureInfo.InvariantCulture)}</td>
                     <td class='column7'>&nbsp;</td>
                 </tr>");
 
-                sumLineTotal += tsUser.LineTotal;
+                sumLineTotal += tsUser.NormalLineTotal;
+                rowIndex++;
+                if (tsUser.TimesheetProjectBillOtTypes.Count > 0)
+                {
+                    foreach (var ot in tsUser.TimesheetProjectBillOtTypes)
+                    {
+                        var workingDayOt = ExtensionMethod.GetWorkingDayOT(ot, tsUser);
+                        var lineTotalOt = workingDayOt * tsUser.BillRateDisplay;
+                        evenClass = (rowIndex % 2 == 0) ? "" : "_even";
+                        builder.Append($@"
+                        <tr class='row14'>
+                            <td class='column0'>&nbsp;</td>
+                            <td class='column1 style17{evenClass} null'>{$"{tsUser.FullName} (OT {ot.OtType})"}</td>
+                            <td class='column2 style29{evenClass} null'>{tsUser.ProjectName}</td>
+                            <td class='column3 style29{evenClass} null'>{tsUser.BillRateDisplay.ToString("N2", CultureInfo.InvariantCulture)}</td>
+                            <td class='column4 style29{evenClass} null'>{tsUser.CurrencyName}/{tsUser.ChargeTypeDisplay}</td>
+                            <td class='column5 style29{evenClass} null'>{workingDayOt.ToString("N3", CultureInfo.InvariantCulture)}</td>
+                            <td class='column6 style29{evenClass} null' style='text-align: right;'>{lineTotalOt.ToString("N2", CultureInfo.InvariantCulture)}</td>
+                            <td class='column7'>&nbsp;</td>
+                        </tr>");
+                        sumLineTotal += lineTotalOt;
+                        rowIndex++;
+                    }
+                }
                 currencyName = tsUser.CurrencyName;
             }
 

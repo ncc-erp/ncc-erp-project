@@ -900,10 +900,13 @@ namespace ProjectManagement.APIs.TimesheetProjects
                         rowRange.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                         rowRange.Style.Fill.BackgroundColor.SetColor(rowIndex % 2 == 0 ? white : ivory);
 
+                        // Calculate total OT (in days or hours) based on OT type and user settings
                         var workingDayOt = ExtensionMethod.GetWorkingDayOT(ot, tsUser);
-                        var otBillRate = tsUser.BillRateDisplay * ot.Multiplier;
+                        var otMultiplier = Math.Round((double)ot.Multiplier, 3);
+                        var otBillRate = tsUser.BillRateDisplay * otMultiplier;
                         var lineTotalOt = workingDayOt * otBillRate;
 
+                        // Fill OT row
                         invoiceSheet.Cells[rowIndex, 2].Value = $"{tsUser.FullName} ({ot.OtType})";
                         invoiceSheet.Cells[rowIndex, 3].Value = tsUser.ProjectName;
                         invoiceSheet.Cells[rowIndex, 4].Value = otBillRate;

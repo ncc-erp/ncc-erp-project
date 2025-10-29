@@ -14,7 +14,7 @@ namespace ProjectManagement.Helper
         /// <returns></returns>
         public static double GetWorkingDayOT(TimesheetProjectBillOtTypeDto ot, TimesheetUser tsUser)
         {
-            var otHours = (float)ot.Hours * ot.Multiplier;
+            var otHours = (float)ot.Hours;
             double result;
 
             if ((tsUser.Mode == ExportInvoiceMode.MontlyToDaily && tsUser.ChargeType == ChargeType.Monthly) || tsUser.ChargeType == ChargeType.Daily)

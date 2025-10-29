@@ -44,14 +44,15 @@ namespace ProjectManagement.Helper
                     foreach (var ot in tsUser.TimesheetProjectBillOtTypes)
                     {
                         var workingDayOt = ExtensionMethod.GetWorkingDayOT(ot, tsUser);
-                        var lineTotalOt = workingDayOt * tsUser.BillRateDisplay;
+                        var otBillRate = tsUser.BillRateDisplay * ot.Multiplier;
+                        var lineTotalOt = workingDayOt * otBillRate;
                         evenClass = (rowIndex % 2 == 0) ? "" : "_even";
                         builder.Append($@"
                         <tr class='row14'>
                             <td class='column0'>&nbsp;</td>
-                            <td class='column1 style17{evenClass} null'>{$"{tsUser.FullName} (OT {ot.OtType})"}</td>
+                            <td class='column1 style17{evenClass} null'>{$"{tsUser.FullName} ({ot.OtType})"}</td>
                             <td class='column2 style29{evenClass} null'>{tsUser.ProjectName}</td>
-                            <td class='column3 style29{evenClass} null'>{tsUser.BillRateDisplay.ToString("N2", CultureInfo.InvariantCulture)}</td>
+                            <td class='column3 style29{evenClass} null'>{otBillRate.ToString("N2", CultureInfo.InvariantCulture)}</td>
                             <td class='column4 style29{evenClass} null'>{tsUser.CurrencyName}/{tsUser.ChargeTypeDisplay}</td>
                             <td class='column5 style29{evenClass} null'>{workingDayOt.ToString("N3", CultureInfo.InvariantCulture)}</td>
                             <td class='column6 style29{evenClass} null' style='text-align: right;'>{lineTotalOt.ToString("N2", CultureInfo.InvariantCulture)}</td>

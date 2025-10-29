@@ -23,7 +23,7 @@
       <div class="d-flex align-items-center">
         <button
           class="btn btn-editall-neutral ml-2"
-          *ngIf="isShowEditAllBtn()"
+          *ngIf="isShowEditAllBtn() && billDetail.length > 1"
           (click)="editAllRow()"
           [disabled]="data.billInfo.isComplete"
         >

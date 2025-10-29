@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using ProjectManagement.Services.Timesheet.Dto;
+using System;
 using System.Globalization;
 using System.Text;
 
@@ -43,9 +44,13 @@ namespace ProjectManagement.Helper
                 {
                     foreach (var ot in tsUser.TimesheetProjectBillOtTypes)
                     {
+                        // Calculate total OT (in days or hours) based on OT type and user settings
                         var workingDayOt = ExtensionMethod.GetWorkingDayOT(ot, tsUser);
-                        var otBillRate = tsUser.BillRateDisplay * ot.Multiplier;
+                        var otMultiplier = Math.Round((double)ot.Multiplier, 3);
+                        var otBillRate = tsUser.BillRateDisplay * otMultiplier;
                         var lineTotalOt = workingDayOt * otBillRate;
+
+                        // Fill OT row
                         evenClass = (rowIndex % 2 == 0) ? "" : "_even";
                         builder.Append($@"
                         <tr class='row14'>

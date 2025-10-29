@@ -901,11 +901,12 @@ namespace ProjectManagement.APIs.TimesheetProjects
                         rowRange.Style.Fill.BackgroundColor.SetColor(rowIndex % 2 == 0 ? white : ivory);
 
                         var workingDayOt = ExtensionMethod.GetWorkingDayOT(ot, tsUser);
-                        var lineTotalOt = workingDayOt * tsUser.BillRateDisplay;
+                        var otBillRate = tsUser.BillRateDisplay * ot.Multiplier;
+                        var lineTotalOt = workingDayOt * otBillRate;
 
                         invoiceSheet.Cells[rowIndex, 2].Value = $"{tsUser.FullName} ({ot.OtType})";
                         invoiceSheet.Cells[rowIndex, 3].Value = tsUser.ProjectName;
-                        invoiceSheet.Cells[rowIndex, 4].Value = tsUser.BillRateDisplay;
+                        invoiceSheet.Cells[rowIndex, 4].Value = otBillRate;
                         invoiceSheet.Cells[rowIndex, 5].Value = tsUser.CurrencyName + "/" + tsUser.ChargeTypeDisplay;
                         invoiceSheet.Cells[rowIndex, 6].Value = workingDayOt;
                         invoiceSheet.Cells[rowIndex, 6].Style.Numberformat.Format = "0.000";

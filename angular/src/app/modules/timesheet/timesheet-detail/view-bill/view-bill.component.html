@@ -17,13 +17,13 @@
   <div class="modal-body row" id="modal-bill-info">
     <div
       class="col-12 row mb-1"
-      *ngIf="billDetail.length != 0 && billDetail.length != 1"
+      *ngIf="billDetail.length != 0"
       style="justify-content: space-between; align-items: center"
     >
       <div class="d-flex align-items-center">
         <button
           class="btn btn-editall-neutral ml-2"
-          *ngIf="isShowEditAllBtn()"
+          *ngIf="isShowEditAllBtn() && billDetail.length > 1"
           (click)="editAllRow()"
           [disabled]="data.billInfo.isComplete"
         >
@@ -31,7 +31,7 @@
         </button>
 
         <!-- Normal Unit Dropdown -->
-        <div class="ml-3" *ngIf="!isEditingAllRow()">
+        <div class="ml-3">
           <mat-form-field appearance="outline" style="width: 150px">
             <mat-label>Normal Unit</mat-label>
             <mat-select [(ngModel)]="normalUnit" name="normalUnit">
@@ -42,7 +42,7 @@
         </div>
 
         <!-- OT Unit Dropdown -->
-        <div class="ml-2" *ngIf="!isEditingAllRow() && hasOTTypes">
+        <div class="ml-2" *ngIf="hasOTTypes">
           <mat-form-field appearance="outline" style="width: 150px">
             <mat-label>OT Unit</mat-label>
             <mat-select [(ngModel)]="otUnit" name="otUnit">
@@ -123,7 +123,7 @@
               </th>
               <th style="width: 50px">Charge Type</th>
               <th style="width: 150px; white-space: break-spaces">
-                Working Time
+                Working Time<br />({{ normalUnit }})
               </th>
               <th
                 style="width: 300px; white-space: break-spaces"
@@ -131,7 +131,7 @@
                   data.action === updateAction.UpdateTimesheet && isShowOTType() && hasOTTypes
                 "
               >
-                OT Time
+                OT Time<br />({{ otUnit }})
               </th>
               <th style="width: 50px">Is Charge</th>
               <th>Note</th>
@@ -258,7 +258,6 @@
               <td class="text-center">
                 <span *ngIf="!bill.isEditing">
                   {{ getDisplayWorkingTime(bill.workingTime) }}
-                  {{ normalUnit == "Day" ? "d" : "h" }}
                 </span>
                 <div *ngIf="bill.isEditing">
                   <input
@@ -267,7 +266,8 @@
                     [name]="i + 'workTime'"
                     id=""
                     class="form-control mt-1"
-                    [(ngModel)]="bill.workingTime"
+                    [ngModel]="getDisplayWorkingTime(bill.workingTime)"
+                    (ngModelChange)="onWorkingTimeChange($event, bill)"
                     step="0.1"
                   />
                 </div>
@@ -310,7 +310,7 @@
                           panelClass="custom-panel-class"
                           (closed)="focusOut()"
                           [(ngModel)]="bill.otType"
-                          name="otType"
+                          [name]="i + '_newOtType'"
                           placeholder="Select OT Type"
                         >
                           <mat-form-field
@@ -355,9 +355,10 @@
                           "
                           step="0.1"
                           min="0"
-                          [(ngModel)]="bill.otHours"
-                          name="otHours"
-                          (input)="onHoursChange(bill, $event)"
+                          
+                          [ngModel]="getDisplayOTTime(bill.otHours)"
+                          (ngModelChange)="onOtHoursChange($event, bill)"
+                          [name]="i + '_newOtHours'"
                           (keydown)="
                             $event.key === '-' ? $event.preventDefault() : null
                           "
@@ -400,14 +401,13 @@
                 <!-- Danh sách OT đã có -->
                 <div class="mb-1" *ngIf="bill.otTypes?.length">
                   <div
-                    *ngFor="let ot of bill.otTypes"
+                    *ngFor="let ot of bill.otTypes; let j = index"
                     class="me-1 my-2 d-flex justify-content-between"
                   >
                     <!-- Hiển thị khi KHÔNG edit -->
                     <div class="timesheetBillOt_lable" *ngIf="!ot.isEditing">
                       {{ ot.otType }} ({{ ot.multiplier }}):
-                      {{ getDisplayOTTime(ot.otHours)
-                      }}{{ otUnit == "Day" ? "d" : "h" }}
+                      {{ getDisplayOTTime(ot.otHours)}}
                     </div>
 
                     <!-- Form edit OT -->
@@ -417,7 +417,7 @@
                           panelClass="custom-panel-class"
                           (closed)="focusOut()"
                           [(ngModel)]="ot.otType"
-                          name="otType"
+                          [name]="i + '_editOtType_' + j"
                           placeholder="Select OT Type"
                           required
                         >
@@ -455,18 +455,14 @@
                         <input
                           type="number"
                           matInput
-                          [placeholder]="
-                            'Hours (' +
-                            (otUnit == 'Day' ? 'days' : 'hours') +
-                            ')'
-                          "
+                          [placeholder]="otUnit"
                           step="0.1"
                           min="0"
-                          [(ngModel)]="ot.otHours"
-                          name="otHours"
+                          [ngModel]="getDisplayOTTime(ot.otHours)"
+                          (ngModelChange)="onOtHoursChange($event, ot)"
+                          [name]="i + '_editOtHours_' + j"
                           #otHours="ngModel"
                           required
-                          (input)="onHoursChange(ot, $event)"
                           (keydown)="
                             $event.key === '-' ? $event.preventDefault() : null
                           "

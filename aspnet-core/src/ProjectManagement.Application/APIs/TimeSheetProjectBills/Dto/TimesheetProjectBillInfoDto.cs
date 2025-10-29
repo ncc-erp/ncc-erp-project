@@ -1,10 +1,7 @@
-﻿using Abp.Configuration;
-using ProjectManagement.Configuration;
-using ProjectManagement.Services.Timesheet.Dto;
+﻿using ProjectManagement.Services.Timesheet.Dto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using static ProjectManagement.Constants.Enum.ProjectEnum;
 
 namespace ProjectManagement.APIs.TimeSheetProjectBills.Dto
@@ -29,18 +26,21 @@ namespace ProjectManagement.APIs.TimeSheetProjectBills.Dto
         public double RoundAmount => Math.Round(Amount);
         private double GetWorkingTime()
         {
-            var otHours = TimesheetProjectBillOtTypes?.Sum(item => (float)item.Hours * item.Multiplier) ?? 0;
+            var otHours = TimesheetProjectBillOtTypes?.Sum(item => (double)item.Hours * (double)item.Multiplier) ?? 0;
+            double result;
             if (ChargeType == Constants.Enum.ProjectEnum.ChargeType.Daily)
             {
-                return WorkingTime + otHours / DefaultWorkingHours;
+                result = WorkingTime + otHours / DefaultWorkingHours;
             }
-
-            if (ChargeType == Constants.Enum.ProjectEnum.ChargeType.Hourly)
+            else if (ChargeType == Constants.Enum.ProjectEnum.ChargeType.Hourly)
             {
-                return WorkingTime * DefaultWorkingHours + otHours;
+                result = WorkingTime * DefaultWorkingHours + otHours;
             }
-
-            return TimeSheetWorkingDay == 0 ? 0 : (WorkingTime + otHours / DefaultWorkingHours) / TimeSheetWorkingDay;
+            else
+            {
+                result = TimeSheetWorkingDay == 0 ? 0 : (WorkingTime + otHours / DefaultWorkingHours) / TimeSheetWorkingDay;
+            }
+            return Math.Round(result, 3);
         }
     }
 }

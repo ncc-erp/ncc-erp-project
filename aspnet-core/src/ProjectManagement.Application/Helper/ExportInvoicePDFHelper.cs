@@ -49,7 +49,7 @@ namespace ProjectManagement.Helper
                         builder.Append($@"
                         <tr class='row14'>
                             <td class='column0'>&nbsp;</td>
-                            <td class='column1 style17{evenClass} null'>{$"{tsUser.FullName} (OT {ot.OtType})"}</td>
+                            <td class='column1 style17{evenClass} null'>{$"{tsUser.FullName} ({ot.OtType})"}</td>
                             <td class='column2 style29{evenClass} null'>{tsUser.ProjectName}</td>
                             <td class='column3 style29{evenClass} null'>{tsUser.BillRateDisplay.ToString("N2", CultureInfo.InvariantCulture)}</td>
                             <td class='column4 style29{evenClass} null'>{tsUser.CurrencyName}/{tsUser.ChargeTypeDisplay}</td>

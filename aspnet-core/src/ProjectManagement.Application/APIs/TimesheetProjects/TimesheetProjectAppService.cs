@@ -903,7 +903,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
                         var workingDayOt = ExtensionMethod.GetWorkingDayOT(ot, tsUser);
                         var lineTotalOt = workingDayOt * tsUser.BillRateDisplay;
 
-                        invoiceSheet.Cells[rowIndex, 2].Value = $"{tsUser.FullName} (OT {ot.OtType})";
+                        invoiceSheet.Cells[rowIndex, 2].Value = $"{tsUser.FullName} ({ot.OtType})";
                         invoiceSheet.Cells[rowIndex, 3].Value = tsUser.ProjectName;
                         invoiceSheet.Cells[rowIndex, 4].Value = tsUser.BillRateDisplay;
                         invoiceSheet.Cells[rowIndex, 5].Value = tsUser.CurrencyName + "/" + tsUser.ChargeTypeDisplay;

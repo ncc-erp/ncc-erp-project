@@ -16,7 +16,8 @@ export class AccountComponent extends AppComponentBase implements OnInit {
   constructor(injector: Injector, private _mezonService: MezonLoginService,private renderer: Renderer2) {
     super(injector);
 
-    _mezonService.initMezonEventListeners();
+    // mini-app authentication from windows event to url base
+    // _mezonService.initMezonEventListeners();
   }
 
   showTenantChange(): boolean {

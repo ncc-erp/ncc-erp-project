@@ -1,47 +1,54 @@
-import { Component, Injector } from '@angular/core';
-import { AbpSessionService } from 'abp-ng2-module';
-import { AppComponentBase } from '@shared/app-component-base';
-import { accountModuleAnimation } from '@shared/animations/routerTransition';
-import { AppAuthService } from '@shared/auth/app-auth.service';
-import { GoogleLoginProvider, SocialAuthService, SocialUser } from 'angularx-social-login';
-import { IHashMezonAuthModel, LoginService } from './login.service';
-import { MezonLoginService } from '@app/service/mezon-login-service/mezon-login.service';
+import { Component, ElementRef, Injector, ViewChild } from "@angular/core";
+import { AbpSessionService } from "abp-ng2-module";
+import { AppComponentBase } from "@shared/app-component-base";
+import { accountModuleAnimation } from "@shared/animations/routerTransition";
+import { AppAuthService } from "@shared/auth/app-auth.service";
+import { SocialUser } from "angularx-social-login";
+import { IHashMezonAuthModel, LoginService } from "./login.service";
+import { MezonLoginService } from "@app/service/mezon-login-service/mezon-login.service";
+import { ActivatedRoute } from "@angular/router";
+
 @Component({
-  templateUrl: './login.component.html',
-  animations: [accountModuleAnimation()]
+  templateUrl: "./login.component.html",
+  animations: [accountModuleAnimation()],
 })
 export class LoginComponent extends AppComponentBase {
   submitting = false;
-  user: SocialUser
-  tenancyName: string
+  user: SocialUser;
+  tenancyName: string;
   loggedIn: boolean;
   hashData: string;
+  accessFromMezonApp: boolean = false;
 
   constructor(
     injector: Injector,
     public authService: AppAuthService,
     private _sessionService: AbpSessionService,
-    private googleAuthService: SocialAuthService,
-    private loginService: LoginService,
+    private _loginService: LoginService,
+    private _activatedRoute: ActivatedRoute,
     public mezonLoginService: MezonLoginService
   ) {
     super(injector);
   }
   ngOnInit(): void {
-    // this.googleAuthService.authState.subscribe((user) => {
-    //   this.user = user;
-    //   this.loggedIn = (user != null);
-    //   if (this.loggedIn) {
-    //     this.loginService.authenticateGoogle(this.user.idToken);
-    //  }
-    // });
 
-    this.mezonLoginService.userHashData$.subscribe((userHashData) => {
-      this.isLoading = true;
-      this.hashData = userHashData;
-      this.loginWithHash(this.hashData);
+    this._activatedRoute.queryParams.subscribe((params) => {
+      if (params["data"]) {
+        this.hashData = params["data"];
+        this.accessFromMezonApp = true;
+        this.signInWithHash(this.hashData);
+        return;
+      }
     });
+
+    const searchParams = new URLSearchParams(window.location.search);
+    const rootData = searchParams.get("data");
+    if (rootData) {
+      this.signInWithHash(rootData);
+      return;
+    }
   }
+
   get multiTenancySideIsTeanant(): boolean {
     return this._sessionService.tenantId > 0;
   }
@@ -53,22 +60,26 @@ export class LoginComponent extends AppComponentBase {
 
     return true;
   }
+
   login(): void {
     this.submitting = true;
     this.authService.authenticate(() => (this.submitting = false));
   }
-  // signInWithGoogle() {
-  //   this.googleAuthService.signIn(GoogleLoginProvider.PROVIDER_ID);
-  // }
 
-  loginWithHash(hash: string) {
+  signInWithHash(hash: string) {
     if (hash) {
       const hashData: IHashMezonAuthModel = {
         hashData: btoa(hash),
-        tenancyName: null
+        tenancyName: null,
       };
 
-      this.loginService.authenticateMezonHash(hashData).subscribe(data => this.isLoading = data.isLoading);
+      this._loginService.authenticateMezonHash(hashData).subscribe(
+        (data) => (this.isLoading = data.isLoading),
+        (err) => {
+          abp.notify.error("Please try to login again!");
+          this.isLoading = false;
+        }
+      );
     }
   }
 

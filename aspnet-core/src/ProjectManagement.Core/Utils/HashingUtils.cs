@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -18,14 +19,9 @@ namespace ProjectManagement.Utils
         {
             using (var md5 = System.Security.Cryptography.MD5.Create())
             {
-                var inputBytes = Encoding.UTF8.GetBytes(input);
-                var hashBytes = md5.ComputeHash(inputBytes);
-                var sb = new StringBuilder();
-                for (int i = 0; i < hashBytes.Length; i++)
-                {
-                    sb.Append(hashBytes[i].ToString("x2"));
-                }
-                return sb.ToString();
+                return string.Join(string.Empty, md5
+                    .ComputeHash(Encoding.ASCII.GetBytes(input))
+                    .Select(s => s.ToString("x2")));
             }
         }
 

@@ -248,9 +248,7 @@ namespace ProjectManagement.Authorization
                 var mezonConfig = _mezonService.GetConfig();
                 var appToken = mezonConfig.AppToken ?? throw new UserFriendlyException("Invalid AppToken");
                 var rawHashData = hashAuthDto.HashData.DecodeBase64();
-
                 var delimiter = "&hash=";
-
                 var index = rawHashData.IndexOf(delimiter);
                 var queryId = rawHashData.Substring(0, index);
                 var mezonHash = rawHashData.Substring(index + delimiter.Length);
@@ -295,7 +293,7 @@ namespace ProjectManagement.Authorization
                 {
                     await UserManager.InitializeOptionsAsync(tenantId);
                     var user = UserManager.Users.FirstOrDefault(x => !string.IsNullOrEmpty(x.MezonUserId) && x.MezonUserId == mezonUser.Id)
-                    ?? UserManager.Users.FirstOrDefault(x => x.EmailAddress == mezonUser.MezonId);
+                    ?? UserManager.Users.FirstOrDefault(x => x.EmailAddress == mezonUser.Subject);
                     if (user == null)
                     {
                         return new AbpLoginResult<Tenant, User>(AbpLoginResultType.InvalidUserNameOrEmailAddress, tenant);

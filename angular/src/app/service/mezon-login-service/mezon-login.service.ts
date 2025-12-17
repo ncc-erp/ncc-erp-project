@@ -34,17 +34,6 @@ export class MezonLoginService extends BaseApiService {
     return 'TokenAuth';
   }
 
-  // redirectToOAuth(): void {
-  //   window.location.href = this.baseUrl + '/api/TokenAuth/MezonRedirect';
-  // }
-
-  // mezonAuthenticate(mezonToken: string): Observable<any> {
-  //   const tokenPayload = { Token: mezonToken };
-  //   return this.http.post(AppConsts.remoteServiceBaseUrl + '/api/TokenAuth/MezonAuthenticate', tokenPayload, {
-  //     headers: { 'Content-Type': 'application/json' }
-  //   });
-  // }
-
   public initMezonEventListeners(): void {
     if (this.eventListenersRegistered)
       return;
@@ -88,7 +77,6 @@ export class MezonLoginService extends BaseApiService {
   }
 
   redirectToOAuth() {
-    // alert(`${this.baseUrl}/api/TokenAuth/MezonRedirect`)
     window.location.href = `${this.baseUrl}/api/TokenAuth/MezonRedirect`;
   }
 

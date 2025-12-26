@@ -118,7 +118,7 @@ namespace ProjectManagement.Services.ProjectTimesheet
 
             var query = _workScope.GetAll<TimesheetProjectBill>().Where(s => s.TimesheetId == activeTimesheet.Id);
 
-            var tpb = await query.FirstOrDefaultAsync(s => s.ProjectUserBillId == pub.Id);
+            var tpb = await query.FirstOrDefaultAsync(s => s.ProjectUserBillId.HasValue == true && s.ProjectUserBillId == pub.Id);
 
             if (tpb == default)
             {

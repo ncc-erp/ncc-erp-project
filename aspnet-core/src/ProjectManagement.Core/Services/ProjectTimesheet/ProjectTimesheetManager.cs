@@ -123,7 +123,7 @@ namespace ProjectManagement.Services.ProjectTimesheet
             if (tpb == default)
             {
                 tpb = await query
-                     .Where(s => s.ProjectId == pub.ProjectId && s.UserId == pub.UserId)
+                     .Where(s => s.ProjectId == pub.ProjectId && s.UserId == pub.UserId && s.ProjectUserBillId.HasValue == false)
                      .FirstOrDefaultAsync();
                 if (tpb != null)
                 {

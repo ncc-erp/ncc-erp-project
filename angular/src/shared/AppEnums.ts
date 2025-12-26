@@ -326,7 +326,14 @@ export const APP_ENUMS = {
     CvStatusTriggerAction: {
         "Create Bill Account of Request if empty" : 0,    // Create Bill Account of Request if empty
         "Create/Update Bill Account of Request" : 1     // Create/Update Bill Account of Request
-    }
+    },
+    ProjectUserOnboardingStatus: {
+        "Not Started" : 0,
+        "In Progress" : 1,
+        "Pending Employee" : 2,
+        "Done" : 3,
+        "Pending": 4
+    },
 
 }
 

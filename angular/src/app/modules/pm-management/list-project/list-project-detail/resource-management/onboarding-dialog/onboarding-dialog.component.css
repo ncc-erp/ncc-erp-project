@@ -1,0 +1,58 @@
+.modal-header {
+    border-bottom: 1px solid #e9ecef;
+    padding: 20px 25px;
+    background-color: #fff; /* Nền trắng như ảnh */
+}
+
+.modal-title {
+    font-size: 1.25rem;
+    color: #333;
+}
+
+.modal-body.custom-scroll {
+    max-height: 75vh;
+    overflow-y: auto;
+    padding: 25px;
+}
+
+.checklist-item {
+    margin-bottom: 10px;
+}
+
+
+.item-label {
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+::ng-deep .mat-checkbox-layout .mat-checkbox-label {
+    color: #555 !important;
+    font-weight: 400;
+    font-size: 15px;
+}
+
+.custom-scroll::-webkit-scrollbar {
+    width: 8px;
+}
+.custom-scroll::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+}
+.custom-scroll::-webkit-scrollbar-thumb {
+    background: #ccc; 
+    border-radius: 4px;
+}
+.custom-scroll::-webkit-scrollbar-thumb:hover {
+    background: #aaa; 
+}
+
+.item-details ul {
+    list-style-type: disc;
+    margin-top: 5px;
+}
+
+.detail-text {
+    font-size: 13px; 
+    line-height: 1.6;
+    color: #666;    
+    margin-bottom: 4px;
+}

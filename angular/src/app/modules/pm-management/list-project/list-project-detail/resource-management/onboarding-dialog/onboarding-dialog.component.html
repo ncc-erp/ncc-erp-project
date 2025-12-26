@@ -1,0 +1,45 @@
+<div class="onboard-container">
+    <div class="modal-header">
+        <h4 class="modal-title font-weight-bold">
+            Onboard Checklist: <span class="text-primary">{{fullName}}</span>
+        </h4>
+        <button type="button" class="close" (click)="close()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <div class="modal-body custom-scroll">
+        <div *ngIf="checklist && checklist.length > 0">
+            <div class="checklist-item" *ngFor="let item of checklist; let i = index">
+                
+                <div class="item-label mb-2">
+                    <strong style="color: #E86C55;">{{ item.label }}</strong>
+                </div>
+
+                <div class="item-details mb-2" *ngIf="item.details && item.details.length > 0">
+                    <ul class="pl-4 mb-0">
+                        <li *ngFor="let detail of item.details" class="text-muted detail-text">
+                            {{ detail }}
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="item-action ml-1">
+                    <mat-checkbox [(ngModel)]="item.isChecked" color="primary" class="text-muted small-checkbox-label">
+                        Done / Xác nhận hoàn thành
+                    </mat-checkbox>
+                </div>
+
+                <div class="separator my-3" style="border-bottom: 1px solid #f1f1f1;" *ngIf="i < checklist.length - 1"></div>
+            </div>
+        </div>
+        
+        </div>
+
+    <div class="modal-footer" style="border-top: none; padding-top: 0;">
+        <button type="button" class="btn btn-secondary font-weight-bold" (click)="close()">Cancel</button>
+        <button type="button" class="btn btn-primary font-weight-bold px-4" [disabled]="isSaving || isLoading" (click)="save()">
+            <i class="fa fa-save mr-1"></i> Submit
+        </button>
+    </div>
+</div>

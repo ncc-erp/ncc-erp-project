@@ -81,6 +81,8 @@ namespace ProjectManagement.Services.ResourceManager.Dto
 
         public ProjectUserWorkingType WorkingType { get; set; }
 
+        public ProjectUserOnboardingStatus OnboardingStatus { get; set; } = ProjectUserOnboardingStatus.NotStarted;
+
     }
     public class ProjectStatusUser
     {

@@ -7,6 +7,7 @@ using ProjectManagement.Utils;
 using System;
 using System.Net.Http;
 using System.Text;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 
 namespace ProjectManagement.Services.Komu
@@ -29,6 +30,7 @@ namespace ProjectManagement.Services.Komu
             var _isNotifyToKomu = configuration.GetValue<string>($"{serviceName}:EnableKomuNotification");
             _enableSendToKomu = _isNotifyToKomu == "true";
         }
+
         public async Task<long?> GetKomuUserId(KomuUserDto input)
         {
             var komuUser = await PostAsync<KomuUserDto>(ChannelTypeConstant.KOMU_USER, new { username = input.Username });
@@ -91,5 +93,23 @@ namespace ProjectManagement.Services.Komu
             }
         }
 
+        public void NotifyToKomuUser(KomuMessage input)
+        {
+            if (!_enableSendToKomu)
+            {
+                logger.LogInformation("_enableSendToKomu=false => stop");
+            }
+
+            Post(KomuUrlConstant.KOMU_USER_ONLY, new { message = input.Message, username = input.UserName });
+        }
+
+        public async Task NotifyToKomuUserAwait(KomuMessage input)
+        {
+            if (!_enableSendToKomu)
+            {
+                logger.LogInformation("_enableSendToKomu=false => stop");
+            }
+            await PostAsync<dynamic>(KomuUrlConstant.KOMU_USER_ONLY, new { message = input.Message, username = input.UserName });
+        }
     }
 }

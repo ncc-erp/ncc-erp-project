@@ -27,6 +27,10 @@ import { RequestResourceDto } from '@app/service/model/delivery-management.dto';
 import { FormSetDoneComponent } from '@app/modules/delivery-management/delivery/request-resource-tab/form-set-done/form-set-done.component';
 import { EditNoteResourceComponent } from '@app/modules/delivery-management/delivery/weekly-report-tab/weekly-report-tab-detail/edit-note-resource/edit-note-resource.component';
 import { getValueByEnum } from '@app/modules/delivery-management/delivery/available-resource-tab/enum-until';
+import { APP_ENUMS } from '@shared/AppEnums';
+import { Utils } from '@shared/Utils';
+import { ProjectUserOnboardingService }  from './../../../../../service/api/project-user-onboarding.service';
+import { OnboardingDialogComponent } from './onboarding-dialog/onboarding-dialog.component';
 
 @Component({
   selector: 'app-resource-management',
@@ -123,7 +127,8 @@ export class ResourceManagementComponent extends AppComponentBase implements OnI
     private projectRequestService: ProjectResourceRequestService,
     private route: ActivatedRoute,
     private dialog: MatDialog,
-    private resourceRequestService: DeliveryResourceRequestService
+    private resourceRequestService: DeliveryResourceRequestService,
+    private projectUserOnboardingService: ProjectUserOnboardingService
   )
   {
       super(injector)
@@ -157,6 +162,9 @@ export class ResourceManagementComponent extends AppComponentBase implements OnI
 
   }
 
+  getOnboardingStatusName(statusValue: number): string {
+    return Utils.getValueByEnum(statusValue, APP_ENUMS.ProjectUserOnboardingStatus);
+  }
 
   public getResourceRequestList(): void {
 
@@ -303,6 +311,24 @@ export class ResourceManagementComponent extends AppComponentBase implements OnI
     user.editMode = true
     this.projectUserProcess = true
   }
+
+  onboardUser(user: any) {
+    const dialogRef = this.dialog.open(OnboardingDialogComponent, {
+      width: '700px',
+      maxHeight: '90vh',
+      data: { 
+        projectUserId: user.id,  
+        fullName: user.fullName   
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.getProjectUser();
+      }
+    });
+  }
+
   removeUser(user: projectUserDto) {
     abp.message.confirm(
       "Remove user: " + user.fullName + "?",

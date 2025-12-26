@@ -116,14 +116,14 @@ namespace ProjectManagement.Services.ProjectTimesheet
                 return;
             }
 
-            var query = _workScope.GetAll<TimesheetProjectBill>().Where(s => s.TimesheetId == activeTimesheet.Id);
+            var query = _workScope.GetAll<TimesheetProjectBill>().Where(s => s.TimesheetId == activeTimesheet.Id && s.ProjectId == pub.ProjectId);
 
             var tpb = await query.FirstOrDefaultAsync(s => s.ProjectUserBillId.HasValue == true && s.ProjectUserBillId == pub.Id);
 
             if (tpb == default)
             {
                 tpb = await query
-                     .Where(s => s.ProjectId == pub.ProjectId && s.UserId == pub.UserId && s.ProjectUserBillId.HasValue == false)
+                     .Where(s => s.UserId == pub.UserId && s.ProjectUserBillId.HasValue == false)
                      .FirstOrDefaultAsync();
                 if (tpb != null)
                 {

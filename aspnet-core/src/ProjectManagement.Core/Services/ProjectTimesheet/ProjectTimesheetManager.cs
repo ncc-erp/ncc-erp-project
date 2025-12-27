@@ -86,9 +86,9 @@ namespace ProjectManagement.Services.ProjectTimesheet
                 IsActive = true,
                 BillRate = pub.BillRate,
                 BillRole = pub.BillRole,
-                //CurrencyId = pub.CurrencyId,
                 ProjectId = pub.ProjectId,
                 UserId = pub.UserId,
+                ProjectUserBillId = pub.Id,
                 WorkingTime = 0,
                 ChargeType = pub.ChargeType.HasValue ? pub.ChargeType : project.ChargeType,
                 CurrencyId = project.CurrencyId,
@@ -116,17 +116,27 @@ namespace ProjectManagement.Services.ProjectTimesheet
                 return;
             }
 
-            var tpb = await _workScope.GetAll<TimesheetProjectBill>()
-                .Where(s => s.ProjectId == pub.ProjectId)
-                .Where(s => s.TimesheetId == activeTimesheet.Id)
-                .Where(s => s.UserId == pub.UserId)
-                .FirstOrDefaultAsync();
+            var query = _workScope.GetAll<TimesheetProjectBill>().Where(s => s.TimesheetId == activeTimesheet.Id && s.ProjectId == pub.ProjectId);
+
+            var tpb = await query.FirstOrDefaultAsync(s => s.ProjectUserBillId.HasValue == true && s.ProjectUserBillId == pub.Id);
+
+            if (tpb == default)
+            {
+                tpb = await query
+                     .Where(s => s.UserId == pub.UserId && s.ProjectUserBillId.HasValue == false)
+                     .FirstOrDefaultAsync();
+                if (tpb != null)
+                {
+                    tpb.ProjectUserBillId = pub.Id;
+                }
+            }
 
             if (tpb == default)
             {
                 Logger.LogInformation($"UpdateTimesheetProjectBill() not found TimesheetProjectBill ProjectId={pub.ProjectId}, TimesheetId={activeTimesheet}, UserId={pub.UserId}");
                 return;
             }
+
             if (timesheetproject.IsComplete.HasValue && timesheetproject.IsComplete.Value == true)
             {
                 return;

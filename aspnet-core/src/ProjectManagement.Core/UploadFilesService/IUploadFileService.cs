@@ -15,5 +15,8 @@ namespace ProjectManagement.UploadFilesService
         Task<string> UploadCvFileAsync(IFormFile file, string tenantName, string fileName);
 
         Task<byte[]> DownloadFileAsync(string filePath);
+
+        Task<string> UploadPunishmentFileAsync(IFormFile file, string tenantName, string fileName);
+
     }
 }

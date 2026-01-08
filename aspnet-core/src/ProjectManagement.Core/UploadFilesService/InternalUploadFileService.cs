@@ -81,6 +81,20 @@ namespace ProjectManagement.UploadFilesService
         {
             return await File.ReadAllBytesAsync(filePath);           
         }
+
+        public async Task<string> UploadPunishmentFileAsync(IFormFile file, string tenantName, string fileName)
+        {
+            CheckValidFile(file, ConstantUploadFile.AllowPunishmentFileTypes);
+            var folder = $"{ConstantUploadFile.UPLOAD_FOLDER}/{tenantName}/{ConstantUploadFile.PUNISHMENT_FOLDER}";
+
+            UploadFile.CreateFolderIfNotExists(folder);
+
+            var filePath = $"{folder.TrimEnd('/')}/{fileName}";
+
+            await UploadFile.UploadFileAsync(folder, file, fileName);
+
+            return filePath;
+        }
     }
     }
 

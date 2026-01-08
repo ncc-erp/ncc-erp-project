@@ -605,6 +605,8 @@ export const PERMISSIONS_CONSTANT = {
        Timesheets_ForceDelete: "Timesheets.ForceDelete",
        Timesheets_CloseAndActive: "Timesheets.CloseOrActive",
 
+       Timesheets_Punishment: "Timesheets.Punishment",
+
        Timesheets_TimesheetDetail: "Timesheets.TimesheetDetail",
        Timesheets_TimesheetDetail_View: "Timesheets.TimesheetDetail.View",
        Timesheets_TimesheetDetail_ViewAll: "Timesheets.TimesheetDetail.ViewAll",

@@ -13,6 +13,9 @@ using ProjectManagement.Services.CheckConnectDto;
 using ProjectManagement.Services.ResourceManager;
 using ProjectManagement.Services.ResourceManager.Dto;
 using ProjectManagement.Services.ResourceService.Dto;
+using ProjectManagement.UploadFilesService;
+using ProjectManagement.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -24,13 +27,15 @@ namespace ProjectManagement.APIs.Public
     {
         private readonly IConfiguration _appConfiguration;
         private readonly ResourceManager resourceManager;
+        private readonly UploadFileService _uploadFileService;
         protected IHttpContextAccessor _httpContextAccessor { get; set; }
 
-        public PublicAppService(ResourceManager resourceManager, IConfiguration appConfiguration, IHttpContextAccessor httpContextAccessor)
+        public PublicAppService(ResourceManager resourceManager, IConfiguration appConfiguration, IHttpContextAccessor httpContextAccessor, UploadFileService uploadFileService)
         {
             this.resourceManager = resourceManager;
             this._appConfiguration = appConfiguration;
             _httpContextAccessor = httpContextAccessor;
+            _uploadFileService = uploadFileService;
         }
 
         [HttpGet]
@@ -304,6 +309,29 @@ namespace ProjectManagement.APIs.Public
             {
                 Between3To5PM = from15To17,
                 After5PMOrMissing = after17
+            };
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<object> GetPunishments(int month, int year)
+        {
+            var filePath = await WorkScope.GetAll<Punishment>()
+               .Where(s => s.Month == month && s.Year == year)
+               .Select(s => s.FilePath)
+               .FirstOrDefaultAsync();
+
+            if (filePath == null)
+                throw new UserFriendlyException(String.Format("File path not found"));
+
+            var data = await _uploadFileService.DownloadPunishmentFileAsync(filePath);
+
+            var fileName = FileUtils.GetFileName(filePath);
+
+            return new
+            {
+                FileName = fileName,
+                Data = data
             };
         }
     }

@@ -54,6 +54,7 @@ namespace ProjectManagement.UploadFilesService
         {
             return await _fileService.DownloadFileAsync(filePath);
         }
+
         public async Task<byte[]> DownloadCvLinkAsync(string filePath)
         {
             return await _fileService.DownloadFileAsync(filePath);
@@ -70,5 +71,18 @@ namespace ProjectManagement.UploadFilesService
             
             return tenant.TenancyName.ToLower();
         }
+
+        public async Task<string> UploadPunishmentFileAsync(IFormFile file, string filename)
+        {
+            var tenantName = getSessionTenantName();
+            var filePath = await _fileService.UploadPunishmentFileAsync(file, tenantName, filename);
+            return filePath;
+        }
+
+        public async Task<byte[]> DownloadPunishmentFileAsync(string filePath)
+        {
+            return await _fileService.DownloadFileAsync(filePath);
+        }
+
     }
 }

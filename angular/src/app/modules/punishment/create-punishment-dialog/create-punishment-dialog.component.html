@@ -1,0 +1,38 @@
+<form class="form-horizontal" autocomplete="off" #createPunishmentForm="ngForm" (ngSubmit)="save()">
+  <abp-modal-header [title]="id ? 'Update Punishment' : 'Import Punishment'" (onCloseClick)="bsModalRef.hide()"></abp-modal-header>
+  
+  <div class="modal-body">
+    <div class="form-group row required">
+      <label class="col-md-3 col-form-label">Month / Year</label>
+      <div class="col-md-4">
+        <input type="number" class="form-control" name="month" [(ngModel)]="punishment.month" placeholder="Month" required min="1" max="12">
+      </div>
+      <div class="col-md-5">
+        <input type="number" class="form-control" name="year" [(ngModel)]="punishment.year" placeholder="Year" required>
+      </div>
+    </div>
+
+    <div class="form-group row required">
+      <label class="col-md-3 col-form-label">Attached File</label>
+      <div class="col-md-9">
+        <div class="custom-file">
+          <input type="file" accept=".xlsx, .xls, .xlsm" class="custom-file-input" id="customFile" (change)="onFileSelect($event)" [required]="!id">
+          <label class="custom-file-label" for="customFile">{{ selectedFileName || 'Choose file...' }}</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <label class="col-md-3 col-form-label">Note</label>
+      <div class="col-md-9">
+        <textarea class="form-control" name="note" [(ngModel)]="punishment.note" rows="3"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <abp-modal-footer 
+      [cancelDisabled]="saving" 
+      [saveDisabled]="!createPunishmentForm.form.valid || (!id && !fileToUpload)"
+      (onCancelClick)="bsModalRef.hide()">
+  </abp-modal-footer>
+</form>

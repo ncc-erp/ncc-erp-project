@@ -217,9 +217,23 @@ export class SidebarMenuComponent extends AppComponentBase implements OnInit {
       ),
       new MenuItem(
         this.l('Timesheets'),
-        '/app/timesheet',
+        '',
         'fas fa-calendar-alt',
-        'Timesheets'
+        'Timesheets',
+          [
+          new MenuItem(
+            this.l('Timesheets'),
+            '/app/timesheet',
+            'fas fa-calendar-alt',
+            'Timesheets'
+          ),
+          new MenuItem(
+            this.l('Punishment'),
+            '/app/punishment',
+            'fas fa-chalkboard',
+            'Timesheets.Punishment'
+          )
+        ]
       ),
       new MenuItem(
         this.l('Audits'),

@@ -631,6 +631,8 @@ namespace ProjectManagement.Authorization
         public const string Timesheets_ForceDelete = "Timesheets.ForceDelete";
         public const string Timesheets_CloseAndActive = "Timesheets.CloseOrActive";
 
+        public const string Timesheets_Punishment = "Timesheets.Punishment";
+
         public const string Timesheets_TimesheetDetail = "Timesheets.TimesheetDetail";
         public const string Timesheets_TimesheetDetail_View = "Timesheets.TimesheetDetail.View";
         public const string Timesheets_TimesheetDetail_ViewAll = "Timesheets.TimesheetDetail.ViewAll";
@@ -663,6 +665,8 @@ namespace ProjectManagement.Authorization
         public const string Timesheets_TimesheetDetail_OTType_View = "Timesheets.TimesheetDetail.OTType.View";
         public const string Timesheets_TimesheetDetail_OTType_Edit = "Timesheets.TimesheetDetail.OTType.Edit";
         public const string Timesheets_TimesheetDetail_OTType_Delete = "Timesheets.TimesheetDetail.OTType.Delete";
+
+
 
         #endregion Timesheet
 
@@ -1357,6 +1361,8 @@ namespace ProjectManagement.Authorization
                     PermissionNames.Timesheets_Delete ,
                     PermissionNames.Timesheets_ForceDelete ,
                     PermissionNames.Timesheets_CloseAndActive ,
+
+                    PermissionNames.Timesheets_Punishment,
 
                     PermissionNames.Timesheets_TimesheetDetail ,
                     PermissionNames.Timesheets_TimesheetDetail_View ,
@@ -2097,6 +2103,8 @@ namespace ProjectManagement.Authorization
                  new SystemPermission{ Name =  PermissionNames.Timesheets_Delete ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Delete"},
                  new SystemPermission{ Name =  PermissionNames.Timesheets_ForceDelete ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Force Delete"},
                  new SystemPermission{ Name =  PermissionNames.Timesheets_CloseAndActive ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Close/Active"},
+
+                 new SystemPermission{ Name =  PermissionNames.Timesheets_Punishment ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Punishment"},
 
                  new SystemPermission{ Name =  PermissionNames.Timesheets_TimesheetDetail ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Timesheet Detail"},
                  new SystemPermission{ Name =  PermissionNames.Timesheets_TimesheetDetail_ViewAll ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Timesheet View All Project Timesheet"},
@@ -3919,6 +3927,9 @@ namespace ProjectManagement.Authorization
                             },
                             new SystemPermission {
                                 Name = PermissionNames.Timesheets_CloseAndActive, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Close/Active"
+                            },
+                            new SystemPermission {
+                                Name = PermissionNames.Timesheets_Punishment, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Punishment"
                             },
 
                             new SystemPermission {

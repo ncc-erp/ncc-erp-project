@@ -1,0 +1,80 @@
+<div>
+  <section class="content-header pb-1">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-6">
+          <h1>Punishment</h1>
+        </div>
+        <div class="col-6 text-right">
+          <button href="javascript:;" class="btn btn-primary" (click)="createPunishment()">
+            <i class="fa fa-plus-square"></i> Import Punishment
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="content px-2">
+    <div class="container-fluid">
+      <div class="card">
+        <div class="card-body table-responsive p-0">
+          <table class="table table-hover text-nowrap">
+            <thead class="bg-light">
+              <tr>
+                <th>STT</th>
+                <th>Month/Year</th>
+                <th>Attached File</th>
+                <th>Note</th>
+                <th style="width: 200px;">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of punishments | paginate: {
+                    id: 'server',
+                    itemsPerPage: pageSize,
+                    currentPage: pageNumber,
+                    totalItems: totalItems
+                  }; let i = index">
+                <td>{{ (pageNumber - 1) * pageSize + i + 1 }}</td>
+                <td>{{ item.month }}/{{ item.year }}</td>
+                <td>
+                  <div class="d-flex col-12 p-0">
+                    <span class="text-nowrap w-100 text-truncate file-link" (click)=" downloadFile(item.id)">
+                      {{ item.fileName }}
+                    </span>
+                  </div>
+                </td>
+                <td>{{ item.note }}</td>
+                <td>
+                  <button type="button" class="btn btn-sm btn-primary mx-1" (click)="editPunishment(item)">
+                    <i class="fas fa-pencil-alt"></i> Edit
+                  </button>
+                  <button type="button" class="btn btn-sm btn-danger mx-1" (click)="delete(item)">
+                    <i class="fas fa-trash"></i> Delete
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-footer bg-light border-top">
+          <div class="row">
+            <div class="col-sm-4 col-12 text-sm-left text-center">
+              <button class="btn btn-secondary" (click)="refresh()">
+                <i class="fas fa-redo-alt"></i> Refresh
+              </button>
+            </div>
+            <div class="col-sm-4 col-12 text-center">
+              <p class="mb-0 my-2">Total: {{ totalItems }} records</p>
+            </div>
+            <div class="col-sm-4 col-12">
+              <div class="float-sm-right m-auto">
+                <abp-pagination-controls id="server" (pageChange)="getDataPage($event)"></abp-pagination-controls>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

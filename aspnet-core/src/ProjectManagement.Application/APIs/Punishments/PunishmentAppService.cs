@@ -1,11 +1,13 @@
 ﻿using Abp.Authorization;
 using Abp.Configuration;
 using Abp.UI;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NccCore.Extension;
 using NccCore.Paging;
 using NccCore.Uitls;
+using OfficeOpenXml;
 using ProjectManagement.APIs.ProjectUsers.Dto;
 using ProjectManagement.APIs.Punishments.Dto;
 using ProjectManagement.APIs.Timesheets.Dto;
@@ -17,6 +19,7 @@ using ProjectManagement.UploadFilesService;
 using ProjectManagement.Utils;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -40,6 +43,8 @@ namespace ProjectManagement.APIs.Punishments
         {
             if (input.File == null || input.File.Length == 0)
                 throw new UserFriendlyException("Please select a valid file to upload.");
+
+            ValidatePunishmentTemplate(input.File);
 
             var punishmentExists = await WorkScope.GetAll<Punishment>()
                 .AnyAsync(x => x.Year == input.Year && x.Month == input.Month);
@@ -87,7 +92,7 @@ namespace ProjectManagement.APIs.Punishments
 
             if (input.File != null)
             {
-
+                ValidatePunishmentTemplate(input.File);
                 var cleanFileName = input.File.FileName.Replace(" ", "_");
                 var filename = $"{DateTimeUtils.NowToyyyyMMddHHmmssfff()}_{cleanFileName}";
 
@@ -167,6 +172,36 @@ namespace ProjectManagement.APIs.Punishments
                 FileName = fileName,
                 Data = data
             };
+        }
+
+        private void ValidatePunishmentTemplate(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+                throw new UserFriendlyException("Uploaded file cannot be empty.");
+
+            var extension = Path.GetExtension(file.FileName).ToLower();
+            if (extension != ".xlsx" && extension != ".xls")
+                throw new UserFriendlyException("Please upload a valid Excel file (.xlsx or .xls).");
+
+            using (var stream = new MemoryStream())
+            {
+                file.CopyTo(stream);
+                using (var package = new ExcelPackage(stream))
+                {
+                    var worksheet = package.Workbook.Worksheets[0];
+                    if (worksheet == null || worksheet.Dimension == null)
+                        throw new UserFriendlyException("The Excel file contains no data.");
+
+                    var expectedHeaders = new[] { "STT", "PM", "EMAIL", "Date of punishment", "Reason", "Amount of fine" };
+
+                    for (int i = 0; i < expectedHeaders.Length; i++)
+                    {
+                        var cellValue = worksheet.Cells[1, i + 1].Value?.ToString()?.Trim();
+                        if (!string.Equals(cellValue, expectedHeaders[i], StringComparison.OrdinalIgnoreCase))
+                            throw new UserFriendlyException($"Invalid file structure. Column {i + 1} must be '{expectedHeaders[i]}'.");
+                    }
+                }
+            }
         }
     }
 }

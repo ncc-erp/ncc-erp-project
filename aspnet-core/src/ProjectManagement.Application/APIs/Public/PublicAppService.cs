@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using NccCore.DataExport;
+using OfficeOpenXml;
 using ProjectManagement.APIs.Public.Dto;
 using ProjectManagement.Authorization.Users;
 using ProjectManagement.Configuration;
@@ -17,6 +19,7 @@ using ProjectManagement.UploadFilesService;
 using ProjectManagement.Utils;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using static ProjectManagement.Constants.Enum.ProjectEnum;
@@ -314,25 +317,65 @@ namespace ProjectManagement.APIs.Public
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<object> GetPunishments(int month, int year)
+        public async Task<List<PunishmentRecordsDto>> GetPunishments(int month, int year)
         {
             var filePath = await WorkScope.GetAll<Punishment>()
-               .Where(s => s.Month == month && s.Year == year)
-               .Select(s => s.FilePath)
-               .FirstOrDefaultAsync();
-
-            if (filePath == null)
-                throw new UserFriendlyException(String.Format("File path not found"));
+                 .Where(s => s.Month == month && s.Year == year)
+                 .Select(s => s.FilePath)
+                 .FirstOrDefaultAsync();
+         
+            if(string.IsNullOrEmpty(filePath)) 
+                throw new UserFriendlyException("File path not found");
 
             var data = await _uploadFileService.DownloadPunishmentFileAsync(filePath);
+            if (data == null || data.Length == 0)
+                throw new UserFriendlyException("File data is empty");
 
-            var fileName = FileUtils.GetFileName(filePath);
+            var rawExcelData = new List<PunishmentRecordsDto>();
 
-            return new
+            using (var stream = new MemoryStream(data))
+            using (var package = new ExcelPackage(stream))
             {
-                FileName = fileName,
-                Data = data
-            };
+                var worksheet = package.Workbook.Worksheets[0];
+                var rowCount = worksheet.Dimension?.Rows ?? 0;
+
+                for (int row = 2; row <= rowCount; row++)
+                {
+                    var email = worksheet.Cells[row, 3].Value?.ToString()?.Trim();
+                    if (string.IsNullOrEmpty(email))
+                        continue;
+
+                    var amountVal = Convert.ToDecimal(worksheet.Cells[row, 6].Value ?? 0);
+
+                    var finalAmount = (amountVal > 0 && amountVal < 1000) ? amountVal * 1000 : amountVal;
+
+                    rawExcelData.Add(new PunishmentRecordsDto
+                    {
+                        Email = email,
+                        Date = worksheet.Cells[row, 4].GetValue<DateTime>().ToString("yyyy-MM-dd"),
+                        Reason = worksheet.Cells[row, 5].Value?.ToString(),
+                        Amount = finalAmount
+                    });
+                }
+            }
+
+            var emailList = rawExcelData.Select(x => x.Email).Distinct().ToList();
+
+            var userMap = await WorkScope.GetAll<User>()
+                .Where(u => emailList.Contains(u.EmailAddress))
+                .Select(u => new { u.EmailAddress, u.MezonUserId })
+                .ToDictionaryAsync(u => u.EmailAddress, u => u.MezonUserId);
+
+            foreach (var record in rawExcelData)
+            {
+                if (userMap.TryGetValue(record.Email, out var mezonId))
+                {
+                    record.MezonId = mezonId;
+                }
+            }
+
+            return rawExcelData;
         }
+
     }
 }

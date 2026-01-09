@@ -6,15 +6,22 @@ import { catchError, finalize } from 'rxjs/operators';
 import { CreatePunishmentDialogComponent } from './create-punishment-dialog/create-punishment-dialog.component'; 
 import { PunishmentService } from '@app/service/api/punishment.service'
 import { FileHandlerService } from '@app/service/utility/file-handler.service';
+import { InputFilterDto } from '@shared/filter/filter.component';
 
 @Component({
   selector: 'app-punishment',
   templateUrl: './punishment.component.html',
   styleUrls: ['./punishment.component.css']
 })
-export class PunishmentComponent extends PagedListingComponentBase<PunishmentDto> {
+export class PunishmentComponent extends PagedListingComponentBase<PunishmentDto> implements OnInit{
   
   punishments: PunishmentDto[] = [];
+
+  public readonly FILTER_CONFIG: InputFilterDto[] = [
+    { propertyName: 'fileName', displayName: "File Name", comparisions: [0, 6, 7, 8] },
+    { propertyName: 'month', displayName: "Month", comparisions: [0, 1, 2, 3, 4] },
+    { propertyName: 'year', displayName: "Year", comparisions: [0, 1, 2, 3, 4]},
+  ];
 
   constructor(
     injector: Injector,
@@ -64,7 +71,7 @@ export class PunishmentComponent extends PagedListingComponentBase<PunishmentDto
     this.showCreateOrEditDialog(item.id);
   }
 
-   downloadFile(id: number){
+  downloadFile(id: number){
     this._punishmentService.downloadFile(id).subscribe(data => {
       this.fileHandlerService.downloadFile(data.result.data, data.result.fileName);
     });

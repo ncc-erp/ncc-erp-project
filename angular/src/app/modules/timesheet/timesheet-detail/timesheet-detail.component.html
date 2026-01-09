@@ -1,36 +1,35 @@
-<section class="content-header pb-1">
+<section class="content-header py-1">
   <div class="container-fluid">
     <div class="row">
-      <div class="col-3" id="title-page-tsdetail" style="font-size: 1.5rem;">
+      <div class="col-3" id="title-page-tsdetail">
         <nav aria-label="breadcrumb">
-          <ol class="breadcrumb">
+          <ol class="breadcrumb m-0 p-0">
             <li class="breadcrumb-item"><a routerLink="/app/timesheet">Timesheets</a></li>
             <li class="breadcrumb-item active" aria-current="page">{{titleTimesheet}}</li>
           </ol>
         </nav>
       </div>
-      <div class="col text-right">
-        <div class="d-flex justify-content-end">
+      <div class="col-9 text-right">
+        <div class="d-flex justify-content-end align-items-center flex-wrap">
           <div class="mr-2">
-            <div class="form-group form-float d-flex">
+            <div class="d-flex">
               <div>
-                <button *ngIf="!isActive && permission.isGranted(Timesheets_TimesheetDetail_ActiveProject)" class="btn bg-success mr-2" (click)="selectActiveProject()"
+                <button class="btn bg-success mr-2" (click)="selectActiveProject()"
                   [disabled]="listTimesheetProject?.length<=0">
                   Activate
                 </button>
               </div>
               <div>
-                <button *ngIf="!isActive && permission.isGranted(Timesheets_TimesheetDetail_DeActivateProject)" class="btn bg-warning mr-2" (click)="selectDeActiveProject()"
+                <button class="btn bg-warning mr-2" (click)="selectDeActiveProject()"
                   [disabled]="listTimesheetProject?.length<=0">
                   Deactivate
                 </button>
               </div>
               <div class="mr-2">
-                <div class="form-group form-float" [matTooltip] ="!isShowBtnExportTsDetail() ? 'Chưa chọn Project, không cùng Currency hoặc Client' : '' ">
-                  <button *ngIf="isShowBtnExportTsDetail()"
-                    [disabled]="listExportInvoice?.length <= 0" type="submit" class="btn bg-primary mr-2"
-                    (click)="exportTimesheetDetail()"
-                    >
+                <div class="form-group form-float"
+                  [matTooltip]="!isShowBtnExportTsDetail() ? 'Chưa chọn Project, không cùng Currency hoặc Client' : '' ">
+                  <button *ngIf="isShowBtnExportTsDetail()" [disabled]="listExportInvoice?.length <= 0" type="submit"
+                    class="btn bg-primary mr-2" (click)="exportTimesheetDetail()">
                     Export TS Detail
                   </button>
                 </div>
@@ -48,9 +47,27 @@
                   Export Invoice
                 </button>
               </div>
+      
+              <div class="mr-2" [matTooltip]="!canExportInvoice?'Chưa chọn Project, không cùng Currency hoặc Client':''">
+                <button *ngIf="permission.isGranted(Timesheets_TimesheetDetail_ExportInvoiceForTax)"
+                  [disabled]="listExportInvoice?.length <= 0 || !canExportInvoice" type="submit" class="btn bg-info mr-2"
+                  [matMenuTriggerFor]="actionsExportInvoiceForTax">
+                  Export Invoice For Tax
+                </button>
+              </div>
+              <div *ngIf="permission.isGranted(Timesheets_TimesheetDetail_SendInvoiceToFinfast)" class="mr-2">
+                <button [disabled]="sending" class="btn bg-warning text-black mr-2" (click)="sendInvoiceToFinfast()">
+                  Send Invoice To Finfast</button>
+              </div>
+              <div class="">
+                <button *ngIf="permission.isGranted(Timesheets_TimesheetDetail_AddProjectToTimesheet)"
+                  (click)="createTimeSheet()" class="btn bg-blue">
+                  <i class="fa fa-plus-square"></i>
+                  Create
+                </button>
+              </div>
             </div>
-
-            <mat-menu #actionsMenu="matMenu">
+            <mat-menu #actionsMenu="matMenu" >
               <div class="form-group form-float">
                 <button mat-menu-item [matMenuTriggerFor]="exportNormalTypes">
                   <i class="fa fa-file"></i> Normally
@@ -66,9 +83,10 @@
                   <i class="fa fa-file-pdf"></i> Export PDF
                 </button>
               </mat-menu>
-
+      
               <div class="form-group form-float">
-                <button class="special" *ngIf="isMonthlyToDaily" mat-menu-item [disabled]="listExportInvoice?.length <= 0" [matMenuTriggerFor]="exportMonthlyToDailyTypes">
+                <button class="special" *ngIf="isMonthlyToDaily" mat-menu-item [disabled]="listExportInvoice?.length <= 0"
+                  [matMenuTriggerFor]="exportMonthlyToDailyTypes">
                   <i class="fa fa-file-code"></i> Monthly to daily
                 </button>
               </div>
@@ -82,21 +100,12 @@
                   <i class="fa fa-file-pdf"></i> Export PDF
                 </button>
               </mat-menu>
-
+      
               <!-- <button class="special" *ngIf="isMonthlyToDaily" mat-menu-item [disabled]="listExportInvoice?.length <= 0"
-                (click)="exportInvoiceClient(APP_ENUM.ExportInvoiceMode.MontlyToDaily)">
-                <i class="fa fa-file-excel"></i> Monthly to daily
-              </button> -->
+                                                      (click)="exportInvoiceClient(APP_ENUM.ExportInvoiceMode.MontlyToDaily)">
+                                                      <i class="fa fa-file-excel"></i> Monthly to daily
+                                                    </button> -->
             </mat-menu>
-          </div>
-          <div class="mr-2">
-            <div class="form-group form-float" [matTooltip] ="!canExportInvoice?'Chưa chọn Project, không cùng Currency hoặc Client':''">
-              <button *ngIf="permission.isGranted(Timesheets_TimesheetDetail_ExportInvoiceForTax)"
-                [disabled]="listExportInvoice?.length <= 0 || !canExportInvoice" type="submit" class="btn bg-info mr-2"
-                [matMenuTriggerFor]="actionsExportInvoiceForTax">
-                Export Invoice For Tax
-              </button>
-            </div>
             <mat-menu #actionsExportInvoiceForTax="matMenu">
               <button mat-menu-item [disabled]="listExportInvoice?.length <= 0"
                 (click)="exportInvoiceForTax(APP_ENUM.ExportInvoiceMode.Normal)">
@@ -110,23 +119,12 @@
               </button>
             </mat-menu>
           </div>
-          <div *ngIf="permission.isGranted(Timesheets_TimesheetDetail_SendInvoiceToFinfast)" class="mr-2">
-            <button [disabled]="sending" class="btn bg-warning text-black mr-2" (click)="sendInvoiceToFinfast()">Send
-              Invoice To Finfast</button>
-          </div>
-          <div class="">
-            <button *ngIf="permission.isGranted(Timesheets_TimesheetDetail_AddProjectToTimesheet)"
-              (click)="createTimeSheet()" class="btn bg-blue">
-              <i class="fa fa-plus-square"></i>
-              Create
-            </button>
-          </div>
         </div>
       </div>
     </div>
   </div>
 </section>
-<section class="content px-2" id="timesheet-detail">
+<section class="content" id="timesheet-detail">
   <div class="container-fluid">
     <div class="card">
       <div class="card-header">
@@ -188,7 +186,7 @@
                     <mat-option [value]="-1">All</mat-option>
                     <mat-option *ngFor="let data of clientList | listFilter:  'name' : searchClient" [value]="data.id">
                       {{data.name}}
-                    </mat-option> 
+                    </mat-option>
                   </mat-select>
                 </mat-form-field>
               </div>
@@ -216,7 +214,7 @@
           </form>
         </div>
       </div>
-      <div class="card-body table-responsive px-4 pb-1">
+      <div class="card-body table-responsive p-0 ">
         <div class="fixTableHead">
           <table style="border-collapse: collapse" class="table table-hover text-nowrap project-timesheet"
             [busy]="isLoading">
@@ -225,14 +223,14 @@
                 <th class="stt">#</th>
                 <th>Project</th>
                 <th>
-                    <div class="total-amount" *ngIf="isGranted(this.Timesheets_TimesheetDetail_ViewBillRate)">
-                        <span>Bill Info</span>
-                        <span *ngFor="let totalAmountByCurrency of listTotalAmountByCurrency"
-                              [style.color]="getColorByCurrency(totalAmountByCurrency.currencyName)" class="ml-4">
-                            {{totalAmountByCurrency.roundAmount | number : "1.0":"en-US"}}
-                            {{totalAmountByCurrency.currencyName}}
-                        </span>
-                    </div>
+                  <div class="total-amount" *ngIf="isGranted(this.Timesheets_TimesheetDetail_ViewBillRate)">
+                    <span>Bill Info</span>
+                    <span *ngFor="let totalAmountByCurrency of listTotalAmountByCurrency"
+                      [style.color]="getColorByCurrency(totalAmountByCurrency.currencyName)" class="ml-4">
+                      {{totalAmountByCurrency.roundAmount | number : "1.0":"en-US"}}
+                      {{totalAmountByCurrency.currencyName}}
+                    </span>
+                  </div>
                 </th>
                 <th>Invoice Info</th>
                 <th>Timesheet File</th>
@@ -240,10 +238,8 @@
                 <th style="display: flex; align-items: center; justify-content: flex-start;" class="text-center">
                   <span style="margin-right: 8px;">Action</span>
                   <div class="align-items-center justify-content-center" style="height: 16px">
-                    <mat-checkbox 
-                    [(ngModel)]="CheckAllSelectBox"
-                    [indeterminate]="indeterminate"
-                    (change)="onCheckUncheckAllRow($event)"></mat-checkbox>                      
+                    <mat-checkbox [(ngModel)]="CheckAllSelectBox" [indeterminate]="indeterminate"
+                      (change)="onCheckUncheckAllRow($event)"></mat-checkbox>
                   </div>
                 </th>
               </tr>
@@ -273,9 +269,9 @@
                     {{ item.projectName }}
                   </b>
                   <p *ngIf="item.isActive && item.closeTime" class="mb-0">
-                     <i  class="far fa-hourglass fa-spin ml-1"></i>&nbsp;
-                      <span >{{item.closeTime }}</span>
-                   </p>
+                    <i class="far fa-hourglass fa-spin ml-1"></i>&nbsp;
+                    <span>{{item.closeTime }}</span>
+                  </p>
                   <p class="mb-0">{{item.clientCode}}</p>
                   <span>PM: <b>{{item.pmFullName}}</b></span>
                 </td>
@@ -284,9 +280,11 @@
                     <div class="row" [style.color]="getColorByCurrency(item.currency)">
                       <div class="col-8"><label *ngIf="isGranted(Timesheets_TimesheetDetail_ViewBillRate)">Total:
                           {{item.projectBillInfomation.length}}</label></div>
-                      <div class="col-2" *ngIf="isGranted(Timesheets_TimesheetDetail_ViewBillRate)" style="margin-left: 50px;">
+                      <div class="col-2" *ngIf="isGranted(Timesheets_TimesheetDetail_ViewBillRate)"
+                        style="margin-left: 50px;">
                         <label>{{item.roundTotalAmountProjectBillInfomation | number : "1.0":"en-US"}}
-                          {{item.currency}}</label></div>
+                          {{item.currency}}</label>
+                      </div>
                       <div [ngClass]="isGranted(Timesheets_TimesheetDetail_ViewBillRate)?'col-1
                       ':'col-5'" style="text-align: center;">
                         Note</div>
@@ -301,11 +299,12 @@
                       </div>
                       <div class="col-3">
                         <label style="font-weight: 500;">
-                          <ng-container *ngIf="bill.timesheetProjectBillOtTypes && bill.timesheetProjectBillOtTypes.length > 0">
-                            <span>{{getTotalWorkingTime(bill)}}d</span>                           
+                          <ng-container
+                            *ngIf="bill.timesheetProjectBillOtTypes && bill.timesheetProjectBillOtTypes.length > 0">
+                            <span>{{getTotalWorkingTime(bill)}}d</span>
                             <span> (</span>
                             <span [matTooltip]="'Normal working day'">{{bill.workingTime}}d</span>
-                            
+
                             <ng-container *ngFor="let otType of bill.timesheetProjectBillOtTypes; let i = index">
                               <span> / </span>
                               <span [matTooltip]="'OT ' + (otType.otType || 'Type')">
@@ -314,8 +313,9 @@
                             </ng-container>
                             <span>)</span>
                           </ng-container>
-                          
-                          <ng-container *ngIf="!bill.timesheetProjectBillOtTypes || bill.timesheetProjectBillOtTypes.length === 0">
+
+                          <ng-container
+                            *ngIf="!bill.timesheetProjectBillOtTypes || bill.timesheetProjectBillOtTypes.length === 0">
                             <span [matTooltip]="'Normal working day'">{{bill.workingTime}}d</span>
                           </ng-container>
                         </label>
@@ -323,7 +323,8 @@
                       <div class="col-2" *ngIf="isGranted(Timesheets_TimesheetDetail_ViewBillRate)"><label
                           class="ml-1">{{bill.roundAmount | number: "1.0":"en-US" }} {{item.currency}}</label>
                       </div>
-                      <div class="text-left note" [ngClass]="isGranted(Timesheets_TimesheetDetail_ViewBillRate)?'col-1 ml-4':'col-5'"
+                      <div class="text-left note"
+                        [ngClass]="isGranted(Timesheets_TimesheetDetail_ViewBillRate)?'col-1 ml-4':'col-5'"
                         style=" white-space: pre-line;">
                         <div title="{{bill.description?bill.description:''}}" PrjResizeContent [collapseLine]="1">
                           {{bill.description?bill.description:''}}
@@ -384,75 +385,68 @@
                   </button>
                 </td>
                 <td class="text-center td-action" style="vertical-align: middle">
-                  <mat-checkbox
-                    #checkboxExportInvoice class="checkbox-exportInvoice" [(ngModel)]="item.isChecked"  [value]="item"
-                    (change)="addProjectToExport($event, item)"
-                    (ngModelChange) = "onCheckUncheckOneRow()"></mat-checkbox>
+                  <mat-checkbox #checkboxExportInvoice class="checkbox-exportInvoice" [(ngModel)]="item.isChecked"
+                    [value]="item" (change)="addProjectToExport($event, item)"
+                    (ngModelChange)="onCheckUncheckOneRow()"></mat-checkbox>
 
                   <button mat-button [matMenuTriggerFor]="menu">
                     <i class="fas fa-bars fa-lg" style="margin-top:1px"></i>
                   </button>
                   <mat-menu #menu="matMenu" class="p-2">
-                    <button *ngIf="(permission.isGranted(Timesheets_TimesheetDetail_UpdateBill) && isActive) || item.isActive"
+                    <button
+                      *ngIf="(permission.isGranted(Timesheets_TimesheetDetail_UpdateBill) && isActive) || item.isActive"
                       class="btn mat-menu-item w-100" (click)="viewBillDetail(item, updateAction.UpdateBillInfo)"
                       #importFileBtn>
                       <i class="fas fa-edit"></i>
                       Update Bill
                     </button>
-                    <button *ngIf="(permission.isGranted(Timesheets_TimesheetDetail_UpdateTimsheet) && isActive) || item.isActive"
+                    <button
+                      *ngIf="(permission.isGranted(Timesheets_TimesheetDetail_UpdateTimsheet) && isActive) || item.isActive"
                       class="btn mat-menu-item w-100" (click)="viewBillDetail(item, updateAction.UpdateTimesheet)"
                       #updateTs>
                       <i class="fas fa-edit"></i>
                       Update TS
                     </button>
-                    
-                    <button
-                      *ngIf="isShowBtnExportTsDetail()"
-                      (click)="exportTimesheetDetail(item)"
+
+                    <button *ngIf="isShowBtnExportTsDetail()" (click)="exportTimesheetDetail(item)"
                       class="btn mat-menu-item w-100">
                       <i class="fas fa-file-export mr-1"></i>
                       Export TS Detail
                     </button>
 
                     <div class="form-group form-float">
-                      <button
-                        class="btn mat-menu-item w-100 special"
-                        mat-menu-item [matMenuTriggerFor]="exportNormallyTypesPerProject">
+                      <button class="btn mat-menu-item w-100 special" mat-menu-item
+                        [matMenuTriggerFor]="exportNormallyTypesPerProject">
                         <i class="fas fa-file-invoice-dollar mr-1"></i>
                         Export Invoice <span>(Normally)</span>
                       </button>
                     </div>
 
-                      <mat-menu #exportNormallyTypesPerProject="matMenu">
-                        <button mat-menu-item
-                          (click)="exportInvocie(item,APP_ENUM.ExportInvoiceMode.Normal)">
-                          <i class="fa fa-file-excel"></i> Export Excel
-                        </button>
-                        <button mat-menu-item
-                          (click)="exportInvocieAsPDF(item,APP_ENUM.ExportInvoiceMode.Normal)">
-                          <i class="fa fa-file-pdf"></i> Export PDF
-                        </button>
-                      </mat-menu>
+                    <mat-menu #exportNormallyTypesPerProject="matMenu">
+                      <button mat-menu-item (click)="exportInvocie(item,APP_ENUM.ExportInvoiceMode.Normal)">
+                        <i class="fa fa-file-excel"></i> Export Excel
+                      </button>
+                      <button mat-menu-item (click)="exportInvocieAsPDF(item,APP_ENUM.ExportInvoiceMode.Normal)">
+                        <i class="fa fa-file-pdf"></i> Export PDF
+                      </button>
+                    </mat-menu>
 
                     <div class="form-group form-float">
-                      <button *ngIf="isShowExportInvoiceMonthlyToDaily(item)"
-                        class="btn mat-menu-item w-100 special"
+                      <button *ngIf="isShowExportInvoiceMonthlyToDaily(item)" class="btn mat-menu-item w-100 special"
                         mat-menu-item [matMenuTriggerFor]="exportMonthlyToDailyTypesPerProject">
                         <i class="fas fa-file-invoice-dollar mr-1"></i>
                         Export Invoice <span>(Monthly to daily)</span>
                       </button>
                     </div>
 
-                      <mat-menu #exportMonthlyToDailyTypesPerProject="matMenu">
-                        <button mat-menu-item
-                          (click)="exportInvocie(item,APP_ENUM.ExportInvoiceMode.MontlyToDaily)">
-                          <i class="fa fa-file-excel"></i> Export Excel
-                        </button>
-                        <button mat-menu-item
-                          (click)="exportInvocieAsPDF(item,APP_ENUM.ExportInvoiceMode.MontlyToDaily)">
-                          <i class="fa fa-file-pdf"></i> Export PDF
-                        </button>
-                      </mat-menu>
+                    <mat-menu #exportMonthlyToDailyTypesPerProject="matMenu">
+                      <button mat-menu-item (click)="exportInvocie(item,APP_ENUM.ExportInvoiceMode.MontlyToDaily)">
+                        <i class="fa fa-file-excel"></i> Export Excel
+                      </button>
+                      <button mat-menu-item (click)="exportInvocieAsPDF(item,APP_ENUM.ExportInvoiceMode.MontlyToDaily)">
+                        <i class="fa fa-file-pdf"></i> Export PDF
+                      </button>
+                    </mat-menu>
 
                     <button *ngIf="permission.isGranted(Timesheets_TimesheetDetail_ExportInvoiceForTax)"
                       (click)="exportQuickInvoiceForTax(item,APP_ENUM.ExportInvoiceMode.Normal)"
@@ -482,8 +476,9 @@
                       Delete
                     </button>
 
-                    <button  *ngIf="isShowBtnLinkProjectTs()" class="btn mat-menu-item w-100" (click)="handleLinkProjectTS(item);">
-                        <i class="fas fa-link mr-1"></i>
+                    <button *ngIf="isShowBtnLinkProjectTs()" class="btn mat-menu-item w-100"
+                      (click)="handleLinkProjectTS(item);">
+                      <i class="fas fa-link mr-1"></i>
                       Link Project In Timesheet
                     </button>
                   </mat-menu>
@@ -493,30 +488,30 @@
           </table>
         </div>
       </div>
-      <div class="card-footer bg-light border-top">
-        <div class="row">
-          <div class="col-sm-4 col-12 text-sm-left text-center">
-            <button class="btn btn-secondary mb-2" (click)="getDataPage(1)">
-              <i class="fas fa-redo-alt"></i>
+      <div class="card-footer bg-light border-top py-1">
+        <div class="row align-items-center">
+          <div class="col-sm-4 col-12 d-flex align-items-center justify-content-sm-start justify-content-center">
+            <button class="btn btn-sm btn-secondary" (click)="getDataPage(1)"> <i class="fas fa-redo-alt"></i>
             </button>
-            <mat-form-field style="width: 20%; margin-left: 30px">
-              <mat-label>Number items</mat-label>
+
+            <mat-form-field class="small-mat-form-field" style="width: 100px; margin-left: 15px">
               <mat-select [(ngModel)]="pageSizeType" (ngModelChange)="changePageSize()">
-                <mat-option [value]="5"> 5 </mat-option>
-                <mat-option [value]="10"> 10 </mat-option>
-                <mat-option [value]="20"> 20 </mat-option>
-                <mat-option [value]="50"> 50 </mat-option>
-                <mat-option [value]="100"> 100 </mat-option>
+                <mat-option [value]="5">5</mat-option>
+                <mat-option [value]="10">10</mat-option>
+                <mat-option [value]="20">20</mat-option>
+                <mat-option [value]="50">50</mat-option>
+                <mat-option [value]="100">100</mat-option>
               </mat-select>
             </mat-form-field>
           </div>
+
           <div class="col-sm-4 col-12 text-center">
-            <p class="mb-0 my-2">
-              {{ "TotalRecordsCount" | localize: totalItems }}
+            <p class="mb-0 small font-weight-bold"> {{ "TotalRecordsCount" | localize: totalItems }}
             </p>
           </div>
-          <div class="col-sm-4 col-12">
-            <div class="float-sm-right m-auto">
+
+          <div class="col-sm-4 col-12 d-flex justify-content-sm-end justify-content-center">
+            <div class="pagination-small">
               <abp-pagination-controls id="server" (pageChange)="getDataPage($event)">
               </abp-pagination-controls>
             </div>

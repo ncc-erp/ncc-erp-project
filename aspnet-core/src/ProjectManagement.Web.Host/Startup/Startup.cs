@@ -225,6 +225,13 @@ namespace ProjectManagement.Web.Host.Startup
             }
             ConstantUploadFile.AllowTimesheetFileTypes = strAllowTimesheetFileType.Split(",");
 
+            var strAllowPunishmentFileType = _appConfiguration.GetValue<string>("UploadFile:AllowPunishmentFileTypes");
+            if (string.IsNullOrEmpty(strAllowPunishmentFileType))
+            {
+                strAllowPunishmentFileType = "xlsx,xltx";
+            }
+            ConstantUploadFile.AllowPunishmentFileTypes = strAllowPunishmentFileType.Split(",");
+
             ConstantInternalUploadFile.RootUrl = _appConfiguration.GetValue<string>("App:ServerRootAddress");
 
             var strAllowCVFileType = _appConfiguration.GetValue<string>("UploadFile:AllowcCVTypes");

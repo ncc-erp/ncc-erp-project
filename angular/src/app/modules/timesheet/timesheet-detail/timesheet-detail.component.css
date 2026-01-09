@@ -124,6 +124,78 @@ button.special span{
   color:white;
   margin-right: 8px;
 }
-:host .fixTableHead{
-  max-height: 65vh;
+
+::ng-deep .small-mat-form-field {
+  .mat-form-field-wrapper {
+    padding-bottom: 0 !important; 
+    margin: 0 !important;
+  }
+  .mat-form-field-underline {
+    bottom: 4px !important;
+  }
+  .mat-form-field-infix {
+    padding: 0.5em 0 !important;
+    border-top: none !important;
+  }
+  .mat-form-field-subscript-wrapper {
+    display: none; 
+  }
+}
+
+.pagination-small {
+  ::ng-deep .ngx-pagination {
+    margin-bottom: 0 !important;
+    padding: 0 !important;
+    font-size: 0.85rem;
+  }
+}
+
+.card-footer {
+  padding-top: 0.25rem !important;
+  padding-bottom: 0.25rem !important;
+}
+
+
+::ng-deep .content-wrapper {
+  display: flex !important;
+  flex-direction: column !important;
+  height: auto !important;
+}
+
+:host {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 !important;
+  min-height: 0 !important;
+}
+
+#timesheet-detail {
+  padding: 0 !important;   
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 !important;
+  min-height: 0 !important;
+}
+
+
+#timesheet-detail > .container-fluid,
+.card {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 !important;
+  margin-bottom: 0 !important; 
+  min-height: 0 !important;
+}
+
+.card-body.table-responsive {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important; 
+}
+
+.fixTableHead {
+  flex: 1 !important;
+  overflow-y: auto !important;
+  min-height: 0 !important;
 }

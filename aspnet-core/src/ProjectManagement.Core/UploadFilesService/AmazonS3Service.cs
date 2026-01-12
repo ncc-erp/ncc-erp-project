@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NccCore.Uitls;
 using Newtonsoft.Json;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
 using ProjectManagement.Authorization.Users;
 using ProjectManagement.Constants;
 using ProjectManagement.Utils;
@@ -90,6 +91,12 @@ namespace ProjectManagement.UploadFilesService
 
             return ms.ToArray();
 
+        }
+
+        public async Task<string> UploadPunishmentFileAsync(IFormFile file, string tenantName, string fileName)
+        {
+            var filePath = $"{AppConsts.APP_NAME}/{tenantName}/{ConstantUploadFile.PUNISHMENT_FOLDER}/{fileName}";
+            return await UploadFileAsync(file, ConstantUploadFile.AllowPunishmentFileTypes, filePath);
         }
 
     }

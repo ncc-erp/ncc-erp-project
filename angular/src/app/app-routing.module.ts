@@ -88,6 +88,8 @@ import { GeneralInformationComponent } from './modules/pm-management/list-projec
 import { CVStatusComponent } from './modules/admin/cvstatus/cvstatus.component';
 import { WillPoolComponent } from './modules/delivery-management/delivery/available-resource-tab/will-pool/will-pool.component';
 import { ProductAccountInfoComponent } from './modules/pm-management/product-projects/product-project-detail/product-account-info/product-account-info.component';
+import { PunishmentComponent } from './modules/punishment/punishment.component';
+
 @NgModule({
   imports: [
     RouterModule.forChild([
@@ -173,6 +175,13 @@ import { ProductAccountInfoComponent } from './modules/pm-management/product-pro
             component: TimesheetComponent,
             canActivate: [AppRouteGuard],
           },
+          // punishment
+          {
+            path: "punishment",
+            component: PunishmentComponent,
+            canActivate: [AppRouteGuard],
+          }
+          ,
           {
             path: "invoice",
             component: InvoiceComponent,

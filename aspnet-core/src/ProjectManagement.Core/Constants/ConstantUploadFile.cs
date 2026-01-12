@@ -10,6 +10,7 @@ namespace ProjectManagement.Constants
         public static string[] AllowImageFileTypes { get; set; }
         public static string[] AllowTimesheetFileTypes { get; set; }
         public static string[] AllowCVFileTypes { get; set; }
+        public static string[] AllowPunishmentFileTypes { get; set; }
 
 
         public static readonly string AMAZONE_S3 = "AWS";
@@ -19,5 +20,6 @@ namespace ProjectManagement.Constants
         public const string CV_Folder = "cv";
         public const string TIMESHEET_FOLDER = "timesheets";
         public const string UPLOAD_FOLDER = "uploads";
+        public const string PUNISHMENT_FOLDER = "punishment";
     }
 }

@@ -237,6 +237,9 @@ import { CVStatusComponent } from './modules/admin/cvstatus/cvstatus.component';
 import { CreateUpdateCvstatusComponent } from './modules/admin/cvstatus/create-update-cvstatus/create-update-cvstatus.component';
 import { WillPoolComponent } from './modules/delivery-management/delivery/available-resource-tab/will-pool/will-pool.component';
 import { ProductAccountInfoComponent } from '@app/modules/pm-management/product-projects/product-project-detail/product-account-info/product-account-info.component';
+import { PunishmentComponent } from './modules/punishment/punishment.component';
+import { CreatePunishmentDialogComponent } from './modules/punishment/create-punishment-dialog/create-punishment-dialog.component';
+
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, "./assets/i18n/", ".json");
 }
@@ -275,6 +278,8 @@ export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
     FilterComponent,
 
     TimesheetComponent,
+    PunishmentComponent,
+    CreatePunishmentDialogComponent,
 
     ChecklistTitleComponent,
     CreateEditChecklistTitleComponent,

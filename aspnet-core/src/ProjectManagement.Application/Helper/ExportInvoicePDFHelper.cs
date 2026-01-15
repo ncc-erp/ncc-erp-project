@@ -345,7 +345,7 @@ body {{ margin-left: 0.25in; margin-right: 0.25in; margin-top: 0.5in; margin-bot
           </tr>
           <tr class='row5'>
             <td class='column0'>&nbsp;</td>
-            <td class='column1 style58 s style58' colspan='3'>NCCPLUS VIET NAM JOINT STOCK COMPANY</td>
+            <td class='column1 style58 s style58' colspan='3'>NCCPLUS JSC</td>
             <td class='column4 style46 s style46' colspan='3'>{clientNameHTML}</td>
             <td class='column7'>&nbsp;</td>
            
@@ -353,7 +353,7 @@ body {{ margin-left: 0.25in; margin-right: 0.25in; margin-top: 0.5in; margin-bot
           </tr>
           <tr class='row6'>
             <td class='column0'>&nbsp;</td>
-            <td class='column1 style56 s style56' colspan='3'>No 3B Lane 69, Nguyen Phuc Lai Street</td>
+            <td class='column1 style56 s style56' colspan='3'>Lot No. 210, 2nd Floor, CT3 Building, The Pride</td>
             <td class='column4 style47 s style47' colspan='3' rowspan='3'>{clientAddressHTML}</td>
             <td class='column7'>&nbsp;</td>
            
@@ -361,7 +361,7 @@ body {{ margin-left: 0.25in; margin-right: 0.25in; margin-top: 0.5in; margin-bot
           </tr>
           <tr class='row7'>
             <td class='column0'>&nbsp;</td>
-            <td class='column1 style57 s style57' colspan='3'>O Cho Dua Precinct, Dong Da District</td>
+            <td class='column1 style57 s style57' colspan='3'>An Hung New Urban Area, Ha Dong Ward</td>
             <td class='column7'>&nbsp;</td>
            
            

@@ -10,7 +10,7 @@
         </nav>
       </div>
       <div class="col-9 text-right">
-        <div class="d-flex justify-content-end align-items-center flex-wrap">
+        <div class="d-flex justify-content-end align-items-center flex-nowrap">
           <div class="mr-2">
             <div class="d-flex">
               <div>
@@ -276,7 +276,7 @@
                   <span>PM: <b>{{item.pmFullName}}</b></span>
                 </td>
                 <td class="text-left bill">
-                  <div *ngIf="item.projectBillInfomation" style="min-width: 1150px;">
+                  <div *ngIf="item.projectBillInfomation" style="width: 100%;">
                     <div class="row" [style.color]="getColorByCurrency(item.currency)">
                       <div class="col-8"><label *ngIf="isGranted(Timesheets_TimesheetDetail_ViewBillRate)">Total:
                           {{item.projectBillInfomation.length}}</label></div>
@@ -482,6 +482,14 @@
                       Link Project In Timesheet
                     </button>
                   </mat-menu>
+                </td>
+              </tr>
+              <tr *ngIf="TimesheetDetaiList?.length === 0 && !isLoading">
+                <td colspan="7" class="text-center py-5">
+                  <div class="empty-state">
+                    <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
+                    <p class="text-secondary font-italic">No projects found for this timesheet.</p>
+                  </div>
                 </td>
               </tr>
             </tbody>

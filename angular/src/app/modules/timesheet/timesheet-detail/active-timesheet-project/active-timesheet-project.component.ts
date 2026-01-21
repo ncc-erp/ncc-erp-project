@@ -76,9 +76,13 @@ export class ActiveTimesheetProjectComponent extends AppComponentBase implements
     }
   }
   public onDateChange(): void {
-    this.submitDate = moment(this.startDate.toISOString()).format('LLLL');
+   clearInterval(this.timer); 
+    if (this.startDate) {
+        this.submitDate = moment(this.startDate.toISOString()).format('LLLL');
+    }
   }
   public removeTime(){
+    clearInterval(this.timer);
     this.submitDate = ''
     this.startDate=''
   }
@@ -91,7 +95,7 @@ export class ActiveTimesheetProjectComponent extends AppComponentBase implements
     }
   }
   updateTime(): void {
-    if(this.startDate  <= new Date()){
+    if(this.startDate && this.startDate <= new Date()){
       let current = new Date().getTime()  +  Number(this.timeConfig)
       this.startDate = new Date(current)
     }

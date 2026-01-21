@@ -5,129 +5,131 @@
 .file-download:hover {
   color: blue;
 }
-.project-timesheet td{
+.project-timesheet td {
   vertical-align: middle;
 }
-::ng-deep #timesheet-detail .filter-pm .mat-form-field{
+::ng-deep #timesheet-detail .filter-pm .mat-form-field {
   display: block;
 }
-::ng-deep #timesheet-detail .btn-search{
+::ng-deep #timesheet-detail .btn-search {
   height: fit-content;
 }
 
-#timesheet-detail .bd-red{
+#timesheet-detail .bd-red {
   border: 1px solid red;
 }
 
-#timesheet-detail .bg-tag{
+#timesheet-detail .bg-tag {
   background-color: #820505;
 }
-#timesheet-detail .btn-upload{
-  background-color: #F9F8A8;
+#timesheet-detail .btn-upload {
+  background-color: #f9f8a8;
 }
-.no-expand-text{
+.no-expand-text {
   text-overflow: ellipsis;
   -webkit-line-clamp: 1;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-.billinfo{
+.billinfo {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-::ng-deep #title-page-tsdetail .breadcrumb-item+.breadcrumb-item::before{
-  content: '>';
+::ng-deep #title-page-tsdetail .breadcrumb-item + .breadcrumb-item::before {
+  content: ">";
 }
-::ng-deep mat-checkbox .mat-checkbox-layout{
+::ng-deep mat-checkbox .mat-checkbox-layout {
   margin-bottom: 10px;
 }
 
-button.special{
+button.special {
   min-height: auto;
   height: auto;
   line-height: 30px;
   overflow: inherit;
 }
-button.special span{
+button.special span {
   display: block;
   padding-left: 25px;
   font-size: 14px;
 }
-#timesheet-detail ::ng-deep .mat-checkbox-inner-container.mat-checkbox-inner-container-no-side-margin {
+#timesheet-detail
+  ::ng-deep
+  .mat-checkbox-inner-container.mat-checkbox-inner-container-no-side-margin {
   margin-top: auto;
 }
-.expand-note{
-  min-width:150px;
+.expand-note {
+  min-width: 150px;
 }
-.noexpand-note{
-  min-width:80px;
+.noexpand-note {
+  min-width: 80px;
 }
-#timesheet-detail .total-amount{
+#timesheet-detail .total-amount {
   width: 100%;
   display: inline-grid;
   grid-template-columns: repeat(3, 1fr);
 }
-#timesheet-detail .td-timesheet-file{
+#timesheet-detail .td-timesheet-file {
   white-space: normal;
   max-width: 170px;
   min-width: 115px;
 }
-#timesheet-detail .p-custom{
+#timesheet-detail .p-custom {
   padding: 0.75rem 0.25rem;
 }
-#timesheet-detail ::ng-deep .td-action .mat-button{
+#timesheet-detail ::ng-deep .td-action .mat-button {
   min-width: 40px;
   padding: 0px 8px;
 }
-#timesheet-detail .td-project{
+#timesheet-detail .td-project {
   white-space: normal;
   min-width: 150px;
   max-width: 190px;
 }
 
-#timesheet-detail .td-note{
+#timesheet-detail .td-note {
   white-space: normal;
   min-width: 195px;
   max-width: 195px;
 }
-#timesheet-detail .td-note{
+#timesheet-detail .td-note {
   white-space: pre-line;
   word-wrap: break-word;
   min-width: 150px;
   max-width: 200px;
 }
-#timesheet-detail .td-invoice-info{
+#timesheet-detail .td-invoice-info {
   white-space: pre-line;
   word-break: break-all;
   min-width: 165px;
   max-width: 165px;
 }
-#timesheet-detail .text-special{
- font-size: 15.5px;
+#timesheet-detail .text-special {
+  font-size: 15.5px;
 }
 
-#timesheet-detail .role{
+#timesheet-detail .role {
   margin-left: -45px;
 }
 
-#timesheet-detail .billRate{
+#timesheet-detail .billRate {
   margin-left: -3px;
 }
 
-#timesheet-detail .note{
+#timesheet-detail .note {
   width: 10px;
 }
-.btn-export-all-project{
+.btn-export-all-project {
   background-color: rgb(201, 125, 119);
-  color:white;
+  color: white;
   margin-right: 8px;
 }
 
 ::ng-deep .small-mat-form-field {
   .mat-form-field-wrapper {
-    padding-bottom: 0 !important; 
+    padding-bottom: 0 !important;
     margin: 0 !important;
   }
   .mat-form-field-underline {
@@ -138,7 +140,7 @@ button.special span{
     border-top: none !important;
   }
   .mat-form-field-subscript-wrapper {
-    display: none; 
+    display: none;
   }
 }
 
@@ -155,7 +157,6 @@ button.special span{
   padding-bottom: 0.25rem !important;
 }
 
-
 ::ng-deep .content-wrapper {
   display: flex !important;
   flex-direction: column !important;
@@ -170,32 +171,94 @@ button.special span{
 }
 
 #timesheet-detail {
-  padding: 0 !important;   
+  padding: 0 !important;
   display: flex !important;
   flex-direction: column !important;
   flex: 1 !important;
   min-height: 0 !important;
 }
-
 
 #timesheet-detail > .container-fluid,
 .card {
   display: flex !important;
   flex-direction: column !important;
-  flex: 1 !important;
-  margin-bottom: 0 !important; 
+  flex: initial !important;
+  margin-bottom: 0 !important;
   min-height: 0 !important;
 }
 
 .card-body.table-responsive {
-  flex: 1 !important;
+  flex: initial !important;
   display: flex !important;
   flex-direction: column !important;
-  overflow: hidden !important; 
+  overflow: hidden !important;
 }
 
 .fixTableHead {
-  flex: 1 !important;
+  flex: initial !important;
+  max-height: 80vh !important;
+  overflow-x: hidden !important;
   overflow-y: auto !important;
-  min-height: 0 !important;
+}
+
+.empty-state {
+  color: #adb5bd;
+}
+
+#timesheet-detail .bill {
+  min-width: 400px;
+  width: auto;
+}
+
+#timesheet-detail .role,
+#timesheet-detail .billRate {
+  margin-left: 0 !important;
+  padding: 0 5px;
+}
+
+#timesheet-detail .td-project {
+  min-width: 120px;
+  max-width: 200px;
+  white-space: normal;
+}
+
+#timesheet-detail .td-invoice-info {
+  min-width: 140px;
+  max-width: 160px;
+}
+
+.text-special {
+  word-break: break-word;
+  white-space: normal;
+}
+
+.content-header.py-1 {
+  padding: 2px 0.5rem !important;
+}
+
+#title-page-tsdetail,
+.content-header .row {
+  display: flex;
+  align-items: center;
+  height: 32px;
+}
+
+.breadcrumb {
+  margin-bottom: 0 !important;
+  padding: 0 !important;
+  font-size: 13px;
+}
+
+.content-header .btn {
+  padding: 2px 8px !important;
+  font-size: 12px !important;
+  line-height: 1.5;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.content-header .mr-2 {
+  margin-right: 4px !important;
 }

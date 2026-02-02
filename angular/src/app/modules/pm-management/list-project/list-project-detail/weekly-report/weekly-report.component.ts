@@ -70,6 +70,7 @@ import { EditNoteResourceComponent } from "@app/modules/delivery-management/deli
 import { AppConfigurationService } from "@app/service/api/app-configuration.service";
 import { AddEditIssuseComponent } from "./add-edit-issuse/add-edit-issuse.component";
 import { EditNoteDialogComponent } from "../project-bill/add-note-dialog/edit-note-dialog.component";
+import { PMReportProjectContributionService } from "../../../../../service/api/pmreport-project-contribution.service";
 
 @Component({
   selector: "app-weekly-report",
@@ -170,6 +171,9 @@ export class WeeklyReportComponent
   isRefresh: boolean = false;
   isStart: boolean = false;
   checkViewSubject: false;
+
+  editingRows: { [key: number]: boolean } = {};
+  tempContributeValues: { [key: number]: number } = {};
 
   public priority = [
     { value: this.APP_ENUM.Priority.Low, viewValue: "Low" },
@@ -312,6 +316,7 @@ export class WeeklyReportComponent
     private pjCriteriaService: CriteriaService,
     private pjCriteriaResultService: ProjectCriteriaResultService,
     private settingService: AppConfigurationService,
+    private PMReportProjectContributionService: PMReportProjectContributionService,
   ) {
     super(injector);
     this.projectId = Number(route.snapshot.queryParamMap.get("id"));
@@ -2204,5 +2209,37 @@ export class WeeklyReportComponent
         user.note = rs;
       }
     });
+  }
+
+  edit(resource: any) {
+    this.tempContributeValues[resource.id] = resource.contribute;
+    this.editingRows[resource.id] = true;
+  }
+
+  cancelUpdate(resource: any) {
+    if (this.tempContributeValues[resource.id] !== undefined) {
+      resource.contribute = this.tempContributeValues[resource.id];
+    }
+    this.editingRows[resource.id] = false;
+    delete this.tempContributeValues[resource.id];
+  }
+
+  saveWeeklyContribute(resource: any, projectUserBillId: number) {
+    this.isLoading = true;
+    const request = {
+      userId: resource.id,
+      projectUserBillId: projectUserBillId,
+      contribute: resource.contribute,
+      projectId: this.projectId,
+      PMReportId: this.selectedReport?.reportId,
+    };
+    this.PMReportProjectContributionService.UpdateWeeklyHistory(request).subscribe(
+      () => {
+        abp.notify.success(`Weekly contributions have been updated: ${this.selectedReport?.pmReportName}`);
+        this.editingRows[resource.id] = false;
+        this.isLoading = false;
+      },
+      () => (this.isLoading = false),
+    );
   }
 }

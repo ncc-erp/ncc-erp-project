@@ -587,8 +587,7 @@
                     *ngIf="isShowEditBtnOnRow()"
                     [disabled]="
                       data.billInfo.isComplete ||
-                      isEditingAnyRow() ||
-                      otTypeProcess
+                      isEditingAnyRow() 
                     "
                     class="btn btn-sm btn-edit-neutral mr-1 mt-3"
                     (click)="editUserBill(bill)"
@@ -601,8 +600,7 @@
                     *ngIf="isGranted(Timesheets_TimesheetDetail_RemoveAccount)"
                     [disabled]="
                       data.billInfo.isComplete ||
-                      isEditingAnyRow() ||
-                      otTypeProcess
+                      isEditingAnyRow()
                     "
                     class="btn btn-sm bg-danger ml-1 mt-3"
                     (click)="removeAccountTS(bill)"

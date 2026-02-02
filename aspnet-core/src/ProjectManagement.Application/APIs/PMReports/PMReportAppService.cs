@@ -262,7 +262,6 @@ namespace ProjectManagement.APIs.PMReports
                             PMReportId = input.Id,
                             ProjectId = project.Id,
                             Status = PMReportProjectStatus.Draft,
-                            //ProjectHealth = mapInprogressIssues.ContainsKey(project.Id) ? ProjectHealth.Yellow : ProjectHealth.Green,
                             PMId = project.PMId,
                             Note = project.ProjectType == ProjectType.TRAINING && mapPMNote.ContainsKey(project.Id) ? mapPMNote[project.Id].Note : null,
                             LastReviewDate = mapPMLastPreviewDate.ContainsKey(project.Id) ? mapPMLastPreviewDate[project.Id].LastReviewDate : null,
@@ -296,6 +295,8 @@ namespace ProjectManagement.APIs.PMReports
                                 await WorkScope.InsertRangeAsync(risks);
                             }
                         }
+
+                        await CloneContributionHistoryAsync(project, lastReportId, input.Id);
                     }
                     unitOfWork.Complete();
                     return input;
@@ -312,6 +313,36 @@ namespace ProjectManagement.APIs.PMReports
         {
             var result = timeline.AddDays(day - (int)timeline.DayOfWeek).AddHours(hour - timeline.Hour);
             return result;
+        }
+
+        private async Task CloneContributionHistoryAsync(Project project, long lastReportId, long newReportId)
+        {
+            var currentProjectBills = await WorkScope.GetAll<ProjectUserBill>()
+             .Where(x => x.isActive && x.User.IsDeleted == false && x.ProjectId == project.Id) 
+             .ToListAsync();
+
+            if (currentProjectBills.Any())
+            {
+                var lastWeekHistoryMap = new Dictionary<long, byte>();
+                if (lastReportId > 0)
+                {
+                    lastWeekHistoryMap = await WorkScope.GetAll<WeeklyContributionHistory>()
+                        .Where(x => x.PMReportId == lastReportId && x.ProjectId == project.Id)
+                        .ToDictionaryAsync(x => x.ProjectUserBillId, x => x.Contribute);
+                }
+
+                var historyEntries = currentProjectBills.Select(bill => new WeeklyContributionHistory
+                {
+                    PMReportId = newReportId, 
+                    ProjectUserBillId = bill.Id,
+                    UserId = bill.UserId,
+                    ProjectId = project.Id,
+                    TenantId = AbpSession.TenantId,
+                    Contribute = lastWeekHistoryMap.ContainsKey(bill.Id) ? lastWeekHistoryMap[bill.Id] : (byte)0
+                }).ToList();
+
+                await WorkScope.InsertRangeAsync(historyEntries);
+            }
         }
 
         [HttpPut]

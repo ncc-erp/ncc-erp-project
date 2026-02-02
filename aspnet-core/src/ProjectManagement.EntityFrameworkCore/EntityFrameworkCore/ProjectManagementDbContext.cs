@@ -103,6 +103,8 @@ namespace ProjectManagement.EntityFrameworkCore
         public DbSet<ProjectOtType> ProjectOtTypes { get; set; }
         public DbSet<TimesheetProjectBillOtTypes> TimesheetProjectBillOtTypes { get; set; }
         public DbSet<Punishment> Punishments { get; set; }
+        public DbSet<WeeklyContributionHistory> WeeklyContributionHistories { get; set; }
+
         public ProjectManagementDbContext(DbContextOptions<ProjectManagementDbContext> options)
             : base(options)
         {

@@ -61,6 +61,8 @@ namespace ProjectManagement.Services.ProjectUserBill.Dto
 
         public string PositionName { get; set; }
         public byte Contribute { get; set; }
+
+        public long? WeeklyContributionHistoryId { get; set; }
     }
 
     public class LinkedResourceInfoDto

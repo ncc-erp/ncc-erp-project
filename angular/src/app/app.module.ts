@@ -239,6 +239,8 @@ import { WillPoolComponent } from './modules/delivery-management/delivery/availa
 import { ProductAccountInfoComponent } from '@app/modules/pm-management/product-projects/product-project-detail/product-account-info/product-account-info.component';
 import { PunishmentComponent } from './modules/punishment/punishment.component';
 import { CreatePunishmentDialogComponent } from './modules/punishment/create-punishment-dialog/create-punishment-dialog.component';
+import { WeeklyContributionComponent } from './modules/weekly-contribution/weekly-contribution.component';
+import { DetailWeeklyContributionComponent } from './modules/weekly-contribution/detail-weekly-contribution/detail-weekly-contribution.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, "./assets/i18n/", ".json");
@@ -462,7 +464,9 @@ export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
     CVStatusComponent,
     CreateUpdateCvstatusComponent,
     WillPoolComponent,
-    ProductAccountInfoComponent
+    ProductAccountInfoComponent,
+    WeeklyContributionComponent,
+    DetailWeeklyContributionComponent,
   ],
   imports: [
     CommonModule,

@@ -712,43 +712,90 @@
                                                 </p>
                                             </span>
                                         </td>
-                                        <td style="width: 300px">
-                                            <div *ngFor="let resource of pu.linkedResources; let i = index" class="d-flex mb-1">
-                                                <div class="col-7 d-flex px-0">
-                                                    <app-user-info [isSmallerDiv]="true" [userData]="resource" [viewMode]="1" [isHideLevel]="true">
-                                                    </app-user-info>
+                                        <td style="width: 400px">
+                                            <div class="text-right" *ngIf="selectedReport.isActive">
+                                                <button class="btn bg-blue btn-sm" (click)="addLinkResource(pu)" style="cursor: pointer; font-size: 10px;">
+                                                    <i class="fa fa-plus fa-s m-0"></i>
+                                                </button>
+                                            </div>
+                                            <div *ngIf="pu.createLinkResourceMode" style="max-width: 400px;" class="row d-flex">
+                                                <div class="col-10 mb-2 px-0">
+                                                    <mat-form-field appearance="outline" class="col-9">
+                                                        <mat-select panelClass="custom-panel-class" (closed)="focusOut()" [(ngModel)]="selectedResource"
+                                                            name="userBill" placeholder="select a resource *" required #userBill="ngModel">
+                                                            <mat-form-field style="position: sticky; top: 0; z-index: 2; background-color: white;">
+                                                                <input matInput [(ngModel)]="searchResource" placeholder="search"
+                                                                    (keydown)="$event.stopPropagation()" name="searchResource" #search>{{search.focus()}}
+                                                            </mat-form-field>
+                                                            <mat-option
+                                                                *ngFor="let resource of listAvailableResource | listFilter: 'fullName' : searchResource : 'emailAddress' "
+                                                                [value]="resource.id">
+                                                                <div class="mat-option-text">
+                                                                    <span class="data-name" class="user-info"> {{resource.fullName}} -
+                                                                        ({{resource.emailAddress}})
+                                                                    </span>
+                                                                </div>
+                                                            </mat-option>
+                                                        </mat-select>
+                                                    </mat-form-field>
+                                                    <input type="number" class="col-3" placeholder="% contribute" min="0" max="100" matTooltip="% contribute"
+                                                        [(ngModel)]="pu.contribute" />
+                                                    <mat-error class="mt-1" *ngIf="userBill.hasError('required') && userBill.touched" style="font-size: 13px;">
+                                                        This field is required
+                                                    </mat-error>
                                                 </div>
-                                        
-                                                <div class="col-5 d-flex px-1 align-items-end">
-                                                    <div class="col-7 px-0 d-flex align-items-center">
-                                                        <span *ngIf="!editingRows[resource.id]" class="badge text-white"
-                                                            [style.backgroundColor]="Utils.getColorContribute(resource.contribute)" 
-                                                            style="min-width: 45px; cursor: pointer;">
-                                                            {{resource.contribute + '%'}}
-                                                        </span>
-                                        
-                                                        <input *ngIf="editingRows[resource.id]" type="number" class="form-control form-control-sm px-1"
-                                                            [(ngModel)]="resource.contribute" (keydown.enter)="saveWeeklyContribute(resource, pu.id)"
-                                                            (keydown.esc)="cancelUpdate(resource)" appFocus />
+                                                <div class="d-flex col-2 align-items-center" style="flex-direction: column;">
+                                                    <button [disabled]="selectedResource == null" class="mb-1 submit-btn"
+                                                        style="background: none; border: none;" [hidden]="showSearchAndFilter && !pu.createLinkResourceMode"
+                                                        (click)="saveLinkResource(pu)">
+                                                        <i style="color: green; font-size: 20px;" class="fas fa-check fa-2x "></i>
+                                                    </button>
+                                                    <i style="color: red; font-size: 20px;" class="fas fa-undo fa-2x"
+                                                        [hidden]="showSearchAndFilter && !pu.createLinkResourceMode" (click)="cancelLinkResource(pu)"></i>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex row" style="max-width: 400px;">
+                                                <div *ngFor="let resource of pu.linkedResources; let i = index" class="d-flex mb-1">
+                                                    <div class="col-7 d-flex px-0">
+                                                        <app-user-info [isSmallerDiv]="true" [userData]="resource" [viewMode]="1" [isHideLevel]="true">
+                                                        </app-user-info>
                                                     </div>
                                         
-                                                    <div *ngIf="selectedReport.isActive" class="col-5 d-flex justify-content-around px-0">
-                                                        <button *ngIf="!editingRows[resource.id]" (click)="edit(resource)"
-                                                            class="btn btn-xs btn-clean btn-icon">
-                                                            <i class="fa fa-pencil-alt text-primary" style="font-size: 12px;"></i>
-                                                        </button>
+                                                    <div class="col-5 d-flex px-1 align-items-end">
+                                                        <div class="col-7 px-0 d-flex align-items-center">
+                                                            <span *ngIf="!editingRows[resource.id]" class="badge text-white"
+                                                                [style.backgroundColor]="Utils.getColorContribute(resource.contribute)"
+                                                                style="min-width: 45px; cursor: pointer;">
+                                                                {{resource.contribute + '%'}}
+                                                            </span>
                                         
-                                                        <ng-container *ngIf="editingRows[resource.id]">
-                                                            <button (click)="saveWeeklyContribute(resource, pu.id)" class="btn btn-xs btn-clean btn-icon">
-                                                                <i class="fas fa-check text-success" style="font-size: 14px;"></i>
+                                                            <input *ngIf="editingRows[resource.id]" type="number" class="form-control form-control-sm px-1"
+                                                                [(ngModel)]="resource.contribute" (keydown.enter)="saveWeeklyContribute(resource, pu.id)"
+                                                                (keydown.esc)="cancelUpdate(resource)" appFocus />
+                                                        </div>
+                                        
+                                                        <div *ngIf="selectedReport.isActive" class="col-5 d-flex justify-content-around px-0">
+                                                            <button *ngIf="!editingRows[resource.id]" (click)="edit(resource)"
+                                                                class="btn btn-xs btn-clean btn-icon">
+                                                                <i class="fa fa-pencil-alt text-primary" style="font-size: 12px;"></i>
                                                             </button>
-                                                            <button (click)="cancelUpdate(resource)" class="btn btn-xs btn-clean btn-icon">
-                                                                <i class="fas fa-undo text-danger" style="font-size: 14px;"></i>
+                                                            <button class="btn btn-xs btn-clean btn-icon" (click)="removeLinkResource(resource.id, pu.id)">
+                                                                <i class="fa fa-times" style="font-size: 12px;"></i>
                                                             </button>
-                                                        </ng-container>
+                                        
+                                                            <ng-container *ngIf="editingRows[resource.id]">
+                                                                <button (click)="saveWeeklyContribute(resource, pu.id)" class="btn btn-xs btn-clean btn-icon">
+                                                                    <i class="fas fa-check text-success" style="font-size: 14px;"></i>
+                                                                </button>
+                                                                <button (click)="cancelUpdate(resource)" class="btn btn-xs btn-clean btn-icon">
+                                                                    <i class="fas fa-undo text-danger" style="font-size: 14px;"></i>
+                                                                </button>
+                                                            </ng-container>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
+                                           
                                         </td>
                                         <td style="white-space: break-spaces; min-width: 200px;">
                                             <div class="d-flex align-items-center"

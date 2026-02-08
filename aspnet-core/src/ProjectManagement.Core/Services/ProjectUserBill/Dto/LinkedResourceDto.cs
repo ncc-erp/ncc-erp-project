@@ -30,5 +30,7 @@ namespace ProjectManagement.Services.ProjectUserBill.Dto
 
         [Range(0, 100)]
         public byte Contribute {  get; set; }
+
+        public long? PmReportId { get; set; }
     }
 }

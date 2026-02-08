@@ -364,14 +364,14 @@
                                     </div>
                                 </td>
                                 <td style="max-width: 400px;">
-                                    <div class="text-right" *ngIf="!bill.createLinkResourceMode">
+                                    <!-- <div class="text-right" *ngIf="!bill.createLinkResourceMode">
                                         <button class="btn bg-blue btn-sm"
                                             (click)="addLinkResource(bill)"
                                             [disabled]="bill.createMode || userBillProcess || !permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount)"
                                             style="cursor: pointer; font-size: 10px;">
                                             <i class="fa fa-plus fa-s m-0"></i>
                                         </button>
-                                    </div>
+                                    </div> -->
                                     <div *ngIf="bill.createLinkResourceMode" style="max-width: 400px;" class="row d-flex">
                                         <div class="col-10 mb-2 px-0">
                                             <mat-form-field appearance="outline" class="col-9">
@@ -464,12 +464,12 @@
                                                             class="col-6 button-action d-flex justify-content-end">
                                                             <i class="fa fa-pencil-alt"></i>
                                                         </button> -->
-                                                        <button *ngIf="!editingRows[bill.id] || !editingRows[bill.id][i]?.contribute" 
+                                                        <!-- <button *ngIf="!editingRows[bill.id] || !editingRows[bill.id][i]?.contribute" 
                                                             (click)="removeLinkResource(resource.id, bill.id)"
                                                             [disabled]="bill.createMode || userBillProcess"
                                                             class="col-6 button-action d-flex justify-content-end">
                                                             <i class="fa fa-times"></i>  
-                                                        </button>
+                                                        </button> -->
                                                     </div>
                                                 </div>
                                             </div>

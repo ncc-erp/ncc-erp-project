@@ -2001,7 +2001,7 @@ saveWeeklyContribute(resource: any, projectUserBillId: number) {
       projectId: this.projectId,
       PMReportId:  this.pmReportId,
     };
-    this.PMReportProjectContributionService.UpdateWeeklyHistory(request).subscribe(
+    this.PMReportProjectContributionService.updateWeeklyHistory(request).subscribe(
       () => {
         abp.notify.success(`Weekly contributions have been updated: ${this.selectedReport?.pmReportName}`);
         this.editingRows[resource.id] = false;

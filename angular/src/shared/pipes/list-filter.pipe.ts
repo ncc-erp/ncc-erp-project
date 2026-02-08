@@ -28,7 +28,11 @@ export class ListFilterPipe implements PipeTransform {
       });
     }
   }
+
   removeAccents(str) {
+    if (!str) {
+        return ''; 
+    }
     var AccentsMap = [
       "aàảãáạăằẳẵắặâầẩẫấậ",
       "AÀẢÃÁẠĂẰẲẴẮẶÂẦẨẪẤẬ",

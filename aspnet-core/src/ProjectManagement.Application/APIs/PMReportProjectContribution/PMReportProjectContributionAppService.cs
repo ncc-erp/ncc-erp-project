@@ -1,13 +1,16 @@
 ﻿using Abp.Authorization;
 using Abp.BackgroundJobs;
+using Abp.Linq.Extensions;
 using Abp.UI;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NccCore.Extension;
+using NccCore.Paging;
 using ProjectManagement.APIs.PMReportProjectContribution.Dto;
-using ProjectManagement.APIs.PMReportProjectIssues.Dto;
-using ProjectManagement.APIs.PMReports.Dto;
 using ProjectManagement.Authorization;
+using ProjectManagement.Authorization.Users;
 using ProjectManagement.Entities;
+using ProjectManagement.Migrations;
 using ProjectManagement.Services.ResourceManager;
 using ProjectManagement.Services.Timesheet;
 using System;
@@ -15,7 +18,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static ProjectManagement.Constants.Enum.ProjectEnum;
+
 
 namespace ProjectManagement.APIs.PMReportProjectContribution
 {
@@ -99,29 +102,175 @@ namespace ProjectManagement.APIs.PMReportProjectContribution
             }
         }
 
-        [HttpGet]
+        [HttpPost]
         [AbpAuthorize]
-        public async Task<List<WeeklyContributionDto>> ContributionsThisWeek(long ProjectId, long pmReportId)
+        public async Task<GridResult<UserGroupContributionDto>> GetAllPagingContributions([FromBody] ContributionInputDto input, [FromQuery] long pmReportId)
         {
-            var query = from wc in WorkScope.GetAll<WeeklyContributionHistory>()
-                        .Include(x => x.ProjectUserBill)
-                        .ThenInclude(x => x.User)
-                        .Where(x => x.ProjectId == ProjectId && x.PMReportId == pmReportId)
-                        .OrderByDescending(x => x.CreationTime)
-                        select new WeeklyContributionDto
-                        {
-                            Id = wc.Id,
-                            Contribute = wc.Contribute,
-                            PMReportId = wc.PMReportId,
-                            PMReportName = wc.PMReport.Name,
-                            ProjectId = wc.ProjectId,
-                            ProjectName = wc.Project.Name,
-                            ProjectUserBillId = wc.ProjectUserBillId,
-                            UserId = wc.UserId,
-                            UserName = wc.User.UserName,
-                            UserFullName = wc.User.FullName
-                        };
-            return await query.ToListAsync();
+            try
+            {
+                var branchIds = input.BranchIds?.ToList() ?? new List<long>();
+                var hasBranchFilter = branchIds.Any();
+                var hasSearchFilter = !string.IsNullOrWhiteSpace(input.SearchText);
+                var search = hasSearchFilter ? input.SearchText.Trim().ToLower() : "";
+
+                var baseHistoryQuery = WorkScope.GetAll<WeeklyContributionHistory>()
+                    .AsNoTracking()
+                    .Where(x => x.PMReportId == pmReportId);
+
+                var userIdsInReport = await baseHistoryQuery
+                    .Select(x => x.UserId)
+                    .Distinct()
+                    .ToListAsync();
+
+                if (!userIdsInReport.Any())
+                {
+                    return new GridResult<UserGroupContributionDto>(new List<UserGroupContributionDto>(), 0);
+                }
+
+                var usersQuery = WorkScope.GetAll<User>()
+                    .AsNoTracking()
+                    .Where(u => userIdsInReport.Contains(u.Id));
+
+                var filteredUsers = await usersQuery
+                    .Select(u => new
+                    {
+                        u.Id,
+                        u.UserName,
+                        u.FullName,
+                        u.EmailAddress,
+                        u.BranchId
+                    })
+                    .ToListAsync();
+
+                if (hasBranchFilter)
+                {
+                    filteredUsers = filteredUsers
+                        .Where(u => u.BranchId.HasValue && branchIds.Contains(u.BranchId.Value))
+                        .ToList();
+                }
+
+                if (hasSearchFilter)
+                {
+                    filteredUsers = filteredUsers
+                        .Where(u => (u.UserName?.ToLower().Contains(search) ?? false)
+                                 || (u.FullName?.ToLower().Contains(search) ?? false)
+                                 || (u.EmailAddress?.ToLower().Contains(search) ?? false))
+                        .ToList();
+                }
+
+                var totalUserCount = filteredUsers.Count;
+
+                var pagedUserIds = filteredUsers
+                    .OrderBy(u => u.UserName)
+                    .Skip(input.SkipCount)
+                    .Take(input.MaxResultCount)
+                    .Select(u => u.Id)
+                    .ToList();
+
+                if (!pagedUserIds.Any())
+                {
+                    return new GridResult<UserGroupContributionDto>(new List<UserGroupContributionDto>(), totalUserCount);
+                }
+
+                var historyData = await WorkScope.GetAll<WeeklyContributionHistory>()
+                    .AsNoTracking()
+                    .Where(x => x.PMReportId == pmReportId && pagedUserIds.Contains(x.UserId))
+                    .Select(g => new
+                    {
+                        g.UserId,
+                        UserName = g.User.UserName,
+                        UserFullName = g.User.FullName,
+                        AvatarPath = g.User.AvatarPath,
+                        BranchDisplayName = g.User.Branch != null ? g.User.Branch.DisplayName : "",
+                        BranchColor = g.User.Branch != null ? g.User.Branch.Color : "",
+                        PositionName = g.User.Position != null ? g.User.Position.Name : "",
+                        PositionColor = g.User.Position != null ? g.User.Position.Color : "",
+                        g.ProjectId,
+                        ProjectName = g.Project.Name,
+                        PMName = g.Project.PM != null ? g.Project.PM.FullName : "No PM",
+                        AccountName = g.ProjectUserBill.AccountName ?? g.ProjectUserBill.User.FullName,
+                        BillRole = g.ProjectUserBill.BillRole,
+                        g.Contribute,
+                        HeadCount = g.ProjectUserBill.HeadCount
+                    })
+                    .ToListAsync();
+
+                var resultItems = historyData
+                    .GroupBy(u => new
+                    {
+                        u.UserId,
+                        u.UserName,
+                        u.UserFullName,
+                        u.AvatarPath,
+                        u.BranchDisplayName,
+                        u.BranchColor,
+                        u.PositionName,
+                        u.PositionColor
+                    })
+                    .OrderBy(k => k.Key.UserName)
+                    .Select(g => new UserGroupContributionDto
+                    {
+                        UserId = g.Key.UserId,
+                        UserName = g.Key.UserName,
+                        UserFullName = g.Key.UserFullName,
+                        AvatarPath = g.Key.AvatarPath,
+                        BranchDisplayName = g.Key.BranchDisplayName,
+                        BranchColor = g.Key.BranchColor,
+                        PositionName = g.Key.PositionName,
+                        PositionColor = g.Key.PositionColor,
+                        TotalHeadCount = g.Sum(x => x.HeadCount * x.Contribute),
+                        Projects = g.GroupBy(p => new { p.ProjectId, p.ProjectName, p.PMName })
+                            .Select(pg => new ProjectUserContributionDto
+                            {
+                                ProjectId = pg.Key.ProjectId,
+                                ProjectName = pg.Key.ProjectName,
+                                PMName = pg.Key.PMName,
+                                TotalContribute = pg.Sum(x => x.Contribute),
+                                BillDetails = pg.Select(detail => new ProjectBillDetailDto
+                                {
+                                    AccountName = detail.AccountName,
+                                    BillRole = detail.BillRole,
+                                    Contribute = detail.Contribute,
+                                    HeadCount = detail.HeadCount
+                                }).ToList()
+                            }).ToList()
+                    })
+                    .ToList();
+
+                return new GridResult<UserGroupContributionDto>(resultItems, totalUserCount);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Error in GetAllPagingContributions", ex);
+                throw new UserFriendlyException(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        [AbpAuthorize(PermissionNames.WeeklyContributionReport)]
+        public async Task<GridResult<GetWeeklyContributionDto>> GetAllPaging(GridParam input)
+        {
+            try
+            {
+                var pmReportProject = WorkScope.GetAll<WeeklyContributionHistory>();
+
+                var query = pmReportProject
+                    .GroupBy(x => new {
+                        x.PMReportId,
+                        PMReportName = x.PMReport.Name,
+                    })
+                    .Select(g => new GetWeeklyContributionDto
+                    {
+                        PMReportId = g.Key.PMReportId,
+                        PMReportName = g.Key.PMReportName,
+                    });
+                return await query.GetGridResult(query, input);
+            }
+            catch(Exception ex)
+            {
+                throw new UserFriendlyException(ex.Message);
+            }
+          
         }
 
         #region API Helper

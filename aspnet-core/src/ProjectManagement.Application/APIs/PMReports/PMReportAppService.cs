@@ -317,30 +317,46 @@ namespace ProjectManagement.APIs.PMReports
 
         private async Task CloneContributionHistoryAsync(Project project, long lastReportId, long newReportId)
         {
-            var currentProjectBills = await WorkScope.GetAll<ProjectUserBill>()
-             .Where(x => x.isActive && x.User.IsDeleted == false && x.ProjectId == project.Id) 
-             .ToListAsync();
 
-            if (currentProjectBills.Any())
+            var projectUserBillIds = WorkScope.GetAll<ProjectUserBill>()
+                .Include(x => x.User)
+                .AsNoTracking()
+                .Where(x =>x.ProjectId == project.Id && x.User.IsActive == true && x.isActive == true && x.IsDeleted == false)
+                .Select(x => x.Id)
+                .ToList();
+
+            var currentLinkedResources = await WorkScope.GetAll<LinkedResource>()
+                .Include(x => x.ProjectUserBill)
+                .AsNoTracking()
+                .Where(x => projectUserBillIds.Contains(x.ProjectUserBillId) && x.IsDeleted == false)
+                .ToListAsync();
+
+            if (!currentLinkedResources.Any())
+                return;
+
+            var lastWeekHistoryMap = lastReportId > 0
+                ? (await WorkScope.GetAll<WeeklyContributionHistory>()
+                      .AsNoTracking()
+                      .Where(x => x.PMReportId == lastReportId && x.ProjectId == project.Id)
+                      .ToListAsync())
+                      .GroupBy(x => (billId: x.ProjectUserBillId, userId: x.UserId))
+                      .ToDictionary(g => g.Key, g => g.First().Contribute)
+                : new Dictionary<(long billId, long userId), byte>();
+
+            var historyEntries = currentLinkedResources.Select(lr => new WeeklyContributionHistory
             {
-                var lastWeekHistoryMap = new Dictionary<long, byte>();
-                if (lastReportId > 0)
-                {
-                    lastWeekHistoryMap = await WorkScope.GetAll<WeeklyContributionHistory>()
-                        .Where(x => x.PMReportId == lastReportId && x.ProjectId == project.Id)
-                        .ToDictionaryAsync(x => x.ProjectUserBillId, x => x.Contribute);
-                }
+                PMReportId = newReportId,
+                ProjectUserBillId = lr.ProjectUserBillId,
+                UserId = lr.UserId,
+                ProjectId = project.Id,
+                TenantId = AbpSession.TenantId,
+                Contribute = lastWeekHistoryMap.TryGetValue((lr.ProjectUserBillId, lr.UserId), out var lastContribute)
+                             ? lastContribute
+                             : lr.Contribute
+            }).ToList();
 
-                var historyEntries = currentProjectBills.Select(bill => new WeeklyContributionHistory
-                {
-                    PMReportId = newReportId, 
-                    ProjectUserBillId = bill.Id,
-                    UserId = bill.UserId,
-                    ProjectId = project.Id,
-                    TenantId = AbpSession.TenantId,
-                    Contribute = lastWeekHistoryMap.ContainsKey(bill.Id) ? lastWeekHistoryMap[bill.Id] : (byte)0
-                }).ToList();
-
+            if (historyEntries.Any())
+            {
                 await WorkScope.InsertRangeAsync(historyEntries);
             }
         }

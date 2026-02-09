@@ -11,6 +11,8 @@ namespace ProjectManagement.Services.ProjectUserBill.Dto
 
         [Required]
         public List<long> UserIds { get; set; }
+
+        public long? PMReportId { get; set; }
     }
 
     public class RemoveLinkResource

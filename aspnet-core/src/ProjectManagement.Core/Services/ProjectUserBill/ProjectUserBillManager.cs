@@ -550,6 +550,19 @@ namespace ProjectManagement.Services.ProjectUserBills
 
                 if (existingLinkedResource != null)
                     await _workScope.DeleteAsync(existingLinkedResource);
+
+                var contributionHistories = await _workScope.GetAll<WeeklyContributionHistory>()
+                    .Where(wch => wch.UserId == userId && wch.ProjectUserBillId == input.ProjectUserBillId && wch.PMReportId == input.PMReportId)
+                    .ToListAsync();
+
+                if (contributionHistories.Count > 0)
+                {
+                    foreach (var history in contributionHistories)
+                    {
+                        await _workScope.DeleteAsync(history);
+                    }
+                }
+
             }
         }
 

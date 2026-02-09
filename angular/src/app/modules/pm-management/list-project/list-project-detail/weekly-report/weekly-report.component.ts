@@ -2260,6 +2260,7 @@ export class WeeklyReportComponent
     const req = {
       projectUserBillId: id,
       userIds: [userId],
+      pmReportId: this.selectedReport?.reportId,
     };
 
     abp.message.confirm("Remove linked resource?", "", (result: boolean) => {
@@ -2341,7 +2342,27 @@ export class WeeklyReportComponent
         this.searchResource = "";
         this.showSearchAndFilter = true;
         this.isAddingResource = false;
-          this.getProjectInfo();
+        this.getProjectInfo();
       });
+  }
+
+  public hasLinkedResources(): boolean {
+    if (!this.projectInfo || !this.projectInfo.projectUserBills) {
+      return false;
+    }
+    const invalidBill = this.projectInfo.projectUserBills.find(
+      (bill) => !bill.linkedResources || bill.linkedResources.length === 0,
+    );
+    return invalidBill === undefined;
+  }
+
+  public getSendReportTooltip(): string {
+    if (!this.isValidCriteria) {
+      return "Cần nhập Criteria để có thể gửi report!";
+    }
+    if (!this.hasLinkedResources()) {
+      return "Mỗi Bill Account phải có ít nhất 1 Linked Resource!";
+    }
+    return "";
   }
 }

@@ -163,7 +163,7 @@ namespace ProjectManagement.APIs.PMReportProjects
                             && x.Status == ProjectUserStatus.Present && x.AllocatePercentage > 0);
 
             var contributions = await WorkScope.GetAll<WeeklyContributionHistory>()
-                .Where(x => x.PMReportId == pmReportId && x.ProjectId == projectId)
+                .Where(x => x.PMReportId == pmReportId && x.ProjectId == projectId && x.IsDeleted == false)
                 .Select(x => new { x.Id, x.Contribute, x.ProjectUserBillId, x.UserId })
                 .ToListAsync();
 

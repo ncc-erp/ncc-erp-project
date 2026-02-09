@@ -46,9 +46,9 @@
                                 </mat-option>
                             </mat-select>
                         </mat-form-field>
-                        <div class="ml-2" [matTooltip]="!isValidCriteria?'Cần nhập Criteria để có thể gửi report!':''">
+                        <div class="ml-2" [matTooltip]="getSendReportTooltip()">
                             <button name="btn-send" (click)="sendWeeklyreport()" class=" btn btn-success"
-                                [disabled]="!isValidCriteria"
+                                [disabled]="!isValidCriteria || !hasLinkedResources()"
                                 *ngIf="selectedReport.isActive && permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_SendWeeklyReport) && isSentReport && selectedReport.pmReportProjectId!=0">
                                 <i class="fas fa-paper-plane"></i>
                             </button>

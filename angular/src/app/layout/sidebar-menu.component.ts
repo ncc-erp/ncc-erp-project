@@ -164,33 +164,12 @@ export class SidebarMenuComponent extends AppComponentBase implements OnInit {
           ),
         ]
       ),
-
-      // new MenuItem(
-      //   this.l('Sao đỏ'),
-      //   '/app/sao-do',
-      //   'fas fa-user-shield',
-      //   'SaoDo.CanViewMenu'
-      // ),
-      // new MenuItem(
-      //   this.l('CheckList'),
-      //   '',
-      //   'fas fa-tasks',
-      //   'CheckList.CanviewMenu',
-      //   [
-      //     new MenuItem(
-      //       this.l('Checklist Category'),
-      //       '/app/checklist-title',
-      //       'fas fa-clipboard-list',
-      //       'CheckList.CheckListCategory'
-      //     ),
-      //     new MenuItem(
-      //       this.l('Checklist Item'),
-      //       '/app/checklist',
-      //       'fas fa-calendar-check',
-      //       'CheckList.CheckListItem'
-      //     ),
-      //   ]
-      // ),
+     new MenuItem(
+        this.l('Contribution Reports'),
+        '/app/contribution-reports',
+        'fas fa-chalkboard-teacher',
+        'WeeklyContributionReport'
+      ),
       new MenuItem(
         this.l('Weekly Reports'),
         '/app/weekly-report',

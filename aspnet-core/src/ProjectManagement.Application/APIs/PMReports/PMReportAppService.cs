@@ -262,7 +262,6 @@ namespace ProjectManagement.APIs.PMReports
                             PMReportId = input.Id,
                             ProjectId = project.Id,
                             Status = PMReportProjectStatus.Draft,
-                            //ProjectHealth = mapInprogressIssues.ContainsKey(project.Id) ? ProjectHealth.Yellow : ProjectHealth.Green,
                             PMId = project.PMId,
                             Note = project.ProjectType == ProjectType.TRAINING && mapPMNote.ContainsKey(project.Id) ? mapPMNote[project.Id].Note : null,
                             LastReviewDate = mapPMLastPreviewDate.ContainsKey(project.Id) ? mapPMLastPreviewDate[project.Id].LastReviewDate : null,
@@ -296,6 +295,8 @@ namespace ProjectManagement.APIs.PMReports
                                 await WorkScope.InsertRangeAsync(risks);
                             }
                         }
+
+                        await CloneContributionHistoryAsync(project, lastReportId, input.Id);
                     }
                     unitOfWork.Complete();
                     return input;
@@ -312,6 +313,52 @@ namespace ProjectManagement.APIs.PMReports
         {
             var result = timeline.AddDays(day - (int)timeline.DayOfWeek).AddHours(hour - timeline.Hour);
             return result;
+        }
+
+        private async Task CloneContributionHistoryAsync(Project project, long lastReportId, long newReportId)
+        {
+
+            var projectUserBillIds = WorkScope.GetAll<ProjectUserBill>()
+                .Include(x => x.User)
+                .AsNoTracking()
+                .Where(x =>x.ProjectId == project.Id && x.User.IsActive == true && x.isActive == true && x.IsDeleted == false)
+                .Select(x => x.Id)
+                .ToList();
+
+            var currentLinkedResources = await WorkScope.GetAll<LinkedResource>()
+                .Include(x => x.ProjectUserBill)
+                .AsNoTracking()
+                .Where(x => projectUserBillIds.Contains(x.ProjectUserBillId) && x.IsDeleted == false)
+                .ToListAsync();
+
+            if (!currentLinkedResources.Any())
+                return;
+
+            var lastWeekHistoryMap = lastReportId > 0
+                ? (await WorkScope.GetAll<WeeklyContributionHistory>()
+                      .AsNoTracking()
+                      .Where(x => x.PMReportId == lastReportId && x.ProjectId == project.Id)
+                      .ToListAsync())
+                      .GroupBy(x => (billId: x.ProjectUserBillId, userId: x.UserId))
+                      .ToDictionary(g => g.Key, g => g.First().Contribute)
+                : new Dictionary<(long billId, long userId), byte>();
+
+            var historyEntries = currentLinkedResources.Select(lr => new WeeklyContributionHistory
+            {
+                PMReportId = newReportId,
+                ProjectUserBillId = lr.ProjectUserBillId,
+                UserId = lr.UserId,
+                ProjectId = project.Id,
+                TenantId = AbpSession.TenantId,
+                Contribute = lastWeekHistoryMap.TryGetValue((lr.ProjectUserBillId, lr.UserId), out var lastContribute)
+                             ? lastContribute
+                             : lr.Contribute
+            }).ToList();
+
+            if (historyEntries.Any())
+            {
+                await WorkScope.InsertRangeAsync(historyEntries);
+            }
         }
 
         [HttpPut]

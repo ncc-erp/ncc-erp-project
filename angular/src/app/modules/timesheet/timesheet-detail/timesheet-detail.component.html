@@ -276,7 +276,7 @@
                   <span>PM: <b>{{item.pmFullName}}</b></span>
                 </td>
                 <td class="text-left bill">
-                  <div *ngIf="item.projectBillInfomation" style="width: 100%;">
+                  <div *ngIf="item.projectBillInfomation" style="min-width: 1000px;">
                     <div class="row" [style.color]="getColorByCurrency(item.currency)">
                       <div class="col-8"><label *ngIf="isGranted(Timesheets_TimesheetDetail_ViewBillRate)">Total:
                           {{item.projectBillInfomation.length}}</label></div>
@@ -290,8 +290,8 @@
                         Note</div>
                     </div>
                     <div class="row" *ngFor="let bill of item.projectBillInfomation; let i = index">
-                      <div class="col-3 text-special"><label><span>{{i+1}}. &nbsp;</span>{{bill.fullName}}</label></div>
-                      <div class="col-1 text-special role"><span>{{bill.billRole}}</span></div>
+                      <div class="col-2 text-special"><label><span>{{i+1}}. &nbsp;</span>{{bill.fullName}}</label></div>
+                      <div class="col-2 text-special role"><span>{{bill.billRole}}</span></div>
                       <div class="col-2 billRate" *ngIf="isGranted(Timesheets_TimesheetDetail_ViewBillRate)">
                         <label class="ml-1" style="font-weight: 500;">
                           {{(covertMoneyType(bill.billRate)+' '+item.currency + getChargeType(bill.chargeType))}}

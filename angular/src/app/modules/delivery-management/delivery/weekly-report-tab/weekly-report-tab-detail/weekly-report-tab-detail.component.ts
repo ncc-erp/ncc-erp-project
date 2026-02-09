@@ -43,6 +43,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { EditNoteResourceComponent } from './edit-note-resource/edit-note-resource.component';
 import { UpdateConfirmModalComponent } from './update-confirm-modal/update-confirm-modal.component';
 import { EditNoteDialogComponent } from '@app/modules/pm-management/list-project/list-project-detail/project-bill/add-note-dialog/edit-note-dialog.component';
+import { PMReportProjectContributionService } from "../../../../../service/api/pmreport-project-contribution.service";
 
 @Component({
   selector: 'app-weekly-report-tab-detail',
@@ -219,6 +220,9 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
     {value:this.APP_ENUM.Priority.Medium,viewValue:'Medium'},
     {value:this.APP_ENUM.Priority.Critical,viewValue:'Critical'}]
 
+  editingRows: { [key: number]: boolean } = {};
+  tempContributeValues: { [key: number]: number } = {};
+
   constructor(public pmReportProjectService: PMReportProjectService,
     public pmReportRiskService: PmReportRiskService,
     private tsProjectService: TimesheetProjectService,
@@ -234,6 +238,7 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
     private pjCriteriaService: CriteriaService,
     private pjCriteriaResultService: ProjectCriteriaResultService,
     private settingService: AppConfigurationService,
+    private PMReportProjectContributionService: PMReportProjectContributionService,
   ) {
     super(injector)
     this.isShowMenuPlannedResource =
@@ -1971,5 +1976,42 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
       return Number(num.toFixed(2));
     }
     return num;
+  }
+
+  edit(resource: any) {
+  this.tempContributeValues[resource.id] = resource.contribute;
+  this.editingRows[resource.id] = true;
+}
+
+cancelUpdate(resource: any) {
+  if (this.tempContributeValues[resource.id] !== undefined) {
+    resource.contribute = this.tempContributeValues[resource.id];
+  }
+  this.editingRows[resource.id] = false;
+  delete this.tempContributeValues[resource.id];
+}
+
+
+saveWeeklyContribute(resource: any, projectUserBillId: number) {
+    this.isLoading = true;
+    const request = {
+      userId: resource.id,
+      projectUserBillId: projectUserBillId,
+      contribute: resource.contribute,
+      projectId: this.projectId,
+      PMReportId:  this.pmReportId,
+    };
+    this.PMReportProjectContributionService.updateWeeklyHistory(request).subscribe(
+      () => {
+        abp.notify.success(`Weekly contributions have been updated: ${this.selectedReport?.pmReportName}`);
+        this.editingRows[resource.id] = false;
+        this.isLoading = false;
+      },
+      () => (this.isLoading = false),
+    );
+  }
+  
+  isShowEditContribute(){
+    return this.isActive
   }
 }

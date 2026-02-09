@@ -124,29 +124,6 @@ namespace ProjectManagement.Services.Timesheet.Dto
         public List<TimesheetProjectBillOtTypeDto> TimesheetProjectBillOtTypes { get; set; }
         public string FullName => string.IsNullOrEmpty(AccountName) ? UserFullName : AccountName;
         public double BillRateDisplay => (Mode == ExportInvoiceMode.MontlyToDaily && ChargeType == ChargeType.Monthly) ? BillRate / TimesheetWorkingDay : BillRate;
-        public double WorkingDayDisplay
-        {
-            get
-            {
-                var otHours = TimesheetProjectBillOtTypes?.Sum(item => (float)item.Hours * item.Multiplier) ?? 0;
-                double result;
-
-                if ((Mode == ExportInvoiceMode.MontlyToDaily && ChargeType == ChargeType.Monthly) || ChargeType == ChargeType.Daily)
-                {
-                    result = WorkingDay + otHours / DefaultWorkingHours;
-                }
-                else if (ChargeType == ChargeType.Hourly)
-                {
-                    result = WorkingDay * DefaultWorkingHours + otHours;
-                }
-                else
-                {
-                    result = (WorkingDay + otHours / DefaultWorkingHours) / TimesheetWorkingDay;
-                }
-
-                return Math.Round(result, 3);
-            }
-        }
 
         public string ChargeTypeDisplay
         {
@@ -166,11 +143,62 @@ namespace ProjectManagement.Services.Timesheet.Dto
             }
         }
 
+        #region LineTotal
+        /// <summary>
+        /// Calculate Working Units for Invoice line total
+        /// </summary>
+        private double TotalWorkingTimeUnits
+        {
+            get
+            {
+                var otHours = TimesheetProjectBillOtTypes?.Sum(item => (float)item.Hours * item.Multiplier) ?? 0;
+                double result;
+
+                if ((Mode == ExportInvoiceMode.MontlyToDaily && ChargeType == ChargeType.Monthly) || ChargeType == ChargeType.Daily)
+                {
+                    result = WorkingDay + otHours / DefaultWorkingHours;
+                }
+                else if (ChargeType == ChargeType.Hourly)
+                {
+                    result = WorkingDay * DefaultWorkingHours + otHours;
+                }
+                else
+                {
+                    result = (WorkingDay + otHours / DefaultWorkingHours) / TimesheetWorkingDay;
+                }
+
+                return result;
+            }
+        }
+
         public double LineTotal
         {
             get
             {
-                return WorkingDayDisplay * BillRateDisplay;
+                double total = TotalWorkingTimeUnits * BillRateDisplay;
+                return Math.Round(total, 2);
+            }
+        }
+        public double WorkingDayDisplay
+        {
+            get
+            {
+                return Math.Round(TotalWorkingTimeUnits, 3);
+            }
+        }
+        #endregion
+
+        #region Normal Line Total
+        private double NormalWorkingTimeUnits
+        {
+            get
+            {
+                if ((Mode == ExportInvoiceMode.MontlyToDaily && ChargeType == ChargeType.Monthly) || ChargeType == ChargeType.Daily)
+                    return WorkingDay;
+                else if (ChargeType == ChargeType.Hourly)
+                    return WorkingDay * DefaultWorkingHours;
+                else
+                    return WorkingDay / TimesheetWorkingDay;
             }
         }
 
@@ -179,25 +207,7 @@ namespace ProjectManagement.Services.Timesheet.Dto
         /// </summary>
         public double NormalWorkingDay
         {
-            get
-            {
-                double result;
-
-                if ((Mode == ExportInvoiceMode.MontlyToDaily && ChargeType == ChargeType.Monthly) || ChargeType == ChargeType.Daily)
-                {
-                    result = WorkingDay;
-                }
-                else if (ChargeType == ChargeType.Hourly)
-                {
-                    result = WorkingDay * DefaultWorkingHours;
-                }
-                else
-                {
-                    result = WorkingDay / TimesheetWorkingDay;
-                }
-
-                return Math.Round(result, 3);
-            }
+            get { return Math.Round(NormalWorkingTimeUnits, 3); }
         }
 
         /// <summary>
@@ -207,9 +217,11 @@ namespace ProjectManagement.Services.Timesheet.Dto
         {
             get
             {
-                return NormalWorkingDay * BillRateDisplay;
+                return Math.Round(NormalWorkingTimeUnits * BillRateDisplay, 2);
             }
         }
+
+        #endregion
     }
 
     public class TimesheetTaxDto

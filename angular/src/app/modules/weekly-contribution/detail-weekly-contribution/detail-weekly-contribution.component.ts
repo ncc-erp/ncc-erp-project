@@ -33,6 +33,7 @@ export class DetailWeeklyContributionComponent
   public sortColumn: string = "";
   public sortDirection: number = -1;
   public iconSort: string = "";
+  public totalContributionSum: number = 0;
 
   constructor(
     injector: Injector,
@@ -78,6 +79,12 @@ export class DetailWeeklyContributionComponent
       )
       .subscribe((data) => {
         this.userGroupContributions = data.result.items;
+        this.totalContributionSum = this.userGroupContributions.reduce(
+          (sum, user) => {
+            return sum + user.totalHeadCount / 100;
+          },
+          0,
+        );
         this.showPaging(data.result, pageNumber);
       });
   }

@@ -8,6 +8,7 @@
 .project-timesheet td {
   vertical-align: middle;
 }
+
 ::ng-deep #timesheet-detail .filter-pm .mat-form-field {
   display: block;
 }
@@ -186,16 +187,16 @@ button.special span {
 }
 
 .card-body.table-responsive {
-  flex: initial !important;
-  display: flex !important;
-  flex-direction: column !important;
-  overflow: hidden !important;
+  flex: 1 1 auto !important;
+  display: block !important;
+  overflow-x: auto !important;
+  width: 100%;
 }
 
 .fixTableHead {
-  flex: initial !important;
-  max-height: 80vh !important;
-  overflow-x: hidden !important;
+  flex: none !important;
+  max-height: 70vh !important;
+  overflow-x: inherit !important;
   overflow-y: auto !important;
 }
 
@@ -259,4 +260,11 @@ button.special span {
 
 .content-header .mr-2 {
   margin-right: 4px !important;
+}
+
+#timesheet-detail > .container-fluid,
+.card {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100%;
 }

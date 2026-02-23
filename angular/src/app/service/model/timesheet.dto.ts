@@ -116,6 +116,7 @@ export class TimesheetProjectBill {
     otTypes?:any[];
     otHours?: number;
     createTimesheetBillOtMode?: boolean;
+    headCount?: number;
 }
 export class TotalAmountByCurrencyDto{
     CurrencyName : string;

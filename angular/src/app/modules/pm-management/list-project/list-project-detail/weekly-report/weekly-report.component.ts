@@ -74,6 +74,7 @@ import {
 } from "./../../../../../service/model/project.dto";
 import { ResourceManagerService } from "@app/service/api/resource-manager.service";
 import { IGetUserInfo } from "@app/service/model/user.inteface";
+import { ReviewContributionComponent } from "./review-contribution/review-contribution.component";
 
 @Component({
   selector: "app-weekly-report",
@@ -667,25 +668,30 @@ export class WeeklyReportComponent
   }
 
   public sendWeeklyreport() {
-    abp.message.confirm(
-      `send report ${this.selectedReport.pmReportName}? `,
-      "",
-      (result: boolean) => {
-        if (result) {
-          this.reportService
-            .sendReport(
-              this.projectId,
-              this.selectedReport.reportId,
-              this.status,
-            )
-            .pipe(catchError(this.reportService.handleError))
-            .subscribe((data) => {
-              abp.notify.success("Send report successful");
-              this.getAllPmReport();
-            });
-        }
+    const dialogRef = this.dialog.open(ReviewContributionComponent, {
+      width: "700px",
+      maxHeight: "90vh",
+      data: {
+        projectUserBills: this.projectInfo.projectUserBills,
+        reportName: this.selectedReport.pmReportName,
       },
-    );
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === true) {
+        this.confirmSendReport();
+      }
+    });
+  }
+
+  private confirmSendReport() {
+    this.reportService
+      .sendReport(this.projectId, this.selectedReport.reportId, this.status)
+      .pipe(catchError(this.reportService.handleError))
+      .subscribe((data) => {
+        abp.notify.success("Send report successful");
+        this.getAllPmReport();
+      });
   }
 
   getProjectInfo(cancel?: boolean) {
@@ -2358,10 +2364,10 @@ export class WeeklyReportComponent
 
   public getSendReportTooltip(): string {
     if (!this.isValidCriteria) {
-      return "Cần nhập Criteria để có thể gửi report!";
+      return "Please enter Criteria to be able to send the report!";
     }
     if (!this.hasLinkedResources()) {
-      return "Mỗi Bill Account phải có ít nhất 1 Linked Resource!";
+      return "Each Bill Account must have at least 1 Linked Resource!";
     }
     return "";
   }

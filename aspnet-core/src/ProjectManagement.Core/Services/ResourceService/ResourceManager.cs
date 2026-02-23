@@ -924,7 +924,7 @@ namespace ProjectManagement.Services.ResourceManager
             var activeReportId = await GetActiveReportId();
             var workingUserIds = await _workScope.All<ProjectUser>()
                 .Where(s => s.Status == ProjectUserStatus.Present)
-                .Where(s => !s.IsPool)
+                .Where(s => !s.IsPool && s.WorkingType != ProjectUserWorkingType.Support)
                 .Where(s => s.AllocatePercentage > 0)
                 .Where(s => s.Project.Status == ProjectStatus.InProgress)
                 .Select(s => s.UserId)
@@ -1039,7 +1039,7 @@ namespace ProjectManagement.Services.ResourceManager
         {
             var query = await QueryAllResource(isVendor);
 
-            query = query.ApplySearch(input.SearchText);
+            query = query.ApplySearchAndFilter(input);
 
             query = ApplyInputFilters(query, input);
 

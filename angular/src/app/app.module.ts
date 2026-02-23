@@ -241,6 +241,7 @@ import { PunishmentComponent } from './modules/punishment/punishment.component';
 import { CreatePunishmentDialogComponent } from './modules/punishment/create-punishment-dialog/create-punishment-dialog.component';
 import { WeeklyContributionComponent } from './modules/weekly-contribution/weekly-contribution.component';
 import { DetailWeeklyContributionComponent } from './modules/weekly-contribution/detail-weekly-contribution/detail-weekly-contribution.component';
+import { ReviewContributionComponent } from './modules/pm-management/list-project/list-project-detail/weekly-report/review-contribution/review-contribution.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, "./assets/i18n/", ".json");
@@ -354,6 +355,7 @@ export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
     CurrencyComponent,
     CreateEditCurrencyComponent,
     ViewBillComponent,
+    ReviewContributionComponent,
     AllResourceComponent,
     TrainingProjectsComponent,
     ProductProjectsComponent,

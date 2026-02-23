@@ -3,12 +3,12 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-6">
-
         </div>
       </div>
     </div>
   </section>
-  <section class="content px-2 ">
+
+  <section class="content px-2">
     <div class="container-fluid">
       <div class="card">
         <div class="card-header">
@@ -16,26 +16,26 @@
             <div class="input-group col-md-3 col-sm-12 pt-1">
               <div class="input-group">
                 <div class="input-group-prepend">
-                  <button name="btn-search" type="button" class="btn bg-blue search-btn" (click)="searchProject()">
+                  <button name="btn-search" type="button" class="btn bg-blue search-btn" (click)="refresh()">
                     <i class="fas fa-search"></i>
                   </button>
                 </div>
                 <input type="text" class="form-control search-input" name="keyword" placeholder="Search"
-                  [(ngModel)]="searchText" (keyup.enter)="searchProject()" />
+                  [(ngModel)]="searchText" (keyup.enter)="refresh()" />
               </div>
             </div>
-            <div class="col-md-9 col-sm-12">
+            <div class="col-md-1 col-sm-12">
               <div class="row filter-wrap">
-                <div class="col-md-3 col-sm-12 search-pm text-right">
+                <div class="col-md-3 col-sm-12 search-pm text-right ml-auto">
                   <mat-form-field appearance="outline">
                     <mat-label>Branch:</mat-label>
                     <mat-select #selectBranch [(ngModel)]="selectedBranchIds" (openedChange)="openedChange($event)"
-                      placeholder="Select branch" multiple>
+                      placeholder="Select branch" multiple (selectionChange)="refresh()">
+
                       <div style="position: sticky; top: 0; z-index: 2; background-color: white;">
-                        <mat-form-field class="w-100 px-3 "
-                          style="position: sticky; top: 0; z-index: 2; background-color: white;">
-                          <input style="height: 30px; padding: 5px 10px; " matInput [(ngModel)]="searchBranch"
-                            placeholder="Search" #search (keydown)="$event.stopPropagation()">
+                        <mat-form-field class="w-100 px-3" style="margin-bottom: 0;">
+                          <input style="height: 30px; padding: 5px 10px;" matInput [(ngModel)]="searchBranch"
+                            placeholder="Search" (keydown)="$event.stopPropagation()">
                         </mat-form-field>
                         <div class="ml-3 mb-2 select-filter-option">
                           <app-select-clear-option [type]="'Branch'" [listOption]="listBranchsId"
@@ -43,8 +43,9 @@
                           </app-select-clear-option>
                         </div>
                       </div>
-                      <mat-option *ngFor="let branch of listBranchs | listFilter:  'name' : searchBranch"
-                        [value]="branch.id" (click)="onSelectChangeBranch(branch.id)">
+
+                      <mat-option *ngFor="let branch of listBranchs | listFilter: 'name' : searchBranch"
+                        [value]="branch.id">
                         {{branch.name}}
                       </mat-option>
                     </mat-select>
@@ -54,16 +55,19 @@
             </div>
           </div>
         </div>
-        <div class="card-body table-responsive p-0 pt-3">
-          <div class="table-vertical-scroll" style="max-height: 800px; overflow-y: auto; overflow-x: auto;">
-            <table class="table table-bordered table-hover text-nowrap m-0">
+
+        <div class="card-body table-responsive p-0">
+          <div class="table-vertical-scroll" style="max-height: 800px; overflow-y: auto;">
+            <table class="table table-bordered table-hover text-nowrap m-0" style="width: 100%; table-layout: fixed;">
               <thead class="bg-light shadow-sm sticky-top">
                 <tr>
-                  <th style="width: 50px;" class="text-center text-uppercase text-secondary text-xs font-weight-bolder">
-                    STT</th>
-                  <th style="width: 300px;" (click)="sortData('userFullName')"
+                  <th style="width: 60px;" class="text-center text-uppercase text-secondary text-xs font-weight-bolder">
+                    STT
+                  </th>
+
+                  <th (click)="sortData('userFullName')" style="width: 250px; cursor: pointer;"
                     class="text-uppercase text-secondary text-xs font-weight-bolder">
-                    <div class="col-bill-account d-flex align-items-center">
+                    <div class="d-flex align-items-center">
                       User Information
                       <span class="ml-1">
                         <i *ngIf="sortColumn === 'userFullName'" [class]="iconSort"></i>
@@ -71,11 +75,14 @@
                       </span>
                     </div>
                   </th>
-                  <th class="text-uppercase text-secondary text-xs font-weight-bolder">Project Workload & Contribution </th>
-                
-                  <th class="text-uppercase text-secondary text-xs font-weight-bolder" (click)="sortData('totalHeadCount')"
-                    style="cursor: pointer;">
-                    <div class="col-bill-account d-flex align-items-center">
+
+                  <th class="text-uppercase text-secondary text-xs font-weight-bolder">
+                    Project Workload & Contribution
+                  </th>
+
+                  <th (click)="sortData('totalHeadCount')" style="width: 150px; cursor: pointer;"
+                    class="text-uppercase text-secondary text-xs font-weight-bolder">
+                    <div class="d-flex align-items-center justify-content-center">
                       Total contribution
                       <span class="ml-1">
                         <i *ngIf="sortColumn === 'totalHeadCount'" [class]="iconSort"></i>
@@ -84,20 +91,21 @@
                     </div>
                   </th>
                 </tr>
-                </thead>
+              </thead>
+
               <tbody>
                 <tr *ngFor="let user of userGroupContributions | paginate: {
-                                id: 'server',
-                                itemsPerPage: pageSize,
-                                currentPage: pageNumber,
-                                totalItems: totalItems
-                              }; let i = index">
-              
+                              id: 'server',
+                              itemsPerPage: pageSize,
+                              currentPage: pageNumber,
+                              totalItems: totalItems
+                            }; let i = index">
+
                   <td class="text-center align-middle font-weight-bold text-muted">
                     {{ (pageNumber - 1) * pageSize + i + 1 }}
                   </td>
-              
-                  <td class="align-middle bg-white">
+
+                  <td class="align-middle bg-white" style="white-space: normal;">
                     <div class="d-flex align-items-center">
                       <div class="avatar-wrapper mr-3">
                         <img [src]="getAvatar(user)" class="rounded-circle shadow-sm"
@@ -110,11 +118,11 @@
                           </span>
                         </div>
                         <div class="d-flex align-items-center flex-wrap">
-                          <span class="badge badge-pill text-white mr-1" [style.background-color]="user.branchColor"
-                            *ngIf="user.branchDisplayName">
+                          <span class="badge badge-pill text-white mr-1 mb-1"
+                            [style.background-color]="user.branchColor" *ngIf="user.branchDisplayName">
                             {{ user.branchDisplayName }}
                           </span>
-                          <span class="badge badge-pill text-white" [style.background-color]="user.positionColor"
+                          <span class="badge badge-pill text-white mb-1" [style.background-color]="user.positionColor"
                             *ngIf="user.positionName">
                             {{ user.positionName }}
                           </span>
@@ -123,66 +131,76 @@
                       </div>
                     </div>
                   </td>
-                  <td class="p-0 align-middle">
+
+                  <td class="p-0 align-middle" style="white-space: normal;">
                     <div class="project-list-container">
+
                       <div *ngIf="!user.projects || user.projects.length === 0" class="text-center text-muted py-3">
                         <em>No active projects</em>
                       </div>
-              
-                      <div *ngFor="let proj of user.projects; let isLast = last"
-                        class="p-3 d-flex align-items-center justify-content-between hover-bg-light transition-fast"
-                        [class.border-bottom]="!isLast">
-              
-                        <div class="d-flex flex-column" style="width: 400px;">
-                          <div class="d-flex align-items-center mb-1">
-                            <span class="font-weight-bold text-primary mr-2" style="font-size: 1.05em;">
-                              {{ proj.projectName }}
-                            </span>
+
+                      <div *ngFor="let proj of user.projects; let isLastProj = last" class="d-flex w-100"
+                        [class.border-bottom]="!isLastProj">
+
+                        <div class="p-3 border-right bg-white"
+                          style="width: 40%; min-width: 200px; display: flex; flex-direction: column; justify-content: center;">
+                          <div class="font-weight-bold text-primary mb-1"
+                            style="font-size: 1rem; word-break: break-word;">
+                            {{ proj.projectName }}
                           </div>
                           <div class="small text-muted">
                             <i class="fas fa-user-tie mr-1"></i> PM: <span class="text-dark">{{ proj.pmName }}</span>
                           </div>
-              
                         </div>
-                        <div class="flex-grow-1 d-flex flex-column border-left pl-3">
-                          <div *ngFor="let bill of proj.billDetails; let isFirst = first"
-                            class="d-flex align-items-center justify-content-between py-2 pr-2" [class.border-top]="!isFirst">
+
+                        <div class="flex-grow-1 d-flex flex-column">
+                        
+                          <div *ngFor="let bill of proj.billDetails; let isLastBill = last"
+                            class="d-flex align-items-center justify-content-between p-2 pl-3 hover-bg-light"
+                            [class.border-bottom]="!isLastBill" style="min-height: 70px;">
+                        
                             <div class="d-flex flex-column" style="flex: 1;">
-                              <div class="font-weight-bold" *ngIf="bill.accountName">
-                                <i class="fas fa-file-invoice mr-1"></i>
-                                {{ bill.accountName }}
-                                <span class="badge badge-light border mb-1" *ngIf="bill.billRole">
+                              <div class="font-weight-bold text-primary mb-1" *ngIf="bill.accountName">
+                                <i class="fas fa-file-invoice mr-2"></i>{{ bill.accountName }}
+                                <span class="badge badge-light border mb-2" *ngIf="bill.billRole">
                                   {{ bill.billRole }}
                                 </span>
                               </div>
-                              <div class="small text-muted mt-1" *ngIf="bill.headCount !== undefined">
-                                <i class="fas fa-users mr-1"></i> Head Count: {{ bill.headCount }}
+                              <div class="small text-muted" *ngIf="bill.headCount !== undefined">
+                                <i class="fas fa-users mr-1"></i> Head Count: <strong>{{ bill.headCount }}</strong>
                               </div>
                             </div>
-                            <div class="d-flex flex-column align-items-end ml-3" style="min-width: 140px;">
-                              <div class="d-flex align-items-center mt-1">
-                                <div class="mr-3 d-flex align-items-center" matTooltip="Contribute">
-                                  <span class="text-muted small mr-1">Contribute:</span>
-                                  <span class="badge badge-danger shadow-sm">
-                                    {{ bill.contribute }}%
-                                  </span>
+                        
+                            <div class="d-flex flex-column align-items-end pl-2" style="min-width: 150px;">
+                        
+                              <div class="d-flex align-items-center flex-wrap justify-content-end">
+                                <div class="mr-2 small text-muted d-flex align-items-center" matTooltip="Contribute">
+                                  Contribute: <span class="badge badge-danger ml-1 shadow-sm">{{ bill.contribute
+                                    }}%</span>
                                 </div>
                               </div>
                             </div>
                           </div>
+                          <div *ngIf="!proj.billDetails || proj.billDetails.length === 0" class="p-3 text-muted text-center small font-italic">
+                            - No bill info -
+                          </div>
                         </div>
-              
                       </div>
                     </div>
                   </td>
-                  <td class="text-center align-middle font-weight-bold text-muted">
-                    {{ (user.totalHeadCount / 100) | number:'1.1-2' }}
+
+                  <td class="text-center align-middle font-weight-bold text-dark">
+                    <span class="badge badge-pill badge-light border" style="font-size: 1rem;">
+                      {{ (user.totalHeadCount / 100) | number:'1.1-2' }}
+                    </span>
+                  </td>
+
                 </tr>
               </tbody>
             </table>
           </div>
-
         </div>
+
         <div class="card-footer bg-light border-top">
           <div class="row container-pagination">
             <div class="col-sm-4 col-12 text-sm-left text-center number-items-pagination">
@@ -191,8 +209,7 @@
               </button>
               <mat-form-field class="form-number-item">
                 <mat-label>Number items</mat-label>
-                <mat-select panelClass="options-number-item" [(ngModel)]="pageSizeType"
-                  (ngModelChange)="changePageSize()">
+                <mat-select panelClass="options-number-item" [(ngModel)]="pageSize" (ngModelChange)="refresh()">
                   <mat-option [value]="5"> 5 </mat-option>
                   <mat-option [value]="10"> 10 </mat-option>
                   <mat-option [value]="20"> 20 </mat-option>
@@ -203,7 +220,13 @@
             </div>
             <div class="col-sm-4 col-12 text-center total-pagination">
               <p class="mb-0 my-2">
-                {{ "TotalRecordsCount" | localize : totalItems }}
+                Total records: {{ totalItems }}
+              </p>
+              <p class="mb-0 text-primary font-weight-bold" style="font-size: 0.95rem;">
+                Total contribution / Total Staff =
+                <span class="text-danger">{{ totalContributionSum }}</span> /
+                <span>{{ totalItems }}</span> =
+                <span class="badge badge-success">{{ (totalContributionSum / totalItems * 100) | number:'1.0-0' }}%</span>
               </p>
             </div>
             <div class="col-sm-4 col-12 pagination-control">

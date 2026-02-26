@@ -298,10 +298,10 @@
                       </div>
                     </div>
                     <div class="row align-items-start" *ngFor="let bill of item.projectBillInfomation; let i = index">
-                      <div class="col-2 text-special">
+                      <div class="text-special" style="flex: 0 0 13%; max-width: 13%;">
                         <label><span>{{i+1}}. &nbsp;</span>{{bill.fullName}}</label>
                       </div>
-                      <div class="col-1 text-special role">
+                      <div class="text-special role" style="flex: 0 0 12%; max-width: 12%;">
                         <span>{{bill.billRole}}</span>
                       </div>
                       <div class="col-2 billRate" *ngIf="isGranted(Timesheets_TimesheetDetail_ViewBillRate)">

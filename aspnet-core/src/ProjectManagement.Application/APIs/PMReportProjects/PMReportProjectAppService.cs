@@ -145,106 +145,114 @@ namespace ProjectManagement.APIs.PMReportProjects
         [HttpGet]
         public async Task<object> GetInfoProject(long pmReportProjectId)
         {
-            var projectUser = WorkScope.GetAll<ProjectUser>()
-                .Where(x => x.User.UserType != UserType.FakeUser)
-                .Where(x => x.Status == ProjectUserStatus.Present && x.AllocatePercentage > 0);
-            var projectUserBill = WorkScope.GetAll<ProjectUserBill>()
-                .Where(x => x.User.IsDeleted == false)
-                .Where(x => x.isActive);
+            var pmReportProject = await WorkScope.GetAll<PMReportProject>()
+              .Include(x => x.Project)
+              .ThenInclude(p => p.Client)
+              .Include(x => x.PM)
+              .FirstOrDefaultAsync(x => x.Id == pmReportProjectId);
 
-            var query = WorkScope.GetAll<PMReportProject>().Where(x => x.Id == pmReportProjectId)
-                                .Select(x => new
-                                {
-                                    ProjectCode = x.Project.Code,
-                                    ProjectName = x.Project.Name,
-                                    ClientName = x.Project.Client.Name,
-                                    ClientCode = x.Project.Client.Code,
-                                    PmName = x.PM.FullName,
-                                    TotalBill = projectUserBill.Where(b => b.ProjectId == x.ProjectId).Count(),
-                                    TotalResource = projectUser.Where(r => r.ProjectId == x.ProjectId).Count(),
-                                    TotalNormalWorkingTime = x.TotalNormalWorkingTime,
-                                    TotalOverTime = x.TotalOverTime,
-                                    PmNote = x.Note,
-                                    AutomationNote = x.AutomationNote,
-                                    ProjectUserBills = (from pub in projectUserBill
-                                                        where pub.ProjectId == x.ProjectId
-                                                        select new ProjectUserBillDto
-                                                        {
-                                                            Id = pub.Id,
-                                                            UserId = pub.UserId,
-                                                            UserName = pub.User.Name,
-                                                            ProjectId = pub.ProjectId,
-                                                            ProjectName = pub.Project.Name,
-                                                            AccountName = pub.AccountName,
-                                                            BillRole = pub.BillRole,
-                                                            StartTime = pub.StartTime.Date,
-                                                            EndTime = pub.EndTime.Value.Date,
-                                                            Note = pub.Note,
-                                                            shadowNote = pub.shadowNote,
-                                                            isActive = pub.isActive,
-                                                            AvatarPath = pub.User.AvatarPath,
-                                                            FullName = pub.User.FullName,
-                                                            Branch = pub.User.BranchOld,
-                                                            BranchColor = pub.User.Branch.Color,
-                                                            BranchDisplayName = pub.User.Branch.DisplayName,
-                                                            PositionId = pub.User.PositionId,
-                                                            PositionName = pub.User.Position.ShortName,
-                                                            PositionColor = pub.User.Position.Color,
-                                                            EmailAddress = pub.User.EmailAddress,
-                                                            UserType = pub.User.UserType,
-                                                            UserLevel = pub.User.UserLevel,
-                                                            ChargeType = pub.ChargeType.HasValue ? pub.ChargeType : pub.Project.ChargeType,
-                                                            CreationTime = pub.CreationTime,
-                                                            HeadCount = pub.HeadCount,
-                                                            LinkedResources = pub.LinkedResources
-                                                                .Select(lr => new GetUserInfo
-                                                                {
-                                                                    Id = lr.UserId,
-                                                                    EmailAddress = lr.User.EmailAddress,
-                                                                    UserName = lr.User.UserName,
-                                                                    AvatarPath = lr.User.AvatarPath ?? "",
-                                                                    UserType = lr.User.UserType,
-                                                                    PositionId = lr.User.PositionId,
-                                                                    PositionColor = lr.User.Position.Color,
-                                                                    PositionName = lr.User.Position.ShortName,
-                                                                    UserLevel = lr.User.UserLevel,
-                                                                    BranchColor = lr.User.Branch.Color,
-                                                                    BranchDisplayName = lr.User.Branch.DisplayName,
-                                                                    IsActive = lr.User.IsActive,
-                                                                    FullName = lr.User.FullName,
-                                                                    Contribute = lr.Contribute
-                                                                }).ToList()
-                                                        }).ToList(),
-                                    TotalHeadCount = projectUserBill.Where(b => b.ProjectId == x.ProjectId).Sum(b => b.HeadCount)
-                                });
+            if (pmReportProject == null)
+                throw new UserFriendlyException("PMReportProject not found");
 
-            return await query.FirstOrDefaultAsync();
+            var projectId = pmReportProject.ProjectId;
+
+            var pmReportId = pmReportProject.PMReportId;
+
+            var totalResource = await WorkScope.GetAll<ProjectUser>()
+                .CountAsync(x => x.ProjectId == projectId && x.User.UserType != UserType.FakeUser
+                            && x.Status == ProjectUserStatus.Present && x.AllocatePercentage > 0);
+
+            var contributions = await WorkScope.GetAll<WeeklyContributionHistory>()
+                .Where(x => x.PMReportId == pmReportId && x.ProjectId == projectId && x.IsDeleted == false)
+                .Select(x => new { x.Id, x.Contribute, x.ProjectUserBillId, x.UserId })
+                .ToListAsync();
+
+            var contributionLookup = contributions
+                .ToDictionary(k => $"{k.ProjectUserBillId}_{k.UserId}", v => v);
+
+            var bills = await WorkScope.GetAll<ProjectUserBill>()
+                .Include(x => x.User).ThenInclude(u => u.Position)
+                .Include(x => x.User).ThenInclude(u => u.Branch)
+                .Include(x => x.Project)
+                .Include(x => x.LinkedResources).ThenInclude(lr => lr.User).ThenInclude(u => u.Position)
+                .Include(x => x.LinkedResources).ThenInclude(lr => lr.User).ThenInclude(u => u.Branch)
+                .Where(x => x.ProjectId == projectId && !x.User.IsDeleted && x.isActive)
+                .ToListAsync();
+
+            var projectUserBills = bills.Select(pub => new ProjectUserBillDto
+            {
+                Id = pub.Id,
+                UserId = pub.UserId,
+                UserName = pub.User.Name,
+                ProjectId = pub.ProjectId,
+                ProjectName = pub.Project.Name,
+                AccountName = pub.AccountName,
+                BillRole = pub.BillRole,
+                StartTime = pub.StartTime.Date,
+                EndTime = pub.EndTime?.Date,
+                Note = pub.Note,
+                shadowNote = pub.shadowNote,
+                isActive = pub.isActive,
+                AvatarPath = pub.User.AvatarPath,
+                FullName = pub.User.FullName,
+                Branch = pub.User.BranchOld,
+                BranchColor = pub.User.Branch?.Color,
+                BranchDisplayName = pub.User.Branch?.DisplayName,
+                PositionId = pub.User.PositionId,
+                PositionName = pub.User.Position?.ShortName,
+                PositionColor = pub.User.Position?.Color,
+                EmailAddress = pub.User.EmailAddress,
+                UserType = pub.User.UserType,
+                UserLevel = pub.User.UserLevel,
+                ChargeType = pub.ChargeType ?? pub.Project.ChargeType,
+                CreationTime = pub.CreationTime,
+                HeadCount = pub.HeadCount,
+                LinkedResources = pub.LinkedResources.Select(lr =>
+                {
+                    var hasHistory = contributionLookup.TryGetValue($"{pub.Id}_{lr.UserId}", out var history);
+                    return new GetUserInfo
+                    {
+                        WeeklyContributionHistoryId = hasHistory ? history.Id : (long?)null,
+                        Id = lr.UserId,
+                        BranchId = lr.User.BranchId,
+                        EmailAddress = lr.User.EmailAddress,
+                        UserName = lr.User.UserName,
+                        AvatarPath = lr.User.AvatarPath ?? "",
+                        UserType = lr.User.UserType,
+                        PositionId = lr.User.PositionId,
+                        PositionColor = lr.User.Position?.Color,
+                        PositionName = lr.User.Position?.ShortName,
+                        UserLevel = lr.User.UserLevel,
+                        BranchColor = lr.User.Branch?.Color,
+                        BranchDisplayName = lr.User.Branch?.DisplayName,
+                        IsActive = lr.User.IsActive,
+                        FullName = lr.User.FullName,
+                        Contribute = hasHistory ? history.Contribute : (byte)0
+                    };
+                }).ToList()
+            }).ToList();
+
+            return new
+            {
+                ProjectCode = pmReportProject.Project.Code,
+                ProjectName = pmReportProject.Project.Name,
+                ClientName = pmReportProject.Project.Client.Name,
+                ClientCode = pmReportProject.Project.Client.Code,
+                PmName = pmReportProject.PM.FullName,
+                TotalBill = projectUserBills.Count,
+                TotalResource = totalResource,
+                pmReportProject.TotalNormalWorkingTime,
+                pmReportProject.TotalOverTime,
+                PmNote = pmReportProject.Note,
+                pmReportProject.AutomationNote,
+                ProjectUserBills = projectUserBills,
+                TotalHeadCount = projectUserBills.Sum(b => b.HeadCount)
+            };
         }
 
         [HttpGet]
         public async Task<List<UserOfProjectDto>> GetWorkingResourceOfProject(long projectId)
         {
-            //var totalPercent = from pu in WorkScope.GetAll<ProjectUser>().Where(x => x.Project.Status != ProjectStatus.Closed)
-            //                   .Where(x => x.Status == ProjectUserStatus.Present )
-            //                   select new
-            //                   {
-            //                       UserId = pu.UserId,
-            //                       TotalPercent = pu.AllocatePercentage
-            //                   };
-
-            //var projectUsers = WorkScope.GetAll<ProjectUser>()
-            //                    .Where(x => x.ProjectId == projectId)
-            //                    .Where(x => x.Status == ProjectUserStatus.Present && x.AllocatePercentage > 0)
-            //                    .Where(x => x.User.UserType != UserType.FakeUser)
-            //                    .Select(x => new CurrentResourceDto
-            //                    {
-            //                        UserId= x.UserId,
-            //                        FullName = x.User.FullName,
-            //                        ProjectRole = x.ProjectRole.ToString(),
-            //                        AllocatePercentage = x.AllocatePercentage,
-            //                        TotalPercent = totalPercent.Where(t => t.UserId == x.UserId).Sum(x => x.TotalPercent)
-            //                    });
-            //return await projectUsers.ToListAsync();
             var query = _resourceManager.QueryUsersOfProject(projectId)
                 .Where(x => x.PUStatus == ProjectUserStatus.Present && x.AllocatePercentage > 0);
 

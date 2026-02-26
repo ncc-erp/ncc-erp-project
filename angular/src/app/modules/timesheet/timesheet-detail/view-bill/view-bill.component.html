@@ -115,9 +115,11 @@
           <thead class="bg-light">
             <tr>
               <th class="stt">#</th>
-              <!-- <th style="width: 350px;">Employee</th> -->
               <th style="width: 200px">Charge Name</th>
+              <th style="width: 200px">Head Count</th>
               <th style="width: 150px">Charge Role</th>
+              <th style="width: 150px">Start Date</th>
+              <th style="width: 150px">End Date</th>
               <th style="width: 100px" *ngIf="isShowRate()">
                 Rate<br />({{ getCurrencyName() }})
               </th>
@@ -172,6 +174,12 @@
                 </div>
               </td>
 
+              <!-- Head Count -->
+              <td class="text-center">
+                <span>{{
+                  bill.headCount
+                  }}</span>
+              </td>
               <!-- Charge Role -->
               <td class="text-center">
                 <span *ngIf="!bill.isEditing || isTSPopUp()">{{
@@ -196,6 +204,14 @@
                   >
                   </abp-validation-summary>
                 </div>
+              </td>
+
+              <td class="text-center">
+                <span>{{ bill.startTime | date : "dd-MM-yyyy" }}</span>
+              </td>
+
+              <td class="text-center">
+                <span>{{ bill.endTime | date : "dd-MM-yyyy" }}</span>
               </td>
 
               <!-- Bill Rate -->
@@ -587,8 +603,7 @@
                     *ngIf="isShowEditBtnOnRow()"
                     [disabled]="
                       data.billInfo.isComplete ||
-                      isEditingAnyRow() ||
-                      otTypeProcess
+                      isEditingAnyRow() 
                     "
                     class="btn btn-sm btn-edit-neutral mr-1 mt-3"
                     (click)="editUserBill(bill)"
@@ -601,8 +616,7 @@
                     *ngIf="isGranted(Timesheets_TimesheetDetail_RemoveAccount)"
                     [disabled]="
                       data.billInfo.isComplete ||
-                      isEditingAnyRow() ||
-                      otTypeProcess
+                      isEditingAnyRow()
                     "
                     class="btn btn-sm bg-danger ml-1 mt-3"
                     (click)="removeAccountTS(bill)"

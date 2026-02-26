@@ -46,9 +46,9 @@
                                 </mat-option>
                             </mat-select>
                         </mat-form-field>
-                        <div class="ml-2" [matTooltip]="!isValidCriteria?'Cần nhập Criteria để có thể gửi report!':''">
+                        <div class="ml-2" [matTooltip]="getSendReportTooltip()">
                             <button name="btn-send" (click)="sendWeeklyreport()" class=" btn btn-success"
-                                [disabled]="!isValidCriteria"
+                                [disabled]="!isValidCriteria || !hasLinkedResources()"
                                 *ngIf="selectedReport.isActive && permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_SendWeeklyReport) && isSentReport && selectedReport.pmReportProjectId!=0">
                                 <i class="fas fa-paper-plane"></i>
                             </button>
@@ -648,12 +648,12 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr *ngFor="let user of projectInfo.projectUserBills; let i =index">
+                                    <tr *ngFor="let pu of projectInfo.projectUserBills; let i =index">
                                         <td style="width: 250px; max-width: 350px;">
                                             <div style="width: 250px; max-width: 350px;">
-                                                <app-user-info [userData]="user"
+                                                <app-user-info [userData]="pu"
                                                     [isWeeklyReport]="true"
-                                                    [workType]="user.workType"
+                                                    [workType]="pu.workType"
                                                     [isHideLevel]="true"
                                                     [isSimplizeEmailAddress]="true">
                                                 </app-user-info>
@@ -671,7 +671,7 @@
                                                 <button [disabled]="projectUserProcess"
                                                     class="mat-menu-item  w-100"
                                                     *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_CurrentResource_Release)"
-                                                    (click)="releaseUser(user)">
+                                                    (click)="releaseUser(pu)">
                                                     <i class="fas fa-sign-out-alt mr-1"></i>
                                                     Release
                                                 </button>
@@ -679,7 +679,7 @@
                                         </td>
                                         <td class="text-center"
                                             style="min-width: 100px; max-width: 150px; width: 100px;">
-                                            {{user.billAccountName}}
+                                            {{pu.billAccountName}}
                                         </td>
                                         <td class="text-center td-fixed-width-100">
                                             <span class="d-flex align-items-center justify-content-between">
@@ -687,12 +687,12 @@
                                                     [collapseLine]="2"
                                                     style="flex: 1;"
                                                     class="mb-0 p-0  ml-2 max-line-content-2">
-                                                    {{user.billRole}}
+                                                    {{pu.billRole}}
                                                 </p>
                                             </span>
                                         </td>
                                         <td class="text-center td-fixed-width-100">
-                                            <span>{{user.headCount | number: '1.2-2':'en-US'}}</span>
+                                            <span>{{pu.headCount | number: '1.2-2':'en-US'}}</span>
                                         </td>
                                         <td class="text-center td-fixed-width-100">
                                             <span class="d-flex align-items-center justify-content-between">
@@ -700,7 +700,7 @@
                                                     [collapseLine]="2"
                                                     style="flex: 1;"
                                                     class="mb-0 p-0 ml-2 max-line-content-2">
-                                                    {{user.startTime | date:"dd/MM/yyyy"}}
+                                                    {{pu.startTime | date:"dd/MM/yyyy"}}
                                                 </p>
                                             </span>
                                             <span class="d-flex align-items-center justify-content-between">
@@ -708,36 +708,101 @@
                                                     [collapseLine]="2"
                                                     style="flex: 1;"
                                                     class="mb-0 p-0  ml-2 max-line-content-2">
-                                                    {{user.endTime | date:"dd/MM/yyyy"}}
+                                                    {{pu.endTime | date:"dd/MM/yyyy"}}
                                                 </p>
                                             </span>
                                         </td>
-                                        <td style="width: 300px">
-                                            <div *ngFor="let resource of user.linkedResources"
-                                                class="d-flex mb-1">
-                                                <div class="col-10">
-                                                    <app-user-info [isSmallerDiv]="true"
-                                                        [userData]="resource"
-                                                        [isWeeklyReport]="true"
-                                                        [viewMode]="1"
-                                                        [isHideLevel]="true">
-                                                    </app-user-info>
+                                        <td style="width: 400px">
+                                            <div class="text-right" *ngIf="selectedReport.isActive">
+                                                <button class="btn bg-blue btn-sm" (click)="addLinkResource(pu)" style="cursor: pointer; font-size: 10px;">
+                                                    <i class="fa fa-plus fa-s m-0"></i>
+                                                </button>
+                                            </div>
+                                            <div *ngIf="pu.createLinkResourceMode" style="max-width: 400px;" class="row d-flex">
+                                                <div class="col-10 mb-2 px-0">
+                                                    <mat-form-field appearance="outline" class="col-9">
+                                                        <mat-select panelClass="custom-panel-class" (closed)="focusOut()" [(ngModel)]="selectedResource"
+                                                            name="userBill" placeholder="select a resource *" required #userBill="ngModel">
+                                                            <mat-form-field style="position: sticky; top: 0; z-index: 2; background-color: white;">
+                                                                <input matInput [(ngModel)]="searchResource" placeholder="search"
+                                                                    (keydown)="$event.stopPropagation()" name="searchResource" #search>{{search.focus()}}
+                                                            </mat-form-field>
+                                                            <mat-option
+                                                                *ngFor="let resource of listAvailableResource | listFilter: 'fullName' : searchResource : 'emailAddress' "
+                                                                [value]="resource.id">
+                                                                <div class="mat-option-text">
+                                                                    <span class="data-name" class="user-info"> {{resource.fullName}} -
+                                                                        ({{resource.emailAddress}})
+                                                                    </span>
+                                                                </div>
+                                                            </mat-option>
+                                                        </mat-select>
+                                                    </mat-form-field>
+                                                    <input type="number" class="col-3" placeholder="% contribute" min="0" max="100" matTooltip="% contribute"
+                                                        [(ngModel)]="pu.contribute" />
+                                                    <mat-error class="mt-1" *ngIf="userBill.hasError('required') && userBill.touched" style="font-size: 13px;">
+                                                        This field is required
+                                                    </mat-error>
                                                 </div>
-                                                <div class="col-2 d-flex align-items-end justify-content-end">
-                                                    <span class="badge text-white"
-                                                        [style.backgroundColor]="Utils.getColorContribute(resource.contribute)"
-                                                        matTooltip="Contribute account">
-                                                        {{resource.contribute + '%'}}
-                                                    </span>
+                                                <div class="d-flex col-2 align-items-center" style="flex-direction: column;">
+                                                    <button [disabled]="selectedResource == null" class="mb-1 submit-btn"
+                                                        style="background: none; border: none;" [hidden]="showSearchAndFilter && !pu.createLinkResourceMode"
+                                                        (click)="saveLinkResource(pu)">
+                                                        <i style="color: green; font-size: 20px;" class="fas fa-check fa-2x "></i>
+                                                    </button>
+                                                    <i style="color: red; font-size: 20px;" class="fas fa-undo fa-2x"
+                                                        [hidden]="showSearchAndFilter && !pu.createLinkResourceMode" (click)="cancelLinkResource(pu)"></i>
                                                 </div>
                                             </div>
+                                            <div class="d-flex row" style="max-width: 400px;">
+                                                <div *ngFor="let resource of pu.linkedResources; let i = index" class="d-flex mb-1">
+                                                    <div class="col-7 d-flex px-0">
+                                                        <app-user-info [isSmallerDiv]="true" [userData]="resource" [viewMode]="1" [isHideLevel]="true">
+                                                        </app-user-info>
+                                                    </div>
+                                        
+                                                    <div class="col-5 d-flex px-1 align-items-end">
+                                                        <div class="col-7 px-0 d-flex align-items-center">
+                                                            <span *ngIf="!editingRows[resource.id]" class="badge text-white"
+                                                                [style.backgroundColor]="Utils.getColorContribute(resource.contribute)"
+                                                                style="min-width: 45px; cursor: pointer;">
+                                                                {{resource.contribute + '%'}}
+                                                            </span>
+                                        
+                                                            <input *ngIf="editingRows[resource.id]" type="number" class="form-control form-control-sm px-1"
+                                                                [(ngModel)]="resource.contribute" (keydown.enter)="saveWeeklyContribute(resource, pu.id)"
+                                                                (keydown.esc)="cancelUpdate(resource)" appFocus />
+                                                        </div>
+                                        
+                                                        <div *ngIf="selectedReport.isActive" class="col-5 d-flex justify-content-around px-0">
+                                                            <button *ngIf="!editingRows[resource.id]" (click)="edit(resource)"
+                                                                class="btn btn-xs btn-clean btn-icon">
+                                                                <i class="fa fa-pencil-alt text-primary" style="font-size: 12px;"></i>
+                                                            </button>
+                                                            <button class="btn btn-xs btn-clean btn-icon" (click)="removeLinkResource(resource.id, pu.id)">
+                                                                <i class="fa fa-times" style="font-size: 12px;"></i>
+                                                            </button>
+                                        
+                                                            <ng-container *ngIf="editingRows[resource.id]">
+                                                                <button (click)="saveWeeklyContribute(resource, pu.id)" class="btn btn-xs btn-clean btn-icon">
+                                                                    <i class="fas fa-check text-success" style="font-size: 14px;"></i>
+                                                                </button>
+                                                                <button (click)="cancelUpdate(resource)" class="btn btn-xs btn-clean btn-icon">
+                                                                    <i class="fas fa-undo text-danger" style="font-size: 14px;"></i>
+                                                                </button>
+                                                            </ng-container>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                           
                                         </td>
                                         <td style="white-space: break-spaces; min-width: 200px;">
                                             <div class="d-flex align-items-center"
                                                 style="width: 100%;">
                                                 <p style="flex: 1; max-width: 100%;"
                                                     class="mb-0 p-0 ml-2 ">
-                                                    {{ user.note }}
+                                                    {{ pu.note }}
                                                 </p>
                                                 <i style="color: #585858;"
                                                     class="fas fa-ellipsis-v ml-1"
@@ -745,7 +810,7 @@
                                                 </i>
                                                 <mat-menu #menu3="matMenu">
                                                     <button class="mat-menu-item"
-                                                        (click)="editBillNote(user)">
+                                                        (click)="editBillNote(pu)">
                                                         <i class="fas fa-edit mr-2 fa-lg"></i>
                                                         Edit Note
                                                     </button>

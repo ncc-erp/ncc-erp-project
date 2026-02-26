@@ -135,6 +135,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
 
   public readonly FILTER_CONFIG: InputFilterDto[] = [
     { propertyName: 'fullName', comparisions: [0, 6, 7, 8], displayName: "User Name" },
+    { propertyName: 'PoolNote', comparisions: [6], displayName: "Note" },
     { propertyName: 'used', comparisions: [0, 1, 2, 3, 4], displayName: "Used" },
     { propertyName: 'userType', comparisions: [0], displayName: "User Type", filterType: 3, dropdownData: this.userTypeParam },
   ];

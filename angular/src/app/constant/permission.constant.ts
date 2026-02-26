@@ -445,6 +445,10 @@ export const PERMISSIONS_CONSTANT = {
 
        // #endregion
 
+       // #region Weekly contribution report
+       WeeklyContributionReport: "WeeklyContributionReport",
+       // #endregion
+
        // #region Weekly report
        WeeklyReport: "WeeklyReport",
        WeeklyReport_View: "WeeklyReport.View",

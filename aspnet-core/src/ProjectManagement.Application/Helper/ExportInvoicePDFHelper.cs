@@ -46,9 +46,9 @@ namespace ProjectManagement.Helper
                     {
                         // Calculate total OT (in days or hours) based on OT type and user settings
                         var workingDayOt = ExtensionMethod.GetWorkingDayOT(ot, tsUser);
-                        var otMultiplier = Math.Round((double)ot.Multiplier, 3);
+                        var otMultiplier = (double)ot.Multiplier;
                         var otBillRate = tsUser.BillRateDisplay * otMultiplier;
-                        var lineTotalOt = workingDayOt * otBillRate;
+                        var lineTotalOt = Math.Round(workingDayOt * otBillRate, 2);
 
                         // Fill OT row
                         evenClass = (rowIndex % 2 == 0) ? "" : "_even";

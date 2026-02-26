@@ -1139,16 +1139,40 @@
                                                     </td>
                                                     <td style="width: 300px">
                                                         <div *ngFor="let resource of user.linkedResources" class="d-flex mb-1">
-                                                            <div class="col-10">
-                                                                <app-user-info [isHideLevel]="true" [isSmallerDiv]="true" [userData]="resource" [isWeeklyReport]="true" [viewMode]="1">
-                                                                </app-user-info>
-                                                            </div>
-                                                            <div class="col-2 d-flex align-items-end justify-content-end">
-                                                                <span class="badge text-white" [style.backgroundColor]="Utils.getColorContribute(resource.contribute)"
-                                                                    matTooltip="Contribute account">
-                                                                    {{resource.contribute + '%'}}
-                                                                </span>
-                                                            </div>
+                                                           <div class="col-7 d-flex px-0">
+                                                    <app-user-info [isSmallerDiv]="true" [userData]="resource" [viewMode]="1" [isHideLevel]="true">
+                                                    </app-user-info>
+                                                </div>
+                                        
+                                                <div class="col-5 d-flex px-1 align-items-end">
+                                                    <div class="col-7 px-0 d-flex align-items-center">
+                                                        <span *ngIf="!editingRows[resource.id]" class="badge text-white"
+                                                            [style.backgroundColor]="Utils.getColorContribute(resource.contribute)" 
+                                                            style="min-width: 45px; cursor: pointer;">
+                                                            {{resource.contribute + '%'}}
+                                                        </span>
+                                        
+                                                        <input *ngIf="editingRows[resource.id]" type="number" class="form-control form-control-sm px-1"
+                                                            [(ngModel)]="resource.contribute" (keydown.enter)="saveWeeklyContribute(resource, user.id)"
+                                                            (keydown.esc)="cancelUpdate(resource)" appFocus />
+                                                    </div>
+                                        
+                                                    <div *ngIf="isShowEditContribute()"  class="col-5 d-flex justify-content-around px-0">
+                                                        <button *ngIf="!editingRows[resource.id]" (click)="edit(resource)"
+                                                            class="btn btn-xs btn-clean btn-icon">
+                                                            <i class="fa fa-pencil-alt text-primary" style="font-size: 12px;"></i>
+                                                        </button>
+                                        
+                                                        <ng-container *ngIf="editingRows[resource.id]">
+                                                            <button (click)="saveWeeklyContribute(resource, user.id)" class="btn btn-xs btn-clean btn-icon">
+                                                                <i class="fas fa-check text-success" style="font-size: 14px;"></i>
+                                                            </button>
+                                                            <button (click)="cancelUpdate(resource)" class="btn btn-xs btn-clean btn-icon">
+                                                                <i class="fas fa-undo text-danger" style="font-size: 14px;"></i>
+                                                            </button>
+                                                        </ng-container>
+                                                    </div>
+                                                </div>
                                                         </div>
                                                     </td>
                                                     <td style="white-space: break-spaces;">

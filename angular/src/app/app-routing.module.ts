@@ -89,6 +89,8 @@ import { CVStatusComponent } from './modules/admin/cvstatus/cvstatus.component';
 import { WillPoolComponent } from './modules/delivery-management/delivery/available-resource-tab/will-pool/will-pool.component';
 import { ProductAccountInfoComponent } from './modules/pm-management/product-projects/product-project-detail/product-account-info/product-account-info.component';
 import { PunishmentComponent } from './modules/punishment/punishment.component';
+import { WeeklyContributionComponent } from './modules/weekly-contribution/weekly-contribution.component';
+import { DetailWeeklyContributionComponent } from './modules/weekly-contribution/detail-weekly-contribution/detail-weekly-contribution.component';
 
 @NgModule({
   imports: [
@@ -390,6 +392,16 @@ import { PunishmentComponent } from './modules/punishment/punishment.component';
           {
             path: "weekly-report",
             component: WeeklyReportTabComponent,
+            canActivate: [AppRouteGuard],
+          },
+          {
+            path: "contribution-reports",
+            component: WeeklyContributionComponent,
+            canActivate: [AppRouteGuard],
+          },
+           {
+            path: "detail-weekly-contribution",
+            component: DetailWeeklyContributionComponent,
             canActivate: [AppRouteGuard],
           },
           {

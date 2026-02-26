@@ -1,0 +1,81 @@
+<section class="content px-2 pt-2">
+  <div class="container-fluid">
+    <div class="card">
+      <div class="card-header">
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <button type="button" class="btn bg-blue" (click)="getDataPage(1)">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+          <input type="text" class="form-control" name="keyword" placeholder="Search" [(ngModel)]="searchText"
+            (keyup.enter)="getDataPage(1)" />
+        </div>
+      </div>
+    </div>
+    <div class="card-body table-responsive p-0">
+      <table class="table table-hover text-nowrap">
+        <thead class="bg-light">
+          <tr>
+            <th>STT</th>
+            <th>Report Name</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of weeklyContributions | paginate: {
+                    id: 'server',
+                    itemsPerPage: pageSize,
+                    currentPage: pageNumber,
+                    totalItems: totalItems
+                  }; let i = index">
+            <td>{{ (pageNumber - 1) * pageSize + i + 1 }}</td>
+            <td><span class="hyperlink text-primary" style="cursor: pointer; font-weight: bold;"
+                (click)="showDetail(item)">
+                {{ item.pmReportName }}
+              </span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card-footer bg-light border-top">
+      <div class="row justify-content-between">
+        <div class="col-sm-4 col-12 text-sm-left card-footer-wrapper">
+          <button class="btn btn-secondary mb-2" (click)="refresh()">
+            <i class="fas fa-redo-alt"></i>
+          </button>
+          <mat-form-field style="max-width:100px; margin-left: 30px">
+            <mat-label>Number items</mat-label>
+            <mat-select [(ngModel)]="pageSizeType" (ngModelChange)="changePageSize()">
+              <mat-option [value]="5">
+                5
+              </mat-option>
+              <mat-option [value]="10">
+                10
+              </mat-option>
+              <mat-option [value]="20">
+                20
+              </mat-option>
+              <mat-option [value]="50">
+                50
+              </mat-option>
+              <mat-option [value]="100">
+                100
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="">
+          <p class="mb-0 my-2">
+            {{ "TotalRecordsCount" | localize: totalItems }}
+          </p>
+        </div>
+        <div class="col-sm-4 col-12">
+          <div class="float-sm-right m-auto">
+            <abp-pagination-controls [maxSize]="6" id="server" (pageChange)="getDataPage($event)">
+            </abp-pagination-controls>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

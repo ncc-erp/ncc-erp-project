@@ -452,7 +452,12 @@ namespace ProjectManagement.Services.ProjectUserBills
 
         public async Task<GetUserInfo> LinkOneLinkedResource(LinkedResourceDto input)
         {
-            ValidateProjectUserBill(input.ProjectUserBillId);
+            var projectUserBill = _workScope.GetAll<Entities.ProjectUserBill>()
+                  .Where(s => s.Id == input.ProjectUserBillId)
+                  .FirstOrDefault();
+
+            if (projectUserBill == null)
+                throw new UserFriendlyException($"ProjectUserBill with Id {input.ProjectUserBillId} does not exist!");
 
             ValidateUser(input.UserId);
 
@@ -469,6 +474,19 @@ namespace ProjectManagement.Services.ProjectUserBills
             };
 
             var linkedId = await _workScope.InsertAndGetIdAsync(newLinkedResource);
+            if (input.PmReportId.HasValue)
+            {
+                var history = new WeeklyContributionHistory
+                {
+                    ProjectUserBillId = input.ProjectUserBillId,
+                    PMReportId = input.PmReportId.Value,
+                    Contribute = input.Contribute,
+                    UserId = input.UserId,
+                    ProjectId = projectUserBill.ProjectId,
+                    TenantId = AbpSession.TenantId
+                };
+                await _workScope.InsertAndGetIdAsync(history);
+            }
             var userInfo = await _workScope.GetAll<LinkedResource>()
                 .Where( lr => lr.Id == linkedId)
                 .Select(lr => new GetUserInfo()
@@ -532,6 +550,19 @@ namespace ProjectManagement.Services.ProjectUserBills
 
                 if (existingLinkedResource != null)
                     await _workScope.DeleteAsync(existingLinkedResource);
+
+                var contributionHistories = await _workScope.GetAll<WeeklyContributionHistory>()
+                    .Where(wch => wch.UserId == userId && wch.ProjectUserBillId == input.ProjectUserBillId && wch.PMReportId == input.PMReportId)
+                    .ToListAsync();
+
+                if (contributionHistories.Count > 0)
+                {
+                    foreach (var history in contributionHistories)
+                    {
+                        await _workScope.DeleteAsync(history);
+                    }
+                }
+
             }
         }
 

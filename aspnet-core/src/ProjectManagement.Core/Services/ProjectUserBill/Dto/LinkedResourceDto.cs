@@ -11,6 +11,8 @@ namespace ProjectManagement.Services.ProjectUserBill.Dto
 
         [Required]
         public List<long> UserIds { get; set; }
+
+        public long? PMReportId { get; set; }
     }
 
     public class RemoveLinkResource
@@ -30,5 +32,7 @@ namespace ProjectManagement.Services.ProjectUserBill.Dto
 
         [Range(0, 100)]
         public byte Contribute {  get; set; }
+
+        public long? PmReportId { get; set; }
     }
 }

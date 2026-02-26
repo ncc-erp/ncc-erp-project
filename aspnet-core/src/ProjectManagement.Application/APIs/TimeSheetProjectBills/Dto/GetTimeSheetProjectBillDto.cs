@@ -22,7 +22,7 @@ namespace ProjectManagement.APIs.TimeSheetProjectBills.Dto
         public float BillRateDisplay { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime? EndTime { get; set; }
-        //public CurrencyCode Currency { get; set; }
+        public float HeadCount { get; set; }
         public string Note { get; set; }
         public string ShadowNote { get; set; }
         public bool IsActive { get; set; }

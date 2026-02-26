@@ -465,6 +465,10 @@ namespace ProjectManagement.Authorization
 
         #endregion Project
 
+        #region weekly contribution
+        public const string WeeklyContributionReport = "WeeklyContributionReport";
+        #endregion
+
         #region Weekly report
 
 
@@ -1198,8 +1202,12 @@ namespace ProjectManagement.Authorization
 
                     #endregion Project
 
+                    #region weekly contribution report
+                    PermissionNames.WeeklyContributionReport,
+                    #endregion 
+
                     #region Weekly report
-                    
+
                     PermissionNames.WeeklyReport ,
                     PermissionNames.WeeklyReport_View ,
                     PermissionNames.WeeklyReport_CloseAndAddNew ,
@@ -1931,13 +1939,17 @@ namespace ProjectManagement.Authorization
                  new SystemPermission{ Name =  PermissionNames.Projects_TrainingProjects_ProjectDetail_TabProjectFile_UploadFile, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Upload File" },
                  new SystemPermission{ Name =  PermissionNames.Projects_TrainingProjects_ProjectDetail_TabProjectFile_DeleteFile, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Delete File" },
 
-                 #endregion Project > Training Projects
+                #endregion Project > Training Projects
 
-                 #endregion Project
+                #endregion Project
 
-                 #region Weekly Report
+                #region weekly contribution Report
+               
+                new SystemPermission{ Name =  PermissionNames.WeeklyContributionReport, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Weekly Contribution Report" },
+                #endregion
+                #region Weekly Report
 
-                 new SystemPermission{ Name =  PermissionNames.WeeklyReport, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Weekly Report" },
+                new SystemPermission{ Name =  PermissionNames.WeeklyReport, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Weekly Report" },
                  new SystemPermission{ Name =  PermissionNames.WeeklyReport_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Wiew" },
                  new SystemPermission{ Name =  PermissionNames.WeeklyReport_CloseAndAddNew, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Clost And Add New" },
                  new SystemPermission{ Name =  PermissionNames.WeeklyReport_CollectTimesheet, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Collect Timesheet" },
@@ -3475,10 +3487,18 @@ namespace ProjectManagement.Authorization
             },
     },
 
-    #endregion Project > TrainingProject
+                #endregion Project > TrainingProject
 
                 #endregion Projects
 
+                #region WeeklyContributionReport
+
+                 new SystemPermission {
+                    Name = PermissionNames.WeeklyContributionReport, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Weekly Contribution Report",
+                        Childrens = new List < SystemPermission > () {
+                        },
+                },
+                #endregion
                 #region WeeklyReport
 
                 new SystemPermission {

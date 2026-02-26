@@ -14,7 +14,7 @@ namespace ProjectManagement.Helper
         /// <returns></returns>
         public static double GetWorkingDayOT(TimesheetProjectBillOtTypeDto ot, TimesheetUser tsUser)
         {
-            var otHours = (float)ot.Hours;
+            var otHours = (double)ot.Hours;
             double result;
 
             if ((tsUser.Mode == ExportInvoiceMode.MontlyToDaily && tsUser.ChargeType == ChargeType.Monthly) || tsUser.ChargeType == ChargeType.Daily)
@@ -30,7 +30,7 @@ namespace ProjectManagement.Helper
                 result = (otHours / tsUser.DefaultWorkingHours) / tsUser.TimesheetWorkingDay;
             }
 
-            return Math.Round(result, 3);
+            return result;
         }
     }
 }

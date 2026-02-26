@@ -364,14 +364,14 @@
                                     </div>
                                 </td>
                                 <td style="max-width: 400px;">
-                                    <div class="text-right" *ngIf="!bill.createLinkResourceMode">
+                                    <!-- <div class="text-right" *ngIf="!bill.createLinkResourceMode">
                                         <button class="btn bg-blue btn-sm"
                                             (click)="addLinkResource(bill)"
                                             [disabled]="bill.createMode || userBillProcess || !permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_UpdateUserToBillAccount)"
                                             style="cursor: pointer; font-size: 10px;">
                                             <i class="fa fa-plus fa-s m-0"></i>
                                         </button>
-                                    </div>
+                                    </div> -->
                                     <div *ngIf="bill.createLinkResourceMode" style="max-width: 400px;" class="row d-flex">
                                         <div class="col-10 mb-2 px-0">
                                             <mat-form-field appearance="outline" class="col-9">
@@ -396,7 +396,7 @@
                                                     </mat-option>
                                                 </mat-select>
                                             </mat-form-field>
-                                            <input                
+                                            <!-- <input                
                                                 type="number"
                                                 class="col-3"
                                                 placeholder="% contribute"
@@ -404,7 +404,7 @@
                                                 max="100"
                                                 matTooltip="% contribute"
                                                 [(ngModel)]="bill.contribute"
-                                            />   
+                                            />    -->
                                             <mat-error class="mt-1" *ngIf="userBill.hasError('required') && userBill.touched" style="font-size: 13px;">
                                                 This field is required
                                             </mat-error>
@@ -442,7 +442,7 @@
                                                             matTooltip="Contribute account">
                                                             {{resource.contribute + '%'}}
                                                         </span>
-                                                        <input  
+                                                        <!-- <input  
                                                             *ngIf="editingRows[bill.id] && editingRows[bill.id][i]?.contribute" 
                                                             type="number"
                                                             placeholder="% contribute"
@@ -455,21 +455,21 @@
                                                             (keydown.enter)="updateContribute(bill.id, resource.id, resource.contribute)" 
                                                             (keydown.esc)="cancelUpdate(bill.id, resource, i, 'contribute')" 
                                                             appFocus
-                                                        />      
+                                                        />       -->
                                                     </div>
                                                     <div class="col-6 align-items-end d-flex">
-                                                        <button *ngIf="!editingRows[bill.id] || !editingRows[bill.id][i]?.contribute"
+                                                        <!-- <button *ngIf="!editingRows[bill.id] || !editingRows[bill.id][i]?.contribute"
                                                             (click)="edit(bill.id, i, 'contribute', resource.contribute)"
                                                             [disabled]="bill.createMode || userBillProcess"
                                                             class="col-6 button-action d-flex justify-content-end">
                                                             <i class="fa fa-pencil-alt"></i>
-                                                        </button>
-                                                        <button *ngIf="!editingRows[bill.id] || !editingRows[bill.id][i]?.contribute" 
+                                                        </button> -->
+                                                        <!-- <button *ngIf="!editingRows[bill.id] || !editingRows[bill.id][i]?.contribute" 
                                                             (click)="removeLinkResource(resource.id, bill.id)"
                                                             [disabled]="bill.createMode || userBillProcess"
                                                             class="col-6 button-action d-flex justify-content-end">
                                                             <i class="fa fa-times"></i>  
-                                                        </button>
+                                                        </button> -->
                                                     </div>
                                                 </div>
                                             </div>

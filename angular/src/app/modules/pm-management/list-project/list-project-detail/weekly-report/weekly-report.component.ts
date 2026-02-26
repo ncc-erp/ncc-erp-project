@@ -44,11 +44,7 @@ import { ProjectCriteriaResultDto } from "../../../../../service/model/project-c
 import { cloneDeep } from "lodash-es";
 import { map } from "rxjs/operators";
 import { Observable, Observer } from "rxjs";
-
-// import { ApproveDialogComponent } from './../../../../pm-management/list-project/list-project-detail/weekly-report/approve-dialog/approve-dialog.component';
-
 import { pmReportProjectDto } from "./../../../../../service/model/pmReport.dto";
-
 import { ViewChild } from "@angular/core";
 import {
   PagedListingComponentBase,
@@ -70,6 +66,15 @@ import { EditNoteResourceComponent } from "@app/modules/delivery-management/deli
 import { AppConfigurationService } from "@app/service/api/app-configuration.service";
 import { AddEditIssuseComponent } from "./add-edit-issuse/add-edit-issuse.component";
 import { EditNoteDialogComponent } from "../project-bill/add-note-dialog/edit-note-dialog.component";
+import { PMReportProjectContributionService } from "../../../../../service/api/pmreport-project-contribution.service";
+import { ProjectUserBillService } from "./../../../../../service/api/project-user-bill.service";
+import {
+  projectUserBillDto,
+  ProjectRateDto,
+} from "./../../../../../service/model/project.dto";
+import { ResourceManagerService } from "@app/service/api/resource-manager.service";
+import { IGetUserInfo } from "@app/service/model/user.inteface";
+import { ReviewContributionComponent } from "./review-contribution/review-contribution.component";
 
 @Component({
   selector: "app-weekly-report",
@@ -130,6 +135,7 @@ export class WeeklyReportComponent
     this.APP_ENUM.PMReportProjectRiskStatus,
   );
   pmReportList: pmReportDto[] = [];
+  public userForUserBill: UserDto[] = [];
   public activeReportId: number;
   public pmReportProjectId: number;
   public isEditWeeklyReport: boolean = false;
@@ -160,6 +166,8 @@ export class WeeklyReportComponent
   public officalResourceList: any[] = [];
   public selectedReport = {} as pmReportDto;
   public projectCurrentSupportUser: any = [];
+  public listAllResource = [];
+  public listAvailableResource = [];
   overTimeNoCharge: number = 0;
   totalNormalWorkingTime: number = 0;
   totalOverTime: number = 0;
@@ -170,6 +178,9 @@ export class WeeklyReportComponent
   isRefresh: boolean = false;
   isStart: boolean = false;
   checkViewSubject: false;
+
+  editingRows: { [key: number]: boolean } = {};
+  tempContributeValues: { [key: number]: number } = {};
 
   public priority = [
     { value: this.APP_ENUM.Priority.Low, viewValue: "Low" },
@@ -312,6 +323,9 @@ export class WeeklyReportComponent
     private pjCriteriaService: CriteriaService,
     private pjCriteriaResultService: ProjectCriteriaResultService,
     private settingService: AppConfigurationService,
+    private PMReportProjectContributionService: PMReportProjectContributionService,
+    private projectUserBillService: ProjectUserBillService,
+    private resourceManagerService: ResourceManagerService,
   ) {
     super(injector);
     this.projectId = Number(route.snapshot.queryParamMap.get("id"));
@@ -350,6 +364,7 @@ export class WeeklyReportComponent
   }
   ngOnInit(): void {
     this.getAllPmReport();
+    this.getListUserAndResources();
     let currentDate = new Date();
     currentDate.setDate(
       currentDate.getDate() - ((currentDate.getDay() + 6) % 7),
@@ -653,25 +668,30 @@ export class WeeklyReportComponent
   }
 
   public sendWeeklyreport() {
-    abp.message.confirm(
-      `send report ${this.selectedReport.pmReportName}? `,
-      "",
-      (result: boolean) => {
-        if (result) {
-          this.reportService
-            .sendReport(
-              this.projectId,
-              this.selectedReport.reportId,
-              this.status,
-            )
-            .pipe(catchError(this.reportService.handleError))
-            .subscribe((data) => {
-              abp.notify.success("Send report successful");
-              this.getAllPmReport();
-            });
-        }
+    const dialogRef = this.dialog.open(ReviewContributionComponent, {
+      width: "700px",
+      maxHeight: "90vh",
+      data: {
+        projectUserBills: this.projectInfo.projectUserBills,
+        reportName: this.selectedReport.pmReportName,
       },
-    );
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === true) {
+        this.confirmSendReport();
+      }
+    });
+  }
+
+  private confirmSendReport() {
+    this.reportService
+      .sendReport(this.projectId, this.selectedReport.reportId, this.status)
+      .pipe(catchError(this.reportService.handleError))
+      .subscribe((data) => {
+        abp.notify.success("Send report successful");
+        this.getAllPmReport();
+      });
   }
 
   getProjectInfo(cancel?: boolean) {
@@ -2204,5 +2224,151 @@ export class WeeklyReportComponent
         user.note = rs;
       }
     });
+  }
+
+  edit(resource: any) {
+    this.tempContributeValues[resource.id] = resource.contribute;
+    this.editingRows[resource.id] = true;
+  }
+
+  cancelUpdate(resource: any) {
+    if (this.tempContributeValues[resource.id] !== undefined) {
+      resource.contribute = this.tempContributeValues[resource.id];
+    }
+    this.editingRows[resource.id] = false;
+    delete this.tempContributeValues[resource.id];
+  }
+
+  saveWeeklyContribute(resource: any, projectUserBillId: number) {
+    this.isLoading = true;
+    const request = {
+      userId: resource.id,
+      projectUserBillId: projectUserBillId,
+      contribute: resource.contribute,
+      projectId: this.projectId,
+      PMReportId: this.selectedReport?.reportId,
+    };
+    this.PMReportProjectContributionService.updateWeeklyHistory(
+      request,
+    ).subscribe(
+      () => {
+        abp.notify.success(
+          `Weekly contributions have been updated: ${this.selectedReport?.pmReportName}`,
+        );
+        this.editingRows[resource.id] = false;
+        this.isLoading = false;
+      },
+      () => (this.isLoading = false),
+    );
+  }
+
+  public removeLinkResource(userId, id) {
+    const req = {
+      projectUserBillId: id,
+      userIds: [userId],
+      pmReportId: this.selectedReport?.reportId,
+    };
+
+    abp.message.confirm("Remove linked resource?", "", (result: boolean) => {
+      if (result) {
+        this.isLoading = true;
+        this.projectUserBillService
+          .RemoveLinkedResource(req)
+          .pipe(catchError(this.projectUserBillService.handleError))
+          .subscribe(
+            () => {
+              abp.notify.success(`Linked Resource Removed Successfully!`);
+              this.getProjectInfo();
+            },
+            () => {
+              this.isLoading = false;
+            },
+          );
+      }
+    });
+  }
+
+  public addLinkResource(userBill: projectUserBillDto): void {
+    let listLinkedResourceId = userBill.linkedResources.map((item) => item.id);
+    this.listAvailableResource = this.listAllResource.filter(
+      (resource) => !listLinkedResourceId.includes(resource.id),
+    );
+    userBill.createLinkResourceMode = true;
+    this.userBillProcess = true;
+    this.showSearchAndFilter = false;
+    this.isAddingResource = true;
+    userBill.contribute = 0;
+  }
+
+  private getListUserAndResources() {
+    this.resourceManagerService
+      .GetListAllUserShortInfo()
+      .pipe(catchError(this.userService.handleError))
+      .subscribe((data) => {
+        this.userForUserBill = data.result;
+        this.listAllResource = this.userForUserBill.filter(
+          (item) => item.isActive,
+        );
+      });
+  }
+
+  public cancelLinkResource(userBill): void {
+    userBill.createLinkResourceMode = false;
+    this.selectedResource = null;
+    this.userBillProcess = false;
+    this.searchResource = "";
+    this.showSearchAndFilter = true;
+    this.isAddingResource = false;
+    userBill.contribute = 0;
+  }
+
+  public focusOut() {
+    this.searchUserBill = "";
+    this.searchResource = "";
+  }
+
+  public saveLinkResource(userBill: projectUserBillDto): void {
+    const reqAdd = {
+      projectUserBillId: userBill.id,
+      userId: this.selectedResource,
+      contribute: userBill.contribute || 0,
+      pmReportId: this.selectedReport?.reportId,
+    };
+
+    this.projectUserBillService
+      .LinkOneProjectUserBillAccount(reqAdd)
+      .pipe(catchError(this.projectUserBillService.handleError))
+      .subscribe((data) => {
+        const userInfo: IGetUserInfo = data.result;
+        abp.notify.success("Linked resources updated successfully");
+        userBill.linkedResources.push(userInfo);
+        userBill.createLinkResourceMode = false;
+        this.selectedResource = null;
+        this.userBillProcess = false;
+        this.searchResource = "";
+        this.showSearchAndFilter = true;
+        this.isAddingResource = false;
+        this.getProjectInfo();
+      });
+  }
+
+  public hasLinkedResources(): boolean {
+    if (!this.projectInfo || !this.projectInfo.projectUserBills) {
+      return false;
+    }
+    const invalidBill = this.projectInfo.projectUserBills.find(
+      (bill) => !bill.linkedResources || bill.linkedResources.length === 0,
+    );
+    return invalidBill === undefined;
+  }
+
+  public getSendReportTooltip(): string {
+    if (!this.isValidCriteria) {
+      return "Please enter Criteria to be able to send the report!";
+    }
+    if (!this.hasLinkedResources()) {
+      return "Each Bill Account must have at least 1 Linked Resource!";
+    }
+    return "";
   }
 }

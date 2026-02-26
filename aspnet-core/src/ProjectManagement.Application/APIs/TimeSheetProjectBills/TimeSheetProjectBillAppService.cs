@@ -32,6 +32,7 @@ namespace ProjectManagement.APIs.TimeSheetProjectBills
             var isViewRate = PermissionChecker.IsGranted(PermissionNames.Timesheets_TimesheetDetail_ViewBillRate);
 
             var query = WorkScope.GetAll<TimesheetProjectBill>()
+                .AsNoTracking()
                 .Where(x => x.TimesheetId == timesheetId && x.ProjectId == projectId)
                 .OrderBy(x => x.User.EmailAddress)
                          .Select(x => new GetTimeSheetProjectBillDto
@@ -64,7 +65,7 @@ namespace ProjectManagement.APIs.TimeSheetProjectBills
                              UserLevel = x.User.UserLevel,
                              Currency = x.CurrencyId == null ? x.Project.Currency.Name : x.Currency.Name,
                              ChargeType = x.ChargeType == null ? x.Project.ChargeType : x.ChargeType,
-                             //ProjectBillInfomation = $"<b>{x.User.FullName}</b> - {x.BillRole} - {x.BillRate} - {x.Note} - {x.ShadowNote} <br>"
+                             HeadCount = x.ProjectUserBill.HeadCount,
                              OtTypes = x.TimesheetProjectBillOtTypes
                                         .Select(ot => new TimesheetProjectBillOtTypesDto
                                         {

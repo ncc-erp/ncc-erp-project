@@ -882,8 +882,8 @@ namespace ProjectManagement.APIs.TimesheetProjects
                 invoiceSheet.Cells[rowIndex, 3].Value = tsUser.ProjectName;
                 invoiceSheet.Cells[rowIndex, 4].Value = tsUser.BillRateDisplay;
                 invoiceSheet.Cells[rowIndex, 5].Value = tsUser.CurrencyName + "/" + tsUser.ChargeTypeDisplay;
-                invoiceSheet.Cells[rowIndex, 6].Value = Math.Round(tsUser.NormalWorkingDay, 3);
-                invoiceSheet.Cells[rowIndex, 6].Style.Numberformat.Format = "0.000";
+                invoiceSheet.Cells[rowIndex, 6].Value = tsUser.NormalWorkingDay;
+                invoiceSheet.Cells[rowIndex, 6].Style.Numberformat.Format = "0.00";
                 invoiceSheet.Cells[rowIndex, 7].Value = tsUser.NormalLineTotal;
                 sumLineTotal += tsUser.NormalLineTotal;
                 rowIndex++;
@@ -902,9 +902,9 @@ namespace ProjectManagement.APIs.TimesheetProjects
 
                         // Calculate total OT (in days or hours) based on OT type and user settings
                         var workingDayOt = ExtensionMethod.GetWorkingDayOT(ot, tsUser);
-                        var otMultiplier = Math.Round((double)ot.Multiplier, 3);
+                        var otMultiplier = (double)ot.Multiplier;
                         var otBillRate = tsUser.BillRateDisplay * otMultiplier;
-                        var lineTotalOt = workingDayOt * otBillRate;
+                        var lineTotalOt = Math.Round(workingDayOt * otBillRate, 2);
 
                         // Fill OT row
                         invoiceSheet.Cells[rowIndex, 2].Value = $"{tsUser.FullName} ({ot.OtType})";
@@ -912,7 +912,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
                         invoiceSheet.Cells[rowIndex, 4].Value = otBillRate;
                         invoiceSheet.Cells[rowIndex, 5].Value = tsUser.CurrencyName + "/" + tsUser.ChargeTypeDisplay;
                         invoiceSheet.Cells[rowIndex, 6].Value = workingDayOt;
-                        invoiceSheet.Cells[rowIndex, 6].Style.Numberformat.Format = "0.000";
+                        invoiceSheet.Cells[rowIndex, 6].Style.Numberformat.Format = "0.00";
                         invoiceSheet.Cells[rowIndex, 7].Value = lineTotalOt;
                         sumLineTotal += lineTotalOt;
                         rowIndex++;

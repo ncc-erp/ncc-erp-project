@@ -23,7 +23,7 @@ namespace ProjectManagement.APIs.TimeSheetProjectBills.Dto
         public int DefaultWorkingHours { get; set; }
         public List<TimesheetProjectBillOtTypeDto> TimesheetProjectBillOtTypes { get; set; }
         public double Amount => GetWorkingTime() * BillRate;
-        public double RoundAmount => Math.Round(Amount);
+        public double RoundAmount => Math.Round(Amount, 2);
         private double GetWorkingTime()
         {
             var otHours = TimesheetProjectBillOtTypes?.Sum(item => (double)item.Hours * (double)item.Multiplier) ?? 0;
@@ -40,7 +40,7 @@ namespace ProjectManagement.APIs.TimeSheetProjectBills.Dto
             {
                 result = TimeSheetWorkingDay == 0 ? 0 : (WorkingTime + otHours / DefaultWorkingHours) / TimeSheetWorkingDay;
             }
-            return Math.Round(result, 3);
+            return result;
         }
     }
 }

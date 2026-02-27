@@ -286,8 +286,7 @@
                           Total: {{item.projectBillInfomation.length}}
                         </label>
                       </div>
-                      <div class="col-2" *ngIf="isGranted(Timesheets_TimesheetDetail_ViewBillRate)"
-                        style="margin-left: 50px;">
+                      <div class="col-2" *ngIf="isGranted(Timesheets_TimesheetDetail_ViewBillRate)">
                         <label>
                           {{item.roundTotalAmountProjectBillInfomation | number : "1.0":"en-US"}} {{item.currency}}
                         </label>

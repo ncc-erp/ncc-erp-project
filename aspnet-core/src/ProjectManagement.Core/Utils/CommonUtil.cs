@@ -351,7 +351,7 @@ namespace ProjectManagement.Utils
         }
         public static double Round(double value)
         {
-            return Math.Round(value);
+            return Math.Round(value, 2);
         }
 
         public static UserLevel GetUserLevelByLevelCode(string levelCode)

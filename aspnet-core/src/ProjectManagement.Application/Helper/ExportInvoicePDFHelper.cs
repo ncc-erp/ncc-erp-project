@@ -13,6 +13,7 @@ namespace ProjectManagement.Helper
         {
             this._hostingEnvironment = webHostEnvironment;
         }
+
         public FileExportInvoiceDto ExportInvoiceDataPdf(InvoiceData data)
         {
             StringBuilder header = new StringBuilder();
@@ -33,7 +34,7 @@ namespace ProjectManagement.Helper
                     <td class='column2 style29{evenClass} null'>{tsUser.ProjectName}</td>
                     <td class='column3 style29{evenClass} null'>{tsUser.BillRateDisplay.ToString("N2", CultureInfo.InvariantCulture)}</td>
                     <td class='column4 style29{evenClass} null'>{tsUser.CurrencyName}/{tsUser.ChargeTypeDisplay}</td>
-                    <td class='column5 style29{evenClass} null'>{tsUser.NormalWorkingDay.ToString("N3", CultureInfo.InvariantCulture)}</td>
+                    <td class='column5 style29{evenClass} null'>{tsUser.NormalWorkingDay.ToString("N2", CultureInfo.InvariantCulture)}</td>
                     <td class='column6 style29{evenClass} null' style='text-align: right;'>{tsUser.NormalLineTotal.ToString("N2", CultureInfo.InvariantCulture)}</td>
                     <td class='column7'>&nbsp;</td>
                 </tr>");

@@ -13,6 +13,7 @@ namespace ProjectManagement.Helper
         {
             this._hostingEnvironment = webHostEnvironment;
         }
+
         public FileExportInvoiceDto ExportInvoiceDataPdf(InvoiceData data)
         {
             StringBuilder header = new StringBuilder();

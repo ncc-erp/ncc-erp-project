@@ -8,6 +8,6 @@ namespace ProjectManagement.Services.Finance.Dto
     {
         public string CurrencyName { get; set; }
         public double Amount { get; set; }
-        public double RoundAmount => Math.Round(Amount);
+        public double RoundAmount => Math.Round(Amount, 2);
     }
 }

@@ -669,11 +669,13 @@ export class WeeklyReportComponent
 
   public sendWeeklyreport() {
     const dialogRef = this.dialog.open(ReviewContributionComponent, {
-      width: "700px",
+      width: "800px",
       maxHeight: "90vh",
       data: {
         projectUserBills: this.projectInfo.projectUserBills,
         reportName: this.selectedReport.pmReportName,
+        projectId: this.projectId,
+        pmReportId: this.selectedReport.reportId,
       },
     });
 
@@ -2226,16 +2228,16 @@ export class WeeklyReportComponent
     });
   }
 
-  edit(resource: any) {
+  edit(resource: any, puId: any) {
     this.tempContributeValues[resource.id] = resource.contribute;
-    this.editingRows[resource.id] = true;
+   this.editingRows[`${resource.id}_${puId}`] = true;
   }
 
-  cancelUpdate(resource: any) {
+  cancelUpdate(resource: any, puId: any) {
     if (this.tempContributeValues[resource.id] !== undefined) {
       resource.contribute = this.tempContributeValues[resource.id];
     }
-    this.editingRows[resource.id] = false;
+    this.editingRows[`${resource.id}_${puId}`] = false;
     delete this.tempContributeValues[resource.id];
   }
 
@@ -2255,7 +2257,7 @@ export class WeeklyReportComponent
         abp.notify.success(
           `Weekly contributions have been updated: ${this.selectedReport?.pmReportName}`,
         );
-        this.editingRows[resource.id] = false;
+        this.editingRows[`${resource.id}_${projectUserBillId}`] = false;
         this.isLoading = false;
       },
       () => (this.isLoading = false),

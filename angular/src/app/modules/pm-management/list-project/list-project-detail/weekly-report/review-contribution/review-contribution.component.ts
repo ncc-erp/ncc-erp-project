@@ -122,7 +122,7 @@ export class ReviewContributionComponent implements OnInit {
       contribute: res.contribute,
       projectId: this.data.projectId,
       pmReportId: this.data.pmReportId,
-      id: res.WeeklyContributionHistoryId || null,
+      id: res.weeklyContributionHistoryId || null,
     };
 
     this.pmReportProjectContributionService

@@ -2248,7 +2248,8 @@ export class WeeklyReportComponent
       projectUserBillId: projectUserBillId,
       contribute: resource.contribute,
       projectId: this.projectId,
-      PMReportId: this.selectedReport?.reportId,
+      pmReportId: this.selectedReport?.reportId,
+      ...(resource.weeklyContributionHistoryId && { id: resource.weeklyContributionHistoryId })
     };
     this.PMReportProjectContributionService.updateWeeklyHistory(
       request,

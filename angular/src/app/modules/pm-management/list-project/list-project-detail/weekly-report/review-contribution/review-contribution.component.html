@@ -58,7 +58,9 @@
                             <div *ngFor="let res of pu.linkedResources"
                                 class="d-flex justify-content-between border-bottom py-1">
                                 <div class="col-5 px-0 d-flex align-items-center">
-                                    <span>{{res.fullName}}</span>
+                                    <app-user-info [isSmallerDiv]="true" [userData]="res" [viewMode]="1"
+                                        [isHideLevel]="true">
+                                    </app-user-info>
                                 </div>
                                 <div class="col-4 px-0 d-flex align-items-center">
                                     <span *ngIf="!editingRows[pu.id + '_' + res.id]" class="badge text-white"

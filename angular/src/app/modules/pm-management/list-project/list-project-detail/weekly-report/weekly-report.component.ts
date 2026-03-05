@@ -179,8 +179,8 @@ export class WeeklyReportComponent
   isStart: boolean = false;
   checkViewSubject: false;
 
-  editingRows: { [key: number]: boolean } = {};
-  tempContributeValues: { [key: number]: number } = {};
+  editingRows: { [key: string]: boolean } = {};
+  tempContributeValues: { [key: string]: number } = {};
 
   public priority = [
     { value: this.APP_ENUM.Priority.Low, viewValue: "Low" },
@@ -2229,27 +2229,32 @@ export class WeeklyReportComponent
   }
 
   edit(resource: any, puId: any) {
-    this.tempContributeValues[resource.id] = resource.contribute;
-   this.editingRows[`${resource.id}_${puId}`] = true;
+    const key = `${resource.id}_${puId}`;
+    this.tempContributeValues[key] = resource.contribute;
+    this.editingRows[key] = true;
   }
 
   cancelUpdate(resource: any, puId: any) {
-    if (this.tempContributeValues[resource.id] !== undefined) {
-      resource.contribute = this.tempContributeValues[resource.id];
+    const key = `${resource.id}_${puId}`;
+    if (this.tempContributeValues[key] !== undefined) {
+      resource.contribute = this.tempContributeValues[key];
     }
-    this.editingRows[`${resource.id}_${puId}`] = false;
-    delete this.tempContributeValues[resource.id];
+    this.editingRows[key] = false;
+    delete this.tempContributeValues[key];
   }
 
   saveWeeklyContribute(resource: any, projectUserBillId: number) {
     this.isLoading = true;
+    const key = `${resource.id}_${projectUserBillId}`;
     const request = {
       userId: resource.id,
       projectUserBillId: projectUserBillId,
       contribute: resource.contribute,
       projectId: this.projectId,
       pmReportId: this.selectedReport?.reportId,
-      ...(resource.weeklyContributionHistoryId && { id: resource.weeklyContributionHistoryId })
+      ...(resource.weeklyContributionHistoryId && {
+        id: resource.weeklyContributionHistoryId,
+      }),
     };
     this.PMReportProjectContributionService.updateWeeklyHistory(
       request,
@@ -2258,10 +2263,15 @@ export class WeeklyReportComponent
         abp.notify.success(
           `Weekly contributions have been updated: ${this.selectedReport?.pmReportName}`,
         );
-        this.editingRows[`${resource.id}_${projectUserBillId}`] = false;
+        this.editingRows[key] = false;
+        delete this.tempContributeValues[key];
         this.isLoading = false;
       },
-      () => (this.isLoading = false),
+      () => {
+        resource.contribute = this.tempContributeValues[key];
+        delete this.tempContributeValues[key];
+        this.isLoading = false;
+      },
     );
   }
 

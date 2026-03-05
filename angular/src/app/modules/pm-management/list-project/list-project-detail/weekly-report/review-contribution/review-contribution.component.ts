@@ -28,9 +28,9 @@ export class ReviewContributionComponent implements OnInit {
     private resourceManagerService: ResourceManagerService,
   ) {}
 
-  editingRows: { [key: number]: boolean } = {};
+  editingRows: { [key: string]: boolean } = {};
 
-  tempContributeValues: { [key: number]: number } = {};
+  tempContributeValues: { [key: string]: number } = {};
 
   ngOnInit(): void {
     this.getListUserAndResources();
@@ -48,7 +48,7 @@ export class ReviewContributionComponent implements OnInit {
       (resource) => !listLinkedResourceId.includes(resource.id),
     );
     userBill.showAddLinkInPopup = true;
-    userBill.tempContribute = 0; 
+    userBill.tempContribute = 0;
   }
 
   public cancelLinkResource(userBill: any): void {
@@ -79,12 +79,16 @@ export class ReviewContributionComponent implements OnInit {
   }
 
   edit(res: any, puId: any) {
-    this.tempContributeValues[res.id] = res.contribute;
-    this.editingRows[`${puId}_${res.id}`] = true;
+    const key = `${puId}_${res.id}`;
+    this.tempContributeValues[key] = res.contribute;
+    this.editingRows[key] = true;
   }
 
   cancelUpdate(res: any, puId: any) {
-    this.editingRows[`${puId}_${res.id}`] = false;
+    const key = `${puId}_${res.id}`;
+    res.contribute = this.tempContributeValues[key];
+    this.editingRows[key] = false;
+    delete this.tempContributeValues[key];
   }
 
   removeLinkResource(resId: any, puId: any) {
@@ -106,6 +110,9 @@ export class ReviewContributionComponent implements OnInit {
                 (r) => r.id !== resId,
               );
             }
+            const key = `${puId}_${resId}`;
+            delete this.tempContributeValues[key];
+            delete this.editingRows[key];
             this.isLoading = false;
           },
           () => (this.isLoading = false),
@@ -116,14 +123,16 @@ export class ReviewContributionComponent implements OnInit {
 
   saveWeeklyContribute(res: any, puId: any) {
     this.isLoading = true;
+    const key = `${puId}_${res.id}`;
     const request = {
       userId: res.id,
       projectUserBillId: puId,
       contribute: res.contribute,
       projectId: this.data.projectId,
       pmReportId: this.data.pmReportId,
-      ...(res.weeklyContributionHistoryId && { id: res.weeklyContributionHistoryId })
-
+      ...(res.weeklyContributionHistoryId && {
+        id: res.weeklyContributionHistoryId,
+      }),
     };
 
     this.pmReportProjectContributionService
@@ -133,10 +142,15 @@ export class ReviewContributionComponent implements OnInit {
           abp.notify.success(
             `Weekly contributions have been updated successfully!`,
           );
-          this.editingRows[`${puId}_${res.id}`] = false;
+          this.editingRows[key] = false;
+          delete this.tempContributeValues[key];
           this.isLoading = false;
         },
-        () => (this.isLoading = false),
+        () => {
+          res.contribute = this.tempContributeValues[key];
+          delete this.tempContributeValues[key];
+          this.isLoading = false;
+        },
       );
   }
 
@@ -145,10 +159,10 @@ export class ReviewContributionComponent implements OnInit {
   }
 
   onCancel(): void {
-    this.data.projectUserBills.forEach(pu => {
-      pu.showAddLinkInPopup = false; 
-      pu.createLinkResourceMode = false; 
+    this.data.projectUserBills.forEach((pu) => {
+      pu.showAddLinkInPopup = false;
+      pu.createLinkResourceMode = false;
     });
-   this.dialogRef.close(false);
+    this.dialogRef.close(false);
   }
 }

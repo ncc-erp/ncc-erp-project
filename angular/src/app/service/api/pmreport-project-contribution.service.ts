@@ -30,4 +30,13 @@ export class PMReportProjectContributionService extends BaseApiService {
       params: { pmReportId: pmReportId.toString() },
     });
   }
+
+  public getTotalContribution(
+    pmReportId: number,
+    input: any,
+  ): Observable<any> {
+    return this.http.post(this.rootUrl + `/GetTotalContribution`, input, {
+      params: { pmReportId: pmReportId.toString() },
+    });
+  }
 }

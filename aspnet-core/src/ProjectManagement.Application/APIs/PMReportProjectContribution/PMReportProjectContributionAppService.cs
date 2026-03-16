@@ -112,34 +112,64 @@ namespace ProjectManagement.APIs.PMReportProjectContribution
                 var hasBranchFilter = branchIds.Any();
                 var search = !string.IsNullOrWhiteSpace(input.SearchText) ? input.SearchText.Trim().ToLower() : "";
 
-                var usersQuery = WorkScope.GetAll<User>().AsNoTracking()
-                    .Where(u => WorkScope.GetAll<WeeklyContributionHistory>()
-                        .Any(h => h.PMReportId == pmReportId && h.UserId == u.Id));
+                var userIdsInReport = await WorkScope.GetAll<WeeklyContributionHistory>()
+                    .Where(h => h.PMReportId == pmReportId)
+                    .Select(h => h.UserId)
+                    .Distinct()
+                    .ToListAsync(); 
+
+                if (!userIdsInReport.Any())
+                {
+                    return new GridResult<UserGroupContributionDto>(new List<UserGroupContributionDto>(), 0);
+                }
+
+                var usersQuery = await WorkScope.GetAll<User>()
+                    .AsNoTracking()
+                    .Where(u => userIdsInReport.Contains(u.Id))
+                    .Select(u => new
+                    {
+                        Id= u.Id,
+                        UserName =  u.UserName.Trim().ToLower(),
+                        FullName = u.FullName.Trim().ToLower(),
+                        EmailAddress = u.EmailAddress.Trim().ToLower(),
+                        u.BranchId,
+                    })
+                    .ToListAsync();
 
                 if (hasBranchFilter)
                 {
-                    usersQuery = usersQuery.Where(u => u.BranchId.HasValue && branchIds.Contains(u.BranchId.Value));
+                    usersQuery = usersQuery
+                        .Where(u => u.BranchId.HasValue && branchIds.Contains(u.BranchId.Value))
+                        .ToList();
                 }
                 else
                 {
-                    usersQuery = usersQuery.Where(u => u.BranchId.HasValue && u.Branch.IsDeleted == false);
+                    var activeBranchIds = await WorkScope.GetAll<Branch>()
+                        .AsNoTracking()
+                        .Where(b => !b.IsDeleted)
+                        .Select(b => b.Id)
+                        .ToListAsync();
+
+                    usersQuery = usersQuery
+                        .Where(u => u.BranchId.HasValue && activeBranchIds.Contains(u.BranchId.Value))
+                        .ToList();
                 }
 
                 if (!string.IsNullOrEmpty(search))
                 {
-                    usersQuery = usersQuery.Where(u => u.UserName.ToLower().Contains(search)
-                                                 || u.FullName.ToLower().Contains(search)
-                                                 || u.EmailAddress.ToLower().Contains(search));
+                    usersQuery = usersQuery.Where(u => u.UserName.Contains(search)
+                                                 || u.FullName.Contains(search)
+                                                 || u.EmailAddress.Contains(search)).ToList();
                 }
 
-                var totalUserCount = await usersQuery.CountAsync();
+                var totalUserCount =  usersQuery.Count;
 
                 if (totalUserCount == 0)
                 {
                     return new GridResult<UserGroupContributionDto>(new List<UserGroupContributionDto>(), 0);
                 }
 
-                var filteredUserIds = await usersQuery.Select(u => u.Id).ToListAsync();
+                var filteredUserIds = usersQuery.Select(u => u.Id).ToList();
 
                 var historyData = await WorkScope.GetAll<WeeklyContributionHistory>()
                     .AsNoTracking()
@@ -242,31 +272,65 @@ namespace ProjectManagement.APIs.PMReportProjectContribution
                 var branchIds = input.BranchIds?.ToList() ?? new List<long>();
                 var hasBranchFilter = branchIds.Any();
                 var search = !string.IsNullOrWhiteSpace(input.SearchText) ? input.SearchText.Trim().ToLower() : "";
-                
-                var historyQuery = WorkScope.GetAll<WeeklyContributionHistory>()
-                    .AsNoTracking()
-                    .Where(x => x.PMReportId == pmReportId);
 
-                var userFilterQuery = WorkScope.GetAll<User>().AsNoTracking();
+                var userIdsInReport = await WorkScope.GetAll<WeeklyContributionHistory>()
+                    .Where(h => h.PMReportId == pmReportId)
+                    .Select(h => h.UserId)
+                    .Distinct()
+                    .ToListAsync();
+
+                if (!userIdsInReport.Any())
+                    return 0;
+                 
+                var usersQuery = await WorkScope.GetAll<User>()
+                    .AsNoTracking()
+                    .Where(u => userIdsInReport.Contains(u.Id))
+                    .Select(u => new
+                    {
+                        Id = u.Id,
+                        UserName = u.UserName.Trim().ToLower(),
+                        FullName = u.FullName.Trim().ToLower(),
+                        EmailAddress = u.EmailAddress.Trim().ToLower(),
+                        u.BranchId,
+                    })
+                    .ToListAsync();
 
                 if (hasBranchFilter)
                 {
-                    userFilterQuery = userFilterQuery.Where(u => u.BranchId.HasValue && branchIds.Contains(u.BranchId.Value));
+                    usersQuery = usersQuery
+                        .Where(u => u.BranchId.HasValue && branchIds.Contains(u.BranchId.Value))
+                        .ToList();
                 }
                 else
                 {
-                    userFilterQuery = userFilterQuery.Where(u => u.BranchId.HasValue && u.Branch.IsDeleted == false);
+                    var activeBranchIds = await WorkScope.GetAll<Branch>()
+                        .AsNoTracking()
+                        .Where(b => !b.IsDeleted)
+                        .Select(b => b.Id)
+                        .ToListAsync();
+
+                    usersQuery = usersQuery
+                        .Where(u => u.BranchId.HasValue && activeBranchIds.Contains(u.BranchId.Value))
+                        .ToList();
                 }
 
                 if (!string.IsNullOrEmpty(search))
                 {
-                    userFilterQuery = userFilterQuery.Where(u => u.UserName.ToLower().Contains(search)
-                                                             || u.FullName.ToLower().Contains(search)
-                                                             || u.EmailAddress.ToLower().Contains(search));
+                    usersQuery = usersQuery.Where(u => u.UserName.Contains(search)
+                                                 || u.FullName.Contains(search)
+                                                 || u.EmailAddress.Contains(search)).ToList();
                 }
 
-                var totalContribution = await historyQuery
-                    .Where(h => userFilterQuery.Any(u => u.Id == h.UserId))
+                var totalUserCount = usersQuery.Count;
+
+                if (totalUserCount == 0)
+                    return 0;
+
+                var filteredUserIds = usersQuery.Select(u => u.Id).ToList();
+
+                var totalContribution = await WorkScope.GetAll<WeeklyContributionHistory>()
+                    .AsNoTracking()
+                    .Where(x => x.PMReportId == pmReportId && filteredUserIds.Contains(x.UserId))
                     .SumAsync(x => x.Contribute * x.ProjectUserBill.HeadCount);
 
                 return (float)Math.Round(totalContribution / 100.0, 3);

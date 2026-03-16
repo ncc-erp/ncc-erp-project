@@ -22,8 +22,8 @@ export class WeeklyContributionComponent
     private PMReportProjectContributionService: PMReportProjectContributionService,
   ) {
     super(injector);
-    this.pageSize = 100;
-    this.pageSizeType = 100;
+    this.pageSize = 10;
+    this.pageSizeType = 10;
   }
 
   ngOnInit(): void {

@@ -212,9 +212,9 @@
               <button class="btn btn-secondary mb-2" (click)="refresh()">
                 <i class="fas fa-redo-alt"></i>
               </button>
-              <mat-form-field class="form-number-item">
+              <mat-form-field appearance="outline" class="form-number-item">
                 <mat-label>Number items</mat-label>
-                <mat-select panelClass="options-number-item" [(ngModel)]="pageSize" (ngModelChange)="refresh()">
+                <mat-select panelClass="options-number-item" [(ngModel)]="pageSizeType" (ngModelChange)="changePageSize()">
                   <mat-option [value]="5"> 5 </mat-option>
                   <mat-option [value]="10"> 10 </mat-option>
                   <mat-option [value]="20"> 20 </mat-option>

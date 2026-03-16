@@ -34,6 +34,7 @@ export class DetailWeeklyContributionComponent
   public sortDirection: number = -1;
   public iconSort: string = "";
   public totalContributionSum: number = 0;
+  public pmReportName: string = "";
 
   constructor(
     injector: Injector,
@@ -44,12 +45,15 @@ export class DetailWeeklyContributionComponent
     public branchService: BranchService,
   ) {
     super(injector);
+    this.pageSize = 100;
+    this.pageSizeType = 100;
   }
 
   @ViewChild("selectBranch") selectBranch;
 
   ngOnInit(): void {
     this.pmReportId = this.route.snapshot.queryParamMap.get("pmReportId");
+    this.pmReportName = this.route.snapshot.queryParamMap.get("pmReportName");
     this.refresh();
     this.getAllBranchs();
   }
@@ -68,6 +72,8 @@ export class DetailWeeklyContributionComponent
       ...request,
       searchText: this.searchText,
       branchIds: this.selectedBranchIds,
+      sort: this.sortColumn,
+      sortDirection: this.sortDirection === 1 ? 1 : 0,
     };
 
     this.pmReportProjectContributionService
@@ -79,13 +85,8 @@ export class DetailWeeklyContributionComponent
       )
       .subscribe((data) => {
         this.userGroupContributions = data.result.items;
-        this.totalContributionSum = this.userGroupContributions.reduce(
-          (sum, user) => {
-            return sum + user.totalHeadCount / 100;
-          },
-          0,
-        );
         this.showPaging(data.result, pageNumber);
+        this.getTotalContributionFromAllPages();
       });
   }
 
@@ -122,6 +123,21 @@ export class DetailWeeklyContributionComponent
     this.refresh();
   }
 
+  public getTotalContributionFromAllPages() {
+    if (!this.pmReportId) {
+      return;
+    }
+    const inputRequest = {
+      searchText: this.searchText,
+      branchIds: this.selectedBranchIds,
+    };
+    this.pmReportProjectContributionService
+      .getTotalContribution(this.pmReportId, inputRequest)
+      .subscribe((data) => {
+        this.totalContributionSum = data.result || 0;
+      });
+  }
+
   public getAllBranchs() {
     this.branchService.getAllNotPagging().subscribe((data) => {
       this.listBranchs = data.result;
@@ -143,24 +159,8 @@ export class DetailWeeklyContributionComponent
       this.sortDirection === 1
         ? "fas fa-sort-amount-down-alt"
         : "fas fa-sort-amount-down";
-    this.userGroupContributions.sort((a: any, b: any) => {
-      let valueA = a[property];
-      let valueB = b[property];
-      if (typeof valueA === "number" || typeof valueB === "number") {
-        valueA = valueA || 0;
-        valueB = valueB || 0;
-      } else {
-        valueA = (valueA || "").toString().toLowerCase();
-        valueB = (valueB || "").toString().toLowerCase();
-      }
-      if (valueA < valueB) {
-        return -1 * this.sortDirection;
-      } else if (valueA > valueB) {
-        return 1 * this.sortDirection;
-      } else {
-        return 0;
-      }
-    });
+    // Use backend sorting instead of client-side sorting
+    this.refresh();
   }
   protected delete(entity: any): void {}
 }

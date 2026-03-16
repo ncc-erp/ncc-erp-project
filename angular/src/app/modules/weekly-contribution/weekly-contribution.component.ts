@@ -22,6 +22,8 @@ export class WeeklyContributionComponent
     private PMReportProjectContributionService: PMReportProjectContributionService,
   ) {
     super(injector);
+    this.pageSize = 10;
+    this.pageSizeType = 10;
   }
 
   ngOnInit(): void {
@@ -32,6 +34,8 @@ export class WeeklyContributionComponent
     pageNumber: number,
     finishedCallback: Function,
   ): void {
+    request.sort = "pmReportId";
+    request.sortDirection = 1;
     this.PMReportProjectContributionService.getAllWeeklyContribution(request)
       .pipe(
         finalize(() => {
@@ -48,7 +52,8 @@ export class WeeklyContributionComponent
    showDetail(item: any) {
     this.router.navigate(['app/detail-weekly-contribution'], {
       queryParams: {
-        pmReportId: item.pmReportId
+            pmReportId: item.pmReportId,
+            pmReportName: item.pmReportName
       }
     })
 

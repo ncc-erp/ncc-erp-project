@@ -232,7 +232,7 @@
                 <span class="text-danger">{{ totalContributionSum }}</span> /
                 <span>{{ totalItems }}</span> =
                 <span class="badge badge-success">
-                  {{ (totalItems > 0 ? (totalContributionSum / totalItems) : 0) / 100 | percent:'1.0-0' }}
+                  {{ (totalItems > 0 ? (totalContributionSum / totalItems) : 0) * 100 | number:'1.1-2' }}%
                 </span>
               </p>
             </div>

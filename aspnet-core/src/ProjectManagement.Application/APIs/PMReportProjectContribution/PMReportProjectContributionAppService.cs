@@ -183,7 +183,7 @@ namespace ProjectManagement.APIs.PMReportProjectContribution
                                 ProjectId = pg.Key.ProjectId,
                                 ProjectName = pg.Key.ProjectName,
                                 PMName = pg.Key.PMName,
-                                TotalContribute = pg.Sum(x => x.Contribute),
+                                TotalContribute = pg.Sum(x => x.Contribute * x.HeadCount),
                                 BillDetails = pg.Select(detail => new ProjectBillDetailDto
                                 {
                                     AccountName = detail.AccountName,
@@ -267,9 +267,9 @@ namespace ProjectManagement.APIs.PMReportProjectContribution
 
                 var totalContribution = await historyQuery
                     .Where(h => userFilterQuery.Any(u => u.Id == h.UserId))
-                    .SumAsync(x => x.Contribute);
+                    .SumAsync(x => x.Contribute * x.ProjectUserBill.HeadCount);
 
-                return totalContribution;
+                return (float)Math.Round(totalContribution / 100.0, 3);
             }
             catch (Exception ex)
             {

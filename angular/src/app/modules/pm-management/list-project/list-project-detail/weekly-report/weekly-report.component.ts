@@ -83,8 +83,7 @@ import { ReviewContributionComponent } from "./review-contribution/review-contri
 })
 export class WeeklyReportComponent
   extends PagedListingComponentBase<WeeklyReportComponent>
-  implements OnInit
-{
+  implements OnInit {
   protected list(
     request: PagedRequestDto,
     pageNumber: number,
@@ -676,6 +675,7 @@ export class WeeklyReportComponent
         reportName: this.selectedReport.pmReportName,
         projectId: this.projectId,
         pmReportId: this.selectedReport.reportId,
+        isValidCriteria: this.isValidCriteria
       },
     });
 
@@ -1827,7 +1827,7 @@ export class WeeklyReportComponent
     };
     this.pmReportProjectService
       .GetTimesheetWeeklyChartOfUserGroupInProject(requestBody)
-      .subscribe((r) => {});
+      .subscribe((r) => { });
   }
   showActions(e) {
     e.preventDefault();
@@ -1923,7 +1923,7 @@ export class WeeklyReportComponent
       .subscribe((data) => {
         abp.notify.success(
           "Update project health to " +
-            this.getByEnum(projectHealth, this.APP_ENUM.ProjectHealth),
+          this.getByEnum(projectHealth, this.APP_ENUM.ProjectHealth),
         );
       });
   }
@@ -2129,7 +2129,7 @@ export class WeeklyReportComponent
           panelClass: "weekly-report-dialog",
         });
 
-        show.afterClosed().subscribe((updatedGuideline) => {});
+        show.afterClosed().subscribe((updatedGuideline) => { });
       } else {
         // Display the dialog with empty content
         const show = this.dialog.open(ReportGuidelineDetailComponent, {
@@ -2141,7 +2141,7 @@ export class WeeklyReportComponent
           panelClass: "weekly-report-dialog",
         });
 
-        show.afterClosed().subscribe((updatedGuideline) => {});
+        show.afterClosed().subscribe((updatedGuideline) => { });
       }
     });
   }
@@ -2379,9 +2379,9 @@ export class WeeklyReportComponent
     if (!this.isValidCriteria) {
       return "Please enter Criteria to be able to send the report!";
     }
-    if (!this.hasLinkedResources()) {
-      return "Each Bill Account must have at least 1 Linked Resource!";
-    }
+    // if (!this.hasLinkedResources()) {
+    //   return "Each Bill Account must have at least 1 Linked Resource!";
+    // }
     return "";
   }
 }

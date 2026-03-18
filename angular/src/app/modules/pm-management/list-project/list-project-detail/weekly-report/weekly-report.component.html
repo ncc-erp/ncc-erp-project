@@ -7,17 +7,22 @@
                 <div class="row p-1">
                     <div class="col-md-7 col-sm-12 p-0 d-flex align-items-center">
                         <label for="" class="mt-1">Status:</label>
-                        <div *ngIf="!permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_ChangeOverAllProjectHealthCriteria)" class="status-label d-flex justify-content-center align-items-center" [ngClass]="bgFlag">
+                        <div *ngIf="!permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_ChangeOverAllProjectHealthCriteria)"
+                            class="status-label d-flex justify-content-center align-items-center" [ngClass]="bgFlag">
                             <span>{{status}}</span>
                         </div>
-                        <mat-form-field *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_ChangeOverAllProjectHealthCriteria)"  [ngClass]="APP_CONST.projectHealthStyle[statusProject]"
-                            class="ml-3 status-weekly-report" appearance="outline">
-                            <mat-select style="text-align: center; padding-bottom: 5px; font-weight: bold !important ;" name="flag" [(ngModel)]="statusProject" placeholder="Select Status" (selectionChange)="onChangeStatusProject()">
+                        <mat-form-field
+                            *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_ChangeOverAllProjectHealthCriteria)"
+                            [ngClass]="APP_CONST.projectHealthStyle[statusProject]" class="ml-3 status-weekly-report"
+                            appearance="outline">
+                            <mat-select style="text-align: center; padding-bottom: 5px; font-weight: bold !important ;"
+                                name="flag" [(ngModel)]="statusProject" placeholder="Select Status"
+                                (selectionChange)="onChangeStatusProject()">
                                 <ng-container *ngFor="let flag of problemIssueList">
                                     <mat-option style="border: 1px white solid;text-align: center;"
                                         [ngClass]="APP_CONST.projectHealthBGStyle[APP_ENUM.ProjectHealth[flag]]"
                                         [value]="APP_ENUM.ProjectHealth[flag]">
-                                        <span  style="font-weight: bold !important; text-align: center;">
+                                        <span style="font-weight: bold !important; text-align: center;">
                                             {{flag}}
                                         </span>
                                     </mat-option>
@@ -27,15 +32,18 @@
 
                     </div>
                     <div class="col-md-5 col-sm-12 m-0 p-0 d-flex align-items-center row-pm-report">
-                        <mat-form-field  class="ml-2 select-pm-report" appearance="outline">
+                        <mat-form-field class="ml-2 select-pm-report" appearance="outline">
                             <mat-label>PM report:</mat-label>
-                            <mat-select [(ngModel)]="selectedReport" name="pmReport" (selectionChange)="onReportchange()"
-                                placeholder="select a report" required #projectEmployee="ngModel">
-                                <mat-form-field class="w-100 px-3 " style="position: sticky; top: 0; z-index: 2; background-color: white;">
+                            <mat-select [(ngModel)]="selectedReport" name="pmReport"
+                                (selectionChange)="onReportchange()" placeholder="select a report" required
+                                #projectEmployee="ngModel">
+                                <mat-form-field class="w-100 px-3 "
+                                    style="position: sticky; top: 0; z-index: 2; background-color: white;">
                                     <input matInput [(ngModel)]="searchPmReport" name="searchPmReportName"
                                         (keydown)="$event.stopPropagation()" placeholder="search">
                                 </mat-form-field>
-                                <mat-option *ngFor="let report of pmReportList |listFilter: 'pmReportName' :searchPmReport"
+                                <mat-option
+                                    *ngFor="let report of pmReportList |listFilter: 'pmReportName' :searchPmReport"
                                     [value]="report">
                                     <div class="row">
                                         <div class="col-10 text-overflow"> {{report.pmReportName}}</div>
@@ -48,7 +56,7 @@
                         </mat-form-field>
                         <div class="ml-2" [matTooltip]="getSendReportTooltip()">
                             <button name="btn-send" (click)="sendWeeklyreport()" class=" btn btn-success"
-                                [disabled]="!isValidCriteria || !hasLinkedResources()"
+                                [disabled]="!isValidCriteria"
                                 *ngIf="selectedReport.isActive && permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_SendWeeklyReport) && isSentReport && selectedReport.pmReportProjectId!=0">
                                 <i class="fas fa-paper-plane"></i>
                             </button>
@@ -63,17 +71,18 @@
                 <div class="row p-1 mt-6">
                     <div class="col-md-8 col-sm-12 m-0 p-0 d-flex align-items-end">
                         <span *ngIf="permission.isGranted(WeeklyReport_ReportDetail_GuideLine_View)">
-                            <strong class="hyperlink" (click)="guideLineCriteriaStatus()" style="font-size: 20px;">Evaluation criteria:</strong>
-                          </span>
-                          <span *ngIf="!permission.isGranted(WeeklyReport_ReportDetail_GuideLine_View)">
+                            <strong class="hyperlink" (click)="guideLineCriteriaStatus()"
+                                style="font-size: 20px;">Evaluation criteria:</strong>
+                        </span>
+                        <span *ngIf="!permission.isGranted(WeeklyReport_ReportDetail_GuideLine_View)">
                             <strong style="font-size: 20px;">Evaluation criteria: </strong>
-                          </span>
+                        </span>
 
                         <button class="btn btn-editall-neutral ml-2" *ngIf="isShowEditAllBtn()" (click)="editAllRow()">
                             <i class="fas fa-pencil-alt mr-1"></i> Edit All</button>
                         <div *ngIf="isEditingAllRow()" class="pt-1 ml-3">
-                            <button class="mr-3 submit-btn"
-                                style="background: none; border: none" (click)="saveAllUpdate()">
+                            <button class="mr-3 submit-btn" style="background: none; border: none"
+                                (click)="saveAllUpdate()">
                                 <i style="color: green" class="fas fa-check fa-2x"></i>
                             </button>
                             <i style="color: red" class="fas fa-times fa-2x" (click)="cancelUpdateAll()"></i>
@@ -82,64 +91,72 @@
                 </div>
 
                 <div class="fixTableHead" style="max-height: none;"
-                        *ngIf="permission.isGranted(ProjectHealthCriteria_View)">
-                        <div *ngFor="let item of listCriteriaResult let i =index">
-                            <div class="d-flex justify-content-between align-items-center row-criteria-result">
-                                <lable *ngIf="permission.isGranted(WeeklyReport_ReportDetail_ProjectHealthCriteria_View_Guideline)" style="white-space: normal;" class="text-primary guide-line"
-                                    (click)="showGuideLine(item)">
-                                    <strong>{{item.criteriaName}}</strong> &nbsp;
-                                    <i class="fas fa-question-circle "></i>
-                                </lable>
-                                <lable *ngIf="!permission.isGranted(WeeklyReport_ReportDetail_ProjectHealthCriteria_View_Guideline)"
-                                    ><strong>{{item.criteriaName}}</strong>
-                                </lable>
-                                <div class="d-flex align-items-center select-status-criteria">
-                                    <ng-container
-                                        *ngIf="(permission.isGranted(ProjectHealthCriteria_ChangeStatus) && selectedReport.isActive && !item.editMode) ||
+                    *ngIf="permission.isGranted(ProjectHealthCriteria_View)">
+                    <div *ngFor="let item of listCriteriaResult let i =index">
+                        <div class="d-flex justify-content-between align-items-center row-criteria-result">
+                            <lable
+                                *ngIf="permission.isGranted(WeeklyReport_ReportDetail_ProjectHealthCriteria_View_Guideline)"
+                                style="white-space: normal;" class="text-primary guide-line"
+                                (click)="showGuideLine(item)">
+                                <strong>{{item.criteriaName}}</strong> &nbsp;
+                                <i class="fas fa-question-circle "></i>
+                            </lable>
+                            <lable
+                                *ngIf="!permission.isGranted(WeeklyReport_ReportDetail_ProjectHealthCriteria_View_Guideline)">
+                                <strong>{{item.criteriaName}}</strong>
+                            </lable>
+                            <div class="d-flex align-items-center select-status-criteria">
+                                <ng-container
+                                    *ngIf="(permission.isGranted(ProjectHealthCriteria_ChangeStatus) && selectedReport.isActive && !item.editMode) ||
                                         (permission.isGranted(ProjectHealthCriteria_ChangeStatus) && permission.isGranted(ProjectHealthCriteria_Edit)  && selectedReport.isActive && item.editMode)">
-                                        <mat-form-field [ngClass]="APP_CONST.projectHealthStyle[item.status]"
-                                            style="margin-left: 10px !important;width: 100px;" class="ml-3" appearance="outline">
-                                            <mat-select style="padding-bottom: 4px;" name="flag" placeholder="Select Status" [(ngModel)]="item.status" [disabled]="selectedReport.pmReportProjectId==0 "
-                                                (ngModelChange)="handleChangeStatus(item,i)">
-                                                <ng-container *ngFor="let flag of problemIssueList">
-                                                    <mat-option style="border: 1px white solid;"
-                                                        [ngClass]="APP_CONST.projectHealthBGStyle[APP_ENUM.ProjectHealth[flag]]"
-                                                        [value]="APP_ENUM.ProjectHealth[flag]">
-                                                        <span style="font-weight: 100 !important;">
-                                                            {{flag}}
-                                                        </span>
-                                                    </mat-option>
-                                                </ng-container>
-                                            </mat-select>
-                                        </mat-form-field>
-                                    </ng-container>
-                                    <span *ngIf="!permission.isGranted(ProjectHealthCriteria_ChangeStatus)|| !selectedReport.isActive"
-                                        [ngClass]="APP_CONST.projectHealthBGStyle[item.status]"
-                                        class="mt-6">
-                                        {{problemIssueList[item.status - 1]}}</span>
-                                    <div *ngIf="permission.isGranted(ProjectHealthCriteria_Edit) && selectedReport.isActive &&!isEditingAllRow() ">
-                                        <button *ngIf="!item.editMode && selectedReport.isActive" mat-button [disabled]="selectedReport.pmReportProjectId==0"
-                                            (click)="handleEditCriteriaResult(i)">
-                                            <i class="fas fa-pencil-alt fa-lg "></i>
+                                    <mat-form-field [ngClass]="APP_CONST.projectHealthStyle[item.status]"
+                                        style="margin-left: 10px !important;width: 100px;" class="ml-3"
+                                        appearance="outline">
+                                        <mat-select style="padding-bottom: 4px;" name="flag" placeholder="Select Status"
+                                            [(ngModel)]="item.status" [disabled]="selectedReport.pmReportProjectId==0 "
+                                            (ngModelChange)="handleChangeStatus(item,i)">
+                                            <ng-container *ngFor="let flag of problemIssueList">
+                                                <mat-option style="border: 1px white solid;"
+                                                    [ngClass]="APP_CONST.projectHealthBGStyle[APP_ENUM.ProjectHealth[flag]]"
+                                                    [value]="APP_ENUM.ProjectHealth[flag]">
+                                                    <span style="font-weight: 100 !important;">
+                                                        {{flag}}
+                                                    </span>
+                                                </mat-option>
+                                            </ng-container>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </ng-container>
+                                <span
+                                    *ngIf="!permission.isGranted(ProjectHealthCriteria_ChangeStatus)|| !selectedReport.isActive"
+                                    [ngClass]="APP_CONST.projectHealthBGStyle[item.status]" class="mt-6">
+                                    {{problemIssueList[item.status - 1]}}</span>
+                                <div
+                                    *ngIf="permission.isGranted(ProjectHealthCriteria_Edit) && selectedReport.isActive &&!isEditingAllRow() ">
+                                    <button *ngIf="!item.editMode && selectedReport.isActive" mat-button
+                                        [disabled]="selectedReport.pmReportProjectId==0"
+                                        (click)="handleEditCriteriaResult(i)">
+                                        <i class="fas fa-pencil-alt fa-lg "></i>
+                                    </button>
+                                    <div *ngIf="item.editMode && selectedReport.isActive"
+                                        class="d-flex align-items-center">
+                                        <button class="submit-btn action-report" style="background: none; border: none;"
+                                            (click)="saveCriteriaResult(item,i)">
+                                            <i style="color: green;font-size: 24px;" class="fas fa-check"></i>
                                         </button>
-                                        <div *ngIf="item.editMode && selectedReport.isActive" class="d-flex align-items-center">
-                                            <button class="submit-btn action-report" style="background: none; border: none;"
-                                                (click)="saveCriteriaResult(item,i)">
-                                                <i style="color: green;font-size: 24px;" class="fas fa-check"></i>
-                                            </button>
-                                            <button class="submit-btn action-report" style="background: none; border: none;" (click)="cancelEditCriteriaResult(i)">
-                                                <i style="color: red; font-size: 24px;" class="fas fa-times" ></i>
-                                            </button>
-                                        </div>
+                                        <button class="submit-btn action-report" style="background: none; border: none;"
+                                            (click)="cancelEditCriteriaResult(i)">
+                                            <i style="color: red; font-size: 24px;" class="fas fa-times"></i>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
-                            <div class="break-word format-editor" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;" *ngIf="!item.editMode"  [innerHTML]="item.note| safeHtml">{{item.note}}</div>
-                            <div *ngIf="item.editMode && selectedReport.isActive" class="text-editor">
-                                <editor
-                                id=""
-                                [(ngModel)]="item.note"
-                                [init]="{
+                        </div>
+                        <div class="break-word format-editor"
+                            style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;" *ngIf="!item.editMode"
+                            [innerHTML]="item.note| safeHtml">{{item.note}}</div>
+                        <div *ngIf="item.editMode && selectedReport.isActive" class="text-editor">
+                            <editor id="" [(ngModel)]="item.note" [init]="{
                                 height:100,
                                 menubar: true,
                                 plugins: ['table', 'code', 'preview', 'media', 'image', 'template', 'paste'],
@@ -148,11 +165,10 @@
                                 forced_root_block: false,
                                 paste_retain_style_properties: 'color font-weight font-style',
                                 paste_webkit_styles: 'color font-weight font-style'
-                                }"
-                            ></editor>
-                            </div>
+                                }"></editor>
                         </div>
                     </div>
+                </div>
             </div>
 
             <div class=" card ">
@@ -161,35 +177,38 @@
                         <mat-panel-title>
                             <span (click)="$event.stopPropagation();">
                                 <span *ngIf="permission.isGranted(WeeklyReport_ReportDetail_GuideLine_View)">
-                                    <strong class="hyperlink" (click)="$event.stopPropagation();guideLinePMNote()" style="font-size: 20px;">PM Note</strong>
-                                  </span>
-                                  <span *ngIf="!permission.isGranted(WeeklyReport_ReportDetail_GuideLine_View)">
+                                    <strong class="hyperlink" (click)="$event.stopPropagation();guideLinePMNote()"
+                                        style="font-size: 20px;">PM Note</strong>
+                                </span>
+                                <span *ngIf="!permission.isGranted(WeeklyReport_ReportDetail_GuideLine_View)">
                                     <strong style="font-size: 20px;">PM Note</strong>
-                                  </span>
-                                  </span>
+                                </span>
+                            </span>
                             <div class="d-inline ml-2 pt-1 text-right row">
                                 <i [hidden]="!selectedReport.isActive || selectedReport.pmReportProjectId==0 ||  !isShowPmNote"
                                     *ngIf="!isEditingNote && permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_UpdateNote)"
                                     class="fas fa-edit fa-lg ml-2" style="font-size: 17px;"
                                     (click)="isEditingNote = true;$event.stopPropagation()"></i>
-                                    <i *ngIf="isEditingNote" style="color: green ;" class="fas fa-check fa-lg"
+                                <i *ngIf="isEditingNote" style="color: green ;" class="fas fa-check fa-lg"
                                     (click)="$event.stopPropagation();updateNote()"></i>
-                                    <i *ngIf="isEditingNote" (click)="$event.stopPropagation();cancelUpdateNote()" style="color: red; margin-left: 15px;"
-                                        class="fas fa-times fa-lg mr-2"></i>
+                                <i *ngIf="isEditingNote" (click)="$event.stopPropagation();cancelUpdateNote()"
+                                    style="color: red; margin-left: 15px;" class="fas fa-times fa-lg mr-2"></i>
                             </div>
                         </mat-panel-title>
                     </mat-expansion-panel-header>
-                    <div class="row p-1 px-4 row-pm-note" *ngIf="(!isEditingNote && projectInfo.pmNote) || isEditingNote">
+                    <div class="row p-1 px-4 row-pm-note"
+                        *ngIf="(!isEditingNote && projectInfo.pmNote) || isEditingNote">
                         <div class="col">
                             <p *ngIf="!isEditingNote && projectInfo.pmNote"
                                 style="word-wrap: break-word; white-space: pre-line;font-size: 18px;text-align: justify;"
                                 class="mt-2">
                                 {{projectInfo.pmNote}}
                             </p>
-                            <mat-form-field class="ml-1 field-pm-note" style="width:100%" appearance="outline" *ngIf="isEditingNote">
-                                <textarea cdkTextareaAutosize #autosize="cdkTextareaAutosize" style="padding-bottom: 20px;"
-                                    rows="2" id="message" matInput [(ngModel)]="projectInfo.pmNote" name="notePM"
-                                    placeholder="General note">
+                            <mat-form-field class="ml-1 field-pm-note" style="width:100%" appearance="outline"
+                                *ngIf="isEditingNote">
+                                <textarea cdkTextareaAutosize #autosize="cdkTextareaAutosize"
+                                    style="padding-bottom: 20px;" rows="2" id="message" matInput
+                                    [(ngModel)]="projectInfo.pmNote" name="notePM" placeholder="General note">
                                     </textarea>
                             </mat-form-field>
                         </div>
@@ -197,29 +216,34 @@
                 </mat-expansion-panel>
             </div>
 
-            <div class=" card "  *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_ProjectIssue_View)">
+            <div class=" card "
+                *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_ProjectIssue_View)">
                 <mat-expansion-panel [expanded]="isShowIssues">
                     <mat-expansion-panel-header class="m-0" #issues (click)="isShowIssues=!isShowIssues">
                         <mat-panel-title>
-                            <span  class="d-flex align-items-center justify-content-end w-100 title-weekly">
+                            <span class="d-flex align-items-center justify-content-end w-100 title-weekly">
                                 <div>
                                     <span (click)="$event.stopPropagation();">
                                         <span *ngIf="permission.isGranted(WeeklyReport_ReportDetail_GuideLine_View)">
-                                            <strong class="hyperlink" (click)="guideLineIssue()" style="font-size: 20px;">Issues</strong>
-                                          </span>
-                                          <span *ngIf="!permission.isGranted(WeeklyReport_ReportDetail_GuideLine_View)">
+                                            <strong class="hyperlink" (click)="guideLineIssue()"
+                                                style="font-size: 20px;">Issues</strong>
+                                        </span>
+                                        <span *ngIf="!permission.isGranted(WeeklyReport_ReportDetail_GuideLine_View)">
                                             <strong style="font-size: 20px;">Issues</strong>
-                                          </span>
-                                         &nbsp;
-                                    <strong style="font-size: 20px;"
-                                        class="text-danger">({{problemList?.length}})</strong>
-                                </span>
+                                        </span>
+                                        &nbsp;
+                                        <strong style="font-size: 20px;"
+                                            class="text-danger">({{problemList?.length}})</strong>
+                                    </span>
                                 </div>
                                 <div class="btn-add" [hidden]="!isShowIssues">
                                     <button
-                                    *ngIf=" permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_ProjectIssue_AddNewIssue) && selectedReport.isActive"
-                                    [hidden]="processProblem || selectedReport.pmReportProjectId==0" (click)="addOrEditIssue('create');$event.stopPropagation()" class="btn bg-blue ml-3 btn-sm mb-2" style="padding: 0px 5px; margin-bottom: 0 !important;">
-                                    <i class="fa fa-plus m-0"></i>
+                                        *ngIf=" permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_ProjectIssue_AddNewIssue) && selectedReport.isActive"
+                                        [hidden]="processProblem || selectedReport.pmReportProjectId==0"
+                                        (click)="addOrEditIssue('create');$event.stopPropagation()"
+                                        class="btn bg-blue ml-3 btn-sm mb-2"
+                                        style="padding: 0px 5px; margin-bottom: 0 !important;">
+                                        <i class="fa fa-plus m-0"></i>
                                     </button>
                                 </div>
                             </span>
@@ -237,7 +261,8 @@
                                         <th>Solution</th>
                                         <th>Meeting Solution</th>
                                         <th class="col-time">Status</th>
-                                        <th class="col-action-menu" *ngIf="selectedReport.isActive && isShowActionPM">Action
+                                        <th class="col-action-menu" *ngIf="selectedReport.isActive && isShowActionPM">
+                                            Action
                                         </th>
                                     </tr>
                                 </thead>
@@ -250,33 +275,37 @@
                                         <td>{{i+1}}</td>
                                         <td style="white-space: normal;max-width: 200px;">
                                             <div *ngIf="!problem.createMode" PrjResizeContent [collapseLine]="2"
-                                                class="mb-0 p-0  ml-2 max-line-content-2" [innerHTML]="problem.description"></div>
+                                                class="mb-0 p-0  ml-2 max-line-content-2"
+                                                [innerHTML]="problem.description"></div>
                                             <div *ngIf="problem.createMode">
                                                 <mat-form-field class="w-100" appearance="outline">
-                                                    <textarea cdkTextareaAutosize #autosize="cdkTextareaAutosize" required
-                                                        rows="2" placeholder="leave a comment" name="description"
-                                                        [(ngModel)]="problem.description" matInput></textarea>
+                                                    <textarea cdkTextareaAutosize #autosize="cdkTextareaAutosize"
+                                                        required rows="2" placeholder="leave a comment"
+                                                        name="description" [(ngModel)]="problem.description"
+                                                        matInput></textarea>
                                                 </mat-form-field>
                                             </div>
                                         </td>
                                         <td style="white-space: normal;max-width: 200px;">
                                             <div *ngIf="!problem.createMode" PrjResizeContent [collapseLine]="2"
-                                                class="mb-0 p-0  ml-2 max-line-content-2" [innerHTML]="problem.impact"></div>
+                                                class="mb-0 p-0  ml-2 max-line-content-2" [innerHTML]="problem.impact">
+                                            </div>
                                             <div *ngIf="problem.createMode">
                                                 <mat-form-field class="w-100" appearance="outline">
-                                                    <textarea cdkTextareaAutosize #autosize="cdkTextareaAutosize" rows="2"
-                                                        placeholder="leave a comment" name="impact"
+                                                    <textarea cdkTextareaAutosize #autosize="cdkTextareaAutosize"
+                                                        rows="2" placeholder="leave a comment" name="impact"
                                                         [(ngModel)]="problem.impact" matInput></textarea>
                                                 </mat-form-field>
                                             </div>
                                         </td>
                                         <td style="white-space: normal;max-width: 200px;">
                                             <div *ngIf="!problem.createMode" PrjResizeContent [collapseLine]="2"
-                                                class="mb-0 p-0  ml-2 max-line-content-2" [innerHTML]="problem.solution"></div>
+                                                class="mb-0 p-0  ml-2 max-line-content-2"
+                                                [innerHTML]="problem.solution"></div>
                                             <div *ngIf="problem.createMode">
                                                 <mat-form-field class="w-100" appearance="outline">
-                                                    <textarea cdkTextareaAutosize #autosize="cdkTextareaAutosize" rows="2"
-                                                        placeholder="leave a comment" name="solution"
+                                                    <textarea cdkTextareaAutosize #autosize="cdkTextareaAutosize"
+                                                        rows="2" placeholder="leave a comment" name="solution"
                                                         [(ngModel)]="problem.solution" matInput></textarea>
                                                 </mat-form-field>
                                             </div>
@@ -284,11 +313,12 @@
                                         <td style="white-space: normal;max-width: 200px;">
 
                                             <div *ngIf="!problem.createMode" PrjResizeContent [collapseLine]="2"
-                                                class="mb-0 p-0  ml-2 max-line-content-2" [innerHTML]="problem.meetingSolution"></div>
+                                                class="mb-0 p-0  ml-2 max-line-content-2"
+                                                [innerHTML]="problem.meetingSolution"></div>
                                             <div *ngIf="problem.createMode">
                                                 <mat-form-field class="w-100" appearance="outline">
-                                                    <textarea cdkTextareaAutosize #autosize="cdkTextareaAutosize" rows="2"
-                                                        placeholder="leave a comment" name="meetingSolution"
+                                                    <textarea cdkTextareaAutosize #autosize="cdkTextareaAutosize"
+                                                        rows="2" placeholder="leave a comment" name="meetingSolution"
                                                         [(ngModel)]="problem.meetingSolution" matInput></textarea>
                                                 </mat-form-field>
                                             </div>
@@ -305,7 +335,8 @@
                                                 </div>
                                             </div>
                                             <div *ngIf="problem.createMode">
-                                                <mat-form-field style="width: 150px;" class="mx-auto" appearance="outline">
+                                                <mat-form-field style="width: 150px;" class="mx-auto"
+                                                    appearance="outline">
                                                     <mat-select [(ngModel)]="problem.status" name="issueStatus"
                                                         placeholder="select a status" required #issueStatus="ngModel">
                                                         <mat-option *ngFor="let status of issueStatusList"
@@ -332,23 +363,24 @@
                                             <mat-menu #menuAction="matMenu" class="p-2">
                                                 <button
                                                     *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_ProjectIssue_Edit)"
-                                                    (click)="addOrEditIssue('edit',problem)" class="mat-menu-item  w-100">
+                                                    (click)="addOrEditIssue('edit',problem)"
+                                                    class="mat-menu-item  w-100">
                                                     <i class="fas fa-pencil-alt mr-2 fa-lg "></i>
                                                     Edit
                                                 </button>
-                                                <button
-                                                (click)="convertToRisk(problem)"
-                                                *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_ProjectIssue_ConvertToRisk)"
-                                                class="mat-menu-item  w-100">
-                                                <i class="fas fa-pencil-alt mr-2 fa-lg "></i>
-                                                Convert to Risk
+                                                <button (click)="convertToRisk(problem)"
+                                                    *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_ProjectIssue_ConvertToRisk)"
+                                                    class="mat-menu-item  w-100">
+                                                    <i class="fas fa-pencil-alt mr-2 fa-lg "></i>
+                                                    Convert to Risk
                                                 </button>
                                                 <button
                                                     *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_ProjectIssue_SetDone)"
                                                     (click)="setDone(problem)" class="mat-menu-item  w-100">
                                                     <i class="fas fa-check mr-2 fa-lg "></i>
                                                     <span *ngIf="isShowChangeDoneText(problem)">Set Done</span>
-                                                    <span *ngIf="isShowChangeInProgressText(problem)">Set InProgress</span>
+                                                    <span *ngIf="isShowChangeInProgressText(problem)">Set
+                                                        InProgress</span>
                                                 </button>
                                                 <button
                                                     *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_ProjectIssue_Delete)"
@@ -358,8 +390,7 @@
                                                 </button>
                                             </mat-menu>
                                             <div *ngIf="problem.createMode" class="pt-2">
-                                                <button
-                                                    [disabled]=" validateContent(problem.description)"
+                                                <button [disabled]=" validateContent(problem.description)"
                                                     class=" mr-3 submit-btn" style="background: none; border: none;"
                                                     (click)="saveProblemReport(problem)">
                                                     <i style="color: green;" class="fas fa-check fa-2x"></i>
@@ -376,30 +407,34 @@
                 </mat-expansion-panel>
             </div>
 
-            <div class=" card " *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_View)">
+            <div class=" card "
+                *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_View)">
                 <mat-expansion-panel [expanded]="isShowRisks">
                     <mat-expansion-panel-header class="m-0" #panelH (click)="isShowRisks=!isShowRisks ">
                         <mat-panel-title class="d-flex align-items-center justify-content-end title-weekly">
-                           <div>
-                            <span (click)="$event.stopPropagation();">
-                                <span *ngIf="permission.isGranted(WeeklyReport_ReportDetail_GuideLine_View)">
-                                    <strong class="hyperlink" (click)="guideLineRisk()" style="font-size: 20px;">Risk</strong>
-                                  </span>
-                                  <span *ngIf="!permission.isGranted(WeeklyReport_ReportDetail_GuideLine_View)">
-                                    <strong style="font-size: 20px;">Risk </strong>
-                                  </span>
-                                 &nbsp;
-                            <strong style="font-size: 20px; "
-                                class="text-danger">({{projectRiskList?.length}})</strong>
-                        </span>
-                           </div>
-                           <div class="btn-add" [hidden]="!isShowRisks">
-                                <button *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_AddNewRisk) && selectedReport.isActive "
-                                (click)="addOrEditRisk('create');$event.stopPropagation()" [hidden]="selectedReport.pmReportProjectId==0" class="btn bg-blue ml-3 btn-sm mb-2"
-                                style="padding: 0px 5px;margin-bottom: 0 !important;">
-                                <i  class="fa fa-plus m-0"></i>
-                                 </button>
-                           </div>
+                            <div>
+                                <span (click)="$event.stopPropagation();">
+                                    <span *ngIf="permission.isGranted(WeeklyReport_ReportDetail_GuideLine_View)">
+                                        <strong class="hyperlink" (click)="guideLineRisk()"
+                                            style="font-size: 20px;">Risk</strong>
+                                    </span>
+                                    <span *ngIf="!permission.isGranted(WeeklyReport_ReportDetail_GuideLine_View)">
+                                        <strong style="font-size: 20px;">Risk </strong>
+                                    </span>
+                                    &nbsp;
+                                    <strong style="font-size: 20px; "
+                                        class="text-danger">({{projectRiskList?.length}})</strong>
+                                </span>
+                            </div>
+                            <div class="btn-add" [hidden]="!isShowRisks">
+                                <button
+                                    *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_AddNewRisk) && selectedReport.isActive "
+                                    (click)="addOrEditRisk('create');$event.stopPropagation()"
+                                    [hidden]="selectedReport.pmReportProjectId==0" class="btn bg-blue ml-3 btn-sm mb-2"
+                                    style="padding: 0px 5px;margin-bottom: 0 !important;">
+                                    <i class="fa fa-plus m-0"></i>
+                                </button>
+                            </div>
                         </mat-panel-title>
                     </mat-expansion-panel-header>
                     <div class="card-body pt-0">
@@ -413,7 +448,8 @@
                                         <th>Solution</th>
                                         <th style="width: 100px;">Priority</th>
                                         <th class="col-time">Status</th>
-                                        <th class="col-action-menu" *ngIf="isShowActionRisk && selectedReport.isActive">Action</th>
+                                        <th class="col-action-menu" *ngIf="isShowActionRisk && selectedReport.isActive">
+                                            Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -425,7 +461,8 @@
                                         <td class="text-center">{{i+1}}</td>
                                         <td style="white-space: normal;max-width: 250px;">
                                             <div PrjResizeContent [collapseLine]="2"
-                                                class="mb-0 p-0  ml-2 max-line-content-2" [innerHTML]="problem.risk"></div>
+                                                class="mb-0 p-0  ml-2 max-line-content-2" [innerHTML]="problem.risk">
+                                            </div>
                                         </td>
                                         <td style="white-space: normal;max-width: 200px;">
                                             <div PrjResizeContent [collapseLine]="2"
@@ -434,64 +471,59 @@
                                         </td>
                                         <td style="white-space: normal;max-width: 200px;">
                                             <div PrjResizeContent [collapseLine]="2"
-                                                class="mb-0 p-0  ml-2 max-line-content-2" [innerHTML]="problem.solution">
+                                                class="mb-0 p-0  ml-2 max-line-content-2"
+                                                [innerHTML]="problem.solution">
                                             </div>
                                         </td>
                                         <td style="white-space: normal" class="text-center">
                                             <span
                                                 style="border-radius: 99px; padding: 1px 7px;font-size: 12px; font-weight: 700;"
-                                                [ngClass]="APP_CONST.priorityRisk[problem.priority] "
-                                                >{{ priorityList[problem.priority] }}</span>
+                                                [ngClass]="APP_CONST.priorityRisk[problem.priority] ">{{
+                                                priorityList[problem.priority] }}</span>
                                         </td>
                                         <td class="text-center">
                                             <span
-                                                [ngClass]="APP_CONST.PMReportProjectIssueStatusStyle[riskStatusList[problem.status]] "
-                                                >{{ riskStatusList[problem.status] }}</span>
-                                                <div>
-                                                    <div style="font-size: 15px;" *ngIf="problem.totalWeekAgo>1">
-                                                        <strong
-                                                            class="text-danger">{{(problem.totalWeekAgo/7).toFixed()}}
-                                                        </strong> weeks ago
-                                                    </div>
+                                                [ngClass]="APP_CONST.PMReportProjectIssueStatusStyle[riskStatusList[problem.status]] ">{{
+                                                riskStatusList[problem.status] }}</span>
+                                            <div>
+                                                <div style="font-size: 15px;" *ngIf="problem.totalWeekAgo>1">
+                                                    <strong class="text-danger">{{(problem.totalWeekAgo/7).toFixed()}}
+                                                    </strong> weeks ago
                                                 </div>
+                                            </div>
                                         </td>
                                         <td class="text-center" *ngIf="isShowActionRisk && selectedReport.isActive">
-                                            <button [matMenuTriggerFor]="menurisk" *ngIf="isShowActionRisk && selectedReport.isActive"
-                                            mat-button >
-                                            <i class="fas fa-bars fa-lg"></i>
-                                        </button>
+                                            <button [matMenuTriggerFor]="menurisk"
+                                                *ngIf="isShowActionRisk && selectedReport.isActive" mat-button>
+                                                <i class="fas fa-bars fa-lg"></i>
+                                            </button>
                                             <mat-menu #menurisk="matMenu" class="p-2">
-                                                <button
-                                                    (click)="addOrEditRisk('edit',problem)"
+                                                <button (click)="addOrEditRisk('edit',problem)"
                                                     *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_Edit)"
                                                     class="mat-menu-item  w-100">
                                                     <i class="fas fa-pencil-alt mr-2 fa-lg "></i>
                                                     Edit
                                                 </button>
-                                                <button
-                                                (click)="convertToIssue(problem)"
-                                                *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_ConvertToIssue)"
-                                                class="mat-menu-item  w-100">
-                                                <i class="fas fa-pencil-alt mr-2 fa-lg "></i>
-                                                Convert to Issue
-                                            </button>
+                                                <button (click)="convertToIssue(problem)"
+                                                    *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_ConvertToIssue)"
+                                                    class="mat-menu-item  w-100">
+                                                    <i class="fas fa-pencil-alt mr-2 fa-lg "></i>
+                                                    Convert to Issue
+                                                </button>
                                                 <button (click)="setDoneRisk(problem)"
-                                                        *ngIf="isShowChangeDoneTextRisk(problem) && permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_SetDone)"
-                                                        class="mat-menu-item  w-100">
-                                                        <i class="fas fa-check mr-2 fa-lg "></i>
-                                                        <span>Set Done</span>
+                                                    *ngIf="isShowChangeDoneTextRisk(problem) && permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_SetDone)"
+                                                    class="mat-menu-item  w-100">
+                                                    <i class="fas fa-check mr-2 fa-lg "></i>
+                                                    <span>Set Done</span>
                                                 </button>
                                                 <button (click)="setInProgressRisk(problem)"
-                                                        *ngIf="isShowChangeInProgressTextRisk(problem) && permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_SetDone)"
-                                                        class="mat-menu-item  w-100">
-                                                        <i class="fas fa-check mr-2 fa-lg "></i>
-                                                        <span>Set InProgress</span>
+                                                    *ngIf="isShowChangeInProgressTextRisk(problem) && permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_SetDone)"
+                                                    class="mat-menu-item  w-100">
+                                                    <i class="fas fa-check mr-2 fa-lg "></i>
+                                                    <span>Set InProgress</span>
                                                 </button>
-                                                <button
-                                                    (click)="deleteRisk(problem)"
-                                                    class="mat-menu-item  w-100"
-                                                    *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_Delete)"
-                                                    >
+                                                <button (click)="deleteRisk(problem)" class="mat-menu-item  w-100"
+                                                    *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PMProjectRisk_Delete)">
                                                     <i class="fas fa-trash mr-2 fa-lg"></i>
                                                     Delete
                                                 </button>
@@ -508,14 +540,19 @@
             <div class="card" id="current-resource"
                 *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_CurrentResource_View)">
                 <mat-expansion-panel [expanded]="isShowCurrentResource">
-                    <mat-expansion-panel-header class="m-0" #resource (click)="isShowCurrentResource=!isShowCurrentResource" [ngClass]="{'pannel-header-current-resource': isShowCurrentResource}">
-                        <mat-panel-title class="align-items-baseline justify-content-between title-resources" [ngClass]="{'title-resources-expand': isShowCurrentResource}">
+                    <mat-expansion-panel-header class="m-0" #resource
+                        (click)="isShowCurrentResource=!isShowCurrentResource"
+                        [ngClass]="{'pannel-header-current-resource': isShowCurrentResource}">
+                        <mat-panel-title class="align-items-baseline justify-content-between title-resources"
+                            [ngClass]="{'title-resources-expand': isShowCurrentResource}">
                             <div>
                                 <strong style="font-size: 20px;">Current resources</strong> &nbsp;
-                                <strong style="font-size: 20px;" class="text-danger">({{projectCurrentResource?.length}})</strong>
+                                <strong style="font-size: 20px;"
+                                    class="text-danger">({{projectCurrentResource?.length}})</strong>
                                 &nbsp;&nbsp;&nbsp;&nbsp;
                             </div>
-                            <mat-checkbox [(ngModel)]="checkViewSubject" (change)="handleViewSubject()" [ngClass]="{'checkbox-view-sub-project': !isShowCurrentResource}"
+                            <mat-checkbox [(ngModel)]="checkViewSubject" (change)="handleViewSubject()"
+                                [ngClass]="{'checkbox-view-sub-project': !isShowCurrentResource}"
                                 (click)="$event.stopPropagation()">
                                 View Sub Project
                             </mat-checkbox>
@@ -556,11 +593,13 @@
                                     <tr *ngFor="let user of projectCurrentResource; let i =index">
                                         <td class="d-flex justify-content-between" style="border: none;">
                                             <div style="width: 80%;">
-                                                <app-user-info [userData]="user" [isWeeklyReport]="true" [workType]="user.workType">
+                                                <app-user-info [userData]="user" [isWeeklyReport]="true"
+                                                    [workType]="user.workType">
                                                 </app-user-info>
                                             </div>
-                                            <div style="visibility: hidden; position: fixed" [style.left]="contextMenuPosition.x"
-                                                [style.top]="contextMenuPosition.y" [matMenuTriggerFor]="menu">
+                                            <div style="visibility: hidden; position: fixed"
+                                                [style.left]="contextMenuPosition.x" [style.top]="contextMenuPosition.y"
+                                                [matMenuTriggerFor]="menu">
                                             </div>
                                             <button mat-icon-button [matMenuTriggerFor]="menu" style="display: none;">
                                             </button>
@@ -590,7 +629,8 @@
                                             </span>
                                         </td>
                                         <td class="text-center">
-                                            <div [matTooltip]="user.normalWorkingTime + 'h of project'
+                                            <div
+                                                [matTooltip]="user.normalWorkingTime + 'h of project'
                                                                         + ' / ' + user.normalWorkingTimeAll + 'h all'
                                                                         + ' / ' + user.normalWorkingTimeStandard + 'h standard'">
                                                 <strong>{{user?.normalWorkingTime}}</strong> /
@@ -623,13 +663,16 @@
             <div class="card" id="charge-account"
                 *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_BillAccount_View)">
                 <mat-expansion-panel [expanded]="isShowChargeAccount">
-                    <mat-expansion-panel-header class="m-0" #resource (click)="isShowChargeAccount=!isShowChargeAccount">
+                    <mat-expansion-panel-header class="m-0" #resource
+                        (click)="isShowChargeAccount=!isShowChargeAccount">
                         <mat-panel-title class="align-items-baseline justify-content-between d-flex align-items-center">
                             <div>
                                 <strong style="font-size: 20px;"> Bill accounts</strong>&nbsp;
-                                <strong style="font-size: 20px;" class="text-danger">({{projectInfo.totalBill || 0}})</strong>
+                                <strong style="font-size: 20px;" class="text-danger">({{projectInfo.totalBill ||
+                                    0}})</strong>
                                 <strong style="font-size: 20px; margin-left: 20px;"> Head Count</strong>&nbsp;
-                                <strong style="font-size: 20px;" class="text-danger">({{projectInfo.totalHeadCount || 0 | number: '1.2-2':'en-US' }})</strong>
+                                <strong style="font-size: 20px;" class="text-danger">({{projectInfo.totalHeadCount || 0
+                                    | number: '1.2-2':'en-US' }})</strong>
                             </div>
                         </mat-panel-title>
                     </mat-expansion-panel-header>
@@ -651,25 +694,19 @@
                                     <tr *ngFor="let pu of projectInfo.projectUserBills; let i =index">
                                         <td style="width: 250px; max-width: 350px;">
                                             <div style="width: 250px; max-width: 350px;">
-                                                <app-user-info [userData]="pu"
-                                                    [isWeeklyReport]="true"
-                                                    [workType]="pu.workType"
-                                                    [isHideLevel]="true"
+                                                <app-user-info [userData]="pu" [isWeeklyReport]="true"
+                                                    [workType]="pu.workType" [isHideLevel]="true"
                                                     [isSimplizeEmailAddress]="true">
                                                 </app-user-info>
                                             </div>
                                             <div style="visibility: hidden; position: fixed"
-                                                [style.left]="contextMenuPosition.x"
-                                                [style.top]="contextMenuPosition.y"
+                                                [style.left]="contextMenuPosition.x" [style.top]="contextMenuPosition.y"
                                                 [matMenuTriggerFor]="menu">
                                             </div>
-                                            <button mat-icon-button
-                                                [matMenuTriggerFor]="menu"
-                                                style="display: none;">
+                                            <button mat-icon-button [matMenuTriggerFor]="menu" style="display: none;">
                                             </button>
                                             <mat-menu #menu="matMenu">
-                                                <button [disabled]="projectUserProcess"
-                                                    class="mat-menu-item  w-100"
+                                                <button [disabled]="projectUserProcess" class="mat-menu-item  w-100"
                                                     *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_CurrentResource_Release)"
                                                     (click)="releaseUser(pu)">
                                                     <i class="fas fa-sign-out-alt mr-1"></i>
@@ -683,9 +720,7 @@
                                         </td>
                                         <td class="text-center td-fixed-width-100">
                                             <span class="d-flex align-items-center justify-content-between">
-                                                <p PrjResizeContent
-                                                    [collapseLine]="2"
-                                                    style="flex: 1;"
+                                                <p PrjResizeContent [collapseLine]="2" style="flex: 1;"
                                                     class="mb-0 p-0  ml-2 max-line-content-2">
                                                     {{pu.billRole}}
                                                 </p>
@@ -696,17 +731,13 @@
                                         </td>
                                         <td class="text-center td-fixed-width-100">
                                             <span class="d-flex align-items-center justify-content-between">
-                                                <p PrjResizeContent
-                                                    [collapseLine]="2"
-                                                    style="flex: 1;"
+                                                <p PrjResizeContent [collapseLine]="2" style="flex: 1;"
                                                     class="mb-0 p-0 ml-2 max-line-content-2">
                                                     {{pu.startTime | date:"dd/MM/yyyy"}}
                                                 </p>
                                             </span>
                                             <span class="d-flex align-items-center justify-content-between">
-                                                <p PrjResizeContent
-                                                    [collapseLine]="2"
-                                                    style="flex: 1;"
+                                                <p PrjResizeContent [collapseLine]="2" style="flex: 1;"
                                                     class="mb-0 p-0  ml-2 max-line-content-2">
                                                     {{pu.endTime | date:"dd/MM/yyyy"}}
                                                 </p>
@@ -714,103 +745,129 @@
                                         </td>
                                         <td style="width: 400px">
                                             <div class="text-right" *ngIf="selectedReport.isActive">
-                                                <button class="btn bg-blue btn-sm" (click)="addLinkResource(pu)" style="cursor: pointer; font-size: 10px;">
+                                                <button class="btn bg-blue btn-sm" (click)="addLinkResource(pu)"
+                                                    style="cursor: pointer; font-size: 10px;">
                                                     <i class="fa fa-plus fa-s m-0"></i>
                                                 </button>
                                             </div>
-                                            <div *ngIf="pu.createLinkResourceMode" style="max-width: 400px;" class="row d-flex">
+                                            <div *ngIf="pu.createLinkResourceMode" style="max-width: 400px;"
+                                                class="row d-flex">
                                                 <div class="col-10 mb-2 px-0">
                                                     <mat-form-field appearance="outline" class="col-9">
-                                                        <mat-select panelClass="custom-panel-class" (closed)="focusOut()" [(ngModel)]="selectedResource"
-                                                            name="userBill" placeholder="select a resource *" required #userBill="ngModel">
-                                                            <mat-form-field style="position: sticky; top: 0; z-index: 2; background-color: white;">
-                                                                <input matInput [(ngModel)]="searchResource" placeholder="search"
-                                                                    (keydown)="$event.stopPropagation()" name="searchResource" #search>{{search.focus()}}
+                                                        <mat-select panelClass="custom-panel-class"
+                                                            (closed)="focusOut()" [(ngModel)]="selectedResource"
+                                                            name="userBill" placeholder="select a resource *" required
+                                                            #userBill="ngModel">
+                                                            <mat-form-field
+                                                                style="position: sticky; top: 0; z-index: 2; background-color: white;">
+                                                                <input matInput [(ngModel)]="searchResource"
+                                                                    placeholder="search"
+                                                                    (keydown)="$event.stopPropagation()"
+                                                                    name="searchResource" #search>{{search.focus()}}
                                                             </mat-form-field>
                                                             <mat-option
                                                                 *ngFor="let resource of listAvailableResource | listFilter: 'fullName' : searchResource : 'emailAddress' "
                                                                 [value]="resource.id">
                                                                 <div class="mat-option-text">
-                                                                    <span class="data-name" class="user-info"> {{resource.fullName}} -
+                                                                    <span class="data-name" class="user-info">
+                                                                        {{resource.fullName}} -
                                                                         ({{resource.emailAddress}})
                                                                     </span>
                                                                 </div>
                                                             </mat-option>
                                                         </mat-select>
                                                     </mat-form-field>
-                                                    <input type="number" class="col-3" placeholder="% contribute" min="0" max="100" matTooltip="% contribute"
+                                                    <input type="number" class="col-3" placeholder="% contribute"
+                                                        min="0" max="100" matTooltip="% contribute"
                                                         [(ngModel)]="pu.contribute" />
-                                                    <mat-error class="mt-1" *ngIf="userBill.hasError('required') && userBill.touched" style="font-size: 13px;">
+                                                    <mat-error class="mt-1"
+                                                        *ngIf="userBill.hasError('required') && userBill.touched"
+                                                        style="font-size: 13px;">
                                                         This field is required
                                                     </mat-error>
                                                 </div>
-                                                <div class="d-flex col-2 align-items-center" style="flex-direction: column;">
-                                                    <button [disabled]="selectedResource == null" class="mb-1 submit-btn"
-                                                        style="background: none; border: none;" [hidden]="showSearchAndFilter && !pu.createLinkResourceMode"
+                                                <div class="d-flex col-2 align-items-center"
+                                                    style="flex-direction: column;">
+                                                    <button [disabled]="selectedResource == null"
+                                                        class="mb-1 submit-btn" style="background: none; border: none;"
+                                                        [hidden]="showSearchAndFilter && !pu.createLinkResourceMode"
                                                         (click)="saveLinkResource(pu)">
-                                                        <i style="color: green; font-size: 20px;" class="fas fa-check fa-2x "></i>
+                                                        <i style="color: green; font-size: 20px;"
+                                                            class="fas fa-check fa-2x "></i>
                                                     </button>
                                                     <i style="color: red; font-size: 20px;" class="fas fa-undo fa-2x"
-                                                        [hidden]="showSearchAndFilter && !pu.createLinkResourceMode" (click)="cancelLinkResource(pu)"></i>
+                                                        [hidden]="showSearchAndFilter && !pu.createLinkResourceMode"
+                                                        (click)="cancelLinkResource(pu)"></i>
                                                 </div>
                                             </div>
                                             <div class="d-flex row" style="max-width: 400px;">
-                                                <div *ngFor="let resource of pu.linkedResources; let i = index" class="d-flex mb-1">
+                                                <div *ngFor="let resource of pu.linkedResources; let i = index"
+                                                    class="d-flex mb-1">
                                                     <div class="col-7 d-flex px-0">
-                                                        <app-user-info [isSmallerDiv]="true" [userData]="resource" [viewMode]="1" [isHideLevel]="true">
+                                                        <app-user-info [isSmallerDiv]="true" [userData]="resource"
+                                                            [viewMode]="1" [isHideLevel]="true">
                                                         </app-user-info>
                                                     </div>
-                                        
+
                                                     <div class="col-5 d-flex px-1 align-items-end">
                                                         <div class="col-7 px-0 d-flex align-items-center">
-                                                            <span *ngIf="!editingRows[resource.id + '_' + pu.id]" class="badge text-white"
+                                                            <span *ngIf="!editingRows[resource.id + '_' + pu.id]"
+                                                                class="badge text-white"
                                                                 [style.backgroundColor]="Utils.getColorContribute(resource.contribute)"
                                                                 style="min-width: 45px; cursor: pointer;">
                                                                 {{resource.contribute + '%'}}
                                                             </span>
-                                        
-                                                            <input *ngIf="editingRows[resource.id + '_' + pu.id]" type="number" class="form-control form-control-sm px-1"
-                                                                [(ngModel)]="resource.contribute" (keydown.enter)="saveWeeklyContribute(resource, pu.id)"
-                                                                (keydown.esc)="cancelUpdate(resource, pu.id)" appFocus />
+
+                                                            <input *ngIf="editingRows[resource.id + '_' + pu.id]"
+                                                                type="number" class="form-control form-control-sm px-1"
+                                                                [(ngModel)]="resource.contribute"
+                                                                (keydown.enter)="saveWeeklyContribute(resource, pu.id)"
+                                                                (keydown.esc)="cancelUpdate(resource, pu.id)"
+                                                                appFocus />
                                                         </div>
-                                        
-                                                        <div *ngIf="selectedReport.isActive" class="col-5 d-flex justify-content-around px-0">
-                                                            <button *ngIf="!editingRows[resource.id + '_' + pu.id]" (click)="edit(resource, pu.id)"
+
+                                                        <div *ngIf="selectedReport.isActive"
+                                                            class="col-5 d-flex justify-content-around px-0">
+                                                            <button *ngIf="!editingRows[resource.id + '_' + pu.id]"
+                                                                (click)="edit(resource, pu.id)"
                                                                 class="btn btn-xs btn-clean btn-icon">
-                                                                <i class="fa fa-pencil-alt text-primary" style="font-size: 12px;"></i>
+                                                                <i class="fa fa-pencil-alt text-primary"
+                                                                    style="font-size: 12px;"></i>
                                                             </button>
-                                                            <button class="btn btn-xs btn-clean btn-icon" (click)="removeLinkResource(resource.id, pu.id)">
+                                                            <button class="btn btn-xs btn-clean btn-icon"
+                                                                (click)="removeLinkResource(resource.id, pu.id)">
                                                                 <i class="fa fa-times" style="font-size: 12px;"></i>
                                                             </button>
-                                        
-                                                            <ng-container *ngIf="editingRows[resource.id + '_' + pu.id]">
-                                                                <button (click)="saveWeeklyContribute(resource, pu.id)" class="btn btn-xs btn-clean btn-icon">
-                                                                    <i class="fas fa-check text-success" style="font-size: 14px;"></i>
+
+                                                            <ng-container
+                                                                *ngIf="editingRows[resource.id + '_' + pu.id]">
+                                                                <button (click)="saveWeeklyContribute(resource, pu.id)"
+                                                                    class="btn btn-xs btn-clean btn-icon">
+                                                                    <i class="fas fa-check text-success"
+                                                                        style="font-size: 14px;"></i>
                                                                 </button>
-                                                                <button (click)="cancelUpdate(resource, pu.id)" class="btn btn-xs btn-clean btn-icon">
-                                                                    <i class="fas fa-undo text-danger" style="font-size: 14px;"></i>
+                                                                <button (click)="cancelUpdate(resource, pu.id)"
+                                                                    class="btn btn-xs btn-clean btn-icon">
+                                                                    <i class="fas fa-undo text-danger"
+                                                                        style="font-size: 14px;"></i>
                                                                 </button>
                                                             </ng-container>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                           
+
                                         </td>
                                         <td style="white-space: break-spaces; min-width: 200px;">
-                                            <div class="d-flex align-items-center"
-                                                style="width: 100%;">
-                                                <p style="flex: 1; max-width: 100%;"
-                                                    class="mb-0 p-0 ml-2 ">
+                                            <div class="d-flex align-items-center" style="width: 100%;">
+                                                <p style="flex: 1; max-width: 100%;" class="mb-0 p-0 ml-2 ">
                                                     {{ pu.note }}
                                                 </p>
-                                                <i style="color: #585858;"
-                                                    class="fas fa-ellipsis-v ml-1"
+                                                <i style="color: #585858;" class="fas fa-ellipsis-v ml-1"
                                                     [matMenuTriggerFor]="menu3">
                                                 </i>
                                                 <mat-menu #menu3="matMenu">
-                                                    <button class="mat-menu-item"
-                                                        (click)="editBillNote(pu)">
+                                                    <button class="mat-menu-item" (click)="editBillNote(pu)">
                                                         <i class="fas fa-edit mr-2 fa-lg"></i>
                                                         Edit Note
                                                     </button>
@@ -831,7 +888,8 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="table-responsive px-2">
-                            <strong style="font-size: 20px;font-family: Roboto, 'Helvetica Neue', sans-serif;">Timesheet</strong>
+                            <strong
+                                style="font-size: 20px;font-family: Roboto, 'Helvetica Neue', sans-serif;">Timesheet</strong>
                             <div style="width: 100%; height: 190px;" id="timesheet-chart">
                             </div>
                         </div>
@@ -841,7 +899,8 @@
                     <div class=" card">
                         <div class="card-body">
                             <div class="table-responsive px-2">
-                                <strong style="font-size: 20px; font-family: Roboto, 'Helvetica Neue', sans-serif;">Bill info</strong>
+                                <strong style="font-size: 20px; font-family: Roboto, 'Helvetica Neue', sans-serif;">Bill
+                                    info</strong>
                                 <div style="width: 100%; height: 190px;" id="bill-chart">
 
                                 </div>
@@ -857,18 +916,20 @@
                                     <mat-expansion-panel-header class="m-0 d-flex align-items-center "
                                         (click)="isShowFutureList=!isShowFutureList">
                                         <strong style="font-size: 20px;">Planned Resource</strong> &nbsp;
-                                        <strong style="font-size: 20px;" class="text-danger">({{futureReportList?.length}})</strong>
+                                        <strong style="font-size: 20px;"
+                                            class="text-danger">({{futureReportList?.length}})</strong>
                                         <button class="btn bg-blue ml-3 btn-sm mb-2"
-                                        *ngIf=" permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PlannedResource_CreateNewPlan) && selectedReport.isActive"
-                                                [hidden]="processFuture || !isShowFutureList "
-                                                (click)="addPlanResource(); $event.stopPropagation()"
-                                                style="padding: 0 5px; margin-bottom: 0 !important;">
+                                            *ngIf=" permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_PlannedResource_CreateNewPlan) && selectedReport.isActive"
+                                            [hidden]="processFuture || !isShowFutureList "
+                                            (click)="addPlanResource(); $event.stopPropagation()"
+                                            style="padding: 0 5px; margin-bottom: 0 !important;">
                                             <i class="fa fa-plus  m-0"></i>
                                         </button>
                                     </mat-expansion-panel-header>
                                     <div class="card-body pt-0">
                                         <div class="fixTableHead" style="max-height:46vh">
-                                            <table style="border-collapse: collapse;" class="table table-hover text-nowrap">
+                                            <table style="border-collapse: collapse;"
+                                                class="table table-hover text-nowrap">
                                                 <thead class="bg-light" style="z-index: 1;">
                                                     <tr>
                                                         <th>Employee</th>
@@ -928,16 +989,18 @@
                                                                             class="fas fa-edit mr-1"></i>Edit</button>
                                                                 </mat-menu>
                                                             </div>
-                                                            <div *ngIf="report.createMode" class="form-group row required">
+                                                            <div *ngIf="report.createMode"
+                                                                class="form-group row required">
                                                                 <mat-form-field class="w-100" appearance="outline">
                                                                     <mat-select [(ngModel)]="report.userId"
-                                                                        name="reportUser" placeholder="select user" required
-                                                                        #reportUser="ngModel">
+                                                                        name="reportUser" placeholder="select user"
+                                                                        required #reportUser="ngModel">
                                                                         <mat-form-field class="w-100 px-3 "
                                                                             style="position: sticky; top: 0; z-index: 2; background-color: white;">
                                                                             <input matInput [(ngModel)]="searchUser"
                                                                                 name="searchUser"
-                                                                                (keydown)="$event.stopPropagation()" #search
+                                                                                (keydown)="$event.stopPropagation()"
+                                                                                #search
                                                                                 placeholder="search">{{search.focus()}}
                                                                         </mat-form-field>
                                                                         <mat-option
@@ -989,7 +1052,8 @@
                                                                 *ngIf="report.createMode">
                                                                 <input [min]="minDate" matInput [matDatepicker]="picker"
                                                                     placeholder="chose a date"
-                                                                    [(ngModel)]="report.startTime" name="usercreateDate">
+                                                                    [(ngModel)]="report.startTime"
+                                                                    name="usercreateDate">
                                                                 <mat-datepicker-toggle matSuffix [for]="picker">
                                                                 </mat-datepicker-toggle>
                                                                 <mat-datepicker #picker></mat-datepicker>
@@ -1030,11 +1094,13 @@
                                     <mat-expansion-panel-header class="m-0"
                                         (click)="isShowWeeklyList=!isShowWeeklyList">
                                         <strong style="font-size: 20px;">Changed Resource</strong> &nbsp;
-                                        <strong style="font-size: 20px;"class="text-danger">({{weeklyReportList?.length}})</strong>
+                                        <strong style="font-size: 20px;"
+                                            class="text-danger">({{weeklyReportList?.length}})</strong>
                                     </mat-expansion-panel-header>
                                     <div class="card-body pt-0">
                                         <div class="fixTableHead" style="max-height:46vh">
-                                            <table style="border-collapse: collapse;" class="table table-hover text-nowrap">
+                                            <table style="border-collapse: collapse;"
+                                                class="table table-hover text-nowrap">
                                                 <thead class="bg-light" style="z-index: 1;">
                                                     <tr>
                                                         <th>Employee</th>
@@ -1056,7 +1122,8 @@
                                                                     [userData]="report" [isWeeklyReport]="true">
                                                                 </app-user-info>
                                                             </div>
-                                                            <div *ngIf="report.createMode" class="form-group row required">
+                                                            <div *ngIf="report.createMode"
+                                                                class="form-group row required">
                                                                 <mat-form-field class="w-100" appearance="outline">
                                                                     <mat-select [(ngModel)]="report.userId"
                                                                         name="projectEmployee" placeholder="select user"
@@ -1065,7 +1132,8 @@
                                                                             style="position: sticky; top: 0; z-index: 2; background-color: white;">
                                                                             <input matInput [(ngModel)]="searchUser"
                                                                                 name="searchUserName"
-                                                                                (keydown)="$event.stopPropagation()" #search
+                                                                                (keydown)="$event.stopPropagation()"
+                                                                                #search
                                                                                 placeholder="search">{{search.focus()}}
                                                                         </mat-form-field>
                                                                         <mat-option
@@ -1117,7 +1185,8 @@
                                                                 *ngIf="report.createMode">
                                                                 <input matInput [matDatepicker]="picker"
                                                                     placeholder="chose a date" required
-                                                                    [(ngModel)]="report.startTime" name="usercreateDate">
+                                                                    [(ngModel)]="report.startTime"
+                                                                    name="usercreateDate">
                                                                 <mat-datepicker-toggle matSuffix [for]="picker">
                                                                 </mat-datepicker-toggle>
                                                                 <mat-datepicker #picker></mat-datepicker>
@@ -1132,7 +1201,8 @@
                                                             </div>
                                                             <div *ngIf="report.createMode">
                                                                 <mat-radio-group [(ngModel)]="report.allocatePercentage"
-                                                                    aria-label="Select an option" name="allocatePercentage">
+                                                                    aria-label="Select an option"
+                                                                    name="allocatePercentage">
                                                                     <mat-radio-button [value]="100">Join
                                                                     </mat-radio-button>
                                                                     <br />
@@ -1152,106 +1222,118 @@
                             </div>
 
                             <div class="card" id="support-resource"
-                            *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_CurrentResource_View)">
-                            <mat-expansion-panel [expanded]="isShowSupportUser">
-                                <mat-expansion-panel-header class="m-0 " (click)="isShowSupportUser=!isShowSupportUser">
-                                    <strong style="font-size: 20px;">Support User</strong> &nbsp;
-                                    <strong style="font-size: 20px;"
-                                        class="text-danger">({{projectCurrentSupportUser?.length}})</strong>
-                                </mat-expansion-panel-header>
-                                 <div class="card-body pt-0">
-                                <div class="fixTableHead" style="max-height: 46vh;">
-                                    <table name="tbl-supportUser" class="table table-hover ">
-                                        <thead>
-                                            <tr>
-                                                <th style="vertical-align: middle;">Employee</th>
-                                                <th style="width: 80px;">
-                                                    Normal
-                                                    <div [matTooltip]="totalNormalWorkingTime1 + 'h of project'
+                                *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_CurrentResource_View)">
+                                <mat-expansion-panel [expanded]="isShowSupportUser">
+                                    <mat-expansion-panel-header class="m-0 "
+                                        (click)="isShowSupportUser=!isShowSupportUser">
+                                        <strong style="font-size: 20px;">Support User</strong> &nbsp;
+                                        <strong style="font-size: 20px;"
+                                            class="text-danger">({{projectCurrentSupportUser?.length}})</strong>
+                                    </mat-expansion-panel-header>
+                                    <div class="card-body pt-0">
+                                        <div class="fixTableHead" style="max-height: 46vh;">
+                                            <table name="tbl-supportUser" class="table table-hover ">
+                                                <thead>
+                                                    <tr>
+                                                        <th style="vertical-align: middle;">Employee</th>
+                                                        <th style="width: 80px;">
+                                                            Normal
+                                                            <div [matTooltip]="totalNormalWorkingTime1 + 'h of project'
                                                             + ' / ' + totalNormalWorkingTimeOfWeekly1 + 'h all'
                                                             + ' / ' + totalNormalWorkingTimeStandard1 + 'h standard'">
-                                                        <strong>({{totalNormalWorkingTime1}}h</strong> /
-                                                        <strong>{{totalNormalWorkingTimeOfWeekly1}}h</strong>/
-                                                        <strong>{{totalNormalWorkingTimeStandard1}}h)</strong>
-                                                    </div>
-                                                </th>
-                                                <th style="width: 80px; white-space: nowrap;">OT
-                                                    <div
-                                                        [matTooltip]="overTimeNoCharge1 + 'h total OT NoCharge' + ' / ' + totalOverTime1 + 'h total OT'">
-                                                        (
-                                                        <strong [ngClass]="overTimeNoCharge1>0?'text-warning':''"
-                                                            style="font-size: 14px;">{{overTimeNoCharge1}}h
-                                                        </strong>/
-                                                        <strong [ngClass]="totalOverTime1>0?'text-danger':''"
-                                                            style="font-size: 14px;">{{totalOverTime1}}h
-                                                        </strong>
-                                                        )
-                                                    </div>
-                                                </th>
-                                                <!-- <th style="width: 50px;">Action</th> -->
-                                                <th style="vertical-align: middle;">Timesheet</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr *ngFor="let user of projectCurrentSupportUser; let i =index">
-                                                <td class="d-flex justify-content-between" style="border: none;width: 100%;">
-                                                    <div style="width: 80%;">
-                                                        <app-user-info [userData]="user" [isWeeklyReport]="true">
-                                                        </app-user-info>
-                                                    </div>
-                                                    <div style="display: flex; align-items: center;">
-                                                        <span class="badge"
-                                                            style="background-color: red; border-radius: 1rem; color: white;"
-                                                            *ngIf="!user.isActive">Đã Nghỉ</span>
-                                                    </div>
-                                                    <div style="visibility: hidden; position: fixed"
-                                                        [style.left]="contextMenuPosition.x" [style.top]="contextMenuPosition.y"
-                                                        [matMenuTriggerFor]="menu">
-                                                    </div>
-                                                    <button mat-icon-button [matMenuTriggerFor]="menu" style="display: none;">
-                                                    </button>
-                                                    <mat-menu #menu="matMenu">
-                                                        <button
-                                                            *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_CurrentResource_Release)"
-                                                            [disabled]="projectUserProcess" class="mat-menu-item  w-100"
-                                                            (click)="releaseUser(user)">
-                                                            <i class="fas fa-sign-out-alt mr-1"></i>Release</button>
-                                                    </mat-menu>
-                                                    <div style="width: 20%; display: flex; align-items: center;"> <strong
-                                                            [ngClass]="user.isPool ? 'text-secondary' : 'text-primary'">
-                                                            {{user.workType }}</strong></div>
-                                                </td>
-                                                <td class="text-center">
-                                                    <div [matTooltip]="user.normalWorkingTime + 'h of project'
+                                                                <strong>({{totalNormalWorkingTime1}}h</strong> /
+                                                                <strong>{{totalNormalWorkingTimeOfWeekly1}}h</strong>/
+                                                                <strong>{{totalNormalWorkingTimeStandard1}}h)</strong>
+                                                            </div>
+                                                        </th>
+                                                        <th style="width: 80px; white-space: nowrap;">OT
+                                                            <div
+                                                                [matTooltip]="overTimeNoCharge1 + 'h total OT NoCharge' + ' / ' + totalOverTime1 + 'h total OT'">
+                                                                (
+                                                                <strong
+                                                                    [ngClass]="overTimeNoCharge1>0?'text-warning':''"
+                                                                    style="font-size: 14px;">{{overTimeNoCharge1}}h
+                                                                </strong>/
+                                                                <strong [ngClass]="totalOverTime1>0?'text-danger':''"
+                                                                    style="font-size: 14px;">{{totalOverTime1}}h
+                                                                </strong>
+                                                                )
+                                                            </div>
+                                                        </th>
+                                                        <!-- <th style="width: 50px;">Action</th> -->
+                                                        <th style="vertical-align: middle;">Timesheet</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let user of projectCurrentSupportUser; let i =index">
+                                                        <td class="d-flex justify-content-between"
+                                                            style="border: none;width: 100%;">
+                                                            <div style="width: 80%;">
+                                                                <app-user-info [userData]="user"
+                                                                    [isWeeklyReport]="true">
+                                                                </app-user-info>
+                                                            </div>
+                                                            <div style="display: flex; align-items: center;">
+                                                                <span class="badge"
+                                                                    style="background-color: red; border-radius: 1rem; color: white;"
+                                                                    *ngIf="!user.isActive">Đã Nghỉ</span>
+                                                            </div>
+                                                            <div style="visibility: hidden; position: fixed"
+                                                                [style.left]="contextMenuPosition.x"
+                                                                [style.top]="contextMenuPosition.y"
+                                                                [matMenuTriggerFor]="menu">
+                                                            </div>
+                                                            <button mat-icon-button [matMenuTriggerFor]="menu"
+                                                                style="display: none;">
+                                                            </button>
+                                                            <mat-menu #menu="matMenu">
+                                                                <button
+                                                                    *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_CurrentResource_Release)"
+                                                                    [disabled]="projectUserProcess"
+                                                                    class="mat-menu-item  w-100"
+                                                                    (click)="releaseUser(user)">
+                                                                    <i
+                                                                        class="fas fa-sign-out-alt mr-1"></i>Release</button>
+                                                            </mat-menu>
+                                                            <div
+                                                                style="width: 20%; display: flex; align-items: center;">
+                                                                <strong
+                                                                    [ngClass]="user.isPool ? 'text-secondary' : 'text-primary'">
+                                                                    {{user.workType }}</strong>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <div [matTooltip]="user.normalWorkingTime + 'h of project'
                                                             + ' / ' + user.normalWorkingTimeAll + 'h all'
                                                             + ' / ' + user.normalWorkingTimeStandard + 'h standard'">
-                                                        <strong>{{user?.normalWorkingTime}}</strong> /
-                                                        <strong
-                                                            [ngClass]="(user.normalWorkingTimeAll <= user.normalWorkingTimeStandard)?'':'time-over'">{{user?.normalWorkingTimeAll}}</strong>
-                                                        /
-                                                        <strong>{{user?.normalWorkingTimeStandard}}</strong>
-                                                    </div>
-                                                </td>
-                                                <td class="text-center">
-                                                    <div
-                                                        [matTooltip]="user.overTimeNoCharge + 'h OT NoCharge' + ' / ' + user.overTime + 'h OT'">
-                                                        <strong
-                                                            [ngClass]="user.overTimeNoCharge>0?'text-warning': ''">{{user.overTimeNoCharge}}</strong>/
-                                                        <strong
-                                                            [ngClass]="user.overTime>0?'text-danger': ''">{{user.overTime}}</strong>
-                                                    </div>
-                                                </td>
-                                                <td style="text-align: -webkit-center;">
-                                                    <div style="width: 200px; height: 60px;" [id]="'user' + user.userId">
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
+                                                                <strong>{{user?.normalWorkingTime}}</strong> /
+                                                                <strong
+                                                                    [ngClass]="(user.normalWorkingTimeAll <= user.normalWorkingTimeStandard)?'':'time-over'">{{user?.normalWorkingTimeAll}}</strong>
+                                                                /
+                                                                <strong>{{user?.normalWorkingTimeStandard}}</strong>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <div
+                                                                [matTooltip]="user.overTimeNoCharge + 'h OT NoCharge' + ' / ' + user.overTime + 'h OT'">
+                                                                <strong
+                                                                    [ngClass]="user.overTimeNoCharge>0?'text-warning': ''">{{user.overTimeNoCharge}}</strong>/
+                                                                <strong
+                                                                    [ngClass]="user.overTime>0?'text-danger': ''">{{user.overTime}}</strong>
+                                                            </div>
+                                                        </td>
+                                                        <td style="text-align: -webkit-center;">
+                                                            <div style="width: 200px; height: 60px;"
+                                                                [id]="'user' + user.userId">
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </mat-expansion-panel>
                             </div>
-                            </mat-expansion-panel>
-                        </div>
                         </div>
                     </div>
                 </div>

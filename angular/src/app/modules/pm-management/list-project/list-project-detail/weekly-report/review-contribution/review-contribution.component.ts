@@ -55,9 +55,9 @@ export class ReviewContributionComponent implements OnInit {
   }
 
   public getSendReportTooltip(): string {
-    if (!this.isValidCriteria) {
-      return "Please enter Criteria to be able to send the report!";
-    }
+    // if (!this.isValidCriteria) {
+    //   return "Please enter Criteria to be able to send the report!";
+    // }
     if (!this.hasLinkedResources()) {
       return "Each Bill Account must have at least 1 Linked Resource!";
     }

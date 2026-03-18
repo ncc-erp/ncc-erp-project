@@ -676,6 +676,7 @@ export class WeeklyReportComponent
         reportName: this.selectedReport.pmReportName,
         projectId: this.projectId,
         pmReportId: this.selectedReport.reportId,
+        isValidCriteria: this.isValidCriteria   
       },
     });
 

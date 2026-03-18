@@ -110,7 +110,10 @@
 
 <mat-dialog-actions align="end" class="border-top pt-2">
     <button mat-button (click)="onCancel()">Back</button>
-    <button mat-raised-button color="primary" (click)="onConfirm()">
+
+    <button mat-raised-button color="primary" (click)="onConfirm()"
+        [disabled]="!isValidCriteria || !hasLinkedResources()">
+
         <i class="fas fa-paper-plane mr-1"></i> Confirm & Submit
     </button>
 </mat-dialog-actions>

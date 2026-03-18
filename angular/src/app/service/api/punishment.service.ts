@@ -37,7 +37,7 @@ export class PunishmentService extends BaseApiService {
     formData.append('Year', item.year.toString());
     formData.append('Note', item.note ? item.note : '');
     if (file) {
-        formData.append('File', file);
+      formData.append('File', file);
     }
     return this.http.put<any>(this.rootUrl + "/Update", formData);
   }
@@ -50,5 +50,9 @@ export class PunishmentService extends BaseApiService {
 
   public downloadFile(punishmentId: number) {
     return this.http.get<any>(this.rootUrl + '/DownloadPunishmentFile?id=' + punishmentId);
+  }
+
+  public getTemplate() {
+    return this.http.get<any>(this.rootUrl + '/DownloadPunishmentTemplate');
   }
 }

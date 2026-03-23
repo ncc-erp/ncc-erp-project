@@ -80,14 +80,14 @@
         </div>
 
         <div
-          *ngIf="isEditingAllRow() && billDetail.length >= 20"
+          *ngIf="isEditingAllRow()"
           class="pt-1 ml-4"
         >
           <input
             type="number"
             (input)="updateAllWorkingTime($event.target.value)"
-            placeholder="Working Time For All"
-            style="min-width: 80px; margin-left: 800px"
+            placeholder=" Working Day"
+            style="min-width: 30px; margin-left: 40px"
           />
         </div>
       </div>
@@ -301,7 +301,7 @@
                 <div
                   class="d-flex justify-content-end my-2"
                   *ngIf="
-                    bill.isEditing &&
+                    !data.billInfo.isComplete &&
                     !bill.createTimesheetBillOtMode &&
                     canEditOTType()
                   "

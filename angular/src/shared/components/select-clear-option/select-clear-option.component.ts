@@ -9,7 +9,8 @@ import { Component, EventEmitter, Injector, Input, Output } from '@angular/core'
 export class SelectClearOptionComponent extends AppComponentBase  {
   @Input() listOption: number[]
   @Input() type:string = '';
-  @Output()newListEvent = new EventEmitter<any>();
+  @Output() newListEvent = new EventEmitter<any>();
+  @Input() showDone: boolean = false;
   @Output()doneEvent = new EventEmitter<string>();
   constructor(injector: Injector) {
     super(injector)

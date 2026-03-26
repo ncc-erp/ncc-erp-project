@@ -205,26 +205,31 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     if(!opened){
       switch(typeSelect){
         case 'Branch':
-          this.selectedBranchIds = [...this.selectedBranchIdsOld]
-          this.selectedBranchIdsCr = [...this.selectedBranchIdsOld]
+          // this.selectedBranchIds = [...this.selectedBranchIdsOld]
+          // this.selectedBranchIdsCr = [...this.selectedBranchIdsOld]
+          this.selectedBranchIdsOld = [...this.selectedBranchIds]
           this.searchBranch = '';
           break;
         case 'Position':
-          this.selectedPositions = [...this.selectedPositionsOld]
-          this.selectedPositionsCr = [...this.selectedPositionsOld]
+          // this.selectedPositions = [...this.selectedPositionsOld]
+          // this.selectedPositionsCr = [...this.selectedPositionsOld]
+          this.selectedBranchIdsOld = [...this.selectedBranchIds]
           this.searchPosition = '';
           break;
         case 'Skill':
-          this.selectedSkillId = [...this.selectedSkillIdOld]
-          this.selectedSkillIdCr = [...this.selectedSkillIdOld]
+          // this.selectedSkillId = [...this.selectedSkillIdOld]
+          // this.selectedSkillIdCr = [...this.selectedSkillIdOld]
+          this.selectedPositionsOld = [...this.selectedPositions]
           this.searchSkill = '';
           break;
         case 'UserType':
-          this.selectedUserTypes = [...this.selectedUserTypesOld]
-          this.selectedUserTypesCr = [...this.selectedUserTypesOld]
+          // this.selectedUserTypes = [...this.selectedUserTypesOld]
+          // this.selectedUserTypesCr = [...this.selectedUserTypesOld]
+          this.selectedSkillIdOld = [...this.selectedSkillId]
           this.searchUserType = '';
           break;
       }
+      this.refresh();
     }
   }
 

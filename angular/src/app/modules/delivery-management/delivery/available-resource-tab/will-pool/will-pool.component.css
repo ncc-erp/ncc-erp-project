@@ -4,7 +4,9 @@
     z-index: 2;
     background-color: white;
 }
-
+::ng-deep .mat-form-field-flex {
+    min-width: 140px;
+}
 .table-border-collapse {
     border-collapse: collapse;
 }

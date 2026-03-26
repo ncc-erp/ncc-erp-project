@@ -106,9 +106,12 @@ export class DetailWeeklyContributionComponent
 
   public openedChange(opened: boolean) {
     if (!opened) {
-      this.selectedBranchIds = [...this.selectedBranchIdsOld];
-      this.selectedBranchIdsCr = [...this.selectedBranchIdsOld];
+      // this.selectedBranchIds = [...this.selectedBranchIdsOld];
+      // this.selectedBranchIdsCr = [...this.selectedBranchIdsOld];
+      this.selectedBranchIdsOld = [...this.selectedBranchIds];
+      this.selectedBranchIdsCr = [...this.selectedBranchIds];
       this.searchBranch = "";
+      this.refresh();
     }
   }
 

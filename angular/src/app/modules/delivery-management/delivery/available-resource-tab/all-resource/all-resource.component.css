@@ -16,6 +16,9 @@
 ::ng-deep .mat-select-panel{
     max-height: 350px !important;
 }
+::ng-deep .row-second .mat-form-field-flex {
+    min-width: 160px;
+}
 
 #all-resource .fa-edit,
 #all-resource .fa-plus {
@@ -99,6 +102,9 @@ span {
 
 .row-second {
     height: 35px;
+}
+::ng-deep .row-second .mat-form-field-flex {
+    min-width: 160px;
 }
 
 ::ng-deep .cdk-overlay-container .cdk-global-overlay-wrapper .add-edit-note-dialog {

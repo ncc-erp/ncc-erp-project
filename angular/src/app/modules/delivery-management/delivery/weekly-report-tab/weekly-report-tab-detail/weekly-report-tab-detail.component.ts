@@ -7,7 +7,7 @@ import { ProjectUserService } from './../../../../../service/api/project-user.se
 import { ProjectInfoDto, projectUserDto } from './../../../../../service/model/project.dto';
 import { PmReportService } from './../../../../../service/api/pm-report.service';
 import { PmReportIssueService } from './../../../../../service/api/pm-report-issue.service';
-import {PmReportRiskService} from './../../../../../service/api/pm-report-project-ricks.service';
+import { PmReportRiskService } from './../../../../../service/api/pm-report-project-ricks.service';
 import { projectProblemDto, projectReportDto } from './../../../../../service/model/projectReport.dto';
 import { finalize, catchError } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
@@ -35,6 +35,8 @@ import { CriteriaService } from '@app/service/api/criteria.service';
 import { ProjectCriteriaResultService } from '@app/service/api/project-criteria-result.service';
 import { ProjectCriteriaDto } from '@app/service/model/criteria-category.dto';
 import { ProjectCriteriaResultDto } from '@app/service/model/project-criteria-result.dto';
+import { ProjectDailyMeetingService } from "../../../../../service/api/project-daily-meeting.service";
+import { ProjectDailyMeetingDto, ProjectDailyReportDto } from "../../../../../service/model/project-daily-meeting.dto";
 import { cloneDeep } from 'lodash';
 import { GuideLineDialogComponent } from '@app/modules/pm-management/list-project/list-project-detail/weekly-report/guide-line-dialog/guide-line-dialog/guide-line-dialog.component';
 import { ReportGuidelineDetailComponent } from './report-guideline-detail/report-guideline-detail.component';
@@ -118,6 +120,7 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
   public pmReportProjectList: pmReportProjectDto[] = [];
   public tempPmReportProjectList: pmReportProjectDto[] = [];
   public listPreEditCriteriaResult: ProjectCriteriaResultDto[] = [];
+  public listPreEditDailyReports: ProjectDailyReportDto[] = [];
   public show: boolean = false;
   public pmReportProject = {} as pmReportProjectDto;
   public pmReportId: any;
@@ -127,21 +130,21 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
   public weeklyReportList: projectReportDto[] = [];
   public futureReportList: projectReportDto[] = [];
   public problemList: projectProblemDto[] = [];
-  public projectRiskList: ReportRiskDto [] = [];
+  public projectRiskList: ReportRiskDto[] = [];
   public problemIssueList: string[] = Object.keys(this.APP_ENUM.ProjectHealth);
   public projectRoleList: string[] = Object.keys(this.APP_ENUM.ProjectUserRole);
   public issueStatusList: string[] = Object.keys(this.APP_ENUM.PMReportProjectIssueStatus);
   public riskStatusList: string[] = Object.keys(this.APP_ENUM.PMReportProjectRiskStatus);
-  public priorityList:string[] = Object.keys(this.APP_ENUM.Priority)
+  public priorityList: string[] = Object.keys(this.APP_ENUM.Priority)
   public activeReportId: number;
   public typeSort: string = "No_Order";
   public sortReview: string = "All";
   public weeklyReportStatus: string;
   public recentDate: string;
-  public drawerLeft=false
-  public drawerRight=true
+  public drawerLeft = false
+  public drawerRight = true
   public iconCheckedDate: string = "<i class='fas fa-calendar-check'></i>&nbsp;";
-  public resizableGrabWidth= -400;
+  public resizableGrabWidth = -400;
 
   public pmReportProjectId: number;
   public isEditWeeklyReport: boolean = false;
@@ -157,18 +160,21 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
   public isEditingAutomationNote: boolean = false
   public generalNote: string = "";
   public automationNote: string = "";
-  public isShowPmNote:boolean=false;
-  public isShowIssues:boolean=false;
-  public isShowCurrentResource:boolean = false;
+  public isShowPmNote: boolean = false;
+  public isShowIssues: boolean = false;
+  public isShowCurrentResource: boolean = false;
   public isShowChargeAccount: boolean = false;
-  public isShowSupportUser:boolean = false;
-  public isShowBillInfo:boolean = true;
-  public isShowTimesheet:boolean = true;
+  public isShowSupportUser: boolean = false;
+  public isShowBillInfo: boolean = true;
+  public isShowTimesheet: boolean = true;
   public isShowProblemList: boolean = false;
   public isShowWeeklyList: boolean = false;
   public isShowFutureList: boolean = false;
   public isShowRisks: boolean = false;
   public projectInfo = {} as ProjectInfoDto
+  public weeklySummaryData = {} as ProjectDailyMeetingDto;
+  public overallSummary: string = "";
+  public listDailyReports: ProjectDailyReportDto[] = [];
   public projectCurrentResource: any = []
   public projectCurrentSupportUser: any = []
   public mondayOf5weeksAgo: any
@@ -215,10 +221,10 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
 
   public guideLine: any;
   public priority = [
-    {value:this.APP_ENUM.Priority.Low,viewValue:'Low'},
-    {value:this.APP_ENUM.Priority.High,viewValue:'High'},
-    {value:this.APP_ENUM.Priority.Medium,viewValue:'Medium'},
-    {value:this.APP_ENUM.Priority.Critical,viewValue:'Critical'}]
+    { value: this.APP_ENUM.Priority.Low, viewValue: 'Low' },
+    { value: this.APP_ENUM.Priority.High, viewValue: 'High' },
+    { value: this.APP_ENUM.Priority.Medium, viewValue: 'Medium' },
+    { value: this.APP_ENUM.Priority.Critical, viewValue: 'Critical' }]
 
   editingRows: { [key: number]: boolean } = {};
   tempContributeValues: { [key: number]: number } = {};
@@ -237,6 +243,7 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
     private _configuration: AppConfigurationService,
     private pjCriteriaService: CriteriaService,
     private pjCriteriaResultService: ProjectCriteriaResultService,
+    private pjDailyMeetingService: ProjectDailyMeetingService,
     private settingService: AppConfigurationService,
     private PMReportProjectContributionService: PMReportProjectContributionService,
   ) {
@@ -334,50 +341,51 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
 
   public getPmReportProject() {
     if (this.router.url.includes("weeklyReportTabDetail") && this.pmReportId) {
-    this.pmReportProjectService.GetAllByPmReport(this.pmReportId, this.projectType, this.projectStatus, this.typeSort,this.sortReview)
-      .subscribe((data => {
-        this.pmReportProjectList = data.result
-        this.tempPmReportProjectList = data.result;
-        this.projectId = this.pmReportProjectList[0]?.projectId
-        this.generalNote = this.pmReportProjectList[0]?.note
-        this.automationNote = this.pmReportProjectList[0]?.automationNote
-        this.totalOverTime = this.pmReportProjectList[0]?.totalOverTime
-        this.projectHealth = this.APP_ENUM.ProjectHealth[this.pmReportProjectList[0]?.projectHealth]
-        //this.pmReportProjectService.projectHealth = this.projectHealth
-        this.pmReportProjectId = this.pmReportProjectList[0]?.id
-        if (this.pmReportProjectList[0]) {
-          this.pmReportProjectList[0].setBackground = true
-        }
+      this.pmReportProjectService.GetAllByPmReport(this.pmReportId, this.projectType, this.projectStatus, this.typeSort, this.sortReview)
+        .subscribe((data => {
+          this.pmReportProjectList = data.result
+          this.tempPmReportProjectList = data.result;
+          this.projectId = this.pmReportProjectList[0]?.projectId
+          this.generalNote = this.pmReportProjectList[0]?.note
+          this.automationNote = this.pmReportProjectList[0]?.automationNote
+          this.totalOverTime = this.pmReportProjectList[0]?.totalOverTime
+          this.projectHealth = this.APP_ENUM.ProjectHealth[this.pmReportProjectList[0]?.projectHealth]
+          //this.pmReportProjectService.projectHealth = this.projectHealth
+          this.pmReportProjectId = this.pmReportProjectList[0]?.id
+          if (this.pmReportProjectList[0]) {
+            this.pmReportProjectList[0].setBackground = true
+          }
 
-        if(this.projectId){
-          this.getLastWeek();
-          this.getAllCriteria();
-          this.getProjectInfo();
-          this.getChangedResource();
-          this.getFuturereport();
-          this.getProjectProblem();
-          this.getRiskOfTheWeek()
-          this.search()
-           this.isShowPmNote = this.generalNote ? true : false
-        }
-        else{
-          this.isShowIssues=false;
-          this.isShowRisks=false;
-          this.isShowPmNote=false;
-          this.isShowSupportUser=false;
-          this.isShowFutureList=false;
-          this.isShowWeeklyList=false;
-          this.futureReportList= [];
-          this.weeklyReportList = [];
-          this.projectCurrentSupportUser = [];
-          this.listCriteriaResult = [];
-          this.generalNote = '';
-          this.problemList = [];
-          this.projectRiskList = [];
-          this.projectCurrentResource = [];
-          this.projectInfo.totalBill= 0;
-        }
-      }))
+          if (this.projectId) {
+            this.getLastWeek();
+            this.getAllCriteria();
+            this.getProjectDailyMeeting();
+            this.getProjectInfo();
+            this.getChangedResource();
+            this.getFuturereport();
+            this.getProjectProblem();
+            this.getRiskOfTheWeek()
+            this.search()
+            this.isShowPmNote = this.generalNote ? true : false
+          }
+          else {
+            this.isShowIssues = false;
+            this.isShowRisks = false;
+            this.isShowPmNote = false;
+            this.isShowSupportUser = false;
+            this.isShowFutureList = false;
+            this.isShowWeeklyList = false;
+            this.futureReportList = [];
+            this.weeklyReportList = [];
+            this.projectCurrentSupportUser = [];
+            this.listCriteriaResult = [];
+            this.generalNote = '';
+            this.problemList = [];
+            this.projectRiskList = [];
+            this.projectCurrentResource = [];
+            this.projectInfo.totalBill = 0;
+          }
+        }))
     }
   }
 
@@ -428,7 +436,43 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
         this.listPreEditCriteriaResult = cloneDeep(this.listCriteriaResult);
         this.setTotalHealth();
         this.isLoading = false
-      }, ()=> this.isLoading = false)
+      }, () => this.isLoading = false)
+  }
+
+  public getProjectDailyMeeting() {
+    if (!this.pmReportId || !this.projectId) {
+      this.overallSummary = "";
+      this.listDailyReports = [];
+      return;
+    }
+
+    this.listDailyReports = [];
+
+    this.pjDailyMeetingService
+      .getProjectWeeklySummary(this.projectId, this.pmReportId)
+      .subscribe((res) => {
+        if (res && res.result) {
+          const raw = res.result;
+
+          this.weeklySummaryData = {
+            id: raw.id,
+            projectId: raw.projectId,
+            pmReportId: raw.pmReportId,
+            summary: raw.summary,
+            editMode: false,
+            dailyReports: raw.dailyReports.map(item => ({
+              ...item,
+              editMode: false
+            }))
+          };
+          this.overallSummary = this.weeklySummaryData.summary;
+          this.listDailyReports = this.weeklySummaryData.dailyReports;
+        } else {
+          this.overallSummary = "";
+          this.listDailyReports = [];
+        }
+        this.listPreEditDailyReports = cloneDeep(this.listDailyReports);
+      });
   }
 
   setTotalHealth() {
@@ -487,7 +531,7 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
     }
   }
 
-  public saveCriteriaResult(item: ProjectCriteriaResultDto,index:number) {
+  public saveCriteriaResult(item: ProjectCriteriaResultDto, index: number) {
     item.pmReportId = this.pmReportId;
     item.note = item.note.replace(/^(<br\s*\/>)+|(<br\s*\/>)+$/g, '');
     if (item.id) {
@@ -532,9 +576,9 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
         this.automationNote = data.result.automationNote
         this.getDataForBillChart(this.projectInfo.projectCode)
         this.getCurrentResourceOfProject(this.projectInfo.projectCode)
-        if (this.projectInfo.projectUserBills.length > 0){
+        if (this.projectInfo.projectUserBills.length > 0) {
           this.isShowChargeAccount = true;
-        } else{
+        } else {
           this.isShowChargeAccount = false;
         }
         if (this.weeklyReportStatus === 'Sent') {
@@ -602,6 +646,7 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
     this.automationNote = projectReport.automationNote
     this.getLastWeek();
     this.getAllCriteria();
+    this.getProjectDailyMeeting();
     this.getProjectInfo();
     this.getChangedResource();
     this.getFuturereport();
@@ -615,7 +660,7 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
     this.checkViewSubject = false
     this.getTimeCountDown(true);
     this.showPmNote = false;
-    this.isShowPmNote = this.generalNote ? true: false
+    this.isShowPmNote = this.generalNote ? true : false
   }
 
   public getChangedResource() {
@@ -625,7 +670,7 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
         this.weeklyReportList = data.result;
         this.isShowWeeklyList = this.weeklyReportList.length == 0 ? false : true;
         this.isLoading = false
-      }, ()=> this.isLoading = false)
+      }, () => this.isLoading = false)
     }
   }
 
@@ -636,7 +681,7 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
         this.futureReportList = data.result;
         this.isShowFutureList = this.futureReportList.length == 0 ? false : true;
         this.isLoading = false
-      },()=> this.isLoading = false)
+      }, () => this.isLoading = false)
     }
   }
 
@@ -697,32 +742,32 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
         this.isShowProblemList = this.problemList.length == 0 ? false : true;
         this.isShowIssues = this.problemList.length > 0;
         this.isLoading = false
-      }, ()=> this.isLoading = false)
+      }, () => this.isLoading = false)
     }
   }
 
-  public getRiskOfTheWeek(){
-    if(this.projectId && this.permission.isGranted(this.WeeklyReport_ReportDetail_PMRisk_View)){
+  public getRiskOfTheWeek() {
+    if (this.projectId && this.permission.isGranted(this.WeeklyReport_ReportDetail_PMRisk_View)) {
       this.isLoading = true;
-      this.pmReportRiskService.getRiskOfTheWeek(this.projectId, this.pmReportId).pipe(catchError( this.pmReportRiskService.handleError)).subscribe(data => {
-        if(data.result){
+      this.pmReportRiskService.getRiskOfTheWeek(this.projectId, this.pmReportId).pipe(catchError(this.pmReportRiskService.handleError)).subscribe(data => {
+        if (data.result) {
           this.projectRiskList = data.result;
-          this.isShowRisks = this.projectRiskList.length >0
+          this.isShowRisks = this.projectRiskList.length > 0
         }
         this.isLoading = false
-      }, ()=> this.isLoading = false)
+      }, () => this.isLoading = false)
     }
   }
 
-  setDoneRisk(risk){
+  setDoneRisk(risk) {
     const Risk = {
       id: risk.id,
       impact: risk.impact,
       pmReportProjectId: risk.pmReportProjectId,
-      priority:risk.priority,
+      priority: risk.priority,
       risk: risk.risk,
       solution: risk.solution,
-      status:this.APP_ENUM.PMReportProjectRiskStatus.Done
+      status: this.APP_ENUM.PMReportProjectRiskStatus.Done
     }
     this.pmReportRiskService.UpdateReportRisk(Risk).pipe(catchError(this.pmReportRiskService.handleError)).subscribe((res) => {
       if (res) {
@@ -732,15 +777,15 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
     })
   }
 
-  setInProgressRisk(risk){
+  setInProgressRisk(risk) {
     const Risk = {
       id: risk.id,
       impact: risk.impact,
       pmReportProjectId: risk.pmReportProjectId,
-      priority:risk.priority,
+      priority: risk.priority,
       risk: risk.risk,
       solution: risk.solution,
-      status:this.APP_ENUM.PMReportProjectRiskStatus.InProgress
+      status: this.APP_ENUM.PMReportProjectRiskStatus.InProgress
     }
     this.pmReportRiskService.UpdateReportRisk(Risk).pipe(catchError(this.pmReportRiskService.handleError)).subscribe((res) => {
       if (res) {
@@ -787,7 +832,7 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
 
   public showConfirmModal(event, project) {
     event.preventDefault();
-    if(project.isActive == true){
+    if (project.isActive == true) {
       const dialogRef = this.dialog.open(UpdateConfirmModalComponent, {
         data: {
           projectName: project.projectName,
@@ -1082,7 +1127,7 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
     report.allocatePercentage = data
   }
 
-  getCurrentLastWeekMonday()  {
+  getCurrentLastWeekMonday() {
     var d = new Date();
     d.setDate(d.getDate() - (d.getDay() + 6) % 7);
     d.setDate(d.getDate() - 7);
@@ -1108,10 +1153,10 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
           this.totalNormalWorkingTimeStandard = 0
           this.totalNormalWorkingTimeStandard1 = 0
           this.projectCurrentResource = data.result
-          if(this.projectCurrentResource.length > 0 ) {
+          if (this.projectCurrentResource.length > 0) {
             this.isShowCurrentResource = true
           }
-          if(this.projectCurrentResource.length === 0 ) {
+          if (this.projectCurrentResource.length === 0) {
             this.isShowCurrentResource = false
           }
           this.projectCurrentResource.forEach(user => {
@@ -1132,7 +1177,7 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
   }
 
   handleViewSubject() {
-    if(this.checkViewSubject) {
+    if (this.checkViewSubject) {
       this.getViewSubject()
       return
     }
@@ -1141,7 +1186,7 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
 
   getViewSubject() {
     forkJoin([
-      this.projectUserService.getCurrentResource(this.projectId,false),
+      this.projectUserService.getCurrentResource(this.projectId, false),
       this.pmReportProjectService.GetCurrentResourceOfProject(this.projectId)
     ]).pipe(map(responses => {
       const projectUser = responses[0].result;
@@ -1150,7 +1195,7 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
       return mergedData;
     })).subscribe(
       mergedData => {
-        if(mergedData.length > 0 ) {
+        if (mergedData.length > 0) {
           this.isShowCurrentResource = true
         }
         this.totalNormalWorkingTime = 0
@@ -1159,9 +1204,9 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
         this.totalNormalWorkingTimeOfWeekly = 0
         this.totalNormalWorkingTimeStandard = 0
         this.projectCurrentResource = mergedData
-        this.projectCurrentResource.forEach((user:projectUserDto) => {
-        this.GetTimesheetWeeklyChartOfUserInProject( this.projectInfo.projectCode, user, this.mondayOf5weeksAgo, this.lastWeekSunday)
-        this.GetTimesheetOfUserInProjectNew( this.projectInfo.projectCode, user, this.getCurrentLastWeekMonday(), this.lastWeekSunday)
+        this.projectCurrentResource.forEach((user: projectUserDto) => {
+          this.GetTimesheetWeeklyChartOfUserInProject(this.projectInfo.projectCode, user, this.mondayOf5weeksAgo, this.lastWeekSunday)
+          this.GetTimesheetOfUserInProjectNew(this.projectInfo.projectCode, user, this.getCurrentLastWeekMonday(), this.lastWeekSunday)
         })
       },
       () => {
@@ -1552,7 +1597,7 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
             this.getFuturereport()
           })
         }
-      }, {isHtml:true}
+      }, { isHtml: true }
     )
   }
 
@@ -1693,10 +1738,10 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
   public editResoureNote(user) {
     let ref = this.dialog.open(EditNoteResourceComponent, {
       width: "600px",
-      data: 
+      data:
       {
         id: user.id,
-        note:user.note
+        note: user.note
       }
     })
     ref.afterClosed().subscribe(rs => {
@@ -1717,12 +1762,12 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
 
     ref.afterClosed().subscribe(rs => {
       if (rs !== undefined) {
-       user.note = rs;
+        user.note = rs;
       }
     });
   }
 
-  isShowChangeDoneText(issue){
+  isShowChangeDoneText(issue) {
     return this.APP_ENUM.PMReportProjectIssueStatus[issue.status] == this.APP_ENUM.PMReportProjectIssueStatus.InProgress
   }
 
@@ -1730,11 +1775,11 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
     return this.APP_ENUM.PMReportProjectIssueStatus[issue.status] == this.APP_ENUM.PMReportProjectIssueStatus.Done
   }
 
-  isShowChangeDoneTextRisk(risk){
+  isShowChangeDoneTextRisk(risk) {
     return risk.status == this.APP_ENUM.PMReportProjectRiskStatus.InProgress
   }
 
-  isShowChangeInProgressTextRisk(risk){
+  isShowChangeInProgressTextRisk(risk) {
     return risk.status == this.APP_ENUM.PMReportProjectRiskStatus.Done
   }
 
@@ -1763,7 +1808,7 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
       this.countdownInterval.setValue(rs.result.timeCountDown);
       if (autoStart) setTimeout(() => this.startTimmer());
       this.isLoading = false
-    },()=> this.isLoading = false);
+    }, () => this.isLoading = false);
   }
 
   openSettingCountDown() {
@@ -1797,7 +1842,7 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
 
   getGuideLineConfiguration() {
     if (this.permission.isGranted(this.WeeklyReport_ReportDetail_GuideLine_View)) {
-    this.settingService.getGuideLine().subscribe((data) => {
+      this.settingService.getGuideLine().subscribe((data) => {
         this.guideLine = data.result;
       });
     }
@@ -1834,8 +1879,8 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
           width: "60%"
         });
 
-        show.afterClosed().subscribe((updatedGuideline) => {});
-      }  else {
+        show.afterClosed().subscribe((updatedGuideline) => { });
+      } else {
         // Display the dialog with empty content
         const show = this.dialog.open(ReportGuidelineDetailComponent, {
           data: {
@@ -1846,7 +1891,7 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
           width: "60%"
         });
 
-        show.afterClosed().subscribe((updatedGuideline) => {});
+        show.afterClosed().subscribe((updatedGuideline) => { });
       }
     });
   }
@@ -1923,7 +1968,7 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
         this.getOldCriteriaResult();
       }
       this.isLoading = false
-    }, ()=> this.isLoading = false);
+    }, () => this.isLoading = false);
   }
 
   getOldCriteriaResult() {
@@ -1968,8 +2013,8 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
     }
   }
 
-  fixedNumber(num?:number) {
-    if(!num){
+  fixedNumber(num?: number) {
+    if (!num) {
       return 0
     }
     if (num % 1 !== 0) {
@@ -1979,27 +2024,27 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
   }
 
   edit(resource: any) {
-  this.tempContributeValues[resource.id] = resource.contribute;
-  this.editingRows[resource.id] = true;
-}
-
-cancelUpdate(resource: any) {
-  if (this.tempContributeValues[resource.id] !== undefined) {
-    resource.contribute = this.tempContributeValues[resource.id];
+    this.tempContributeValues[resource.id] = resource.contribute;
+    this.editingRows[resource.id] = true;
   }
-  this.editingRows[resource.id] = false;
-  delete this.tempContributeValues[resource.id];
-}
+
+  cancelUpdate(resource: any) {
+    if (this.tempContributeValues[resource.id] !== undefined) {
+      resource.contribute = this.tempContributeValues[resource.id];
+    }
+    this.editingRows[resource.id] = false;
+    delete this.tempContributeValues[resource.id];
+  }
 
 
-saveWeeklyContribute(resource: any, projectUserBillId: number) {
+  saveWeeklyContribute(resource: any, projectUserBillId: number) {
     this.isLoading = true;
     const request = {
       userId: resource.id,
       projectUserBillId: projectUserBillId,
       contribute: resource.contribute,
       projectId: this.projectId,
-      PMReportId:  this.pmReportId,
+      PMReportId: this.pmReportId,
     };
     this.PMReportProjectContributionService.updateWeeklyHistory(request).subscribe(
       () => {
@@ -2010,8 +2055,52 @@ saveWeeklyContribute(resource: any, projectUserBillId: number) {
       () => (this.isLoading = false),
     );
   }
-  
-  isShowEditContribute(){
+
+  isShowEditContribute() {
     return this.isActive
+  }
+
+  public saveOverallSummary() {
+    const payload = {
+      id: this.weeklySummaryData.id,
+      summary: this.overallSummary
+    };
+
+    this.pjDailyMeetingService.updateSummary(payload).subscribe((res) => {
+      abp.notify.success("Update Weekly Summary successfully");
+      this.weeklySummaryData.editMode = false;
+
+      if (res && res.result) {
+        this.weeklySummaryData.summary = res.result.summary;
+        this.overallSummary = res.result.summary;
+      }
+    });
+  }
+
+  public cancelEditSummary() {
+    this.overallSummary = this.weeklySummaryData.summary;
+    this.weeklySummaryData.editMode = false;
+  }
+
+  public saveDailyDetail(item: ProjectDailyReportDto, index: number) {
+    const payload = {
+      id: item.id,
+      content: item.content
+    };
+
+    this.pjDailyMeetingService.updateDailyReport(payload).subscribe((res) => {
+      abp.notify.success(`Update Daily Report successfully`);
+      item.editMode = false;
+
+      if (res && res.result) {
+        item.content = res.result.content;
+        this.listPreEditDailyReports[index].content = item.content;
+      }
+    });
+  }
+
+  public cancelEditDailyReport(index: number) {
+    this.listDailyReports[index].content = this.listPreEditDailyReports[index].content;
+    this.listDailyReports[index].editMode = false;
   }
 }

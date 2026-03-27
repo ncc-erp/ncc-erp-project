@@ -10,8 +10,8 @@ using ProjectManagement.EntityFrameworkCore;
 namespace ProjectManagement.Migrations
 {
     [DbContext(typeof(ProjectManagementDbContext))]
-    [Migration("20260323063127_Added_Weekly_And_Daily_Report_Tables")]
-    partial class Added_Weekly_And_Daily_Report_Tables
+    [Migration("20260326085130_Add_Weekly_And_Daily_Report_Tables")]
+    partial class Add_Weekly_And_Daily_Report_Tables
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -3859,14 +3859,14 @@ namespace ProjectManagement.Migrations
                     b.Property<long?>("LastModifierUserId")
                         .HasColumnType("bigint");
 
+                    b.Property<string>("OverallSummary")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<long>("PMReportId")
                         .HasColumnType("bigint");
 
                     b.Property<long>("ProjectId")
                         .HasColumnType("bigint");
-
-                    b.Property<string>("Summary")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("TenantId")
                         .HasColumnType("int");

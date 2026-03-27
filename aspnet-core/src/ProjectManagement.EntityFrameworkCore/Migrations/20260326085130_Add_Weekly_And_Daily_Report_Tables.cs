@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ProjectManagement.Migrations
 {
-    public partial class Added_Weekly_And_Daily_Report_Tables : Migration
+    public partial class Add_Weekly_And_Daily_Report_Tables : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -20,7 +20,7 @@ namespace ProjectManagement.Migrations
                     IsDeleted = table.Column<bool>(nullable: false),
                     DeleterUserId = table.Column<long>(nullable: true),
                     DeletionTime = table.Column<DateTime>(nullable: true),
-                    Summary = table.Column<string>(nullable: true),
+                    OverallSummary = table.Column<string>(nullable: true),
                     ProjectId = table.Column<long>(nullable: false),
                     PMReportId = table.Column<long>(nullable: false),
                     TenantId = table.Column<int>(nullable: true)

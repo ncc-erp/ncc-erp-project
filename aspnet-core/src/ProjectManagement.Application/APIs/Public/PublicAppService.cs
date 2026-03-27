@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using NccCore.DataExport;
 using OfficeOpenXml;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
 using ProjectManagement.APIs.Public.Dto;
 using ProjectManagement.Authorization.Users;
 using ProjectManagement.Configuration;
@@ -377,5 +378,116 @@ namespace ProjectManagement.APIs.Public
             return rawExcelData;
         }
 
+        [AbpAllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> GetMyProject(string mezonUserId)
+        {
+            var secretCode = SettingManager.GetSettingValue(AppSettingNames.SecurityCode);
+            var header = _httpContextAccessor.HttpContext.Request.Headers;
+            var securityCodeHeader = header["X-Secret-Key"].ToString();
+            if (secretCode != securityCodeHeader)
+            {
+                return new BadRequestObjectResult("You do not have permission to retrieve projects.");
+            }
+            if (string.IsNullOrEmpty(mezonUserId))
+            {
+                return new BadRequestObjectResult("Mezon User Id is required.");
+            }
+            var query = WorkScope.GetAll<Project>()
+                .Where(p => p.PM.MezonUserId == mezonUserId)
+                .Where(p => p.ProjectType != ProjectType.TRAINING && p.ProjectType != ProjectType.PRODUCT && p.Status == ProjectStatus.InProgress)
+                .Select(p => new
+                {
+                    project_id = p.Code,
+                    project_name = p.Name
+                });
+            var result = await query.ToListAsync();
+            return new OkObjectResult(result);
+        }
+
+        [AbpAllowAnonymous]
+        [HttpPost]
+        public async Task<IActionResult> UpdateDailyMeetings([FromBody] WeeklyReportDto input)
+        {
+            var secretCode = SettingManager.GetSettingValue(AppSettingNames.SecurityCode);
+            var header = _httpContextAccessor.HttpContext.Request.Headers;
+            var securityCodeHeader = header["X-Secret-Key"].ToString();
+            if (secretCode != securityCodeHeader)
+            {
+                return new BadRequestObjectResult("You do not have permission to retrieve projects.");
+            }
+
+            var project = await WorkScope.GetAll<Project>()
+                .FirstOrDefaultAsync(x => x.Id == input.ProjectId);
+            if (project == null)
+            {
+                return new BadRequestObjectResult($"Project code {input.ProjectId} not found.");
+            }
+            var activeReport = await WorkScope.GetAll<PMReport>()
+                .FirstOrDefaultAsync(x => x.IsActive && x.Type == PMReportType.Weekly);
+            if (activeReport == null)
+            {
+                return new BadRequestObjectResult("No active weekly report found to sync.");
+            }
+            var reportProject = await WorkScope.GetAll<PMReportProject>()
+                .FirstOrDefaultAsync(x => x.ProjectId == project.Id && x.PMReportId == activeReport.Id);
+            if (reportProject == null)
+            {
+                return new BadRequestObjectResult("This project is not in the current weekly report.");
+            }
+
+            var existingSummary = await WorkScope.GetAll<ProjectWeeklySummary>()
+                .FirstOrDefaultAsync(x => x.ProjectId == project.Id && x.PMReportId == activeReport.Id);
+
+            if (existingSummary != null)
+            {
+                existingSummary.OverallSummary = input.OverallSummary;
+                await WorkScope.UpdateAsync(existingSummary);
+            }
+            else
+            {
+                existingSummary = new ProjectWeeklySummary
+                {
+                    ProjectId = project.Id,
+                    PMReportId = activeReport.Id,
+                    OverallSummary = input.OverallSummary,
+                    TenantId = AbpSession.TenantId
+                };
+                existingSummary.Id = await WorkScope.InsertAndGetIdAsync(existingSummary);
+            }
+
+            if (input.DailyReports?.Any() == true)
+            {
+                var currentDailies = await WorkScope.GetAll<ProjectDailyReport>()
+                    .Where(x => x.WeeklySummaryId == existingSummary.Id)
+                    .ToListAsync();
+
+                foreach (var dto in input.DailyReports)
+                {
+                    var reportDate = dto.Date.Date;
+                    var match = currentDailies.FirstOrDefault(x => x.Date.Date == reportDate);
+
+                    if (match != null)
+                    {
+                        if (match.Content != dto.Content)
+                        {
+                            match.Content = dto.Content;
+                            await WorkScope.UpdateAsync(match);
+                        }
+                    }
+                    else
+                    {
+                        await WorkScope.InsertAsync(new ProjectDailyReport
+                        {
+                            WeeklySummaryId = existingSummary.Id,
+                            Date = reportDate,
+                            Content = dto.Content,
+                            TenantId = AbpSession.TenantId
+                        });
+                    }
+                }
+            }
+            return new OkObjectResult(new { message = "Sync summary successfully!" });
+        }
     }
 }

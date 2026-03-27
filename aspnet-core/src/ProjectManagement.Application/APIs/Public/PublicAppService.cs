@@ -380,7 +380,7 @@ namespace ProjectManagement.APIs.Public
 
         [AbpAllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> GetMyProject(string mezonUserId)
+        public async Task<IActionResult> GetMyProjects(string mezonUserId)
         {
             var secretCode = SettingManager.GetSettingValue(AppSettingNames.SecurityCode);
             var header = _httpContextAccessor.HttpContext.Request.Headers;

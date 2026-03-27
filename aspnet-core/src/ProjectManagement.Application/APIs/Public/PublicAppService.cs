@@ -395,10 +395,10 @@ namespace ProjectManagement.APIs.Public
             }
             var query = WorkScope.GetAll<Project>()
                 .Where(p => p.PM.MezonUserId == mezonUserId)
-                .Where(p => p.ProjectType != ProjectType.TRAINING && p.ProjectType != ProjectType.PRODUCT && p.Status == ProjectStatus.InProgress)
+                .Where(p => p.ProjectType != ProjectType.TRAINING && p.Status == ProjectStatus.InProgress)
                 .Select(p => new
                 {
-                    project_id = p.Code,
+                    project_id = p.Id,
                     project_name = p.Name
                 });
             var result = await query.ToListAsync();
@@ -462,6 +462,9 @@ namespace ProjectManagement.APIs.Public
                     .Where(x => x.WeeklySummaryId == existingSummary.Id)
                     .ToListAsync();
 
+                var listToUpdate = new List<ProjectDailyReport>();
+                var listToInsert = new List<ProjectDailyReport>();
+
                 foreach (var dto in input.DailyReports)
                 {
                     var reportDate = dto.Date.Date;
@@ -472,12 +475,12 @@ namespace ProjectManagement.APIs.Public
                         if (match.Content != dto.Content)
                         {
                             match.Content = dto.Content;
-                            await WorkScope.UpdateAsync(match);
+                            listToUpdate.Add(match);
                         }
                     }
                     else
                     {
-                        await WorkScope.InsertAsync(new ProjectDailyReport
+                        listToInsert.Add(new ProjectDailyReport
                         {
                             WeeklySummaryId = existingSummary.Id,
                             Date = reportDate,
@@ -485,6 +488,16 @@ namespace ProjectManagement.APIs.Public
                             TenantId = AbpSession.TenantId
                         });
                     }
+                }
+
+                if (listToInsert.Any())
+                {
+                    await WorkScope.InsertRangeAsync(listToInsert);
+                }
+
+                if (listToUpdate.Any())
+                {
+                    await WorkScope.UpdateRangeAsync(listToUpdate);
                 }
             }
             return new OkObjectResult(new { message = "Sync summary successfully!" });

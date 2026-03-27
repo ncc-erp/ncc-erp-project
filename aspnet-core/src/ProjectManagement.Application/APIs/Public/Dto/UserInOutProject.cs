@@ -34,4 +34,17 @@ namespace ProjectManagement.APIs.Public.Dto
         public string PMEmail { get; set; }
         public string PMFullName { get; set; }
     }
+
+    public class WeeklyReportDto
+    {
+        public long ProjectId { get; set; }
+        public string OverallSummary { get; set; }
+        public List<DailyReportDto> DailyReports { get; set; }
+    }
+
+    public class DailyReportDto
+    {
+        public DateTime Date { get; set; }
+        public string Content { get; set; }
+    }
 }

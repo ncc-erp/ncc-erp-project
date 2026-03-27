@@ -1,9 +1,11 @@
 ﻿using Abp.Authorization;
 using Abp.Configuration;
 using Abp.UI;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NccCore.DataExport;
 using NccCore.Extension;
 using NccCore.Paging;
 using NccCore.Uitls;
@@ -13,6 +15,7 @@ using ProjectManagement.APIs.Punishments.Dto;
 using ProjectManagement.APIs.Timesheets.Dto;
 using ProjectManagement.Authorization;
 using ProjectManagement.Entities;
+using ProjectManagement.Net.MimeTypes;
 using ProjectManagement.Services.Komu;
 using ProjectManagement.Services.ResourceManager;
 using ProjectManagement.UploadFilesService;
@@ -29,6 +32,7 @@ namespace ProjectManagement.APIs.Punishments
     public class PunishmentAppService : ProjectManagementAppServiceBase, IPunishmentAppService
     {
         private readonly UploadFileService _uploadFileService;
+        private readonly string templateFolder = Path.Combine("wwwroot", "template");
 
         public PunishmentAppService(
             UploadFileService uploadFileService) : base()
@@ -171,6 +175,23 @@ namespace ProjectManagement.APIs.Punishments
             {
                 FileName = fileName,
                 Data = data
+            };
+        }
+
+        [HttpGet]
+        [AbpAuthorize(PermissionNames.Timesheets_Punishment)]
+        public async Task<FileBase64Dto> DownloadPunishmentTemplate()
+        {
+            var templateFilePath = Path.Combine(templateFolder, "Punishment.xlsx");
+
+            var bytes = await File.ReadAllBytesAsync(templateFilePath);
+            var fileBase64 = Convert.ToBase64String(bytes);
+
+            return new FileBase64Dto
+            {
+                FileName = "punishment_template.xlsx",
+                FileType = MimeTypeNames.ApplicationVndOpenxmlformatsOfficedocumentSpreadsheetmlSheet,
+                Base64 = fileBase64
             };
         }
 

@@ -26,7 +26,7 @@ export class ReviewContributionComponent implements OnInit {
     private pmReportProjectContributionService: PMReportProjectContributionService,
     private projectUserBillService: ProjectUserBillService,
     private resourceManagerService: ResourceManagerService,
-  ) {}
+  ) { }
 
   editingRows: { [key: string]: boolean } = {};
 
@@ -34,6 +34,34 @@ export class ReviewContributionComponent implements OnInit {
 
   ngOnInit(): void {
     this.getListUserAndResources();
+  }
+  get projectInfo() {
+    return {
+      projectUserBills: this.data?.projectUserBills
+    };
+  }
+
+  get isValidCriteria(): boolean {
+    return this.data?.isValidCriteria ?? false;
+  }
+  public hasLinkedResources(): boolean {
+    if (!this.projectInfo || !this.projectInfo.projectUserBills) {
+      return false;
+    }
+    const invalidBill = this.projectInfo.projectUserBills.find(
+      (bill) => !bill.linkedResources || bill.linkedResources.length === 0,
+    );
+    return invalidBill === undefined;
+  }
+
+  public getSendReportTooltip(): string {
+    // if (!this.isValidCriteria) {
+    //   return "Please enter Criteria to be able to send the report!";
+    // }
+    if (!this.hasLinkedResources()) {
+      return "Each Bill Account must have at least 1 Linked Resource!";
+    }
+    return "";
   }
 
   private getListUserAndResources() {

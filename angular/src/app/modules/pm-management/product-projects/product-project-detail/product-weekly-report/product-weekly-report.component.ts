@@ -34,6 +34,9 @@ import { CriteriaService } from '@app/service/api/criteria.service';
 import { ProjectCriteriaResultService } from '@app/service/api/project-criteria-result.service';
 import { ProjectCriteriaDto } from '@app/service/model/criteria-category.dto';
 import { ProjectCriteriaResultDto } from '@app/service/model/project-criteria-result.dto';
+import { ProjectDailyMeetingService } from "../../../../../service/api/project-daily-meeting.service";
+import { ProjectDailyMeetingDto, ProjectDailyReportDto } from "../../../../../service/model/project-daily-meeting.dto";
+import { cloneDeep } from "lodash-es";
 import { APP_ENUMS } from '@shared/AppEnums';
 import { GuideLineDialogComponent } from '@app/modules/pm-management/list-project/list-project-detail/weekly-report/guide-line-dialog/guide-line-dialog/guide-line-dialog.component';
 
@@ -80,7 +83,7 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
   public problemIssueList: string[] = Object.keys(this.APP_ENUM.ProjectHealth);
   public projectRoleList: string[] = Object.keys(this.APP_ENUM.ProjectUserRole);
   public issueStatusList: string[] = Object.keys(this.APP_ENUM.PMReportProjectIssueStatus)
-  public projectHealthList: string[] =  Object.keys(this.APP_ENUM.ProjectHealth);
+  public projectHealthList: string[] = Object.keys(this.APP_ENUM.ProjectHealth);
   pmReportList: pmReportDto[] = [];
   public activeReportId: number;
   public pmReportProjectId: number;
@@ -94,11 +97,14 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
   public projectId: number;
   public projectIdReport: number;
   public isEditingNote: boolean = false;
-  public isEditingAutomationNote:boolean = false
+  public isEditingAutomationNote: boolean = false
   public isShowProblemList: boolean = false;
   public isShowWeeklyList: boolean = false;
   public isShowFutureList: boolean = false;
   public projectInfo = {} as ProjectInfoDto
+  public weeklySummaryData = {} as ProjectDailyMeetingDto;
+  public overallSummary: string = "";
+  public listDailyReports: ProjectDailyReportDto[] = [];
   public projectCurrentResource: any = []
   public mondayOf5weeksAgo: any
   public lastWeekSunday: any
@@ -120,13 +126,14 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
   totalNormalWorkingTime1: number = 0;
   totalOverTime1: number = 0;
   totalNormalWorkingTimeOfWeekly1: number = 0;
-    overTimeNoCharge1: number = 0;
-    totalNormalWorkingTimeStandard: number = 0;
-    totalNormalWorkingTimeStandard1: number = 0;
+  overTimeNoCharge1: number = 0;
+  totalNormalWorkingTimeStandard: number = 0;
+  totalNormalWorkingTimeStandard1: number = 0;
   public projectCurrentSupportUser: any = []
 
   public listCriteria: ProjectCriteriaDto[] = []
   public listCriteriaResult: ProjectCriteriaResultDto[] = []
+  public listPreEditDailyReports: ProjectDailyReportDto[] = [];
   public bgFlag: string = ''
   public status: string = ''
   public processCriteria: boolean = false;
@@ -137,7 +144,7 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
   public searchPmReport: string = "";
   public projectHealth: any;
   allowSendReport: boolean = true;
-  overTimeNoCharge:number = 0;
+  overTimeNoCharge: number = 0;
   public defaultStatus = this.APP_ENUM.PMReportProjectIssueStatus[this.issueStatusList[0]];
   Projects_ProductProjects_ProjectDetail_TabWeeklyReport_View = PERMISSIONS_CONSTANT.Projects_ProductProjects_ProjectDetail_TabWeeklyReport_View
   Projects_ProductProjects_ProjectDetail_TabWeeklyReport_ChangeOverAllProjectHealthCriteria = PERMISSIONS_CONSTANT.Projects_ProductProjects_ProjectDetail_TabWeeklyReport_ChangeOverAllProjectHealthCriteria;
@@ -176,7 +183,7 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
     private tsProjectService: TimesheetProjectService,
     private reportIssueService: PmReportIssueService, private pmReportService: PmReportService,
     public route: ActivatedRoute,
-    private router:Router,
+    private router: Router,
     injector: Injector,
     private projectUserService: ProjectUserService,
     private userService: UserService,
@@ -185,13 +192,14 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
     private _layoutStore: LayoutStoreService,
     private reportService: PMReportProjectService,
     private pjCriteriaService: CriteriaService,
+    private pjDailyMeetingService: ProjectDailyMeetingService,
     private pjCriteriaResultService: ProjectCriteriaResultService,
   ) {
     super(injector);
     this.projectId = Number(route.snapshot.queryParamMap.get("id"));
     this.projectType = route.snapshot.queryParamMap.get("type");
 
-      this.isShowActionPM = this.permission.isGranted(this.Projects_ProductProjects_ProjectDetail_TabWeeklyReport_ProjectIssue_Edit) ||
+    this.isShowActionPM = this.permission.isGranted(this.Projects_ProductProjects_ProjectDetail_TabWeeklyReport_ProjectIssue_Edit) ||
       this.permission.isGranted(this.Projects_ProductProjects_ProjectDetail_TabWeeklyReport_ProjectIssue_Delete) ||
       this.permission.isGranted(this.Projects_ProductProjects_ProjectDetail_TabWeeklyReport_ProjectIssue_SetDone) ||
       this.permission.isGranted(this.Projects_ProductProjects_ProjectDetail_TabWeeklyReport_ProjectIssue_AddNewIssue);
@@ -206,10 +214,10 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
     this.mondayOf5weeksAgo = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
     this.mondayOf5weeksAgo = moment(this.mondayOf5weeksAgo.setDate(this.mondayOf5weeksAgo.getDate() - 28)).format("YYYY-MM-DD")
     this.lastWeekSunday = moment(new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 6)).format("YYYY-MM-DD");
-      this.getUser();
-      this._layoutStore.sidebarExpanded.subscribe((value) => {
-        this.sidebarExpanded = value;
-      });
+    this.getUser();
+    this._layoutStore.sidebarExpanded.subscribe((value) => {
+      this.sidebarExpanded = value;
+    });
 
   }
   public startTimmer() {
@@ -262,6 +270,7 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
       this.allowSendReport = this.selectedReport.note == null || this.selectedReport.note == '' ? false : true;
       this.projectHealth = this.APP_ENUM.ProjectHealth[this.selectedReport.projectHealth]
       this.getAllCriteria();
+      this.getProjectDailyMeeting();
       this.getProjectInfo();
       this.getWeeklyReport();
       this.getFuturereport();
@@ -299,7 +308,7 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
           const itemCriteriaResult = {
             criteriaName: criteria.name,
             note: check?.note || '',
-            status: check?.status ,
+            status: check?.status,
             editMode: false,
             projectCriteriaId: criteria.id,
             projectId: this.projectId,
@@ -322,15 +331,51 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
             }
           }
         }
-    this.setTotalHealth();
-    })
+        this.setTotalHealth();
+      })
   }
 
-  onChangeStatusProject(){
-    this.pjCriteriaResultService.updateStatus(this.statusProject,this.selectedReport.reportId,this.projectId).pipe(catchError(this.pjCriteriaResultService.handleError)).subscribe(data => {
+  public getProjectDailyMeeting() {
+    if (!this.selectedReport || !this.selectedReport.reportId) {
+      this.overallSummary = "";
+      this.listDailyReports = [];
+      return;
+    }
+
+    this.listDailyReports = [];
+
+    this.pjDailyMeetingService
+      .getProjectWeeklySummary(this.projectId, this.selectedReport.reportId)
+      .subscribe((res) => {
+        if (res && res.result) {
+          const raw = res.result;
+
+          this.weeklySummaryData = {
+            id: raw.id,
+            projectId: raw.projectId,
+            pmReportId: raw.pmReportId,
+            summary: raw.summary,
+            editMode: false,
+            dailyReports: raw.dailyReports.map(item => ({
+              ...item,
+              editMode: false
+            }))
+          };
+          this.overallSummary = this.weeklySummaryData.summary;
+          this.listDailyReports = this.weeklySummaryData.dailyReports;
+        } else {
+          this.overallSummary = "";
+          this.listDailyReports = [];
+        }
+        this.listPreEditDailyReports = cloneDeep(this.listDailyReports);
+      });
+  }
+
+  onChangeStatusProject() {
+    this.pjCriteriaResultService.updateStatus(this.statusProject, this.selectedReport.reportId, this.projectId).pipe(catchError(this.pjCriteriaResultService.handleError)).subscribe(data => {
       abp.notify.success("Update status project successful");
       this.getAllCriteria();
-    }, () => { this.statusProject = this.statusProjectHistory})
+    }, () => { this.statusProject = this.statusProjectHistory })
   }
 
   setTotalHealth() {
@@ -436,14 +481,14 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
       "",
       (result: boolean) => {
         if (result) {
-          this.reportService.sendReport(this.projectId, this.selectedReport.reportId,this.status).pipe(catchError(this.reportService.handleError)).subscribe(data => {
+          this.reportService.sendReport(this.projectId, this.selectedReport.reportId, this.status).pipe(catchError(this.reportService.handleError)).subscribe(data => {
             abp.notify.success("Send report successful");
             this.getAllPmReport();
           })
         }
       }
     );
-    }
+  }
 
   getProjectInfo() {
     this.isLoading = true;
@@ -496,7 +541,7 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
         if (data.result) {
           this.problemList = [];
           for (let i = 0; i < data.result.result.length; i++) {
-              this.problemList.push(data.result.result[i]);
+            this.problemList.push(data.result.result[i]);
           }
 
           this.projectHealth = data.result.projectHealth;
@@ -828,8 +873,7 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
         })
     }
   }
-  getUserFromTimesheet(projectCode, usersEmail, lastWeekMonday)
-  {
+  getUserFromTimesheet(projectCode, usersEmail, lastWeekMonday) {
     this.pmReportProjectService.GetUserInProjectFromTimesheet(projectCode, usersEmail, this.mondayOf5weeksAgo, this.lastWeekSunday).subscribe(rs => {
       this.projectCurrentSupportUser = rs.result
       this.projectCurrentSupportUser.forEach(user => {
@@ -888,7 +932,7 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
       }
 
       option = {
-        width:'90%',
+        width: '90%',
         title: {
           text: 'Timesheet'
         },
@@ -896,11 +940,11 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
           trigger: 'axis'
         },
         legend: {
-          left:'25%',
-          width:'80%',
+          left: '25%',
+          width: '80%',
           data: ['Total normal', `${hasOtValue ? 'Total OT' : ''}`, `${hasOfficalDataNormal ? 'Normal Offical' : ''}`
-          , `${hasOfficalDataOT ? 'OT Offical' : ''}`, `${hasTempDataNormal ? 'Normal Temp' : ''}`,
-          `${hasTempDataOT ? 'OT Temp' : ''}`,`${hasOtNoCharge ? 'OT NoCharge' : ''}`],
+            , `${hasOfficalDataOT ? 'OT Offical' : ''}`, `${hasTempDataNormal ? 'Normal Temp' : ''}`,
+            `${hasTempDataOT ? 'OT Temp' : ''}`, `${hasOtNoCharge ? 'OT NoCharge' : ''}`],
         },
         color: ['#211f1f', 'red', 'blue', 'orange', '#787a7a', 'purple', 'green'],
         grid: {
@@ -954,7 +998,7 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
             name: 'OT Temp',
             type: 'line',
             data: hasTempDataOT ? TempChartData?.overTimeHours : []
-          },{
+          }, {
             lineStyle: { color: 'green' },
             name: 'OT NoCharge',
             type: 'line',
@@ -1020,11 +1064,11 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
             data: hasOtValue ? chartData.overTimeHours : [],
             type: 'line',
             name: 'OT',
-            lineStyle: {color: '#dc3545'}
+            lineStyle: { color: '#dc3545' }
           },
           {
             // showSymbol: false,
-            color:['orange'],
+            color: ['orange'],
             symbolSize: 2,
             data: hasOtNocharge ? chartData.otNoChargeHours : [],
             type: 'line',
@@ -1084,8 +1128,8 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
   getDataForBillChart(projectCode: string) {
     var now = new Date();
     var currentDate = this.formatDateYMD(new Date())
-    let fiveMonthAgo: any =  new Date(now.setMonth(now.getMonth() - 5))
-    fiveMonthAgo =  this.formatDateYMD(this.getFirstDayOfMonth(fiveMonthAgo.getFullYear(), fiveMonthAgo.getMonth()))
+    let fiveMonthAgo: any = new Date(now.setMonth(now.getMonth() - 5))
+    fiveMonthAgo = this.formatDateYMD(this.getFirstDayOfMonth(fiveMonthAgo.getFullYear(), fiveMonthAgo.getMonth()))
 
     let apiPayload = {
       projectCode: projectCode,
@@ -1127,36 +1171,36 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
       this.totalOverTime += user.overTime
       this.overTimeNoCharge += user.overTimeNoCharge
     })
-    }
+  }
 
-    GetTimesheetOfUserInProjectNew(projectCode, user, startTime, endTime) {
-        this.pmReportProjectService.GetTimesheetOfUserInProjectNew(projectCode, user.emailAddress, startTime, endTime).subscribe(rs => {
-            user.normalWorkingTime = rs.result ? rs.result.normalWorkingTime : 0
-            user.overTime = rs.result ? rs.result.overTime : 0
-            user.overTimeNoCharge = rs.result ? rs.result.overTimeNoCharge : 0
-            user.normalWorkingTimeAll = rs.result ? rs.result.normalWorkingTimeAll : 0
-            user.normalWorkingTimeStandard = rs.result ? rs.result.normalWorkingTimeStandard : 0
-            this.totalNormalWorkingTime += user.normalWorkingTime
-            this.totalOverTime += user.overTime
-            this.overTimeNoCharge += user.overTimeNoCharge
-            this.totalNormalWorkingTimeOfWeekly += user.normalWorkingTimeAll
-            this.totalNormalWorkingTimeStandard += user.normalWorkingTimeStandard
-        })
-    }
-    GetTimesheetOfSupportUserInProject(projectCode, user, startTime, endTime) {
-        this.pmReportProjectService.GetTimesheetOfUserInProjectNew(projectCode, user.emailAddress, startTime, endTime).subscribe(rs => {
-            user.normalWorkingTime = rs.result ? rs.result.normalWorkingTime : 0
-            user.overTime = rs.result ? rs.result.overTime : 0
-            user.overTimeNoCharge = rs.result ? rs.result.overTimeNoCharge : 0
-            user.normalWorkingTimeAll = rs.result ? rs.result.normalWorkingTimeAll : 0
-            user.normalWorkingTimeStandard = rs.result ? rs.result.normalWorkingTimeStandard : 0
-            this.totalNormalWorkingTime1 += user.normalWorkingTime
-            this.totalOverTime1 += user.overTime
-            this.overTimeNoCharge1 += user.overTimeNoCharge
-            this.totalNormalWorkingTimeOfWeekly1 += user.normalWorkingTimeAll
-            this.totalNormalWorkingTimeStandard1 += user.normalWorkingTimeStandard
-        })
-    }
+  GetTimesheetOfUserInProjectNew(projectCode, user, startTime, endTime) {
+    this.pmReportProjectService.GetTimesheetOfUserInProjectNew(projectCode, user.emailAddress, startTime, endTime).subscribe(rs => {
+      user.normalWorkingTime = rs.result ? rs.result.normalWorkingTime : 0
+      user.overTime = rs.result ? rs.result.overTime : 0
+      user.overTimeNoCharge = rs.result ? rs.result.overTimeNoCharge : 0
+      user.normalWorkingTimeAll = rs.result ? rs.result.normalWorkingTimeAll : 0
+      user.normalWorkingTimeStandard = rs.result ? rs.result.normalWorkingTimeStandard : 0
+      this.totalNormalWorkingTime += user.normalWorkingTime
+      this.totalOverTime += user.overTime
+      this.overTimeNoCharge += user.overTimeNoCharge
+      this.totalNormalWorkingTimeOfWeekly += user.normalWorkingTimeAll
+      this.totalNormalWorkingTimeStandard += user.normalWorkingTimeStandard
+    })
+  }
+  GetTimesheetOfSupportUserInProject(projectCode, user, startTime, endTime) {
+    this.pmReportProjectService.GetTimesheetOfUserInProjectNew(projectCode, user.emailAddress, startTime, endTime).subscribe(rs => {
+      user.normalWorkingTime = rs.result ? rs.result.normalWorkingTime : 0
+      user.overTime = rs.result ? rs.result.overTime : 0
+      user.overTimeNoCharge = rs.result ? rs.result.overTimeNoCharge : 0
+      user.normalWorkingTimeAll = rs.result ? rs.result.normalWorkingTimeAll : 0
+      user.normalWorkingTimeStandard = rs.result ? rs.result.normalWorkingTimeStandard : 0
+      this.totalNormalWorkingTime1 += user.normalWorkingTime
+      this.totalOverTime1 += user.overTime
+      this.overTimeNoCharge1 += user.overTimeNoCharge
+      this.totalNormalWorkingTimeOfWeekly1 += user.normalWorkingTimeAll
+      this.totalNormalWorkingTimeStandard1 += user.normalWorkingTimeStandard
+    })
+  }
 
   GetTimesheetWeeklyChartOfUserGroupInProject(emailList) {
     // monday at 5 weeks ago =  last week mondy - 5 week (35 days)
@@ -1191,8 +1235,8 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
     })
     ref.afterClosed().subscribe(rs => {
       if (rs) {
-       this.getCurrentResourceOfProject(this.projectInfo.projectCode)
-       this.getChangedResource()
+        this.getCurrentResourceOfProject(this.projectInfo.projectCode)
+        this.getChangedResource()
       }
     })
   }
@@ -1256,7 +1300,7 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
             this.getFuturereport()
           })
         }
-      }, {isHtml:true}
+      }, { isHtml: true }
     )
   }
 
@@ -1267,150 +1311,193 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
 
   }
 
-  setDone(issue){
-    this.pmReportProjectService.SetDoneIssue(issue.id).subscribe((res)=>{
-      if(res){
+  setDone(issue) {
+    this.pmReportProjectService.SetDoneIssue(issue.id).subscribe((res) => {
+      if (res) {
         abp.notify.success("Update Successfully!")
       }
       this.getProjectProblem();
     })
   }
 
-    public buildBillChart(billData,EffortData) {
+  public buildBillChart(billData, EffortData) {
 
-      // var chartDom = document.getElementById(user.userId.toString());
-      // var myChart = echarts.init(chartDom);
+    // var chartDom = document.getElementById(user.userId.toString());
+    // var myChart = echarts.init(chartDom);
 
-      setTimeout(() => {
+    setTimeout(() => {
 
-        let chartDom = document.getElementById('bill-chart');
+      let chartDom = document.getElementById('bill-chart');
 
-        let myChart = echarts.init(chartDom);
-        let option: echarts.EChartsOption;
-        option = {
-          tooltip: {
-            trigger: 'axis',
-          },
-          title: {
-            text: 'Bill info'
-          },
-          grid: {
-            left: '3%',
-            right: '4%',
-            bottom: '1%',
-            containLabel: true
-          },
-          legend: {
-            data: ['Bill.ManMonth', 'Bill.ManDay', `${EffortData?.manDays? 'Effort.ManDay' : ''}`]
-          },
-          xAxis: [
-            {
-              axisLabel: {
-                padding: [4, 0, 0, 0]
-              },
-              type: 'category',
-              data: billData.labels,
-              boundaryGap: false,
-            }
-          ],
-          yAxis: [
-            {
-              axisLabel: {
-                padding: [0, 13, 0, 13]
-              },
-              type: 'value',
-              name: 'ManMonth',
-
+      let myChart = echarts.init(chartDom);
+      let option: echarts.EChartsOption;
+      option = {
+        tooltip: {
+          trigger: 'axis',
+        },
+        title: {
+          text: 'Bill info'
+        },
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '1%',
+          containLabel: true
+        },
+        legend: {
+          data: ['Bill.ManMonth', 'Bill.ManDay', `${EffortData?.manDays ? 'Effort.ManDay' : ''}`]
+        },
+        xAxis: [
+          {
+            axisLabel: {
+              padding: [4, 0, 0, 0]
             },
-            {
-              axisLabel: {
-                padding: [0, 13, 0, 13]
-              },
-              type: 'value',
-              name: 'ManDay',
-
-            }
-          ],
-          series: [
-
-            {
-              barWidth: 30,
-              name: 'Bill.ManMonth',
-              type: 'bar',
-              data: billData.manMonths
+            type: 'category',
+            data: billData.labels,
+            boundaryGap: false,
+          }
+        ],
+        yAxis: [
+          {
+            axisLabel: {
+              padding: [0, 13, 0, 13]
             },
-            {
-              name: 'Bill.ManDay',
-              type: 'line',
-              yAxisIndex: 1,
-              data: billData.manDays
+            type: 'value',
+            name: 'ManMonth',
+
+          },
+          {
+            axisLabel: {
+              padding: [0, 13, 0, 13]
             },
-            {
-              name: 'Effort.ManDay',
-              type: 'line',
-              yAxisIndex: 1,
-              data: EffortData?.manDays
-            }
-          ]
-        };
-        option && myChart.setOption(option);
-      }, 1)
-    }
+            type: 'value',
+            name: 'ManDay',
+
+          }
+        ],
+        series: [
+
+          {
+            barWidth: 30,
+            name: 'Bill.ManMonth',
+            type: 'bar',
+            data: billData.manMonths
+          },
+          {
+            name: 'Bill.ManDay',
+            type: 'line',
+            yAxisIndex: 1,
+            data: billData.manDays
+          },
+          {
+            name: 'Effort.ManDay',
+            type: 'line',
+            yAxisIndex: 1,
+            data: EffortData?.manDays
+          }
+        ]
+      };
+      option && myChart.setOption(option);
+    }, 1)
+  }
 
 
-    addPlanResource() {
-      let ref = this.dialog.open(AddFutureResourceDialogComponent, {
-        width: "700px",
-        maxHeight: '80vh',
-        data: {
-          projectId: this.projectId,
-          projectName: this.projectInfo.projectName
-        }
-      })
-      ref.afterClosed().subscribe(rs => {
-        if (rs) {
-          this.getFuturereport()
-        }
-      })
-    }
-    editResourcePlan(resource) {
-      let item = {
-        projectUserId:resource.id,
-        fullName: resource.fullName,
+  addPlanResource() {
+    let ref = this.dialog.open(AddFutureResourceDialogComponent, {
+      width: "700px",
+      maxHeight: '80vh',
+      data: {
         projectId: this.projectId,
-        projectRole: resource.projectRole,
-        userId: resource.userId,
-        startDate: resource.startDate,
-        isPool: resource.isPool,
-        allocatePercentage: resource.allocatePercentage,
-        startTime: resource.startTime
+        projectName: this.projectInfo.projectName
       }
-      let ref = this.dialog.open(AddFutureResourceDialogComponent, {
-        width: "700px",
-        maxHeight: '80vh',
-        data: {
-          command: "edit",
-          item: item
-        }
-      })
-      ref.afterClosed().subscribe(rs => {
-        if (rs) {
-          this.getFuturereport()
-        }
-      })
-    }
-    isShowChangeDoneText(issue){
-      return this.APP_ENUM.PMReportProjectIssueStatus[issue.status] == this.APP_ENUM.PMReportProjectIssueStatus.InProgress
-    }
-    isShowChangeInProgressText(issue){
-      return this.APP_ENUM.PMReportProjectIssueStatus[issue.status] == this.APP_ENUM.PMReportProjectIssueStatus.Done
-    }
-    showGuideLine(item) {
-      const show = this.dialog.open(GuideLineDialogComponent,{
-        width: "700px",
-        maxHeight: '99vh',
-        data:item
-        })
+    })
+    ref.afterClosed().subscribe(rs => {
+      if (rs) {
+        this.getFuturereport()
       }
+    })
+  }
+  editResourcePlan(resource) {
+    let item = {
+      projectUserId: resource.id,
+      fullName: resource.fullName,
+      projectId: this.projectId,
+      projectRole: resource.projectRole,
+      userId: resource.userId,
+      startDate: resource.startDate,
+      isPool: resource.isPool,
+      allocatePercentage: resource.allocatePercentage,
+      startTime: resource.startTime
+    }
+    let ref = this.dialog.open(AddFutureResourceDialogComponent, {
+      width: "700px",
+      maxHeight: '80vh',
+      data: {
+        command: "edit",
+        item: item
+      }
+    })
+    ref.afterClosed().subscribe(rs => {
+      if (rs) {
+        this.getFuturereport()
+      }
+    })
+  }
+  isShowChangeDoneText(issue) {
+    return this.APP_ENUM.PMReportProjectIssueStatus[issue.status] == this.APP_ENUM.PMReportProjectIssueStatus.InProgress
+  }
+  isShowChangeInProgressText(issue) {
+    return this.APP_ENUM.PMReportProjectIssueStatus[issue.status] == this.APP_ENUM.PMReportProjectIssueStatus.Done
+  }
+  showGuideLine(item) {
+    const show = this.dialog.open(GuideLineDialogComponent, {
+      width: "700px",
+      maxHeight: '99vh',
+      data: item
+    })
+  }
+  public saveOverallSummary() {
+    const payload = {
+      id: this.weeklySummaryData.id,
+      summary: this.overallSummary
+    };
+
+    this.pjDailyMeetingService.updateSummary(payload).subscribe((res) => {
+      abp.notify.success("Update Weekly Summary successfully");
+      this.weeklySummaryData.editMode = false;
+
+      if (res && res.result) {
+        this.weeklySummaryData.summary = res.result.summary;
+        this.overallSummary = res.result.summary;
+      }
+    });
+  }
+
+  public cancelEditSummary() {
+    this.overallSummary = this.weeklySummaryData.summary;
+    this.weeklySummaryData.editMode = false;
+  }
+
+  public saveDailyDetail(item: ProjectDailyReportDto, index: number) {
+    const payload = {
+      id: item.id,
+      content: item.content
+    };
+
+    this.pjDailyMeetingService.updateDailyReport(payload).subscribe((res) => {
+      abp.notify.success(`Update Daily Report successfully`);
+      item.editMode = false;
+
+      if (res && res.result) {
+        item.content = res.result.content;
+        this.listPreEditDailyReports[index].content = item.content;
+      }
+    });
+  }
+
+  public cancelEditDailyReport(index: number) {
+    this.listDailyReports[index].content = this.listPreEditDailyReports[index].content;
+    this.listDailyReports[index].editMode = false;
+  }
 }
 

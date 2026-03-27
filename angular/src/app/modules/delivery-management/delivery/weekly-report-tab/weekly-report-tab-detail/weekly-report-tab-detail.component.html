@@ -1,4 +1,4 @@
-<mat-drawer-container class="example-container" style="min-height: 94vh;" [busy] ="isLoading"
+<mat-drawer-container class="example-container" style="min-height: 94vh;" [busy]="isLoading"
     *ngIf="permission.isGranted(WeeklyReport_ReportDetail_View)">
     <mat-drawer #drawer mode="side" opened style="position: fixed;top: 6%;padding-top: 10px;width: 15%;">
         <div>
@@ -16,7 +16,8 @@
                 </div>
 
                 <div style="margin-bottom: 20px;">
-                    <p style="margin-left: 8px; font-size: 20px; margin-top: 20px; font-weight: 600;" *ngIf="pmReportProjectList.length < 1">No data !</p>
+                    <p style="margin-left: 8px; font-size: 20px; margin-top: 20px; font-weight: 600;"
+                        *ngIf="pmReportProjectList.length < 1">No data !</p>
                     <mat-list *ngFor="let item of pmReportProjectList;index as i">
                         <div class="row sidebar-item" style="flex: 1;"
                             [ngClass]="item.setBackground == true ? 'projectActive' : ''">
@@ -94,7 +95,7 @@
             </div>
         </div>
     </mat-drawer>
-    <mat-drawer #drawerRight mode="side" opened position="end" class="pt-3" [ngClass] = "{changeWidth:drawerLeft}"
+    <mat-drawer #drawerRight mode="side" opened position="end" class="pt-3" [ngClass]="{changeWidth:drawerLeft}"
         style="width: 35%;background-color: #fafafa;">
         <div class="position-relative; px-2">
             <div>
@@ -119,7 +120,8 @@
 
                 <div class="card" *ngIf="permission.isGranted(WeeklyReport_ReportDetail_PlannedResource_View)">
                     <mat-expansion-panel [expanded]="isShowFutureList">
-                        <mat-expansion-panel-header class="m-0 d-flex align-items-center" (click)="isShowFutureList=!isShowFutureList">
+                        <mat-expansion-panel-header class="m-0 d-flex align-items-center"
+                            (click)="isShowFutureList=!isShowFutureList">
                             <strong style="font-size: 20px;">Planned Resource</strong> &nbsp;
                             <strong style="font-size: 20px;" class="text-danger">({{futureReportList?.length}})</strong>
                             <button class="btn bg-blue ml-3 btn-sm mb-2"
@@ -529,27 +531,30 @@
                             <div class="row p-1 align-items-center">
                                 <div class="col-8 m-0 p-0 d-flex align-items-center">
 
-                                    <span *ngIf="permission.isGranted(WeeklyReport_ReportDetail_GuideLine_View) && !!projectId">
-                                        <strong class="hyperlink" (click)="guideLineCriteriaStatus()" style="font-size: 20px;">Criteria status</strong>
+                                    <span
+                                        *ngIf="permission.isGranted(WeeklyReport_ReportDetail_GuideLine_View) && !!projectId">
+                                        <strong class="hyperlink" (click)="guideLineCriteriaStatus()"
+                                            style="font-size: 20px;">Criteria status</strong>
                                     </span>
 
-                                      <span *ngIf="!permission.isGranted(WeeklyReport_ReportDetail_GuideLine_View) || !projectId">
+                                    <span
+                                        *ngIf="!permission.isGranted(WeeklyReport_ReportDetail_GuideLine_View) || !projectId">
                                         <strong style="font-size: 20px;">Criteria status </strong>
                                     </span>
 
-                                      <div *ngIf="!!projectId">
+                                    <div *ngIf="!!projectId">
                                         <button class="btn btn-editall-neutral ml-2" *ngIf="isShowEditAllBtn()"
-                                        (click)="editAllRow()">
-                                        <i class="fas fa-pencil-alt mr-1"></i> Edit All</button>
+                                            (click)="editAllRow()">
+                                            <i class="fas fa-pencil-alt mr-1"></i> Edit All</button>
                                         <div *ngIf="isEditingAllRow()" class="pt-1 ml-4">
-                                                <button class="mr-3 submit-btn" style="background: none; border: none"
-                                                    (click)="saveAllUpdate()">
-                                                    <i style="color: green" class="fas fa-check fa-2x"></i>
-                                                </button>
-                                                <i style="color: red" class="fas fa-times fa-2x"
-                                                    (click)="cancelUpdateAll()"></i>
+                                            <button class="mr-3 submit-btn" style="background: none; border: none"
+                                                (click)="saveAllUpdate()">
+                                                <i style="color: green" class="fas fa-check fa-2x"></i>
+                                            </button>
+                                            <i style="color: red" class="fas fa-times fa-2x"
+                                                (click)="cancelUpdateAll()"></i>
                                         </div>
-                                      </div>
+                                    </div>
                                     <mat-checkbox [color]="'primary'" class="pl-3"
                                         (change)="showLastWeek(listCriteriaResult,$event.checked)"
                                         [checked]="isShowLastWeek()">Show last week</mat-checkbox>
@@ -560,18 +565,20 @@
                             </div>
 
                             <div>
-                                <div *ngIf="permission.isGranted(WeeklyReport_ReportDetail_ProjectHealthCriteria)" class="fixTableHead" style="max-height: none;">
+                                <div *ngIf="permission.isGranted(WeeklyReport_ReportDetail_ProjectHealthCriteria)"
+                                    class="fixTableHead" style="max-height: none;">
                                     <div *ngFor="let item of listCriteriaResult let i =index">
                                         <div class="d-flex justify-content-between align-items-center">
                                             <lable
-                                            *ngIf="permission.isGranted(WeeklyReport_ReportDetail_ProjectHealthCriteria_View_Guideline)" style="white-space: normal;" class="text-primary guide-line"
+                                                *ngIf="permission.isGranted(WeeklyReport_ReportDetail_ProjectHealthCriteria_View_Guideline)"
+                                                style="white-space: normal;" class="text-primary guide-line"
                                                 (click)="showGuideLine(item)">
                                                 <strong>{{item.criteriaName}}</strong> &nbsp;
                                                 <i class="fas fa-question-circle "></i>
                                             </lable>
                                             <lable
-                                            *ngIf="!permission.isGranted(WeeklyReport_ReportDetail_ProjectHealthCriteria_View_Guideline)"
-                                               ><strong>{{item.criteriaName}}</strong>
+                                                *ngIf="!permission.isGranted(WeeklyReport_ReportDetail_ProjectHealthCriteria_View_Guideline)">
+                                                <strong>{{item.criteriaName}}</strong>
                                             </lable>
 
                                             <div class="d-flex align-items-center">
@@ -582,8 +589,8 @@
                                                         [ngClass]="APP_CONST.projectHealthStyle[item.status]"
                                                         style="margin-left: 10px !important;width: 100px;" class="ml-3"
                                                         appearance="outline">
-                                                        <mat-select name="flag" placeholder="Select Status" style="padding-bottom: 4px;"
-                                                            [(ngModel)]="item.status"
+                                                        <mat-select name="flag" placeholder="Select Status"
+                                                            style="padding-bottom: 4px;" [(ngModel)]="item.status"
                                                             (ngModelChange)="handleChangeStatus(item)">
                                                             <ng-container *ngFor="let flag of problemIssueList">
                                                                 <mat-option style="border: 1px white solid;"
@@ -629,13 +636,11 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="break-word format-editor" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;"
-                                         *ngIf="!item.editMode" [innerHTML]="item.note| safeHtml"></div>
+                                        <div class="break-word format-editor"
+                                            style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;"
+                                            *ngIf="!item.editMode" [innerHTML]="item.note| safeHtml"></div>
                                         <div *ngIf="item.editMode && isActive">
-                                            <editor
-                                            id=""
-                                            [(ngModel)]="item.note"
-                                            [init]="{
+                                            <editor id="" [(ngModel)]="item.note" [init]="{
                                                 height:100,
                                                 menubar: true,
                                                 plugins: ['table', 'code', 'preview', 'media', 'image', 'template', 'paste'],
@@ -644,8 +649,7 @@
                                                 forced_root_block: false,
                                                 paste_retain_style_properties: 'color font-weight font-style',
                                                 paste_webkit_styles: 'color font-weight font-style'
-                                            }"
-                                          ></editor>
+                                            }"></editor>
                                         </div>
                                         <div *ngIf="item.isShowHistory==true &&oldWeeklyReport" class="rounded my-4"
                                             style="border: 1px solid #C9C8C8 ; background-color: #F1F1E5;">
@@ -656,7 +660,8 @@
                                                 </span>
                                                 <span class="m-2 overflow-auto d-flex">
                                                     <strong>{{oldWeeklyReport.pmReportName}}: </strong>
-                                                    <span class="mb-0 p-0  ml-2" [innerHTML]="getOldNote(item) | safeHtml"></span>
+                                                    <span class="mb-0 p-0  ml-2"
+                                                        [innerHTML]="getOldNote(item) | safeHtml"></span>
                                                 </span>
                                             </div>
                                         </div>
@@ -666,20 +671,150 @@
                             </div>
                         </div>
 
+                        <div class="card">
+                            <mat-expansion-panel #dailyPanel [expanded]="true">
+                                <mat-expansion-panel-header class="m-0">
+                                    <mat-panel-title class="d-flex align-items-center justify-content-between w-100">
+                                        <div class="d-flex align-items-center">
+                                            <strong style="font-size: 20px;">Daily Meetings</strong>
+                                        </div>
+
+                                        <div (click)="$event.stopPropagation()">
+                                            <button *ngIf="!!projectId && dailyPanel.expanded" mat-raised-button
+                                                color="primary" class="btn-sm mr-3" (click)="applyToCriteria()">
+                                                <i class="fas fa-magic"></i> Apply to Criteria
+                                            </button>
+                                        </div>
+                                    </mat-panel-title>
+                                </mat-expansion-panel-header>
+
+                                <div class="row p-1 px-4">
+                                    <div class="col">
+                                        <div class="weekly-summary mb-4">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <h5 class="text-primary font-weight-bold m-0">
+                                                    <i class="fas fa-list-alt mr-2"></i>Weekly Summary
+                                                </h5>
+
+                                                <div *ngIf="isActive">
+                                                    <button *ngIf="!weeklySummaryData.editMode && !!overallSummary"
+                                                        mat-button (click)="weeklySummaryData.editMode = true">
+                                                        <i class="fas fa-edit fa-lg"></i>
+                                                    </button>
+
+                                                    <div *ngIf="weeklySummaryData.editMode"
+                                                        class="d-flex align-items-center">
+                                                        <button class="submit-btn"
+                                                            style="background: none; border: none;"
+                                                            (click)="saveOverallSummary()">
+                                                            <i style="color: green; font-size: 24px;"
+                                                                class="fas fa-check"></i>
+                                                        </button>
+                                                        <button class="submit-btn ml-2"
+                                                            style="background: none; border: none;"
+                                                            (click)="cancelEditSummary()">
+                                                            <i style="color: red; font-size: 24px;"
+                                                                class="fas fa-times"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <p *ngIf="!weeklySummaryData.editMode"
+                                                style="font-size: 17px; text-align: justify; background: #f8f9fa; padding: 12px; border-left: 5px solid #007bff; word-wrap: break-word; white-space: pre-line;">
+                                                {{ overallSummary || 'There is no summary for this week yet!' }}
+                                            </p>
+
+                                            <mat-form-field *ngIf="weeklySummaryData.editMode" class="w-100"
+                                                appearance="outline">
+                                                <textarea matInput cdkTextareaAutosize [(ngModel)]="overallSummary"
+                                                    rows="3" style="font-size: 17px;"
+                                                    placeholder="Enter weekly summary content..."></textarea>
+                                            </mat-form-field>
+                                        </div>
+
+                                        <hr class="my-3">
+
+                                        <div class="daily-detail-list">
+                                            <h5 class="text-secondary font-weight-bold mb-3"><i
+                                                    class="far fa-calendar-check mr-2"></i>Daily Details</h5>
+
+                                            <div *ngFor="let meeting of listDailyReports; let i = index" class="mb-3">
+                                                <div class="d-flex justify-content-between align-items-center p-2 rounded"
+                                                    style="background-color: #f1f1f1;">
+                                                    <span class="font-weight-bold text-info" style="font-size: 17px;">
+                                                        {{ meeting.date | date: 'EEEE, dd/MM/yyyy' }}
+                                                    </span>
+
+                                                    <div *ngIf="isActive">
+                                                        <button *ngIf="!meeting.editMode" mat-button
+                                                            (click)="meeting.editMode = true">
+                                                            <i class="fas fa-pencil-alt"></i>
+                                                        </button>
+
+                                                        <div *ngIf="meeting.editMode" class="d-flex align-items-center">
+                                                            <button class="submit-btn"
+                                                                style="background: none; border: none;"
+                                                                (click)="saveDailyDetail(meeting, i)">
+                                                                <i style="color: green; font-size: 22px;"
+                                                                    class="fas fa-check"></i>
+                                                            </button>
+                                                            <button class="submit-btn ml-2"
+                                                                style="background: none; border: none;"
+                                                                (click)="cancelEditDailyReport(i)">
+                                                                <i style="color: red; font-size: 22px;"
+                                                                    class="fas fa-times"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="px-2 pt-2">
+                                                    <p *ngIf="!meeting.editMode" class="mb-0"
+                                                        style="white-space: pre-line; font-size: 17px; text-align: justify; word-wrap: break-word;">
+                                                        {{ meeting.content || 'No content!' }}
+                                                    </p>
+
+                                                    <div *ngIf="meeting.editMode" class="mt-2">
+                                                        <mat-form-field style="width: 100%;" appearance="outline">
+                                                            <textarea matInput cdkTextareaAutosize
+                                                                [(ngModel)]="meeting.content" rows="2"
+                                                                style="font-size: 17px;"
+                                                                placeholder="Enter daily meeting content..."></textarea>
+                                                        </mat-form-field>
+                                                    </div>
+                                                </div>
+                                                <hr *ngIf="i < listDailyReports.length - 1" class="mt-3">
+                                            </div>
+
+                                            <div *ngIf="!listDailyReports || listDailyReports.length === 0"
+                                                class="text-muted italic p-3 text-center">
+                                                There's no daily meeting data yet!
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </mat-expansion-panel>
+                        </div>
+
                         <div class=" card ">
                             <mat-expansion-panel [expanded]="isShowPmNote">
                                 <mat-expansion-panel-header class="m-0" #pmNote (click)="isShowPmNote=!isShowPmNote">
                                     <mat-panel-title>
                                         <!-- <strong style="font-size: 20px;" class="hyperlink" (click)="$event.stopPropagation();guideLinePMNote()">PM Note</strong> -->
                                         <span (click)="$event.stopPropagation();">
-                                            <span *ngIf="permission.isGranted(WeeklyReport_ReportDetail_GuideLine_View) && !!projectId">
-                                                <strong class="hyperlink" (click)="$event.stopPropagation();guideLinePMNote()" style="font-size: 20px;">PM Note</strong>
-                                              </span>
+                                            <span
+                                                *ngIf="permission.isGranted(WeeklyReport_ReportDetail_GuideLine_View) && !!projectId">
+                                                <strong class="hyperlink"
+                                                    (click)="$event.stopPropagation();guideLinePMNote()"
+                                                    style="font-size: 20px;">PM Note</strong>
+                                            </span>
 
-                                              <span *ngIf="!permission.isGranted(WeeklyReport_ReportDetail_GuideLine_View) || !projectId">
+                                            <span
+                                                *ngIf="!permission.isGranted(WeeklyReport_ReportDetail_GuideLine_View) || !projectId">
                                                 <strong style="font-size: 20px;">PM Note</strong>
-                                              </span>
-                                              </span>
+                                            </span>
+                                        </span>
                                         <div class="d-inline ml-2 pt-1 text-right row"
                                             *ngIf="permission.isGranted(WeeklyReport_ReportDetail_UpdateNote) && !!projectId">
                                             <i [hidden]="!isActive || !isShowPmNote " *ngIf="!isEditingNote"
@@ -687,8 +822,9 @@
                                                 (click)="isEditingNote = true ;$event.stopPropagation()"></i>
                                             <i style="color: green ;" class="fas fa-check fa-2x" *ngIf="isEditingNote"
                                                 (click)="updateNote();$event.stopPropagation()"></i>
-                                            <i *ngIf="isEditingNote" (click)="cancelUpdateNote();$event.stopPropagation()" style="color: red;"
-                                                class=" ml-1 fas fa-times fa-2x mr-3"></i>
+                                            <i *ngIf="isEditingNote"
+                                                (click)="cancelUpdateNote();$event.stopPropagation()"
+                                                style="color: red;" class=" ml-1 fas fa-times fa-2x mr-3"></i>
                                         </div>
                                     </mat-panel-title>
                                 </mat-expansion-panel-header>
@@ -713,7 +849,7 @@
                                             <div class="d-flex align-items-baseline">
                                                 <span class="m-2 overflow-auto">
                                                     <strong>{{oldWeeklyReport.pmReportName}}: </strong>
-                                                    <span  [innerHTML]="oldWeeklyReport.note| safeHtml "></span>
+                                                    <span [innerHTML]="oldWeeklyReport.note| safeHtml "></span>
                                                 </span>
                                             </div>
                                         </div>
@@ -727,14 +863,17 @@
                                 <mat-expansion-panel-header class="m-0" #issues (click)="isShowIssues=!isShowIssues">
                                     <mat-panel-title>
                                         <span (click)="$event.stopPropagation();">
-                                                <span *ngIf="permission.isGranted(WeeklyReport_ReportDetail_GuideLine_View) && !!projectId">
-                                                    <strong class="hyperlink" (click)="guideLineIssue()" style="font-size: 20px;">Issues</strong>
-                                                  </span>
+                                            <span
+                                                *ngIf="permission.isGranted(WeeklyReport_ReportDetail_GuideLine_View) && !!projectId">
+                                                <strong class="hyperlink" (click)="guideLineIssue()"
+                                                    style="font-size: 20px;">Issues</strong>
+                                            </span>
 
-                                                  <span *ngIf="!permission.isGranted(WeeklyReport_ReportDetail_GuideLine_View) || !projectId">
-                                                    <strong style="font-size: 20px;">Issues</strong>
-                                                  </span>
-                                                 &nbsp;
+                                            <span
+                                                *ngIf="!permission.isGranted(WeeklyReport_ReportDetail_GuideLine_View) || !projectId">
+                                                <strong style="font-size: 20px;">Issues</strong>
+                                            </span>
+                                            &nbsp;
                                             <strong style="font-size: 20px;"
                                                 class="text-danger">({{problemList?.length}})</strong>
                                         </span>
@@ -841,14 +980,17 @@
                                 <mat-expansion-panel-header class="m-0" #panelH (click)="isShowRisks=!isShowRisks ">
                                     <mat-panel-title>
                                         <span (click)="$event.stopPropagation();">
-                                                <span *ngIf="permission.isGranted(WeeklyReport_ReportDetail_GuideLine_View) && !!projectId">
-                                                    <strong class="hyperlink" (click)="guideLineRisk()" style="font-size: 20px;">Risk</strong>
-                                                  </span>
+                                            <span
+                                                *ngIf="permission.isGranted(WeeklyReport_ReportDetail_GuideLine_View) && !!projectId">
+                                                <strong class="hyperlink" (click)="guideLineRisk()"
+                                                    style="font-size: 20px;">Risk</strong>
+                                            </span>
 
-                                                  <span *ngIf="!permission.isGranted(WeeklyReport_ReportDetail_GuideLine_View) || !projectId">
-                                                    <strong style="font-size: 20px;">Risk </strong>
-                                                  </span>
-                                                 &nbsp;
+                                            <span
+                                                *ngIf="!permission.isGranted(WeeklyReport_ReportDetail_GuideLine_View) || !projectId">
+                                                <strong style="font-size: 20px;">Risk </strong>
+                                            </span>
+                                            &nbsp;
                                             <strong style="font-size: 20px; "
                                                 class="text-danger">({{projectRiskList?.length}})</strong>
                                         </span>
@@ -919,13 +1061,13 @@
                                                     <span
                                                         [ngClass]="APP_CONST.PMReportProjectIssueStatusStyle[riskStatusList[problem.status]] ">{{
                                                         riskStatusList[problem.status] }}</span>
-                                                        <div>
-                                                            <div style="font-size: 15px;" *ngIf="problem.totalWeekAgo>1">
-                                                                <strong
-                                                                    class="text-danger">{{(problem.totalWeekAgo/7).toFixed()}}
-                                                                </strong> weeks ago
-                                                            </div>
+                                                    <div>
+                                                        <div style="font-size: 15px;" *ngIf="problem.totalWeekAgo>1">
+                                                            <strong
+                                                                class="text-danger">{{(problem.totalWeekAgo/7).toFixed()}}
+                                                            </strong> weeks ago
                                                         </div>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -934,13 +1076,17 @@
                             </mat-expansion-panel>
                         </div>
 
-                        <div class="card" id="current-resource" *ngIf="permission.isGranted(WeeklyReport_ReportDetail_CurrentResource_View)">
+                        <div class="card" id="current-resource"
+                            *ngIf="permission.isGranted(WeeklyReport_ReportDetail_CurrentResource_View)">
                             <mat-expansion-panel [expanded]="isShowCurrentResource">
-                                <mat-expansion-panel-header class="m-0" #resource (click)="isShowCurrentResource=!isShowCurrentResource">
-                                    <mat-panel-title class="align-items-baseline justify-content-between d-flex align-items-center">
+                                <mat-expansion-panel-header class="m-0" #resource
+                                    (click)="isShowCurrentResource=!isShowCurrentResource">
+                                    <mat-panel-title
+                                        class="align-items-baseline justify-content-between d-flex align-items-center">
                                         <div>
                                             <strong style="font-size: 20px; ">Current resources</strong>&nbsp;
-                                            <strong style="font-size: 20px;" class="text-danger">({{projectCurrentResource?.length}})</strong>
+                                            <strong style="font-size: 20px;"
+                                                class="text-danger">({{projectCurrentResource?.length}})</strong>
                                         </div>
                                         <mat-checkbox [(ngModel)]="checkViewSubject" (change)="handleViewSubject()"
                                             (click)="$event.stopPropagation()">
@@ -972,7 +1118,8 @@
                                                             <strong
                                                                 [ngClass]="overTimeNoCharge>0?'ot-noCharge':''">{{fixedNumber(overTimeNoCharge)}}h
                                                             </strong> /
-                                                            <strong [ngClass]="totalOverTime>0?'text-danger':''">{{fixedNumber(totalOverTime)}}h
+                                                            <strong
+                                                                [ngClass]="totalOverTime>0?'text-danger':''">{{fixedNumber(totalOverTime)}}h
                                                             </strong>
                                                             )
                                                         </div>
@@ -985,15 +1132,18 @@
                                                 <tr *ngFor="let user of projectCurrentResource; let i =index">
                                                     <td class="d-flex justify-content-between" style="border: none;">
                                                         <i *ngIf="permission.isGranted(WeeklyReport_ReportDetail_CurrentResource_Release)"
-                                                            class="fas fa-ellipsis-v ml-1 menu-4-icon" [matMenuTriggerFor]="menu4"></i>
+                                                            class="fas fa-ellipsis-v ml-1 menu-4-icon"
+                                                            [matMenuTriggerFor]="menu4"></i>
                                                         <mat-menu #menu4="matMenu">
-                                                            <button [disabled]="projectUserProcess" class="mat-menu-item  w-100"
+                                                            <button [disabled]="projectUserProcess"
+                                                                class="mat-menu-item  w-100"
                                                                 (click)="releaseUser(user)">
                                                                 <i class="fas fa-sign-out-alt mr-1"></i>Release</button>
                                                         </mat-menu>
                                                         <div class="position-relative">
-                                                            <app-user-info [isWeeklyReport]="true" [isPool]="user.isPool"
-                                                                [workType]="user.workType" [userData]="{fullName:user.fullName,branch:user.branch,
+                                                            <app-user-info [isWeeklyReport]="true"
+                                                                [isPool]="user.isPool" [workType]="user.workType"
+                                                                [userData]="{fullName:user.fullName,branch:user.branch,
                                                                                         branchColor:user.branchColor,
                                                                                         branchDisplayName:user.branchDisplayName,
                                                                                         userType: user.userType, avatarFullPath: user.avatarFullPath,
@@ -1003,35 +1153,41 @@
                                                                                         userLevel: user.userLevel}">
                                                             </app-user-info>
                                                         </div>
-                                                        <div style="visibility: hidden; position: fixed" [style.left]="contextMenuPosition.x"
-                                                            [style.top]="contextMenuPosition.y" [matMenuTriggerFor]="menu">
+                                                        <div style="visibility: hidden; position: fixed"
+                                                            [style.left]="contextMenuPosition.x"
+                                                            [style.top]="contextMenuPosition.y"
+                                                            [matMenuTriggerFor]="menu">
                                                         </div>
-                                                        <button mat-icon-button [matMenuTriggerFor]="menu" style="display: none;">
+                                                        <button mat-icon-button [matMenuTriggerFor]="menu"
+                                                            style="display: none;">
                                                         </button>
                                                         <mat-menu #menu="matMenu">
                                                             <button
                                                                 *ngIf="permission.isGranted(WeeklyReport_ReportDetail_CurrentResource_Release)"
-                                                                [disabled]="projectUserProcess" class="mat-menu-item  w-100"
+                                                                [disabled]="projectUserProcess"
+                                                                class="mat-menu-item  w-100"
                                                                 (click)="releaseUser(user)">
                                                                 <i class="fas fa-sign-out-alt mr-1"></i>Release</button>
                                                         </mat-menu>
                                                     </td>
-                                                    <td style="white-space: break-spaces"> 
+                                                    <td style="white-space: break-spaces">
                                                         <div class="d-flex align-items-centern">
-                                                            <p style="flex: 1;" 
-                                                            class="mb-0 p-0 ml-2">{{user.note}}</p>
-                                                            <i style="color: #585858;" class="fas fa-ellipsis-v ml-1" [matMenuTriggerFor]="menu3"></i>
+                                                            <p style="flex: 1;" class="mb-0 p-0 ml-2">{{user.note}}</p>
+                                                            <i style="color: #585858;" class="fas fa-ellipsis-v ml-1"
+                                                                [matMenuTriggerFor]="menu3"></i>
                                                             <mat-menu #menu3="matMenu">
-                                                                <button class="mat-menu-item w-100" *ngIf="permission.isGranted(WeeklyReport_ReportDetail_CurrentResource_Update_Note)"
+                                                                <button class="mat-menu-item w-100"
+                                                                    *ngIf="permission.isGranted(WeeklyReport_ReportDetail_CurrentResource_Update_Note)"
                                                                     (click)="editResoureNote(user)">
                                                                     <i class="fas fa-edit mr-2 fa-lg"></i>
                                                                     Edit
                                                                 </button>
                                                             </mat-menu>
                                                         </div>
-                                                    </td>                                                    
+                                                    </td>
                                                     <td class="text-center">
-                                                        <div [matTooltip]="user.normalWorkingTime + 'h of project'
+                                                        <div
+                                                            [matTooltip]="user.normalWorkingTime + 'h of project'
                                                                         + ' / ' + user.normalWorkingTimeAll + 'h all'
                                                                         + ' / ' + user.normalWorkingTimeStandard + 'h standard'">
                                                             <strong>{{user?.normalWorkingTime}}</strong> /
@@ -1047,11 +1203,13 @@
                                                             <strong
                                                                 [ngClass]="user.overTimeNoCharge>0?'ot-noCharge': ''">{{user.overTimeNoCharge}}</strong>
                                                             /
-                                                            <strong [ngClass]="user.overTime>0?'text-danger': ''">{{user.overTime}}</strong>
+                                                            <strong
+                                                                [ngClass]="user.overTime>0?'text-danger': ''">{{user.overTime}}</strong>
                                                         </div>
                                                     </td>
                                                     <td style="text-align: -webkit-center;">
-                                                        <div style="width: 200px; height: 60px;" [id]="'user' + user.userId">
+                                                        <div style="width: 200px; height: 60px;"
+                                                            [id]="'user' + user.userId">
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -1062,15 +1220,22 @@
                             </mat-expansion-panel>
                         </div>
 
-                        <div class="card" id="charge-account" *ngIf="permission.isGranted(WeeklyReport_ReportDetail_BillAccount_View)">
+                        <div class="card" id="charge-account"
+                            *ngIf="permission.isGranted(WeeklyReport_ReportDetail_BillAccount_View)">
                             <mat-expansion-panel [expanded]="isShowChargeAccount">
-                                <mat-expansion-panel-header class="m-0" #resource (click)="isShowChargeAccount=!isShowChargeAccount">
-                                    <mat-panel-title class="align-items-baseline justify-content-between d-flex align-items-center">
+                                <mat-expansion-panel-header class="m-0" #resource
+                                    (click)="isShowChargeAccount=!isShowChargeAccount">
+                                    <mat-panel-title
+                                        class="align-items-baseline justify-content-between d-flex align-items-center">
                                         <div>
                                             <strong style="font-size: 20px;"> Bill accounts</strong>&nbsp;
-                                            <strong style="font-size: 20px;" class="text-danger">({{projectInfo.totalBill || 0}})</strong>
-                                            <strong style="font-size: 20px; margin-left: 20px;"> Head Count</strong>&nbsp;
-                                            <strong style="font-size: 20px;" class="text-danger">({{projectInfo.totalHeadCount || 0 | number: '1.2-2':'en-US'}})</strong>
+                                            <strong style="font-size: 20px;"
+                                                class="text-danger">({{projectInfo.totalBill || 0}})</strong>
+                                            <strong style="font-size: 20px; margin-left: 20px;"> Head
+                                                Count</strong>&nbsp;
+                                            <strong style="font-size: 20px;"
+                                                class="text-danger">({{projectInfo.totalHeadCount || 0 | number:
+                                                '1.2-2':'en-US'}})</strong>
                                         </div>
                                     </mat-panel-title>
                                 </mat-expansion-panel-header>
@@ -1092,18 +1257,23 @@
                                                 <tr *ngFor="let user of projectInfo.projectUserBills; let i =index">
                                                     <td class="d-flex justify-content-between" style="border: none;">
                                                         <div style="width: 80%;">
-                                                            <app-user-info [userData]="user" [isWeeklyReport]="true" [workType]="user.workType" [isHideLevel]="true">
+                                                            <app-user-info [userData]="user" [isWeeklyReport]="true"
+                                                                [workType]="user.workType" [isHideLevel]="true">
                                                             </app-user-info>
                                                         </div>
-                                                        <div style="visibility: hidden; position: fixed" [style.left]="contextMenuPosition.x"
-                                                            [style.top]="contextMenuPosition.y" [matMenuTriggerFor]="menu">
+                                                        <div style="visibility: hidden; position: fixed"
+                                                            [style.left]="contextMenuPosition.x"
+                                                            [style.top]="contextMenuPosition.y"
+                                                            [matMenuTriggerFor]="menu">
                                                         </div>
-                                                        <button mat-icon-button [matMenuTriggerFor]="menu" style="display: none;">
+                                                        <button mat-icon-button [matMenuTriggerFor]="menu"
+                                                            style="display: none;">
                                                         </button>
                                                         <mat-menu #menu="matMenu">
                                                             <button
                                                                 *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_CurrentResource_Release)"
-                                                                [disabled]="projectUserProcess" class="mat-menu-item  w-100"
+                                                                [disabled]="projectUserProcess"
+                                                                class="mat-menu-item  w-100"
                                                                 (click)="releaseUser(user)">
                                                                 <i class="fas fa-sign-out-alt mr-1"></i>Release</button>
                                                         </mat-menu>
@@ -1111,14 +1281,16 @@
                                                     <td class="text-center" style="white-space: break-spaces;">
                                                         <span class="d-flex align-items-center justify-content-between">
                                                             <p PrjResizeContent [collapseLine]="2" style="flex: 1;"
-                                                                class="mb-0 p-0  ml-2 max-line-content-2">{{user.billAccountName}}
+                                                                class="mb-0 p-0  ml-2 max-line-content-2">
+                                                                {{user.billAccountName}}
                                                             </p>
                                                         </span>
                                                     </td>
                                                     <td class="text-center" style="white-space: break-spaces;">
                                                         <span class="d-flex align-items-center justify-content-between">
                                                             <p PrjResizeContent [collapseLine]="2" style="flex: 1;"
-                                                                class="mb-0 p-0  ml-2 max-line-content-2">{{user.billRole}}</p>
+                                                                class="mb-0 p-0  ml-2 max-line-content-2">
+                                                                {{user.billRole}}</p>
                                                         </span>
                                                     </td>
                                                     <td class="text-center td-fixed-width-100">
@@ -1127,7 +1299,8 @@
                                                     <td class="text-center" style="white-space: break-spaces;">
                                                         <span class="d-flex align-items-center justify-content-between">
                                                             <p PrjResizeContent [collapseLine]="2" style="flex: 1;"
-                                                                class="mb-0 p-0  ml-2 max-line-content-2">{{user.startTime
+                                                                class="mb-0 p-0  ml-2 max-line-content-2">
+                                                                {{user.startTime
                                                                 |date:"dd/MM/yyyy"}}</p>
                                                         </span>
 
@@ -1138,50 +1311,68 @@
                                                         </span>
                                                     </td>
                                                     <td style="width: 300px">
-                                                        <div *ngFor="let resource of user.linkedResources" class="d-flex mb-1">
-                                                           <div class="col-7 d-flex px-0">
-                                                    <app-user-info [isSmallerDiv]="true" [userData]="resource" [viewMode]="1" [isHideLevel]="true">
-                                                    </app-user-info>
-                                                </div>
-                                        
-                                                <div class="col-5 d-flex px-1 align-items-end">
-                                                    <div class="col-7 px-0 d-flex align-items-center">
-                                                        <span *ngIf="!editingRows[resource.id]" class="badge text-white"
-                                                            [style.backgroundColor]="Utils.getColorContribute(resource.contribute)" 
-                                                            style="min-width: 45px; cursor: pointer;">
-                                                            {{resource.contribute + '%'}}
-                                                        </span>
-                                        
-                                                        <input *ngIf="editingRows[resource.id]" type="number" class="form-control form-control-sm px-1"
-                                                            [(ngModel)]="resource.contribute" (keydown.enter)="saveWeeklyContribute(resource, user.id)"
-                                                            (keydown.esc)="cancelUpdate(resource)" appFocus />
-                                                    </div>
-                                        
-                                                    <div *ngIf="isShowEditContribute()"  class="col-5 d-flex justify-content-around px-0">
-                                                        <button *ngIf="!editingRows[resource.id]" (click)="edit(resource)"
-                                                            class="btn btn-xs btn-clean btn-icon">
-                                                            <i class="fa fa-pencil-alt text-primary" style="font-size: 12px;"></i>
-                                                        </button>
-                                        
-                                                        <ng-container *ngIf="editingRows[resource.id]">
-                                                            <button (click)="saveWeeklyContribute(resource, user.id)" class="btn btn-xs btn-clean btn-icon">
-                                                                <i class="fas fa-check text-success" style="font-size: 14px;"></i>
-                                                            </button>
-                                                            <button (click)="cancelUpdate(resource)" class="btn btn-xs btn-clean btn-icon">
-                                                                <i class="fas fa-undo text-danger" style="font-size: 14px;"></i>
-                                                            </button>
-                                                        </ng-container>
-                                                    </div>
-                                                </div>
+                                                        <div *ngFor="let resource of user.linkedResources"
+                                                            class="d-flex mb-1">
+                                                            <div class="col-7 d-flex px-0">
+                                                                <app-user-info [isSmallerDiv]="true"
+                                                                    [userData]="resource" [viewMode]="1"
+                                                                    [isHideLevel]="true">
+                                                                </app-user-info>
+                                                            </div>
+
+                                                            <div class="col-5 d-flex px-1 align-items-end">
+                                                                <div class="col-7 px-0 d-flex align-items-center">
+                                                                    <span *ngIf="!editingRows[resource.id]"
+                                                                        class="badge text-white"
+                                                                        [style.backgroundColor]="Utils.getColorContribute(resource.contribute)"
+                                                                        style="min-width: 45px; cursor: pointer;">
+                                                                        {{resource.contribute + '%'}}
+                                                                    </span>
+
+                                                                    <input *ngIf="editingRows[resource.id]"
+                                                                        type="number"
+                                                                        class="form-control form-control-sm px-1"
+                                                                        [(ngModel)]="resource.contribute"
+                                                                        (keydown.enter)="saveWeeklyContribute(resource, user.id)"
+                                                                        (keydown.esc)="cancelUpdate(resource)"
+                                                                        appFocus />
+                                                                </div>
+
+                                                                <div *ngIf="isShowEditContribute()"
+                                                                    class="col-5 d-flex justify-content-around px-0">
+                                                                    <button *ngIf="!editingRows[resource.id]"
+                                                                        (click)="edit(resource)"
+                                                                        class="btn btn-xs btn-clean btn-icon">
+                                                                        <i class="fa fa-pencil-alt text-primary"
+                                                                            style="font-size: 12px;"></i>
+                                                                    </button>
+
+                                                                    <ng-container *ngIf="editingRows[resource.id]">
+                                                                        <button
+                                                                            (click)="saveWeeklyContribute(resource, user.id)"
+                                                                            class="btn btn-xs btn-clean btn-icon">
+                                                                            <i class="fas fa-check text-success"
+                                                                                style="font-size: 14px;"></i>
+                                                                        </button>
+                                                                        <button (click)="cancelUpdate(resource)"
+                                                                            class="btn btn-xs btn-clean btn-icon">
+                                                                            <i class="fas fa-undo text-danger"
+                                                                                style="font-size: 14px;"></i>
+                                                                        </button>
+                                                                    </ng-container>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </td>
                                                     <td style="white-space: break-spaces;">
                                                         <div class="d-flex align-items-center" style="width: 100%;">
                                                             <p style="flex: 1; min-width: 220px; max-width: 100%;"
-                                                            class="mb-0 p-0 ml-2 ">{{ user.note }}</p>     
-                                                            <i style="color: #585858;" class="fas fa-ellipsis-v ml-1" [matMenuTriggerFor]="menu3"></i>
+                                                                class="mb-0 p-0 ml-2 ">{{ user.note }}</p>
+                                                            <i style="color: #585858;" class="fas fa-ellipsis-v ml-1"
+                                                                [matMenuTriggerFor]="menu3"></i>
                                                             <mat-menu #menu3="matMenu">
-                                                                <button class="mat-menu-item" (click)="editBillNote(user)">
+                                                                <button class="mat-menu-item"
+                                                                    (click)="editBillNote(user)">
                                                                     <i class="fas fa-edit mr-2 fa-lg"></i>
                                                                     Edit Note
                                                                 </button>
@@ -1249,7 +1440,8 @@
                         <div class="d-flex p-2 align-items-center"
                             style="background: #0d6efd;border-radius: 4px;color: #fff; position: fixed;top: 9%;left: 42%;cursor: all-scroll;"
                             cdkDrag>
-                            <i style=" font-size: 24px" (click)="drawer.toggle();drawerLeft=!drawerLeft" class="fas fa-chevron-left"></i>&nbsp;
+                            <i style=" font-size: 24px" (click)="drawer.toggle();drawerLeft=!drawerLeft"
+                                class="fas fa-chevron-left"></i>&nbsp;
                             <span style="font-weight: 600;" class="mx-1">
                             </span>&nbsp;
                             <i style=" font-size: 24px;" (click)="drawerRight.toggle()"

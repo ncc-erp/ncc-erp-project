@@ -201,27 +201,30 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     });
   }
 
-  openedChange(opened,typeSelect){
-    if(!opened){
-      switch(typeSelect){
+  openedChange(opened, typeSelect) {
+    if (!opened) {
+      switch (typeSelect) {
         case 'Branch':
-          this.selectedBranchIdsOld = [...this.selectedBranchIds]
+          this.selectedBranchIds = [...this.selectedBranchIdsOld]
+          this.selectedBranchIdsCr = [...this.selectedBranchIdsOld]
           this.searchBranch = '';
           break;
         case 'Position':
-          this.selectedPositionsOld = [...this.selectedPositions]
+          this.selectedPositions = [...this.selectedPositionsOld]
+          this.selectedPositionsCr = [...this.selectedPositionsOld]
           this.searchPosition = '';
           break;
         case 'Skill':
-          this.selectedSkillIdOld = [...this.selectedSkillId]
+          this.selectedSkillId = [...this.selectedSkillIdOld]
+          this.selectedSkillIdCr = [...this.selectedSkillIdOld]
           this.searchSkill = '';
           break;
         case 'UserType':
-          this.selectedUserTypesOld = [...this.selectedUserTypes]
+          this.selectedUserTypes = [...this.selectedUserTypesOld]
+          this.selectedUserTypesCr = [...this.selectedUserTypesOld]
           this.searchUserType = '';
           break;
       }
-      this.refresh();
     }
   }
 

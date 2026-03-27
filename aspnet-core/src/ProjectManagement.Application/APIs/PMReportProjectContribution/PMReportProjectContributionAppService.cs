@@ -261,6 +261,7 @@ namespace ProjectManagement.APIs.PMReportProjectContribution
             }
         }
 
+
         [HttpPost]
         [AbpAuthorize]
         public async Task<float> GetTotalContribution([FromBody] ContributionInputDto input, [FromQuery] long pmReportId)
@@ -271,18 +272,33 @@ namespace ProjectManagement.APIs.PMReportProjectContribution
                 var hasBranchFilter = branchIds.Any();
                 var search = !string.IsNullOrWhiteSpace(input.SearchText) ? input.SearchText.Trim().ToLower() : "";
 
-                // Get all staff
-                var activeUsersQuery = WorkScope.GetAll<User>()
-                    .AsNoTracking()
-                    .Where(u => u.IsActive
-                             && u.UserType != Constants.Enum.ProjectEnum.UserType.FakeUser
-                             && u.BranchId != null);
+                var userIdsInReport = await WorkScope.GetAll<WeeklyContributionHistory>()
+                    .Where(h => h.PMReportId == pmReportId)
+                    .Select(h => h.UserId)
+                    .Distinct()
+                    .ToListAsync();
 
-                // Apply branch filter
+                if (!userIdsInReport.Any())
+                    return 0;
+
+                var usersQuery = await WorkScope.GetAll<User>()
+                    .AsNoTracking()
+                    .Where(u => userIdsInReport.Contains(u.Id))
+                    .Select(u => new
+                    {
+                        Id = u.Id,
+                        UserName = u.UserName.Trim().ToLower(),
+                        FullName = u.FullName.Trim().ToLower(),
+                        EmailAddress = u.EmailAddress.Trim().ToLower(),
+                        u.BranchId,
+                    })
+                    .ToListAsync();
+
                 if (hasBranchFilter)
                 {
-                    activeUsersQuery = activeUsersQuery
-                        .Where(u => u.BranchId.HasValue && branchIds.Contains(u.BranchId.Value));
+                    usersQuery = usersQuery
+                        .Where(u => u.BranchId.HasValue && branchIds.Contains(u.BranchId.Value))
+                        .ToList();
                 }
                 else
                 {
@@ -292,39 +308,28 @@ namespace ProjectManagement.APIs.PMReportProjectContribution
                         .Select(b => b.Id)
                         .ToListAsync();
 
-                    activeUsersQuery = activeUsersQuery
-                        .Where(u => u.BranchId.HasValue && activeBranchIds.Contains(u.BranchId.Value));
-                }
-
-                // Get filtered user IDs
-                var filteredUserIds = await activeUsersQuery
-                    .Select(u => new
-                    {
-                        u.Id,
-                        UserName = u.UserName.Trim().ToLower(),
-                        FullName = u.FullName.Trim().ToLower(),
-                        EmailAddress = u.EmailAddress.Trim().ToLower()
-                    })
-                    .ToListAsync();
-
-                // Apply search filter after fetching from database
-                if (!string.IsNullOrEmpty(search))
-                {
-                    filteredUserIds = filteredUserIds
-                        .Where(u => u.UserName.Contains(search)
-                                 || u.FullName.Contains(search)
-                                 || u.EmailAddress.Contains(search))
+                    usersQuery = usersQuery
+                        .Where(u => u.BranchId.HasValue && activeBranchIds.Contains(u.BranchId.Value))
                         .ToList();
                 }
 
-                var userIds = filteredUserIds.Select(u => u.Id).ToList();
+                if (!string.IsNullOrEmpty(search))
+                {
+                    usersQuery = usersQuery.Where(u => u.UserName.Contains(search)
+                                                 || u.FullName.Contains(search)
+                                                 || u.EmailAddress.Contains(search)).ToList();
+                }
 
-                if (!userIds.Any())
+                var totalUserCount = usersQuery.Count;
+
+                if (totalUserCount == 0)
                     return 0;
+
+                var filteredUserIds = usersQuery.Select(u => u.Id).ToList();
 
                 var totalContribution = await WorkScope.GetAll<WeeklyContributionHistory>()
                     .AsNoTracking()
-                    .Where(x => x.PMReportId == pmReportId && userIds.Contains(x.UserId))
+                    .Where(x => x.PMReportId == pmReportId && filteredUserIds.Contains(x.UserId))
                     .SumAsync(x => x.Contribute * x.ProjectUserBill.HeadCount);
 
                 return (float)Math.Round(totalContribution / 100.0, 3);

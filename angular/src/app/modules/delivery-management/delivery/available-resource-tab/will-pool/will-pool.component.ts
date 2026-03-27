@@ -127,20 +127,17 @@ export class WillPoolComponent extends PagedListingComponentBase<any> implements
     if (!isOpen) {
       switch (field) {
         case 'Branch':
-          this.selectedBranchIdsOld = [...this.selectedBranchIds];
-          this.selectedBranchIdsCr = [...this.selectedBranchIds];
+          this.selectedBranchIds = this.selectedBranchIdsCr = this.selectedBranchIdsOld;
           this.searchBranch = '';
           break;
         case 'UserType':
-          this.selectedUserTypesOld = [...this.selectedUserTypes];
-          this.selectedUserTypesCr = [...this.selectedUserTypes];
+          this.selectedUserTypes = this.selectedUserTypesCr = this.selectedUserTypesOld;
           this.searchUserType = '';
           break;
       }
-      this.pageNumber = 1;
-      this.refresh();
     }
   }
+
 
   actionSelect(event: IEventObject): void {
     switch (event.type) {

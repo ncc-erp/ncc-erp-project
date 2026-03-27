@@ -33,6 +33,10 @@
     <Compile Remove="Migrations\20230115191736_add_tbls_for_ProjectCriteria_Feature.Designer.cs" />
     <Compile Remove="Migrations\20230303033422_add-lastReviewDate-PMReportProject.cs" />
     <Compile Remove="Migrations\20230303033422_add-lastReviewDate-PMReportProject.Designer.cs" />
+    <Compile Remove="Migrations\20260326055212_Added_Weekly_And_Daily_Report_Tables.cs" />
+    <Compile Remove="Migrations\20260326055212_Added_Weekly_And_Daily_Report_Tables.Designer.cs" />
+    <Compile Remove="Migrations\20260326083254_Add_Weekly_And_Daily_Report_Tables.cs" />
+    <Compile Remove="Migrations\20260326083254_Add_Weekly_And_Daily_Report_Tables.Designer.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Hangfire" Version="1.8.6" />

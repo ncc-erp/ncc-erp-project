@@ -7,6 +7,7 @@ namespace ProjectManagement.Services.ProjectTimesheet.Dto
 {
     public class ProjectUserBillDto
     {
+        public long Id { get; set; }
         public long ProjectId { get; set; }
         public long UserId { get; set; }
         public string AccountName { get; set; }

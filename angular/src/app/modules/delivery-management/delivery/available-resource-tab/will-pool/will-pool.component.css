@@ -13,7 +13,8 @@
     transform: rotate(-45deg);
 }
 
-.sort-button > i, .expand-icon {
+.sort-button>i,
+.expand-icon {
     font-size: 16px;
 }
 
@@ -51,18 +52,22 @@
     width: 30px;
 }
 
-.button-action:hover{
+.button-action:hover {
     background-color: #c3c3c3;
 }
 
 @media screen and (min-width: 1500px) and (max-width: 1700px) {
-    .project-name, .charge-name {
+
+    .project-name,
+    .charge-name {
         width: 250px !important;
     }
 }
 
 @media screen and (min-width: 1701px) {
-    .project-name, .charge-name {
+
+    .project-name,
+    .charge-name {
         width: 300px !important;
     }
 

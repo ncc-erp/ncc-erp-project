@@ -31,8 +31,8 @@ namespace ProjectManagement.APIs.PMReportProjectContribution
 
         private readonly ResourceManager _resourceManager;
 
-        public PMReportProjectContributionAppService(IBackgroundJobManager backgroundJobManager, 
-            TimesheetService timesheetService, 
+        public PMReportProjectContributionAppService(IBackgroundJobManager backgroundJobManager,
+            TimesheetService timesheetService,
             ResourceManager resourceManager)
         {
             _backgroundJobManager = backgroundJobManager;
@@ -112,35 +112,16 @@ namespace ProjectManagement.APIs.PMReportProjectContribution
                 var hasBranchFilter = branchIds.Any();
                 var search = !string.IsNullOrWhiteSpace(input.SearchText) ? input.SearchText.Trim().ToLower() : "";
 
-                var userIdsInReport = await WorkScope.GetAll<WeeklyContributionHistory>()
-                    .Where(h => h.PMReportId == pmReportId)
-                    .Select(h => h.UserId)
-                    .Distinct()
-                    .ToListAsync(); 
-
-                if (!userIdsInReport.Any())
-                {
-                    return new GridResult<UserGroupContributionDto>(new List<UserGroupContributionDto>(), 0);
-                }
-
-                var usersQuery = await WorkScope.GetAll<User>()
+                // Get all active staff
+                var activeUsersQuery = WorkScope.GetAll<User>()
                     .AsNoTracking()
-                    .Where(u => userIdsInReport.Contains(u.Id))
-                    .Select(u => new
-                    {
-                        Id= u.Id,
-                        UserName =  u.UserName.Trim().ToLower(),
-                        FullName = u.FullName.Trim().ToLower(),
-                        EmailAddress = u.EmailAddress.Trim().ToLower(),
-                        u.BranchId,
-                    })
-                    .ToListAsync();
+                    .Where(u => u.IsActive);
 
+                // Apply branch filter
                 if (hasBranchFilter)
                 {
-                    usersQuery = usersQuery
-                        .Where(u => u.BranchId.HasValue && branchIds.Contains(u.BranchId.Value))
-                        .ToList();
+                    activeUsersQuery = activeUsersQuery
+                        .Where(u => u.BranchId.HasValue && branchIds.Contains(u.BranchId.Value));
                 }
                 else
                 {
@@ -150,19 +131,38 @@ namespace ProjectManagement.APIs.PMReportProjectContribution
                         .Select(b => b.Id)
                         .ToListAsync();
 
+                    activeUsersQuery = activeUsersQuery
+                        .Where(u => u.BranchId.HasValue && activeBranchIds.Contains(u.BranchId.Value));
+                }
+
+                // Get user basic info (query db)
+                var usersQuery = await activeUsersQuery
+                    .Select(u => new
+                    {
+                        u.Id,
+                        UserName = u.UserName.Trim().ToLower(),
+                        FullName = u.FullName.Trim().ToLower(),
+                        EmailAddress = u.EmailAddress.Trim().ToLower(),
+                        u.AvatarPath,
+
+                        BranchDisplayName = u.Branch.DisplayName,
+                        BranchColor = u.Branch.Color,
+                        PositionName = u.Position.Name,
+                        PositionColor = u.Position.Color
+                    })
+                    .ToListAsync();
+
+                // Apply search
+                if (!string.IsNullOrEmpty(search))
+                {
                     usersQuery = usersQuery
-                        .Where(u => u.BranchId.HasValue && activeBranchIds.Contains(u.BranchId.Value))
+                        .Where(u => u.UserName.Contains(search)
+                                 || u.FullName.Contains(search)
+                                 || u.EmailAddress.Contains(search))
                         .ToList();
                 }
 
-                if (!string.IsNullOrEmpty(search))
-                {
-                    usersQuery = usersQuery.Where(u => u.UserName.Contains(search)
-                                                 || u.FullName.Contains(search)
-                                                 || u.EmailAddress.Contains(search)).ToList();
-                }
-
-                var totalUserCount =  usersQuery.Count;
+                var totalUserCount = usersQuery.Count;
 
                 if (totalUserCount == 0)
                 {
@@ -171,19 +171,13 @@ namespace ProjectManagement.APIs.PMReportProjectContribution
 
                 var filteredUserIds = usersQuery.Select(u => u.Id).ToList();
 
+                // JOIN with WeeklyContributionHistory => contribution data
                 var historyData = await WorkScope.GetAll<WeeklyContributionHistory>()
                     .AsNoTracking()
                     .Where(x => x.PMReportId == pmReportId && filteredUserIds.Contains(x.UserId))
                     .Select(g => new
                     {
                         g.UserId,
-                        UserName = g.User.UserName,
-                        UserFullName = g.User.FullName,
-                        AvatarPath = g.User.AvatarPath,
-                        BranchDisplayName = g.User.Branch != null ? g.User.Branch.DisplayName : "No Branch",
-                        BranchColor = g.User.Branch != null ? g.User.Branch.Color : "#ccc",
-                        PositionName = g.User.Position != null ? g.User.Position.Name : "",
-                        PositionColor = g.User.Position != null ? g.User.Position.Color : "",
                         g.ProjectId,
                         ProjectName = g.Project.Name,
                         PMName = g.Project.PM != null ? g.Project.PM.FullName : "No PM",
@@ -194,20 +188,24 @@ namespace ProjectManagement.APIs.PMReportProjectContribution
                     })
                     .ToListAsync();
 
-                var resultItems = historyData
-                    .GroupBy(u => new { u.UserId, u.UserName, u.UserFullName, u.AvatarPath, u.BranchDisplayName, u.BranchColor, u.PositionName, u.PositionColor })
-                    .Select(g => new UserGroupContributionDto
+                // Group and aggregate with default values for users without contribution
+                var resultItems = usersQuery
+                    .Select(user => new UserGroupContributionDto
                     {
-                        UserId = g.Key.UserId,
-                        UserName = g.Key.UserName,
-                        UserFullName = g.Key.UserFullName,
-                        AvatarPath = g.Key.AvatarPath,
-                        BranchDisplayName = g.Key.BranchDisplayName,
-                        BranchColor = g.Key.BranchColor,
-                        PositionName = g.Key.PositionName,
-                        PositionColor = g.Key.PositionColor,
-                        TotalHeadCount = g.Sum(x => x.HeadCount * x.Contribute),
-                        Projects = g.GroupBy(p => new { p.ProjectId, p.ProjectName, p.PMName })
+                        UserId = user.Id,
+                        UserName = user.UserName,
+                        UserFullName = user.FullName,
+                        AvatarPath = user.AvatarPath,
+                        BranchDisplayName = user.BranchDisplayName,
+                        BranchColor = user.BranchColor,
+                        PositionName = user.PositionName,
+                        PositionColor = user.PositionColor,
+                        TotalHeadCount = historyData
+                            .Where(h => h.UserId == user.Id)
+                            .Sum(x => x.HeadCount * x.Contribute),
+                        Projects = historyData
+                            .Where(h => h.UserId == user.Id)
+                            .GroupBy(p => new { p.ProjectId, p.ProjectName, p.PMName })
                             .Select(pg => new ProjectUserContributionDto
                             {
                                 ProjectId = pg.Key.ProjectId,
@@ -226,7 +224,7 @@ namespace ProjectManagement.APIs.PMReportProjectContribution
                     .ToList();
 
                 var sortColumn = input.Sort?.Trim().ToLower();
-             
+
                 var isDesc = input.SortDirection == SortDirection.DESC;
 
                 IEnumerable<UserGroupContributionDto> sortedQuery;
@@ -263,6 +261,7 @@ namespace ProjectManagement.APIs.PMReportProjectContribution
             }
         }
 
+
         [HttpPost]
         [AbpAuthorize]
         public async Task<float> GetTotalContribution([FromBody] ContributionInputDto input, [FromQuery] long pmReportId)
@@ -281,7 +280,7 @@ namespace ProjectManagement.APIs.PMReportProjectContribution
 
                 if (!userIdsInReport.Any())
                     return 0;
-                 
+
                 var usersQuery = await WorkScope.GetAll<User>()
                     .AsNoTracking()
                     .Where(u => userIdsInReport.Contains(u.Id))
@@ -367,7 +366,7 @@ namespace ProjectManagement.APIs.PMReportProjectContribution
             {
                 throw new UserFriendlyException(ex.Message);
             }
-          
+
         }
 
         #region API Helper

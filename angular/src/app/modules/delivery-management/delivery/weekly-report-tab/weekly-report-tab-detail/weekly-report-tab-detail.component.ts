@@ -126,6 +126,7 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
   public pmReportId: any;
   public isActive: boolean;
   public projectType = "";
+  public currentProjectType: number = -1;
   public projectStatus: string = "ALL";
   public weeklyReportList: projectReportDto[] = [];
   public futureReportList: projectReportDto[] = [];
@@ -572,6 +573,7 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
     if (this.pmReportProjectId) {
       this.pmReportProjectService.GetInfoProject(this.pmReportProjectId).pipe(catchError(this.pmReportProjectService.handleError)).subscribe(data => {
         this.projectInfo = data.result
+        this.currentProjectType = data.result.projectType
         this.generalNote = data.result.pmNote
         this.automationNote = data.result.automationNote
         this.getDataForBillChart(this.projectInfo.projectCode)
@@ -622,6 +624,7 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
   }
 
   public view(projectReport) {
+    this.currentProjectType = -1;
     this.pmReportProjectId = projectReport.id;
 
     this.projectId = projectReport.projectId;

@@ -671,7 +671,7 @@
                             </div>
                         </div>
 
-                        <div class="card">
+                        <div class="card" *ngIf="currentProjectType !== APP_ENUM.ProjectType.TRAINING">
                             <mat-expansion-panel #dailyPanel [expanded]="true">
                                 <mat-expansion-panel-header class="m-0">
                                     <mat-panel-title class="d-flex align-items-center justify-content-between w-100">
@@ -1230,7 +1230,8 @@
                                         <div>
                                             <strong style="font-size: 20px;"> Bill accounts</strong>&nbsp;
                                             <strong style="font-size: 20px;"
-                                                class="text-danger">({{projectInfo.totalBill || 0}})</strong>
+                                                class="text-danger">({{projectInfo.totalBill ||
+                                                0}})</strong>
                                             <strong style="font-size: 20px; margin-left: 20px;"> Head
                                                 Count</strong>&nbsp;
                                             <strong style="font-size: 20px;"

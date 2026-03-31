@@ -108,16 +108,40 @@ namespace ProjectManagement.APIs.PMReportProjectContribution
         {
             try
             {
+                var projectIds = input.FilterItems?.FirstOrDefault(x => x.PropertyName == "projectId");
+                long? projectId = null;
+                if (projectIds != null)
+                {
+                    projectId = Convert.ToInt64(projectIds.Value);
+                    input.FilterItems.Remove(projectIds);
+                }
                 var branchIds = input.BranchIds?.ToList() ?? new List<long>();
                 var hasBranchFilter = branchIds.Any();
                 var search = !string.IsNullOrWhiteSpace(input.SearchText) ? input.SearchText.Trim().ToLower() : "";
 
-                // Get all active staff
                 var activeUsersQuery = WorkScope.GetAll<User>()
                     .AsNoTracking()
                     .Where(u => u.IsActive);
 
-                // Apply branch filter
+                if (projectId.HasValue)
+                {
+                    var userIdsInProjectUser = await WorkScope.GetAll<ProjectUser>()
+                        .AsNoTracking()
+                        .Where(pu => pu.ProjectId == projectId.Value)
+                        .Select(pu => pu.UserId)
+                        .ToListAsync();
+                    var userIdsWithContribution = await WorkScope.GetAll<WeeklyContributionHistory>()
+                        .AsNoTracking()
+                        .Where(h => h.ProjectId == projectId.Value && h.PMReportId == pmReportId)
+                        .Select(h => h.UserId)
+                        .ToListAsync();
+
+
+                    var allUserIdsInProject = userIdsInProjectUser.Union(userIdsWithContribution).ToList();
+
+                    activeUsersQuery = activeUsersQuery.Where(u => allUserIdsInProject.Contains(u.Id));
+                }
+
                 if (hasBranchFilter)
                 {
                     activeUsersQuery = activeUsersQuery
@@ -135,7 +159,7 @@ namespace ProjectManagement.APIs.PMReportProjectContribution
                         .Where(u => u.BranchId.HasValue && activeBranchIds.Contains(u.BranchId.Value));
                 }
 
-                // Get user basic info (query db)
+
                 var usersQuery = await activeUsersQuery
                     .Select(u => new
                     {
@@ -152,7 +176,6 @@ namespace ProjectManagement.APIs.PMReportProjectContribution
                     })
                     .ToListAsync();
 
-                // Apply search
                 if (!string.IsNullOrEmpty(search))
                 {
                     usersQuery = usersQuery
@@ -171,10 +194,10 @@ namespace ProjectManagement.APIs.PMReportProjectContribution
 
                 var filteredUserIds = usersQuery.Select(u => u.Id).ToList();
 
-                // JOIN with WeeklyContributionHistory => contribution data
                 var historyData = await WorkScope.GetAll<WeeklyContributionHistory>()
                     .AsNoTracking()
                     .Where(x => x.PMReportId == pmReportId && filteredUserIds.Contains(x.UserId))
+                    .WhereIf(projectId.HasValue, x => x.ProjectId == projectId.Value)
                     .Select(g => new
                     {
                         g.UserId,
@@ -188,7 +211,6 @@ namespace ProjectManagement.APIs.PMReportProjectContribution
                     })
                     .ToListAsync();
 
-                // Group and aggregate with default values for users without contribution
                 var resultItems = usersQuery
                     .Select(user => new UserGroupContributionDto
                     {
@@ -268,6 +290,14 @@ namespace ProjectManagement.APIs.PMReportProjectContribution
         {
             try
             {
+                var projectIds = input.FilterItems?.FirstOrDefault(x => x.PropertyName == "projectId");
+                long? projectId = null;
+                if (projectIds != null)
+                {
+                    projectId = Convert.ToInt64(projectIds.Value);
+                    input.FilterItems.Remove(projectIds);
+                }
+
                 var branchIds = input.BranchIds?.ToList() ?? new List<long>();
                 var hasBranchFilter = branchIds.Any();
                 var search = !string.IsNullOrWhiteSpace(input.SearchText) ? input.SearchText.Trim().ToLower() : "";
@@ -293,6 +323,27 @@ namespace ProjectManagement.APIs.PMReportProjectContribution
                         u.BranchId,
                     })
                     .ToListAsync();
+
+                if (projectId.HasValue)
+                {
+                    var userIdsInProjectUser = await WorkScope.GetAll<ProjectUser>()
+                        .AsNoTracking()
+                        .Where(pu => pu.ProjectId == projectId.Value)
+                        .Select(pu => pu.UserId)
+                        .ToListAsync();
+                    var userIdsWithContribution = await WorkScope.GetAll<WeeklyContributionHistory>()
+                        .AsNoTracking()
+                        .Where(h => h.ProjectId == projectId.Value && h.PMReportId == pmReportId)
+                        .Select(h => h.UserId)
+                        .ToListAsync();
+
+
+                    var allUserIdsInProject = userIdsInProjectUser.Union(userIdsWithContribution);
+
+                    usersQuery = usersQuery.Where(u => allUserIdsInProject.Contains(u.Id))
+                                            .ToList();
+                }
+
 
                 if (hasBranchFilter)
                 {
@@ -330,6 +381,7 @@ namespace ProjectManagement.APIs.PMReportProjectContribution
                 var totalContribution = await WorkScope.GetAll<WeeklyContributionHistory>()
                     .AsNoTracking()
                     .Where(x => x.PMReportId == pmReportId && filteredUserIds.Contains(x.UserId))
+                    .WhereIf(projectId.HasValue, x => x.ProjectId == projectId.Value)
                     .SumAsync(x => x.Contribute * x.ProjectUserBill.HeadCount);
 
                 return (float)Math.Round(totalContribution / 100.0, 3);

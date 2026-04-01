@@ -236,6 +236,7 @@ namespace ProjectManagement.APIs.PMReportProjects
             {
                 ProjectCode = pmReportProject.Project.Code,
                 ProjectName = pmReportProject.Project.Name,
+                ProjectType = pmReportProject.Project.ProjectType,
                 ClientName = pmReportProject.Project.Client.Name,
                 ClientCode = pmReportProject.Project.Client.Code,
                 PmName = pmReportProject.PM.FullName,

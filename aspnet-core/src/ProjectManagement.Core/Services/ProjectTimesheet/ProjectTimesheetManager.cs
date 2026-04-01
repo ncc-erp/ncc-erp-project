@@ -187,6 +187,7 @@ namespace ProjectManagement.Services.ProjectTimesheet
 
             return await q.Select(s => new ProjectUserBillDto
             {
+                Id = s.Id,
                 ProjectId = s.ProjectId,
                 UserId = s.UserId,
                 BillRate = s.BillRate,

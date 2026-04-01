@@ -138,6 +138,7 @@ export class WillPoolComponent extends PagedListingComponentBase<any> implements
     }
   }
 
+
   actionSelect(event: IEventObject): void {
     switch (event.type) {
       case 'Branch':

@@ -6,28 +6,28 @@ import { Component, EventEmitter, Injector, Input, Output } from '@angular/core'
   templateUrl: './select-clear-option.component.html',
   styleUrls: ['./select-clear-option.component.css']
 })
-export class SelectClearOptionComponent extends AppComponentBase  {
+export class SelectClearOptionComponent extends AppComponentBase {
   @Input() listOption: number[]
-  @Input() type:string = '';
-  @Output()newListEvent = new EventEmitter<any>();
-  @Output()doneEvent = new EventEmitter<string>();
+  @Input() type: string = '';
+  @Output() newListEvent = new EventEmitter<any>();
+  @Output() doneEvent = new EventEmitter<string>();
   constructor(injector: Injector) {
     super(injector)
   }
 
-  selectAll(){
+  selectAll() {
     this.newListEvent.emit({
       type: this.type,
-      data:this.listOption
+      data: this.listOption
     })
   }
-  clear(){
+  clear() {
     this.newListEvent.emit({
       type: this.type,
       data: []
     })
   }
-  doneSelectSkill(){
+  doneSelectSkill() {
     this.doneEvent.emit(this.type)
   }
 }

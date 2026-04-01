@@ -453,6 +453,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
                 var timesheetProjectBill = new TimesheetProjectBill
                 {
                     ProjectId = pub.ProjectId,
+                    ProjectUserBillId = pub.Id,
                     AccountName = pub.AccountName,
                     TimesheetId = timesheet.Id,
                     UserId = pub.UserId,

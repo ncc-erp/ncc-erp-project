@@ -201,9 +201,9 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     });
   }
 
-  openedChange(opened,typeSelect){
-    if(!opened){
-      switch(typeSelect){
+  openedChange(opened, typeSelect) {
+    if (!opened) {
+      switch (typeSelect) {
         case 'Branch':
           this.selectedBranchIds = [...this.selectedBranchIdsOld]
           this.selectedBranchIdsCr = [...this.selectedBranchIdsOld]

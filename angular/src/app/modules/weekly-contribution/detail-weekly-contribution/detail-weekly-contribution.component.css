@@ -1,11 +1,13 @@
 .table-responsive::-webkit-scrollbar {
-  height: 8px; 
+  height: 8px;
   width: 8px;
 }
+
 .table-responsive::-webkit-scrollbar-thumb {
   background: #ccc;
   border-radius: 4px;
 }
+
 .table-responsive::-webkit-scrollbar-track {
   background: #f1f1f1;
 }
@@ -16,6 +18,7 @@
   height: 45px;
   flex-shrink: 0;
 }
+
 .avatar-wrapper img {
   width: 100%;
   height: 100%;
@@ -26,7 +29,7 @@
 .table-vertical-scroll {
   border: 1px solid #dee2e6;
   background: #fff;
-  scrollbar-width: thin; 
+  scrollbar-width: thin;
   scrollbar-color: #ccc #f1f1f1;
 }
 
@@ -49,6 +52,7 @@
 .hover-bg-light {
   transition: background-color 0.15s ease-in-out;
 }
+
 .hover-bg-light:hover {
   background-color: #f8fbff !important;
 }
@@ -62,7 +66,8 @@
   align-items: stretch;
 }
 
-.search-input, .search-btn {
+.search-input,
+.search-btn {
   height: 38px !important;
   display: flex;
   align-items: center;
@@ -81,36 +86,71 @@
   border-right: 1px solid #ced4da;
   box-shadow: none !important;
 }
+
 .search-input:focus {
   border-color: #80bdff;
   z-index: 3;
 }
 
-.number-items-pagination {
+.footer-pagination {
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-height: 56px;
 }
+
+.footer-left {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.footer-center {
+  flex: 1;
+  text-align: center;
+}
+
+.footer-right {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
 .form-number-item {
-  width: 80px;
-  margin-bottom: -1.25em;
+  width: 120px;
 }
+
+::ng-deep .form-number-item .mat-form-field-wrapper {
+  margin: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+::ng-deep .form-number-item .mat-form-field-subscript-wrapper {
+  display: none !important;
+}
+
 .total-pagination p {
-  line-height: 38px;
   font-weight: 500;
   color: #6c757d;
+  margin-bottom: 0.1rem;
 }
 
 
 ::ng-deep .cdk-overlay-container,
 ::ng-deep .cdk-overlay-connected-position-bounding-box,
 ::ng-deep .cdk-overlay-pane {
-    z-index: 9999 !important;
+  z-index: 9999 !important;
 }
 
 .badge {
-    font-size: 0.85em; 
-    padding: 0.4em 0.6em;
-    font-weight: 600;
-    letter-spacing: 0.3px;
+  font-size: 0.85em;
+  padding: 0.4em 0.6em;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+::ng-deep .search-pm .mat-form-field-flex {
+  min-width: 160px;
 }

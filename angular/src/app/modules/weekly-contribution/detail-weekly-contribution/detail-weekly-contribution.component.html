@@ -140,7 +140,7 @@
                     <div class="project-list-container">
 
                       <div *ngIf="!user.projects || user.projects.length === 0" class="text-center text-muted py-3">
-                        <em>No active projects</em>
+                        <em>No contributions yet</em>
                       </div>
 
                       <div *ngFor="let proj of user.projects; let isLastProj = last" class="d-flex w-100"
@@ -207,14 +207,15 @@
         </div>
 
         <div class="card-footer bg-light border-top">
-          <div class="row container-pagination">
-            <div class="col-sm-4 col-12 text-sm-left text-center number-items-pagination">
-              <button class="btn btn-secondary mb-2" (click)="refresh()">
+          <div class="footer-pagination">
+            <div class="footer-left">
+              <button class="btn btn-secondary" (click)="refresh()">
                 <i class="fas fa-redo-alt"></i>
               </button>
-              <mat-form-field appearance="outline" class="form-number-item">
+              <mat-form-field appearance="outline" class="form-number-item ml-2">
                 <mat-label>Number items</mat-label>
-                <mat-select panelClass="options-number-item" [(ngModel)]="pageSizeType" (ngModelChange)="changePageSize()">
+                <mat-select panelClass="options-number-item" [(ngModel)]="pageSizeType"
+                  (ngModelChange)="changePageSize()">
                   <mat-option [value]="5"> 5 </mat-option>
                   <mat-option [value]="10"> 10 </mat-option>
                   <mat-option [value]="20"> 20 </mat-option>
@@ -223,10 +224,8 @@
                 </mat-select>
               </mat-form-field>
             </div>
-            <div class="col-sm-4 col-12 text-center total-pagination">
-              <p class="mb-0 my-2">
-                Total records: {{ totalItems }}
-              </p>
+            <div class="footer-center total-pagination">
+              <p class="mb-0">Total records: {{ totalItems }}</p>
               <p class="mb-0 text-primary font-weight-bold" style="font-size: 0.95rem;">
                 Total contribution / Total Staff =
                 <span class="text-danger">{{ totalContributionSum }}</span> /
@@ -236,11 +235,9 @@
                 </span>
               </p>
             </div>
-            <div class="col-sm-4 col-12 pagination-control">
-              <div class="float-sm-right m-auto">
-                <abp-pagination-controls id="server" (pageChange)="getDataPage($event)">
-                </abp-pagination-controls>
-              </div>
+            <div class="footer-right pagination-control">
+              <abp-pagination-controls id="server" (pageChange)="getDataPage($event)">
+              </abp-pagination-controls>
             </div>
           </div>
         </div>

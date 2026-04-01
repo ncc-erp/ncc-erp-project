@@ -108,13 +108,7 @@ namespace ProjectManagement.APIs.PMReportProjectContribution
         {
             try
             {
-                var projectIds = input.FilterItems?.FirstOrDefault(x => x.PropertyName == "projectId");
-                long? projectId = null;
-                if (projectIds != null)
-                {
-                    projectId = Convert.ToInt64(projectIds.Value);
-                    input.FilterItems.Remove(projectIds);
-                }
+                var projectId = input.ProjectId;
                 var branchIds = input.BranchIds?.ToList() ?? new List<long>();
                 var hasBranchFilter = branchIds.Any();
                 var search = !string.IsNullOrWhiteSpace(input.SearchText) ? input.SearchText.Trim().ToLower() : "";
@@ -290,14 +284,8 @@ namespace ProjectManagement.APIs.PMReportProjectContribution
         {
             try
             {
-                var projectIds = input.FilterItems?.FirstOrDefault(x => x.PropertyName == "projectId");
-                long? projectId = null;
-                if (projectIds != null)
-                {
-                    projectId = Convert.ToInt64(projectIds.Value);
-                    input.FilterItems.Remove(projectIds);
-                }
 
+                var projectId = input.ProjectId;
                 var branchIds = input.BranchIds?.ToList() ?? new List<long>();
                 var hasBranchFilter = branchIds.Any();
                 var search = !string.IsNullOrWhiteSpace(input.SearchText) ? input.SearchText.Trim().ToLower() : "";

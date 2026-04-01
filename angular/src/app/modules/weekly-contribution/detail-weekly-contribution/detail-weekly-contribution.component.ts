@@ -78,13 +78,7 @@ export class DetailWeeklyContributionComponent
       ...request,
       searchText: this.searchText,
       branchIds: this.selectedBranchIds,
-      filterItems: this.selectedProjectId ? [
-        {
-          propertyName: "projectId",
-          value: this.selectedProjectId,
-          comparision: 0 // Equal
-        }
-      ] : [],
+      projectId: this.selectedProjectId ?? null,
       sort: this.sortColumn,
       sortDirection: this.sortDirection === 1 ? 1 : 0,
     };
@@ -113,7 +107,7 @@ export class DetailWeeklyContributionComponent
     return "/assets/img/user.png";
   }
 
-  public onProjectFilterChange() {
+  public searchProject() {
     this.getDataPage(1);
   }
 
@@ -143,13 +137,7 @@ export class DetailWeeklyContributionComponent
     const inputRequest = {
       searchText: this.searchText,
       branchIds: this.selectedBranchIds,
-      filterItems: this.selectedProjectId ? [
-        {
-          propertyName: "projectId",
-          value: this.selectedProjectId,
-          comparision: 0 // Equal
-        }
-      ] : [],
+      projectId: this.selectedProjectId ?? null,
     };
     this.pmReportProjectContributionService
       .getTotalContribution(this.pmReportId, inputRequest)

@@ -15,57 +15,76 @@
   <section class="content px-2">
     <div class="container-fluid">
       <div class="card">
-        <div class="card-header">
-          <div class="row g-3">
-            <div class="input-group col-md-3 col-sm-12 pt-1">
-              <div class="input-group">
-                <div class="input-group-prepend">
-                  <button name="btn-search" type="button" class="btn bg-blue search-btn" (click)="refresh()">
-                    <i class="fas fa-search"></i>
-                  </button>
-                </div>
-                <input type="text" class="form-control search-input" name="keyword" placeholder="Search"
-                  [(ngModel)]="searchText" (keyup.enter)="refresh()" />
+      <div class="card-header">
+        <div class="row align-items-center">
+      
+          <div class="col-md-3 col-sm-12 pt-1">
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <button name="btn-search" type="button" class="btn bg-blue search-btn" (click)="refresh()">
+                  <i class="fas fa-search"></i>
+                </button>
               </div>
+              <input type="text" class="form-control search-input" name="keyword" placeholder="Search"
+                [(ngModel)]="searchText" (keyup.enter)="refresh()" />
             </div>
-            <div class="col-md-1 col-sm-12">
-              <div class="row filter-wrap">
-                <div class="col-md-3 col-sm-12 search-pm text-right ml-auto">
-                  <mat-form-field appearance="outline">
-                    <mat-label>Branch:</mat-label>
-                    <mat-select #selectBranch [(ngModel)]="selectedBranchIds" (openedChange)="openedChange($event)"
-                      placeholder="Select branch" multiple (selectionChange)="refresh()">
+          </div>
+      
+          <div class="col-md-2 col-sm-12 offset-md-1">
+            <mat-form-field appearance="outline" style="width: 100%;">
+              <mat-label>Branch:</mat-label>
+              <mat-select #selectBranch [(ngModel)]="selectedBranchIds" (openedChange)="openedChange($event)"
+                placeholder="Select branch" multiple (selectionChange)="refresh()">
 
-                      <div style="position: sticky; top: 0; z-index: 2; background-color: white;">
-                        <mat-form-field class="w-100 px-3" style="margin-bottom: 0;">
-                          <input style="height: 30px; padding: 5px 10px;" matInput [(ngModel)]="searchBranch"
-                            placeholder="Search" (keydown)="$event.stopPropagation()">
-                        </mat-form-field>
-                        <div class="ml-3 mb-2 select-filter-option">
-                          <app-select-clear-option [type]="'Branch'" [listOption]="listBranchsId"
-                            (newListEvent)="actionSelect($event)" (doneEvent)="selectDone()">
-                          </app-select-clear-option>
-                        </div>
-                      </div>
+                <div style="position: sticky; top: 0; z-index: 2; background-color: white;">
+                  <mat-form-field class="w-100 px-3" style="margin-bottom: 0;">
+                    <input style="height: 30px; padding: 5px 10px;" matInput [(ngModel)]="searchBranch" placeholder="Search"
+                      (keydown)="$event.stopPropagation()">
+                  </mat-form-field>
+                  <div class="ml-3 mb-2 select-filter-option">
+                    <app-select-clear-option [type]="'Branch'" [listOption]="listBranchsId"
+                      (newListEvent)="actionSelect($event)" (doneEvent)="selectDone()">
+                    </app-select-clear-option>
+                  </div>
+                </div>
 
                       <mat-option *ngFor="let branch of listBranchs | listFilter: 'name' : searchBranch"
                         [value]="branch.id">
-                        {{branch.name}}
-                      </mat-option>
-                    </mat-select>
+                  {{branch.name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+      
+          <div class="col-md-2 col-sm-12 offset-md-1">
+            <mat-form-field appearance="outline" style="width: 100%;">
+              <mat-label>Project:</mat-label>
+              <mat-select [(ngModel)]="selectedProjectId" placeholder="Select project" (selectionChange)="refresh()"
+                panelClass="select-below">
+                <div style="position: sticky; top: 0; z-index: 2; background-color: white;">
+                  <mat-form-field class="w-100 px-3" style="margin-bottom: 0;">
+                    <input style="height: 30px; padding: 5px 10px;" matInput [(ngModel)]="projectSearchText"
+                      placeholder="Search" (keydown)="$event.stopPropagation()">
                   </mat-form-field>
                 </div>
-              </div>
-            </div>
+                <mat-option [value]="null">All</mat-option>
+                <mat-option *ngFor="let project of listProject | listFilter: 'name' : projectSearchText" [value]="project.id">
+                  {{project.name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
           </div>
+      
         </div>
-
+      </div>
+   
         <div class="card-body table-responsive p-0">
           <div class="table-vertical-scroll" style="max-height: 800px; overflow-y: auto;">
             <table class="table table-bordered table-hover text-nowrap m-0" style="width: 100%; table-layout: fixed;">
               <thead class="bg-light shadow-sm sticky-top">
                 <tr>
-                  <th style="width: 60px;" class="text-center text-uppercase text-secondary text-xs font-weight-bolder">
+                  <th style="width: 90px; white-space: nowrap; padding: 12px 0 !important;"
+                    class="text-center text-uppercase text-secondary text-xs font-weight-bolder">
                     STT
                   </th>
 
@@ -104,9 +123,9 @@
                               currentPage: pageNumber,
                               totalItems: totalItems
                             }; let i = index">
-
-                  <td class="text-center align-middle font-weight-bold text-muted">
-                    {{ (pageNumber - 1) * pageSize + i + 1 }}
+                  <td class="text-center align-middle font-weight-bold text-muted"
+                      style="white-space: nowrap; padding: 12px 0 !important;">
+                      {{ (pageNumber - 1) * pageSize + i + 1 }}
                   </td>
 
                   <td class="align-middle bg-white" style="white-space: normal;">

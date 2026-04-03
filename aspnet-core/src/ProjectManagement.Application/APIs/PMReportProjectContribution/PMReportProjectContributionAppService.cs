@@ -115,7 +115,9 @@ namespace ProjectManagement.APIs.PMReportProjectContribution
 
                 var activeUsersQuery = WorkScope.GetAll<User>()
                     .AsNoTracking()
-                    .Where(u => u.IsActive);
+                    .Where(u => u.IsActive)
+                    .Where(u => (int)u.UserType != 4)
+                    .Where(u => (int)u.UserType != 5);
 
                 if (projectId.HasValue)
                 {

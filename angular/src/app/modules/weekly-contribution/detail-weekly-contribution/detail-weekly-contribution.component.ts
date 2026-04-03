@@ -11,6 +11,7 @@ import { ListProjectService } from "./../../../service/api/list-project.service"
 import { ProjectDto } from "@app/service/model/list-project.dto";
 import { UserService } from "./../../../service/api/user.service";
 import { BranchService } from "@app/service/api/branch.service";
+import { ResourceManagerService } from "./../../../service/api/resource-manager.service";
 
 @Component({
   selector: "app-detail-weekly-contribution",
@@ -30,7 +31,7 @@ export class DetailWeeklyContributionComponent
   public selectedBranchIdsCr: number[] = [];
   public selectedBranchIdsOld: number[] = [];
   public searchBranch: string = "";
-  public listProject: ProjectDto[] = [];
+  public listProject: any[] = [];
   public projectSearchText: string = "";
   public selectedProjectId: number | null = null;
 
@@ -47,6 +48,7 @@ export class DetailWeeklyContributionComponent
     public listProjectService: ListProjectService,
     public userService: UserService,
     public branchService: BranchService,
+    private availableRerourceService: ResourceManagerService,
   ) {
     super(injector);
     this.pageSize = 100;
@@ -60,7 +62,7 @@ export class DetailWeeklyContributionComponent
     this.pmReportName = this.route.snapshot.queryParamMap.get("pmReportName");
     this.refresh();
     this.getAllBranchs();
-    this.getAllProject();
+    this.getProjectsForAllResource();
 
   }
 
@@ -155,11 +157,11 @@ export class DetailWeeklyContributionComponent
       this.selectedBranchIdsCr = this.selectedBranchIds;
     });
   }
-  public getAllProject() {
-    this.listProjectService.getMyProjects().subscribe((data) => {
+  public getProjectsForAllResource() {
+    this.availableRerourceService.getProjectsForAllResource().subscribe((data) => {
       this.listProject = data.result;
-    });
-  } 
+    })
+  }
 
   public sortData(property: string) {
     if (this.sortColumn === property) {

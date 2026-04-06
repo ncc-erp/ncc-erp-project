@@ -1,4 +1,5 @@
-﻿using Abp.Authorization;
+﻿
+using Abp.Authorization;
 using Abp.BackgroundJobs;
 using Abp.Linq.Extensions;
 using Abp.UI;
@@ -9,6 +10,7 @@ using NccCore.Paging;
 using ProjectManagement.APIs.PMReportProjectContribution.Dto;
 using ProjectManagement.Authorization;
 using ProjectManagement.Authorization.Users;
+using ProjectManagement.Constants.Enum;
 using ProjectManagement.Entities;
 using ProjectManagement.Migrations;
 using ProjectManagement.Services.ResourceManager;
@@ -115,7 +117,9 @@ namespace ProjectManagement.APIs.PMReportProjectContribution
 
                 var activeUsersQuery = WorkScope.GetAll<User>()
                     .AsNoTracking()
-                    .Where(u => u.IsActive);
+                    .Where(u => u.IsActive)
+                    .Where(u => u.UserType != ProjectEnum.UserType.FakeUser)
+                    .Where(u => u.UserType != ProjectEnum.UserType.Vendor);
 
                 if (projectId.HasValue)
                 {

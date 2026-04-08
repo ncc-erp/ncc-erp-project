@@ -590,19 +590,15 @@
             </table>
           </div>
         </div>
-        <div class="card-footer bg-light border-top">
-          <div class="row container-pagination">
-            <div class="col-sm-4 col-12 text-sm-left text-center number-items-pagination">
+        <div class="Number itemsNumber itemsNumber itemsNumber itemsNumber items">
+          <div class="row justify-content-between">
+            <div class="col-sm-4 col-12 text-sm-left card-footer-wrapper">
               <button class="btn btn-secondary mb-2" (click)="refresh()">
                 <i class="fas fa-redo-alt"></i>
               </button>
-              <mat-form-field class="form-number-item">
+              <mat-form-field appearance="outline" style="max-width:100px; margin-left: 30px">
                 <mat-label>Number items</mat-label>
-                <mat-select
-                  panelClass="options-number-item"
-                  [(ngModel)]="pageSizeType"
-                  (ngModelChange)="changePageSize()"
-                >
+                <mat-select [(ngModel)]="pageSizeType" (ngModelChange)="changePageSize()">
                   <mat-option [value]="5"> 5 </mat-option>
                   <mat-option [value]="10"> 10 </mat-option>
                   <mat-option [value]="20"> 20 </mat-option>
@@ -611,12 +607,12 @@
                 </mat-select>
               </mat-form-field>
             </div>
-            <div class="col-sm-4 col-12 text-center total-pagination">
+            <div class="">
               <p class="mb-0 my-2">
                 {{ "TotalRecordsCount" | localize : totalItems }}
               </p>
             </div>
-            <div class="col-sm-4 col-12 pagination-control">
+            <div class="col-sm-4 col-12">
               <div class="float-sm-right m-auto">
                 <abp-pagination-controls
                   id="server"

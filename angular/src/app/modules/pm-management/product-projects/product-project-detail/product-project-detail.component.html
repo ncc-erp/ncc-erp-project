@@ -2,13 +2,13 @@
     <div class="container-fluid">
         <div class="row mb-4 card">
             <div class="col-12">
-                <nav mat-tab-nav-bar style="position: sticky; z-index: 2; top: 56px; background: white;">
+                <nav mat-tab-nav-bar style="position: sticky; z-index: 10; top: 0px; background: white;">
                     <a *ngIf="permission.isGranted(Projects_ProductProjects_ProjectDetail_TabGeneral)" [ngClass]="currentUrl.includes('product-project-general')?'active':''" mat-tab-link (click)="routingGeneralTab()">
                         General
                     </a>
                     <a *ngIf="permission.isGranted(Projects_ProductProjects_ProjectDetail_TabResourceManagement)" [ngClass]="currentUrl.includes('product-resource-management')?'active':''" mat-tab-link (click)="routingResourceTab()">
                         Resource Management
-                    </a>
+                    </a>    
                     <!-- <a  *ngIf="permission.isGranted(PmManager_CanViewMenu_Milestone)"  [ngClass]="currentUrl.includes('product-milestone')?'active':''" mat-tab-link (click)="routingMilestoneTab()">
                         Milestone
                     </a> -->

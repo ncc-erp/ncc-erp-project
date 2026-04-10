@@ -90,6 +90,8 @@ namespace ProjectManagement.Services.ProjectTimesheet
                 UserId = pub.UserId,
                 ProjectUserBillId = pub.Id,
                 WorkingTime = 0,
+                StartTime = pub.StartTime,
+                EndTime = pub.EndTime,
                 ChargeType = pub.ChargeType.HasValue ? pub.ChargeType : project.ChargeType,
                 CurrencyId = project.CurrencyId,
                 AccountName = pub.AccountName,
@@ -145,6 +147,8 @@ namespace ProjectManagement.Services.ProjectTimesheet
             tpb.BillRole = pub.BillRole;
             tpb.IsActive = pub.isActive;
             tpb.AccountName = pub.AccountName;
+            tpb.StartTime = pub.StartTime; 
+            tpb.EndTime = pub.EndTime;
 
             await _workScope.UpdateAsync(tpb);
         }

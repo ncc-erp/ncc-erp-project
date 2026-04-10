@@ -8,8 +8,10 @@ import { catchError, finalize } from "rxjs/operators";
 import { PMReportProjectContributionService } from "@app/service/api/pmreport-project-contribution.service";
 import { UserGroupContributionDto } from "@app/service/model/weekly-contribution.dto";
 import { ListProjectService } from "./../../../service/api/list-project.service";
+import { ProjectDto } from "@app/service/model/list-project.dto";
 import { UserService } from "./../../../service/api/user.service";
 import { BranchService } from "@app/service/api/branch.service";
+import { ResourceManagerService } from "./../../../service/api/resource-manager.service";
 
 @Component({
   selector: "app-detail-weekly-contribution",
@@ -29,6 +31,9 @@ export class DetailWeeklyContributionComponent
   public selectedBranchIdsCr: number[] = [];
   public selectedBranchIdsOld: number[] = [];
   public searchBranch: string = "";
+  public listProject: any[] = [];
+  public projectSearchText: string = "";
+  public selectedProjectId: number | null = null;
 
   public sortColumn: string = "";
   public sortDirection: number = -1;
@@ -43,6 +48,7 @@ export class DetailWeeklyContributionComponent
     public listProjectService: ListProjectService,
     public userService: UserService,
     public branchService: BranchService,
+    private availableRerourceService: ResourceManagerService,
   ) {
     super(injector);
     this.pageSize = 100;
@@ -56,6 +62,8 @@ export class DetailWeeklyContributionComponent
     this.pmReportName = this.route.snapshot.queryParamMap.get("pmReportName");
     this.refresh();
     this.getAllBranchs();
+    this.getProjectsForAllResource();
+
   }
 
   protected list(
@@ -72,6 +80,7 @@ export class DetailWeeklyContributionComponent
       ...request,
       searchText: this.searchText,
       branchIds: this.selectedBranchIds,
+      projectId: this.selectedProjectId ?? null,
       sort: this.sortColumn,
       sortDirection: this.sortDirection === 1 ? 1 : 0,
     };
@@ -130,6 +139,7 @@ export class DetailWeeklyContributionComponent
     const inputRequest = {
       searchText: this.searchText,
       branchIds: this.selectedBranchIds,
+      projectId: this.selectedProjectId ?? null,
     };
     this.pmReportProjectContributionService
       .getTotalContribution(this.pmReportId, inputRequest)
@@ -146,6 +156,11 @@ export class DetailWeeklyContributionComponent
       this.selectedBranchIdsOld = [...this.selectedBranchIds];
       this.selectedBranchIdsCr = this.selectedBranchIds;
     });
+  }
+  public getProjectsForAllResource() {
+    this.availableRerourceService.getProjectsForAllResource().subscribe((data) => {
+      this.listProject = data.result;
+    })
   }
 
   public sortData(property: string) {

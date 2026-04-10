@@ -6,5 +6,6 @@ namespace ProjectManagement.APIs.PMReportProjectContribution.Dto
     public class ContributionInputDto : GridParam
     {
         public List<long> BranchIds { get; set; }
+        public long? ProjectId { get; set; }
     }
 }

@@ -261,7 +261,7 @@
                         <button class="btn btn-secondary mb-2" (click)="refresh()">
                             <i class="fas fa-redo-alt"></i>
                         </button>
-                        <mat-form-field style="max-width:100px; margin-left: 30px">
+                        <mat-form-field appearance="outline" style="max-width:100px; margin-left: 30px">
                             <mat-label>Number items</mat-label>
                             <mat-select [(ngModel)]="pageSizeType" (ngModelChange)="changePageSize()">
                                 <mat-option [value]="5">

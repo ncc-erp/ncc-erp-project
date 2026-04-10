@@ -118,26 +118,24 @@ namespace ProjectManagement.APIs.PMReportProjectContribution
                 var activeUsersQuery = WorkScope.GetAll<User>()
                     .AsNoTracking()
                     .Where(u => u.IsActive)
-                    .Where(u => u.UserType != ProjectEnum.UserType.FakeUser)
-                    .Where(u => u.UserType != ProjectEnum.UserType.Vendor);
+                    .Where(u => u.UserType != ProjectEnum.UserType.FakeUser);
 
                 if (projectId.HasValue)
                 {
-                    var userIdsInProjectUser = await WorkScope.GetAll<ProjectUser>()
+                    var userIdsInProjectUser = WorkScope.GetAll<ProjectUser>()
                         .AsNoTracking()
                         .Where(pu => pu.ProjectId == projectId.Value)
-                        .Select(pu => pu.UserId)
-                        .ToListAsync();
-                    var userIdsWithContribution = await WorkScope.GetAll<WeeklyContributionHistory>()
+                        .Where(pu => pu.Status == ProjectEnum.ProjectUserStatus.Present && pu.AllocatePercentage > 0)
+                        .Select(pu => pu.UserId);
+
+                    var userIdsWithContribution = WorkScope.GetAll<WeeklyContributionHistory>()
                         .AsNoTracking()
                         .Where(h => h.ProjectId == projectId.Value && h.PMReportId == pmReportId)
-                        .Select(h => h.UserId)
-                        .ToListAsync();
+                        .Select(h => h.UserId);
 
+                    var allUserIdsQuery = userIdsInProjectUser.Union(userIdsWithContribution);
 
-                    var allUserIdsInProject = userIdsInProjectUser.Union(userIdsWithContribution).ToList();
-
-                    activeUsersQuery = activeUsersQuery.Where(u => allUserIdsInProject.Contains(u.Id));
+                    activeUsersQuery = activeUsersQuery.Where(u => allUserIdsQuery.Contains(u.Id));
                 }
 
                 if (hasBranchFilter)
@@ -147,11 +145,10 @@ namespace ProjectManagement.APIs.PMReportProjectContribution
                 }
                 else
                 {
-                    var activeBranchIds = await WorkScope.GetAll<Branch>()
+                    var activeBranchIds = WorkScope.GetAll<Branch>()
                         .AsNoTracking()
                         .Where(b => !b.IsDeleted)
-                        .Select(b => b.Id)
-                        .ToListAsync();
+                        .Select(b => b.Id);
 
                     activeUsersQuery = activeUsersQuery
                         .Where(u => u.BranchId.HasValue && activeBranchIds.Contains(u.BranchId.Value));
@@ -166,7 +163,6 @@ namespace ProjectManagement.APIs.PMReportProjectContribution
                         FullName = u.FullName.Trim().ToLower(),
                         EmailAddress = u.EmailAddress.Trim().ToLower(),
                         u.AvatarPath,
-
                         BranchDisplayName = u.Branch.DisplayName,
                         BranchColor = u.Branch.Color,
                         PositionName = u.Position.Name,
@@ -186,9 +182,7 @@ namespace ProjectManagement.APIs.PMReportProjectContribution
                 var totalUserCount = usersQuery.Count;
 
                 if (totalUserCount == 0)
-                {
                     return new GridResult<UserGroupContributionDto>(new List<UserGroupContributionDto>(), 0);
-                }
 
                 var filteredUserIds = usersQuery.Select(u => u.Id).ToList();
 
@@ -300,7 +294,7 @@ namespace ProjectManagement.APIs.PMReportProjectContribution
                     .Distinct()
                     .ToListAsync();
 
-                if (!userIdsInReport.Any())
+                if (userIdsInReport.Count == 0)
                     return 0;
 
                 var usersQuery = await WorkScope.GetAll<User>()
@@ -318,21 +312,13 @@ namespace ProjectManagement.APIs.PMReportProjectContribution
 
                 if (projectId.HasValue)
                 {
-                    var userIdsInProjectUser = await WorkScope.GetAll<ProjectUser>()
-                        .AsNoTracking()
-                        .Where(pu => pu.ProjectId == projectId.Value)
-                        .Select(pu => pu.UserId)
-                        .ToListAsync();
                     var userIdsWithContribution = await WorkScope.GetAll<WeeklyContributionHistory>()
                         .AsNoTracking()
                         .Where(h => h.ProjectId == projectId.Value && h.PMReportId == pmReportId)
                         .Select(h => h.UserId)
                         .ToListAsync();
 
-
-                    var allUserIdsInProject = userIdsInProjectUser.Union(userIdsWithContribution);
-
-                    usersQuery = usersQuery.Where(u => allUserIdsInProject.Contains(u.Id))
+                    usersQuery = usersQuery.Where(u => userIdsWithContribution.Contains(u.Id))
                                             .ToList();
                 }
 
@@ -363,9 +349,7 @@ namespace ProjectManagement.APIs.PMReportProjectContribution
                                                  || u.EmailAddress.Contains(search)).ToList();
                 }
 
-                var totalUserCount = usersQuery.Count;
-
-                if (totalUserCount == 0)
+                if (usersQuery.Count == 0)
                     return 0;
 
                 var filteredUserIds = usersQuery.Select(u => u.Id).ToList();

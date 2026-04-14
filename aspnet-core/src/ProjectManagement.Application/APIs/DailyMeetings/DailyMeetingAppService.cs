@@ -38,8 +38,7 @@ namespace ProjectManagement.APIs.DailyMeetings
                     Id = d.Id,
                     CriteriaName = d.CriteriaName,
                     Content = d.Content,
-                    Status = d.Status,
-                    Section
+                    //Status = d.Status,
                 })
                 .ToList()
             };
@@ -60,7 +59,7 @@ namespace ProjectManagement.APIs.DailyMeetings
             var item = await WorkScope.GetAsync<MeetingReportCriteria>(id);
             item.CriteriaName = input.CriteriaName;
             item.Content = input.Content;
-            item.Status = input.Status;
+            //item.Status = input.Status;
             await WorkScope.UpdateAsync(item);
         }
         [AbpAuthorize]

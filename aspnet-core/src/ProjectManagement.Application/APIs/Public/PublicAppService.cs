@@ -436,10 +436,33 @@ namespace ProjectManagement.APIs.Public
                 return new BadRequestObjectResult("This project is not in the current weekly report.");
             }
 
+            var existingSection = await WorkScope.GetAll<ProjectWeeklySummary>()
+                .FirstOrDefaultAsync(x => x.ProjectId == project.Id
+                                && x.PMReportId == activeReport.Id
+                                && x.SectionName == input.SectionName);
+
+            if (existingSection != null)
+            {
+                existingSection.SectionName = input.SectionName;
+                await WorkScope.UpdateAsync(existingSection);
+            }
+            else
+            {
+                existingSection = new ProjectWeeklySummary
+                {
+                    ProjectId = project.Id,
+                    PMReportId = activeReport.Id,
+                    TenantId = AbpSession.TenantId,
+                    SectionName = input.SectionName
+
+                };
+                existingSection.Id = await WorkScope.InsertAndGetIdAsync(existingSection);
+            }
+
             if (input.Criterias?.Any() == true)
             {
                 var existingCriterias = await WorkScope.GetAll<MeetingReportCriteria>()
-                    .Where(x => x.WeeklySummaryId == existingSummary.Id)
+                    .Where(x => x.WeeklySummaryId == existingSection.Id)
                     .ToListAsync();
 
                 var listToUpdate = new List<MeetingReportCriteria>();
@@ -461,9 +484,8 @@ namespace ProjectManagement.APIs.Public
                     {
                         listToInsert.Add(new MeetingReportCriteria
                         {
-                            WeeklySummaryId = existingSummary.Id,
+                            WeeklySummaryId = existingSection.Id,
                             CriteriaName = dto.CriteriaName,
-                            Status = dto.Status,
                             Content = dto.Content,
                             TenantId = AbpSession.TenantId
                         });

@@ -42,7 +42,7 @@ import { TimesheetProjectService } from "@app/service/api/timesheet-project.serv
 import { ProjectCriteriaResultService } from "../../../../../service/api/project-criteria-result.service";
 import { ProjectCriteriaResultDto } from "../../../../../service/model/project-criteria-result.dto";
 import { ProjectDailyMeetingService } from "../../../../../service/api/project-daily-meeting.service";
-import { ProjectDailyMeetingDto, ProjectDailyReportDto, MeetingReportCriteriaDto } from "../../../../../service/model/project-daily-meeting.dto";
+import { ProjectDailyMeetingDto, ProjectDailyReportDto } from "../../../../../service/model/project-daily-meeting.dto";
 import { cloneDeep } from "lodash-es";
 import { map } from "rxjs/operators";
 import { Observable, Observer } from "rxjs";
@@ -163,8 +163,6 @@ export class WeeklyReportComponent
   public weeklySummaryData = {} as ProjectDailyMeetingDto;
   public overallSummary: string = "";
   public listDailyReports: ProjectDailyReportDto[] = [];
-  public listMeetingCriterias: MeetingReportCriteriaDto[] = [];
-  public isSyncingMeetingCriteria: boolean = false;
   public projectCurrentResource: any = [];
   public mondayOf5weeksAgo: any;
   public lastWeekSunday: any;
@@ -528,15 +526,7 @@ export class WeeklyReportComponent
 
   public getProjectDailyMeeting() {
     if (!this.selectedReport || !this.selectedReport.reportId) {
-      this.overallSummary = "";
-      this.listDailyReports = [];
-      this.listMeetingCriterias = [];
       return;
-    }
-
-    if (!keepExpanded) {
-      this.listDailyReports = [];
-      this.listMeetingCriterias = [];
     }
 
     this.pjDailyMeetingService
@@ -547,29 +537,52 @@ export class WeeklyReportComponent
 
           this.weeklySummaryData = {
             id: raw.id,
-            projectId: raw.projectId,
-            pmReportId: raw.pmReportId,
-            summary: raw.summary,
+            projectId: raw.projectId || this.projectId,
+            pmReportId: raw.pmReportId || this.selectedReport.reportId,
+            summary: '',
             editMode: false,
-            dailyReports: (raw.dailyReports || []).map(item => ({
-              ...item,
-              editMode: false
-            })),
-            criterias: (raw.criterias || []).map(c => ({
-              ...c,
-              editMode: false
-            }))
+            criterias: raw.criterias.map(item => {
+              const criteria = { ...item };
+              if (item.content) {
+                try {
+                  const content = JSON.parse(item.content);
+                  const criteriaContent = [
+                    content.reason,
+                    content.main_features,
+                    content.references,
+                    content.daily_statistics,
+                    content.release_out_of_scope,
+                    content.actual_goal,
+                    content.overall_evaluation,
+                    content.executive_summary
+                  ];
+                  if (content.highlights && Array.isArray(content.highlights)) {
+                    criteriaContent.push('\nĐiểm nổi bật:\n' + content.highlights.join('\n'));
+                  }
+                  if (content.action_items && Array.isArray(content.action_items)) {
+                    criteriaContent.push('\nHoạt động của team:\n' + content.action_items.join('\n'));
+                  }
+                  if (content.executive_summary) {
+                    criteriaContent.push('\nExecutive summary:\n' + content.executive_summary);
+                  }
+                  criteria.originalContent = criteriaContent.filter(c => c != null && c !== '' && c !== undefined).join('\n');
+                  criteria.originalStatus = content.status || 0;
+                } catch (error) {
+                  criteria.originalContent = 'N/A';
+                  criteria.originalStatus = 0;
+                }
+              }
+              return {
+                ...criteria,
+                editMode: false
+              };
+            }),
+            dailyReports: []
           };
-          this.overallSummary = this.weeklySummaryData.summary;
-          this.listDailyReports = this.weeklySummaryData.dailyReports;
-          this.listMeetingCriterias = this.weeklySummaryData.criterias;
         } else {
-          this.overallSummary = "";
-          this.listDailyReports = [];
-          this.listMeetingCriterias = [];
         }
         this.listPreEditDailyReports = cloneDeep(this.listDailyReports);
-    });
+      });
   }
 
   onChangeStatusProject() {
@@ -2441,47 +2454,47 @@ export class WeeklyReportComponent
     return "";
   }
 
-  public saveOverallSummary() {
-    const payload = {
-      id: this.weeklySummaryData.id,
-      summary: this.overallSummary
-    };
+  // public saveOverallSummary() {
+  //   const payload = {
+  //     id: this.weeklySummaryData.id,
+  //     summary: this.overallSummary
+  //   };
 
-    this.pjDailyMeetingService.updateSummary(payload).subscribe((res) => {
-      abp.notify.success("Update Weekly Summary successfully");
-      this.weeklySummaryData.editMode = false;
+  //   this.pjDailyMeetingService.updateSummary(payload).subscribe((res) => {
+  //     abp.notify.success("Update Weekly Summary successfully");
+  //     this.weeklySummaryData.editMode = false;
 
-      if (res && res.result) {
-        this.weeklySummaryData.summary = res.result.summary;
-        this.overallSummary = res.result.summary;
-      }
-    });
-  }
+  //     if (res && res.result) {
+  //       this.weeklySummaryData.summary = res.result.summary;
+  //       this.overallSummary = res.result.summary;
+  //     }
+  //   });
+  // }
 
-  public cancelEditSummary() {
-    this.overallSummary = this.weeklySummaryData.summary;
-    this.weeklySummaryData.editMode = false;
-  }
+  // public cancelEditSummary() {
+  //   this.overallSummary = this.weeklySummaryData.summary;
+  //   this.weeklySummaryData.editMode = false;
+  // }
 
-  public saveDailyDetail(item: ProjectDailyReportDto, index: number) {
-    const payload = {
-      id: item.id,
-      content: item.content
-    };
+  // public saveDailyDetail(item: ProjectDailyReportDto, index: number) {
+  //   const payload = {
+  //     id: item.id,
+  //     content: item.content
+  //   };
 
-    this.pjDailyMeetingService.updateDailyReport(payload).subscribe((res) => {
-      abp.notify.success(`Update Daily Report successfully`);
-      item.editMode = false;
+  //   this.pjDailyMeetingService.updateDailyReport(payload).subscribe((res) => {
+  //     abp.notify.success(`Update Daily Report successfully`);
+  //     item.editMode = false;
 
-      if (res && res.result) {
-        item.content = res.result.content;
-        this.listPreEditDailyReports[index].content = item.content;
-      }
-    });
-  }
+  //     if (res && res.result) {
+  //       item.content = res.result.content;
+  //       this.listPreEditDailyReports[index].content = item.content;
+  //     }
+  //   });
+  // }
 
-  public cancelEditDailyReport(index: number) {
-    this.listDailyReports[index].content = this.listPreEditDailyReports[index].content;
-    this.listDailyReports[index].editMode = false;
-  }
+  // public cancelEditDailyReport(index: number) {
+  //   this.listDailyReports[index].content = this.listPreEditDailyReports[index].content;
+  //   this.listDailyReports[index].editMode = false;
+  // }
 }

@@ -2063,47 +2063,47 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
     return this.isActive
   }
 
-  public saveOverallSummary() {
-    const payload = {
-      id: this.weeklySummaryData.id,
-      summary: this.overallSummary
-    };
+  // public saveOverallSummary() {
+  //   const payload = {
+  //     id: this.weeklySummaryData.id,
+  //     summary: this.overallSummary
+  //   };
 
-    this.pjDailyMeetingService.updateSummary(payload).subscribe((res) => {
-      abp.notify.success("Update Weekly Summary successfully");
-      this.weeklySummaryData.editMode = false;
+  //   this.pjDailyMeetingService.updateSummary(payload).subscribe((res) => {
+  //     abp.notify.success("Update Weekly Summary successfully");
+  //     this.weeklySummaryData.editMode = false;
 
-      if (res && res.result) {
-        this.weeklySummaryData.summary = res.result.summary;
-        this.overallSummary = res.result.summary;
-      }
-    });
-  }
+  //     if (res && res.result) {
+  //       this.weeklySummaryData.summary = res.result.summary;
+  //       this.overallSummary = res.result.summary;
+  //     }
+  //   });
+  // }
 
-  public cancelEditSummary() {
-    this.overallSummary = this.weeklySummaryData.summary;
-    this.weeklySummaryData.editMode = false;
-  }
+  // public cancelEditSummary() {
+  //   this.overallSummary = this.weeklySummaryData.summary;
+  //   this.weeklySummaryData.editMode = false;
+  // }
 
-  public saveDailyDetail(item: ProjectDailyReportDto, index: number) {
-    const payload = {
-      id: item.id,
-      content: item.content
-    };
+  // public saveDailyDetail(item: ProjectDailyReportDto, index: number) {
+  //   const payload = {
+  //     id: item.id,
+  //     content: item.content
+  //   };
 
-    this.pjDailyMeetingService.updateDailyReport(payload).subscribe((res) => {
-      abp.notify.success(`Update Daily Report successfully`);
-      item.editMode = false;
+  //   this.pjDailyMeetingService.updateDailyReport(payload).subscribe((res) => {
+  //     abp.notify.success(`Update Daily Report successfully`);
+  //     item.editMode = false;
 
-      if (res && res.result) {
-        item.content = res.result.content;
-        this.listPreEditDailyReports[index].content = item.content;
-      }
-    });
-  }
+  //     if (res && res.result) {
+  //       item.content = res.result.content;
+  //       this.listPreEditDailyReports[index].content = item.content;
+  //     }
+  //   });
+  // }
 
-  public cancelEditDailyReport(index: number) {
-    this.listDailyReports[index].content = this.listPreEditDailyReports[index].content;
-    this.listDailyReports[index].editMode = false;
-  }
+  // public cancelEditDailyReport(index: number) {
+  //   this.listDailyReports[index].content = this.listPreEditDailyReports[index].content;
+  //   this.listDailyReports[index].editMode = false;
+  // }
 }

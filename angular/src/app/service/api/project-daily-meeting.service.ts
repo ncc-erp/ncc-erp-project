@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ProjectDailyMeetingDto, MeetingReportCriteriaStatus } from '../model/project-daily-meeting.dto';
 import { BaseApiService } from './base-api.service';
 
 
@@ -25,7 +24,7 @@ export class ProjectDailyMeetingService extends BaseApiService {
         return this.http.put(this.rootUrl + `/UpdateSummary`, summaryData);
     }
 
-    public updateMeetingReportCriteria(id: number, payload: { criteriaName: string, content: string, status: MeetingReportCriteriaStatus }): Observable<any> {
+    public updateMeetingReportCriteria(id: number, payload: { criteriaName: string, content: string, status: number }): Observable<any> {
         return this.http.put(this.rootUrl + `/UpdateMeetingReportCriteria?id=${id}`, payload);
     }
 

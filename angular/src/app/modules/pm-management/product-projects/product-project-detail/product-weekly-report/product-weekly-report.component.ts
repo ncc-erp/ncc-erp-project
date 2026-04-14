@@ -356,7 +356,7 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
             pmReportId: raw.pmReportId,
             summary: raw.summary,
             editMode: false,
-            meetingReportCriterias: (raw.criterias || []).map((item: any) => ({
+            criterias: (raw.criterias || []).map((item: any) => ({
               ...item,
               editMode: false
             })),

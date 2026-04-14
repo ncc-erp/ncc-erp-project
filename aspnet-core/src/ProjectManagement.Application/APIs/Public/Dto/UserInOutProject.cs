@@ -47,6 +47,6 @@ namespace ProjectManagement.APIs.Public.Dto
     {
         public string Content { get; set; }
         public string CriteriaName { get; set; }
-        public MeetingReportCriteriaStatus Status { get; set; }
+        public string Status { get; set; }
     }
 }

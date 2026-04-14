@@ -10,6 +10,10 @@ namespace ProjectManagement.Migrations
             migrationBuilder.DropTable(
                 name: "ProjectDailyReports");
 
+            migrationBuilder.DropColumn(
+                name: "OverallSummary",
+                table: "ProjectWeeklySummaries");
+
             migrationBuilder.CreateTable(
                 name: "MeetingReportCriterias",
                 columns: table => new
@@ -23,6 +27,7 @@ namespace ProjectManagement.Migrations
                     IsDeleted = table.Column<bool>(nullable: false),
                     DeleterUserId = table.Column<long>(nullable: true),
                     DeletionTime = table.Column<DateTime>(nullable: true),
+                    SectionName = table.Column<string>(nullable: true),
                     CriteriaName = table.Column<string>(nullable: true),
                     Content = table.Column<string>(nullable: true),
                     Status = table.Column<int>(nullable: false),
@@ -50,6 +55,12 @@ namespace ProjectManagement.Migrations
         {
             migrationBuilder.DropTable(
                 name: "MeetingReportCriterias");
+
+            migrationBuilder.AddColumn<string>(
+                name: "OverallSummary",
+                table: "ProjectWeeklySummaries",
+                type: "nvarchar(max)",
+                nullable: true);
 
             migrationBuilder.CreateTable(
                 name: "ProjectDailyReports",

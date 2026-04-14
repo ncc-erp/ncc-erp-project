@@ -2,12 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProjectManagement.APIs.DailyMeetings.Dto;
-using ProjectManagement.APIs.Public.Dto;
 using ProjectManagement.Entities;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ProjectManagement.APIs.DailyMeetings
@@ -38,8 +34,7 @@ namespace ProjectManagement.APIs.DailyMeetings
                     Id = d.Id,
                     CriteriaName = d.CriteriaName,
                     Content = d.Content,
-                    Status = d.Status,
-                    Section
+                    Status = d.Status
                 })
                 .ToList()
             };

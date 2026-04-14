@@ -412,10 +412,10 @@ namespace ProjectManagement.APIs.Public
             var secretCode = SettingManager.GetSettingValue(AppSettingNames.SecurityCode);
             var header = _httpContextAccessor.HttpContext.Request.Headers;
             var securityCodeHeader = header["X-Secret-Key"].ToString();
-            //if (secretCode != securityCodeHeader)
-            //{
-            //    return new BadRequestObjectResult("You do not have permission to retrieve projects.");
-            //}
+            if (secretCode != securityCodeHeader)
+            {
+                return new BadRequestObjectResult("You do not have permission to retrieve projects.");
+            }
 
             var project = await WorkScope.GetAll<Project>()
                 .FirstOrDefaultAsync(x => x.Id == input.ProjectId);
@@ -436,6 +436,13 @@ namespace ProjectManagement.APIs.Public
                 return new BadRequestObjectResult("This project is not in the current weekly report.");
             }
 
+            var existingSummary = await WorkScope.GetAll<ProjectWeeklySummary>()
+                .FirstOrDefaultAsync(x => x.ProjectId == project.Id && x.PMReportId == activeReport.Id);
+            if (existingSummary == null)
+            {
+                return new BadRequestObjectResult("This project is not in the current weekly report.");
+            }
+
             if (input.Criterias?.Any() == true)
             {
                 var existingCriterias = await WorkScope.GetAll<MeetingReportCriteria>()
@@ -451,11 +458,8 @@ namespace ProjectManagement.APIs.Public
 
                     if (match != null)
                     {
-                        if (match.Content != dto.Content )
-                        {
-                            match.Content = dto.Content;
-                            listToUpdate.Add(match);
-                        }
+                        match.Content = dto.Content;
+                        listToUpdate.Add(match);
                     }
                     else
                     {
@@ -463,7 +467,7 @@ namespace ProjectManagement.APIs.Public
                         {
                             WeeklySummaryId = existingSummary.Id,
                             CriteriaName = dto.CriteriaName,
-                            Status = dto.Status,
+                            Status = MeetingReportCriteriaStatus.Green,
                             Content = dto.Content,
                             TenantId = AbpSession.TenantId
                         });

@@ -10,9 +10,6 @@ namespace ProjectManagement.Entities
 {
     public class ProjectWeeklySummary : FullAuditedEntity<long>, IMayHaveTenant
     {
-        public string SectionName { get; set; }
-        public MeetingReportCriteriaStatus Status { get; set; } = MeetingReportCriteriaStatus.Green;
-
         [ForeignKey(nameof(ProjectId))]
         public Project Project { get; set; }
         public long ProjectId { get; set; }

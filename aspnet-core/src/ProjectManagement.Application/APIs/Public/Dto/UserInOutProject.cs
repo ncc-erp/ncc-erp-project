@@ -40,12 +40,12 @@ namespace ProjectManagement.APIs.Public.Dto
     {
         public long ProjectId { get; set; }
         public string SectionName { get; set; }
-        public MeetingReportCriteriaStatus Status { get; set; }
         public List<MeetingReportCriteriaDto> Criterias { get; set; }
     }
 
     public class MeetingReportCriteriaDto
     {
+        public MeetingReportCriteriaStatus Status { get; set; }
         public string Content { get; set; }
         public string CriteriaName { get; set; }
     }

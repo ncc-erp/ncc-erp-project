@@ -35,7 +35,7 @@ import { ProjectCriteriaResultService } from '@app/service/api/project-criteria-
 import { ProjectCriteriaDto } from '@app/service/model/criteria-category.dto';
 import { ProjectCriteriaResultDto } from '@app/service/model/project-criteria-result.dto';
 import { ProjectDailyMeetingService } from "../../../../../service/api/project-daily-meeting.service";
-import { ProjectDailyMeetingDto, ProjectDailyReportDto } from "../../../../../service/model/project-daily-meeting.dto";
+import { ProjectDailyMeetingDto, ProjectDailyReportDto, MeetingReportCriteriaDto } from "../../../../../service/model/project-daily-meeting.dto";
 import { cloneDeep } from "lodash-es";
 import { APP_ENUMS } from '@shared/AppEnums';
 import { GuideLineDialogComponent } from '@app/modules/pm-management/list-project/list-project-detail/weekly-report/guide-line-dialog/guide-line-dialog/guide-line-dialog.component';
@@ -356,13 +356,14 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
             pmReportId: raw.pmReportId,
             summary: raw.summary,
             editMode: false,
-            dailyReports: raw.dailyReports.map(item => ({
+            meetingReportCriterias: (raw.criterias || []).map((item: any) => ({
               ...item,
               editMode: false
-            }))
+            })),
+            dailyReports: []
           };
           this.overallSummary = this.weeklySummaryData.summary;
-          this.listDailyReports = this.weeklySummaryData.dailyReports;
+          this.listDailyReports = this.weeklySummaryData.dailyReports || [];
         } else {
           this.overallSummary = "";
           this.listDailyReports = [];
@@ -1479,24 +1480,14 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
   }
 
   public saveDailyDetail(item: ProjectDailyReportDto, index: number) {
-    const payload = {
-      id: item.id,
-      content: item.content
-    };
-
-    this.pjDailyMeetingService.updateDailyReport(payload).subscribe((res) => {
-      abp.notify.success(`Update Daily Report successfully`);
-      item.editMode = false;
-
-      if (res && res.result) {
-        item.content = res.result.content;
-        this.listPreEditDailyReports[index].content = item.content;
-      }
-    });
+    abp.notify.warn('Daily report editing is no longer supported. Please use Meeting Report Criteria instead.');
+    item.editMode = false;
   }
 
   public cancelEditDailyReport(index: number) {
-    this.listDailyReports[index].content = this.listPreEditDailyReports[index].content;
+    if (this.listDailyReports[index] && this.listPreEditDailyReports[index]) {
+      this.listDailyReports[index].content = this.listPreEditDailyReports[index].content;
+    }
     this.listDailyReports[index].editMode = false;
   }
 }

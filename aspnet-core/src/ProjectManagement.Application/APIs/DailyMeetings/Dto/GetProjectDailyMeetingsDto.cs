@@ -1,5 +1,6 @@
 ﻿using Abp.Application.Services.Dto;
 using Abp.AutoMapper;
+using ProjectManagement.APIs.Public.Dto;
 using ProjectManagement.Entities;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,6 @@ namespace ProjectManagement.APIs.DailyMeetings.Dto
 
         public long ProjectId { get; set; }
 
-        public List<ProjectDailyReportDto> DailyReports { get; set; }
+        public List<MeetingReportCriteriaDetailDto> Criterias { get; set; }
     }
 }

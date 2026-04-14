@@ -2503,6 +2503,56 @@ namespace ProjectManagement.Migrations
                     b.ToTable("LinkedResources");
                 });
 
+            modelBuilder.Entity("ProjectManagement.Entities.MeetingReportCriteria", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Content")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("CreatorUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("CriteriaName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long?>("DeleterUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("LastModifierUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TenantId")
+                        .HasColumnType("int");
+
+                    b.Property<long>("WeeklySummaryId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("WeeklySummaryId");
+
+                    b.ToTable("MeetingReportCriterias");
+                });
+
             modelBuilder.Entity("ProjectManagement.Entities.PMReport", b =>
                 {
                     b.Property<long>("Id")
@@ -3197,53 +3247,6 @@ namespace ProjectManagement.Migrations
                     b.HasIndex("ProjectId");
 
                     b.ToTable("ProjectCriteriaResults");
-                });
-
-            modelBuilder.Entity("ProjectManagement.Entities.ProjectDailyReport", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Content")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreationTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long?>("CreatorUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("date");
-
-                    b.Property<long?>("DeleterUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime?>("DeletionTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LastModificationTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long?>("LastModifierUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<int?>("TenantId")
-                        .HasColumnType("int");
-
-                    b.Property<long>("WeeklySummaryId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("WeeklySummaryId");
-
-                    b.ToTable("ProjectDailyReports");
                 });
 
             modelBuilder.Entity("ProjectManagement.Entities.ProjectFile", b =>
@@ -5098,6 +5101,15 @@ namespace ProjectManagement.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("ProjectManagement.Entities.MeetingReportCriteria", b =>
+                {
+                    b.HasOne("ProjectManagement.Entities.ProjectWeeklySummary", "WeeklySummary")
+                        .WithMany("MeetingReportCriterias")
+                        .HasForeignKey("WeeklySummaryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("ProjectManagement.Entities.PMReportProject", b =>
                 {
                     b.HasOne("ProjectManagement.Authorization.Users.User", "PM")
@@ -5186,15 +5198,6 @@ namespace ProjectManagement.Migrations
                     b.HasOne("ProjectManagement.Entities.Project", "Project")
                         .WithMany()
                         .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ProjectManagement.Entities.ProjectDailyReport", b =>
-                {
-                    b.HasOne("ProjectManagement.Entities.ProjectWeeklySummary", "WeeklySummary")
-                        .WithMany("DailyReports")
-                        .HasForeignKey("WeeklySummaryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

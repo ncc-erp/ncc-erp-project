@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProjectManagement.APIs.DailyMeetings.Dto;
+using ProjectManagement.APIs.Public.Dto;
 using ProjectManagement.Entities;
 using System;
 using System.Collections.Generic;
@@ -32,14 +33,14 @@ namespace ProjectManagement.APIs.DailyMeetings
                 Id = summary.Id,
                 ProjectId = summary.ProjectId,
                 PMReportId = summary.PMReportId,
-                Summary = summary.OverallSummary,
-                DailyReports = summary.DailyReports.Select(d => new ProjectDailyReportDto
+                Criterias = summary.DailyReports.Select(d => new MeetingReportCriteriaDetailDto
                 {
                     Id = d.Id,
-                    Date = d.Date,
-                    Content = d.Content
+                    CriteriaName = d.CriteriaName,
+                    Content = d.Content,
+                    Status = d.Status,
+                    Section
                 })
-                .OrderBy(d => d.Date)
                 .ToList()
             };
         }
@@ -49,17 +50,25 @@ namespace ProjectManagement.APIs.DailyMeetings
         public async Task UpdateSummary(UpdateSummaryDto input)
         {
             var item = await WorkScope.GetAsync<ProjectWeeklySummary>(input.Id);
-            item.OverallSummary = input.Summary;
             await WorkScope.UpdateAsync(item);
         }
 
         [AbpAuthorize]
         [HttpPut]
-        public async Task UpdateDailyReport(UpdateDailyReportDto input)
+        public async Task UpdateMeetingReportCriteria(long id, UpdateMeetingReportCriteriaDto input)
         {
-            var item = await WorkScope.GetAsync<ProjectDailyReport>(input.Id);
+            var item = await WorkScope.GetAsync<MeetingReportCriteria>(id);
+            item.CriteriaName = input.CriteriaName;
             item.Content = input.Content;
+            item.Status = input.Status;
             await WorkScope.UpdateAsync(item);
         }
+        [AbpAuthorize]
+        [HttpDelete]
+        public async Task DeleteMeetingReportCriteria(long id)
+        {
+            await WorkScope.DeleteAsync<MeetingReportCriteria>(id);
+        }
+
     }
 }

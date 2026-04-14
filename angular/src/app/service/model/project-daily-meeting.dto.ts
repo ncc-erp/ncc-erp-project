@@ -4,6 +4,7 @@ export interface ProjectDailyMeetingDto {
     pmReportId: number;
     projectId: number;
     dailyReports: ProjectDailyReportDto[];
+    criterias: MeetingReportCriteriaDto[];
     editMode: boolean;
 }
 
@@ -14,4 +15,13 @@ export interface ProjectDailyReportDto {
     weeklySummaryId: number;
     projectId: number;
     editMode: boolean;
+}
+export interface MeetingReportCriteriaDto {
+    id: number;
+    criteriaName: string;
+    content: string;
+    status: number;
+    editMode: boolean;
+    originalStatus?: number;
+    originalContent?: string;
 }

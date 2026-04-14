@@ -42,7 +42,7 @@ import { TimesheetProjectService } from "@app/service/api/timesheet-project.serv
 import { ProjectCriteriaResultService } from "../../../../../service/api/project-criteria-result.service";
 import { ProjectCriteriaResultDto } from "../../../../../service/model/project-criteria-result.dto";
 import { ProjectDailyMeetingService } from "../../../../../service/api/project-daily-meeting.service";
-import { ProjectDailyMeetingDto, ProjectDailyReportDto } from "../../../../../service/model/project-daily-meeting.dto";
+import { ProjectDailyMeetingDto, ProjectDailyReportDto, MeetingReportCriteriaDto } from "../../../../../service/model/project-daily-meeting.dto";
 import { cloneDeep } from "lodash-es";
 import { map } from "rxjs/operators";
 import { Observable, Observer } from "rxjs";
@@ -163,6 +163,8 @@ export class WeeklyReportComponent
   public weeklySummaryData = {} as ProjectDailyMeetingDto;
   public overallSummary: string = "";
   public listDailyReports: ProjectDailyReportDto[] = [];
+  public listMeetingCriterias: MeetingReportCriteriaDto[] = [];
+  public isSyncingMeetingCriteria: boolean = false;
   public projectCurrentResource: any = [];
   public mondayOf5weeksAgo: any;
   public lastWeekSunday: any;
@@ -528,10 +530,14 @@ export class WeeklyReportComponent
     if (!this.selectedReport || !this.selectedReport.reportId) {
       this.overallSummary = "";
       this.listDailyReports = [];
+      this.listMeetingCriterias = [];
       return;
     }
 
-    this.listDailyReports = [];
+    if (!keepExpanded) {
+      this.listDailyReports = [];
+      this.listMeetingCriterias = [];
+    }
 
     this.pjDailyMeetingService
       .getProjectWeeklySummary(this.projectId, this.selectedReport.reportId)
@@ -545,19 +551,25 @@ export class WeeklyReportComponent
             pmReportId: raw.pmReportId,
             summary: raw.summary,
             editMode: false,
-            dailyReports: raw.dailyReports.map(item => ({
+            dailyReports: (raw.dailyReports || []).map(item => ({
               ...item,
+              editMode: false
+            })),
+            criterias: (raw.criterias || []).map(c => ({
+              ...c,
               editMode: false
             }))
           };
           this.overallSummary = this.weeklySummaryData.summary;
           this.listDailyReports = this.weeklySummaryData.dailyReports;
+          this.listMeetingCriterias = this.weeklySummaryData.criterias;
         } else {
           this.overallSummary = "";
           this.listDailyReports = [];
+          this.listMeetingCriterias = [];
         }
         this.listPreEditDailyReports = cloneDeep(this.listDailyReports);
-      });
+    });
   }
 
   onChangeStatusProject() {

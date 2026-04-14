@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using static ProjectManagement.Constants.Enum.ProjectEnum;
 
 namespace ProjectManagement.APIs.Public.Dto
 {
@@ -39,12 +40,13 @@ namespace ProjectManagement.APIs.Public.Dto
     {
         public long ProjectId { get; set; }
         public string OverallSummary { get; set; }
-        public List<DailyReportDto> DailyReports { get; set; }
+        public List<MeetingReportCriteriaDto> Criterias { get; set; }
     }
 
-    public class DailyReportDto
+    public class MeetingReportCriteriaDto
     {
-        public DateTime Date { get; set; }
         public string Content { get; set; }
+        public string CriteriaName { get; set; }
+        public MeetingReportCriteriaStatus Status { get; set; }
     }
 }

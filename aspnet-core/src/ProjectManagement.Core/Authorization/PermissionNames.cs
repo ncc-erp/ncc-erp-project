@@ -729,6 +729,13 @@ namespace ProjectManagement.Authorization
         public const string Admin_CVStatus_Delete = "Admin.CVStatus.Delete";
         #endregion CVStatus
 
+        #region OnboardingChecklist
+        public const string Admin_OnboardingChecklist = "Admin.OnboardingChecklist";
+        public const string Admin_OnboardingChecklist_View = "Admin.OnboardingChecklist.View";
+        public const string Admin_OnboardingChecklist_Create = "Admin.OnboardingChecklist.Create";
+        public const string Admin_OnboardingChecklist_Edit = "Admin.OnboardingChecklist.Edit";
+        public const string Admin_OnboardingChecklist_Delete = "Admin.OnboardingChecklist.Delete";
+        #endregion OnboardingChecklist
     }
 
     public class GrantPermissionRoles
@@ -1463,6 +1470,15 @@ namespace ProjectManagement.Authorization
                     PermissionNames.Admin_CVStatus_Edit,
                     PermissionNames.Admin_CVStatus_Delete,
                     #endregion CVStatus
+
+                    #region OnboardingChecklist
+
+                    PermissionNames.Admin_OnboardingChecklist,
+                    PermissionNames.Admin_OnboardingChecklist_View,
+                    PermissionNames.Admin_OnboardingChecklist_Create,
+                    PermissionNames.Admin_OnboardingChecklist_Edit,
+                    PermissionNames.Admin_OnboardingChecklist_Delete,
+                    #endregion OnboardingChecklist
                 }
             }
         };
@@ -2205,6 +2221,15 @@ namespace ProjectManagement.Authorization
                  new SystemPermission{ Name =  PermissionNames.Admin_CVStatus_Delete, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Delete" },
                 #endregion CVStatus
 
+                #region OnboardingChecklist
+
+                 new SystemPermission{ Name =  PermissionNames.Admin_OnboardingChecklist, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "OnboardingChecklist" },
+                 new SystemPermission{ Name =  PermissionNames.Admin_OnboardingChecklist_View ,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View" },
+                 new SystemPermission{ Name =  PermissionNames.Admin_OnboardingChecklist_Create, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Create" },
+                 new SystemPermission{ Name =  PermissionNames.Admin_OnboardingChecklist_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit" },
+                 new SystemPermission{ Name =  PermissionNames.Admin_OnboardingChecklist_Delete, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Delete" },
+                #endregion OnboardingChecklist
+
             };
             public static List<SystemPermission> TreePermissions = new List<SystemPermission>() {
 
@@ -2546,6 +2571,28 @@ namespace ProjectManagement.Authorization
                                     }
                             },
                             #endregion CVStatus
+
+                            #region OnboardingChecklist
+
+                            new SystemPermission {
+                                Name = PermissionNames.Admin_OnboardingChecklist, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "OnboardingChecklist",
+                                    Childrens = new List < SystemPermission > () {
+                                        new SystemPermission {
+                                            Name = PermissionNames.Admin_OnboardingChecklist_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View"
+                                        },
+                                        new SystemPermission {
+                                            Name = PermissionNames.Admin_OnboardingChecklist_Create, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Create"
+                                        },
+                                        new SystemPermission {
+                                            Name = PermissionNames.Admin_OnboardingChecklist_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit"
+                                        },
+                                        new SystemPermission {
+                                            Name = PermissionNames.Admin_OnboardingChecklist_Delete, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Delete"
+                                        },
+                                    }
+                            },
+                            #endregion OnboardingChecklist
+
                         },
                 },
 

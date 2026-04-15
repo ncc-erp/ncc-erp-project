@@ -693,4 +693,12 @@ export const PERMISSIONS_CONSTANT = {
        Admin_CVStatus_Edit: "Admin.CVStatus.Edit",
        Admin_CVStatus_Delete: "Admin.CVStatus.Delete",
        // #endregion
+
+       // #region OnboardingChecklist
+       Admin_OnboardingChecklist: "Admin.OnboardingChecklist",
+       Admin_OnboardingChecklist_View: "Admin.OnboardingChecklist.View",
+       Admin_OnboardingChecklist_Create: "Admin.OnboardingChecklist.Create",
+       Admin_OnboardingChecklist_Edit: "Admin.OnboardingChecklist.Edit",
+       Admin_OnboardingChecklist_Delete: "Admin.OnboardingChecklist.Delete",
+       // #endregion
 }

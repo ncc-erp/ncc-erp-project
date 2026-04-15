@@ -242,6 +242,10 @@ import { CreatePunishmentDialogComponent } from './modules/punishment/create-pun
 import { WeeklyContributionComponent } from './modules/weekly-contribution/weekly-contribution.component';
 import { DetailWeeklyContributionComponent } from './modules/weekly-contribution/detail-weekly-contribution/detail-weekly-contribution.component';
 import { ReviewContributionComponent } from './modules/pm-management/list-project/list-project-detail/weekly-report/review-contribution/review-contribution.component';
+import { OnboardingDialogComponent } from './modules/pm-management/list-project/list-project-detail/resource-management/onboarding-dialog/onboarding-dialog.component';
+import {OnboardingChecklistComponent}  from './modules/admin/onboarding-checklist/onboarding-checklist.component';
+import { CreateEditOnboardingChecklistComponent } from './modules/admin/onboarding-checklist/create-edit-onboarding-checklist/create-edit-onboarding-checklist.component';
+
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, "./assets/i18n/", ".json");
@@ -392,6 +396,7 @@ export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
     ReleaseUserDialogComponent,
     ProjectBillComponent,
     ConfirmPopupComponent,
+    OnboardingDialogComponent,
     FormPlanUserComponent,
     FormSetDoneComponent,
     ConfirmPlanDialogComponent,
@@ -419,6 +424,8 @@ export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
     AuditLogComponent,
     RetroReviewHistoryByUserComponent,
     CriteriasComponent,
+    OnboardingChecklistComponent,
+    CreateEditOnboardingChecklistComponent,
     ExportInvoiceComponent,
     ExchangeRateComponent,
     GuideLineDialogComponent,
@@ -540,7 +547,8 @@ export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
     EditUserDialogComponent,
     ResetPasswordDialogComponent,
     BillAccountDialogNoteComponent,
-
+    OnboardingDialogComponent,
+    CreateEditOnboardingChecklistComponent
   ],
 })
 export class AppModule {}

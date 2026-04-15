@@ -81,6 +81,7 @@
                   <th style="width: 90px">Role</th>
                   <th style="width: 90px">Start time</th>
                   <th style="width: 90px">Work type</th>
+                  <th style="width: 90px">Onboard status</th>
                   <th style="width: 60px">Actions</th>
                 </tr>
               </thead>
@@ -417,6 +418,19 @@
                       </mat-radio-group>
                     </div>
                   </td>
+                  <td>
+                    <div class="table-vertical">
+                      <span class="badge" [ngClass]="{
+                                              'badge-secondary': user.onboardingStatus === APP_ENUM.ProjectUserOnboardingStatus['Not Started'],
+                                              'badge-warning': user.onboardingStatus === APP_ENUM.ProjectUserOnboardingStatus['In Progress'],
+                                              'badge-info': user.onboardingStatus === APP_ENUM.ProjectUserOnboardingStatus['Pending Employee'],
+                                              'badge-success': user.onboardingStatus === APP_ENUM.ProjectUserOnboardingStatus['Done'],
+                                              'badge-primary': user.onboardingStatus === APP_ENUM.ProjectUserOnboardingStatus['Pending']
+                                            }">
+                        {{ getOnboardingStatusName(user.onboardingStatus) }}
+                      </span>
+                    </div>
+                  </td>
                   <td style="vertical-align: middle">
                     <div
                       *ngIf="
@@ -435,32 +449,39 @@
                         <i class="fas fa-bars fa-lg"></i>
                       </button>
                       <mat-menu #menu="matMenu" class="p-2">
-                        <button
-                          *ngIf="
-                            permission.isGranted(
-                              Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_Edit
-                            )
-                          "
-                          [disabled]="projectUserProcess"
-                          class="mat-menu-item w-100"
-                          (click)="editProjectUser(user)"
-                        >
+                        <button *ngIf="
+                                                  permission.isGranted(
+                                                    Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_Edit
+                                                  )
+                                                " [disabled]="projectUserProcess" class="mat-menu-item w-100"
+                          (click)="editProjectUser(user)">
                           <i class="fas fa-edit"></i>Edit
                         </button>
-                        <button
-                          *ngIf="
-                            permission.isGranted(
-                              Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_Release
-                            )
-                          "
-                          [disabled]="projectUserProcess"
-                          class="mat-menu-item w-100"
-                          (click)="releaseUser(user)"
-                        >
+                        <button *ngIf="
+                                                                        permission.isGranted(
+                                                                          Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_Edit
+                                                                        )
+                                                                      " [disabled]="projectUserProcess" class="mat-menu-item w-100"
+                          (click)="onboardUser(user)">
+                          <i class="fa fa-handshake"></i>Onboard
+                        </button>
+                        <button *ngIf="
+                                                                      permission.isGranted(
+                                                                        Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_Edit
+                                                                      )
+                                                                    " [disabled]="projectUserProcess" class="mat-menu-item w-100"
+                          (click)="onboardUser(user)">
+                          <i class="fa fa-bell text-warning"></i>Remind
+                        </button>
+                        <button *ngIf="
+                                                  permission.isGranted(
+                                                    Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_Release
+                                                  )
+                                                " [disabled]="projectUserProcess" class="mat-menu-item w-100" (click)="releaseUser(user)">
                           <i class="fas fa-sign-out-alt mr-1"></i>Release
                         </button>
                       </mat-menu>
-                    </div>
+                      </div>
                     <div
                       *ngIf="user.createMode || user.editMode"
                       class="pt-2 d-flex flex-baseline align-items-center"

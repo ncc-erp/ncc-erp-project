@@ -91,5 +91,23 @@ namespace ProjectManagement.Services.Komu
             }
         }
 
+        public void NotifyToKomuUser(KomuMessage input)
+        {
+            if (!_enableSendToKomu)
+            {
+                logger.LogInformation("_enableSendToKomu=false => stop");
+            }
+
+            Post(KomuUrlConstant.KOMU_USER_ONLY, new { message = input.Message, username = input.UserName });
+        }
+
+        public async Task NotifyToKomuUserAwait(KomuMessage input)
+        {
+            if (!_enableSendToKomu)
+            {
+                logger.LogInformation("_enableSendToKomu=false => stop");
+            }
+            await PostAsync<dynamic>(KomuUrlConstant.KOMU_USER_ONLY, new { message = input.Message, username = input.UserName });
+        }
     }
 }

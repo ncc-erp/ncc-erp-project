@@ -87,6 +87,7 @@ import { BillAccountPlanComponent } from './modules/delivery-management/delivery
 import { GeneralInformationComponent } from './modules/pm-management/list-project/list-project-detail/general-information/general-information.component';
 import { CVStatusComponent } from './modules/admin/cvstatus/cvstatus.component';
 import { WillPoolComponent } from './modules/delivery-management/delivery/available-resource-tab/will-pool/will-pool.component';
+import { OnboardingChecklistComponent } from './modules/admin/onboarding-checklist/onboarding-checklist.component';
 import { ProductAccountInfoComponent } from './modules/pm-management/product-projects/product-project-detail/product-account-info/product-account-info.component';
 import { PunishmentComponent } from './modules/punishment/punishment.component';
 import { WeeklyContributionComponent } from './modules/weekly-contribution/weekly-contribution.component';
@@ -545,6 +546,11 @@ import { DetailWeeklyContributionComponent } from './modules/weekly-contribution
             path:"cvstatus",
             component:CVStatusComponent,
             canActivate:[AppRouteGuard]
+          },
+          {
+            path: "onboarding-checklist",
+            component: OnboardingChecklistComponent,
+            canActivate: [AppRouteGuard]
           },
         ]
       }

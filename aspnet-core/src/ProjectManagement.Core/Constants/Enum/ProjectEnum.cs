@@ -374,5 +374,13 @@
             Create = 0,
             Update = 1
         }
+        public enum ProjectUserOnboardingStatus : byte
+        {
+            NotStarted = 0,
+            InProgress = 1,
+            PendingEmployee = 2,
+            Done = 3,
+            Pending = 4
+        }
     }
 }

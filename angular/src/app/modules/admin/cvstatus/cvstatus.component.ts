@@ -13,6 +13,7 @@ import { AppConsts } from '@shared/AppConsts';
   templateUrl: './cvstatus.component.html',
   styleUrls: ['./cvstatus.component.css']
 })
+
 export class CVStatusComponent extends PagedListingComponentBase<CVStatusComponent> implements OnInit {
   protected list(request: PagedRequestDto, pageNumber: number, finishedCallback: Function): void {
     this.cvStatusService.getAllPaging(request).pipe(finalize(() => {

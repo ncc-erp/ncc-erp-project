@@ -11,8 +11,6 @@ namespace ProjectManagement.APIs.DailyMeetings.Dto
     [AutoMapTo(typeof(ProjectWeeklySummary))]
     public class GetProjectDailyMeetingsDto : EntityDto<long>
     {
-        public string Summary { get; set; } 
-
         public long PMReportId { get; set; }
 
         public long ProjectId { get; set; }

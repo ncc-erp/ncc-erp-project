@@ -35,7 +35,7 @@ import { ProjectCriteriaResultService } from '@app/service/api/project-criteria-
 import { ProjectCriteriaDto } from '@app/service/model/criteria-category.dto';
 import { ProjectCriteriaResultDto } from '@app/service/model/project-criteria-result.dto';
 import { ProjectDailyMeetingService } from "../../../../../service/api/project-daily-meeting.service";
-import { ProjectDailyMeetingDto, ProjectDailyReportDto, MeetingReportCriteriaDto } from "../../../../../service/model/project-daily-meeting.dto";
+import { MeetingReportCriteriaDetailDto, ProjectDailyMeetingDto } from "../../../../../service/model/project-daily-meeting.dto";
 import { cloneDeep } from "lodash-es";
 import { APP_ENUMS } from '@shared/AppEnums';
 import { GuideLineDialogComponent } from '@app/modules/pm-management/list-project/list-project-detail/weekly-report/guide-line-dialog/guide-line-dialog/guide-line-dialog.component';
@@ -77,6 +77,7 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
   public projectType = "";
   public statusProject: number = 0;
   public statusProjectHistory: number = 0;
+  public meetingCriteriaStatusKeys: string[] = Object.keys(this.APP_ENUM.MeetingReportCriteriaStatus);
   public weeklyReportList: projectReportDto[] = [];
   public futureReportList: projectReportDto[] = [];
   public problemList: projectProblemDto[] = [];
@@ -104,7 +105,7 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
   public projectInfo = {} as ProjectInfoDto
   public weeklySummaryData = {} as ProjectDailyMeetingDto;
   public overallSummary: string = "";
-  public listDailyReports: ProjectDailyReportDto[] = [];
+  public listDailyReports: any[] = [];
   public projectCurrentResource: any = []
   public mondayOf5weeksAgo: any
   public lastWeekSunday: any
@@ -133,7 +134,7 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
 
   public listCriteria: ProjectCriteriaDto[] = []
   public listCriteriaResult: ProjectCriteriaResultDto[] = []
-  public listPreEditDailyReports: ProjectDailyReportDto[] = [];
+  public listPreEditDailyReports: any[] = [];
   public bgFlag: string = ''
   public status: string = ''
   public processCriteria: boolean = false;
@@ -337,39 +338,32 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
 
   public getProjectDailyMeeting() {
     if (!this.selectedReport || !this.selectedReport.reportId) {
-      this.overallSummary = "";
-      this.listDailyReports = [];
       return;
     }
-
-    this.listDailyReports = [];
-
     this.pjDailyMeetingService
       .getProjectWeeklySummary(this.projectId, this.selectedReport.reportId)
       .subscribe((res) => {
         if (res && res.result) {
           const raw = res.result;
-
           this.weeklySummaryData = {
             id: raw.id,
-            projectId: raw.projectId,
-            pmReportId: raw.pmReportId,
-            summary: raw.summary,
+            projectId: raw.projectId || this.projectId,
+            pmReportId: raw.pmReportId || this.selectedReport.reportId,
+            summary: '',
             editMode: false,
-            criterias: (raw.criterias || []).map((item: any) => ({
+            criterias: (raw.criterias || []).map((item: MeetingReportCriteriaDetailDto) => ({
               ...item,
+              originalContent: item.content ?? '',
               editMode: false
             })),
-            dailyReports: []
           };
-          this.overallSummary = this.weeklySummaryData.summary;
-          this.listDailyReports = this.weeklySummaryData.dailyReports || [];
-        } else {
-          this.overallSummary = "";
-          this.listDailyReports = [];
         }
-        this.listPreEditDailyReports = cloneDeep(this.listDailyReports);
       });
+  }
+
+  public syncMeetingCriteria() {
+    this.getProjectDailyMeeting();
+    abp.notify.success('Synced latest meeting report data');
   }
 
   onChangeStatusProject() {
@@ -474,6 +468,61 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
         }
       })
     }
+  }
+
+  public changeMeetingCriteriaStatus(criteria: any) {
+    const payload = {
+      criteriaName: criteria.criteriaName,
+      content: criteria.content ?? '',
+      status: criteria.status,
+    };
+    this.pjDailyMeetingService.updateMeetingReportCriteria(criteria.id, payload).subscribe(
+      () => abp.notify.success(`Updated status for "${criteria.criteriaName}" successfully`),
+    );
+  }
+
+  public editMeetingCriteria(criteria: any) {
+    criteria.editMode = true;
+    criteria._editContent = criteria.originalContent;
+    criteria._editStatus = criteria.status;
+  }
+
+  public cancelEditMeetingCriteria(criteria: any) {
+    criteria.editMode = false;
+    criteria.originalContent = criteria._editContent;
+    criteria.status = criteria._editStatus;
+  }
+
+  public saveMeetingCriteria(criteria: any) {
+    const payload = {
+      criteriaName: criteria.criteriaName,
+      content: criteria.originalContent ?? '',
+      status: criteria.status,
+    };
+    this.pjDailyMeetingService.updateMeetingReportCriteria(criteria.id, payload).subscribe(
+      () => {
+        abp.notify.success(`Updated "${criteria.criteriaName}" successfully`);
+        criteria.content = criteria.originalContent;
+        criteria.editMode = false;
+      },
+    );
+  }
+
+  public deleteMeetingCriteria(criteria: any) {
+    abp.message.confirm(
+      `Are you sure you want to delete "${criteria.criteriaName}"?`,
+      '',
+      (result: boolean) => {
+        if (result) {
+          this.pjDailyMeetingService.deleteMeetingReportCriteria(criteria.id).subscribe(() => {
+            abp.notify.success(`Deleted "${criteria.criteriaName}" successfully`);
+            this.weeklySummaryData.criterias = this.weeklySummaryData.criterias.filter(
+              (c) => c.id !== criteria.id
+            );
+          });
+        }
+      }
+    );
   }
 
   public sendWeeklyreport() {
@@ -1457,38 +1506,28 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
       data: item
     })
   }
-  public saveOverallSummary() {
-    const payload = {
-      id: this.weeklySummaryData.id,
-      summary: this.overallSummary
-    };
+  // public saveOverallSummary() {
+  //   // Weekly summary is currently a UI-only field (no backend endpoint / db column).
+  //   this.weeklySummaryData.summary = this.overallSummary;
+  //   this.weeklySummaryData.editMode = false;
+  //   abp.notify.success("Update Weekly Summary successfully");
+  // }
 
-    this.pjDailyMeetingService.updateSummary(payload).subscribe((res) => {
-      abp.notify.success("Update Weekly Summary successfully");
-      this.weeklySummaryData.editMode = false;
+  // public cancelEditSummary() {
+  //   this.overallSummary = this.weeklySummaryData.summary;
+  //   this.weeklySummaryData.editMode = false;
+  // }
 
-      if (res && res.result) {
-        this.weeklySummaryData.summary = res.result.summary;
-        this.overallSummary = res.result.summary;
-      }
-    });
-  }
+  // public saveDailyDetail(item: any, index: number) {
+  //   abp.notify.warn('Daily report editing is no longer supported. Please use Meeting Report Criteria instead.');
+  //   item.editMode = false;
+  // }
 
-  public cancelEditSummary() {
-    this.overallSummary = this.weeklySummaryData.summary;
-    this.weeklySummaryData.editMode = false;
-  }
-
-  public saveDailyDetail(item: ProjectDailyReportDto, index: number) {
-    abp.notify.warn('Daily report editing is no longer supported. Please use Meeting Report Criteria instead.');
-    item.editMode = false;
-  }
-
-  public cancelEditDailyReport(index: number) {
-    if (this.listDailyReports[index] && this.listPreEditDailyReports[index]) {
-      this.listDailyReports[index].content = this.listPreEditDailyReports[index].content;
-    }
-    this.listDailyReports[index].editMode = false;
-  }
+  // public cancelEditDailyReport(index: number) {
+  //   if (this.listDailyReports[index] && this.listPreEditDailyReports[index]) {
+  //     this.listDailyReports[index].content = this.listPreEditDailyReports[index].content;
+  //   }
+  //   this.listDailyReports[index].editMode = false;
+  // }
 }
 

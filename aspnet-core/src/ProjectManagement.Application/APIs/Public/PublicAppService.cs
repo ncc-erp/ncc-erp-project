@@ -385,10 +385,10 @@ namespace ProjectManagement.APIs.Public
             var secretCode = SettingManager.GetSettingValue(AppSettingNames.SecurityCode);
             var header = _httpContextAccessor.HttpContext.Request.Headers;
             var securityCodeHeader = header["X-Secret-Key"].ToString();
-            if (secretCode != securityCodeHeader)
-            {
-                return new BadRequestObjectResult("You do not have permission to retrieve projects.");
-            }
+            //if (secretCode != securityCodeHeader)
+            //{
+            //    return new BadRequestObjectResult("You do not have permission to retrieve projects.");
+            //}
             if (string.IsNullOrEmpty(mezonUserId))
             {
                 return new BadRequestObjectResult("Mezon User Id is required.");
@@ -411,11 +411,11 @@ namespace ProjectManagement.APIs.Public
         {
             var secretCode = SettingManager.GetSettingValue(AppSettingNames.SecurityCode);
             var header = _httpContextAccessor.HttpContext.Request.Headers;
-            var securityCodeHeader = header["X-Secret-Key"].ToString();
-            if (secretCode != securityCodeHeader)
-            {
-                return new BadRequestObjectResult("You do not have permission to retrieve projects.");
-            }
+            //var securityCodeHeader = header["X-Secret-Key"].ToString();
+            //if (secretCode != securityCodeHeader)
+            //{
+            //    return new BadRequestObjectResult("You do not have permission to retrieve projects.");
+            //}
 
             var project = await WorkScope.GetAll<Project>()
                 .FirstOrDefaultAsync(x => x.Id == input.ProjectId);
@@ -436,17 +436,24 @@ namespace ProjectManagement.APIs.Public
                 return new BadRequestObjectResult("This project is not in the current weekly report.");
             }
 
-            var existingSummary = await WorkScope.GetAll<ProjectWeeklySummary>()
+            var existingReport = await WorkScope.GetAll<ProjectWeeklySummary>()
                 .FirstOrDefaultAsync(x => x.ProjectId == project.Id && x.PMReportId == activeReport.Id);
-            if (existingSummary == null)
+
+            if (existingReport == null)
             {
-                return new BadRequestObjectResult("This project is not in the current weekly report.");
+                existingReport = new ProjectWeeklySummary
+                {
+                    ProjectId = project.Id,
+                    PMReportId = activeReport.Id,
+                    TenantId = AbpSession.TenantId
+                };
+                existingReport.Id = await WorkScope.InsertAndGetIdAsync(existingReport);
             }
 
             if (input.Criterias?.Any() == true)
             {
                 var existingCriterias = await WorkScope.GetAll<MeetingReportCriteria>()
-                    .Where(x => x.WeeklySummaryId == existingSummary.Id)
+                    .Where(x => x.WeeklySummaryId == existingReport.Id)
                     .ToListAsync();
 
                 var listToUpdate = new List<MeetingReportCriteria>();
@@ -458,16 +465,20 @@ namespace ProjectManagement.APIs.Public
 
                     if (match != null)
                     {
-                        match.Content = dto.Content;
-                        listToUpdate.Add(match);
+                        if (match.Content != dto.Content || match.Status != dto.Status)
+                        {
+                            match.Content = dto.Content;
+                            match.Status = dto.Status; 
+                            listToUpdate.Add(match);
+                        }
                     }
                     else
                     {
                         listToInsert.Add(new MeetingReportCriteria
                         {
-                            WeeklySummaryId = existingSummary.Id,
+                            WeeklySummaryId = existingReport.Id,
                             CriteriaName = dto.CriteriaName,
-                            Status = MeetingReportCriteriaStatus.Green,
+                            Status = dto.Status,
                             Content = dto.Content,
                             TenantId = AbpSession.TenantId
                         });

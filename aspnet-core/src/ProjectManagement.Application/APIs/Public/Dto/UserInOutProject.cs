@@ -39,7 +39,6 @@ namespace ProjectManagement.APIs.Public.Dto
     public class WeeklyReportDto
     {
         public long ProjectId { get; set; }
-        public string OverallSummary { get; set; }
         public List<MeetingReportCriteriaDto> Criterias { get; set; }
     }
 
@@ -47,6 +46,6 @@ namespace ProjectManagement.APIs.Public.Dto
     {
         public string Content { get; set; }
         public string CriteriaName { get; set; }
-        public string Status { get; set; }
+        public MeetingReportCriteriaStatus Status { get; set; }
     }
 }

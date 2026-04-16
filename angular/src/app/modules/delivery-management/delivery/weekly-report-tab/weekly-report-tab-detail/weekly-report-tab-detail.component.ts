@@ -36,7 +36,7 @@ import { ProjectCriteriaResultService } from '@app/service/api/project-criteria-
 import { ProjectCriteriaDto } from '@app/service/model/criteria-category.dto';
 import { ProjectCriteriaResultDto } from '@app/service/model/project-criteria-result.dto';
 import { ProjectDailyMeetingService } from "../../../../../service/api/project-daily-meeting.service";
-import { ProjectDailyMeetingDto, ProjectDailyReportDto } from "../../../../../service/model/project-daily-meeting.dto";
+import { MeetingReportCriteriaDetailDto, ProjectDailyMeetingDto } from "../../../../../service/model/project-daily-meeting.dto";
 import { cloneDeep } from 'lodash';
 import { GuideLineDialogComponent } from '@app/modules/pm-management/list-project/list-project-detail/weekly-report/guide-line-dialog/guide-line-dialog/guide-line-dialog.component';
 import { ReportGuidelineDetailComponent } from './report-guideline-detail/report-guideline-detail.component';
@@ -120,7 +120,7 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
   public pmReportProjectList: pmReportProjectDto[] = [];
   public tempPmReportProjectList: pmReportProjectDto[] = [];
   public listPreEditCriteriaResult: ProjectCriteriaResultDto[] = [];
-  public listPreEditDailyReports: ProjectDailyReportDto[] = [];
+  public listPreEditDailyReports: any[] = [];
   public show: boolean = false;
   public pmReportProject = {} as pmReportProjectDto;
   public pmReportId: any;
@@ -174,8 +174,9 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
   public isShowRisks: boolean = false;
   public projectInfo = {} as ProjectInfoDto
   public weeklySummaryData = {} as ProjectDailyMeetingDto;
+  public meetingCriteriaStatusKeys: string[] = Object.keys(this.APP_ENUM.MeetingReportCriteriaStatus);
   public overallSummary: string = "";
-  public listDailyReports: ProjectDailyReportDto[] = [];
+  public listDailyReports: any[] = [];
   public projectCurrentResource: any = []
   public projectCurrentSupportUser: any = []
   public mondayOf5weeksAgo: any
@@ -459,21 +460,27 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
             id: raw.id,
             projectId: raw.projectId,
             pmReportId: raw.pmReportId,
-            summary: raw.summary,
+            summary: '',
             editMode: false,
-            dailyReports: raw.dailyReports.map(item => ({
+            criterias: (raw.criterias || []).map((item: MeetingReportCriteriaDetailDto) => ({
               ...item,
+              originalContent: item.content ?? '',
               editMode: false
-            }))
+            })),
           };
-          this.overallSummary = this.weeklySummaryData.summary;
-          this.listDailyReports = this.weeklySummaryData.dailyReports;
+          this.listDailyReports = [];
         } else {
-          this.overallSummary = "";
           this.listDailyReports = [];
         }
         this.listPreEditDailyReports = cloneDeep(this.listDailyReports);
       });
+  }
+
+
+
+  public syncMeetingCriteria() {
+    this.getProjectDailyMeeting();
+    abp.notify.success('Synced latest meeting report data');
   }
 
   setTotalHealth() {
@@ -566,6 +573,60 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
         }
       })
     }
+  }
+
+  public changeMeetingCriteriaStatus(criteria: any) {
+    const payload = {
+      criteriaName: criteria.criteriaName,
+      content: criteria.content ?? '',
+      status: criteria.status,
+    };
+    this.pjDailyMeetingService.updateMeetingReportCriteria(criteria.id, payload).subscribe(
+      () => abp.notify.success(`Updated status for "${criteria.criteriaName}" successfully`),
+    );
+  }
+
+  public editMeetingCriteria(criteria: any) {
+    criteria.editMode = true;
+    criteria._editContent = criteria.content;
+    criteria._editStatus = criteria.status;
+  }
+
+  public cancelEditMeetingCriteria(criteria: any) {
+    criteria.editMode = false;
+    criteria.content = criteria._editContent;
+    criteria.status = criteria._editStatus;
+  }
+
+  public saveMeetingCriteria(criteria: any) {
+    const payload = {
+      criteriaName: criteria.criteriaName,
+      content: criteria.content ?? '',
+      status: criteria.status,
+    };
+    this.pjDailyMeetingService.updateMeetingReportCriteria(criteria.id, payload).subscribe(
+      () => {
+        abp.notify.success(`Updated "${criteria.criteriaName}" successfully`);
+        criteria.editMode = false;
+      },
+    );
+  }
+
+  public deleteMeetingCriteria(criteria: any) {
+    abp.message.confirm(
+      `Are you sure you want to delete "${criteria.criteriaName}"?`,
+      '',
+      (result: boolean) => {
+        if (result) {
+          this.pjDailyMeetingService.deleteMeetingReportCriteria(criteria.id).subscribe(() => {
+            abp.notify.success(`Deleted "${criteria.criteriaName}" successfully`);
+            this.weeklySummaryData.criterias = this.weeklySummaryData.criterias.filter(
+              (c) => c.id !== criteria.id
+            );
+          });
+        }
+      }
+    );
   }
 
   getProjectInfo() {
@@ -2085,7 +2146,7 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
   //   this.weeklySummaryData.editMode = false;
   // }
 
-  // public saveDailyDetail(item: ProjectDailyReportDto, index: number) {
+  // public saveDailyDetail(item: any, index: number) {
   //   const payload = {
   //     id: item.id,
   //     content: item.content

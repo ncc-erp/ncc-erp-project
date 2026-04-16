@@ -10,7 +10,6 @@ namespace ProjectManagement.Entities
 {
     public class MeetingReportCriteria : FullAuditedEntity<long>, IMayHaveTenant
     {
-        public string SectionName { get; set; }
         public string CriteriaName { get; set; }
         public string Content { get; set; }
         public MeetingReportCriteriaStatus Status { get; set; } = MeetingReportCriteriaStatus.Green;

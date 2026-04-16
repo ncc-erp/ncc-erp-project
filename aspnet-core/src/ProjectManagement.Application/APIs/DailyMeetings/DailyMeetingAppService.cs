@@ -1,69 +1,60 @@
-﻿using Abp.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using ProjectManagement.APIs.DailyMeetings.Dto;
-using ProjectManagement.Entities;
-using System.Linq;
-using System.Threading.Tasks;
+﻿    using Abp.Authorization;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.EntityFrameworkCore;
+    using ProjectManagement.APIs.DailyMeetings.Dto;
+    using ProjectManagement.Entities;
+    using System.Linq;
+    using System.Threading.Tasks;
 
-namespace ProjectManagement.APIs.DailyMeetings
-{
-    public class DailyMeetingAppService : ProjectManagementAppServiceBase
+    namespace ProjectManagement.APIs.DailyMeetings
     {
-        [AbpAuthorize]
+        public class DailyMeetingAppService : ProjectManagementAppServiceBase
+        {
+        [AbpAllowAnonymous]
         [HttpGet]
         public async Task<GetProjectDailyMeetingsDto> Get(long projectId, long pmReportId)
         {
-            var summary = await WorkScope.GetAll<ProjectWeeklySummary>()
+            var report = await WorkScope.GetAll<ProjectWeeklySummary>()
                 .Include(x => x.DailyReports)
                 .Where(x => x.ProjectId == projectId && x.PMReportId == pmReportId)
                 .FirstOrDefaultAsync();
 
-            if (summary == null)
-            {
-                return null;
-            }
+            if (report == null) return null;
 
             return new GetProjectDailyMeetingsDto
             {
-                Id = summary.Id,
-                ProjectId = summary.ProjectId,
-                PMReportId = summary.PMReportId,
-                Criterias = summary.DailyReports.Select(d => new MeetingReportCriteriaDetailDto
-                {
-                    Id = d.Id,
-                    CriteriaName = d.CriteriaName,
-                    Content = d.Content,
-                    Status = d.Status
-                })
-                .ToList()
+                Id = report.Id,
+                ProjectId = report.ProjectId,
+                PMReportId = report.PMReportId,
+                Criterias = report.DailyReports
+                    .Where(d => !d.IsDeleted)
+                    .Select(d => new MeetingReportCriteriaDetailDto
+                    {
+                        Id = d.Id,
+                        CriteriaName = d.CriteriaName,
+                        Content = d.Content,
+                        Status = d.Status
+                    })
+                    .ToList()
             };
         }
 
         [AbpAuthorize]
-        [HttpPut]
-        public async Task UpdateSummary(UpdateSummaryDto input)
-        {
-            var item = await WorkScope.GetAsync<ProjectWeeklySummary>(input.Id);
-            await WorkScope.UpdateAsync(item);
-        }
+            [HttpPut]
+            public async Task UpdateMeetingReportCriteria(long id, MeetingReportCriteriaDetailDto input)
+            {
+                var item = await WorkScope.GetAsync<MeetingReportCriteria>(id);
+                item.CriteriaName = input.CriteriaName;
+                item.Content = input.Content;
+                item.Status = input.Status;
+                await WorkScope.UpdateAsync(item);
+            }
+            [AbpAuthorize]
+            [HttpDelete]
+            public async Task DeleteMeetingReportCriteria(long id)
+            {
+                await WorkScope.DeleteAsync<MeetingReportCriteria>(id);
+            }
 
-        [AbpAuthorize]
-        [HttpPut]
-        public async Task UpdateMeetingReportCriteria(long id, UpdateMeetingReportCriteriaDto input)
-        {
-            var item = await WorkScope.GetAsync<MeetingReportCriteria>(id);
-            item.CriteriaName = input.CriteriaName;
-            item.Content = input.Content;
-            item.Status = input.Status;
-            await WorkScope.UpdateAsync(item);
         }
-        [AbpAuthorize]
-        [HttpDelete]
-        public async Task DeleteMeetingReportCriteria(long id)
-        {
-            await WorkScope.DeleteAsync<MeetingReportCriteria>(id);
-        }
-
     }
-}

@@ -20,10 +20,6 @@ export class ProjectDailyMeetingService extends BaseApiService {
         return this.http.get(this.rootUrl + `/Get?projectId=${projectId}&pmReportId=${pmReportId}`);
     }
 
-    public updateSummary(summaryData: { id: number, summary: string }): Observable<any> {
-        return this.http.put(this.rootUrl + `/UpdateSummary`, summaryData);
-    }
-
     public updateMeetingReportCriteria(id: number, payload: { criteriaName: string, content: string, status: number }): Observable<any> {
         return this.http.put(this.rootUrl + `/UpdateMeetingReportCriteria?id=${id}`, payload);
     }

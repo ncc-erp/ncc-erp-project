@@ -85,6 +85,12 @@ export const APP_ENUMS = {
         Yellow: 2,
         Red: 3
     },
+    MeetingReportCriteriaStatus:
+    {
+        Red: 0,
+        Yellow: 1,
+        Green: 2
+    },
     ProjectMilestoneStatus:
     {
         Paid: 2,

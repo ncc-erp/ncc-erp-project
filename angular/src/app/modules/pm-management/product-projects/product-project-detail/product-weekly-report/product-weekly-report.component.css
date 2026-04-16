@@ -77,7 +77,7 @@ button {
 @media only screen and (max-width: 487px) {
   .resource {
     flex-direction: column;
-    align-items: start !important;
+    align-items: flex-start !important;
   }
   .change-acc {
     margin-left: 0 !important;
@@ -151,6 +151,63 @@ button {
 
 ::ng-deep .mat-select-panel .mat-option.mat-selected:not(.mat-option-multiple) {
   opacity: 0.7;
+}
+
+:host ::ng-deep .text-overflow {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
+}
+
+.meeting-report-scroll {
+  max-height: 300px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 6px;
+}
+
+.meeting-content-preview {
+  font-size: 16px;
+  white-space: pre-line;
+  overflow: visible;
+}
+
+.row-criteria-result {
+  align-items: normal !important;
+}
+
+.select-status-criteria {
+  align-items: normal !important;
+  height: fit-content;
+}
+
+:host ::ng-deep .select-status-criteria .mat-button {
+  min-width: 100%;
+  line-height: 44px;
+}
+
+:host ::ng-deep .meeting-status-select.text-success .mat-form-field-outline {
+  background: #28a745;
+  border-radius: 5px;
+}
+
+:host ::ng-deep .meeting-status-select.text-warning .mat-form-field-outline {
+  background: #ffc107;
+  border-radius: 5px;
+}
+
+:host ::ng-deep .meeting-status-select.text-danger .mat-form-field-outline {
+  background: #dc3545;
+  border-radius: 5px;
+}
+
+:host ::ng-deep .meeting-status-select.text-success .mat-select-value,
+:host ::ng-deep .meeting-status-select.text-danger .mat-select-value {
+  color: #fff;
+}
+
+:host ::ng-deep .meeting-status-select.text-warning .mat-select-value {
+  color: #000;
 }
 
 .note {

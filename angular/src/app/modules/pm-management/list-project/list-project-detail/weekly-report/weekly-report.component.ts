@@ -42,7 +42,7 @@ import { TimesheetProjectService } from "@app/service/api/timesheet-project.serv
 import { ProjectCriteriaResultService } from "../../../../../service/api/project-criteria-result.service";
 import { ProjectCriteriaResultDto } from "../../../../../service/model/project-criteria-result.dto";
 import { ProjectDailyMeetingService } from "../../../../../service/api/project-daily-meeting.service";
-import { ProjectDailyMeetingDto, ProjectDailyReportDto } from "../../../../../service/model/project-daily-meeting.dto";
+import { MeetingReportCriteriaDetailDto, ProjectDailyMeetingDto } from "../../../../../service/model/project-daily-meeting.dto";
 import { cloneDeep } from "lodash-es";
 import { map } from "rxjs/operators";
 import { Observable, Observer } from "rxjs";
@@ -125,6 +125,8 @@ export class WeeklyReportComponent
   public futureReportList: projectReportDto[] = [];
   public problemList: projectProblemDto[] = [];
   public problemIssueList: string[] = Object.keys(this.APP_ENUM.ProjectHealth);
+  public meetingCriteriaStatusKeys: string[] = Object.keys(this.APP_ENUM.MeetingReportCriteriaStatus);
+  public weeklySummaryData = {} as any;
   public projectRoleList: string[] = Object.keys(this.APP_ENUM.ProjectUserRole);
   public issueStatusList: string[] = Object.keys(
     this.APP_ENUM.PMReportProjectIssueStatus,
@@ -160,9 +162,8 @@ export class WeeklyReportComponent
   public isShowWeeklyList: boolean = false;
   public isShowFutureList: boolean = false;
   public projectInfo = {} as ProjectInfoDto;
-  public weeklySummaryData = {} as ProjectDailyMeetingDto;
   public overallSummary: string = "";
-  public listDailyReports: ProjectDailyReportDto[] = [];
+  public listDailyReports: any[] = [];
   public projectCurrentResource: any = [];
   public mondayOf5weeksAgo: any;
   public lastWeekSunday: any;
@@ -196,7 +197,7 @@ export class WeeklyReportComponent
   public listCriteria: ProjectCriteriaDto[] = [];
   public listCriteriaResult: ProjectCriteriaResultDto[] = [];
   public listPreEditCriteriaResult: ProjectCriteriaResultDto[] = [];
-  public listPreEditDailyReports: ProjectDailyReportDto[] = [];
+  public listPreEditDailyReports: any[] = [];
   public bgFlag: string = "";
   public status: string = "";
   public processCriteria: boolean = false;
@@ -541,50 +542,75 @@ export class WeeklyReportComponent
             pmReportId: raw.pmReportId || this.selectedReport.reportId,
             summary: '',
             editMode: false,
-            criterias: raw.criterias.map(item => {
-              const criteria = { ...item };
-              if (item.content) {
-                try {
-                  const content = JSON.parse(item.content);
-                  const criteriaContent = [
-                    content.reason,
-                    content.main_features,
-                    content.references,
-                    content.daily_statistics,
-                    content.release_out_of_scope,
-                    content.actual_goal,
-                    content.overall_evaluation,
-                    content.executive_summary
-                  ];
-                  if (content.highlights && Array.isArray(content.highlights)) {
-                    criteriaContent.push('\nĐiểm nổi bật:\n' + content.highlights.join('\n'));
-                  }
-                  if (content.action_items && Array.isArray(content.action_items)) {
-                    criteriaContent.push('\nHoạt động của team:\n' + content.action_items.join('\n'));
-                  }
-                  if (content.executive_summary) {
-                    criteriaContent.push('\nExecutive summary:\n' + content.executive_summary);
-                  }
-                  criteria.originalContent = criteriaContent.filter(c => c != null && c !== '' && c !== undefined).join('\n');
-                  criteria.originalStatus = content.status || 0;
-                } catch (error) {
-                  criteria.originalContent = 'N/A';
-                  criteria.originalStatus = 0;
-                }
-              }
-              return {
-                ...criteria,
-                editMode: false
-              };
-            }),
-            dailyReports: []
+            criterias: (raw.criterias || []).map((item: MeetingReportCriteriaDetailDto) => ({
+              ...item,
+              originalContent: item.content ?? '',
+              editMode: false
+            })),
           };
-        } else {
         }
-        this.listPreEditDailyReports = cloneDeep(this.listDailyReports);
       });
   }
 
+  public syncMeetingCriteria() {
+    this.getProjectDailyMeeting();
+    abp.notify.success('Synced latest meeting report data');
+  }
+
+  public changeMeetingCriteriaStatus(criteria: any) {
+    const payload = {
+      criteriaName: criteria.criteriaName,
+      content: criteria.content ?? '',
+      status: criteria.status,
+    };
+    this.pjDailyMeetingService.updateMeetingReportCriteria(criteria.id, payload).subscribe(
+      () => abp.notify.success(`Updated status for "${criteria.criteriaName}" successfully`),
+    );
+  }
+
+  public editMeetingCriteria(criteria: any) {
+    criteria.editMode = true;
+    criteria._editContent = criteria.originalContent;
+    criteria._editStatus = criteria.status;
+  }
+
+  public cancelEditMeetingCriteria(criteria: any) {
+    criteria.editMode = false;
+    criteria.originalContent = criteria._editContent;
+    criteria.status = criteria._editStatus;
+  }
+
+  public saveMeetingCriteria(criteria: any) {
+    const payload = {
+      criteriaName: criteria.criteriaName,
+      content: criteria.originalContent ?? '',
+      status: criteria.status,
+    };
+    this.pjDailyMeetingService.updateMeetingReportCriteria(criteria.id, payload).subscribe(
+      () => {
+        abp.notify.success(`Updated "${criteria.criteriaName}" successfully`);
+        criteria.content = criteria.originalContent;
+        criteria.editMode = false;
+      },
+    );
+  }
+
+  public deleteMeetingCriteria(criteria: any) {
+    abp.message.confirm(
+      `Are you sure you want to delete "${criteria.criteriaName}"?`,
+      '',
+      (result: boolean) => {
+        if (result) {
+          this.pjDailyMeetingService.deleteMeetingReportCriteria(criteria.id).subscribe(() => {
+            abp.notify.success(`Deleted "${criteria.criteriaName}" successfully`);
+            this.weeklySummaryData.criterias = this.weeklySummaryData.criterias.filter(
+              (c) => c.id !== criteria.id
+            );
+          });
+        }
+      }
+    );
+  }
   onChangeStatusProject() {
     this.pjCriteriaResultService
       .updateStatus(

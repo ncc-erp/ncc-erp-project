@@ -1,17 +1,16 @@
-export interface ProjectDailyMeetingDto {
+export interface GetProjectDailyMeetingsDto {
     id: number;
-    summary: string;
     pmReportId: number;
     projectId: number;
-    dailyReports: ProjectDailyReportDto[];
-    editMode: boolean;
-}
+    criterias: MeetingReportCriteriaDetailDto[];
+    editMode?: boolean;
 
-export interface ProjectDailyReportDto {
+}
+export interface MeetingReportCriteriaDetailDto {
     id: number;
-    date: Date | string;
+    criteriaName: string;
+    originalContent?: string;
     content: string;
-    weeklySummaryId: number;
-    projectId: number;
-    editMode: boolean;
+    status: number;
+    editMode?: boolean;
 }

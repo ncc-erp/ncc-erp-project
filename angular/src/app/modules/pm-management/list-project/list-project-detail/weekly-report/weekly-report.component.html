@@ -171,111 +171,105 @@
                 </div>
             </div>
 
-             <div class="card mb-4">
+            <div class="card mb-4">
                 <mat-expansion-panel #dailyPanel [expanded]="true">
                     <mat-expansion-panel-header class="m-0">
                         <mat-panel-title class="d-flex align-items-center justify-content-between w-100">
                             <div class="d-flex align-items-center">
-                                <strong style="font-size: 20px;">Daily Meetings</strong>
+                                <strong style="font-size: 20px;">Meeting Report</strong>
+                                <!-- <button mat-icon-button class="ml-2" [matTooltip]="'Sync latest data'"
+                                    (click)="$event.stopPropagation(); syncMeetingCriteria()" style="color: #007bff;">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button> -->
                             </div>
                         </mat-panel-title>
                     </mat-expansion-panel-header>
 
                     <div class="p-3 px-4">
                         <div class="weekly-summary mb-4">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <h5 class="text-primary font-weight-bold">
-                                    <i class="fas fa-list-alt mr-2"></i>Weekly Summary
-                                </h5>
+                            <div class="meeting-criteria-list meeting-report-scroll">
+                                <ng-container
+                                    *ngFor="let criteria of (weeklySummaryData?.criterias || []); let i = index">
+                                    <div class="meeting-criteria-item mb-2 pb-2"
+                                        style="border-bottom: 1px solid #e9ecef;">
+                                        <div
+                                            class="d-flex justify-content-between align-items-center row-criteria-result">
+                                            <div class="text-primary mb-0"
+                                                style="white-space: normal; flex: 1; min-width: 0;">
+                                                <strong style="font-size: 16px;">
+                                                    <i class="fas fa-check-circle mr-1"></i>{{ criteria.criteriaName }}
+                                                </strong>
+                                            </div>
 
-                                <div *ngIf="selectedReport.isActive">
-                                    <button *ngIf="!weeklySummaryData.editMode && overallSummary" mat-button
-                                        (click)="weeklySummaryData.editMode = true">
-                                        <i class="fas fa-pencil-alt fa-lg"></i>
-                                    </button>
+                                            <div class="d-flex align-items-center select-s  tatus-criteria flex-shrink-0">
+                                                <mat-form-field class="meeting-status-select"
+                                                    [ngClass]="APP_CONST.meetingCriteriaStatusStyle[criteria.status] || 'text-success'"
+                                                    style="margin-left: 10px !important; width: 100px;" class="ml-3"
+                                                    appearance="outline">
+                                                    <mat-select style="padding-bottom: 4px;"
+                                                        [attr.name]="'meetingCriteriaStatus_' + i" placeholder="Status"
+                                                        [(ngModel)]="criteria.status"
+                                                        (ngModelChange)="changeMeetingCriteriaStatus(criteria)">
+                                                        <ng-container *ngFor="let key of meetingCriteriaStatusKeys">
+                                                            <mat-option style="border: 1px white solid;"
+                                                                [ngClass]="APP_CONST.meetingCriteriaStatusBGStyle[APP_ENUM.MeetingReportCriteriaStatus[key]]"
+                                                                [value]="APP_ENUM.MeetingReportCriteriaStatus[key]">
+                                                                <span
+                                                                    style="font-weight: 100 !important;">{{key}}</span>
+                                                            </mat-option>
+                                                        </ng-container>
+                                                    </mat-select>
+                                                </mat-form-field>
 
-                                    <div *ngIf="weeklySummaryData.editMode" class="d-flex align-items-center">
-                                        <button class="submit-btn" style="background: none; border: none;"
-                                            (click)="saveOverallSummary()">
-                                            <i style="color: green; font-size: 24px;" class="fas fa-check"></i>
-                                        </button>
-                                        <button class="submit-btn ml-2" style="background: none; border: none;"
-                                            (click)="cancelEditSummary()">
-                                            <i style="color: red; font-size: 24px;" class="fas fa-times"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
+                                                <ng-container *ngIf="!criteria.editMode">
+                                                    <button type="button" mat-icon-button [matTooltip]="'Edit'"
+                                                        class="ml-1"
+                                                        (click)="$event.stopPropagation(); editMeetingCriteria(criteria)">
+                                                        <i class="fas fa-pencil-alt"></i>
+                                                    </button>
+                                                    <button type="button" mat-icon-button [matTooltip]="'Delete'"
+                                                        class="ml-1"
+                                                        (click)="$event.stopPropagation(); deleteMeetingCriteria(criteria)">
+                                                        <i class="fas fa-trash" style="color: #dc3545;"></i>
+                                                    </button>
+                                                </ng-container>
+                                                <ng-container *ngIf="criteria.editMode">
+                                                    <button type="button" mat-icon-button [matTooltip]="'Save'"
+                                                        class="ml-1"
+                                                        (click)="$event.stopPropagation(); saveMeetingCriteria(criteria)">
+                                                        <i class="fas fa-check" style="color: green;"></i>
+                                                    </button>
+                                                    <button type="button" mat-icon-button [matTooltip]="'Cancel'"
+                                                        class="ml-1"
+                                                        (click)="$event.stopPropagation(); cancelEditMeetingCriteria(criteria)">
+                                                        <i class="fas fa-times" style="color: red;"></i>
+                                                    </button>
+                                                </ng-container>
+                                            </div>
+                                        </div>
 
-                            <p *ngIf="!weeklySummaryData.editMode"
-                                style="font-size: 18px; text-align: justify; background: #f8f9fa; padding: 15px; border-left: 5px solid #007bff; word-wrap: break-word; white-space: pre-line;">
-                                {{ overallSummary || 'There is no summary for this week yet!' }}
-                            </p>
-
-                            <div *ngIf="weeklySummaryData.editMode" class="mt-2">
-                                <mat-form-field style="width: 100%;" appearance="outline">
-                                    <textarea matInput cdkTextareaAutosize [(ngModel)]="overallSummary" rows="4"
-                                        style="font-size: 18px;" placeholder="Enter weekly summary content...">
-                                    </textarea>
-                                </mat-form-field>
-                            </div>
-                        </div>
-
-                        <hr>
-
-                        <div class="daily-detail-list">
-                            <h5 class="text-secondary font-weight-bold mb-3">
-                                <i class="fas mr-2"></i>Daily Details
-                            </h5>
-
-                            <div *ngFor="let meeting of listDailyReports; let i = index" class="mb-3 p-2 border-bottom">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <span class="font-weight-bold text-info" style="font-size: 19px;">
-                                        {{ meeting.date | date: 'EEEE, dd/MM/yyyy' }}
-                                    </span>
-
-                                    <div *ngIf="selectedReport.isActive">
-                                        <button *ngIf="!meeting.editMode" mat-button (click)="meeting.editMode = true">
-                                            <i class="fas fa-pencil-alt fa-lg"></i>
-                                        </button>
-
-                                        <div *ngIf="meeting.editMode" class="d-flex align-items-center">
-                                            <button class="submit-btn" style="background: none; border: none;"
-                                                (click)="saveDailyDetail(meeting, i)">
-                                                <i style="color: green; font-size: 24px;" class="fas fa-check"></i>
-                                            </button>
-                                            <button class="submit-btn ml-2" style="background: none; border: none;"
-                                                (click)="cancelEditDailyReport(i)">
-                                                <i style="color: red; font-size: 24px;" class="fas fa-times"></i>
-                                            </button>
+                                        <div *ngIf="!criteria.editMode" class="break-word format-editor py-1" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                                                   white-space: pre-line; color: #555; word-break: break-word;
+                                                   overflow-wrap: break-word;">
+                                            <div class="meeting-content-preview">
+                                                {{ criteria.originalContent }}
+                                            </div>
+                                        </div>
+                                        <div *ngIf="criteria.editMode" class="mt-2">
+                                            <textarea class="form-control" rows="4"
+                                                [attr.name]="'meetingCriteriaContent_' + i"
+                                                [(ngModel)]="criteria.originalContent"
+                                                style="resize: vertical; word-break: break-word; overflow-wrap: break-word;">
+                                            </textarea>
                                         </div>
                                     </div>
-                                </div>
-
-                                <p *ngIf="!meeting.editMode" class="mt-1 mb-0"
-                                    style="white-space: pre-line; font-size: 18px; text-align: justify; word-wrap: break-word;">
-                                    {{ meeting.content || 'No content!' }}
-                                </p>
-
-                                <div *ngIf="meeting.editMode" class="mt-2">
-                                    <mat-form-field style="width: 100%;" appearance="outline">
-                                        <textarea matInput cdkTextareaAutosize [(ngModel)]="meeting.content" rows="3"
-                                            style="font-size: 18px;" placeholder="Enter daily meeting content...">
-                          </textarea>
-                                    </mat-form-field>
-                                </div>
+                                </ng-container>
                             </div>
 
-                            <div *ngIf="!listDailyReports || listDailyReports.length === 0" class="text-muted italic"
-                                style="font-size: 16px;">
+                            <div *ngIf="!weeklySummaryData?.criterias?.length" class="text-muted"
+                                style="font-size: 14px;">
                                 There's no daily meeting data yet!
                             </div>
-                        </div>
-
-                        <div class="d-flex justify-content-end mt-3">
-                            <button mat-raised-button color="primary" (click)="applyToCriteria()">
-                                Apply to Criteria
-                            </button>
                         </div>
                     </div>
                 </mat-expansion-panel>

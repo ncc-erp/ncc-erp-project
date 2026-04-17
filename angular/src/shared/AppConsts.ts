@@ -125,6 +125,18 @@ export class AppConsts {
         2: "text-warning",
         3: "text-danger"
     }
+
+    static readonly meetingCriteriaStatusBGStyle = {
+        0: "badge  bg-danger",
+        1: "badge  bg-warning",
+        2: "badge  bg-success"
+    }
+
+    static readonly meetingCriteriaStatusStyle = {
+        0: "text-danger",
+        1: "text-warning",
+        2: "text-success"
+    }
     static readonly auditStatus = {
         1: "badge  bg-success",
         2: "badge  bg-warning",

@@ -57,7 +57,7 @@
 }
 
 :host::ng-deep .mat-drawer-content{
-  overflow: visible;
+    overflow: visible;
 }
 
 :host::ng-deep.mat-drawer.mat-drawer-side{
@@ -456,9 +456,9 @@ mat-list-item.checked {
     background: white;
     border-radius: 4px;
     overflow: hidden;
-  }
+}
 
-  .example-box {
+.example-box {
     padding: 20px 10px;
     border-bottom: solid 1px #ccc;
     color: rgba(0, 0, 0, 0.87);
@@ -470,32 +470,83 @@ mat-list-item.checked {
     cursor: move;
     background: white;
     font-size: 14px;
-  }
+}
 
-  .cdk-drag-preview {
+.cdk-drag-preview {
     box-sizing: border-box;
     border-radius: 4px;
     box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
-                0 8px 10px 1px rgba(0, 0, 0, 0.14),
-                0 3px 14px 2px rgba(0, 0, 0, 0.12);
-  }
+        0 8px 10px 1px rgba(0, 0, 0, 0.14),
+        0 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
 
-  .cdk-drag-placeholder {
+.cdk-drag-placeholder {
     opacity: 0;
-  }
+}
 
-  .cdk-drag-animating {
+.cdk-drag-animating {
     transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
-  }
+}
 
-  .example-box:last-child {
+.example-box:last-child {
     border: none;
-  }
+}
 
-  .example-list.cdk-drop-list-dragging .example-box:not(.cdk-drag-placeholder) {
+.example-list.cdk-drop-list-dragging .example-box:not(.cdk-drag-placeholder) {
     transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
-  }
+}
 
   :host::ng-deep .mat-expansion-panel-header{
     font-family: "Source Sans Pro",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";;
-  }
+}
+
+.meeting-report-scroll {
+    max-height: 700px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 6px;
+}
+
+.meeting-content-preview {
+    font-size: 16px;
+    white-space: pre-line;
+    overflow: visible;
+}
+
+.row-criteria-result {
+    align-items: normal !important;
+}
+
+.select-status-criteria {
+    align-items: normal !important;
+    height: fit-content;
+}
+
+:host ::ng-deep .select-status-criteria .mat-button {
+    min-width: 100%;
+    line-height: 44px;
+}
+
+:host ::ng-deep .meeting-status-select.text-success .mat-form-field-outline {
+    background: #28a745;
+    border-radius: 5px;
+}
+
+:host ::ng-deep .meeting-status-select.text-warning .mat-form-field-outline {
+    background: #ffc107;
+    border-radius: 5px;
+}
+
+:host ::ng-deep .meeting-status-select.text-danger .mat-form-field-outline {
+    background: #dc3545;
+    border-radius: 5px;
+}
+
+:host ::ng-deep .meeting-status-select.text-success .mat-select-value,
+:host ::ng-deep .meeting-status-select.text-danger .mat-select-value {
+    color: #fff;
+}
+
+:host ::ng-deep .meeting-status-select.text-warning .mat-select-value {
+    color: #000;
+}

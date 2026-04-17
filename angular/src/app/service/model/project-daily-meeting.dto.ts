@@ -1,5 +1,5 @@
 export interface GetProjectDailyMeetingsDto {
-    id: number;
+    id?: number | null;
     pmReportId: number;
     projectId: number;
     criterias: MeetingReportCriteriaDetailDto[];

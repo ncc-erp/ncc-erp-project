@@ -3,22 +3,20 @@ using Abp.Domain.Entities.Auditing;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using static ProjectManagement.Constants.Enum.ProjectEnum;
 using System.Text;
 
 namespace ProjectManagement.Entities
 {
-    public class ProjectDailyReport : FullAuditedEntity<long>, IMayHaveTenant
+    public class MeetingReportCriteria : FullAuditedEntity<long>, IMayHaveTenant
     {
-        [Column(TypeName = "date")]
-        public DateTime Date { get; set; } 
-
+        public string CriteriaName { get; set; }
         public string Content { get; set; }
-
+        public MeetingReportCriteriaStatus Status { get; set; } = MeetingReportCriteriaStatus.Green;
+        public long WeeklySummaryId { get; set; }
+        
         [ForeignKey(nameof(WeeklySummaryId))]
         public ProjectWeeklySummary WeeklySummary { get; set; }
-
-        public long WeeklySummaryId { get; set; }
-
         public int? TenantId { get; set; }
     }
 }

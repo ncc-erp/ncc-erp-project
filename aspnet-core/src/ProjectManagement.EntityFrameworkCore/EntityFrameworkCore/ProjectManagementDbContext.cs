@@ -105,7 +105,7 @@ namespace ProjectManagement.EntityFrameworkCore
         public DbSet<Punishment> Punishments { get; set; }
         public DbSet<WeeklyContributionHistory> WeeklyContributionHistories { get; set; }
         public DbSet<ProjectWeeklySummary> ProjectWeeklySummaries { get; set; }
-        public DbSet<ProjectDailyReport> ProjectDailyReports { get; set; } 
+        public DbSet<MeetingReportCriteria> MeetingReportCriterias { get; set; } 
         public ProjectManagementDbContext(DbContextOptions<ProjectManagementDbContext> options)
             : base(options)
         {

@@ -374,5 +374,11 @@
             Create = 0,
             Update = 1
         }
+        public enum MeetingReportCriteriaStatus
+        {
+            Red = 0,
+            Yellow = 1,
+            Green = 2
+        }
     }
 }

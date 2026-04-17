@@ -36,6 +36,8 @@ import { CriteriaService } from '@app/service/api/criteria.service';
 import { ProjectCriteriaResultService } from '@app/service/api/project-criteria-result.service';
 import { APP_ENUMS } from '@shared/AppEnums';
 import { GuideLineDialogComponent } from '@app/modules/pm-management/list-project/list-project-detail/weekly-report/guide-line-dialog/guide-line-dialog/guide-line-dialog.component';
+import { ProjectDailyMeetingService } from '@app/service/api/project-daily-meeting.service';
+import { MeetingReportCriteriaDetailDto, GetProjectDailyMeetingsDto } from '@app/service/model/project-daily-meeting.dto';
 
 @Component({
   selector: 'app-training-weekly-report',
@@ -120,9 +122,9 @@ export class TrainingWeeklyReportComponent extends AppComponentBase implements O
   totalNormalWorkingTime1: number = 0;
   totalOverTime1: number = 0;
   totalNormalWorkingTimeOfWeekly1: number = 0;
-    overTimeNoCharge1: number = 0;
-    totalNormalWorkingTimeStandard: number = 0;
-    totalNormalWorkingTimeStandard1: number = 0;
+  overTimeNoCharge1: number = 0;
+  totalNormalWorkingTimeStandard: number = 0;
+  totalNormalWorkingTimeStandard1: number = 0;
   public projectCurrentSupportUser: any = []
   public isSentReport: boolean;
   public searchPmReport: string = "";
@@ -136,6 +138,8 @@ export class TrainingWeeklyReportComponent extends AppComponentBase implements O
   public processCriteria: boolean = false;
   public isShowActionPM: boolean;
   public isValidCriteria: boolean;
+  public weeklySummaryData = {} as GetProjectDailyMeetingsDto;
+  public meetingCriteriaStatusKeys: string[] = Object.keys(this.APP_ENUM.MeetingReportCriteriaStatus);
 
   public defaultStatus = this.APP_ENUM.PMReportProjectIssueStatus[this.issueStatusList[0]];
   Projects_TrainingProjects_ProjectDetail_TabWeeklyReport_View = PERMISSIONS_CONSTANT.Projects_TrainingProjects_ProjectDetail_TabWeeklyReport_View
@@ -184,16 +188,17 @@ export class TrainingWeeklyReportComponent extends AppComponentBase implements O
     private reportService: PMReportProjectService,
     private router: Router,
     private pjCriteriaService: CriteriaService,
-    private pjCriteriaResultService: ProjectCriteriaResultService
+    private pjCriteriaResultService: ProjectCriteriaResultService,
+    private pjDailyMeetingService: ProjectDailyMeetingService
   ) {
     super(injector);
     this.projectId = Number(route.snapshot.queryParamMap.get("id"));
     this.projectType = route.snapshot.queryParamMap.get("type");
 
-      this.isShowActionPM = this.permission.isGranted(this.Projects_TrainingProjects_ProjectDetail_TabWeeklyReport_ProjectIssue_Edit) ||
+    this.isShowActionPM = this.permission.isGranted(this.Projects_TrainingProjects_ProjectDetail_TabWeeklyReport_ProjectIssue_Edit) ||
       this.permission.isGranted(this.Projects_TrainingProjects_ProjectDetail_TabWeeklyReport_ProjectIssue_Delete) ||
-        this.permission.isGranted(this.Projects_TrainingProjects_ProjectDetail_TabWeeklyReport_ProjectIssue_SetDone) ||
-        this.permission.isGranted(this.Projects_TrainingProjects_ProjectDetail_TabWeeklyReport_ProjectIssue_AddNewIssue);
+      this.permission.isGranted(this.Projects_TrainingProjects_ProjectDetail_TabWeeklyReport_ProjectIssue_SetDone) ||
+      this.permission.isGranted(this.Projects_TrainingProjects_ProjectDetail_TabWeeklyReport_ProjectIssue_AddNewIssue);
   }
   ngOnInit(): void {
     this.getAllPmReport();
@@ -205,10 +210,10 @@ export class TrainingWeeklyReportComponent extends AppComponentBase implements O
     this.mondayOf5weeksAgo = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
     this.mondayOf5weeksAgo = moment(this.mondayOf5weeksAgo.setDate(this.mondayOf5weeksAgo.getDate() - 28)).format("YYYY-MM-DD")
     this.lastWeekSunday = moment(new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 6)).format("YYYY-MM-DD");
-      this.getUser();
-      this._layoutStore.sidebarExpanded.subscribe((value) => {
-        this.sidebarExpanded = value;
-      });
+    this.getUser();
+    this._layoutStore.sidebarExpanded.subscribe((value) => {
+      this.sidebarExpanded = value;
+    });
 
   }
   public startTimmer() {
@@ -261,6 +266,7 @@ export class TrainingWeeklyReportComponent extends AppComponentBase implements O
       this.getFuturereport();
       this.getProjectProblem();
       this.getChangedResource();
+      this.getProjectDailyMeeting();
     })
   }
 
@@ -316,8 +322,8 @@ export class TrainingWeeklyReportComponent extends AppComponentBase implements O
             }
           }
         }
-    this.setTotalHealth();
-    })
+        this.setTotalHealth();
+      })
   }
 
   setTotalHealth() {
@@ -436,7 +442,7 @@ export class TrainingWeeklyReportComponent extends AppComponentBase implements O
         }
       }
     );
-    }
+  }
 
   getProjectInfo() {
     this.isLoading = true;
@@ -488,7 +494,7 @@ export class TrainingWeeklyReportComponent extends AppComponentBase implements O
         if (data.result) {
           this.problemList = [];
           for (let i = 0; i < data.result.result.length; i++) {
-              this.problemList.push(data.result.result[i]);
+            this.problemList.push(data.result.result[i]);
           }
 
           this.projectHealth = data.result.projectHealth;
@@ -802,13 +808,13 @@ export class TrainingWeeklyReportComponent extends AppComponentBase implements O
         .pipe(catchError(this.pmReportProjectService.handleError)).subscribe(data => {
           this.totalNormalWorkingTime = 0
           this.totalOverTime = 0
-            this.totalNormalWorkingTimeOfWeekly = 0
-            this.totalNormalWorkingTime1 = 0
-            this.totalNormalWorkingTimeOfWeekly1 = 0
-            this.totalOverTime1 = 0
-            this.overTimeNoCharge1 = 0
-            this.totalNormalWorkingTimeStandard = 0
-            this.totalNormalWorkingTimeStandard1 = 0
+          this.totalNormalWorkingTimeOfWeekly = 0
+          this.totalNormalWorkingTime1 = 0
+          this.totalNormalWorkingTimeOfWeekly1 = 0
+          this.totalOverTime1 = 0
+          this.overTimeNoCharge1 = 0
+          this.totalNormalWorkingTimeStandard = 0
+          this.totalNormalWorkingTimeStandard1 = 0
 
           this.projectCurrentResource = data.result
           this.projectCurrentResource.forEach(user => {
@@ -858,6 +864,7 @@ export class TrainingWeeklyReportComponent extends AppComponentBase implements O
     this.getProjectProblem();
     this.getProjectInfo();
     this.getAllCriteria();
+    this.getProjectDailyMeeting();
     this.isEditingNote = false;
     this.projectHealth = this.APP_ENUM.ProjectHealth[this.selectedReport.projectHealth]
   }
@@ -897,7 +904,7 @@ export class TrainingWeeklyReportComponent extends AppComponentBase implements O
           left:'25%',
           width:'80%',
           data: ['Total normal', `${hasOtValue ? 'Total OT' : ''}`, `${hasOfficalDataNormal ? 'Normal Offical' : ''}`
-          , `${hasOfficalDataOT ? 'OT Offical' : ''}`, `${hasTempDataNormal ? 'Normal Temp' : ''}`,
+            , `${hasOfficalDataOT ? 'OT Offical' : ''}`, `${hasTempDataNormal ? 'Normal Temp' : ''}`,
           `${hasTempDataOT ? 'OT Temp' : ''}`,`${hasOtNoCharge ? 'OT NoCharge' : ''}`],
         },
         color: ['#211f1f', 'red', 'blue', 'orange', '#787a7a', 'purple', 'green'],
@@ -1120,34 +1127,34 @@ export class TrainingWeeklyReportComponent extends AppComponentBase implements O
       this.overTimeNoCharge += user.overTimeNoCharge
     })
   }
-    GetTimesheetOfUserInProjectNew(projectCode, user, startTime, endTime) {
-        this.pmReportProjectService.GetTimesheetOfUserInProjectNew(projectCode, user.emailAddress, startTime, endTime).subscribe(rs => {
-            user.normalWorkingTime = rs.result ? rs.result.normalWorkingTime : 0
-            user.overTime = rs.result ? rs.result.overTime : 0
-            user.overTimeNoCharge = rs.result ? rs.result.overTimeNoCharge : 0
-            user.normalWorkingTimeAll = rs.result ? rs.result.normalWorkingTimeAll : 0
-            user.normalWorkingTimeStandard = rs.result ? rs.result.normalWorkingTimeStandard : 0
-            this.totalNormalWorkingTime += user.normalWorkingTime
-            this.totalOverTime += user.overTime
-            this.overTimeNoCharge += user.overTimeNoCharge
-            this.totalNormalWorkingTimeOfWeekly += user.normalWorkingTimeAll
-            this.totalNormalWorkingTimeStandard += user.normalWorkingTimeStandard
-        })
-    }
-    GetTimesheetOfSupportUserInProject(projectCode, user, startTime, endTime) {
-        this.pmReportProjectService.GetTimesheetOfUserInProjectNew(projectCode, user.emailAddress, startTime, endTime).subscribe(rs => {
-            user.normalWorkingTime = rs.result ? rs.result.normalWorkingTime : 0
-            user.overTime = rs.result ? rs.result.overTime : 0
-            user.overTimeNoCharge = rs.result ? rs.result.overTimeNoCharge : 0
-            user.normalWorkingTimeAll = rs.result ? rs.result.normalWorkingTimeAll : 0
-            user.normalWorkingTimeStandard = rs.result ? rs.result.normalWorkingTimeStandard : 0
-            this.totalNormalWorkingTime1 += user.normalWorkingTime
-            this.totalOverTime1 += user.overTime
-            this.overTimeNoCharge1 += user.overTimeNoCharge
-            this.totalNormalWorkingTimeOfWeekly1 += user.normalWorkingTimeAll
-            this.totalNormalWorkingTimeStandard1 += user.normalWorkingTimeStandard
-        })
-    }
+  GetTimesheetOfUserInProjectNew(projectCode, user, startTime, endTime) {
+    this.pmReportProjectService.GetTimesheetOfUserInProjectNew(projectCode, user.emailAddress, startTime, endTime).subscribe(rs => {
+      user.normalWorkingTime = rs.result ? rs.result.normalWorkingTime : 0
+      user.overTime = rs.result ? rs.result.overTime : 0
+      user.overTimeNoCharge = rs.result ? rs.result.overTimeNoCharge : 0
+      user.normalWorkingTimeAll = rs.result ? rs.result.normalWorkingTimeAll : 0
+      user.normalWorkingTimeStandard = rs.result ? rs.result.normalWorkingTimeStandard : 0
+      this.totalNormalWorkingTime += user.normalWorkingTime
+      this.totalOverTime += user.overTime
+      this.overTimeNoCharge += user.overTimeNoCharge
+      this.totalNormalWorkingTimeOfWeekly += user.normalWorkingTimeAll
+      this.totalNormalWorkingTimeStandard += user.normalWorkingTimeStandard
+    })
+  }
+  GetTimesheetOfSupportUserInProject(projectCode, user, startTime, endTime) {
+    this.pmReportProjectService.GetTimesheetOfUserInProjectNew(projectCode, user.emailAddress, startTime, endTime).subscribe(rs => {
+      user.normalWorkingTime = rs.result ? rs.result.normalWorkingTime : 0
+      user.overTime = rs.result ? rs.result.overTime : 0
+      user.overTimeNoCharge = rs.result ? rs.result.overTimeNoCharge : 0
+      user.normalWorkingTimeAll = rs.result ? rs.result.normalWorkingTimeAll : 0
+      user.normalWorkingTimeStandard = rs.result ? rs.result.normalWorkingTimeStandard : 0
+      this.totalNormalWorkingTime1 += user.normalWorkingTime
+      this.totalOverTime1 += user.overTime
+      this.overTimeNoCharge1 += user.overTimeNoCharge
+      this.totalNormalWorkingTimeOfWeekly1 += user.normalWorkingTimeAll
+      this.totalNormalWorkingTimeStandard1 += user.normalWorkingTimeStandard
+    })
+  }
   GetTimesheetWeeklyChartOfUserGroupInProject(emailList) {
     // monday at 5 weeks ago =  last week mondy - 5 week (35 days)
 
@@ -1181,8 +1188,8 @@ export class TrainingWeeklyReportComponent extends AppComponentBase implements O
     })
     ref.afterClosed().subscribe(rs => {
       if (rs) {
-       this.getCurrentResourceOfProject(this.projectInfo.projectCode)
-       this.getChangedResource()
+        this.getCurrentResourceOfProject(this.projectInfo.projectCode)
+        this.getChangedResource()
       }
     })
   }
@@ -1266,136 +1273,218 @@ export class TrainingWeeklyReportComponent extends AppComponentBase implements O
 
     public buildBillChart(billData,EffortData) {
 
-      // var chartDom = document.getElementById(user.userId.toString());
-      // var myChart = echarts.init(chartDom);
+    // var chartDom = document.getElementById(user.userId.toString());
+    // var myChart = echarts.init(chartDom);
 
-      setTimeout(() => {
+    setTimeout(() => {
 
-        let chartDom = document.getElementById('bill-chart');
+      let chartDom = document.getElementById('bill-chart');
 
-        let myChart = echarts.init(chartDom);
-        let option: echarts.EChartsOption;
-        option = {
-          tooltip: {
-            trigger: 'axis',
-          },
-          title: {
-            text: 'Bill info'
-          },
-          grid: {
-            left: '3%',
-            right: '4%',
-            bottom: '1%',
-            containLabel: true
-          },
-          legend: {
+      let myChart = echarts.init(chartDom);
+      let option: echarts.EChartsOption;
+      option = {
+        tooltip: {
+          trigger: 'axis',
+        },
+        title: {
+          text: 'Bill info'
+        },
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '1%',
+          containLabel: true
+        },
+        legend: {
             data: ['Bill.ManMonth', 'Bill.ManDay', `${EffortData?.manDays? 'Effort.ManDay' : ''}`]
+        },
+        xAxis: [
+          {
+            axisLabel: {
+              padding: [4, 0, 0, 0]
+            },
+            type: 'category',
+            data: billData.labels,
+            boundaryGap: false,
+          }
+        ],
+        yAxis: [
+          {
+            axisLabel: {
+              padding: [0, 13, 0, 13]
+            },
+            type: 'value',
+            name: 'ManMonth',
+
           },
-          xAxis: [
-            {
-              axisLabel: {
-                padding: [4, 0, 0, 0]
-              },
-              type: 'category',
-              data: billData.labels,
-              boundaryGap: false,
-            }
-          ],
-          yAxis: [
-            {
-              axisLabel: {
-                padding: [0, 13, 0, 13]
-              },
-              type: 'value',
-              name: 'ManMonth',
-
+          {
+            axisLabel: {
+              padding: [0, 13, 0, 13]
             },
-            {
-              axisLabel: {
-                padding: [0, 13, 0, 13]
-              },
-              type: 'value',
-              name: 'ManDay',
+            type: 'value',
+            name: 'ManDay',
 
-            }
-          ],
-          series: [
+          }
+        ],
+        series: [
 
-            {
-              barWidth: 30,
-              name: 'Bill.ManMonth',
-              type: 'bar',
-              data: billData.manMonths
-            },
-            {
-              name: 'Bill.ManDay',
-              type: 'line',
-              yAxisIndex: 1,
-              data: billData.manDays
-            },
-            {
-              name: 'Effort.ManDay',
-              type: 'line',
-              yAxisIndex: 1,
-              data: EffortData?.manDays
-            }
-          ]
-        };
-        option && myChart.setOption(option);
-      }, 1)
-    }
+          {
+            barWidth: 30,
+            name: 'Bill.ManMonth',
+            type: 'bar',
+            data: billData.manMonths
+          },
+          {
+            name: 'Bill.ManDay',
+            type: 'line',
+            yAxisIndex: 1,
+            data: billData.manDays
+          },
+          {
+            name: 'Effort.ManDay',
+            type: 'line',
+            yAxisIndex: 1,
+            data: EffortData?.manDays
+          }
+        ]
+      };
+      option && myChart.setOption(option);
+    }, 1)
+  }
 
 
-    addPlanResource() {
-      let ref = this.dialog.open(AddFutureResourceDialogComponent, {
-        width: "700px",
-        data: {
-          projectId: this.projectId,
-          projectName: this.projectInfo.projectName
-        }
-      })
-      ref.afterClosed().subscribe(rs => {
-        if (rs) {
-          this.getFuturereport()
-        }
-      })
-    }
-    editResourcePlan(resource) {
-      let item = {
-        projectUserId:resource.id,
-        fullName: resource.fullName,
+  addPlanResource() {
+    let ref = this.dialog.open(AddFutureResourceDialogComponent, {
+      width: "700px",
+      data: {
         projectId: this.projectId,
-        projectRole: resource.projectRole,
-        userId: resource.userId,
-        startDate: resource.startDate,
-        isPool: resource.isPool,
-        allocatePercentage: resource.allocatePercentage,
-        startTime: resource.startTime
+        projectName: this.projectInfo.projectName
       }
-      let ref = this.dialog.open(AddFutureResourceDialogComponent, {
-        width: "700px",
-        data: {
-          command: "edit",
-          item: item
-        }
-      })
-      ref.afterClosed().subscribe(rs => {
-        if (rs) {
-          this.getFuturereport()
-        }
-      })
+    })
+    ref.afterClosed().subscribe(rs => {
+      if (rs) {
+        this.getFuturereport()
+      }
+    })
+  }
+  editResourcePlan(resource) {
+    let item = {
+        projectUserId:resource.id,
+      fullName: resource.fullName,
+      projectId: this.projectId,
+      projectRole: resource.projectRole,
+      userId: resource.userId,
+      startDate: resource.startDate,
+      isPool: resource.isPool,
+      allocatePercentage: resource.allocatePercentage,
+      startTime: resource.startTime
     }
+    let ref = this.dialog.open(AddFutureResourceDialogComponent, {
+      width: "700px",
+      data: {
+        command: "edit",
+        item: item
+      }
+    })
+    ref.afterClosed().subscribe(rs => {
+      if (rs) {
+        this.getFuturereport()
+      }
+    })
+  }
     isShowChangeDoneText(issue){
-      return this.APP_ENUM.PMReportProjectIssueStatus[issue.status] == this.APP_ENUM.PMReportProjectIssueStatus.InProgress
-    }
+    return this.APP_ENUM.PMReportProjectIssueStatus[issue.status] == this.APP_ENUM.PMReportProjectIssueStatus.InProgress
+  }
     isShowChangeInProgressText(issue){
-      return this.APP_ENUM.PMReportProjectIssueStatus[issue.status] == this.APP_ENUM.PMReportProjectIssueStatus.Done
+    return this.APP_ENUM.PMReportProjectIssueStatus[issue.status] == this.APP_ENUM.PMReportProjectIssueStatus.Done
   }
   showGuideLine(item) {
     const show = this.dialog.open(GuideLineDialogComponent,{
       width: "60%",
       data:item
-      })
+    })
+  }
+
+  public getProjectDailyMeeting() {
+    if (!this.selectedReport || !this.selectedReport.reportId) {
+      return;
     }
+    this.pjDailyMeetingService
+      .getProjectWeeklySummary(this.projectId, this.selectedReport.reportId)
+      .subscribe((res) => {
+        if (res && res.result) {
+          const raw = res.result;
+          this.weeklySummaryData = {
+            id: raw.id,
+            projectId: raw.projectId || this.projectId,
+            pmReportId: raw.pmReportId || this.selectedReport.reportId,
+            editMode: false,
+            criterias: (raw.criterias || []).map((item: MeetingReportCriteriaDetailDto) => ({
+              ...item,
+              originalContent: item.content ?? '',
+              editMode: false
+            })),
+          };
+        }
+      });
+  }
+  public syncMeetingCriteria() {
+    this.getProjectDailyMeeting();
+    abp.notify.success('Synced latest meeting report data');
+  }
+
+  public changeMeetingCriteriaStatus(criteria: any) {
+    const payload = {
+      criteriaName: criteria.criteriaName,
+      content: criteria.content ?? '',
+      status: criteria.status,
+    };
+    this.pjDailyMeetingService.updateMeetingReportCriteria(criteria.id, payload).subscribe(
+      () => abp.notify.success(`Updated status for "${criteria.criteriaName}" successfully`),
+    );
+  }
+
+  public editMeetingCriteria(criteria: any) {
+    criteria.editMode = true;
+    criteria._editContent = criteria.content;
+    criteria._editStatus = criteria.status;
+  }
+
+  public cancelEditMeetingCriteria(criteria: any) {
+    criteria.editMode = false;
+    criteria.content = criteria._editContent;
+    criteria.status = criteria._editStatus;
+  }
+
+  public saveMeetingCriteria(criteria: any) {
+    const payload = {
+      criteriaName: criteria.criteriaName,
+      content: criteria.content ?? '',
+      status: criteria.status,
+    };
+    this.pjDailyMeetingService.updateMeetingReportCriteria(criteria.id, payload).subscribe(
+      () => {
+        abp.notify.success(`Updated "${criteria.criteriaName}" successfully`);
+        criteria.editMode = false;
+      },
+    );
+  }
+
+  public deleteMeetingCriteria(criteria: any) {
+    abp.message.confirm(
+      `Are you sure you want to delete "${criteria.criteriaName}"?`,
+      '',
+      (result: boolean) => {
+        if (result) {
+          this.pjDailyMeetingService.deleteMeetingReportCriteria(criteria.id).subscribe(() => {
+            abp.notify.success(`Deleted "${criteria.criteriaName}" successfully`);
+            this.weeklySummaryData.criterias = this.weeklySummaryData.criterias.filter(
+              (c) => c.id !== criteria.id
+            );
+          });
+        }
+      }
+    );
+  }
 }
 

@@ -436,54 +436,49 @@ namespace ProjectManagement.APIs.Public
                 return new BadRequestObjectResult("This project is not in the current weekly report.");
             }
 
-            var existingSummary = await WorkScope.GetAll<ProjectWeeklySummary>()
+            var existingReport = await WorkScope.GetAll<ProjectWeeklySummary>()
                 .FirstOrDefaultAsync(x => x.ProjectId == project.Id && x.PMReportId == activeReport.Id);
 
-            if (existingSummary != null)
+            if (existingReport == null)
             {
-                existingSummary.OverallSummary = input.OverallSummary;
-                await WorkScope.UpdateAsync(existingSummary);
-            }
-            else
-            {
-                existingSummary = new ProjectWeeklySummary
+                existingReport = new ProjectWeeklySummary
                 {
                     ProjectId = project.Id,
                     PMReportId = activeReport.Id,
-                    OverallSummary = input.OverallSummary,
                     TenantId = AbpSession.TenantId
                 };
-                existingSummary.Id = await WorkScope.InsertAndGetIdAsync(existingSummary);
+                existingReport.Id = await WorkScope.InsertAndGetIdAsync(existingReport);
             }
 
-            if (input.DailyReports?.Any() == true)
+            if (input.Criterias?.Any() == true)
             {
-                var currentDailies = await WorkScope.GetAll<ProjectDailyReport>()
-                    .Where(x => x.WeeklySummaryId == existingSummary.Id)
+                var existingCriterias = await WorkScope.GetAll<MeetingReportCriteria>()
+                    .Where(x => x.WeeklySummaryId == existingReport.Id)
                     .ToListAsync();
 
-                var listToUpdate = new List<ProjectDailyReport>();
-                var listToInsert = new List<ProjectDailyReport>();
+                var listToUpdate = new List<MeetingReportCriteria>();
+                var listToInsert = new List<MeetingReportCriteria>();
 
-                foreach (var dto in input.DailyReports)
+                foreach (var dto in input.Criterias)
                 {
-                    var reportDate = dto.Date.Date;
-                    var match = currentDailies.FirstOrDefault(x => x.Date.Date == reportDate);
+                    var match = existingCriterias.FirstOrDefault(x => x.CriteriaName == dto.CriteriaName);
 
                     if (match != null)
                     {
-                        if (match.Content != dto.Content)
+                        if (match.Content != dto.Content || match.Status != dto.Status)
                         {
                             match.Content = dto.Content;
+                            match.Status = dto.Status; 
                             listToUpdate.Add(match);
                         }
                     }
                     else
                     {
-                        listToInsert.Add(new ProjectDailyReport
+                        listToInsert.Add(new MeetingReportCriteria
                         {
-                            WeeklySummaryId = existingSummary.Id,
-                            Date = reportDate,
+                            WeeklySummaryId = existingReport.Id,
+                            CriteriaName = dto.CriteriaName,
+                            Status = dto.Status,
                             Content = dto.Content,
                             TenantId = AbpSession.TenantId
                         });

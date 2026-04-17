@@ -3,14 +3,14 @@ export interface GetProjectDailyMeetingsDto {
     pmReportId: number;
     projectId: number;
     criterias: MeetingReportCriteriaDetailDto[];
+    editMode?: boolean;
+
 }
 export interface MeetingReportCriteriaDetailDto {
     id: number;
     criteriaName: string;
+    originalContent?: string;
     content: string;
     status: number;
-}
-export interface ProjectDailyMeetingDto extends GetProjectDailyMeetingsDto {
-    summary?: string;
     editMode?: boolean;
 }

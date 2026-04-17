@@ -42,7 +42,7 @@ import { TimesheetProjectService } from "@app/service/api/timesheet-project.serv
 import { ProjectCriteriaResultService } from "../../../../../service/api/project-criteria-result.service";
 import { ProjectCriteriaResultDto } from "../../../../../service/model/project-criteria-result.dto";
 import { ProjectDailyMeetingService } from "../../../../../service/api/project-daily-meeting.service";
-import { MeetingReportCriteriaDetailDto, ProjectDailyMeetingDto } from "../../../../../service/model/project-daily-meeting.dto";
+import { MeetingReportCriteriaDetailDto, GetProjectDailyMeetingsDto } from "../../../../../service/model/project-daily-meeting.dto";
 import { cloneDeep } from "lodash-es";
 import { map } from "rxjs/operators";
 import { Observable, Observer } from "rxjs";
@@ -162,7 +162,6 @@ export class WeeklyReportComponent
   public isShowWeeklyList: boolean = false;
   public isShowFutureList: boolean = false;
   public projectInfo = {} as ProjectInfoDto;
-  public overallSummary: string = "";
   public listDailyReports: any[] = [];
   public projectCurrentResource: any = [];
   public mondayOf5weeksAgo: any;
@@ -540,7 +539,6 @@ export class WeeklyReportComponent
             id: raw.id,
             projectId: raw.projectId || this.projectId,
             pmReportId: raw.pmReportId || this.selectedReport.reportId,
-            summary: '',
             editMode: false,
             criterias: (raw.criterias || []).map((item: MeetingReportCriteriaDetailDto) => ({
               ...item,
@@ -2479,48 +2477,4 @@ export class WeeklyReportComponent
     // }
     return "";
   }
-
-  // public saveOverallSummary() {
-  //   const payload = {
-  //     id: this.weeklySummaryData.id,
-  //     summary: this.overallSummary
-  //   };
-
-  //   this.pjDailyMeetingService.updateSummary(payload).subscribe((res) => {
-  //     abp.notify.success("Update Weekly Summary successfully");
-  //     this.weeklySummaryData.editMode = false;
-
-  //     if (res && res.result) {
-  //       this.weeklySummaryData.summary = res.result.summary;
-  //       this.overallSummary = res.result.summary;
-  //     }
-  //   });
-  // }
-
-  // public cancelEditSummary() {
-  //   this.overallSummary = this.weeklySummaryData.summary;
-  //   this.weeklySummaryData.editMode = false;
-  // }
-
-  // public saveDailyDetail(item: ProjectDailyReportDto, index: number) {
-  //   const payload = {
-  //     id: item.id,
-  //     content: item.content
-  //   };
-
-  //   this.pjDailyMeetingService.updateDailyReport(payload).subscribe((res) => {
-  //     abp.notify.success(`Update Daily Report successfully`);
-  //     item.editMode = false;
-
-  //     if (res && res.result) {
-  //       item.content = res.result.content;
-  //       this.listPreEditDailyReports[index].content = item.content;
-  //     }
-  //   });
-  // }
-
-  // public cancelEditDailyReport(index: number) {
-  //   this.listDailyReports[index].content = this.listPreEditDailyReports[index].content;
-  //   this.listDailyReports[index].editMode = false;
-  // }
 }

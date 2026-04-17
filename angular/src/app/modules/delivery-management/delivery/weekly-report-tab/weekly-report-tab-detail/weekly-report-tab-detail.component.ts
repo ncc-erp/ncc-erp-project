@@ -36,7 +36,7 @@ import { ProjectCriteriaResultService } from '@app/service/api/project-criteria-
 import { ProjectCriteriaDto } from '@app/service/model/criteria-category.dto';
 import { ProjectCriteriaResultDto } from '@app/service/model/project-criteria-result.dto';
 import { ProjectDailyMeetingService } from "../../../../../service/api/project-daily-meeting.service";
-import { MeetingReportCriteriaDetailDto, ProjectDailyMeetingDto } from "../../../../../service/model/project-daily-meeting.dto";
+import { MeetingReportCriteriaDetailDto, GetProjectDailyMeetingsDto } from "../../../../../service/model/project-daily-meeting.dto";
 import { cloneDeep } from 'lodash';
 import { GuideLineDialogComponent } from '@app/modules/pm-management/list-project/list-project-detail/weekly-report/guide-line-dialog/guide-line-dialog/guide-line-dialog.component';
 import { ReportGuidelineDetailComponent } from './report-guideline-detail/report-guideline-detail.component';
@@ -173,9 +173,8 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
   public isShowFutureList: boolean = false;
   public isShowRisks: boolean = false;
   public projectInfo = {} as ProjectInfoDto
-  public weeklySummaryData = {} as ProjectDailyMeetingDto;
+  public weeklySummaryData = {} as GetProjectDailyMeetingsDto;
   public meetingCriteriaStatusKeys: string[] = Object.keys(this.APP_ENUM.MeetingReportCriteriaStatus);
-  public overallSummary: string = "";
   public listDailyReports: any[] = [];
   public projectCurrentResource: any = []
   public projectCurrentSupportUser: any = []
@@ -443,13 +442,8 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
 
   public getProjectDailyMeeting() {
     if (!this.pmReportId || !this.projectId) {
-      this.overallSummary = "";
-      this.listDailyReports = [];
       return;
     }
-
-    this.listDailyReports = [];
-
     this.pjDailyMeetingService
       .getProjectWeeklySummary(this.projectId, this.pmReportId)
       .subscribe((res) => {
@@ -460,7 +454,6 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
             id: raw.id,
             projectId: raw.projectId,
             pmReportId: raw.pmReportId,
-            summary: '',
             editMode: false,
             criterias: (raw.criterias || []).map((item: MeetingReportCriteriaDetailDto) => ({
               ...item,
@@ -468,11 +461,7 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
               editMode: false
             })),
           };
-          this.listDailyReports = [];
-        } else {
-          this.listDailyReports = [];
         }
-        this.listPreEditDailyReports = cloneDeep(this.listDailyReports);
       });
   }
 
@@ -2123,48 +2112,4 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
   isShowEditContribute() {
     return this.isActive
   }
-
-  // public saveOverallSummary() {
-  //   const payload = {
-  //     id: this.weeklySummaryData.id,
-  //     summary: this.overallSummary
-  //   };
-
-  //   this.pjDailyMeetingService.updateSummary(payload).subscribe((res) => {
-  //     abp.notify.success("Update Weekly Summary successfully");
-  //     this.weeklySummaryData.editMode = false;
-
-  //     if (res && res.result) {
-  //       this.weeklySummaryData.summary = res.result.summary;
-  //       this.overallSummary = res.result.summary;
-  //     }
-  //   });
-  // }
-
-  // public cancelEditSummary() {
-  //   this.overallSummary = this.weeklySummaryData.summary;
-  //   this.weeklySummaryData.editMode = false;
-  // }
-
-  // public saveDailyDetail(item: any, index: number) {
-  //   const payload = {
-  //     id: item.id,
-  //     content: item.content
-  //   };
-
-  //   this.pjDailyMeetingService.updateDailyReport(payload).subscribe((res) => {
-  //     abp.notify.success(`Update Daily Report successfully`);
-  //     item.editMode = false;
-
-  //     if (res && res.result) {
-  //       item.content = res.result.content;
-  //       this.listPreEditDailyReports[index].content = item.content;
-  //     }
-  //   });
-  // }
-
-  // public cancelEditDailyReport(index: number) {
-  //   this.listDailyReports[index].content = this.listPreEditDailyReports[index].content;
-  //   this.listDailyReports[index].editMode = false;
-  // }
 }

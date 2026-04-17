@@ -501,7 +501,7 @@ mat-list-item.checked {
 }
 
 .meeting-report-scroll {
-    max-height: 300px;
+    max-height: 700px;
     overflow-y: auto;
     overflow-x: hidden;
     padding-right: 6px;

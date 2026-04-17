@@ -35,7 +35,7 @@ import { ProjectCriteriaResultService } from '@app/service/api/project-criteria-
 import { ProjectCriteriaDto } from '@app/service/model/criteria-category.dto';
 import { ProjectCriteriaResultDto } from '@app/service/model/project-criteria-result.dto';
 import { ProjectDailyMeetingService } from "../../../../../service/api/project-daily-meeting.service";
-import { MeetingReportCriteriaDetailDto, ProjectDailyMeetingDto } from "../../../../../service/model/project-daily-meeting.dto";
+import { MeetingReportCriteriaDetailDto, GetProjectDailyMeetingsDto } from "../../../../../service/model/project-daily-meeting.dto";
 import { cloneDeep } from "lodash-es";
 import { APP_ENUMS } from '@shared/AppEnums';
 import { GuideLineDialogComponent } from '@app/modules/pm-management/list-project/list-project-detail/weekly-report/guide-line-dialog/guide-line-dialog/guide-line-dialog.component';
@@ -103,8 +103,7 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
   public isShowWeeklyList: boolean = false;
   public isShowFutureList: boolean = false;
   public projectInfo = {} as ProjectInfoDto
-  public weeklySummaryData = {} as ProjectDailyMeetingDto;
-  public overallSummary: string = "";
+  public weeklySummaryData = {} as GetProjectDailyMeetingsDto;
   public listDailyReports: any[] = [];
   public projectCurrentResource: any = []
   public mondayOf5weeksAgo: any
@@ -349,7 +348,6 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
             id: raw.id,
             projectId: raw.projectId || this.projectId,
             pmReportId: raw.pmReportId || this.selectedReport.reportId,
-            summary: '',
             editMode: false,
             criterias: (raw.criterias || []).map((item: MeetingReportCriteriaDetailDto) => ({
               ...item,
@@ -1506,28 +1504,6 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
       data: item
     })
   }
-  // public saveOverallSummary() {
-  //   // Weekly summary is currently a UI-only field (no backend endpoint / db column).
-  //   this.weeklySummaryData.summary = this.overallSummary;
-  //   this.weeklySummaryData.editMode = false;
-  //   abp.notify.success("Update Weekly Summary successfully");
-  // }
-
-  // public cancelEditSummary() {
-  //   this.overallSummary = this.weeklySummaryData.summary;
-  //   this.weeklySummaryData.editMode = false;
-  // }
-
-  // public saveDailyDetail(item: any, index: number) {
-  //   abp.notify.warn('Daily report editing is no longer supported. Please use Meeting Report Criteria instead.');
-  //   item.editMode = false;
-  // }
-
-  // public cancelEditDailyReport(index: number) {
-  //   if (this.listDailyReports[index] && this.listPreEditDailyReports[index]) {
-  //     this.listDailyReports[index].content = this.listPreEditDailyReports[index].content;
-  //   }
-  //   this.listDailyReports[index].editMode = false;
-  // }
+ 
 }
 

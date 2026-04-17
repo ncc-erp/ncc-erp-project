@@ -10,7 +10,7 @@
     {
         public class DailyMeetingAppService : ProjectManagementAppServiceBase
         {
-        [AbpAllowAnonymous]
+        [AbpAuthorize]
         [HttpGet]
         public async Task<GetProjectDailyMeetingsDto> Get(long projectId, long pmReportId)
         {

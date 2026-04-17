@@ -37,7 +37,7 @@ import { ProjectCriteriaResultService } from '@app/service/api/project-criteria-
 import { APP_ENUMS } from '@shared/AppEnums';
 import { GuideLineDialogComponent } from '@app/modules/pm-management/list-project/list-project-detail/weekly-report/guide-line-dialog/guide-line-dialog/guide-line-dialog.component';
 import { ProjectDailyMeetingService } from '@app/service/api/project-daily-meeting.service';
-import { MeetingReportCriteriaDetailDto, ProjectDailyMeetingDto } from '@app/service/model/project-daily-meeting.dto';
+import { MeetingReportCriteriaDetailDto, GetProjectDailyMeetingsDto } from '@app/service/model/project-daily-meeting.dto';
 
 @Component({
   selector: 'app-training-weekly-report',
@@ -138,7 +138,7 @@ export class TrainingWeeklyReportComponent extends AppComponentBase implements O
   public processCriteria: boolean = false;
   public isShowActionPM: boolean;
   public isValidCriteria: boolean;
-  public weeklySummaryData = {} as ProjectDailyMeetingDto;
+  public weeklySummaryData = {} as GetProjectDailyMeetingsDto;
   public meetingCriteriaStatusKeys: string[] = Object.keys(this.APP_ENUM.MeetingReportCriteriaStatus);
 
   public defaultStatus = this.APP_ENUM.PMReportProjectIssueStatus[this.issueStatusList[0]];
@@ -1418,7 +1418,6 @@ export class TrainingWeeklyReportComponent extends AppComponentBase implements O
             id: raw.id,
             projectId: raw.projectId || this.projectId,
             pmReportId: raw.pmReportId || this.selectedReport.reportId,
-            summary: '',
             editMode: false,
             criterias: (raw.criterias || []).map((item: MeetingReportCriteriaDetailDto) => ({
               ...item,

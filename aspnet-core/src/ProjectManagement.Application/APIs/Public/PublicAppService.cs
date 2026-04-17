@@ -385,10 +385,10 @@ namespace ProjectManagement.APIs.Public
             var secretCode = SettingManager.GetSettingValue(AppSettingNames.SecurityCode);
             var header = _httpContextAccessor.HttpContext.Request.Headers;
             var securityCodeHeader = header["X-Secret-Key"].ToString();
-            //if (secretCode != securityCodeHeader)
-            //{
-            //    return new BadRequestObjectResult("You do not have permission to retrieve projects.");
-            //}
+            if (secretCode != securityCodeHeader)
+            {
+                return new BadRequestObjectResult("You do not have permission to retrieve projects.");
+            }
             if (string.IsNullOrEmpty(mezonUserId))
             {
                 return new BadRequestObjectResult("Mezon User Id is required.");
@@ -411,11 +411,11 @@ namespace ProjectManagement.APIs.Public
         {
             var secretCode = SettingManager.GetSettingValue(AppSettingNames.SecurityCode);
             var header = _httpContextAccessor.HttpContext.Request.Headers;
-            //var securityCodeHeader = header["X-Secret-Key"].ToString();
-            //if (secretCode != securityCodeHeader)
-            //{
-            //    return new BadRequestObjectResult("You do not have permission to retrieve projects.");
-            //}
+            var securityCodeHeader = header["X-Secret-Key"].ToString();
+            if (secretCode != securityCodeHeader)
+            {
+                return new BadRequestObjectResult("You do not have permission to retrieve projects.");
+            }
 
             var project = await WorkScope.GetAll<Project>()
                 .FirstOrDefaultAsync(x => x.Id == input.ProjectId);

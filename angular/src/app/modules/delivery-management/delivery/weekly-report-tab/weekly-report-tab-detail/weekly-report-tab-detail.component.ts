@@ -444,6 +444,7 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
     if (!this.pmReportId || !this.projectId) {
       return;
     }
+
     this.pjDailyMeetingService
       .getProjectWeeklySummary(this.projectId, this.pmReportId)
       .subscribe((res) => {
@@ -461,6 +462,8 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
               editMode: false
             })),
           };
+        } else {
+          this.weeklySummaryData = {} as GetProjectDailyMeetingsDto
         }
       });
   }

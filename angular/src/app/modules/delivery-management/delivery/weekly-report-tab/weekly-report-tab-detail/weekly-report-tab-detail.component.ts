@@ -171,6 +171,7 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
   public isShowProblemList: boolean = false;
   public isShowWeeklyList: boolean = false;
   public isShowFutureList: boolean = false;
+  public isSyncingMeetingReport: boolean = false;
   public isShowRisks: boolean = false;
   public projectInfo = {} as ProjectInfoDto
   public weeklySummaryData = {} as GetProjectDailyMeetingsDto;
@@ -471,8 +472,34 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
 
 
   public syncMeetingCriteria() {
-    this.getProjectDailyMeeting();
-    abp.notify.success('Synced latest meeting report data');
+    if (this.isSyncingMeetingReport) {
+      return;
+    }
+
+    this.isSyncingMeetingReport = true;
+
+    this.pjDailyMeetingService
+      .syncProjectWeeklyReport(this.projectId)
+      .subscribe(
+        (res) => {
+          const result = res?.result ?? res;
+          const success = !!result?.success;
+
+          if (!success) {
+            abp.notify.error(result?.message || 'Sync data failed');
+            return;
+          }
+
+          this.getProjectDailyMeeting();
+          abp.notify.success(result?.message || 'Sync data successfully');
+        },
+        () => {
+          abp.notify.error('Sync data failed');
+        },
+      )
+      .add(() => {
+        this.isSyncingMeetingReport = false;
+      });
   }
 
   setTotalHealth() {

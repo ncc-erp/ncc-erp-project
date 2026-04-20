@@ -138,6 +138,7 @@ export class TrainingWeeklyReportComponent extends AppComponentBase implements O
   public processCriteria: boolean = false;
   public isShowActionPM: boolean;
   public isValidCriteria: boolean;
+  public isSyncingMeetingReport: boolean = false;
   public weeklySummaryData = {} as GetProjectDailyMeetingsDto;
   public meetingCriteriaStatusKeys: string[] = Object.keys(this.APP_ENUM.MeetingReportCriteriaStatus);
 
@@ -1429,8 +1430,34 @@ export class TrainingWeeklyReportComponent extends AppComponentBase implements O
       });
   }
   public syncMeetingCriteria() {
-    this.getProjectDailyMeeting();
-    abp.notify.success('Synced latest meeting report data');
+    if (this.isSyncingMeetingReport) {
+      return;
+    }
+
+    this.isSyncingMeetingReport = true;
+
+    this.pjDailyMeetingService
+      .syncProjectWeeklyReport(this.projectId)
+      .subscribe(
+        (res) => {
+          const result = res?.result ?? res;
+          const success = !!result?.success;
+
+          if (!success) {
+            abp.notify.error(result?.message || 'Sync data failed');
+            return;
+          }
+
+          this.getProjectDailyMeeting();
+          abp.notify.success(result?.message || 'Sync data successfully');
+        },
+        () => {
+          abp.notify.error('Sync data failed');
+        },
+      )
+      .add(() => {
+        this.isSyncingMeetingReport = false;
+      });
   }
 
   public changeMeetingCriteriaStatus(criteria: any) {

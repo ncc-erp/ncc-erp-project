@@ -204,6 +204,7 @@ export class WeeklyReportComponent
   public isShowActionRisk: boolean;
   public isShowOptionNotRp: boolean = true;
   public isValidCriteria: boolean;
+  public isSyncingMeetingReport: boolean = false;
 
   totalNormalWorkingTimeOfWeekly: number = 0;
   totalNormalWorkingTime1: number = 0;
@@ -551,8 +552,34 @@ export class WeeklyReportComponent
   }
 
   public syncMeetingCriteria() {
-    this.getProjectDailyMeeting();
-    abp.notify.success('Synced latest meeting report data');
+    if (this.isSyncingMeetingReport) {
+      return;
+    }
+
+    this.isSyncingMeetingReport = true;
+
+    this.pjDailyMeetingService
+      .syncProjectWeeklyReport(this.projectId)
+      .subscribe(
+        (res) => {
+          const result = res?.result ?? res;
+          const success = !!result?.success;
+
+          if (!success) {
+            abp.notify.error(result?.message || 'Sync data failed');
+            return;
+          }
+
+          this.getProjectDailyMeeting();
+          abp.notify.success(result?.message || 'Sync data successfully');
+        },
+        () => {
+          abp.notify.error('Sync data failed');
+        },
+      )
+      .add(() => {
+        this.isSyncingMeetingReport = false;
+      });
   }
 
   public changeMeetingCriteriaStatus(criteria: any) {

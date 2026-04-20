@@ -1,38 +1,39 @@
-﻿using System;
-using System.Linq;
-using System.Reflection;
+﻿using Abp.AspNetCore;
+using Abp.AspNetCore.Mvc.Antiforgery;
+using Abp.AspNetCore.SignalR.Hubs;
+using Abp.Castle.Logging.Log4Net;
+using Abp.Dependency;
+using Abp.Extensions;
+using Abp.Json;
+using Amazon;
+using Amazon.Runtime.CredentialManagement;
+using Amazon.S3;
+using Castle.Facilities.Logging;
+using Hangfire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Castle.Facilities.Logging;
-using Abp.AspNetCore;
-using Abp.AspNetCore.Mvc.Antiforgery;
-using Abp.Castle.Logging.Log4Net;
-using Abp.Extensions;
-using ProjectManagement.Configuration;
-using ProjectManagement.Identity;
-using Abp.AspNetCore.SignalR.Hubs;
-using Abp.Dependency;
-using Abp.Json;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Serialization;
-using ProjectManagement.Services.Finance;
-using ProjectManagement.Services.Timesheet;
-using ProjectManagement.Services.Komu;
-using ProjectManagement.Services.HRM;
+using ProjectManagement.Configuration;
 using ProjectManagement.Constants;
-using Amazon.Runtime.CredentialManagement;
-using Amazon.S3;
-using Amazon;
-using ProjectManagement.UploadFilesService;
-using ProjectManagement.Services.Talent;
-using ProjectManagement.Services;
-using Hangfire;
 using ProjectManagement.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
+using ProjectManagement.Identity;
+using ProjectManagement.Services;
+using ProjectManagement.Services.Finance;
+using ProjectManagement.Services.HRM;
+using ProjectManagement.Services.Komu;
 using ProjectManagement.Services.Mezon;
+using ProjectManagement.Services.PmBot;
+using ProjectManagement.Services.Talent;
+using ProjectManagement.Services.Timesheet;
+using ProjectManagement.UploadFilesService;
+using System;
+using System.Linq;
+using System.Reflection;
 
 namespace ProjectManagement.Web.Host.Startup
 {
@@ -97,6 +98,8 @@ namespace ProjectManagement.Web.Host.Startup
             services.AddHttpClient<TalentService>();
             services.AddHttpClient<BaseWebService>();
             services.AddHttpClient<MezonService>();
+            services.AddHttpClient<PmBotService>();
+
 
             RegisterFileService(services);
 

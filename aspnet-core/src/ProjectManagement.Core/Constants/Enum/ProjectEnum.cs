@@ -376,9 +376,10 @@
         }
         public enum MeetingReportCriteriaStatus
         {
-            Red = 0,
-            Yellow = 1,
-            Green = 2
+            Red = 3,
+            Yellow = 2,
+            Green = 1,
+            NotAvailable = 0
         }
     }
 }

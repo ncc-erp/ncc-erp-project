@@ -112,6 +112,7 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
   public officalResourceList: any[] = []
   public selectedReport = {} as pmReportDto;
   public userList = [];
+  public isSyncingMeetingReport: boolean = false;
   totalNormalWorkingTime: number = 0;
   totalOverTime: number = 0;
   sidebarExpanded: boolean;
@@ -360,8 +361,34 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
   }
 
   public syncMeetingCriteria() {
-    this.getProjectDailyMeeting();
-    abp.notify.success('Synced latest meeting report data');
+    if (this.isSyncingMeetingReport) {
+      return;
+    }
+
+    this.isSyncingMeetingReport = true;
+
+    this.pjDailyMeetingService
+      .syncProjectWeeklyReport(this.projectId)
+      .subscribe(
+        (res) => {
+          const result = res?.result ?? res;
+          const success = !!result?.success;
+
+          if (!success) {
+            abp.notify.error(result?.message || 'Sync data failed');
+            return;
+          }
+
+          this.getProjectDailyMeeting();
+          abp.notify.success(result?.message || 'Sync data successfully');
+        },
+        () => {
+          abp.notify.error('Sync data failed');
+        },
+      )
+      .add(() => {
+        this.isSyncingMeetingReport = false;
+      });
   }
 
   onChangeStatusProject() {

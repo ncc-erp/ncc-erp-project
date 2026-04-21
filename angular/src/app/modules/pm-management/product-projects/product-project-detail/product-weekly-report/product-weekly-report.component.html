@@ -185,7 +185,7 @@
                                                                 [ngClass]="APP_CONST.meetingCriteriaStatusBGStyle[APP_ENUM.MeetingReportCriteriaStatus[key]]"
                                                                 [value]="APP_ENUM.MeetingReportCriteriaStatus[key]">
                                                                 <span
-                                                                    style="font-weight: 100 !important;">{{key}}</span>
+                                                                    style="font-weight: 100 !important;">{{key === 'NotAvailable' ? 'N/A' : key}}</span>
                                                             </mat-option>
                                                         </ng-container>
                                                     </mat-select>

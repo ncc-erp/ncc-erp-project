@@ -700,5 +700,6 @@ export const PERMISSIONS_CONSTANT = {
        Admin_OnboardingChecklist_Create: "Admin.OnboardingChecklist.Create",
        Admin_OnboardingChecklist_Edit: "Admin.OnboardingChecklist.Edit",
        Admin_OnboardingChecklist_Delete: "Admin.OnboardingChecklist.Delete",
+       Admin_OnboardingChecklist_ForceDone: "Admin.OnboardingChecklist.ForceDone",
        // #endregion
 }

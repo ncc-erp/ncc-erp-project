@@ -29,4 +29,18 @@ export class ProjectUserOnboardingService extends BaseApiService {
       input
     );
   }
+
+  forceDone(projectUserId: number): Observable<any> {
+    return this.http.post<any>(
+      this.rootUrl + `/ForceDone?projectUserId=${projectUserId}`,
+      {}
+    );
+  }
+
+  remind(projectUserId: number): Observable<any> {
+    return this.http.post<any>(
+      this.rootUrl + `/Remind?projectUserId=${projectUserId}`,
+      {}
+    );
+  }
 }

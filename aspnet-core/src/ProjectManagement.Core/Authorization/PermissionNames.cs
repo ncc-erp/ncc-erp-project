@@ -735,6 +735,7 @@ namespace ProjectManagement.Authorization
         public const string Admin_OnboardingChecklist_Create = "Admin.OnboardingChecklist.Create";
         public const string Admin_OnboardingChecklist_Edit = "Admin.OnboardingChecklist.Edit";
         public const string Admin_OnboardingChecklist_Delete = "Admin.OnboardingChecklist.Delete";
+        public const string Admin_OnboardingChecklist_ForceDone = "Admin.OnboardingChecklist.ForceDone";
         #endregion OnboardingChecklist
     }
 
@@ -1478,6 +1479,7 @@ namespace ProjectManagement.Authorization
                     PermissionNames.Admin_OnboardingChecklist_Create,
                     PermissionNames.Admin_OnboardingChecklist_Edit,
                     PermissionNames.Admin_OnboardingChecklist_Delete,
+                    PermissionNames.Admin_OnboardingChecklist_ForceDone
                     #endregion OnboardingChecklist
                 }
             }
@@ -2228,6 +2230,7 @@ namespace ProjectManagement.Authorization
                  new SystemPermission{ Name =  PermissionNames.Admin_OnboardingChecklist_Create, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Create" },
                  new SystemPermission{ Name =  PermissionNames.Admin_OnboardingChecklist_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit" },
                  new SystemPermission{ Name =  PermissionNames.Admin_OnboardingChecklist_Delete, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Delete" },
+                 new SystemPermission{ Name =  PermissionNames.Admin_OnboardingChecklist_ForceDone, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "ForceDone" },
                 #endregion OnboardingChecklist
 
             };
@@ -2588,6 +2591,9 @@ namespace ProjectManagement.Authorization
                                         },
                                         new SystemPermission {
                                             Name = PermissionNames.Admin_OnboardingChecklist_Delete, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Delete"
+                                        },
+                                        new SystemPermission {
+                                            Name = PermissionNames.Admin_OnboardingChecklist_ForceDone, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "ForceDone"
                                         },
                                     }
                             },

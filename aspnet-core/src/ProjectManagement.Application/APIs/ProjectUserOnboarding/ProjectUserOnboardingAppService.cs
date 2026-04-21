@@ -46,26 +46,57 @@ namespace ProjectManagement.APIs.ProjectUserOnboarding
 
 
         [HttpPost]
-        [AbpAuthorize(PermissionNames.Admin)]
+        [AbpAuthorize(PermissionNames.Admin_OnboardingChecklist_ForceDone)]
         public async Task ForceDone(long projectUserId)
         {
             try
             {
-                var projectUserOnboarding = await WorkScope.GetAll<Entities.ProjectUserOnboarding>().FirstOrDefaultAsync(x => x.ProjectUserId == projectUserId);
-                if (projectUserOnboarding != null)
+                var onboarding = await WorkScope.GetAll<Entities.ProjectUserOnboarding>()
+                    .Include(x => x.ProjectUserOnboardingDetails)
+                    .FirstOrDefaultAsync(x => x.ProjectUserId == projectUserId);
+
+                if (onboarding == null)
                 {
-                    projectUserOnboarding.Status = ProjectUserOnboardingStatus.Done;
-                    projectUserOnboarding.ConfirmedTime = DateTime.Now;
+                    onboarding = new Entities.ProjectUserOnboarding
+                    {
+                        ProjectUserId = projectUserId,
+                        ProjectUserOnboardingDetails = new List<ProjectUserOnboardingDetail>()
+                    };
+                    onboarding.Id = await WorkScope.InsertAndGetIdAsync(onboarding);
                 }
-                await WorkScope.UpdateAsync(projectUserOnboarding);
+
+                onboarding.Status = ProjectUserOnboardingStatus.Done;
+                onboarding.ConfirmedTime = DateTime.Now;
+
+                var templates = await WorkScope.GetAll<Entities.OnboardingChecklist>().ToListAsync();
+
+                foreach (var t in templates)
+                {
+                    var detail = onboarding.ProjectUserOnboardingDetails
+                                           .FirstOrDefault(d => d.OnboardingChecklistId == t.Id);
+
+                    if (detail != null)
+                    {
+                        detail.IsChecked = true;
+                    }
+                    else
+                    {
+                        onboarding.ProjectUserOnboardingDetails.Add(new ProjectUserOnboardingDetail
+                        {
+                            OnboardingChecklistId = t.Id,
+                            IsChecked = true
+                        });
+                    }
+                }
+
+                await WorkScope.UpdateAsync(onboarding);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Logger.Error("Force Done failed: " + ex.Message);
                 throw new UserFriendlyException("Failed to force status to Done.");
             }
-
         }
-
 
         [HttpGet]
         public async Task<GetOnboardingDto> GetOnboardingInfor(long projectUserId)
@@ -226,7 +257,7 @@ namespace ProjectManagement.APIs.ProjectUserOnboarding
             sbMessage.AppendLine("> *Bạn xác nhận đã đọc kỹ và hoàn thành đầy đủ các mục yêu cầu trong Onboarding Checklist.*");
             await _komuService.NotifyToKomuUserAwait(new KomuMessage
             {
-                UserName = "chinh.vuquang",
+                UserName = "tu.lecam",
                 Message = sbMessage.ToString(),
                 CreateDate = DateTimeUtils.GetNow(),
             });

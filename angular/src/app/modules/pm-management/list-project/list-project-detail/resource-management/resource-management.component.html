@@ -460,7 +460,7 @@
                         <button *ngIf="
                                                                         permission.isGranted(
                                                                           Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_Edit
-                                                                        )
+                                                                        ) && user.onboardingStatus !== APP_ENUM.ProjectUserOnboardingStatus['Done']  
                                                                       " [disabled]="projectUserProcess" class="mat-menu-item w-100"
                           (click)="onboardUser(user)">
                           <i class="fa fa-handshake"></i>Onboard
@@ -468,9 +468,9 @@
                         <button *ngIf="
                                                                       permission.isGranted(
                                                                         Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_Edit
-                                                                      )
+                                                                      ) && (user.onboardingStatus === APP_ENUM.ProjectUserOnboardingStatus['Pending'] || user.onboardingStatus === APP_ENUM.ProjectUserOnboardingStatus['Pending Employee'])
                                                                     " [disabled]="projectUserProcess" class="mat-menu-item w-100"
-                          (click)="onboardUser(user)">
+                          (click)="remindUser(user)">
                           <i class="fa fa-bell text-warning"></i>Remind
                         </button>
                         <button *ngIf="

@@ -35,9 +35,17 @@
         </div>
 
     <div class="modal-footer" style="border-top: none; padding-top: 0;">
-        <button type="button" class="btn btn-secondary font-weight-bold" (click)="close()">Cancel</button>
+        <button *ngIf="permission.isGranted(Admin_OnboardingChecklist_ForceDone)" type="button"
+            class="btn btn-danger font-weight-bold mr-auto" [disabled]="isSaving || isLoading" (click)="forceDone()">
+            <i class="fa mr-1"></i> Onboard DONE 
+        </button>
+        
+        <button type="button" class="btn btn-secondary font-weight-bold" (click)="close()">
+            Cancel
+        </button>
+        
         <button type="button" class="btn btn-primary font-weight-bold px-4" [disabled]="isSaving || isLoading" (click)="save()">
-            <i class="fa fa-save mr-1"></i> Submit
+            <i class="fa mr-1"></i> Submit
         </button>
     </div>
 </div>

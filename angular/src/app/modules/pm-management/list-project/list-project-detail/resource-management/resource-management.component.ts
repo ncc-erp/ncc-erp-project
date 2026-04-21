@@ -109,7 +109,7 @@ export class ResourceManagementComponent
     PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest_Delete;
   Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest_SendRecruitment =
     PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest_SendRecruitment;
-
+  
   private projectId: number;
   public userBillCurrentPage = 1;
   public resourceRequestCurrentPage = 1;
@@ -908,5 +908,15 @@ export class ResourceManagementComponent
 
   getColorWorkingType(workingType: number): string {
     return this.workingTypeColorMap[workingType] || "black";
+  }
+
+  remindUser(user: any) {
+    this.projectUserProcess = true; 
+    this.projectUserOnboardingService.remind(user.id)
+      .pipe(finalize(() => this.projectUserProcess = false))
+      .subscribe(() => {
+        abp.notify.success(`Sent reminder to ${user.fullName} successfully!`);
+        this.getProjectUser();
+      });
   }
 }

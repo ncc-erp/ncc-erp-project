@@ -4,6 +4,7 @@ import { ProjectUserOnboardingService }  from './../../../../../../service/api/p
 import { OnboardingChecklistItemDto, AddOnboardingDto } from './../../../../../../service/model/onboarding-checklist-Item.dto';
 import { AppComponentBase } from '@shared/app-component-base';
 import { finalize } from 'rxjs/operators';
+import { PERMISSIONS_CONSTANT } from '@app/constant/permission.constant';
 
 @Component({
   selector: 'app-onboarding-dialog',
@@ -17,7 +18,8 @@ export class OnboardingDialogComponent extends AppComponentBase implements OnIni
   fullName: string;
   isLoading: boolean = false;
   isSaving: boolean = false;
-
+  Admin_OnboardingChecklist_ForceDone = PERMISSIONS_CONSTANT.Admin_OnboardingChecklist_ForceDone;
+  
   constructor(
     injector: Injector,
     private _onboardingService: ProjectUserOnboardingService,
@@ -67,5 +69,23 @@ export class OnboardingDialogComponent extends AppComponentBase implements OnIni
 
   get isAllChecked(): boolean {
     return this.checklist && this.checklist.every(x => x.isChecked);
+  }
+
+  forceDone() {
+    abp.message.confirm(
+      `Are you sure you want to force mark onboarding as DONE for ${this.fullName}?`,
+      'Admin Confirmation',
+      (result: boolean) => {
+        if (result) {
+          this.isSaving = true; 
+          this._onboardingService.forceDone(this.projectUserId)
+            .pipe(finalize(() => this.isSaving = false))
+            .subscribe(() => {
+              abp.notify.success('Force Done successfully');
+              this.dialogRef.close(true); 
+            });
+        }
+      }
+    );
   }
 }

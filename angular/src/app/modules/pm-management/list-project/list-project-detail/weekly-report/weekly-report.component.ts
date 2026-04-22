@@ -548,6 +548,9 @@ export class WeeklyReportComponent
             })),
           };
         }
+        else {
+          this.weeklySummaryData = {} as GetProjectDailyMeetingsDto
+        }
       });
   }
 
@@ -1562,6 +1565,7 @@ export class WeeklyReportComponent
   public onReportchange() {
     this.getFuturereport();
     this.getProjectProblem();
+    this.getProjectDailyMeeting();
     this.getProjectInfo();
     this.getAllCriteria();
     this.getRiskOfTheWeek();

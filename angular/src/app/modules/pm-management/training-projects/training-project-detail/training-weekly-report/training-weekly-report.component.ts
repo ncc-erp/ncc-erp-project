@@ -1427,6 +1427,9 @@ export class TrainingWeeklyReportComponent extends AppComponentBase implements O
             })),
           };
         }
+        else {
+          this.weeklySummaryData = {} as GetProjectDailyMeetingsDto
+        }
       });
   }
   public syncMeetingCriteria() {

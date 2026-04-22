@@ -172,6 +172,7 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
   public isShowWeeklyList: boolean = false;
   public isShowFutureList: boolean = false;
   public isSyncingMeetingReport: boolean = false;
+  public syncingProjectId: number | null = null;
   public isShowRisks: boolean = false;
   public projectInfo = {} as ProjectInfoDto
   public weeklySummaryData = {} as GetProjectDailyMeetingsDto;
@@ -474,8 +475,13 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
   public syncMeetingCriteria() {
     if (this.isSyncingMeetingReport) {
       return;
+      if (this.syncingProjectId == this.projectId) {
+        return;
+      }
+      abp.notify.warn('Another project is syncing. Please wait until it finishes.');
+      return;
     }
-
+    this.syncingProjectId = this.projectId;
     this.isSyncingMeetingReport = true;
 
     this.pjDailyMeetingService
@@ -499,7 +505,8 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
       )
       .add(() => {
         this.isSyncingMeetingReport = false;
-      });
+        this.syncingProjectId = null;
+    });
   }
 
   setTotalHealth() {
@@ -729,6 +736,9 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
     this.automationNote = projectReport.automationNote
     this.getLastWeek();
     this.getAllCriteria();
+    if (!(this.isSyncingMeetingReport && this.syncingProjectId == this.projectId)) {
+      this.getProjectDailyMeeting();
+    }
     this.getProjectDailyMeeting();
     this.getProjectInfo();
     this.getChangedResource();

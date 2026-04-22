@@ -1,4 +1,5 @@
 <section class="content p-3" id="weekly-report" style="background-color: #f1f1f1;"
+     [busy]="isLoading || isSyncingMeetingReport"
     *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_View)">
     <div class="row justify-content-between weekly-report-container">
         <div class="weekly-report-left">
@@ -177,16 +178,24 @@
                         <mat-panel-title class="d-flex align-items-center justify-content-between w-100">
                             <div class="d-flex align-items-center">
                                 <strong style="font-size: 20px;">Meeting Report</strong>
-                                <button mat-icon-button class="ml-2" [disabled]="isSyncingMeetingReport"
-                                    [matTooltip]="isSyncingMeetingReport ? 'Syncing...' : 'Sync latest data'"
-                                    (click)="$event.stopPropagation(); syncMeetingCriteria()" style="color: #007bff;">
-                                    <i class="fas fa-sync-alt"></i>
-                                </button>
+                                <ng-container *ngIf="selectedReport?.isActive && selectedReport?.status === 'Draft'">
+                                <span class="ml-2"
+                                    [matTooltip]="'Sync latest data'">
+                                    <button
+                                    mat-icon-button
+                                    [disabled]="isSyncingMeetingReport"
+                                    (click)="$event.stopPropagation(); syncMeetingCriteria()"
+                                    style="color: #007bff;">
+                                    <i class="fas fa-sync-alt" [ngClass]="{ 'fa-spin': isSyncingMeetingReport }"></i>
+                                    </button>
+                                </span>
+                                </ng-container>
                             </div>
                         </mat-panel-title>
                     </mat-expansion-panel-header>
 
                     <div class="p-3 px-4">
+                        <ng-container *ngIf="!isSyncingMeetingReport; else meetingReportSyncingTpl">
                         <div class="weekly-summary mb-4">
                             <div class="meeting-criteria-list meeting-report-scroll">
                                 <ng-container
@@ -210,6 +219,8 @@
                                                     <mat-select style="padding-bottom: 4px;"
                                                         [attr.name]="'meetingCriteriaStatus_' + i" placeholder="Status"
                                                         [(ngModel)]="criteria.status"
+                                                        [disabled]="!selectedReport?.isActive"
+
                                                         (ngModelChange)="changeMeetingCriteriaStatus(criteria)">
                                                         <ng-container *ngFor="let key of meetingCriteriaStatusKeys">
                                                             <mat-option style="border: 1px white solid;"
@@ -223,16 +234,23 @@
                                                 </mat-form-field>
 
                                                 <ng-container *ngIf="!criteria.editMode">
-                                                    <button type="button" mat-icon-button [matTooltip]="'Edit'"
-                                                        class="ml-1"
-                                                        (click)="$event.stopPropagation(); editMeetingCriteria(criteria)">
-                                                        <i class="fas fa-pencil-alt"></i>
-                                                    </button>
-                                                    <button type="button" mat-icon-button [matTooltip]="'Delete'"
-                                                        class="ml-1"
-                                                        (click)="$event.stopPropagation(); deleteMeetingCriteria(criteria)">
-                                                        <i class="fas fa-trash" style="color: #dc3545;"></i>
-                                                    </button>
+
+                                                    <ng-container *ngIf="selectedReport?.isActive">
+                                                        <span class="ml-1" [matTooltip]="'Edit'">
+                                                            <button type="button" mat-icon-button (click)="$event.stopPropagation(); editMeetingCriteria(criteria)">
+                                                                <i class="fas fa-pencil-alt"></i>
+                                                            </button>
+                                                        </span>
+                                                    </ng-container>
+
+                                                    <ng-container *ngIf="selectedReport?.isActive === true && selectedReport?.status === 'Draft'">
+                                                        <span class="ml-1" [matTooltip]="'Delete'">
+                                                            <button type="button" mat-icon-button (click)="$event.stopPropagation(); deleteMeetingCriteria(criteria)">
+                                                                <i class="fas fa-trash" style="color: #dc3545;"></i>
+                                                            </button>
+                                                        </span>
+                                                    </ng-container>
+
                                                 </ng-container>
                                                 <ng-container *ngIf="criteria.editMode">
                                                     <button type="button" mat-icon-button [matTooltip]="'Save'"
@@ -272,6 +290,13 @@
                                 There's no daily meeting data yet!
                             </div>
                         </div>
+                        </ng-container>
+                        <ng-template #meetingReportSyncingTpl>
+                            <div class="py-5 text-center text-primary h4 font-weight-normal">
+                                <i class="fas fa-sync-alt fa-spin mr-2"></i>
+                                Syncing meeting report...
+                            </div>
+                        </ng-template>
                     </div>
                 </mat-expansion-panel>
             </div>

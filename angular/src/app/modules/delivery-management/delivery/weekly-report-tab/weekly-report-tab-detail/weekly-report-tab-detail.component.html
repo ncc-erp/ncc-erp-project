@@ -1,4 +1,5 @@
-<mat-drawer-container class="example-container" style="min-height: 94vh;" [busy]="isLoading"
+<mat-drawer-container class="example-container" style="min-height: 94vh;"
+    [busy]="isLoading || (isSyncingMeetingReport && syncingProjectId == projectId)"
     *ngIf="permission.isGranted(WeeklyReport_ReportDetail_View)">
     <mat-drawer #drawer mode="side" opened style="position: fixed;top: 6%;padding-top: 10px;width: 15%;">
         <div>
@@ -677,11 +678,14 @@
                                     <mat-panel-title class="d-flex align-items-center justify-content-between w-100">
                                         <div class="d-flex align-items-center">
                                             <strong style="font-size: 20px;">Meeting Report</strong>
-                                            <button mat-icon-button class="ml-2" [disabled]="isSyncingMeetingReport"
-                                                [matTooltip]="isSyncingMeetingReport ? 'Syncing...' : 'Sync latest data'"
-                                                (click)="$event.stopPropagation(); syncMeetingCriteria()" style="color: #007bff;">
-                                                <i class="fas fa-sync-alt"></i>
-                                            </button>
+                                            <ng-container *ngIf="isActive && weeklyReportStatus !== 'Sent'">
+                                                <span class="ml-2" [matTooltip]="'Sync latest data'">
+                                                    <button mat-icon-button [disabled]="!isActive || (isSyncingMeetingReport && syncingProjectId == projectId)"
+                                                        (click)="$event.stopPropagation(); syncMeetingCriteria()" style="color: #007bff;">
+                                                        <i class="fas fa-sync-alt" [ngClass]="{ 'fa-spin': isSyncingMeetingReport && syncingProjectId == projectId }"></i>
+                                                    </button>
+                                                </span>
+                                            </ng-container>
                                         </div>
 
                                         <div (click)="$event.stopPropagation()">
@@ -690,6 +694,7 @@
                                 </mat-expansion-panel-header>
 
                                 <div class="p-3 px-4">
+                                    <ng-container *ngIf="!(isSyncingMeetingReport && syncingProjectId == projectId); else meetingReportSyncingTpl">
                                     <div class="weekly-summary mb-4">
                                         <div class="meeting-criteria-list meeting-report-scroll">
                                             <ng-container
@@ -731,17 +736,16 @@
 
                                                             <ng-container *ngIf="isActive">
                                                                 <ng-container *ngIf="!criteria.editMode">
-                                                                    <button type="button" mat-icon-button
-                                                                        [matTooltip]="'Edit'" class="ml-1"
+                                                                    <button type="button" mat-icon-button [matTooltip]="'Edit'" class="ml-1"
                                                                         (click)="$event.stopPropagation(); editMeetingCriteria(criteria)">
                                                                         <i class="fas fa-pencil-alt"></i>
                                                                     </button>
-                                                                    <button type="button" mat-icon-button
-                                                                        [matTooltip]="'Delete'" class="ml-1"
-                                                                        (click)="$event.stopPropagation(); deleteMeetingCriteria(criteria)">
-                                                                        <i class="fas fa-trash"
-                                                                            style="color: #dc3545;"></i>
-                                                                    </button>
+                                                                    <ng-container *ngIf="weeklyReportStatus !== 'Sent'">
+                                                                        <button type="button" mat-icon-button [matTooltip]="'Delete'" class="ml-1"
+                                                                            (click)="$event.stopPropagation(); deleteMeetingCriteria(criteria)">
+                                                                            <i class="fas fa-trash" style="color: #dc3545;"></i>
+                                                                        </button>
+                                                                    </ng-container>
                                                                 </ng-container>
 
                                                                 <ng-container *ngIf="criteria.editMode">
@@ -785,6 +789,13 @@
                                             There's no meeting report data yet!
                                         </div>
                                     </div>
+                                    </ng-container>
+                                    <ng-template #meetingReportSyncingTpl>
+                                        <div class="py-5 text-center text-primary h4 font-weight-normal">
+                                            <i class="fas fa-sync-alt fa-spin mr-2"></i>
+                                            Syncing meeting report...
+                                        </div>
+                                    </ng-template>
                                 </div>
                             </mat-expansion-panel>
                         </div>

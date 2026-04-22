@@ -357,6 +357,9 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
             })),
           };
         }
+        else {
+          this.weeklySummaryData = {} as GetProjectDailyMeetingsDto
+        }
       });
   }
 
@@ -976,6 +979,7 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
   public onReportchange() {
     this.getWeeklyReport();
     this.getFuturereport();
+    this.getProjectDailyMeeting();
     this.getProjectProblem();
     this.getProjectInfo();
     this.getAllCriteria();

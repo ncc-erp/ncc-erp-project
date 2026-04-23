@@ -20,7 +20,7 @@ import {
 } from "./../../../../../service/model/project.dto";
 import { UserService } from "./../../../../../service/api/user.service";
 import { UserDto } from "./../../../../../../shared/service-proxies/service-proxies";
-import { catchError } from "rxjs/operators";
+import { catchError, finalize  } from "rxjs/operators";
 import { AppComponentBase } from "@shared/app-component-base";
 import { ActivatedRoute } from "@angular/router";
 import { PMReportProjectService } from "./../../../../../service/api/pmreport-project.service";
@@ -820,11 +820,16 @@ export class WeeklyReportComponent
   }
 
   getProjectInfo(cancel?: boolean) {
-    this.isLoading = true;
     if (this.selectedReport.pmReportProjectId) {
+      this.isLoading = true;
       this.pmReportProjectService
         .GetInfoProject(this.selectedReport.pmReportProjectId)
-        .pipe(catchError(this.pmReportProjectService.handleError))
+        .pipe(
+          catchError(this.pmReportProjectService.handleError),
+          finalize(() => {
+            this.isLoading = false;
+          }),
+        )
         .subscribe(
           (data) => {
             this.projectInfo = data.result;
@@ -852,7 +857,7 @@ export class WeeklyReportComponent
             });
           },
           () => {
-            this.isLoading = false;
+            // this.isLoading = false;
           },
         );
     }

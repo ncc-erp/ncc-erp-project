@@ -2,7 +2,7 @@ import { PERMISSIONS_CONSTANT } from './../../../../../constant/permission.const
 import { TrainingApprovedDialogComponent } from './training-approved-dialog/training-approved-dialog.component';
 import { ApproveDialogComponent } from './../../../list-project/list-project-detail/weekly-report/approve-dialog/approve-dialog.component';
 import { ProjectInfoDto, projectUserDto } from './../../../../../service/model/project.dto';
-import { catchError } from 'rxjs/operators';
+import { catchError, finalize  } from 'rxjs/operators';
 import { PmReportService } from './../../../../../service/api/pm-report.service';
 import { ProjectUserService } from './../../../../../service/api/project-user.service';
 import { ListProjectService } from './../../../../../service/api/list-project.service';
@@ -446,11 +446,10 @@ export class TrainingWeeklyReportComponent extends AppComponentBase implements O
   }
 
   getProjectInfo() {
-    this.isLoading = true;
     if (this.selectedReport.pmReportProjectId) {
-      this.pmReportProjectService.GetInfoProject(this.selectedReport.pmReportProjectId).pipe(catchError(this.pmReportProjectService.handleError)).subscribe(data => {
+      this.isLoading = true;
+      this.pmReportProjectService.GetInfoProject(this.selectedReport.pmReportProjectId).pipe(catchError(this.pmReportProjectService.handleError), finalize(() => { this.isLoading = false; })).subscribe(data => {
         this.projectInfo = data.result
-        this.isLoading = false;
         this.getDataForBillChart(this.projectInfo.projectCode)
         this.getCurrentResourceOfProject(this.projectInfo.projectCode);
 
@@ -467,8 +466,7 @@ export class TrainingWeeklyReportComponent extends AppComponentBase implements O
             },
             queryParamsHandling: 'merge', // remove to replace all query params by provided
           });
-      },
-        () => { this.isLoading = false })
+      })
     }
   }
 

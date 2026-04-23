@@ -1,7 +1,7 @@
 import { PERMISSIONS_CONSTANT } from './../../../../../constant/permission.constant';
 import { ProductApprovedDialogComponent } from './product-approved-dialog/product-approved-dialog.component';
 import { ProjectInfoDto, projectUserDto } from './../../../../../service/model/project.dto';
-import { catchError } from 'rxjs/operators';
+import { catchError, finalize  } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { PmReportIssueService } from './../../../../../service/api/pm-report-issue.service';
 import { ProjectResourceRequestService } from './../../../../../service/api/project-resource-request.service';
@@ -569,9 +569,9 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
   }
 
   getProjectInfo() {
-    this.isLoading = true;
     if (this.selectedReport.pmReportProjectId) {
-      this.pmReportProjectService.GetInfoProject(this.selectedReport.pmReportProjectId).pipe(catchError(this.pmReportProjectService.handleError)).subscribe(data => {
+      this.isLoading = true;
+      this.pmReportProjectService.GetInfoProject(this.selectedReport.pmReportProjectId).pipe(catchError(this.pmReportProjectService.handleError), finalize(() => { this.isLoading = false; })).subscribe(data => {
         this.projectInfo = data.result
 
         this.isLoading = false;
@@ -591,8 +591,7 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
             },
             queryParamsHandling: 'merge', // remove to replace all query params by provided
           });
-      },
-        () => { this.isLoading = false })
+      })
     }
   }
 

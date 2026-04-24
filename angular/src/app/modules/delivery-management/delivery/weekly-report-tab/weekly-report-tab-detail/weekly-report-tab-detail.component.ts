@@ -171,6 +171,8 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
   public isShowProblemList: boolean = false;
   public isShowWeeklyList: boolean = false;
   public isShowFutureList: boolean = false;
+  public isSyncingMeetingReport: boolean = false;
+  public syncingProjectId: number | null = null;
   public isShowRisks: boolean = false;
   public projectInfo = {} as ProjectInfoDto
   public weeklySummaryData = {} as GetProjectDailyMeetingsDto;
@@ -471,8 +473,40 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
 
 
   public syncMeetingCriteria() {
-    this.getProjectDailyMeeting();
-    abp.notify.success('Synced latest meeting report data');
+    if (this.isSyncingMeetingReport) {
+      return;
+      if (this.syncingProjectId == this.projectId) {
+        return;
+      }
+      abp.notify.warn('Another project is syncing. Please wait until it finishes.');
+      return;
+    }
+    this.syncingProjectId = this.projectId;
+    this.isSyncingMeetingReport = true;
+
+    this.pjDailyMeetingService
+      .syncProjectWeeklyReport(this.projectId)
+      .subscribe(
+        (res) => {
+          const result = res?.result ?? res;
+          const success = !!result?.success;
+
+          if (!success) {
+            abp.notify.error(result?.message || 'Sync data failed');
+            return;
+          }
+
+          this.getProjectDailyMeeting();
+          abp.notify.success(result?.message || 'Sync data successfully');
+        },
+        () => {
+          abp.notify.error('Sync data failed');
+        },
+      )
+      .add(() => {
+        this.isSyncingMeetingReport = false;
+        this.syncingProjectId = null;
+    });
   }
 
   setTotalHealth() {
@@ -702,6 +736,9 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
     this.automationNote = projectReport.automationNote
     this.getLastWeek();
     this.getAllCriteria();
+    if (!(this.isSyncingMeetingReport && this.syncingProjectId == this.projectId)) {
+      this.getProjectDailyMeeting();
+    }
     this.getProjectDailyMeeting();
     this.getProjectInfo();
     this.getChangedResource();

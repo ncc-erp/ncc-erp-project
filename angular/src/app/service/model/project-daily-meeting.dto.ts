@@ -14,3 +14,11 @@ export interface MeetingReportCriteriaDetailDto {
     status: number;
     editMode?: boolean;
 }
+export interface SyncProjectWeeklyReportRequestDto {
+    projectId: number;
+}
+
+export interface SyncProjectWeeklyReportResponseDto {
+    success: boolean;
+    message?: string | null;
+}

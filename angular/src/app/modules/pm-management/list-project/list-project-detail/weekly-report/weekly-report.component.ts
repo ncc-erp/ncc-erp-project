@@ -20,7 +20,7 @@ import {
 } from "./../../../../../service/model/project.dto";
 import { UserService } from "./../../../../../service/api/user.service";
 import { UserDto } from "./../../../../../../shared/service-proxies/service-proxies";
-import { catchError } from "rxjs/operators";
+import { catchError, finalize  } from "rxjs/operators";
 import { AppComponentBase } from "@shared/app-component-base";
 import { ActivatedRoute } from "@angular/router";
 import { PMReportProjectService } from "./../../../../../service/api/pmreport-project.service";
@@ -204,6 +204,7 @@ export class WeeklyReportComponent
   public isShowActionRisk: boolean;
   public isShowOptionNotRp: boolean = true;
   public isValidCriteria: boolean;
+  public isSyncingMeetingReport: boolean = false;
 
   totalNormalWorkingTimeOfWeekly: number = 0;
   totalNormalWorkingTime1: number = 0;
@@ -547,12 +548,41 @@ export class WeeklyReportComponent
             })),
           };
         }
+        else {
+          this.weeklySummaryData = {} as GetProjectDailyMeetingsDto
+        }
       });
   }
 
   public syncMeetingCriteria() {
-    this.getProjectDailyMeeting();
-    abp.notify.success('Synced latest meeting report data');
+    if (this.isSyncingMeetingReport) {
+      return;
+    }
+
+    this.isSyncingMeetingReport = true;
+
+    this.pjDailyMeetingService
+      .syncProjectWeeklyReport(this.projectId)
+      .subscribe(
+        (res) => {
+          const result = res?.result ?? res;
+          const success = !!result?.success;
+
+          if (!success) {
+            abp.notify.error(result?.message || 'Sync data failed');
+            return;
+          }
+
+          this.getProjectDailyMeeting();
+          abp.notify.success(result?.message || 'Sync data successfully');
+        },
+        () => {
+          abp.notify.error('Sync data failed');
+        },
+      )
+      .add(() => {
+        this.isSyncingMeetingReport = false;
+      });
   }
 
   public changeMeetingCriteriaStatus(criteria: any) {
@@ -790,11 +820,16 @@ export class WeeklyReportComponent
   }
 
   getProjectInfo(cancel?: boolean) {
-    this.isLoading = true;
     if (this.selectedReport.pmReportProjectId) {
+      this.isLoading = true;
       this.pmReportProjectService
         .GetInfoProject(this.selectedReport.pmReportProjectId)
-        .pipe(catchError(this.pmReportProjectService.handleError))
+        .pipe(
+          catchError(this.pmReportProjectService.handleError),
+          finalize(() => {
+            this.isLoading = false;
+          }),
+        )
         .subscribe(
           (data) => {
             this.projectInfo = data.result;
@@ -822,7 +857,7 @@ export class WeeklyReportComponent
             });
           },
           () => {
-            this.isLoading = false;
+            // this.isLoading = false;
           },
         );
     }
@@ -1535,6 +1570,7 @@ export class WeeklyReportComponent
   public onReportchange() {
     this.getFuturereport();
     this.getProjectProblem();
+    this.getProjectDailyMeeting();
     this.getProjectInfo();
     this.getAllCriteria();
     this.getRiskOfTheWeek();

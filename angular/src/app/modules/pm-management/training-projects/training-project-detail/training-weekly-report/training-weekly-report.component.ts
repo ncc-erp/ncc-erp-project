@@ -2,7 +2,7 @@ import { PERMISSIONS_CONSTANT } from './../../../../../constant/permission.const
 import { TrainingApprovedDialogComponent } from './training-approved-dialog/training-approved-dialog.component';
 import { ApproveDialogComponent } from './../../../list-project/list-project-detail/weekly-report/approve-dialog/approve-dialog.component';
 import { ProjectInfoDto, projectUserDto } from './../../../../../service/model/project.dto';
-import { catchError } from 'rxjs/operators';
+import { catchError, finalize  } from 'rxjs/operators';
 import { PmReportService } from './../../../../../service/api/pm-report.service';
 import { ProjectUserService } from './../../../../../service/api/project-user.service';
 import { ListProjectService } from './../../../../../service/api/list-project.service';
@@ -138,6 +138,7 @@ export class TrainingWeeklyReportComponent extends AppComponentBase implements O
   public processCriteria: boolean = false;
   public isShowActionPM: boolean;
   public isValidCriteria: boolean;
+  public isSyncingMeetingReport: boolean = false;
   public weeklySummaryData = {} as GetProjectDailyMeetingsDto;
   public meetingCriteriaStatusKeys: string[] = Object.keys(this.APP_ENUM.MeetingReportCriteriaStatus);
 
@@ -445,11 +446,10 @@ export class TrainingWeeklyReportComponent extends AppComponentBase implements O
   }
 
   getProjectInfo() {
-    this.isLoading = true;
     if (this.selectedReport.pmReportProjectId) {
-      this.pmReportProjectService.GetInfoProject(this.selectedReport.pmReportProjectId).pipe(catchError(this.pmReportProjectService.handleError)).subscribe(data => {
+      this.isLoading = true;
+      this.pmReportProjectService.GetInfoProject(this.selectedReport.pmReportProjectId).pipe(catchError(this.pmReportProjectService.handleError), finalize(() => { this.isLoading = false; })).subscribe(data => {
         this.projectInfo = data.result
-        this.isLoading = false;
         this.getDataForBillChart(this.projectInfo.projectCode)
         this.getCurrentResourceOfProject(this.projectInfo.projectCode);
 
@@ -466,8 +466,7 @@ export class TrainingWeeklyReportComponent extends AppComponentBase implements O
             },
             queryParamsHandling: 'merge', // remove to replace all query params by provided
           });
-      },
-        () => { this.isLoading = false })
+      })
     }
   }
 
@@ -1426,11 +1425,40 @@ export class TrainingWeeklyReportComponent extends AppComponentBase implements O
             })),
           };
         }
+        else {
+          this.weeklySummaryData = {} as GetProjectDailyMeetingsDto
+        }
       });
   }
   public syncMeetingCriteria() {
-    this.getProjectDailyMeeting();
-    abp.notify.success('Synced latest meeting report data');
+    if (this.isSyncingMeetingReport) {
+      return;
+    }
+
+    this.isSyncingMeetingReport = true;
+
+    this.pjDailyMeetingService
+      .syncProjectWeeklyReport(this.projectId)
+      .subscribe(
+        (res) => {
+          const result = res?.result ?? res;
+          const success = !!result?.success;
+
+          if (!success) {
+            abp.notify.error(result?.message || 'Sync data failed');
+            return;
+          }
+
+          this.getProjectDailyMeeting();
+          abp.notify.success(result?.message || 'Sync data successfully');
+        },
+        () => {
+          abp.notify.error('Sync data failed');
+        },
+      )
+      .add(() => {
+        this.isSyncingMeetingReport = false;
+      });
   }
 
   public changeMeetingCriteriaStatus(criteria: any) {

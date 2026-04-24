@@ -27,4 +27,7 @@ export class ProjectDailyMeetingService extends BaseApiService {
     public deleteMeetingReportCriteria(id: number): Observable<any> {
         return this.http.delete(this.rootUrl + `/DeleteMeetingReportCriteria?id=${id}`);
     }
+    public syncProjectWeeklyReport(projectId: number): Observable<any> {
+        return this.http.post(this.rootUrl + `/SyncProjectWeeklyReport`, { projectId });
+    }
 }

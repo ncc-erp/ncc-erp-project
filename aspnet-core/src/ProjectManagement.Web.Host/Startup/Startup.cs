@@ -33,6 +33,7 @@ using Hangfire;
 using ProjectManagement.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using ProjectManagement.Services.Mezon;
+using ProjectManagement.Services.PmBot;
 
 namespace ProjectManagement.Web.Host.Startup
 {
@@ -97,6 +98,7 @@ namespace ProjectManagement.Web.Host.Startup
             services.AddHttpClient<TalentService>();
             services.AddHttpClient<BaseWebService>();
             services.AddHttpClient<MezonService>();
+            services.AddHttpClient<PmBotService>();
 
             RegisterFileService(services);
 
@@ -151,7 +153,7 @@ namespace ProjectManagement.Web.Host.Startup
             );
         }
 
-        public void Configure(IApplicationBuilder app,  ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
         {
             app.UseAbp(options => { options.UseAbpRequestLocalization = false; }); // Initializes ABP framework.
 

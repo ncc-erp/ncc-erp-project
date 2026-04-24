@@ -1,7 +1,7 @@
 import { PERMISSIONS_CONSTANT } from './../../../../../constant/permission.constant';
 import { ProductApprovedDialogComponent } from './product-approved-dialog/product-approved-dialog.component';
 import { ProjectInfoDto, projectUserDto } from './../../../../../service/model/project.dto';
-import { catchError } from 'rxjs/operators';
+import { catchError, finalize  } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { PmReportIssueService } from './../../../../../service/api/pm-report-issue.service';
 import { ProjectResourceRequestService } from './../../../../../service/api/project-resource-request.service';
@@ -112,6 +112,7 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
   public officalResourceList: any[] = []
   public selectedReport = {} as pmReportDto;
   public userList = [];
+  public isSyncingMeetingReport: boolean = false;
   totalNormalWorkingTime: number = 0;
   totalOverTime: number = 0;
   sidebarExpanded: boolean;
@@ -356,12 +357,41 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
             })),
           };
         }
+        else {
+          this.weeklySummaryData = {} as GetProjectDailyMeetingsDto
+        }
       });
   }
 
   public syncMeetingCriteria() {
-    this.getProjectDailyMeeting();
-    abp.notify.success('Synced latest meeting report data');
+    if (this.isSyncingMeetingReport) {
+      return;
+    }
+
+    this.isSyncingMeetingReport = true;
+
+    this.pjDailyMeetingService
+      .syncProjectWeeklyReport(this.projectId)
+      .subscribe(
+        (res) => {
+          const result = res?.result ?? res;
+          const success = !!result?.success;
+
+          if (!success) {
+            abp.notify.error(result?.message || 'Sync data failed');
+            return;
+          }
+
+          this.getProjectDailyMeeting();
+          abp.notify.success(result?.message || 'Sync data successfully');
+        },
+        () => {
+          abp.notify.error('Sync data failed');
+        },
+      )
+      .add(() => {
+        this.isSyncingMeetingReport = false;
+      });
   }
 
   onChangeStatusProject() {
@@ -539,9 +569,9 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
   }
 
   getProjectInfo() {
-    this.isLoading = true;
     if (this.selectedReport.pmReportProjectId) {
-      this.pmReportProjectService.GetInfoProject(this.selectedReport.pmReportProjectId).pipe(catchError(this.pmReportProjectService.handleError)).subscribe(data => {
+      this.isLoading = true;
+      this.pmReportProjectService.GetInfoProject(this.selectedReport.pmReportProjectId).pipe(catchError(this.pmReportProjectService.handleError), finalize(() => { this.isLoading = false; })).subscribe(data => {
         this.projectInfo = data.result
 
         this.isLoading = false;
@@ -561,8 +591,7 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
             },
             queryParamsHandling: 'merge', // remove to replace all query params by provided
           });
-      },
-        () => { this.isLoading = false })
+      })
     }
   }
 
@@ -949,6 +978,7 @@ export class ProductWeeklyReportComponent extends AppComponentBase implements On
   public onReportchange() {
     this.getWeeklyReport();
     this.getFuturereport();
+    this.getProjectDailyMeeting();
     this.getProjectProblem();
     this.getProjectInfo();
     this.getAllCriteria();

@@ -177,6 +177,32 @@
                         </mat-form-field>
                         <i class="fas fa-times fa-lg ml-2 mt-2" *ngIf="selectedIsPlanned > 1" (click)="applyPlanFilter()"></i>
                     </div>
+                  <div class="col-12 col-md-3 mt-1 d-flex align-items-center mb-3">
+                        <mat-form-field appearance="outline" class="flex-grow-1">
+                            <mat-label>User Level:</mat-label>
+                            <mat-select #selectUserLevel placeholder="Select user level"
+                            [(ngModel)]="selectedUserLevels" multiple (openedChange)="openedChange($event,'UserLevel')">
+                                <div style="position: sticky; top: 0; z-index: 2; background-color: white;">
+                                    <mat-form-field class="w-100 px-3 ">
+                                        <input style="height: 30px; padding: 5px 10px; "
+                                        matInput [(ngModel)]="searchUserLevel"  placeholder="Search" #search
+                                        (keydown)="$event.stopPropagation()">
+                                    </mat-form-field>
+                                    <div class="ml-3 mb-2 select-filter-option">
+                                        <app-select-clear-option [type]= "'UserLevel'" [listOption]="listUserLevelsId"
+                                            (newListEvent)= "actionSelect($event)" (doneEvent)="selectDone($event)">
+                                        </app-select-clear-option>
+                                    </div>
+                                </div>
+                                <mat-option *ngFor="let userLevel of listUserLevels | listFilter:  'displayName' : searchUserLevel"
+                                [value]="userLevel.value" (click)="onSelectChangeUserLevel(userLevel.value)">
+                                    {{userLevel.displayName}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <i class="fas fa-times fa-lg ml-2 mt-2" *ngIf="selectedUserLevels?.length > 0"
+                            (click)="clearUserLevelFilter()"></i>
+                    </div>
 
                 </div>
 

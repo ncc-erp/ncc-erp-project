@@ -27,6 +27,8 @@ using Abp.Linq.Extensions;
 using Abp.Extensions;
 using NccCore.Uitls;
 using ProjectManagement.UploadFilesService;
+using OfficeOpenXml;
+using System.IO;
 
 namespace ProjectManagement.Services.ProjectUserBills
 {
@@ -164,6 +166,7 @@ namespace ProjectManagement.Services.ProjectUserBills
                     AccountName = x.AccountName.IsEmpty() ? x.User.UserName : x.AccountName,
                     BillRole = x.BillRole,
                     BillRate = isViewRate ? x.BillRate : 0,
+                    CurrencyName = x.Project.Currency.Name,
                     HeadCount = x.HeadCount,
                     StartTime = x.StartTime.Date,
                     EndTime = x.EndTime.Value.Date,
@@ -247,7 +250,7 @@ namespace ProjectManagement.Services.ProjectUserBills
                     (!input.IsAccountInfoTab && x.BillRate.ToString().Contains(lowerSearch)) ||
                     (x.UserSkills != null && x.UserSkills.Any(us =>
                         !string.IsNullOrEmpty(us.SkillName) && us.SkillName.ToLower().Contains(lowerSearch)
-                    )) 
+                    ))
                 ).ToList();
             }
 
@@ -327,7 +330,7 @@ namespace ProjectManagement.Services.ProjectUserBills
                     SkillNote = x.BillUserSkills.Select(s => s.Note).FirstOrDefault() ?? ""
                 }).FirstOrDefault();
         }
-         
+
         public async Task<List<LinkedResourceInfoDto>> GetAllLinkedResourcesByProject(long projectId)
         {
             var result = await _workScope.GetAll<LinkedResource>()
@@ -601,6 +604,100 @@ namespace ProjectManagement.Services.ProjectUserBills
             {
                 Id = projectUserBill.Id,
                 LinkCV = projectUserBill.LinkCV
+            };
+        }
+        public async Task<FileBase64Dto> ExportBillAccountToExcel(GetAllProjectUserBillDto input)
+        {
+            var result = await GetAllByProject(input);
+
+            if (input.SelectedIds != null && input.SelectedIds.Any())
+            {
+                var resultDict = result.ToDictionary(x => x.Id);
+                result = input.SelectedIds
+                    .Where(id => resultDict.ContainsKey(id))
+                    .Select(id => resultDict[id])
+                    .ToList();
+            }
+
+            var projectName = result.FirstOrDefault()?.ProjectName;
+            var currencyName = result.FirstOrDefault()?.CurrencyName;
+            var fileName = $"Bill_Account_{projectName}.xlsx";
+
+            byte[] bytes;
+            using (var package = new ExcelPackage())
+            {
+                var sheet = package.Workbook.Worksheets.Add("Bill Account");
+                sheet.Cells.Style.Font.Name = "Arial";
+                sheet.Cells.Style.Font.Size = 10;
+
+                var headers = new List<string> {
+                    "STT",
+                    "Employee",
+                    "Charge Name",
+                    "Charge Role",
+                    "Linked Resources"
+                };
+
+                if (!input.IsHideRates)
+                {
+                    headers.Add($"Rate ({currencyName})");
+                }
+
+                headers.AddRange(new[] {
+                    "Head Count",
+                    "Charge Type",
+                    "Is Charge",
+                    "Is Expose",
+                    "Skills",
+                    "Note"
+                });
+
+                for (int i = 0; i < headers.Count; i++)
+                {
+                    sheet.Cells[1, i + 1].Value = headers[i];
+                    sheet.Cells[1, i + 1].Style.Font.Bold = true;
+                }
+
+                int rowIndex = 2;
+                foreach (var item in result)
+                {
+                    sheet.Cells[rowIndex, 1].Value = rowIndex - 1;
+                    sheet.Cells[rowIndex, 2].Value = item.FullName;
+                    sheet.Cells[rowIndex, 3].Value = item.AccountName;
+                    sheet.Cells[rowIndex, 4].Value = item.BillRole;
+                    sheet.Cells[rowIndex, 5].Value = item.LinkedResources != null
+                        ? string.Join(", ", item.LinkedResources.Select(lr => lr.FullName)) : "";
+                    int colIndex = 6;
+                    if (!input.IsHideRates)
+                    {   
+                        sheet.Cells[rowIndex, colIndex].Value = item.BillRate;
+                        sheet.Cells[rowIndex, colIndex].Style.Numberformat.Format = "#,##0.000";
+                        colIndex++;
+                    }
+
+                    sheet.Cells[rowIndex, colIndex].Value = item.HeadCount;
+                    sheet.Cells[rowIndex, colIndex].Style.Numberformat.Format = "#,##0.00";
+                    colIndex++;
+
+                    sheet.Cells[rowIndex, colIndex++].Value = item.ChargeType?.ToString() ?? "";
+                    sheet.Cells[rowIndex, colIndex++].Value = $"{item.StartTime:dd/MM/yyyy}{(item.EndTime.HasValue ? $" - {item.EndTime.Value:dd/MM/yyyy}" : "")}";
+                    sheet.Cells[rowIndex, colIndex++].Value = item.isExpose ? "Yes" : "No";
+                    sheet.Cells[rowIndex, colIndex++].Value = item.UserSkills != null
+                        ? string.Join(", ", item.UserSkills.Select(s => s.SkillName)) : "";
+                    sheet.Cells[rowIndex, colIndex++].Value = item.Note;
+
+                    rowIndex++;
+                }
+
+                sheet.Cells.AutoFitColumns();
+                bytes = package.GetAsByteArray();
+            }
+
+            return new FileBase64Dto
+            {
+                FileName = fileName,
+                Base64 = Convert.ToBase64String(bytes),
+                FileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             };
         }
     }

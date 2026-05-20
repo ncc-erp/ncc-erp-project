@@ -108,6 +108,7 @@ namespace ProjectManagement.APIs.Projects
             var query = from p in projects
                         join rp in qActivePMReport on p.Id equals rp.ProjectId into lst
                         from l in lst.DefaultIfEmpty()
+                        orderby p.CreationTime descending
                         select new GetProjectDto
                         {
                             Id = p.Id,

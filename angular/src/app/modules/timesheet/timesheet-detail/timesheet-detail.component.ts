@@ -131,6 +131,7 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
   public sending: boolean = false;
   public canExportInvoice = false;
   public listTimesheetProject = [];
+  public viewMultipliedOtTime = true;
   @ViewChild(MatMenuTrigger)
   menu: MatMenuTrigger
   contextMenuPosition = { x: '0', y: '0' }
@@ -211,21 +212,56 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
   }
 
   getOtDays(hours: number): number {
-    return parseFloat((hours / 8).toFixed(3));
+    return this.roundDay((hours || 0) / 8);
+  }
+
+  roundDay(value: number): number {
+    return parseFloat((value || 0).toFixed(3));
+  }
+
+  getRawOtDays(item: any): number {
+    const total = item.timesheetProjectBillOtTypes?.reduce((sum: number, otType: any) => {
+      return sum + this.getOtDays(otType?.hours || 0);
+    }, 0) || 0;
+
+    return this.roundDay(total);
+  }
+
+  getMultipliedOtDays(item: any): number {
+    const total = item.timesheetProjectBillOtTypes?.reduce((sum: number, otType: any) => {
+      const multiplier = otType?.multiplier || 0;
+      return sum + this.getOtDays(otType?.hours || 0) * multiplier;
+    }, 0) || 0;
+
+    return this.roundDay(total);
+  }
+
+  getDisplayedOtDays(item: any): number {
+    return this.viewMultipliedOtTime ? this.getMultipliedOtDays(item) : this.getRawOtDays(item);
   }
   
-  getTotalWorkingTime(item: any): number {
+getTotalWorkingTime(item: any): number {
     const normalWorkingTime = item.workingTime || 0;
 
     if (!item.timesheetProjectBillOtTypes?.length) {
       return normalWorkingTime;
     }
-    const totalOtTime = item.timesheetProjectBillOtTypes.reduce((total: number, otType: any) => {
-      const hours = otType?.hours ?? 0;
-      return total + this.getOtDays(hours);
-    }, 0) || 0;
 
-    return parseFloat((normalWorkingTime + totalOtTime).toFixed(3));  
+    return this.roundDay(normalWorkingTime + this.getDisplayedOtDays(item));
+  }
+
+  getOtTypeName(otType: any): string {
+    return otType?.otType || otType?.otTypeName || otType?.typeName || 'Type';
+  }
+
+  getOtTooltip(item: any): string {
+    if (!item.timesheetProjectBillOtTypes?.length) {
+      return '';
+    }
+
+    return item.timesheetProjectBillOtTypes.map((otType: any) => {
+      return `OT ${this.getOtTypeName(otType)} ${this.getOtDays(otType?.hours || 0)}d x ${otType?.multiplier || 0}`;
+    }).join(', ');
   }
 
   isShowBtnExportTsDetail() {

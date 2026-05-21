@@ -240,7 +240,7 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
     return this.viewMultipliedOtTime ? this.getMultipliedOtDays(item) : this.getRawOtDays(item);
   }
   
-getTotalWorkingTime(item: any): number {
+  getTotalWorkingTime(item: any): number {
     const normalWorkingTime = item.workingTime || 0;
 
     if (!item.timesheetProjectBillOtTypes?.length) {

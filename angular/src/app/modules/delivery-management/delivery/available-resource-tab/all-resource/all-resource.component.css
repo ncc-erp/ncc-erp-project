@@ -101,7 +101,8 @@ span {
 }
 
 .row-second {
-    height: 35px;
+    width: 100%;
+    height: 50px;
 }
 ::ng-deep .row-second .mat-form-field-flex {
     min-width: 160px;

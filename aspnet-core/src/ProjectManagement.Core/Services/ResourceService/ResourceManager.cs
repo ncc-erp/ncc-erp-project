@@ -1060,6 +1060,7 @@ namespace ProjectManagement.Services.ResourceManager
                              .WhereIf(input.PositionIds != null, x => input.PositionIds.Contains(x.PositionId.Value))
                              .WhereIf(input.UserTypes != null, x => input.UserTypes.Contains((UserType)x.UserType));
             }
+            quser = quser.WhereIf(input.UserLevels != null && input.UserLevels.Any(), x => x.UserLevel.HasValue && input.UserLevels.Contains(x.UserLevel.Value));
             return quser;
         }
         public IQueryable<GetAllPoolResourceDto> ApplyFilterPlannedResource(IQueryable<GetAllPoolResourceDto> query, InputGetResourceDto input)

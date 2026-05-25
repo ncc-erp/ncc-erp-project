@@ -47,6 +47,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
   public searchBranch: string = '';
   public searchPosition: string ='';
   public searchUserType: string ='';
+  public searchUserLevel: string ='';
   public searchProject: string ='';
   public listSkills: SkillDto[] = [];
   public listBranchs: BranchDto[] = [];
@@ -54,10 +55,12 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
   public listProject = [];
   public projectId = -1;
   public listUserTypes: any = [];
+  public listUserLevels: any = [];
   public listSkillsId: number[] = [];
   public listBranchsId: number[] = [];
   public listPositionsId: number[] = [];
   public listUserTypesId: number[] = [];
+  public listUserLevelsId: number[] = [];
   public skill = '';
   public skillsParam = [];
   public selectedSkillId: number[] = [];
@@ -69,6 +72,9 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
   public selectedUserTypes: number[] = [];
   public selectedUserTypesCr: number[] = [];
   public selectedUserTypesOld: number[] = [];
+  public selectedUserLevels: number[] = [];
+  public selectedUserLevelsCr: number[] = [];
+  public selectedUserLevelsOld: number[] = [];
   public selectedPositions: number[] = [];
   public selectedPositionsCr: number[] = [];
   public selectedPositionsOld: number[] = [];
@@ -105,6 +111,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
       branchIds: this.selectedBranchIds,
       userTypes: this.selectedUserTypes,
       positionIds: this.selectedPositions,
+      userLevels: this.selectedUserLevels,
       planStatus: this.selectedIsPlanned || APP_ENUMS.PlanStatus.AllPlan,
       projectId: this.projectId == -1 ? null : this.projectId
     };
@@ -158,6 +165,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
   @ViewChild("selectBranch") selectBranch;
   @ViewChild("selectSkill") selectSkill;
   @ViewChild("selectUserType") selectUserType;
+  @ViewChild("selectUserLevel") selectUserLevel;
 
   ngOnInit(): void {
     this.changePageSize();
@@ -165,6 +173,7 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     this.getAllPositions();
     this.getAllBranchs();
     this.getAllUserTypes();
+    this.getAllUserLevels();
     this.getProjectsForAllResource();
     this.selectedIsPlanned = 1;
   }
@@ -224,6 +233,11 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
           this.selectedUserTypesCr = [...this.selectedUserTypesOld]
           this.searchUserType = '';
           break;
+        case 'UserLevel':
+          this.selectedUserLevels = [...this.selectedUserLevelsOld]
+          this.selectedUserLevelsCr = [...this.selectedUserLevelsOld]
+          this.searchUserLevel = '';
+          break;
       }
     }
   }
@@ -246,16 +260,22 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
         this.selectedUserTypes = typeSelect.data
         this.selectedUserTypesCr = typeSelect.data
         break;
+      case 'UserLevel':
+        this.selectedUserLevels = typeSelect.data
+        this.selectedUserLevelsCr = typeSelect.data
+        break;
     }
   }
 
-  onSelectChange(listSelect,id){
-    if(listSelect.includes(id)){
-      return listSelect.filter(res => res != id)
+
+ onSelectChange(listSelect,id){
+    const currentList = listSelect || [];
+    if(currentList.includes(id)){
+      return currentList.filter(res => res != id)
     }
     else{
-      listSelect.push(id)
-      return listSelect
+      currentList.push(id)
+      return currentList
     }
   }
 
@@ -287,6 +307,13 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     this.listUserTypes = this.orderList(this.listUserTypes,this.selectedUserTypes)
   }
 
+  onSelectChangeUserLevel(id){
+    const userLevel = this.onSelectChange(this.selectedUserLevelsCr,id)
+    this.selectedUserLevelsCr = userLevel
+    this.selectedUserLevels = [...userLevel]
+    this.listUserLevels = this.orderList(this.listUserLevels,this.selectedUserLevels)
+  }
+
   orderList(listAll, listIdSelect){
     const listSelect = listAll.filter(item => listIdSelect.includes(item.id))
     const listUnSelect = listAll.filter(item => !listIdSelect.includes(item.id))
@@ -310,6 +337,10 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
       case 'UserType':
         this.selectedUserTypesOld = this.selectedUserTypes
         this.selectUserType.close()
+        break;
+      case 'UserLevel':
+      this.selectedUserLevelsOld = this.selectedUserLevels
+      this.selectUserLevel.close()
         break;
     }
     this.refresh()
@@ -405,6 +436,41 @@ export class AllResourceComponent extends PagedListingComponentBase<any> impleme
     this.selectedUserTypesCr = this.selectedUserTypes;
     //this.refresh();
   }
+
+  handleUserLevelSelection(userLevels: number[]) {
+    this.selectedUserLevels = userLevels;
+    this.selectedUserLevelsCr = userLevels;
+
+    if (!userLevels.length) {
+      this.selectedUserLevelsOld = [];
+      this.searchUserLevel = '';
+      this.getAllUserLevels();
+    }
+  }
+
+  clearUserLevelFilter() {
+    this.selectedUserLevels = [];
+    this.selectedUserLevelsCr = [];
+    this.selectedUserLevelsOld = [];
+    this.searchUserLevel = '';
+    this.getAllUserLevels();
+    this.refresh();
+  }
+  
+  getAllUserLevels() {
+    this.listUserLevels = Object.entries(this.APP_ENUM.UserLevel)
+      .map((item) => {
+        return {
+          displayName: item[0],
+          value: item[1],
+        };
+      });
+    this.listUserLevelsId = this.listUserLevels.map(item => item.value);
+    this.selectedUserLevels = [];
+    this.selectedUserLevelsOld = [];
+    this.selectedUserLevelsCr = [];
+  }
+  
 
   skillsCommas(arr) {
     arr = arr.map((item) => {

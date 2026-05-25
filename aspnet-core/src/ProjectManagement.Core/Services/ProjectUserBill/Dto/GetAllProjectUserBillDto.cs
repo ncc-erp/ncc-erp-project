@@ -13,5 +13,7 @@ namespace ProjectManagement.Services.ProjectUserBill.Dto
         public string SearchText { get; set; }
         public string LinkCv {  get; set; }
         public bool IsAccountInfoTab { get; set; } = false;
+        public List<long> SelectedIds { get; set; }
+        public bool IsHideRates { get; set; }
     }
 }

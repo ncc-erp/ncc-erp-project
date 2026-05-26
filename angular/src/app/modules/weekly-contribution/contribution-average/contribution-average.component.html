@@ -1,104 +1,100 @@
 <div>
-  <section class="content-header pb-1">
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-12">
-          <h3 class="mb-2">
-            <i class="fas fa-calendar-week mr-2"></i>
-            <strong>{{ pmReportName }}</strong>
-          </h3>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <section class="content px-2">
     <div class="container-fluid">
       <div class="card">
-      <div class="card-header">
-        <div class="row align-items-center">
-      
-          <div class="col-md-3 col-sm-12">
-            <div class="input-group">
-              <div class="input-group-prepend">
-                <button name="btn-search" type="button" class="btn bg-blue search-btn" (click)="refresh()">
-                  <i class="fas fa-search"></i>
-                </button>
+        <div class="card-header">
+          <div class="row align-items-center">
+            <div class="col-md-2 col-sm-12">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <button name="btn-search" type="button" class="btn bg-blue search-btn" (click)="filterAverage()">
+                    <i class="fas fa-search"></i>
+                  </button>
+                </div>
+                <input type="text" class="form-control search-input" name="keyword" placeholder="Search"
+                  [(ngModel)]="searchText" (keyup.enter)="filterAverage()" />
               </div>
-              <input type="text" class="form-control search-input" name="keyword" placeholder="Search"
-                [(ngModel)]="searchText" (keyup.enter)="refresh()" />
+            </div>
+
+            <div class="col-md-2 col-sm-12">
+              <mat-form-field appearance="outline" style="width: 100%;">
+                <mat-label>Branch:</mat-label>
+                <mat-select #selectBranch [(ngModel)]="selectedBranchIds" placeholder="Select branch"
+                  multiple (selectionChange)="filterAverage()">
+                  <div style="position: sticky; top: 0; z-index: 2; background-color: white;">
+                    <mat-form-field class="w-100 px-3" style="margin-bottom: 0;">
+                      <input style="height: 30px; padding: 5px 10px;" matInput [(ngModel)]="searchBranch"
+                        placeholder="Search" (keydown)="$event.stopPropagation()">
+                    </mat-form-field>
+                  </div>
+                  <mat-option *ngFor="let branch of listBranchs | listFilter: 'name' : searchBranch"
+                    [value]="branch.id">
+                    {{branch.name}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="col-md-2 col-sm-12">
+              <mat-form-field appearance="outline" style="width: 100%;">
+                <mat-label>Project:</mat-label>
+                <mat-select [(ngModel)]="selectedProjectId" placeholder="Select project"
+                  (selectionChange)="filterAverage()" panelClass="select-below">
+                  <div style="position: sticky; top: 0; z-index: 2; background-color: white;">
+                    <mat-form-field class="w-100 px-3" style="margin-bottom: 0;">
+                      <input style="height: 30px; padding: 5px 10px;" matInput [(ngModel)]="projectSearchText"
+                        placeholder="Search" (keydown)="$event.stopPropagation()">
+                    </mat-form-field>
+                  </div>
+                  <mat-option [value]="null">All</mat-option>
+                  <mat-option *ngFor="let project of listProject | listFilter: 'projectName' : projectSearchText"
+                    [value]="project.projectId">
+                    {{project.projectName}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="col-md-2 col-sm-12">
+              <mat-form-field appearance="outline" style="width: 100%;">
+                <mat-label>User Type:</mat-label>
+                <mat-select [(ngModel)]="selectedUserTypes" placeholder="Select user type"
+                  multiple (selectionChange)="filterAverage()">
+                  <div style="position: sticky; top: 0; z-index: 2; background-color: white;">
+                    <mat-form-field class="w-100 px-3" style="margin-bottom: 0;">
+                      <input style="height: 30px; padding: 5px 10px;" matInput [(ngModel)]="searchUserType"
+                        placeholder="Search" (keydown)="$event.stopPropagation()">
+                    </mat-form-field>
+                  </div>
+                  <mat-option *ngFor="let userType of listUserTypes | listFilter: 'displayName' : searchUserType"
+                    [value]="userType.value">
+                    {{userType.displayName}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="col-md-4 col-sm-12 d-flex">
+              <mat-form-field appearance="outline" class="mr-2" style="width: 50%;">
+                <mat-label>From date:</mat-label>
+                <input matInput [matDatepicker]="fromDatePicker" readonly [(ngModel)]="fromDate"
+                  (dateChange)="filterAverage()">
+                <mat-datepicker-toggle matSuffix [for]="fromDatePicker"></mat-datepicker-toggle>
+                <mat-datepicker #fromDatePicker></mat-datepicker>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" style="width: 50%;">
+                <mat-label>To date:</mat-label>
+                <input matInput [matDatepicker]="toDatePicker" readonly [(ngModel)]="toDate"
+                  (dateChange)="filterAverage()">
+                <mat-datepicker-toggle matSuffix [for]="toDatePicker"></mat-datepicker-toggle>
+                <mat-datepicker #toDatePicker></mat-datepicker>
+              </mat-form-field>
             </div>
           </div>
-      
-          <div class="col-md-2 col-sm-12">
-            <mat-form-field appearance="outline" style="width: 100%;">
-              <mat-label>Branch:</mat-label>
-              <mat-select #selectBranch [(ngModel)]="selectedBranchIds" (openedChange)="openedChange($event)"
-                placeholder="Select branch" multiple (selectionChange)="refresh()">
+        </div>
 
-                <div style="position: sticky; top: 0; z-index: 2; background-color: white;">
-                  <mat-form-field class="w-100 px-3" style="margin-bottom: 0;">
-                    <input style="height: 30px; padding: 5px 10px;" matInput [(ngModel)]="searchBranch" placeholder="Search"
-                      (keydown)="$event.stopPropagation()">
-                  </mat-form-field>
-                  <div class="ml-3 mb-2 select-filter-option">
-                    <app-select-clear-option [type]="'Branch'" [listOption]="listBranchsId"
-                      (newListEvent)="actionSelect($event)" (doneEvent)="selectDone()">
-                    </app-select-clear-option>
-                  </div>
-                </div>
-
-                      <mat-option *ngFor="let branch of listBranchs | listFilter: 'name' : searchBranch"
-                        [value]="branch.id">
-                  {{branch.name}}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
-
-          <div class="col-md-2 col-sm-12">
-            <mat-form-field appearance="outline" style="width: 100%;">
-              <mat-label>User Type:</mat-label>
-              <mat-select [(ngModel)]="selectedUserTypes" placeholder="Select user type"
-                multiple (selectionChange)="filterUserType()">
-                <div style="position: sticky; top: 0; z-index: 2; background-color: white;">
-                  <mat-form-field class="w-100 px-3" style="margin-bottom: 0;">
-                    <input style="height: 30px; padding: 5px 10px;" matInput [(ngModel)]="searchUserType"
-                      placeholder="Search" (keydown)="$event.stopPropagation()">
-                  </mat-form-field>
-                </div>
-                <mat-option *ngFor="let userType of listUserTypes | listFilter: 'displayName' : searchUserType"
-                  [value]="userType.value">
-                  {{userType.displayName}}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
-      
-          <div class="col-md-2 col-sm-12">
-            <mat-form-field appearance="outline" style="width: 100%;">
-              <mat-label>Project:</mat-label>
-              <mat-select [(ngModel)]="selectedProjectId" placeholder="Select project" (selectionChange)="refresh()"
-                panelClass="select-below">
-                <div style="position: sticky; top: 0; z-index: 2; background-color: white;">
-                  <mat-form-field class="w-100 px-3" style="margin-bottom: 0;">
-                    <input style="height: 30px; padding: 5px 10px;" matInput [(ngModel)]="projectSearchText"
-                      placeholder="Search" (keydown)="$event.stopPropagation()">
-                  </mat-form-field>
-                </div>
-                <mat-option [value]="null">All</mat-option>
-                <mat-option *ngFor="let project of listProject | listFilter: 'projectName' : projectSearchText"
-                  [value]="project.projectId">
-                  {{project.projectName}}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
-      
-        </div> 
-      </div>
-   
-        <div class="card-body table-responsive p-0">
+       <div class="card-body table-responsive p-0">
           <div class="table-vertical-scroll" style="max-height: 800px; overflow-y: auto;">
             <table class="table table-bordered table-hover text-nowrap m-0" style="width: 100%; table-layout: fixed;">
               <thead class="bg-light shadow-sm sticky-top">
@@ -123,13 +119,13 @@
                     Project Workload & Contribution
                   </th>
 
-                  <th (click)="sortData('totalHeadCount')" style="width: 150px; cursor: pointer;"
+                  <th (click)="sortData('averageContribution')" style="width: 150px; cursor: pointer;"
                     class="text-uppercase text-secondary text-xs font-weight-bolder">
                     <div class="d-flex align-items-center justify-content-center">
-                      Total contribution
+                      Average Contribution
                       <span class="ml-1">
-                        <i *ngIf="sortColumn === 'totalHeadCount'" [class]="iconSort"></i>
-                        <i *ngIf="sortColumn !== 'totalHeadCount'" class="fas fa-sort text-muted"></i>
+                        <i *ngIf="sortColumn === 'averageContribution'" [class]="iconSort"></i>
+                        <i *ngIf="sortColumn !== 'averageContribution'" class="fas fa-sort text-muted"></i>
                       </span>
                     </div>
                   </th>
@@ -137,17 +133,17 @@
               </thead>
 
               <tbody>
-                <tr *ngFor="let user of userGroupContributions | paginate: {
+                <tr *ngFor="let user of contributionSummaries | paginate: {
                               id: 'server',
                               itemsPerPage: pageSize,
                               currentPage: pageNumber,
                               totalItems: totalItems
                             }; let i = index">
                   <td class="text-center align-middle font-weight-bold text-muted"
-                      style="white-space: nowrap; padding: 12px 0 !important;">
-                      {{ (pageNumber - 1) * pageSize + i + 1 }}
+                    style="white-space: nowrap; padding: 12px 0 !important;">
+                    {{ (pageNumber - 1) * pageSize + i + 1 }}
                   </td>
-
+                  
                   <td class="align-middle bg-white" style="white-space: normal;">
                     <div class="d-flex align-items-center">
                       <div class="avatar-wrapper mr-3">
@@ -177,14 +173,12 @@
 
                   <td class="p-0 align-middle" style="white-space: normal;">
                     <div class="project-list-container">
-
                       <div *ngIf="!user.projects || user.projects.length === 0" class="text-center text-muted py-3">
                         <em>No contributions yet</em>
                       </div>
 
                       <div *ngFor="let proj of user.projects; let isLastProj = last" class="d-flex w-100"
                         [class.border-bottom]="!isLastProj">
-
                         <div class="p-3 border-right bg-white"
                           style="width: 40%; min-width: 200px; display: flex; flex-direction: column; justify-content: center;">
                           <div class="font-weight-bold text-primary mb-1"
@@ -197,11 +191,9 @@
                         </div>
 
                         <div class="flex-grow-1 d-flex flex-column">
-
                           <div *ngFor="let bill of proj.billDetails; let isLastBill = last"
                             class="d-flex align-items-center justify-content-between p-2 pl-3 hover-bg-light"
                             [class.border-bottom]="!isLastBill" style="min-height: 70px;">
-
                             <div class="d-flex flex-column" style="flex: 1;">
                               <div class="font-weight-bold text-primary mb-1" *ngIf="bill.accountName">
                                 <i class="fas fa-file-invoice mr-2"></i>{{ bill.accountName }}
@@ -210,20 +202,27 @@
                                 </span>
                               </div>
                               <div class="small text-muted" *ngIf="bill.headCount !== undefined">
-                                <i class="fas fa-users mr-1"></i> Head Count: <strong>{{ bill.headCount }}</strong>
+                                <i class="fas fa-users mr-1"></i> Head Count:
+                                <strong>{{ bill.headCount | number:'1.0-2' }}</strong>
                               </div>
                             </div>
 
-                            <div class="d-flex flex-column align-items-end pl-2" style="min-width: 150px;">
+                            <div class="weekly-report-name mx-2" *ngIf="bill.pmReportName">
+                              {{ bill.pmReportName }}
+                            </div>
 
+                            <div class="d-flex flex-column align-items-end pl-2" style="min-width: 150px;">
                               <div class="d-flex align-items-center flex-wrap justify-content-end">
                                 <div class="mr-2 small text-muted d-flex align-items-center" matTooltip="Contribute">
-                                  Contribute: <span class="badge badge-danger ml-1 shadow-sm">{{ bill.contribute
-                                    }}%</span>
+                                  Contribute:
+                                  <span class="badge badge-danger ml-1 shadow-sm">
+                                    {{ bill.contribute | number:'1.1-2' }}%
+                                  </span>
                                 </div>
                               </div>
                             </div>
                           </div>
+
                           <div *ngIf="!proj.billDetails || proj.billDetails.length === 0"
                             class="p-3 text-muted text-center small font-italic">
                             - No bill info -
@@ -235,10 +234,9 @@
 
                   <td class="text-center align-middle font-weight-bold text-dark">
                     <span class="badge badge-pill badge-light border" style="font-size: 1rem;">
-                      {{ (user.totalHeadCount / 100) | number:'1.1-2' }}
+                      {{ (user.averageContribution / 100) | number:'1.1-2' }}
                     </span>
                   </td>
-
                 </tr>
               </tbody>
             </table>
@@ -263,15 +261,11 @@
                 </mat-select>
               </mat-form-field>
             </div>
+            
             <div class="footer-center total-pagination">
               <p class="mb-0">Total records: {{ totalItems }}</p>
-              <p class="mb-0 text-primary font-weight-bold" style="font-size: 0.95rem;">
-                Total contribution / Total Staff =
-                <span class="text-danger">{{ totalContributionSum }}</span> /
-                <span>{{ totalItems }}</span> =
-                <span class="badge badge-success">
-                  {{ (totalItems > 0 ? (totalContributionSum / totalItems) : 0) * 100 | number:'1.1-2' }}%
-                </span>
+              <p class="mb-0 text-primary font-weight-bold">
+                Weekly reports in range: <span class="text-danger">{{ weeklyReportInRange }}</span>
               </p>
             </div>
             <div class="footer-right pagination-control">
@@ -283,4 +277,4 @@
       </div>
     </div>
   </section>
-</div>
+</div> 

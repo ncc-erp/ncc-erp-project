@@ -112,7 +112,9 @@ namespace ProjectManagement.APIs.PMReportProjectContribution
             {
                 var projectId = input.ProjectId;
                 var branchIds = input.BranchIds?.ToList() ?? new List<long>();
+                var userTypes = input.UserTypes?.ToList() ?? new List<ProjectEnum.UserType>();
                 var hasBranchFilter = branchIds.Any();
+                var hasUserTypeFilter = userTypes.Any();
                 var search = !string.IsNullOrWhiteSpace(input.SearchText) ? input.SearchText.Trim().ToLower() : "";
 
                 var activeUsersQuery = WorkScope.GetAll<User>()
@@ -154,6 +156,11 @@ namespace ProjectManagement.APIs.PMReportProjectContribution
                         .Where(u => u.BranchId.HasValue && activeBranchIds.Contains(u.BranchId.Value));
                 }
 
+                if (hasUserTypeFilter)
+                {
+                    activeUsersQuery = activeUsersQuery
+                        .Where(u => userTypes.Contains(u.UserType));
+                }
 
                 var usersQuery = await activeUsersQuery
                     .Select(u => new
@@ -368,6 +375,228 @@ namespace ProjectManagement.APIs.PMReportProjectContribution
                 throw new UserFriendlyException(ex.Message);
             }
 
+        }
+
+        [HttpPost]
+        [AbpAuthorize]
+        public async Task<ContributionAverageResultDto> GetContributionAverage([FromBody] ContributionAverageInputDto input)
+        {
+            try
+            {
+                var fromDate = input.FromDate.Date;
+                var toDate = input.ToDate.Date.AddDays(1);
+
+                if (fromDate >= toDate)
+                    throw new ArgumentException("From date must be less than or equal to To date.");
+
+                var projectId = input.ProjectId;
+                var branchIds = input.BranchIds?.ToList() ?? new List<long>();
+                var userTypes = input.UserTypes?.ToList() ?? new List<ProjectEnum.UserType>();
+                var hasBranchFilter = branchIds.Any();
+                var hasUserTypeFilter = userTypes.Any();
+                var search = !string.IsNullOrWhiteSpace(input.SearchText) ? input.SearchText.Trim().ToLower() : "";
+
+                var reportIds = await WorkScope.GetAll<PMReport>()
+                    .AsNoTracking()
+                    .Where(r => r.Type == ProjectEnum.PMReportType.Weekly)
+                    .Where(r => r.CreationTime >= fromDate && r.CreationTime < toDate)
+                    .Select(r => r.Id)
+                    .ToListAsync();
+
+                var weeklyReportCount = reportIds.Count;
+
+                var activeUsersQuery = WorkScope.GetAll<User>()
+                    .AsNoTracking()
+                    .Where(u => u.IsActive)
+                    .Where(u => u.UserType != ProjectEnum.UserType.FakeUser);
+
+                if (hasBranchFilter)
+                {
+                    activeUsersQuery = activeUsersQuery
+                        .Where(u => u.BranchId.HasValue && branchIds.Contains(u.BranchId.Value));
+                }
+
+                if (hasUserTypeFilter)
+                {
+                    activeUsersQuery = activeUsersQuery
+                        .Where(u => userTypes.Contains(u.UserType));
+                }
+
+                if (projectId.HasValue)
+                {
+                    var userIdsInProjectUser = WorkScope.GetAll<ProjectUser>()
+                        .AsNoTracking()
+                        .Where(pu => pu.ProjectId == projectId.Value)
+                        .Where(pu => pu.Status == ProjectEnum.ProjectUserStatus.Present && pu.AllocatePercentage > 0)
+                        .Select(pu => pu.UserId);
+
+                    var userIdsWithContribution = WorkScope.GetAll<WeeklyContributionHistory>()
+                        .AsNoTracking()
+                        .Where(h => h.ProjectId == projectId.Value)
+                        .Where(h => reportIds.Contains(h.PMReportId))
+                        .Select(h => h.UserId);
+
+                    var allUserIdsQuery = userIdsInProjectUser.Union(userIdsWithContribution);
+
+                    activeUsersQuery = activeUsersQuery.Where(u => allUserIdsQuery.Contains(u.Id));
+                }
+
+                var users = await activeUsersQuery
+                    .Select(u => new
+                    {
+                        u.Id,
+                        UserName = u.UserName.Trim().ToLower(),
+                        FullName = u.FullName.Trim().ToLower(),
+                        EmailAddress = u.EmailAddress.Trim().ToLower(),
+                        u.AvatarPath,
+                        BranchDisplayName = u.Branch.DisplayName,
+                        BranchColor = u.Branch.Color,
+                        PositionName = u.Position.Name,
+                        PositionColor = u.Position.Color
+                    })
+                    .ToListAsync();
+
+                if (!string.IsNullOrEmpty(search))
+                {
+                    users = users
+                        .Where(u => u.UserName.Contains(search)
+                                 || u.FullName.Contains(search)
+                                 || u.EmailAddress.Contains(search))
+                        .ToList();
+                }
+
+                var totalUserCount = users.Count;
+
+                if (totalUserCount == 0)
+                    return new ContributionAverageResultDto
+                    {
+                        Items = new List<ContributionAverageUserDto>(),
+                        TotalCount = 0,
+                        WeeklyReportInRange = weeklyReportCount
+                    };
+
+                var filteredUserIds = users.Select(u => u.Id).ToList();
+
+                var contributionRows = await WorkScope.GetAll<WeeklyContributionHistory>()
+                    .AsNoTracking()
+                    .Where(h => reportIds.Contains(h.PMReportId) && filteredUserIds.Contains(h.UserId))
+                    .WhereIf(projectId.HasValue, h => h.ProjectId == projectId.Value)
+                    .Select(h => new
+                    {
+                        h.UserId,
+                        h.PMReportId,
+                        PMReportName = h.PMReport.Name,
+                        h.ProjectId,
+                        h.ProjectUserBillId,
+                        ProjectName = h.Project.Name,
+                        PMName = h.Project.PM != null ? h.Project.PM.FullName : "No PM",
+                        AccountName = h.ProjectUserBill.AccountName ?? h.ProjectUserBill.User.FullName,
+                        BillRole = h.ProjectUserBill.BillRole,
+                        h.Contribute,                          
+                        HeadCount = h.ProjectUserBill.HeadCount, 
+                        WeightedContribution = h.Contribute * h.ProjectUserBill.HeadCount
+                    })
+                    .ToListAsync();
+
+                var totalContributionByUser = contributionRows
+                    .GroupBy(row => new { row.UserId, row.PMReportId })
+                    .Select(group => new
+                    {
+                        group.Key.UserId,
+                        ReportContribution = group.Sum(row => row.WeightedContribution)
+                    })
+                    .GroupBy(row => row.UserId)
+                    .ToDictionary(
+                        group => group.Key,
+                        group => group.Sum(row => row.ReportContribution));
+
+                var resultItems = users
+                    .Select(user =>
+                    {
+                        var totalContribution = totalContributionByUser.TryGetValue(user.Id, out var contribution) ? contribution : 0;
+
+                        return new ContributionAverageUserDto
+                        {
+                            UserId = user.Id,
+                            UserName = user.UserName,
+                            UserFullName = user.FullName,
+                            AvatarPath = user.AvatarPath,
+                            BranchDisplayName = user.BranchDisplayName,
+                            BranchColor = user.BranchColor,
+                            PositionName = user.PositionName,
+                            PositionColor = user.PositionColor,
+                            AverageContribution = weeklyReportCount == 0 ? 0d : totalContribution / weeklyReportCount, 
+                            Projects = contributionRows
+                                .Where(row => row.UserId == user.Id)
+                                .GroupBy(row => new { row.ProjectId, row.ProjectName, row.PMName })
+                                .Select(projectGroup => new ContributionAverageProjectDto
+                                {
+                                    ProjectId = projectGroup.Key.ProjectId,
+                                    ProjectName = projectGroup.Key.ProjectName,
+                                    PMName = projectGroup.Key.PMName,
+                                    TotalContribute = weeklyReportCount == 0
+                                        ? 0
+                                        : projectGroup.Sum(row => row.WeightedContribution) / weeklyReportCount, 
+                                    BillDetails = projectGroup
+                                        .GroupBy(row => new { row.PMReportId, row.PMReportName, row.ProjectUserBillId, row.AccountName, row.BillRole })
+                                        .Select(billGroup => new ContributionAverageDetailDto
+                                        {
+                                            PMReportId = billGroup.Key.PMReportId,
+                                            PMReportName = billGroup.Key.PMReportName,
+                                            AccountName = billGroup.Key.AccountName,
+                                            BillRole = billGroup.Key.BillRole,
+                                            HeadCount = billGroup.Sum(row => row.HeadCount), 
+                                            Contribute = billGroup.Sum(row => row.Contribute) 
+                                        })
+                                        .ToList()
+                                })
+                                .ToList()
+                        };
+                    })
+                    .ToList();
+
+                var sortColumn = input.Sort?.Trim().ToLower();
+                var isDesc = input.SortDirection == SortDirection.DESC;
+                IEnumerable<ContributionAverageUserDto> sortedItems;
+
+                switch (sortColumn)
+                {
+                    case "username":
+                        sortedItems = isDesc ? resultItems.OrderByDescending(x => x.UserName) : resultItems.OrderBy(x => x.UserName);
+                        break;
+                    case "userfullname":
+                        sortedItems = isDesc ? resultItems.OrderByDescending(x => x.UserFullName) : resultItems.OrderBy(x => x.UserFullName);
+                        break;
+                    case "branchdisplayname":
+                        sortedItems = isDesc ? resultItems.OrderByDescending(x => x.BranchDisplayName) : resultItems.OrderBy(x => x.BranchDisplayName);
+                        break;
+                    case "averagecontribution":
+                        sortedItems = isDesc ? resultItems.OrderByDescending(x => x.AverageContribution) : resultItems.OrderBy(x => x.AverageContribution);
+                        break;
+                    default:
+                        sortedItems = resultItems
+                            .OrderByDescending(x => x.AverageContribution)
+                            .ThenBy(x => x.UserName);
+                        break;
+                }
+
+                var finalItems = sortedItems
+                    .Skip(input.SkipCount)
+                    .Take(input.MaxResultCount)
+                    .ToList();
+
+                return new ContributionAverageResultDto
+                {
+                    Items = finalItems,
+                    TotalCount = totalUserCount,
+                    WeeklyReportInRange = weeklyReportCount
+                };
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Error in GetContributionAverage", ex);
+                throw new UserFriendlyException(ex.Message);
+            }
         }
 
         [HttpPost]

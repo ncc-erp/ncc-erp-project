@@ -171,6 +171,12 @@ export class SidebarMenuComponent extends AppComponentBase implements OnInit {
         'WeeklyContributionReport'
       ),
       new MenuItem(
+        this.l('Contribution Average'),
+        '/app/contribution-average',
+        'fas fa-chart-line',
+        'WeeklyContributionReport'
+      ),
+      new MenuItem(
         this.l('Weekly Reports'),
         '/app/weekly-report',
         'fas fa-chalkboard-teacher',

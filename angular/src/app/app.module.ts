@@ -242,6 +242,7 @@ import { CreatePunishmentDialogComponent } from './modules/punishment/create-pun
 import { WeeklyContributionComponent } from './modules/weekly-contribution/weekly-contribution.component';
 import { DetailWeeklyContributionComponent } from './modules/weekly-contribution/detail-weekly-contribution/detail-weekly-contribution.component';
 import { ReviewContributionComponent } from './modules/pm-management/list-project/list-project-detail/weekly-report/review-contribution/review-contribution.component';
+import { ContributionAverageComponent } from './modules/weekly-contribution/contribution-average/contribution-average.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, "./assets/i18n/", ".json");
@@ -469,6 +470,7 @@ export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
     ProductAccountInfoComponent,
     WeeklyContributionComponent,
     DetailWeeklyContributionComponent,
+    ContributionAverageComponent,
   ],
   imports: [
     CommonModule,

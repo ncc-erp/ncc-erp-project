@@ -1,3 +1,4 @@
+import { ProjectAssetComponent } from './modules/pm-management/list-project/list-project-detail/project-asset/project-asset.component';
 import { ProjectBillComponent } from './modules/pm-management/list-project/list-project-detail/project-bill/project-bill.component';
 import { VendorComponent } from './modules/delivery-management/delivery/available-resource-tab/vendor/vendor.component';
 import { ProductProjectDetailComponent } from './modules/pm-management/product-projects/product-project-detail/product-project-detail.component';
@@ -26,6 +27,7 @@ import { FutureResourceComponent } from './modules/delivery-management/delivery/
 import { PlanResourceComponent } from './modules/delivery-management/delivery/available-resource-tab/plan-resource/plan-resource.component';
 import { ProjectTimesheetComponent } from './modules/pm-management/list-project/list-project-detail/project-timesheet/project-timesheet.component';
 import { AvailableResourceTabComponent } from './modules/delivery-management/delivery/available-resource-tab/available-resource-tab.component';
+import { OffboardHistoryTabComponent } from './modules/delivery-management/delivery/offboard-history-tab/offboard-history-tab.component';
 import { ResourceRequestDetailComponent } from './modules/delivery-management/delivery/request-resource-tab/resource-request-detail/resource-request-detail.component';
 import { RequestResourceTabComponent } from './modules/delivery-management/delivery/request-resource-tab/request-resource-tab.component';
 import { WeeklyReportTabDetailComponent } from './modules/delivery-management/delivery/weekly-report-tab/weekly-report-tab-detail/weekly-report-tab-detail.component';
@@ -91,7 +93,8 @@ import { ProductAccountInfoComponent } from './modules/pm-management/product-pro
 import { PunishmentComponent } from './modules/punishment/punishment.component';
 import { WeeklyContributionComponent } from './modules/weekly-contribution/weekly-contribution.component';
 import { DetailWeeklyContributionComponent } from './modules/weekly-contribution/detail-weekly-contribution/detail-weekly-contribution.component';
-
+import { ProductProjectAssetComponent } from './modules/pm-management/product-projects/product-project-detail/product-project-asset/product-project-asset.component';
+import { TrainingProjectAssetComponent } from './modules/pm-management/training-projects/training-project-detail/training-project-asset/training-project-asset.component';
 @NgModule({
   imports: [
     RouterModule.forChild([
@@ -279,6 +282,11 @@ import { DetailWeeklyContributionComponent } from './modules/weekly-contribution
                 path: "general-information",
                 component: GeneralInformationComponent,
                 canActivate: [AppRouteGuard]
+              },
+              {
+                path: "project-asset",
+                component: ProjectAssetComponent,
+                canActivate: [AppRouteGuard]
               }
             ],
           },
@@ -329,6 +337,11 @@ import { DetailWeeklyContributionComponent } from './modules/weekly-contribution
               {
                 path: "project-bill-tab",
                 component: ProjectBillComponent,
+                canActivate: [AppRouteGuard]
+              },
+              {
+                path: "training-project-asset",
+                component: TrainingProjectAssetComponent,
                 canActivate: [AppRouteGuard]
               }
             ],
@@ -385,6 +398,11 @@ import { DetailWeeklyContributionComponent } from './modules/weekly-contribution
               {
                 path: "product-account-info",
                 component: ProductAccountInfoComponent,
+                canActivate: [AppRouteGuard]
+              },
+              {
+                path: "product-project-asset",
+                component: ProductProjectAssetComponent,
                 canActivate: [AppRouteGuard]
               }
             ],
@@ -449,6 +467,11 @@ import { DetailWeeklyContributionComponent } from './modules/weekly-contribution
                 canActivate: [AppRouteGuard],
               }
             ]
+          },
+          {
+            path: "offboard-history",
+            component: OffboardHistoryTabComponent,
+            canActivate: [AppRouteGuard],
           },
           {
             path: "tags",

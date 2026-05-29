@@ -242,6 +242,14 @@ import { CreatePunishmentDialogComponent } from './modules/punishment/create-pun
 import { WeeklyContributionComponent } from './modules/weekly-contribution/weekly-contribution.component';
 import { DetailWeeklyContributionComponent } from './modules/weekly-contribution/detail-weekly-contribution/detail-weekly-contribution.component';
 import { ReviewContributionComponent } from './modules/pm-management/list-project/list-project-detail/weekly-report/review-contribution/review-contribution.component';
+import { OffboardHistoryTabComponent } from './modules/delivery-management/delivery/offboard-history-tab/offboard-history-tab.component';
+import { OffboardDialogComponent } from './modules/delivery-management/delivery/offboard-history-tab/offboard-dialog/offboard-dialog.component';
+import { ProjectAssetComponent } from './modules/pm-management/list-project/list-project-detail/project-asset/project-asset.component';
+import { CreateUpdateAssetComponent } from './modules/pm-management/list-project/list-project-detail/project-asset/create-update-asset/create-update-asset.component';
+import { UpdateUserAssetDialogComponent } from './modules/pm-management/list-project/list-project-detail/resource-management/update-user-asset-dialog/update-user-asset-dialog.component';
+import { ProductProjectAssetComponent } from './modules/pm-management/product-projects/product-project-detail/product-project-asset/product-project-asset.component';
+import { TrainingProjectAssetComponent } from './modules/pm-management/training-projects/training-project-detail/training-project-asset/training-project-asset.component';
+
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, "./assets/i18n/", ".json");
@@ -469,6 +477,13 @@ export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
     ProductAccountInfoComponent,
     WeeklyContributionComponent,
     DetailWeeklyContributionComponent,
+    OffboardHistoryTabComponent,
+    OffboardDialogComponent,
+    ProjectAssetComponent,
+    CreateUpdateAssetComponent,
+    UpdateUserAssetDialogComponent,
+    ProductProjectAssetComponent,
+    TrainingProjectAssetComponent,
   ],
   imports: [
     CommonModule,
@@ -541,6 +556,7 @@ export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
     ResetPasswordDialogComponent,
     BillAccountDialogNoteComponent,
 
+    CreateUpdateAssetComponent,
   ],
 })
 export class AppModule {}

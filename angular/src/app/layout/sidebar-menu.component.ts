@@ -195,6 +195,12 @@ export class SidebarMenuComponent extends AppComponentBase implements OnInit {
         'Resource'
       ),
       new MenuItem(
+        this.l('Offboard History'),
+        '/app/offboard-history',
+        'fas fa-history',
+        'OffboardHistory'
+      ),
+      new MenuItem(
         this.l('Timesheets'),
         '',
         'fas fa-calendar-alt',

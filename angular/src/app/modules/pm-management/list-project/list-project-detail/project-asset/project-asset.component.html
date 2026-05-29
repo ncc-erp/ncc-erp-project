@@ -1,0 +1,108 @@
+<section class="content px-2">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <button type="button" class="btn bg-blue" (click)="getDataPage(1)">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                            <input type="text" class="form-control" name="keyword" placeholder="Search" [(ngModel)]="searchText"
+                                (keyup.enter)="getDataPage(1)" />
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-default" (click)="checkAddFilter()">
+                                    <i class="fas" [class.fa-angle-up]="advancedFiltersVisible"
+                                        [class.fa-angle-down]="!advancedFiltersVisible"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 text-right">
+                        <button class="btn bg-blue" (click)="createAsset()" *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabProjectAsset_Create)">
+                            <i class="fa fa-plus-square"></i>
+                            Create
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body table-responsive p-4">
+                <div class="fixHead">
+                    <table name="tbl-project-asset" style="border-collapse: collapse;" class="table table-hover text-nowrap" [busy]="isLoading">
+                        <thead class="bg-light">
+                            <tr>
+                                <th style="width: 50px;">STT</th>
+                                <th>Asset Name</th>
+                                <th class="actions" style="width: 200px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of assetList | paginate
+                                : {
+                                    id: 'server',
+                                    itemsPerPage: pageSize,
+                                    currentPage: pageNumber,
+                                    totalItems: totalItems
+                                  }; let i = index">
+                                <td class="text-center stt"><span>{{ i + 1 + pageSize * (pageNumber - 1)}}</span></td>
+                                <td class="text-center">{{item.assetName}}</td>
+                                <td style="width: 200px;" class="text-center">
+                                    <button class="btn btn-sm bg-secondary mr-1" (click)="editAsset(item);$event.stopPropagation()" *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabProjectAsset_Edit)">
+                                        <i class="fas fa-pencil-alt"></i>
+                                        Edit
+                                    </button>
+                                    <button class="btn btn-sm bg-danger ml-1" (click)="delete(item);$event.stopPropagation()" *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabProjectAsset_Delete)">
+                                        <i class="fas fa-trash"></i>
+                                        Delete
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer bg-light border-top">
+                <div class="row">
+                    <div class="col-sm-4 col-12 text-sm-left card-footer-wrapper">
+                        <button class="btn btn-secondary mb-2" (click)="refresh()">
+                            <i class="fas fa-redo-alt"></i>
+                        </button>
+                        <mat-form-field style="max-width: 100px;margin-left: 30px;">
+                            <mat-label>Number items</mat-label>
+                            <mat-select [(ngModel)]="pageSizeType" (ngModelChange)="changePageSize()">
+                                <mat-option [value]="5">
+                                    5
+                                </mat-option>
+                                <mat-option [value]="10">
+                                    10
+                                </mat-option>
+                                <mat-option [value]="20">
+                                    20
+                                </mat-option>
+                                <mat-option [value]="50">
+                                    50
+                                </mat-option>
+                                <mat-option [value]="100">
+                                    100
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="">
+                        <p class="mb-0 my-2">
+                            {{ "TotalRecordsCount" | localize: totalItems }}
+                        </p>
+                    </div>
+                    <div class="col-sm-4 col-12">
+                        <div class="float-sm-right m-auto">
+                            <abp-pagination-controls id="server" class="pagination-project-asset" (pageChange)="getDataPage($event)">
+                            </abp-pagination-controls>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

@@ -80,7 +80,7 @@ namespace ProjectManagement.Services.ResourceManager.Dto
         }
 
         public ProjectUserWorkingType WorkingType { get; set; }
-
+        public List<string> ProjectAssets { get; set; } = new List<string>();
     }
     public class ProjectStatusUser
     {

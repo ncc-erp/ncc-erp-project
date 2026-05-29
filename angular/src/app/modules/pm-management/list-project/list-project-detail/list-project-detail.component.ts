@@ -28,6 +28,7 @@ export class ListProjectDetailComponent extends AppComponentBase implements OnIn
   Projects_OutsourcingProjects_ProjectDetail_TabProjectFile=PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabProjectFile;
   Projects_OutsourcingProjects_ProjectDetail_TabTimesheet=PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabTimesheet;
   Projects_OutsourcingProjects_ProjectDetail_TabProjectSummary=PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabProjectSummary;
+  Projects_OutsourcingProjects_ProjectDetail_TabProjectAsset=PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabProjectAsset;
 
   constructor(private route: ActivatedRoute, private router: Router, injector:Injector,private projectDetailService: ProjectDetailService) {
     super(injector)
@@ -141,6 +142,26 @@ export class ListProjectDetailComponent extends AppComponentBase implements OnIn
 
   public routingGeneralInformation(){
     this.router.navigate(['general-information'],{
+      relativeTo: this.route, queryParams:{
+        id:this.requestId,
+        projectName: this.projectName,
+        projectCode:this.projectCode
+      }
+    })
+  }
+
+  public routingProjectAssetTab(){
+    this.router.navigate(['project-asset'],{
+      relativeTo: this.route, queryParams:{
+        id:this.requestId,
+        projectName: this.projectName,
+        projectCode:this.projectCode
+      }
+    })
+  }
+
+  public routingUserAssetTab(){
+    this.router.navigate(['user-asset'],{
       relativeTo: this.route, queryParams:{
         id:this.requestId,
         projectName: this.projectName,

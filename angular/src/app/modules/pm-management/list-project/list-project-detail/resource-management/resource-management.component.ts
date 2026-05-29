@@ -27,6 +27,9 @@ import { RequestResourceDto } from '@app/service/model/delivery-management.dto';
 import { FormSetDoneComponent } from '@app/modules/delivery-management/delivery/request-resource-tab/form-set-done/form-set-done.component';
 import { EditNoteResourceComponent } from '@app/modules/delivery-management/delivery/weekly-report-tab/weekly-report-tab-detail/edit-note-resource/edit-note-resource.component';
 import { getValueByEnum } from '@app/modules/delivery-management/delivery/available-resource-tab/enum-until';
+import { Utils } from "@shared/Utils";
+import { APP_ENUMS } from "@shared/AppEnums";
+import { UpdateUserAssetDialogComponent } from "../resource-management/update-user-asset-dialog/update-user-asset-dialog.component";
 
 @Component({
   selector: 'app-resource-management',
@@ -43,6 +46,8 @@ export class ResourceManagementComponent extends AppComponentBase implements OnI
   Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_Release = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_Release;
   Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserSkill = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserSkill;
   Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserStarSkill = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserStarSkill;
+  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserAsset = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserAsset;
+  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserAsset = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserAsset;
 
   Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource;
   Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_View = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_View;
@@ -123,7 +128,7 @@ export class ResourceManagementComponent extends AppComponentBase implements OnI
     private projectRequestService: ProjectResourceRequestService,
     private route: ActivatedRoute,
     private dialog: MatDialog,
-    private resourceRequestService: DeliveryResourceRequestService
+    private resourceRequestService: DeliveryResourceRequestService,
   )
   {
       super(injector)
@@ -174,8 +179,6 @@ export class ResourceManagementComponent extends AppComponentBase implements OnI
     })
   }
 
-
-
   updateUserSkill(user,viewStarSkillUser) {
     let ref = this.dialog.open(UpdateUserSkillDialogComponent, {
       width: "700px",
@@ -193,6 +196,26 @@ export class ResourceManagementComponent extends AppComponentBase implements OnI
         this.getProjectUser()
         this.getPlannedtUser()
         this.getAllUser()
+        this.projectUserProcess = false;
+        this.planResourceProcess = false;
+      }
+    })
+  }
+
+  updateUserAsset(user) {
+    let ref = this.dialog.open(UpdateUserAssetDialogComponent, {
+      width: "700px",
+      data: {
+        currentAssets: user?.projectAssets,
+        userId: user.userId,
+        fullName: user.fullName,
+        projectId: this.projectId
+      }
+    });
+    ref.afterClosed().subscribe(rs => {
+      if (rs) {
+        this.getProjectUser()
+        this.getPlannedtUser()
         this.projectUserProcess = false;
         this.planResourceProcess = false;
       }

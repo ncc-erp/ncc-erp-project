@@ -290,6 +290,9 @@
                         <label *ngIf="isGranted(Timesheets_TimesheetDetail_ViewBillRate)">
                           Total: {{item.projectBillInfomation.length}}
                         </label>
+                        <span class="ml-3 font-weight-bold" *ngIf="getProjectTotalOtDays(item) > 0">
+                          Total OT: {{getProjectTotalOtDays(item)}} days
+                        </span>
                       </div>
                       <div class="col-2" *ngIf="isGranted(Timesheets_TimesheetDetail_ViewBillRate)">
                         <label>

@@ -249,16 +249,6 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
 
     return this.roundDay(normalWorkingTime + this.getDisplayedOtDays(item));
   }
-  getProjectTotalOtDays(project: any): number {
-    if (!project.projectBillInfomation) {
-      return 0;
-    }
-    const total = project.projectBillInfomation.reduce((sum: number, bill: any) => {
-      return sum + this.getDisplayedOtDays(bill);
-    }, 0);
-    return this.roundDay(total);
-  }
-  
 
   getOtTypeName(otType: any): string {
     return otType?.otType || otType?.otTypeName || otType?.typeName || 'Type';

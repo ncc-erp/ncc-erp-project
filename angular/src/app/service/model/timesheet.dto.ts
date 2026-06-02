@@ -37,6 +37,8 @@ export class TimesheetDetailDto {
     subProjectsName: string[];
     subProjectIds: number[];
     isChecked?:boolean;
+    totalRawOtDays?: number;
+    totalMultipliedOtDays?: number;
 }
 
 export class ProjectBillInfoDto{

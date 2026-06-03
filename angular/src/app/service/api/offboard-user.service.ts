@@ -38,4 +38,8 @@ export class OffboardUserService extends BaseApiService {
   public MoveToComplete(offboardHistoryId: number): Observable<any> {
     return this.http.post<any>(this.rootUrl + '/MoveToComplete?offboardHistoryId=' + offboardHistoryId, {});
   }
+
+  public CheckOffboardHistory(projectUserId: number): Observable<any> {
+    return this.http.get<any>(this.rootUrl + '/CheckOffboardHistory?projectUserId=' + projectUserId);
+  }
 }

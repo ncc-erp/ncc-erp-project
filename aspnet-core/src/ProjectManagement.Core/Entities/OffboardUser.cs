@@ -24,6 +24,8 @@ namespace ProjectManagement.Entities
         public CheckOffboardStatus CheckOffboardStatus { get; set; }
         [MaxLength(4000)]
         public string OffboardChecklistJson { get; set; }
+        [MaxLength(4000)]
+        public string HistoryAsset { get; set; }
         public OffboardStatus OffboardStatus { get; set; }
         public DateTime OffboardDate { get; set; }
 

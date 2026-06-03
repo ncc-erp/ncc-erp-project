@@ -1,6 +1,7 @@
 import { AppComponentBase } from '@shared/app-component-base';
 import { catchError } from 'rxjs/operators';
 import { ProjectUserService } from '@app/service/api/project-user.service';
+import { OffboardUserService } from '@app/service/api/offboard-user.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Component, OnInit, Inject, Injector } from '@angular/core';
 import * as moment from 'moment';
@@ -62,6 +63,7 @@ export class ConfirmPopupComponent extends AppComponentBase implements OnInit {
  
   constructor(@Inject(MAT_DIALOG_DATA) public data: any, injector:Injector,
     private projectUserService: ProjectUserService, private pmReportProService:PMReportProjectService,
+    private offboardUserService: OffboardUserService,
      private dialogRef: MatDialogRef<ConfirmPopupComponent>) {
        super(injector)
       }
@@ -83,9 +85,31 @@ export class ConfirmPopupComponent extends AppComponentBase implements OnInit {
     this.checkPermissionForEachPage()
   }
   confirm() {
+    if (this.data.type === 'confirmJoin') {
+      this.offboardUserService
+        .CheckOffboardHistory(this.user.id)
+        .pipe(catchError(this.projectUserService.handleError))
+        .subscribe((response) => {
+          const hasHistory = response?.result ?? response;
+          if (hasHistory) {
+            abp.message.error(
+              'This employee still has an uncomplete OffboardHistory Record of this Project, please contact PM and IT to complete it first'
+            );
+            return;
+          }
+
+          this.performConfirmJoinFlow();
+        });
+      return;
+    }
+
+    this.performConfirmJoinFlow();
+  }
+
+  private performConfirmJoinFlow() {
     if (this.data.workingProject.length > 0) {
       if (this.data.page == ConfirmFromPage.weeklyReport) {
-        this.pmReportProService.ConfirmJoinProject(this.user.id, moment(this.startDate).format("YYYY-MM-DD")).pipe(catchError(this.pmReportProService.handleError)).subscribe(rs => {
+        this.pmReportProService.ConfirmJoinProject(this.user.id, moment(this.startDate).format('YYYY-MM-DD')).pipe(catchError(this.pmReportProService.handleError)).subscribe(rs => {
           abp.notify.success(`Confirmed for user ${this.user.fullName} join project`)
           this.dialogRef.close(true)
         })
@@ -102,7 +126,7 @@ export class ConfirmPopupComponent extends AppComponentBase implements OnInit {
         if (rs) {
 
           if (this.data.page == ConfirmFromPage.weeklyReport) {
-            this.pmReportProService.ConfirmJoinProject(this.user.id, moment(this.startDate).format("YYYY-MM-DD")).pipe(catchError(this.pmReportProService.handleError)).subscribe(rs => {
+            this.pmReportProService.ConfirmJoinProject(this.user.id, moment(this.startDate).format('YYYY-MM-DD')).pipe(catchError(this.pmReportProService.handleError)).subscribe(rs => {
               this.dialogRef.close(true)
               abp.notify.success(`Confirmed for user ${this.user.fullName} join project`)
             })

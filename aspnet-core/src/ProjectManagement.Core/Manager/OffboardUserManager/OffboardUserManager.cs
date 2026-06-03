@@ -55,9 +55,10 @@ namespace ProjectManagement.Manager.OffboardUserManager
                 ProjectRole = x.ProjectRole,
                 ProjectPM = x.Project.PM.FullName,
                 PMEmail = x.Project.PM.EmailAddress,
+                HistoryAsset = x.HistoryAsset,
                 CheckOffboardStatus = x.CheckOffboardStatus,
                 OffboardDate = x.OffboardDate,
-                OffboardStatus = x.OffboardStatus
+                OffboardStatus = x.OffboardStatus,
             });
 
             if (input.ProjectId.HasValue && input.ProjectId.Value > 0)
@@ -139,7 +140,7 @@ namespace ProjectManagement.Manager.OffboardUserManager
                 .FirstOrDefaultAsync(x => x.Id == input.OffboardHistoryId);
 
             if (offboard == null)
-                throw new Abp.UI.UserFriendlyException("Offboard history not found");
+                throw new UserFriendlyException("Offboard history not found");
 
             var assets = await WorkScope.GetAll<ProjectUserAsset>()
                 .Include(x => x.ProjectAsset)
@@ -190,14 +191,23 @@ namespace ProjectManagement.Manager.OffboardUserManager
                 .FirstOrDefaultAsync(x => x.Id == offboardHistoryId);
 
             if (offboard == null)
-                throw new Abp.UI.UserFriendlyException("Offboard history not found");
+                throw new UserFriendlyException("Offboard history not found");
 
             offboard.OffboardStatus = OffboardStatus.Complete;
             offboard.OffboardChecklistJson = null;
 
             var remainAsset = await WorkScope.All<ProjectUserAsset>()
+                .Include(x => x.ProjectAsset)
                 .Where(x => x.UserId == offboard.UserId)
                 .ToListAsync();
+
+            var assetHistory = JsonConvert.SerializeObject(remainAsset.Select(x => new
+            {
+                x.ProjectAssetId,
+                AssetName = x.ProjectAsset?.AssetName
+            }));
+
+            offboard.HistoryAsset = assetHistory;
 
             foreach (var asset in remainAsset)
             {
@@ -213,12 +223,34 @@ namespace ProjectManagement.Manager.OffboardUserManager
                 .FirstOrDefaultAsync(x => x.Id == offboadHistoryId);
 
             if (offboard == null)
-                throw new Abp.UI.UserFriendlyException("Offboard history not found");
+                throw new UserFriendlyException("Offboard history not found");
 
             offboard.OffboardStatus = OffboardStatus.ITOffboard;
             offboard.OffboardChecklistJson = null;
 
             await WorkScope.UpdateAsync(offboard);
+        }
+
+        public async Task<bool> CheckOffboardHistory(long projectUserId)
+        {
+            var projectUser = await WorkScope.GetAll<ProjectUser>()
+                .Where(s => s.Id == projectUserId)
+                .Select(s => new
+                {
+                    s.UserId,
+                    s.ProjectId,
+                })
+                .FirstOrDefaultAsync();
+
+            if (projectUser == null)
+            {
+                return false;
+            }
+
+            return await WorkScope.All<OffboardUser>()
+                .AnyAsync(x => x.UserId == projectUser.UserId
+                    && x.ProjectId == projectUser.ProjectId
+                    && x.OffboardStatus != OffboardStatus.Complete);
         }
     }
 }

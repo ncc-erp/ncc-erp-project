@@ -15,6 +15,7 @@ export class OffboardDialogComponent extends AppComponentBase implements OnInit 
   fullName: string;
   isLoading = false;
   isSaving = false;
+  viewOnly = false;
 
   constructor(
     injector: Injector,
@@ -25,6 +26,7 @@ export class OffboardDialogComponent extends AppComponentBase implements OnInit 
     super(injector);
     this.offboardHistoryId = data.offboardHistoryId;
     this.fullName = data.fullName;
+    this.viewOnly = data?.viewOnly === true;
   }
 
   ngOnInit(): void {

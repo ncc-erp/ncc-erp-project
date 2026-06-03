@@ -65,5 +65,12 @@ namespace ProjectManagement.APIs.OffboardUser
         {
             await _offboardUserManager.MoveToIT(offboardHistoryId);
         }
+
+        [HttpGet]
+        [AbpAuthorize]
+        public async Task<bool> CheckOffboardHistory(long projectUserId)
+        {
+            return await _offboardUserManager.CheckOffboardHistory(projectUserId);
+        }
     }
 }

@@ -64,11 +64,12 @@
             <thead class="bg-light">
               <tr>
                 <th style="width: 50px;">#</th>
-                <th style="width: 360px;">Employee</th>
-                <th style="width: 320px;">Project</th>
+                <th style="width: 300px;">Employee</th>
+                <th style="width: 300px;">Project</th>
                 <th style="width: 150px;">Status</th>
                 <th style="width: 150px;">Checklist Status</th>
-                <th style="width: 200px;">Offboard Date</th>
+                <th style="width: 300px;">History Asset</th>
+                <th style="width: 150px;">Offboard Date</th>
                 <th style="width: 100px;">Action</th>
               </tr>
             </thead>
@@ -84,14 +85,14 @@
                   let i = index"
               >
                 <td style="width: 50px;" class="text-center">{{ i + 1 + pageSize * (pageNumber - 1) }}</td>
-                <td style="width: 360px;">
+                <td style="width: 300px;">
                   <app-user-info
                     [userData]="item"
                     [isSimplizeEmailAddress]="true"
                     [isSmallerDiv]="true"
                   ></app-user-info>
                 </td>
-                <td style="width: 320px;">
+                <td style="width: 300px;">
                   <div class="d-flex align-items-center flex-wrap">
                     <a class="hyperlink font-weight-bold" style="cursor: pointer;" (click)="showProjectDetail(item)">
                       {{ item.projectName || '-' }}
@@ -126,7 +127,12 @@
                     }}
                   </span>
                 </td>
-                <td style="width: 200px; text-align: center;">{{ item.offboardDate | date: 'dd/MM/yyyy' }}</td>
+                <td style="width: 300px;">
+                  <p *ngFor="let asset of parseHistoryAsset(item.historyAsset)" class="mb-1">
+                    - {{ asset.AssetName || asset.assetName || asset.name || '-' }}
+                  </p>
+                </td>
+                <td style="width: 150px; text-align: center;">{{ item.offboardDate | date: 'dd/MM/yyyy' }}</td>
                 <td style="width: 100px;" class="text-center align-middle">
                   <button
                     *ngIf="item.offboardStatus !== 3"
@@ -144,13 +150,13 @@
                     <button mat-menu-item *ngIf="item.offboardStatus === 0 && permission.isGranted(OffboardHistory_Edit) " (click)="onUpdateOffboardStatus(item, false)">
                       <i class="fas fa-times mr-2"></i>Don't need Offboard
                     </button>
-                    <button mat-menu-item *ngIf="item.offboardStatus === 1 && item.checkOffboardStatus !== 3 && permission.isGranted(OffboardHistory_CheckList_PM)" (click)="openOffboardDialog(item)">
+                    <button mat-menu-item *ngIf="item.offboardStatus === 1 && permission.isGranted(OffboardHistory_CheckList_PM)" (click)="openOffboardDialog(item)">
                       <i class="fas fa-user-check mr-2"></i>Offboard
                     </button>
                     <button mat-menu-item *ngIf="item.offboardStatus === 1 && item.checkOffboardStatus === 2 && permission.isGranted(OffboardHistory_CheckList_PM)" (click)="moveToIT(item)">
                       <i class="fas fa-exchange-alt mr-2"></i>Move to IT
                     </button>
-                    <button mat-menu-item *ngIf="item.offboardStatus === 2 && item.checkOffboardStatus !== 3 && permission.isGranted(OffboardHistory_CheckList_IT)" (click)="openOffboardDialog(item)">
+                    <button mat-menu-item *ngIf="item.offboardStatus === 2 && (permission.isGranted(OffboardHistory_CheckList_IT) || permission.isGranted(OffboardHistory_CheckList_PM))" (click)="openOffboardDialog(item)">
                       <i class="fas fa-user-shield mr-2"></i>ITOffboard
                     </button>
                     <button mat-menu-item *ngIf="item.offboardStatus === 2 && item.checkOffboardStatus === 3 && permission.isGranted(OffboardHistory_CheckList_IT)" (click)="moveToComplete(item)">

@@ -171,9 +171,14 @@ export class OffboardHistoryTabComponent extends PagedListingComponentBase<any> 
   }
 
   public openOffboardDialog(item: any): void {
+    const isReadOnly =
+      item.offboardStatus === 2 &&
+      this.permission.isGranted(this.OffboardHistory_CheckList_PM) &&
+      !this.permission.isGranted(this.OffboardHistory_CheckList_IT);
+
     const dialogRef = this.dialog.open(OffboardDialogComponent, {
       width: '720px',
-      data: { offboardHistoryId: item.id, fullName: item.fullName }
+      data: { offboardHistoryId: item.id, fullName: item.fullName, viewOnly: isReadOnly }
     });
 
     dialogRef.afterClosed().subscribe((result) => {
@@ -217,5 +222,18 @@ export class OffboardHistoryTabComponent extends PagedListingComponentBase<any> 
         }
       }
     );
+  }
+
+  public parseHistoryAsset(historyAsset: string): any[] {
+    if (!historyAsset) {
+      return [];
+    }
+
+    try {
+      const parsed = JSON.parse(historyAsset);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
   }
 }

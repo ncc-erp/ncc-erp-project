@@ -15,7 +15,7 @@
                     <strong style="color: #E86C55;">{{ item.assetName }}</strong>
                 </div>
 
-                <div class="item-action ml-1">
+                <div class="item-action ml-1" *ngIf="!viewOnly">
                     <mat-checkbox [(ngModel)]="item.isChecked" color="primary" class="text-muted small-checkbox-label">
                         Checked
                     </mat-checkbox>
@@ -29,7 +29,7 @@
 
     <div class="modal-footer" style="border-top: none; padding-top: 0;">
         <button type="button" class="btn btn-secondary font-weight-bold" (click)="close()">Cancel</button>
-        <button type="button" class="btn btn-primary font-weight-bold px-4" [disabled]="isSaving || isLoading" (click)="save()">
+        <button *ngIf="!viewOnly" type="button" class="btn btn-primary font-weight-bold px-4" [disabled]="isSaving || isLoading" (click)="save()">
             <i class="fa fa-save mr-1"></i> Submit
         </button>
     </div>

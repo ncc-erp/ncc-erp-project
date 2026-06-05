@@ -116,6 +116,7 @@ namespace ProjectManagement.Services.ResourceManager
                     SkillNote = s.Note
                 }).ToList(),
                 WorkingType = s.WorkingType,
+                ProjectAssets = new List<string>(),
                 OnboardingStatus = s.Onboarding != null ? s.Onboarding.Status : ProjectUserOnboardingStatus.NotStarted
             })
             .OrderByDescending(s => s.PUStatus == ProjectUserStatus.Present && s.AllocatePercentage > 0)
@@ -314,6 +315,7 @@ namespace ProjectManagement.Services.ResourceManager
                         Note = $"added to project {projectToJoin.ProjectName} {CommonUtil.ProjectUserWorkType(pu.IsPool)} by {sessionUser.FullName}",
                     };
                     projectUsersOut.Add(outPU);
+                    await CreateOffboardUser(pu.UserId, pu.ProjectId, pu.ProjectRole);
                     sbKomuMessage.AppendLine($"{DateTimeUtils.ToString(outPU.StartTime)}: {sessionUser.KomuAccountInfo} " +
                         $"released {employee.KomuAccountInfo} from {pu.Project.Name} {CommonUtil.ProjectUserWorkTypeKomu(pu.IsPool)}");
                 }
@@ -321,6 +323,20 @@ namespace ProjectManagement.Services.ResourceManager
             }
             await CurrentUnitOfWork.SaveChangesAsync();
             return sbKomuMessage;
+        }
+
+        private async Task CreateOffboardUser(long userId, long projectId, ProjectUserRole projectRole)
+        {
+            var offboardUser = new OffboardUser
+            {
+                UserId = userId,
+                ProjectId = projectId,
+                ProjectRole = projectRole,
+                OffboardStatus = OffboardStatus.Todo,
+                OffboardDate = DateTimeUtils.GetNow()
+            };
+
+            await _workScope.InsertAsync(offboardUser);
         }
 
         public async Task<ProjectUser> CreatePresentProjectUserAndNofity(AddResourceToProjectDto input, bool allowConfirmMoveEmployeeToOtherProject)
@@ -616,6 +632,7 @@ namespace ProjectManagement.Services.ResourceManager
                 Note = input.Note
             };
             await _workScope.InsertAsync(releasePU);
+            await CreateOffboardUser(releasePU.UserId, releasePU.ProjectId, releasePU.ProjectRole);
 
             var sessionUser = await getSessionKomuUserInfo();
             var sbKomuMessage = new StringBuilder();

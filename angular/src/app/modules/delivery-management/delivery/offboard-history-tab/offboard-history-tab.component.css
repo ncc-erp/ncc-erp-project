@@ -1,0 +1,78 @@
+.status-pill {
+  display: inline-block;
+  padding: 0.25rem 0.65rem;
+  border-radius: 0.75rem;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.status-todo {
+  background-color: #ffe9b3;
+  color: #6c4a00;
+  padding: 0.25rem 0.65rem;
+  border-radius: 0.75rem;
+  font-weight: 700;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  vertical-align: middle;
+}
+
+.status-pmoffboard {
+  background-color: #d9ecff;
+  color: #0056b3;
+}
+
+.status-itoffboard {
+  background-color: #e6f4ea;
+  color: #1b5e20;
+}
+
+.status-complete {
+  background-color: #f0f0f0;
+  color: #343a40;
+}
+
+
+.status-inprogress {
+  background-color: #fff3cd;
+  color: #856404;
+  padding: 0.25rem 0.65rem;
+  border-radius: 0.75rem;
+  font-weight: 700;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  vertical-align: middle;
+}
+
+.status-pmaccept {
+  background-color: #d1ecf1;
+  color: #0c5460;
+  padding: 0.25rem 0.65rem;
+  border-radius: 0.75rem;
+  font-weight: 700;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  vertical-align: middle;
+}
+
+.status-done {
+  background-color: #d4edda;
+  color: #155724;
+  padding: 0.25rem 0.65rem;
+  border-radius: 0.75rem;
+  font-weight: 700;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  vertical-align: middle;
+}
+
+.status-unknown {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.badge-project-role {
+  font-size: 0.75rem;
+  padding: 0.2rem 0.45rem;
+  vertical-align: middle;
+}

@@ -29,17 +29,17 @@ namespace ProjectManagement.APIs.ProjectUserOnboarding
     {
         private readonly ResourceManager _resourceManager;
         private ISettingManager _settingManager;
-        private KomuService _komuService;
+        //private KomuService _komuService;
         private static IConfiguration _appConfiguration;
 
         public ProjectUserOnboardingAppService(
             IConfiguration appConfiguration,
-            KomuService komuService,
+            //KomuService komuService,
             ResourceManager resourceManager,
             ISettingManager settingManager) : base()
         {
             _resourceManager = resourceManager;
-            _komuService = komuService;
+            //_komuService = komuService;
             _settingManager = settingManager;
             _appConfiguration = appConfiguration;
         }
@@ -193,7 +193,7 @@ namespace ProjectManagement.APIs.ProjectUserOnboarding
                     {
                         projectUserOnboarding.Status = ProjectUserOnboardingStatus.Pending;
                         projectUserOnboarding.SentRequestTime = DateTime.Now;
-                        await SendConfirmationRequestToMember(input.ProjectUserId);
+                        //await SendConfirmationRequestToMember(input.ProjectUserId);
                     }
                 }
                 else
@@ -234,12 +234,12 @@ namespace ProjectManagement.APIs.ProjectUserOnboarding
             onboarding.Status = ProjectUserOnboardingStatus.PendingEmployee;
             await WorkScope.UpdateAsync(onboarding);
 
-            await SendConfirmationRequestToMember(projectUserId);
+            //await SendConfirmationRequestToMember(projectUserId);
         }
 
-        #region API Helper methods
+        //#region API Helper methods
 
-        private async Task SendConfirmationRequestToMember(long projectUserId)
+        /*private async Task SendConfirmationRequestToMember(long projectUserId)
         {
             var projectUser = await WorkScope.GetAll<ProjectUser>()
                             .Include(x => x.User)
@@ -263,6 +263,6 @@ namespace ProjectManagement.APIs.ProjectUserOnboarding
             });
 
         }
-        #endregion
+        #endregion */
     }
 }

@@ -90,7 +90,26 @@ namespace ProjectManagement.APIs.ProjectUsers
                 query = query.Where(x => x.PUStatus != ProjectUserStatus.Future);
             }
 
-            return await query.ToListAsync();
+            var users = await query.ToListAsync();
+
+            var userIds = users.Select(u => u.UserId).ToList();
+            var assets = await WorkScope.GetAll<ProjectUserAsset>()
+                .Where(pua => userIds.Contains(pua.UserId))
+                .Include(pua => pua.ProjectAsset)
+                .ToListAsync();
+
+            var assetsDict = assets
+                .GroupBy(pua => pua.UserId)
+                .ToDictionary(g => g.Key, g => g.Select(x => x.ProjectAsset.AssetName).ToList());
+
+            foreach (var user in users)
+            {
+                user.ProjectAssets = assetsDict.ContainsKey(user.UserId)
+                    ? assetsDict[user.UserId]
+                    : new List<string>();
+            }
+
+            return users;
         }
 
         [HttpGet]

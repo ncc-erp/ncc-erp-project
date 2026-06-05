@@ -245,6 +245,13 @@ import { ReviewContributionComponent } from './modules/pm-management/list-projec
 import { OnboardingDialogComponent } from './modules/pm-management/list-project/list-project-detail/resource-management/onboarding-dialog/onboarding-dialog.component';
 import {OnboardingChecklistComponent}  from './modules/admin/onboarding-checklist/onboarding-checklist.component';
 import { CreateEditOnboardingChecklistComponent } from './modules/admin/onboarding-checklist/create-edit-onboarding-checklist/create-edit-onboarding-checklist.component';
+import { OffboardHistoryTabComponent } from './modules/delivery-management/delivery/offboard-history-tab/offboard-history-tab.component';
+import { OffboardDialogComponent } from './modules/delivery-management/delivery/offboard-history-tab/offboard-dialog/offboard-dialog.component';
+import { ProjectAssetComponent } from './modules/pm-management/list-project/list-project-detail/project-asset/project-asset.component';
+import { CreateUpdateAssetComponent } from './modules/pm-management/list-project/list-project-detail/project-asset/create-update-asset/create-update-asset.component';
+import { UpdateUserAssetDialogComponent } from './modules/pm-management/list-project/list-project-detail/resource-management/update-user-asset-dialog/update-user-asset-dialog.component';
+import { ProductProjectAssetComponent } from './modules/pm-management/product-projects/product-project-detail/product-project-asset/product-project-asset.component';
+import { TrainingProjectAssetComponent } from './modules/pm-management/training-projects/training-project-detail/training-project-asset/training-project-asset.component';
 
 
 export function HttpLoaderFactory(http: HttpClient) {
@@ -476,6 +483,13 @@ export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
     ProductAccountInfoComponent,
     WeeklyContributionComponent,
     DetailWeeklyContributionComponent,
+    OffboardHistoryTabComponent,
+    OffboardDialogComponent,
+    ProjectAssetComponent,
+    CreateUpdateAssetComponent,
+    UpdateUserAssetDialogComponent,
+    ProductProjectAssetComponent,
+    TrainingProjectAssetComponent,
   ],
   imports: [
     CommonModule,
@@ -548,7 +562,8 @@ export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
     ResetPasswordDialogComponent,
     BillAccountDialogNoteComponent,
     OnboardingDialogComponent,
-    CreateEditOnboardingChecklistComponent
+    CreateEditOnboardingChecklistComponent,
+    CreateUpdateAssetComponent,
   ],
 })
 export class AppModule {}

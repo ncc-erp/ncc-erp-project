@@ -382,5 +382,19 @@
             Done = 3,
             Pending = 4
         }
+        public enum OffboardStatus
+        {
+            Todo = 0,
+            PMOffboard = 1,
+            ITOffboard = 2,
+            Complete = 3
+        }
+        public enum CheckOffboardStatus
+        {
+            NotStarted = 0,
+            InProgress = 1,
+            PMAccept = 2,
+            Done = 3
+        }
     }
 }

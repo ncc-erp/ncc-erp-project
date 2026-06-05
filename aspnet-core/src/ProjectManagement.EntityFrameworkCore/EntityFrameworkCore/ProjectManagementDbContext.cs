@@ -109,7 +109,9 @@ namespace ProjectManagement.EntityFrameworkCore
         public DbSet<ProjectUserOnboarding> ProjectUserOnboardings { get; set; }
         public DbSet<ProjectUserOnboardingDetail> ProjectUserOnboardingDetails { get; set; }
         public DbSet<OnboardingChecklist> OnboardingChecklists { get; set; }
-
+        public DbSet<OffboardUser> OffboardUsers { get; set; }
+        public DbSet<ProjectAsset> ProjectAssets { get; set; }
+        public DbSet<ProjectUserAsset> ProjectUserAssets { get; set; }
         public ProjectManagementDbContext(DbContextOptions<ProjectManagementDbContext> options)
             : base(options)
         {

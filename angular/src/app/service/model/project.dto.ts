@@ -71,6 +71,7 @@ export class projectUserDto {
   workType:boolean;
   isPool?: boolean;
   workingType: number;
+  projectAssets?: string[];
 }
 
 export class projectResourceRequestDto {

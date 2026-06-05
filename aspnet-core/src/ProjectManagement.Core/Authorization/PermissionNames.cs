@@ -161,6 +161,8 @@ namespace ProjectManagement.Authorization
         public const string Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_Release = "Projects.OutsourcingProjects.ProjectDetail.TabResourceManagement.CurrentResource.Release";
         public const string Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserSkill = "Projects.OutsourcingProjects.ProjectDetail.TabResourceManagement.CurrentResource.UpdateUserSkill";
         public const string Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserStarSkill = "Projects.OutsourcingProjects.ProjectDetail.TabResourceManagement.CurrentResource.ViewUserStarSkill";
+        public const string Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserAsset = "Projects.OutsourcingProjects.ProjectDetail.TabResourceManagement.CurrentResource.ViewUserAsset";
+        public const string Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserAsset = "Projects.OutsourcingProjects.ProjectDetail.TabResourceManagement.CurrentResource.UpdateUserAsset";
 
         public const string Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource = "Projects.OutsourcingProjects.ProjectDetail.TabResourceManagement.PlannedResource";
         public const string Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_View = "Projects.OutsourcingProjects.ProjectDetail.TabResourceManagement.PlannedResource.View";
@@ -255,6 +257,12 @@ namespace ProjectManagement.Authorization
         public const string Projects_OutsourcingProjects_ProjectDetail_TabProjectFile_UploadFile = "Projects.OutsourcingProjects.ProjectDetail.TabProjectFile.UploadFile";
         public const string Projects_OutsourcingProjects_ProjectDetail_TabProjectFile_DeleteFile = "Projects.OutsourcingProjects.ProjectDetail.TabProjectFile.DeleteFile";
         public const string Projects_OutsourcingProjects_ProjectDetail_TabProjectSummary = "Projects.OutsourcingProjects.ProjectDetail.TabProjectSummary";
+
+        public const string Projects_OutsourcingProjects_ProjectDetail_TabProjectAsset = "Projects.OutsourcingProjects.ProjectDetail.TabProjectAsset";
+        public const string Projects_OutsourcingProjects_ProjectDetail_TabProjectAsset_View = "Projects.OutsourcingProjects.ProjectDetail.TabProjectAsset.View";
+        public const string Projects_OutsourcingProjects_ProjectDetail_TabProjectAsset_Create = "Projects.OutsourcingProjects.ProjectDetail.TabProjectAsset.Create";
+        public const string Projects_OutsourcingProjects_ProjectDetail_TabProjectAsset_Edit = "Projects.OutsourcingProjects.ProjectDetail.TabProjectAsset.Edit";
+        public const string Projects_OutsourcingProjects_ProjectDetail_TabProjectAsset_Delete = "Projects.OutsourcingProjects.ProjectDetail.TabProjectAsset.Delete";
         #endregion Projects > Outsourcing Project
 
         #region Projects > Product Project
@@ -294,6 +302,8 @@ namespace ProjectManagement.Authorization
         public const string Projects_ProductProjects_ProjectDetail_TabResourceManagement_PlannedResource_Edit = "Projects.ProductProjects.ProjectDetail.TabResourceManagement.PlannedResource.Edit";
         public const string Projects_ProductProjects_ProjectDetail_TabResourceManagement_PlannedResource_UpdateUserSkill = "Projects.ProductProjects.ProjectDetail.TabResourceManagement.PlannedResource.UpdateUserSkill";
         public const string Projects_ProductProjects_ProjectDetail_TabResourceManagement_PlannedResource_ViewUserStarSkill = "Projects.ProductProjects.ProjectDetail.TabResourceManagement.PlannedResource.ViewUserStarSkill";
+        public const string Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserAsset = "Projects.ProductProjects.ProjectDetail.TabResourceManagement.CurrentResource.ViewUserAsset";
+        public const string Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserAsset = "Projects.ProductProjects.ProjectDetail.TabResourceManagement.CurrentResource.UpdateUserAsset";
 
         public const string Projects_ProductProjects_ProjectDetail_TabResourceManagement_ResourceRequest = "Projects.ProductProjects.ProjectDetail.TabResourceManagement.ResourceRequest";
         public const string Projects_ProductProjects_ProjectDetail_TabResourceManagement_ResourceRequest_View = "Projects.ProductProjects.ProjectDetail.TabResourceManagement.ResourceRequest.View";
@@ -358,6 +368,12 @@ namespace ProjectManagement.Authorization
         public const string Projects_ProductProjects_ProjectDetail_TabProjectFile_View = "Projects.ProductProjects.ProjectDetail.TabProjectFile.View";
         public const string Projects_ProductProjects_ProjectDetail_TabProjectFile_UploadFile = "Projects.ProductProjects.ProjectDetail.TabProjectFile.UploadFile";
         public const string Projects_ProductProjects_ProjectDetail_TabProjectFile_DeleteFile = "Projects.ProductProjects.ProjectDetail.TabProjectFile.DeleteFile";
+
+        public const string Projects_ProductProjects_ProjectDetail_TabProjectAsset = "Projects.ProductProjects.ProjectDetail.TabProjectAsset";
+        public const string Projects_ProductProjects_ProjectDetail_TabProjectAsset_View = "Projects.ProductProjects.ProjectDetail.TabProjectAsset.View";
+        public const string Projects_ProductProjects_ProjectDetail_TabProjectAsset_Create = "Projects.ProductProjects.ProjectDetail.TabProjectAsset.Create";
+        public const string Projects_ProductProjects_ProjectDetail_TabProjectAsset_Edit = "Projects.ProductProjects.ProjectDetail.TabProjectAsset.Edit";
+        public const string Projects_ProductProjects_ProjectDetail_TabProjectAsset_Delete = "Projects.ProductProjects.ProjectDetail.TabProjectAsset.Delete";
         #endregion Projects > Product Project
 
         #region Projects > Training Project
@@ -386,6 +402,8 @@ namespace ProjectManagement.Authorization
         public const string Projects_TrainingProjects_ProjectDetail_TabResourceManagement_CurrentResource_Release = "Projects.TrainingProjects.ProjectDetail.TabResourceManagement.CurrentResource.Release";
         public const string Projects_TrainingProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserSkill = "Projects.TrainingProjects.ProjectDetail.TabResourceManagement.CurrentResource.UpdateUserSkill";
         public const string Projects_TrainingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserStarSkill = "Projects.TrainingProjects.ProjectDetail.TabResourceManagement.CurrentResource.ViewUserStarSkill";
+        public const string Projects_TrainingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserAsset = "Projects.TrainingProjects.ProjectDetail.TabResourceManagement.CurrentResource.ViewUserAsset";
+        public const string Projects_TrainingProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserAsset = "Projects.TrainingProjects.ProjectDetail.TabResourceManagement.CurrentResource.UpdateUserAsset";
 
         public const string Projects_TrainingProjects_ProjectDetail_TabResourceManagement_PlannedResource = "Projects.TrainingProjects.ProjectDetail.TabResourceManagement.PlannedResource";
         public const string Projects_TrainingProjects_ProjectDetail_TabResourceManagement_PlannedResource_View = "Projects.TrainingProjects.ProjectDetail.TabResourceManagement.PlannedResource.View";
@@ -460,6 +478,13 @@ namespace ProjectManagement.Authorization
         public const string Projects_TrainingProjects_ProjectDetail_TabProjectFile_View = "Projects.TrainingProjects.ProjectDetail.TabProjectFile.View";
         public const string Projects_TrainingProjects_ProjectDetail_TabProjectFile_UploadFile = "Projects.TrainingProjects.ProjectDetail.TabProjectFile.UploadFile";
         public const string Projects_TrainingProjects_ProjectDetail_TabProjectFile_DeleteFile = "Projects.TrainingProjects.ProjectDetail.TabProjectFile.DeleteFile";
+
+
+        public const string Projects_TrainingProjects_ProjectDetail_TabProjectAsset = "Projects.TrainingProjects.ProjectDetail.TabProjectAsset";
+        public const string Projects_TrainingProjects_ProjectDetail_TabProjectAsset_View = "Projects.TrainingProjects.ProjectDetail.TabProjectAsset.View";
+        public const string Projects_TrainingProjects_ProjectDetail_TabProjectAsset_Edit = "Projects.TrainingProjects.ProjectDetail.TabProjectAsset.Edit";
+        public const string Projects_TrainingProjects_ProjectDetail_TabProjectAsset_Create = "Projects.TrainingProjects.ProjectDetail.TabProjectAsset.Create";
+        public const string Projects_TrainingProjects_ProjectDetail_TabProjectAsset_Delete = "Projects.TrainingProjects.ProjectDetail.TabProjectAsset.Delete";
 
         #endregion Projects > Training Project
 
@@ -737,6 +762,15 @@ namespace ProjectManagement.Authorization
         public const string Admin_OnboardingChecklist_Delete = "Admin.OnboardingChecklist.Delete";
         public const string Admin_OnboardingChecklist_ForceDone = "Admin.OnboardingChecklist.ForceDone";
         #endregion OnboardingChecklist
+
+        #region OffboardHistory
+        public const string OffboardHistory = "OffboardHistory";
+        public const string OffboardHistory_View = "OffboardHistory.View";
+        public const string OffboardHistory_Edit = "OffboardHistory.Edit";
+        public const string OffboardHistory_CheckList = "OffboardHistory.CheckList";
+        public const string OffboardHistory_CheckList_PM = "OffboardHistory.CheckList.PM";
+        public const string OffboardHistory_CheckList_IT = "OffboardHistory.CheckList.IT";
+        #endregion OffboardHistory
     }
 
     public class GrantPermissionRoles
@@ -905,6 +939,8 @@ namespace ProjectManagement.Authorization
                     PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_Release ,
                     PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserSkill ,
                     PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserStarSkill ,
+                    PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserAsset,
+                    PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserAsset,
 
                     PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource ,
                     PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_View ,
@@ -999,6 +1035,13 @@ namespace ProjectManagement.Authorization
                     PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabProjectFile_DeleteFile ,
                     PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabProjectSummary,
 
+                    PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabProjectAsset,
+                    PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabProjectAsset_View,
+                    PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabProjectAsset_Create,
+                    PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabProjectAsset_Edit,
+                    PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabProjectAsset_Delete,
+
+
                     #endregion Projects > Outsourcing Project
 
                     #region Projects > Product Project
@@ -1028,6 +1071,9 @@ namespace ProjectManagement.Authorization
                     PermissionNames.Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_Release ,
                     PermissionNames.Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserSkill ,
                     PermissionNames.Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserStarSkill ,
+                    PermissionNames.Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserAsset,
+                    PermissionNames.Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserAsset,
+
 
                     PermissionNames.Projects_ProductProjects_ProjectDetail_TabResourceManagement_PlannedResource ,
                     PermissionNames.Projects_ProductProjects_ProjectDetail_TabResourceManagement_PlannedResource_View ,
@@ -1103,6 +1149,13 @@ namespace ProjectManagement.Authorization
                     PermissionNames.Projects_ProductProjects_ProjectDetail_TabProjectFile_UploadFile ,
                     PermissionNames.Projects_ProductProjects_ProjectDetail_TabProjectFile_DeleteFile ,
 
+                    PermissionNames.Projects_ProductProjects_ProjectDetail_TabProjectAsset,
+                    PermissionNames.Projects_ProductProjects_ProjectDetail_TabProjectAsset_View,
+                    PermissionNames.Projects_ProductProjects_ProjectDetail_TabProjectAsset_Create,
+                    PermissionNames.Projects_ProductProjects_ProjectDetail_TabProjectAsset_Edit,
+                    PermissionNames.Projects_ProductProjects_ProjectDetail_TabProjectAsset_Delete,
+
+
                     #endregion Projects > Product Project
 
                     #region Projects > training Project
@@ -1132,6 +1185,9 @@ namespace ProjectManagement.Authorization
                     PermissionNames.Projects_TrainingProjects_ProjectDetail_TabResourceManagement_CurrentResource_Release ,
                     PermissionNames.Projects_TrainingProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserSkill ,
                     PermissionNames.Projects_TrainingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserStarSkill ,
+                    PermissionNames.Projects_TrainingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserAsset,
+                    PermissionNames.Projects_TrainingProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserAsset,
+
 
                     PermissionNames.Projects_TrainingProjects_ProjectDetail_TabResourceManagement_PlannedResource ,
                     PermissionNames.Projects_TrainingProjects_ProjectDetail_TabResourceManagement_PlannedResource_View ,
@@ -1205,6 +1261,12 @@ namespace ProjectManagement.Authorization
                     PermissionNames.Projects_TrainingProjects_ProjectDetail_TabProjectFile_View ,
                     PermissionNames.Projects_TrainingProjects_ProjectDetail_TabProjectFile_UploadFile ,
                     PermissionNames.Projects_TrainingProjects_ProjectDetail_TabProjectFile_DeleteFile ,
+
+                    PermissionNames.Projects_TrainingProjects_ProjectDetail_TabProjectAsset,
+                    PermissionNames.Projects_TrainingProjects_ProjectDetail_TabProjectAsset_Create,
+                    PermissionNames.Projects_TrainingProjects_ProjectDetail_TabProjectAsset_View,
+                    PermissionNames.Projects_TrainingProjects_ProjectDetail_TabProjectAsset_Edit,
+                    PermissionNames.Projects_TrainingProjects_ProjectDetail_TabProjectAsset_Delete,
 
                     #endregion Projects > training Project
 
@@ -1479,8 +1541,19 @@ namespace ProjectManagement.Authorization
                     PermissionNames.Admin_OnboardingChecklist_Create,
                     PermissionNames.Admin_OnboardingChecklist_Edit,
                     PermissionNames.Admin_OnboardingChecklist_Delete,
-                    PermissionNames.Admin_OnboardingChecklist_ForceDone
+                    PermissionNames.Admin_OnboardingChecklist_ForceDone,
                     #endregion OnboardingChecklist
+
+                    #region OffboardHistory
+
+                    PermissionNames.OffboardHistory,
+                    PermissionNames.OffboardHistory_Edit,
+                    PermissionNames.OffboardHistory_View,
+                    PermissionNames.OffboardHistory_CheckList,
+                    PermissionNames.OffboardHistory_CheckList_PM,
+                    PermissionNames.OffboardHistory_CheckList_IT,
+
+                    #endregion OffboardHistory
                 }
             }
         };
@@ -1657,6 +1730,8 @@ namespace ProjectManagement.Authorization
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_Release, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Release" },
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserSkill, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Update Skill" },
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserStarSkill, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View Star Skill" },
+                 new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserAsset, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View User Asset" },
+                 new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserAsset, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Update User Asset" },
 
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Planned Resource" },
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View" },
@@ -1750,7 +1825,14 @@ namespace ProjectManagement.Authorization
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabProjectFile_UploadFile, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Upload File" },
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabProjectFile_DeleteFile, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Delete File" },
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabProjectSummary, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Tab Project Summary" },
-	             #endregion Project > OutSourcing
+
+                 new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabProjectAsset, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Tab Project Asset" },
+                 new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabProjectAsset_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Tab Project Asset View" },
+                 new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabProjectAsset_Create, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Create Project Asset" },
+                 new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabProjectAsset_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit Project Asset" },
+                 new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabProjectAsset_Delete, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Delete Project Asset" },
+	             
+                 #endregion Project > OutSourcing
 
                  #region Project > Product Project
 
@@ -1789,6 +1871,8 @@ namespace ProjectManagement.Authorization
                  new SystemPermission{ Name =  PermissionNames.Projects_ProductProjects_ProjectDetail_TabResourceManagement_PlannedResource_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit" },
                  new SystemPermission{ Name =  PermissionNames.Projects_ProductProjects_ProjectDetail_TabResourceManagement_PlannedResource_UpdateUserSkill, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Update Skill" },
                  new SystemPermission{ Name =  PermissionNames.Projects_ProductProjects_ProjectDetail_TabResourceManagement_PlannedResource_ViewUserStarSkill, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View User Star Skill" },
+                 new SystemPermission{ Name =  PermissionNames.Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserAsset, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View User Asset" },
+                 new SystemPermission{ Name =  PermissionNames.Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserAsset, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Update User Asset" },
 
                  new SystemPermission{ Name =  PermissionNames.Projects_ProductProjects_ProjectDetail_TabResourceManagement_ResourceRequest, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Resource Request" },
                  new SystemPermission{ Name =  PermissionNames.Projects_ProductProjects_ProjectDetail_TabResourceManagement_ResourceRequest_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View" },
@@ -1854,6 +1938,12 @@ namespace ProjectManagement.Authorization
                  new SystemPermission{ Name =  PermissionNames.Projects_ProductProjects_ProjectDetail_TabProjectFile_UploadFile, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Upload File" },
                  new SystemPermission{ Name =  PermissionNames.Projects_ProductProjects_ProjectDetail_TabProjectFile_DeleteFile, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Delete File" },
 
+                 new SystemPermission{ Name =  PermissionNames.Projects_ProductProjects_ProjectDetail_TabProjectAsset, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Tab Project Asset" },
+                 new SystemPermission{ Name =  PermissionNames.Projects_ProductProjects_ProjectDetail_TabProjectAsset_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Tab Project Asset View" },
+                 new SystemPermission{ Name =  PermissionNames.Projects_ProductProjects_ProjectDetail_TabProjectAsset_Create, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Create Project Asset" },
+                 new SystemPermission{ Name =  PermissionNames.Projects_ProductProjects_ProjectDetail_TabProjectAsset_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit Project Asset" },
+                 new SystemPermission{ Name =  PermissionNames.Projects_ProductProjects_ProjectDetail_TabProjectAsset_Delete, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Delete Project Asset" },
+                
                  #endregion Project > Product Project
 
                  #region Project > Training Projects
@@ -1882,6 +1972,9 @@ namespace ProjectManagement.Authorization
                  new SystemPermission{ Name =  PermissionNames.Projects_TrainingProjects_ProjectDetail_TabResourceManagement_CurrentResource_Release, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Release" },
                  new SystemPermission{ Name =  PermissionNames.Projects_TrainingProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserSkill, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Update Skill" },
                  new SystemPermission{ Name =  PermissionNames.Projects_TrainingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserStarSkill, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View User Star Skill" },
+                 new SystemPermission{ Name =  PermissionNames.Projects_TrainingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserAsset, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View User Asset" },
+                 new SystemPermission{ Name =  PermissionNames.Projects_TrainingProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserAsset, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Update User Asset" },
+
 
                  new SystemPermission{ Name =  PermissionNames.Projects_TrainingProjects_ProjectDetail_TabResourceManagement_PlannedResource, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Planned Resource" },
                  new SystemPermission{ Name =  PermissionNames.Projects_TrainingProjects_ProjectDetail_TabResourceManagement_PlannedResource_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View" },
@@ -1957,6 +2050,12 @@ namespace ProjectManagement.Authorization
                  new SystemPermission{ Name =  PermissionNames.Projects_TrainingProjects_ProjectDetail_TabProjectFile_UploadFile, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Upload File" },
                  new SystemPermission{ Name =  PermissionNames.Projects_TrainingProjects_ProjectDetail_TabProjectFile_DeleteFile, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Delete File" },
 
+                 new SystemPermission{ Name =  PermissionNames.Projects_TrainingProjects_ProjectDetail_TabProjectAsset, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Tab Project Asset" },
+                 new SystemPermission{ Name =  PermissionNames.Projects_TrainingProjects_ProjectDetail_TabProjectAsset_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Tab Project Asset View" },
+                 new SystemPermission{ Name =  PermissionNames.Projects_TrainingProjects_ProjectDetail_TabProjectAsset_Create, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Create Project Asset" },
+                 new SystemPermission{ Name =  PermissionNames.Projects_TrainingProjects_ProjectDetail_TabProjectAsset_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit Project Asset" },
+                 new SystemPermission{ Name =  PermissionNames.Projects_TrainingProjects_ProjectDetail_TabProjectAsset_Delete, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Delete Project Asset" },
+                
                 #endregion Project > Training Projects
 
                 #endregion Project
@@ -2232,6 +2331,16 @@ namespace ProjectManagement.Authorization
                  new SystemPermission{ Name =  PermissionNames.Admin_OnboardingChecklist_Delete, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Delete" },
                  new SystemPermission{ Name =  PermissionNames.Admin_OnboardingChecklist_ForceDone, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "ForceDone" },
                 #endregion OnboardingChecklist
+
+                 #region OffboardHistory
+
+                 new SystemPermission{ Name =  PermissionNames.OffboardHistory, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "OffboardHistory" },
+                 new SystemPermission{ Name =  PermissionNames.OffboardHistory_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View" },
+                 new SystemPermission{ Name =  PermissionNames.OffboardHistory_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit" },
+                 new SystemPermission{ Name =  PermissionNames.OffboardHistory_CheckList, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "CheckList" },
+                 new SystemPermission{ Name =  PermissionNames.OffboardHistory_CheckList_PM, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "PM CheckList" },
+                 new SystemPermission{ Name =  PermissionNames.OffboardHistory_CheckList_IT, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "IT CheckList" },
+                #endregion OffboardHistory
 
             };
             public static List<SystemPermission> TreePermissions = new List<SystemPermission>() {
@@ -2692,6 +2801,12 @@ namespace ProjectManagement.Authorization
                                                                             new SystemPermission {
                                                                                 Name = PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserStarSkill, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View Star Skill"
                                                                             },
+                                                                            new SystemPermission {
+                                                                                Name = PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserAsset, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View User Asset"
+                                                                            },
+                                                                            new SystemPermission {
+                                                                                Name = PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserAsset, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Update User Asset"
+                                                                            },
                                                                         }
                                                                 },
 
@@ -2964,6 +3079,24 @@ namespace ProjectManagement.Authorization
                                                     new SystemPermission
                                                     {
                                                         Name = PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabProjectSummary, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Tab Project Summary"
+                                                    },
+                                                    new SystemPermission
+                                                    {
+                                                        Name = PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabProjectAsset, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Tab Project Asset",
+                                                            Childrens = new List < SystemPermission > () {
+                                                                new SystemPermission {
+                                                                    Name = PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabProjectAsset_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View"
+                                                                },
+                                                                new SystemPermission {
+                                                                    Name = PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabProjectAsset_Create, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Create"
+                                                                },
+                                                                new SystemPermission {
+                                                                    Name = PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabProjectAsset_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit"
+                                                                },
+                                                                new SystemPermission {
+                                                                    Name = PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabProjectAsset_Delete, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Delete"
+                                                                },
+                                                            }
                                                     }
                                                 },
                                         }
@@ -3075,6 +3208,12 @@ namespace ProjectManagement.Authorization
                                                                 },
                                                                 new SystemPermission {
                                                                     Name = PermissionNames.Projects_ProductProjects_ProjectDetail_TabResourceManagement_PlannedResource_ViewUserStarSkill, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View User Star Skill"
+                                                                },
+                                                                new SystemPermission {
+                                                                    Name = PermissionNames.Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserAsset, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View User Asset"
+                                                                },
+                                                                new SystemPermission {
+                                                                    Name = PermissionNames.Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserAsset, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Update User Asset"
                                                                 },
                                                             }
                                                     },
@@ -3260,6 +3399,23 @@ namespace ProjectManagement.Authorization
                                                         Name = PermissionNames.Projects_ProductProjects_ProjectDetail_TabProjectFile_DeleteFile, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Delete File"
                                                     },
                                                 }
+                                        },
+                                        new SystemPermission {
+                                            Name = PermissionNames.Projects_ProductProjects_ProjectDetail_TabProjectAsset, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Tab Project Asset",
+                                                Childrens = new List < SystemPermission > () {
+                                                    new SystemPermission {
+                                                        Name = PermissionNames.Projects_ProductProjects_ProjectDetail_TabProjectAsset_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View"
+                                                    },
+                                                    new SystemPermission {
+                                                        Name = PermissionNames.Projects_ProductProjects_ProjectDetail_TabProjectAsset_Create, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Create"
+                                                    },
+                                                    new SystemPermission {
+                                                        Name = PermissionNames.Projects_ProductProjects_ProjectDetail_TabProjectAsset_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit"
+                                                    },
+                                                    new SystemPermission {
+                                                        Name = PermissionNames.Projects_ProductProjects_ProjectDetail_TabProjectAsset_Delete, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Delete"
+                                                    },
+                                                }
                                         }
                                     },
                             }
@@ -3371,6 +3527,12 @@ namespace ProjectManagement.Authorization
                                                                 },
                                                                 new SystemPermission {
                                                                     Name = PermissionNames.Projects_TrainingProjects_ProjectDetail_TabResourceManagement_PlannedResource_ViewUserStarSkill, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View User Star Skill"
+                                                                },
+                                                                new SystemPermission {
+                                                                    Name = PermissionNames.Projects_TrainingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserAsset, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View User Asset"
+                                                                },
+                                                                new SystemPermission {
+                                                                    Name = PermissionNames.Projects_TrainingProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserAsset, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Update User Asset"
                                                                 },
                                                             }
                                                     },
@@ -3530,6 +3692,23 @@ namespace ProjectManagement.Authorization
                                                     },
                                                     new SystemPermission {
                                                         Name = PermissionNames.Projects_TrainingProjects_ProjectDetail_TabProjectFile_DeleteFile, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Delete File"
+                                                    },
+                                                }
+                                        },
+                                        new SystemPermission {
+                                            Name = PermissionNames.Projects_TrainingProjects_ProjectDetail_TabProjectAsset, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Tab Project Asset",
+                                                Childrens = new List < SystemPermission > () {
+                                                    new SystemPermission {
+                                                        Name = PermissionNames.Projects_TrainingProjects_ProjectDetail_TabProjectAsset_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View"
+                                                    },
+                                                    new SystemPermission {
+                                                        Name = PermissionNames.Projects_TrainingProjects_ProjectDetail_TabProjectAsset_Create, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Create"
+                                                    },
+                                                    new SystemPermission {
+                                                        Name = PermissionNames.Projects_TrainingProjects_ProjectDetail_TabProjectAsset_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit"
+                                                    },
+                                                    new SystemPermission {
+                                                        Name = PermissionNames.Projects_TrainingProjects_ProjectDetail_TabProjectAsset_Delete, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Delete"
                                                     },
                                                 }
                                         }
@@ -4156,6 +4335,27 @@ namespace ProjectManagement.Authorization
                 },
 
                 #endregion Audit
+
+                #region OffboardHistory
+
+                new SystemPermission
+                {
+                    Name = PermissionNames.OffboardHistory, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "OffboardHistory",
+                     Childrens = new List<SystemPermission> ()
+                     {
+                         new SystemPermission{ Name = PermissionNames.OffboardHistory_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "OffboardHistory View"},
+                         new SystemPermission{ Name = PermissionNames.OffboardHistory_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Accept/Remove Offboard"},
+                         new SystemPermission{ Name = PermissionNames.OffboardHistory_CheckList, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "CheckList Offboard",
+                            Childrens = new List<SystemPermission>
+                            {
+                                new SystemPermission{ Name = PermissionNames.OffboardHistory_CheckList_PM, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "PM CheckList" },
+                                new SystemPermission{ Name = PermissionNames.OffboardHistory_CheckList_IT, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "IT CheckList" }
+                            },
+                         }
+                     }
+                }
+
+                #endregion OffboardHistory
             };
         }
     }

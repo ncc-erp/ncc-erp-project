@@ -9,7 +9,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ProjectUserService } from '@app/service/api/project-user.service';
 import * as moment from 'moment';
 import { ConfirmFromPage } from '@app/modules/pm-management/list-project/list-project-detail/resource-management/confirm-popup/confirm-popup.component';
-
+import { OffboardUserService } from '@app/service/api/offboard-user.service';
 @Component({
   selector: 'app-confirm-plan-dialog',
   templateUrl: './confirm-plan-dialog.component.html',
@@ -34,6 +34,7 @@ export class ConfirmPlanDialogComponent extends AppComponentBase implements OnIn
   constructor(@Inject(MAT_DIALOG_DATA) public data: any,
     private puService: ResourceManagerService,
     injector: Injector,
+    private offboardUserService: OffboardUserService,
     private dialogRef: MatDialogRef<ConfirmPlanDialogComponent>) {
     super(injector)
   }
@@ -62,27 +63,40 @@ export class ConfirmPlanDialogComponent extends AppComponentBase implements OnIn
   }
   confirm() {
     if (this.user.allocatePercentage > 0) {
-      if(this.data.fromPage == ConfirmFromPage.poolResource){
-        this.puService.ConfirmJoinProjectFromTabPool(this.user.id, moment(this.startDate).format("YYYY-MM-DD")).pipe(catchError(this.puService.handleError)).subscribe(rs => {
-          this.confirmJoinSuccessResult()
-        })
-      }
+      // check offboard history first
+      this.offboardUserService
+        .CheckOffboardHistory(this.user.id)
+        .pipe(catchError(this.puService.handleError))
+        .subscribe((response) => {
+          const hasHistory = response?.result ?? response;
+          if (hasHistory) {
+            abp.message.error(
+              'This employee still has an uncomplete OffboardHistory Record of this Project, please contact PM and IT to complete it first'
+            );
+            return;
+          }
 
-      if(this.data.fromPage == ConfirmFromPage.allResource){
-        this.puService.ConfirmJoinProjectFromTabAllResource(this.user.id, moment(this.startDate).format("YYYY-MM-DD")).pipe(catchError(this.puService.handleError)).subscribe(rs => {
-          this.confirmJoinSuccessResult()
-        })
-      }
+          // proceed join flow when no incomplete offboard
+          if(this.data.fromPage == ConfirmFromPage.poolResource){
+            this.puService.ConfirmJoinProjectFromTabPool(this.user.id, moment(this.startDate).format("YYYY-MM-DD")).pipe(catchError(this.puService.handleError)).subscribe(rs => {
+              this.confirmJoinSuccessResult()
+            })
+          }
 
-      if(this.data.fromPage == ConfirmFromPage.vendor){
-        this.puService.ConfirmJoinProjectFromTabVendor(this.user.id, moment(this.startDate).format("YYYY-MM-DD")).pipe(catchError(this.puService.handleError)).subscribe(rs => {
-          this.confirmJoinSuccessResult()
-        })
-      }
+          if(this.data.fromPage == ConfirmFromPage.allResource){
+            this.puService.ConfirmJoinProjectFromTabAllResource(this.user.id, moment(this.startDate).format("YYYY-MM-DD")).pipe(catchError(this.puService.handleError)).subscribe(rs => {
+              this.confirmJoinSuccessResult()
+            })
+          }
 
+          if(this.data.fromPage == ConfirmFromPage.vendor){
+            this.puService.ConfirmJoinProjectFromTabVendor(this.user.id, moment(this.startDate).format("YYYY-MM-DD")).pipe(catchError(this.puService.handleError)).subscribe(rs => {
+              this.confirmJoinSuccessResult()
+            })
+          }
+      });
 
-    }
-    else {
+    } else {
       let requestBody = {
         projectUserId: this.user.id,
         startTime: moment(this.startDate).format("YYYY-MM-DD")

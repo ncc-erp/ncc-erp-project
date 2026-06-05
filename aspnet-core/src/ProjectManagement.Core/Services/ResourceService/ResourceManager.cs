@@ -327,6 +327,16 @@ namespace ProjectManagement.Services.ResourceManager
 
         private async Task CreateOffboardUser(long userId, long projectId, ProjectUserRole projectRole)
         {
+            var exists = await _workScope.All<OffboardUser>()
+                .AnyAsync(x => x.UserId == userId
+                    && x.ProjectId == projectId
+                    && x.OffboardStatus != OffboardStatus.Complete);
+
+            if (exists)
+            {
+                throw new UserFriendlyException("An active offboard record already exists for this user and project.");
+            }
+
             var offboardUser = new OffboardUser
             {
                 UserId = userId,

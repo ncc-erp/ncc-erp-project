@@ -46,15 +46,18 @@ namespace ProjectManagement.APIs.ProjectAsset
 
         [HttpPost]
         [AbpAuthorize]
-        public async Task UpdateUserAsset(long userId, List<long> projectAssetIds)
+        public async Task UpdateUserAsset(long userId, long projectId, List<long> projectAssetIds)
         {
             if (userId <= 0)
                 throw new UserFriendlyException("User id is invalid!");
 
+            if (projectId <= 0)
+                throw new UserFriendlyException("Project id is invalid!");
+
             if (projectAssetIds == null)
                 projectAssetIds = new List<long>();
 
-            await _projectAssetManager.UpdateUserAsset(userId, projectAssetIds);
+            await _projectAssetManager.UpdateUserAsset(userId, projectId, projectAssetIds);
         }
 
         [HttpPut]

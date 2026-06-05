@@ -93,7 +93,7 @@ export class UpdateUserAssetDialogComponent extends AppComponentBase implements 
   public saveAndClose(): void {
     this.isLoading = true;
     this.subscription.push(
-      this.projectAssetService.UpdateUserAsset(this.data.userId, this.selectedAssets).pipe(
+      this.projectAssetService.UpdateUserAsset(this.data.userId, this.data.projectId, this.selectedAssets).pipe(
         catchError(this.projectAssetService.handleError)
       ).subscribe(() => {
         abp.notify.success('Update user assets successfully!');

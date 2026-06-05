@@ -94,7 +94,7 @@ namespace ProjectManagement.APIs.ProjectUsers
 
             var userIds = users.Select(u => u.UserId).ToList();
             var assets = await WorkScope.GetAll<ProjectUserAsset>()
-                .Where(pua => userIds.Contains(pua.UserId))
+                .Where(pua => userIds.Contains(pua.UserId) && pua.ProjectAsset.ProjectId == projectId)
                 .Include(pua => pua.ProjectAsset)
                 .ToListAsync();
 

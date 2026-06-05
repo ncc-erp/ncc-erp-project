@@ -74,7 +74,7 @@ namespace ProjectManagement.Manager.ProjectAssetManager
             foreach (var projectUser in projectUsers)
             {
                 var userProjectAssets = await WorkScope.All<ProjectUserAsset>()
-                    .Where(x => x.UserId == projectUser.UserId)
+                    .Where(x => x.UserId == projectUser.UserId && x.ProjectAsset.ProjectId == projectId)
                     .Include(x => x.ProjectAsset)
                     .Include(x => x.User)
                     .ToListAsync();
@@ -105,13 +105,14 @@ namespace ProjectManagement.Manager.ProjectAssetManager
             return result;
         }
 
-        public async Task UpdateUserAsset(long userId, List<long> projectAssetIds)
+        public async Task UpdateUserAsset(long userId, long projectId, List<long> projectAssetIds)
         {
             if (projectAssetIds == null)
                 projectAssetIds = new List<long>();
 
             var existingAssets = await WorkScope.All<ProjectUserAsset>()
-                .Where(x => x.UserId == userId)
+                .Include(x => x.ProjectAsset)
+                .Where(x => x.UserId == userId && x.ProjectAsset.ProjectId == projectId)
                 .ToListAsync();
 
             foreach (var asset in existingAssets)
@@ -122,8 +123,8 @@ namespace ProjectManagement.Manager.ProjectAssetManager
             foreach (var projectAssetId in projectAssetIds)
             {
                 var projectAsset = await WorkScope.GetAsync<ProjectAsset>(projectAssetId);
-                if (projectAsset == null)
-                    throw new UserFriendlyException("Project asset not found!");
+                if (projectAsset == null || projectAsset.ProjectId != projectId)
+                    throw new UserFriendlyException("Project asset not found in this project!");
 
                 var userProjectAsset = new ProjectUserAsset
                 {

@@ -27,8 +27,8 @@ export class ProjectAssetService extends BaseApiService {
     return this.http.get<any>(this.rootUrl + `/GetAllUserProjectAssetByProjectId?projectId=${projectId}&viewHistory=${viewHistory}`);
   }
 
-  public UpdateUserAsset(userId: number, projectAssetIds: number[]): Observable<any> {
-    return this.http.post<any>(this.rootUrl + `/UpdateUserAsset?userId=${userId}`, projectAssetIds);
+  public UpdateUserAsset(userId: number, projectId: number, projectAssetIds: number[]): Observable<any> {
+    return this.http.post<any>(this.rootUrl + `/UpdateUserAsset?userId=${userId}&projectId=${projectId}`, projectAssetIds);
   }
 
   public Edit(projectId: number, input: any): Observable<any> {

@@ -198,7 +198,7 @@ namespace ProjectManagement.Manager.OffboardUserManager
 
             var remainAsset = await WorkScope.All<ProjectUserAsset>()
                 .Include(x => x.ProjectAsset)
-                .Where(x => x.UserId == offboard.UserId)
+                .Where(x => x.UserId == offboard.UserId && x.ProjectAsset.ProjectId == offboard.ProjectId)
                 .ToListAsync();
 
             var assetHistory = JsonConvert.SerializeObject(remainAsset.Select(x => new

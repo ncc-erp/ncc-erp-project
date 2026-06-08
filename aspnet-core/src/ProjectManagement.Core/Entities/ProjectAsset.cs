@@ -10,8 +10,8 @@ namespace ProjectManagement.Entities
     public class ProjectAsset : FullAuditedEntity<long>, IMayHaveTenant
     {
         public int? TenantId { get; set; }
-        [ForeignKey(nameof(ProjectId))]
         public long ProjectId { get; set; }
+        [ForeignKey(nameof(ProjectId))]
         public Project Project { get; set; }
         public string AssetName { get; set; }
         public ICollection<ProjectUserAsset> ProjectUserAssets { get; set; }

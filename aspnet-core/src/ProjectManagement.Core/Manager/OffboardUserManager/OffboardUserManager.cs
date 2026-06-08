@@ -53,8 +53,8 @@ namespace ProjectManagement.Manager.OffboardUserManager
                 ProjectType = x.Project != null ? x.Project.ProjectType : 0,
                 ProjectCode = x.Project != null ? x.Project.Code : null,
                 ProjectRole = x.ProjectRole,
-                ProjectPM = x.Project.PM.FullName,
-                PMEmail = x.Project.PM.EmailAddress,
+                ProjectPM = x.Project.PM.FullName != null ? x.Project.PM.FullName : null,
+                PMEmail = x.Project.PM.EmailAddress != null ? x.Project.PM.EmailAddress : null,
                 HistoryAsset = x.HistoryAsset,
                 CheckOffboardStatus = x.CheckOffboardStatus,
                 OffboardDate = x.OffboardDate,
@@ -64,11 +64,6 @@ namespace ProjectManagement.Manager.OffboardUserManager
             if (input.ProjectId.HasValue && input.ProjectId.Value > 0)
             {
                 query = query.Where(x => x.ProjectId == input.ProjectId.Value);
-            }
-
-            if (input.UserId > 0)
-            {
-                query = query.Where(x => x.UserId == input.UserId);
             }
 
             if (input.OffboardStatus.HasValue)
@@ -83,7 +78,9 @@ namespace ProjectManagement.Manager.OffboardUserManager
                     x.FullName.ToLower().Contains(input.SearchText.ToLower()));
             }
 
-            return query.GetGridResultWithoutSearchAndFilter(input);
+            var list = await query.TakePage(input).ToListAsync();
+            var total = await query.CountAsync();
+            return new GridResult<OffboardHistoryDto>(list, total);
         }
 
         public async Task<OffboardUser> UpdateOffboardStatus(long offboardHistoryId, bool needOffboard)
@@ -92,12 +89,29 @@ namespace ProjectManagement.Manager.OffboardUserManager
                 .Where(x => x.Id == offboardHistoryId)
                 .FirstOrDefaultAsync();
 
+            var assets = await WorkScope.GetAll<ProjectUserAsset>()
+                .Include(x => x.ProjectAsset)
+                .Where(x => x.UserId == offboardUser.UserId && x.ProjectAsset.ProjectId == offboardUser.ProjectId)
+                .ToListAsync();
+
+            var total = assets.Count;
+
             if (offboardUser == null)
             {
                 throw new UserFriendlyException($"Not found OffboardUser with Id {offboardHistoryId}");
             }
 
             offboardUser.OffboardStatus = needOffboard ? OffboardStatus.PMOffboard : OffboardStatus.Complete;
+
+            if (!needOffboard)
+            {
+                offboardUser.CheckOffboardStatus = CheckOffboardStatus.Done;
+            }
+            if (total == 0)
+            {
+                offboardUser.CheckOffboardStatus = CheckOffboardStatus.PMAccept;
+            }
+
             await WorkScope.UpdateAsync(offboardUser);
 
             return offboardUser;
@@ -222,10 +236,27 @@ namespace ProjectManagement.Manager.OffboardUserManager
             var offboard = await WorkScope.GetAll<Entities.OffboardUser>()
                 .FirstOrDefaultAsync(x => x.Id == offboadHistoryId);
 
+            var assets = await WorkScope.GetAll<ProjectUserAsset>()
+                .Include(x => x.ProjectAsset)
+                .Where(x => x.UserId == offboard.UserId && x.ProjectAsset.ProjectId == offboard.ProjectId)
+                .ToListAsync();
+
+            var total = assets.Count;
+
             if (offboard == null)
                 throw new UserFriendlyException("Offboard history not found");
 
             offboard.OffboardStatus = OffboardStatus.ITOffboard;
+            
+            if (total == 0)
+            {
+                offboard.CheckOffboardStatus = CheckOffboardStatus.Done;
+            }
+            else
+            {
+                offboard.CheckOffboardStatus = CheckOffboardStatus.NotStarted;
+            }
+
             offboard.OffboardChecklistJson = null;
 
             await WorkScope.UpdateAsync(offboard);

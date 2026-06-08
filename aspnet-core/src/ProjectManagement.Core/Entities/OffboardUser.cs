@@ -13,7 +13,6 @@ namespace ProjectManagement.Entities
     public class OffboardUser : FullAuditedEntity<long>, IMayHaveTenant
     {
         public int? TenantId { get; set; }
-        [MaxLength(255)]
         public long UserId { get; set; }
         [ForeignKey(nameof(UserId))]
         public User User { get; set; }

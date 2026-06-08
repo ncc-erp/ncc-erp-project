@@ -9,7 +9,6 @@ namespace ProjectManagement.Manager.OffboardUserManager.Dto
     public class InputGetAllOffboardHistoryDto : GridParam
     {
         public long? ProjectId { get; set; }
-        public long UserId { get; set; }
         public OffboardStatus? OffboardStatus { get; set; }
     }
 }

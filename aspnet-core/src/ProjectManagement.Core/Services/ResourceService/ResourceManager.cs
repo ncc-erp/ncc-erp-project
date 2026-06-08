@@ -334,7 +334,7 @@ namespace ProjectManagement.Services.ResourceManager
 
             if (exists)
             {
-                throw new UserFriendlyException("An active offboard record already exists for this user and project.");
+                return;
             }
 
             var offboardUser = new OffboardUser

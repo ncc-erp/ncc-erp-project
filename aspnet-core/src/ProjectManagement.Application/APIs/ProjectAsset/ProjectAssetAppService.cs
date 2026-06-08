@@ -11,6 +11,7 @@ using ProjectManagement.Authorization;
 
 namespace ProjectManagement.APIs.ProjectAsset
 {
+    [AbpAuthorize]
     public class ProjectAssetAppService : ProjectManagementAppServiceBase
     {
         private readonly ProjectAssetManager _projectAssetManager;
@@ -35,13 +36,6 @@ namespace ProjectManagement.APIs.ProjectAsset
                 throw new UserFriendlyException("Asset name is required!");
 
             return await _projectAssetManager.Create(projectId, input);
-        }
-
-        [HttpGet]
-        [AbpAuthorize]
-        public async Task<List<GetAllUserProjectAsset>> GetAllUserProjectAssetByProjectId(long projectId, bool viewHistory = false)
-        {
-            return await _projectAssetManager.GetAllUserProjectAssetByProjectId(projectId, viewHistory);
         }
 
         [HttpPost]

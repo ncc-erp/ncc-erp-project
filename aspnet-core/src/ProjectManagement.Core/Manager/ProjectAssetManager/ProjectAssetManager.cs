@@ -54,57 +54,6 @@ namespace ProjectManagement.Manager.ProjectAssetManager
             };
         }
 
-        public async Task<List<GetAllUserProjectAsset>> GetAllUserProjectAssetByProjectId(long projectId, bool viewHistory = false)
-        {
-            var query = WorkScope.All<ProjectUser>()
-                .Where(x => x.ProjectId == projectId)
-                .Where(x => x.User.UserType != UserType.FakeUser);
-
-            if (!viewHistory)
-            {
-                query = query.Where(x => x.Status == ProjectUserStatus.Present && x.AllocatePercentage > 0);
-            }
-
-            var projectUsers = await query
-                .Include(x => x.User)
-                .ToListAsync();
-
-            var result = new List<GetAllUserProjectAsset>();
-
-            foreach (var projectUser in projectUsers)
-            {
-                var userProjectAssets = await WorkScope.All<ProjectUserAsset>()
-                    .Where(x => x.UserId == projectUser.UserId && x.ProjectAsset.ProjectId == projectId)
-                    .Include(x => x.ProjectAsset)
-                    .Include(x => x.User)
-                    .ToListAsync();
-
-                var dto = new GetAllUserProjectAsset
-                {
-                    Id = projectUser.UserId,
-                    UserId = projectUser.UserId,
-                    EmailAddress = projectUser.User.EmailAddress,
-                    AvatarPath = projectUser.User.AvatarPath,
-                    UserType = projectUser.User.UserType,
-                    Branch = projectUser.User.BranchOld,
-                    BranchColor = projectUser.User.Branch != null ? projectUser.User.Branch.Color : null,
-                    BranchDisplayName = projectUser.User.Branch != null ? projectUser.User.Branch.DisplayName : null,
-                    PositionId = projectUser.User.PositionId,
-                    PositionColor = projectUser.User.Position != null ? projectUser.User.Position.Color : null,
-                    PositionName = projectUser.User.Position != null ? projectUser.User.Position.Name : null,
-                    FullName = projectUser.User.FullName,
-                    UserLevel = projectUser.User.UserLevel,
-                    ProjectAssets = userProjectAssets
-                        .Select(x => x.ProjectAsset.AssetName)
-                        .ToList()
-                };
-
-                result.Add(dto);
-            }
-
-            return result;
-        }
-
         public async Task UpdateUserAsset(long userId, long projectId, List<long> projectAssetIds)
         {
             if (projectAssetIds == null)

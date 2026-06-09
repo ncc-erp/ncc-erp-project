@@ -6,7 +6,7 @@ import {
 } from "@shared/paged-listing-component-base";
 import { catchError, finalize } from "rxjs/operators";
 import { PMReportProjectContributionService } from "@app/service/api/pmreport-project-contribution.service";
-import { UserGroupContributionDto } from "@app/service/model/weekly-contribution.dto";
+import { UserGroupContributionDto, UserTypeDto} from "@app/service/model/weekly-contribution.dto";
 import { ListProjectService } from "./../../../service/api/list-project.service";
 import { ProjectDto } from "@app/service/model/list-project.dto";
 import { UserService } from "./../../../service/api/user.service";
@@ -30,6 +30,9 @@ export class DetailWeeklyContributionComponent
   public selectedBranchIds: number[] = [];
   public selectedBranchIdsCr: number[] = [];
   public selectedBranchIdsOld: number[] = [];
+  public listUserTypes: UserTypeDto[] = [];
+  public selectedUserTypes: number[] = [];
+  public searchUserType: string = "";
   public searchBranch: string = "";
   public listProject: any[] = [];
   public projectSearchText: string = "";
@@ -63,6 +66,7 @@ export class DetailWeeklyContributionComponent
     this.refresh();
     this.getAllBranchs();
     this.getProjectsForAllResource();
+    this.getAllUserTypes();
 
   }
 
@@ -80,6 +84,7 @@ export class DetailWeeklyContributionComponent
       ...request,
       searchText: this.searchText,
       branchIds: this.selectedBranchIds,
+      userTypes: this.selectedUserTypes,
       projectId: this.selectedProjectId ?? null,
       sort: this.sortColumn,
       sortDirection: this.sortDirection === 1 ? 1 : 0,
@@ -139,6 +144,7 @@ export class DetailWeeklyContributionComponent
     const inputRequest = {
       searchText: this.searchText,
       branchIds: this.selectedBranchIds,
+      userTypes: this.selectedUserTypes,
       projectId: this.selectedProjectId ?? null,
     };
     this.pmReportProjectContributionService
@@ -146,6 +152,19 @@ export class DetailWeeklyContributionComponent
       .subscribe((data) => {
         this.totalContributionSum = data.result || 0;
       });
+  }
+
+  public getAllUserTypes() {
+    this.listUserTypes = Object.entries(this.APP_ENUM.UserType)
+      .filter(([displayName]) => displayName !== "FakeUser")
+      .map(([displayName, value]) => ({
+        displayName,
+        value: Number(value),
+      }));
+  }
+
+  public filterUserType() {
+    this.getDataPage(1);
   }
 
   public getAllBranchs() {

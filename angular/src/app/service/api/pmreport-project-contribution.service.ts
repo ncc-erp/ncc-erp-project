@@ -39,4 +39,7 @@ export class PMReportProjectContributionService extends BaseApiService {
       params: { pmReportId: pmReportId.toString() },
     });
   }
+  public getContributionAverage(input: any): Observable<any> {
+    return this.http.post(this.rootUrl + `/GetContributionAverage`, input);
+  }
 }

@@ -91,6 +91,7 @@ import { ProductAccountInfoComponent } from './modules/pm-management/product-pro
 import { PunishmentComponent } from './modules/punishment/punishment.component';
 import { WeeklyContributionComponent } from './modules/weekly-contribution/weekly-contribution.component';
 import { DetailWeeklyContributionComponent } from './modules/weekly-contribution/detail-weekly-contribution/detail-weekly-contribution.component';
+import { ContributionAverageComponent } from './modules/weekly-contribution/contribution-average/contribution-average.component';
 
 @NgModule({
   imports: [
@@ -397,6 +398,11 @@ import { DetailWeeklyContributionComponent } from './modules/weekly-contribution
           {
             path: "contribution-reports",
             component: WeeklyContributionComponent,
+            canActivate: [AppRouteGuard],
+          }, 
+          {
+            path: "contribution-average",
+            component: ContributionAverageComponent,
             canActivate: [AppRouteGuard],
           },
            {

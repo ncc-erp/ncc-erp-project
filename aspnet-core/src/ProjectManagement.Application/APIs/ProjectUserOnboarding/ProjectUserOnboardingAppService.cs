@@ -18,7 +18,9 @@ using ProjectManagement.Services.ResourceManager;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using static ProjectManagement.Constants.Enum.ProjectEnum;
 
@@ -193,7 +195,7 @@ namespace ProjectManagement.APIs.ProjectUserOnboarding
                     {
                         projectUserOnboarding.Status = ProjectUserOnboardingStatus.Pending;
                         projectUserOnboarding.SentRequestTime = DateTime.Now;
-                        await SendConfirmationRequestToMember(input.ProjectUserId);
+                        await SendConfirmationRequestToMember(input.ProjectUserId, input.Checklist);
                     }
                 }
                 else
@@ -219,7 +221,9 @@ namespace ProjectManagement.APIs.ProjectUserOnboarding
         public async Task Remind(long projectUserId)
         {
             var onboarding = await WorkScope.GetAll<Entities.ProjectUserOnboarding>()
-                .FirstOrDefaultAsync(x => x.ProjectUserId == projectUserId);
+                 .Include(x => x.ProjectUserOnboardingDetails)
+                 .ThenInclude(d => d.OnboardingChecklist)
+                 .FirstOrDefaultAsync(x => x.ProjectUserId == projectUserId);
 
             bool canRemind = onboarding != null &&
                              (onboarding.Status == ProjectUserOnboardingStatus.PendingEmployee ||
@@ -233,13 +237,18 @@ namespace ProjectManagement.APIs.ProjectUserOnboarding
             onboarding.SentRequestTime = DateTime.Now;
             onboarding.Status = ProjectUserOnboardingStatus.PendingEmployee;
             await WorkScope.UpdateAsync(onboarding);
-
-            await SendConfirmationRequestToMember(projectUserId);
+            var checklist = onboarding.ProjectUserOnboardingDetails.Select(d => new OnboardingChecklistItemDto
+            {
+                Id = d.OnboardingChecklistId,
+                Label = d.OnboardingChecklist.Label,
+                Details = d.OnboardingChecklist.DetailsJson,
+                IsChecked = d.IsChecked
+            }).ToList();
+            await SendConfirmationRequestToMember(projectUserId, checklist);
         }
 
         #region API Helper methods
-
-        private async Task SendConfirmationRequestToMember(long projectUserId)
+        private async Task SendConfirmationRequestToMember(long projectUserId, List<OnboardingChecklistItemDto> Checklist)
         {
             var projectUser = await WorkScope.GetAll<ProjectUser>()
                             .Include(x => x.User)
@@ -253,15 +262,47 @@ namespace ProjectManagement.APIs.ProjectUserOnboarding
             sbMessage.AppendLine($"✅**ONBOARDING CONFIRM**");
             sbMessage.AppendLine($"Project: **{projectUser.Project.Name}**");
             sbMessage.AppendLine("------------------------------------------------");
+
+            if (Checklist != null && Checklist.Count > 0)
+            {
+                sbMessage.AppendLine("📋 **Onboarding Checklist:**");
+                foreach (var item in Checklist)
+                {
+                    sbMessage.AppendLine($"- **{item.Label}**");
+
+                    if (!string.IsNullOrWhiteSpace(item.Details))
+                    {
+                        string cleanDetails = WebUtility.HtmlDecode(item.Details);
+
+                        cleanDetails = Regex.Replace(cleanDetails, @"<br\s*/?>", "\n", RegexOptions.IgnoreCase);
+                        cleanDetails = Regex.Replace(cleanDetails, @"</p>", "\n", RegexOptions.IgnoreCase);
+                        cleanDetails = Regex.Replace(cleanDetails, @"<[^>]+>", string.Empty);
+                        cleanDetails = cleanDetails.Replace("&nbsp;", " ").Trim();
+
+                        var lines = cleanDetails.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+                        foreach (var line in lines)
+                        {
+                            var trimmedLine = line.Trim();
+                            if (!string.IsNullOrEmpty(trimmedLine))
+                            {
+                                sbMessage.AppendLine($"  > {trimmedLine}");
+                            }
+                        }
+                    }
+                }
+                sbMessage.AppendLine("------------------------------------------------");
+            }
+
             sbMessage.AppendLine("🗣️ **User confirmation:**");
             sbMessage.AppendLine("> *Bạn xác nhận đã đọc kỹ và hoàn thành đầy đủ các mục yêu cầu trong Onboarding Checklist.*");
+
+            var komuUserName = projectUser.User.UserName?.Split('@')[0];
             await _komuService.NotifyToKomuUserAwait(new KomuMessage
             {
-                UserName = "tu.lecam",
+                UserName = komuUserName,
                 Message = sbMessage.ToString(),
                 CreateDate = DateTimeUtils.GetNow(),
             });
-
         }
         #endregion
     }

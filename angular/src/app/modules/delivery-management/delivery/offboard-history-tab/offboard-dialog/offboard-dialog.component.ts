@@ -12,6 +12,8 @@ import { AppComponentBase } from '@shared/app-component-base';
 })
 export class OffboardDialogComponent extends AppComponentBase implements OnInit {
   items: any[] = [];
+  accountResourceItems: any[] = [];
+  projectAssetItems: any[] = [];
   offboardHistoryId: number;
   fullName: string;
   isLoading = false;
@@ -40,13 +42,27 @@ export class OffboardDialogComponent extends AppComponentBase implements OnInit 
       .pipe(finalize(() => (this.isLoading = false)))
       .subscribe((res: any) => {
         this.items = res.result || res || [];
+        this.accountResourceItems = this.items.filter(x => x.itemType === 'AccountResource');
+        this.projectAssetItems = this.items.filter(x => x.itemType === 'ProjectAsset');
       });
   }
 
   save() {
     this.isSaving = true;
-    const checked = this.items.filter(x => x.isChecked).map(x => x.projectAssetId);
-    const input = { offboardHistoryId: this.offboardHistoryId, checkedProjectAssetIds: checked };
+    const checkedProjectAssetIds = this.items
+      .filter(x => x.itemType === 'ProjectAsset' && x.isChecked)
+      .map(x => x.projectAssetId)
+      .filter((id): id is number => id !== null && id !== undefined);
+    const checkedAccountResourceIds = this.items
+      .filter(x => x.itemType === 'AccountResource' && x.isChecked)
+      .map(x => x.accountResourceId)
+      .filter((id): id is number => id !== null && id !== undefined);
+
+    const input = {
+      offboardHistoryId: this.offboardHistoryId,
+      checkedProjectAssetIds,
+      checkedAccountResourceIds
+    };
     this._offboardService.SaveOffboardChecklist(input)
       .pipe(finalize(() => (this.isSaving = false)))
       .subscribe(() => {

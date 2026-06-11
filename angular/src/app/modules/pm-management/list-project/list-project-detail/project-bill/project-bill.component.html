@@ -232,6 +232,7 @@
                                             <i *ngIf="sortColumn !== 'linkedResources'" class="fas fa-sort"></i>
                                         </div>
                                 </th>
+                                <th class="align" style="min-width: 240px;">Account Assets</th>
                                 <th class="align column-rate" (click)="sortData('billRate')" style="cursor: pointer; min-width: 100px;"
                                     *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Rate_View) && !isHideRates">
                                     <div class="col-bill-account"> 
@@ -474,6 +475,30 @@
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
+                                </td>
+                                <td style="min-width: 260px; max-width: 320px;">
+                                    <div class="d-flex flex-column gap-1">
+                                        <button class="btn btn-xs btn-outline-primary account-resource-create-btn mb-1"
+                                                type="button"
+                                                (click)="openAccountResourceDialog(bill)"
+                                                [matTooltip]="'Create account resource'">
+                                            <i class="fa fa-plus"></i>
+                                        </button>
+                                        <div *ngIf="bill.accountResources?.length; else noAccountResource" class="d-flex flex-column gap-1">
+                                            <div *ngFor="let ar of bill.accountResources" class="d-flex align-items-center justify-content-between border rounded p-1 account-resource-item">
+                                                <span class="text-truncate account-resource-text" [matTooltip]="(ar.assetName || '') + ' (' + (ar.creatorName || '') + ') (' + (ar.accountTypeName || '') + '): ' + (ar.typeLogin || '')">
+                                                    <strong>{{ ar.assetName || 'Unnamed' }}</strong> ({{ ar.creatorName || 'Unknown creator' }}) ({{ ar.accountTypeName || 'Unknown type' }}): {{ ar.typeLogin || '' }}
+                                                </span>
+                                                <span class="d-flex gap-1">
+                                                    <button class="btn btn-xs btn-light" (click)="openAccountResourceDialog(bill, ar)"><i class="fas fa-edit"></i></button>
+                                                    <button class="btn btn-xs btn-light text-danger" (click)="deleteAccountResource(ar)"><i class="fas fa-trash"></i></button>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <ng-template #noAccountResource>
+                                            <small class="text-muted">No account resource</small>
+                                        </ng-template>
                                     </div>
                                 </td>
                                 <td class="text-center"

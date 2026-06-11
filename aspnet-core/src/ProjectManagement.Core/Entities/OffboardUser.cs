@@ -23,6 +23,7 @@ namespace ProjectManagement.Entities
         public CheckOffboardStatus CheckOffboardStatus { get; set; }
         public string OffboardChecklistJson { get; set; }
         public string HistoryAsset { get; set; }
+        public string HistoryAccountResource { get; set; }
         public OffboardStatus OffboardStatus { get; set; }
         public DateTime OffboardDate { get; set; }
 

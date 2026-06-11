@@ -127,10 +127,23 @@
                     }}
                   </span>
                 </td>
-                <td style="width: 300px;">
-                  <p *ngFor="let asset of parseHistoryAsset(item.historyAsset)" class="mb-1">
-                    - {{ asset.AssetName || asset.assetName || asset.name || '-' }}
-                  </p>
+                <td style="width: 300px; white-space: normal; word-break: break-word;">
+                  <div class="mb-2">
+                    <strong>Account Asset:</strong>
+                    <ul class="mb-1 pl-3">
+                      <li *ngFor="let resource of parseHistoryAccountResource(item.historyAccountResource)">
+                        {{ getHistoryDisplayValue(resource) }}
+                      </li>
+                    </ul>
+                  </div>
+                  <div>
+                    <strong>Project Asset:</strong>
+                    <ul class="mb-1 pl-3">
+                      <li *ngFor="let asset of parseHistoryAsset(item.historyAsset)">
+                        {{ getHistoryDisplayValue(asset) }}
+                      </li>
+                    </ul>
+                  </div>
                 </td>
                 <td style="width: 150px; text-align: center;">{{ item.offboardDate | date: 'dd/MM/yyyy' }}</td>
                 <td style="width: 100px;" class="text-center align-middle">

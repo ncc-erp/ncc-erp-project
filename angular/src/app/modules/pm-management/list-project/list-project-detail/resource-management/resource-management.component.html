@@ -309,12 +309,12 @@
                       <div style="width: 90%; text-align: left">
                         <p
                           class="m-0 mr-1 content-skills"
-                          *ngFor="let asset of user.projectAssets"
+                          *ngFor="let asset of getProjectAssets(user)"
                         >
                           - {{ asset }}
                         </p>
                         <div
-                          *ngIf="!user.projectAssets || user.projectAssets.length === 0"
+                          *ngIf="getProjectAssets(user).length === 0"
                           class="text-muted"
                         >
                           No assets

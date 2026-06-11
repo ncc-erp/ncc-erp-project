@@ -35,6 +35,7 @@
                             <tr>
                                 <th style="width: 50px;">STT</th>
                                 <th>Asset Name</th>
+                                <th>Asset Type</th>
                                 <th class="actions" style="width: 200px;">Actions</th>
                             </tr>
                         </thead>
@@ -48,6 +49,7 @@
                                   }; let i = index">
                                 <td class="text-center stt"><span>{{ i + 1 + pageSize * (pageNumber - 1)}}</span></td>
                                 <td class="text-center">{{item.assetName}}</td>
+                                <td class="text-center">{{ item.projectResourceName || item.projectResource?.name || '-' }}</td>
                                 <td style="width: 200px;" class="text-center">
                                     <button class="btn btn-sm bg-secondary mr-1" (click)="editAsset(item);$event.stopPropagation()" *ngIf="permission.isGranted(Projects_TrainingProjects_ProjectDetail_TabProjectAsset_Edit)">
                                         <i class="fas fa-pencil-alt"></i>

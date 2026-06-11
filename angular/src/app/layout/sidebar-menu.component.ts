@@ -101,6 +101,24 @@ export class SidebarMenuComponent extends AppComponentBase implements OnInit {
             'Admin.Skills'
           ),
           new MenuItem(
+            this.l('Account Types'),
+            '/app/account-types',
+            'fas fa-list-alt',
+            'Admin.AccountTypes'
+          ),
+          new MenuItem(
+            this.l('Creators'),
+            '/app/creators',
+            'fas fa-user-tag',
+            'Admin.Creators'
+          ),
+          new MenuItem(
+            this.l('Project Asset Types'),
+            '/app/project-resources',
+            'fas fa-sitemap',
+            'Admin.ProjectAssetTypes'
+          ),
+          new MenuItem(
             this.l('Currencies'),
             '/app/currency',
             'fas fa-money-check',

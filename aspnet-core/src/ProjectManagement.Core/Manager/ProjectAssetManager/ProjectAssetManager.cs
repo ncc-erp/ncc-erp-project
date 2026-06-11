@@ -20,38 +20,60 @@ namespace ProjectManagement.Manager.ProjectAssetManager
         public async Task<List<ProjectAssetDto>> GetAllAssetsByProjectId(long projectId)
         {
             var assets = await WorkScope.All<ProjectAsset>()
+                .Include(x => x.ProjectResource)
                 .Where(x => x.ProjectId == projectId)
                 .Select(x => new ProjectAssetDto
                 {
                     Id = x.Id,
-                    AssetName = x.AssetName
+                    ProjectResourceId = x.ProjectResourceId,
+                    ProjectResourceName = x.ProjectResource != null ? x.ProjectResource.Name : string.Empty,
+                    AssetName = x.AssetName,
                 })
                 .ToListAsync();
 
             return assets;
         }
 
-        public async Task<ProjectAssetDto> Create(long projectId, ProjectAssetDto input)
+        public async Task<List<ProjectAssetDto>> Create(long projectId, List<ProjectAssetDto> input)
         {
-            var isExist = await WorkScope.All<ProjectAsset>()
-                .AnyAsync(x => x.ProjectId == projectId && x.AssetName == input.AssetName);
+            if (input == null || input.Count == 0)
+                throw new UserFriendlyException("At least one project resource is required!");
 
-            if (isExist)
-                throw new UserFriendlyException("Asset already exists in this project!");
+            var results = new List<ProjectAssetDto>();
 
-            var projectAsset = new ProjectAsset
+            foreach (var item in input)
             {
-                ProjectId = projectId,
-                AssetName = input.AssetName
-            };
+                if (item.ProjectResourceId <= 0)
+                    throw new UserFriendlyException("Project resource is required!");
 
-            var id = await WorkScope.InsertAndGetIdAsync(projectAsset);
+                var projectResource = await WorkScope.GetAsync<ProjectResource>(item.ProjectResourceId);
+                if (projectResource == null)
+                    throw new UserFriendlyException("Project resource not found!");
 
-            return new ProjectAssetDto
-            {
-                Id = id,
-                AssetName = input.AssetName
-            };
+                var assetName = string.IsNullOrWhiteSpace(item.AssetName)
+                    ? projectResource.Name
+                    : item.AssetName.Trim();
+
+                var projectAsset = new ProjectAsset
+                {
+                    ProjectId = projectId,
+                    ProjectResourceId = item.ProjectResourceId,
+                    AssetName = assetName
+                };
+
+                var id = await WorkScope.InsertAndGetIdAsync(projectAsset);
+
+                results.Add(new ProjectAssetDto
+                {
+                    Id = id,
+                    ProjectResourceId = item.ProjectResourceId,
+                    ProjectResourceName = projectResource.Name,
+                    AssetName = assetName,
+                    
+                });
+            }
+
+            return results;
         }
 
         public async Task UpdateUserAsset(long userId, long projectId, List<long> projectAssetIds)
@@ -94,19 +116,24 @@ namespace ProjectManagement.Manager.ProjectAssetManager
             if (projectAsset.ProjectId != projectId)
                 throw new UserFriendlyException("Project asset does not belong to this project!");
 
-            var isExist = await WorkScope.All<ProjectAsset>()
-                .AnyAsync(x => x.ProjectId == projectId && x.AssetName == input.AssetName && x.Id != input.Id);
+            var projectResource = await WorkScope.GetAsync<ProjectResource>(input.ProjectResourceId);
+            if (projectResource == null)
+                throw new UserFriendlyException("Project resource not found!");
 
-            if (isExist)
-                throw new UserFriendlyException("Asset name already exists in this project!");
+            var assetName = string.IsNullOrWhiteSpace(input.AssetName)
+                ? projectResource.Name
+                : input.AssetName.Trim();
 
-            projectAsset.AssetName = input.AssetName;
+            projectAsset.ProjectResourceId = input.ProjectResourceId;
+            projectAsset.AssetName = assetName;
             await WorkScope.UpdateAsync(projectAsset);
 
             return new ProjectAssetDto
             {
                 Id = projectAsset.Id,
-                AssetName = projectAsset.AssetName
+                ProjectResourceId = projectAsset.ProjectResourceId,
+                ProjectResourceName = projectResource.Name,
+                AssetName = projectAsset.AssetName,
             };
         }
 

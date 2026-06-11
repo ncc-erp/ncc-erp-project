@@ -96,11 +96,19 @@ namespace ProjectManagement.APIs.ProjectUsers
             var assets = await WorkScope.GetAll<ProjectUserAsset>()
                 .Where(pua => userIds.Contains(pua.UserId) && pua.ProjectAsset.ProjectId == projectId)
                 .Include(pua => pua.ProjectAsset)
+                .Include(pua => pua.ProjectAsset.ProjectResource)
                 .ToListAsync();
 
             var assetsDict = assets
                 .GroupBy(pua => pua.UserId)
-                .ToDictionary(g => g.Key, g => g.Select(x => x.ProjectAsset.AssetName).ToList());
+                .ToDictionary(g => g.Key, g => g.Select(x =>
+                    x.ProjectAsset != null
+                        ? (!string.IsNullOrWhiteSpace(x.ProjectAsset.AssetName)
+                            ? x.ProjectAsset.AssetName
+                            : x.ProjectAsset.ProjectResource != null
+                                ? x.ProjectAsset.ProjectResource.Name
+                                : string.Empty)
+                        : string.Empty).ToList());
 
             foreach (var user in users)
             {

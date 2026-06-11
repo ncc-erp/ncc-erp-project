@@ -237,4 +237,37 @@ export class OffboardHistoryTabComponent extends PagedListingComponentBase<any> 
       return [];
     }
   }
+
+  public parseHistoryAccountResource(historyAccountResource: string): any[] {
+    if (!historyAccountResource) {
+      return [];
+    }
+
+    try {
+      const parsed = JSON.parse(historyAccountResource);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  }
+
+  public getHistoryDisplayValue(item: any): string {
+    if (typeof item === 'string') {
+      return item || '-';
+    }
+
+    if (item?.Value != null && item.Value !== '') {
+      return item.Value;
+    }
+
+    if (item?.value != null && item.value !== '') {
+      return item.value;
+    }
+
+    if (item?.AssetName || item?.assetName) {
+      return item.AssetName || item.assetName;
+    }
+
+    return item?.name || '-';
+  }
 }

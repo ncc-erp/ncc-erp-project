@@ -287,11 +287,29 @@ export class ResourceManagementComponent
     });
   }
 
+  public getProjectAssets(user: any): string[] {
+    const assets = user?.projectAssets || [];
+
+    if (!Array.isArray(assets)) {
+      return [];
+    }
+
+    return assets
+      .map((asset) => {
+        if (typeof asset === "string") {
+          return asset.trim();
+        }
+
+        return asset?.assetName || asset?.name || "";
+      })
+      .filter((asset) => asset && asset.trim().length > 0);
+  }
+
   updateUserAsset(user) {
     let ref = this.dialog.open(UpdateUserAssetDialogComponent, {
       width: "700px",
       data: {
-        currentAssets: user?.projectAssets,
+        currentAssets: this.getProjectAssets(user),
         userId: user.userId,
         fullName: user.fullName,
         projectId: this.projectId

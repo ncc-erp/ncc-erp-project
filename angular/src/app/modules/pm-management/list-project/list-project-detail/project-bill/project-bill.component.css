@@ -101,6 +101,26 @@
     background: #c3c3c3;
     border-radius: 5px;
 }
+
+.account-resource-create-btn {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    line-height: 1;
+}
+
+.account-resource-item {
+    background: #fafcff;
+}
+
+.account-resource-text {
+    font-size: 0.95rem;
+}
+
 @media screen and (max-width: 600px) {
     .invoice-setting, .bill-account {
         height: 100% !important;

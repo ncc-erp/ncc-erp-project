@@ -210,6 +210,18 @@ namespace ProjectManagement.Services.ProjectUserBills
                             FullName = lr.User.FullName,
                             Contribute = lr.Contribute
                         }).ToList(),
+                    AccountResources = x.AccountResources
+                        .Select(ar => new AccountResourceDto
+                        {
+                            Id = ar.Id,
+                            ProjectUserBillId = ar.ProjectUserBillId,
+                            AccountTypeId = ar.AccountTypeId,
+                            AccountTypeName = ar.AccountType.Name,
+                            CreatorId = ar.CreatorId,
+                            CreatorName = ar.Creator.Name,
+                            TypeLogin = ar.TypeLogin,
+                            AssetName = ar.AssetName,
+                        }).ToList(),
                     SkillNote = x.BillUserSkills.Select(s => s.Note).FirstOrDefault() ?? ""
                 });
 
@@ -316,6 +328,18 @@ namespace ProjectManagement.Services.ProjectUserBills
                             IsActive = lr.User.IsActive,
                             FullName = lr.User.FullName,
                             Contribute = lr.Contribute
+                        }).ToList(),
+                    AccountResources = x.AccountResources
+                        .Select(ar => new AccountResourceDto
+                        {
+                            Id = ar.Id,
+                            ProjectUserBillId = ar.ProjectUserBillId,
+                            AccountTypeId = ar.AccountTypeId,
+                            AccountTypeName = ar.AccountType.Name,
+                            CreatorId = ar.CreatorId,
+                            CreatorName = ar.Creator.Name,
+                            TypeLogin = ar.TypeLogin,
+                            AssetName = ar.AssetName,
                         }).ToList(),
                     UserSkills = x.BillUserSkills.Select(us => new BillUserSkillDto
                     {
@@ -521,6 +545,101 @@ namespace ProjectManagement.Services.ProjectUserBills
             }
             checkExist.Contribute = input.Contribute;
             await _workScope.UpdateAsync(checkExist);
+        }
+
+        public async Task<AccountResourceDto> CreateAccountResource(AccountResource input)
+        {
+            ValidateProjectUserBill(input.ProjectUserBillId);
+
+            var accountType = await _workScope.GetAsync<AccountType>(input.AccountTypeId);
+            if (accountType == null)
+                throw new UserFriendlyException("AccountType not exist !");
+
+            var creator = await _workScope.GetAsync<Creator>(input.CreatorId);
+            if (creator == null)
+                throw new UserFriendlyException("Creator not exist !");
+
+            var entity = new AccountResource
+            {
+                ProjectUserBillId = input.ProjectUserBillId,
+                AccountTypeId = input.AccountTypeId,
+                CreatorId = input.CreatorId,
+                TypeLogin = input.TypeLogin?.Trim(),
+                AssetName = input.AssetName,
+            };
+
+            var id = await _workScope.InsertAndGetIdAsync(entity);
+            var created = await _workScope.GetAsync<AccountResource>(id);
+            return new AccountResourceDto
+            {
+                Id = created.Id,
+                ProjectUserBillId = created.ProjectUserBillId,
+                AccountTypeId = created.AccountTypeId,
+                AccountTypeName = created.AccountType?.Name,
+                CreatorId = created.CreatorId,
+                CreatorName = created.Creator?.Name,
+                TypeLogin = created.TypeLogin,
+                AssetName = created.AssetName,
+            };
+        }
+
+        public async Task DeleteAccountResource(long accountResourceId)
+        {
+            var accountResource = await _workScope.GetAsync<AccountResource>(accountResourceId);
+            if (accountResource == null)
+                throw new UserFriendlyException("AccountResource not exist !");
+
+            await _workScope.DeleteAsync(accountResource);
+        }
+
+        public async Task<AccountResource> UpdateAccountResource(AccountResource input)
+        {
+            var accountResource = await _workScope.GetAsync<AccountResource>(input.Id);
+            if (accountResource == null)
+            {
+                throw new UserFriendlyException("AccountResource not exist !");
+            }
+
+            if (input.ProjectUserBillId > 0)
+            {
+                ValidateProjectUserBill(input.ProjectUserBillId);
+                accountResource.ProjectUserBillId = input.ProjectUserBillId;
+            }
+
+            if (input.AccountTypeId > 0)
+            {
+                var accountType = await _workScope.GetAsync<AccountType>(input.AccountTypeId);
+                if (accountType == null)
+                {
+                    throw new UserFriendlyException("AccountType not exist !");
+                }
+
+                accountResource.AccountTypeId = input.AccountTypeId;
+            }
+
+            if (input.CreatorId > 0)
+            {
+                var creator = await _workScope.GetAsync<Creator>(input.CreatorId);
+                if (creator == null)
+                {
+                    throw new UserFriendlyException("Creator not exist !");
+                }
+
+                accountResource.CreatorId = input.CreatorId;
+            }
+
+            if (!string.IsNullOrWhiteSpace(input.TypeLogin))
+            {
+                accountResource.TypeLogin = input.TypeLogin.Trim();
+            }
+
+            if (!string.IsNullOrWhiteSpace(input.AssetName))
+            {
+                accountResource.AssetName = input.AssetName.Trim();
+            }
+
+            await _workScope.UpdateAsync(accountResource);
+            return accountResource;
         }
 
         private async Task<bool> CheckTotalContribute(long projectUserBillId, byte contribute, long userId)

@@ -56,6 +56,7 @@ namespace ProjectManagement.Manager.OffboardUserManager
                 ProjectPM = x.Project.PM.FullName != null ? x.Project.PM.FullName : null,
                 PMEmail = x.Project.PM.EmailAddress != null ? x.Project.PM.EmailAddress : null,
                 HistoryAsset = x.HistoryAsset,
+                HistoryAccountResource = x.HistoryAccountResource,
                 CheckOffboardStatus = x.CheckOffboardStatus,
                 OffboardDate = x.OffboardDate,
                 OffboardStatus = x.OffboardStatus
@@ -89,17 +90,22 @@ namespace ProjectManagement.Manager.OffboardUserManager
                 .Where(x => x.Id == offboardHistoryId)
                 .FirstOrDefaultAsync();
 
+            if (offboardUser == null)
+            {
+                throw new UserFriendlyException($"Not found OffboardUser with Id {offboardHistoryId}");
+            }
+
             var assets = await WorkScope.GetAll<ProjectUserAsset>()
                 .Include(x => x.ProjectAsset)
                 .Where(x => x.UserId == offboardUser.UserId && x.ProjectAsset.ProjectId == offboardUser.ProjectId)
                 .ToListAsync();
 
-            var total = assets.Count;
+            var accountResources = await WorkScope.GetAll<AccountResource>()
+                .Include(x => x.ProjectUserBill)
+                .Where(x => x.ProjectUserBill.ProjectId == offboardUser.ProjectId && x.ProjectUserBill.UserId == offboardUser.UserId)
+                .ToListAsync();
 
-            if (offboardUser == null)
-            {
-                throw new UserFriendlyException($"Not found OffboardUser with Id {offboardHistoryId}");
-            }
+            var total = assets.Count + accountResources.Count;
 
             offboardUser.OffboardStatus = needOffboard ? OffboardStatus.PMOffboard : OffboardStatus.Complete;
 
@@ -127,25 +133,41 @@ namespace ProjectManagement.Manager.OffboardUserManager
 
             var assets = await WorkScope.GetAll<ProjectUserAsset>()
                 .Include(x => x.ProjectAsset)
+                    .ThenInclude(x => x.ProjectResource)
                 .Where(x => x.UserId == offboard.UserId && x.ProjectAsset.ProjectId == offboard.ProjectId)
                 .ToListAsync();
 
-            var checkedIds = new List<long>();
-            if (!string.IsNullOrEmpty(offboard.OffboardChecklistJson))
-            {
-                try
-                {
-                    checkedIds = JsonConvert.DeserializeObject<List<long>>(offboard.OffboardChecklistJson) ?? new List<long>();
-                }
-                catch { checkedIds = new List<long>(); }
-            }
+            var accountResources = await WorkScope.GetAll<AccountResource>()
+                .Include(x => x.AccountType)
+                .Include(x => x.Creator)
+                .Include(x => x.ProjectUserBill)
+                .Where(x => x.ProjectUserBill.ProjectId == offboard.ProjectId && x.ProjectUserBill.UserId == offboard.UserId)
+                .ToListAsync();
 
-            return assets.Select(x => new OffboardChecklistItemDto
+            var checkedItems = DeserializeCheckedItems(offboard.OffboardChecklistJson);
+
+            var checklist = assets
+                .Select(x => new OffboardChecklistItemDto
+                {
+                    ProjectAssetId = x.ProjectAssetId,
+                    AccountResourceId = null,
+                    ItemType = "ProjectAsset",
+                    AssetName = !string.IsNullOrWhiteSpace(x.ProjectAsset?.AssetName)
+                        ? x.ProjectAsset.AssetName : string.Empty,
+                    IsChecked = checkedItems.ProjectAssetIds.Contains(x.ProjectAssetId)
+                })
+                .ToList();
+
+            checklist.AddRange(accountResources.Select(x => new OffboardChecklistItemDto
             {
-                ProjectAssetId = x.ProjectAssetId,
-                AssetName = x.ProjectAsset?.AssetName,
-                IsChecked = checkedIds.Contains(x.ProjectAssetId)
-            }).ToList();
+                ProjectAssetId = null,
+                AccountResourceId = x.Id,
+                ItemType = "AccountResource",
+                AssetName = $"{x.AssetName ?? "Unnamed"} ({x.Creator?.Name ?? "Unknown creator"}) ({x.AccountType?.Name ?? "Unknown type"}): {x.TypeLogin ?? string.Empty}",
+                IsChecked = checkedItems.AccountResourceIds.Contains(x.Id)
+            }));
+
+            return checklist;
         }
 
         public async Task SaveOffboardChecklist(SaveOffboardChecklistDto input)
@@ -161,11 +183,21 @@ namespace ProjectManagement.Manager.OffboardUserManager
                 .Where(x => x.UserId == offboard.UserId && x.ProjectAsset.ProjectId == offboard.ProjectId)
                 .ToListAsync();
 
-            var total = assets.Count;
+            var accountResources = await WorkScope.GetAll<AccountResource>()
+                .Include(x => x.ProjectUserBill)
+                .Where(x => x.ProjectUserBill.ProjectId == offboard.ProjectId && x.ProjectUserBill.UserId == offboard.UserId)
+                .ToListAsync();
 
-            var checkedCount = input.CheckedProjectAssetIds?.Count ?? 0;
+            var total = assets.Count + accountResources.Count;
+            var checkedAssetCount = input.CheckedProjectAssetIds?.Count ?? 0;
+            var checkedAccountResourceCount = input.CheckedAccountResourceIds?.Count ?? 0;
+            var checkedCount = checkedAssetCount + checkedAccountResourceCount;
 
-            offboard.OffboardChecklistJson = JsonConvert.SerializeObject(input.CheckedProjectAssetIds ?? new List<long>());
+            offboard.OffboardChecklistJson = JsonConvert.SerializeObject(new
+            {
+                ProjectAssetIds = input.CheckedProjectAssetIds ?? new List<long>(),
+                AccountResourceIds = input.CheckedAccountResourceIds ?? new List<long>()
+            });
 
             if (total == 0)
             {
@@ -199,6 +231,37 @@ namespace ProjectManagement.Manager.OffboardUserManager
             };
         }
 
+        private static (List<long> ProjectAssetIds, List<long> AccountResourceIds) DeserializeCheckedItems(string json)
+        {
+            if (string.IsNullOrWhiteSpace(json))
+                return (new List<long>(), new List<long>());
+
+            try
+            {
+                var payload = JsonConvert.DeserializeObject<dynamic>(json);
+
+                if (payload != null && payload.ProjectAssetIds != null && payload.AccountResourceIds != null)
+                {
+                    return (
+                        JsonConvert.DeserializeObject<List<long>>(payload.ProjectAssetIds.ToString()) ?? new List<long>(),
+                        JsonConvert.DeserializeObject<List<long>>(payload.AccountResourceIds.ToString()) ?? new List<long>()
+                    );
+                }
+            }
+            catch
+            {
+            }
+
+            try
+            {
+                return (JsonConvert.DeserializeObject<List<long>>(json) ?? new List<long>(), new List<long>());
+            }
+            catch
+            {
+                return (new List<long>(), new List<long>());
+            }
+        }
+
         public async Task MoveToComplete(long offboardHistoryId)
         {
             var offboard = await WorkScope.GetAll<Entities.OffboardUser>()
@@ -212,20 +275,44 @@ namespace ProjectManagement.Manager.OffboardUserManager
 
             var remainAsset = await WorkScope.All<ProjectUserAsset>()
                 .Include(x => x.ProjectAsset)
+                    .ThenInclude(x => x.ProjectResource)
                 .Where(x => x.UserId == offboard.UserId && x.ProjectAsset.ProjectId == offboard.ProjectId)
+                .ToListAsync();
+
+            var remainAccountResources = await WorkScope.All<AccountResource>()
+                .Include(x => x.AccountType)
+                .Include(x => x.Creator)
+                .Include(x => x.ProjectUserBill)
+                .Where(x => x.ProjectUserBill.ProjectId == offboard.ProjectId && x.ProjectUserBill.UserId == offboard.UserId)
                 .ToListAsync();
 
             var assetHistory = JsonConvert.SerializeObject(remainAsset.Select(x => new
             {
                 x.ProjectAssetId,
-                AssetName = x.ProjectAsset?.AssetName
+                AssetName = !string.IsNullOrWhiteSpace(x.ProjectAsset?.AssetName)
+                    ? x.ProjectAsset.AssetName
+                    : x.ProjectAsset?.ProjectResource != null
+                        ? x.ProjectAsset.ProjectResource.Name
+                        : string.Empty
+            }));
+
+            var accountResourceHistory = JsonConvert.SerializeObject(remainAccountResources.Select(x => new
+            {
+                x.Id,
+                Value = $"{x.AssetName ?? "Unnamed"} ({x.Creator?.Name ?? "Unknown creator"}) ({x.AccountType?.Name ?? "Unknown type"}): {x.TypeLogin ?? string.Empty}"
             }));
 
             offboard.HistoryAsset = assetHistory;
+            offboard.HistoryAccountResource = accountResourceHistory;
 
             foreach (var asset in remainAsset)
             {
                 await WorkScope.DeleteAsync(asset);
+            }
+
+            foreach (var accountResource in remainAccountResources)
+            {
+                await WorkScope.DeleteAsync(accountResource);
             }
 
             await WorkScope.UpdateAsync(offboard);
@@ -241,7 +328,12 @@ namespace ProjectManagement.Manager.OffboardUserManager
                 .Where(x => x.UserId == offboard.UserId && x.ProjectAsset.ProjectId == offboard.ProjectId)
                 .ToListAsync();
 
-            var total = assets.Count;
+            var accountResources = await WorkScope.GetAll<AccountResource>()
+                .Include(x => x.ProjectUserBill)
+                .Where(x => x.ProjectUserBill.ProjectId == offboard.ProjectId && x.ProjectUserBill.UserId == offboard.UserId)
+                .ToListAsync();
+
+            var total = assets.Count + accountResources.Count;
 
             if (offboard == null)
                 throw new UserFriendlyException("Offboard history not found");

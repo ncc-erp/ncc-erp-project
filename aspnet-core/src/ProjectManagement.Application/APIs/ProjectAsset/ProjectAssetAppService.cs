@@ -30,10 +30,16 @@ namespace ProjectManagement.APIs.ProjectAsset
 
         [HttpPost]
         [AbpAuthorize]
-        public async Task<ProjectAssetDto> Create(long projectId, ProjectAssetDto input)
+        public async Task<List<ProjectAssetDto>> Create(long projectId, List<ProjectAssetDto> input)
         {
-            if (string.IsNullOrWhiteSpace(input.AssetName))
-                throw new UserFriendlyException("Asset name is required!");
+            if (input == null || input.Count == 0)
+                throw new UserFriendlyException("At least one project resource is required!");
+
+            foreach (var item in input)
+            {
+                if (item.ProjectResourceId <= 0)
+                    throw new UserFriendlyException("Project resource is required!");
+            }
 
             return await _projectAssetManager.Create(projectId, input);
         }
@@ -61,8 +67,8 @@ namespace ProjectManagement.APIs.ProjectAsset
             if (input.Id <= 0)
                 throw new UserFriendlyException("Project asset id is invalid!");
 
-            if (string.IsNullOrWhiteSpace(input.AssetName))
-                throw new UserFriendlyException("Asset name is required!");
+            if (input.ProjectResourceId <= 0)
+                throw new UserFriendlyException("Project resource is required!");
 
             return await _projectAssetManager.Edit(projectId, input);
         }

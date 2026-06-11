@@ -114,6 +114,20 @@ export class ProjectUserBillService extends BaseApiService {
     return this.http.get<any>(this.rootUrl + `/GetAllLinkedResourcesByProject?projectId=${projectId}`);
   }
 
+  createAccountResource(request: any): Observable<any> {
+    return this.http.post<any>(this.rootUrl + '/CreateAccountResource', request);
+  }
+
+  updateAccountResource(request: any): Observable<any> {
+    return this.http.put<any>(this.rootUrl + '/UpdateAccountResource', request);
+  }
+
+  deleteAccountResource(accountResourceId: number): Observable<any> {
+    return this.http.delete<any>(this.rootUrl + '/DeleteAccountResource', {
+      params: { accountResourceId: accountResourceId.toString() }
+    });
+  }
+
   UpdateBillUserSkill(request): Observable<any>{
     return this.http.post<any>(this.rootUrl + '/UpdateBillUserSkill', request);
   }

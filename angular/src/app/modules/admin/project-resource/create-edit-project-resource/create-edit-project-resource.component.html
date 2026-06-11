@@ -1,0 +1,35 @@
+<form class="form-horizontal" autocomplete="off" #form="ngForm" novalidate>
+  <abp-modal-header [title]="data.command === 'create' ? 'Add new Project Resource' : 'Edit Project Resource'" (onCloseClick)="dialogRef.close()"></abp-modal-header>
+
+  <div class="modal-body">
+    <div class="form-group row required">
+      <label class="col-md-3 col-form-label">Name:</label>
+      <div class="col-md-9">
+        <input class="form-control" type="text" placeholder="Name" required name="name" [(ngModel)]="item.name" #name="ngModel" #nameEl />
+        <abp-validation-summary [control]="name" [controlEl]="nameEl"></abp-validation-summary>
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <label class="col-md-3 col-form-label">Parent:</label>
+      <div class="col-md-9">
+        <select class="form-control" name="parentId" [(ngModel)]="item.parentId">
+          <option [ngValue]="null">Root (Level 1)</option>
+          <option *ngFor="let parent of parentList" [ngValue]="parent.id">{{ parent.name }}</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <label class="col-md-3 col-form-label">Note:</label>
+      <div class="col-md-9">
+        <input class="form-control" type="text" placeholder="Note" name="note" [(ngModel)]="item.note" />
+      </div>
+    </div>
+  </div>
+
+  <div align="end" class="row justify-content-end">
+    <button class="btn btn-secondary btn-action mr-2" mat-dialog-close>Cancel</button>
+    <button class="btn btn-primary btn-action" [disabled]="!form.valid || isLoading" (click)="save()">Save</button>
+  </div>
+</form>

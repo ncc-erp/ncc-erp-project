@@ -58,6 +58,9 @@ import { SaoDoComponent } from './modules/saodo-management/sao-do/sao-do.compone
 import { ListProjectGeneralComponent } from './modules/pm-management/list-project/list-project-detail/list-project-general/list-project-general.component';
 import { ProjectGeneralComponent } from './modules/pm-management/project-detail/project-general/project-general.component';
 import { SkillComponent } from './modules/admin/skill/skill.component';
+import { AccountTypeComponent } from './modules/admin/account-type/account-type.component';
+import { CreatorComponent } from './modules/admin/creator/creator.component';
+import { ProjectResourceComponent } from './modules/admin/project-resource/project-resource.component';
 import { ConfigurationComponent } from './modules/admin/configuration/configuration.component';
 import { CurrencyComponent } from './modules/admin/currency/currency.component';
 import { AllResourceComponent } from './modules/delivery-management/delivery/available-resource-tab/all-resource/all-resource.component';
@@ -172,6 +175,21 @@ import { TrainingProjectAssetComponent } from './modules/pm-management/training-
           {
             path: "skills",
             component: SkillComponent,
+            canActivate: [AppRouteGuard],
+          },
+          {
+            path: "account-types",
+            component: AccountTypeComponent,
+            canActivate: [AppRouteGuard],
+          },
+          {
+            path: "creators",
+            component: CreatorComponent,
+            canActivate: [AppRouteGuard],
+          },
+          {
+            path: "project-resources",
+            component: ProjectResourceComponent,
             canActivate: [AppRouteGuard],
           },
           { path: "about", component: AboutComponent },

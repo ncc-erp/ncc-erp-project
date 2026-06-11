@@ -46,6 +46,30 @@ export const PERMISSIONS_CONSTANT = {
        Admin_Skills_Delete: "Admin.Skills.Delete",
        // #endregion
 
+       // #region AccountTypes
+       Admin_AccountTypes: "Admin.AccountTypes",
+       Admin_AccountTypes_View: "Admin.AccountTypes.View",
+       Admin_AccountTypes_Create: "Admin.AccountTypes.Create",
+       Admin_AccountTypes_Edit: "Admin.AccountTypes.Edit",
+       Admin_AccountTypes_Delete: "Admin.AccountTypes.Delete",
+       // #endregion
+
+       // #region Creators
+       Admin_Creators: "Admin.Creators",
+       Admin_Creators_View: "Admin.Creators.View",
+       Admin_Creators_Create: "Admin.Creators.Create",
+       Admin_Creators_Edit: "Admin.Creators.Edit",
+       Admin_Creators_Delete: "Admin.Creators.Delete",
+       // #endregion
+
+       // #region Project Asset Type
+       Admin_ProjectAssetTypes: "Admin.ProjectAssetTypes",
+       Admin_ProjectAssetTypes_View: "Admin.ProjectAssetTypes.View",
+       Admin_ProjectAssetTypes_Create: "Admin.ProjectAssetTypes.Create",
+       Admin_ProjectAssetTypes_Edit: "Admin.ProjectAssetTypes.Edit",
+       Admin_ProjectAssetTypes_Delete: "Admin.ProjectAssetTypes.Delete",
+       // #endregion
+
        // #region Currencies
        Admin_Currencies: "Admin.Currencies",
        Admin_Currencies_View: "Admin.Currencies.View",

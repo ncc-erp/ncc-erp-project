@@ -32,6 +32,25 @@ export interface SkillDto {
     name: string;
     id: number;
 }
+
+export interface AccountTypeDto {
+    name: string;
+    id: number;
+}
+
+export interface CreatorDto {
+    name: string;
+    id: number;
+}
+
+export interface ProjectResourceDto {
+    id: number;
+    name: string;
+    note?: string;
+    parentId?: number;
+    childrens?: ProjectResourceDto[];
+}
+
 export class projectForDM {
     projectName: string;
     pmName: string;

@@ -38,17 +38,17 @@ export interface AccountTypeDto {
     id: number;
 }
 
-export interface CreatorDto {
+export interface AccountAssetCreatorDto {
     name: string;
     id: number;
 }
 
-export interface ProjectResourceDto {
+export interface ProjectAssetTypeDto {
     id: number;
     name: string;
     note?: string;
     parentId?: number;
-    childrens?: ProjectResourceDto[];
+    childrens?: ProjectAssetTypeDto[];
 }
 
 export class projectForDM {

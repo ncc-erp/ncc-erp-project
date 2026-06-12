@@ -54,12 +54,12 @@ export const PERMISSIONS_CONSTANT = {
        Admin_AccountTypes_Delete: "Admin.AccountTypes.Delete",
        // #endregion
 
-       // #region Creators
-       Admin_Creators: "Admin.Creators",
-       Admin_Creators_View: "Admin.Creators.View",
-       Admin_Creators_Create: "Admin.Creators.Create",
-       Admin_Creators_Edit: "Admin.Creators.Edit",
-       Admin_Creators_Delete: "Admin.Creators.Delete",
+       // #region AccountAssetCreators
+       Admin_AccountAssetCreators: "Admin.AccountAssetCreators",
+       Admin_AccountAssetCreators_View: "Admin.AccountAssetCreators.View",
+       Admin_AccountAssetCreators_Create: "Admin.AccountAssetCreators.Create",
+       Admin_AccountAssetCreators_Edit: "Admin.AccountAssetCreators.Edit",
+       Admin_AccountAssetCreators_Delete: "Admin.AccountAssetCreators.Delete",
        // #endregion
 
        // #region Project Asset Type

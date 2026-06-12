@@ -69,8 +69,8 @@ export class ProjectAssetComponent extends PagedListingComponentBase<ProjectAsse
   public showDialog(command: string, asset: any) {
     const assetItem = {
       id: asset.id,
-      projectResourceId: asset.projectResourceId,
-      projectResourceName: asset.projectResourceName || asset.projectResource?.name || '',
+      projectAssetTypeId: asset.projectAssetTypeId,
+      projectAssetTypeName: asset.projectAssetTypeName || asset.projectAssetType?.name || '',
       assetName: asset.assetName
     };
     const show = this.dialog.open(CreateUpdateAssetComponent, {

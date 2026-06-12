@@ -112,10 +112,10 @@ namespace ProjectManagement.EntityFrameworkCore
         public DbSet<OffboardUser> OffboardUsers { get; set; }
         public DbSet<ProjectAsset> ProjectAssets { get; set; }
         public DbSet<ProjectUserAsset> ProjectUserAssets { get; set; }
-        public DbSet<Creator> Creators { get; set; }
+        public DbSet<AccountAssetCreator> AccountAssetCreators { get; set; }
         public DbSet<AccountType> AccountTypes { get; set; }
-        public DbSet<ProjectResource> ProjectResources { get; set; }
-        public DbSet<AccountResource> AccountResources { get; set; }
+        public DbSet<ProjectAssetType> ProjectAssetTypes { get; set; }
+        public DbSet<AccountAsset> AccountAssets { get; set; }
         public ProjectManagementDbContext(DbContextOptions<ProjectManagementDbContext> options)
             : base(options)
         {

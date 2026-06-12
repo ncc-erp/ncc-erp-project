@@ -8,8 +8,8 @@ namespace ProjectManagement.Manager.ProjectAssetManager.Dto
 {
     public class ProjectAssetDto : EntityDto<long>
     {
-        public long ProjectResourceId { get; set; }
-        public string ProjectResourceName { get; set; }
+        public long ProjectAssetTypeId { get; set; }
+        public string ProjectAssetTypeName { get; set; }
         public string AssetName { get; set; }
     }
 }

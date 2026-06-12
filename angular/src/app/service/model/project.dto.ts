@@ -88,14 +88,14 @@ export class projectResourceRequestDto {
   dmNote?: string;
 }
 
-export class AccountResourceDto {
+export class AccountAssetDto {
   id?: number;
   accountResourceId?: number;
   projectUserBillId?: number;
   accountTypeId?: number;
   accountTypeName?: string;
-  creatorId?: number;
-  creatorName?: string;
+  accountAssetCreatorId?: number;
+  accountAssetCreatorName?: string;
   typeLogin?: string;
   assetName?: string;
 }
@@ -132,7 +132,7 @@ export class projectUserBillDto {
   contribute: number;
   userSkills: ProjectUserSkillDto[];
   skillNote: string;
-  accountResources?: AccountResourceDto[];
+  accountAssets?: AccountAssetDto[];
   initialIsExpose: boolean;
 }
 

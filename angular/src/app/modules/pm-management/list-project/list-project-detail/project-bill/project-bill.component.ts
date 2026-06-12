@@ -7,7 +7,7 @@ import { UserService } from '@app/service/api/user.service';
 import { PERMISSIONS_CONSTANT } from '@app/constant/permission.constant';
 import { AppComponentBase } from '@shared/app-component-base';
 import { UserDto } from '@shared/service-proxies/service-proxies';
-import { AccountResourceDto, projectUserBillDto, ProjectRateDto } from './../../../../../service/model/project.dto';
+import { AccountAssetDto, projectUserBillDto, ProjectRateDto } from './../../../../../service/model/project.dto';
 import { ProjectUserBillService } from './../../../../../service/api/project-user-bill.service';
 import { Component, OnInit, Injector, ViewChildren, QueryList, ChangeDetectorRef, ViewChild } from '@angular/core';
 import * as moment from 'moment';
@@ -21,7 +21,7 @@ import { ProjectInvoiceSettingDto } from '@app/service/model/project-invoice-set
 import { UpdateInvoiceDto } from '@app/service/model/updateInvoice.dto';
 import { MatDialog } from '@angular/material/dialog';
 import { ShadowAccountDialogComponent } from './shadow-account-dialog/shadow-account-dialog.component';
-import { AddAccountResourceDialogComponent } from './add-account-resource-dialog/add-account-resource-dialog.component';
+import { AddAccountAssetDialogComponent } from './add-account-asset-dialog/add-account-asset-dialog.component';
 import { Observable, concat } from 'rxjs';
 import { SortableModel } from '@shared/components/sortable/sortable.component';
 import { ChargeStatusFilter } from '@app/service/model/project-process-criteria-result.dto';
@@ -890,8 +890,8 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     this.showSearchAndFilter = !hasChanged;
   }
 
-  openAccountResourceDialog(bill: projectUserBillDto, accountResource?: AccountResourceDto): void {
-    const dialogRef = this.dialog.open(AddAccountResourceDialogComponent, {
+  openAccountAssetDialog(bill: projectUserBillDto, accountResource?: AccountAssetDto): void {
+    const dialogRef = this.dialog.open(AddAccountAssetDialogComponent, {
       width: '420px',
       data: { projectUserBillId: bill.id, accountResource }
     });
@@ -903,12 +903,12 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     });
   }
 
-  deleteAccountResource(accountResource: AccountResourceDto): void {
-    if (!confirm('Delete this account resource?')) {
+  deleteAccountAsset(accountResource: AccountAssetDto): void {
+    if (!confirm('Delete this account asset?')) {
       return;
     }
 
-    this.projectUserBillService.deleteAccountResource(accountResource.id || accountResource.accountResourceId).subscribe(() => {
+    this.projectUserBillService.deleteAccountAsset(accountResource.id || accountResource.accountResourceId).subscribe(() => {
       this.getUserBill();
     });
   }

@@ -14,9 +14,9 @@ namespace ProjectManagement.Entities
         [ForeignKey(nameof(ProjectId))]
         public Project Project { get; set; }
 
-        [ForeignKey(nameof(ProjectResourceId))]
-        public ProjectResource ProjectResource { get; set; }
-        public long ProjectResourceId { get; set; }
+        [ForeignKey(nameof(ProjectAssetTypeId))]
+        public ProjectAssetType ProjectAssetType { get; set; }
+        public long ProjectAssetTypeId { get; set; }
         public string AssetName { get; set; }
         public ICollection<ProjectUserAsset> ProjectUserAssets { get; set; }
     }

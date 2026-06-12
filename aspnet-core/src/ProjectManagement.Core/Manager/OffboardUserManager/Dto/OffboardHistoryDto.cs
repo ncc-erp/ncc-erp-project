@@ -32,7 +32,7 @@ namespace ProjectManagement.Manager.OffboardUserManager.Dto
         public string ProjectPM { get; set; }
         public string PMEmail { get; set; }
         public string HistoryAsset { get; set; }
-        public string HistoryAccountResource { get; set; }
+        public string HistoryAccountAsset { get; set; }
         public CheckOffboardStatus CheckOffboardStatus { get; set; }
         public DateTime OffboardDate { get; set; }
         public OffboardStatus OffboardStatus { get; set; }

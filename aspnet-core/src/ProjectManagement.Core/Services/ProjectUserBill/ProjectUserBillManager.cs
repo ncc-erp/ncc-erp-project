@@ -1,32 +1,24 @@
 ﻿using Abp.Application.Services;
+using Abp.Collections.Extensions;
+using Abp.Linq.Extensions;
+using Abp.UI;
+using Microsoft.EntityFrameworkCore;
+using NccCore.Extension;
 using NccCore.IoC;
-using ProjectManagement.Authorization.Users;
+using NccCore.Uitls;
 using ProjectManagement.Authorization;
+using ProjectManagement.Authorization.Users;
 using ProjectManagement.Entities;
+using ProjectManagement.Services.ProjectUserBill.Dto;
 using ProjectManagement.Services.ResourceManager.Dto;
 using ProjectManagement.Services.ResourceService.Dto;
-using System.Linq;
-using static ProjectManagement.Constants.Enum.ProjectEnum;
-using System.Threading.Tasks;
-using Abp.Collections.Extensions;
-using Microsoft.EntityFrameworkCore;
-using NccCore.Paging;
-using NccCore.Extension;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-using System.Collections.Generic;
-using ProjectManagement.Services.ProjectUserBill.Dto;
-using Abp.UI;
-using Abp.Domain.Uow;
-using Abp;
-using System.Linq.Dynamic.Core;
-using System.Linq.Expressions;
-using Microsoft.AspNetCore.SignalR;
-using System;
-using ProjectManagement.Services.ProjectUserBill;
-using Abp.Linq.Extensions;
-using Abp.Extensions;
-using NccCore.Uitls;
 using ProjectManagement.UploadFilesService;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Dynamic.Core;
+using System.Threading.Tasks;
+using static ProjectManagement.Constants.Enum.ProjectEnum;
 
 namespace ProjectManagement.Services.ProjectUserBills
 {
@@ -210,15 +202,15 @@ namespace ProjectManagement.Services.ProjectUserBills
                             FullName = lr.User.FullName,
                             Contribute = lr.Contribute
                         }).ToList(),
-                    AccountResources = x.AccountResources
-                        .Select(ar => new AccountResourceDto
+                    AccountAssets = x.AccountAssets
+                        .Select(ar => new AccountAssetDto
                         {
                             Id = ar.Id,
                             ProjectUserBillId = ar.ProjectUserBillId,
                             AccountTypeId = ar.AccountTypeId,
                             AccountTypeName = ar.AccountType.Name,
-                            CreatorId = ar.CreatorId,
-                            CreatorName = ar.Creator.Name,
+                            AccountAssetCreatorId = ar.AccountAssetCreatorId,
+                            AccountAssetCreatorName = ar.AccountAssetCreator.Name,
                             TypeLogin = ar.TypeLogin,
                             AssetName = ar.AssetName,
                         }).ToList(),
@@ -329,15 +321,15 @@ namespace ProjectManagement.Services.ProjectUserBills
                             FullName = lr.User.FullName,
                             Contribute = lr.Contribute
                         }).ToList(),
-                    AccountResources = x.AccountResources
-                        .Select(ar => new AccountResourceDto
+                    AccountAssets = x.AccountAssets
+                        .Select(ar => new AccountAssetDto
                         {
                             Id = ar.Id,
                             ProjectUserBillId = ar.ProjectUserBillId,
                             AccountTypeId = ar.AccountTypeId,
                             AccountTypeName = ar.AccountType.Name,
-                            CreatorId = ar.CreatorId,
-                            CreatorName = ar.Creator.Name,
+                            AccountAssetCreatorId = ar.AccountAssetCreatorId,
+                            AccountAssetCreatorName = ar.AccountAssetCreator.Name,
                             TypeLogin = ar.TypeLogin,
                             AssetName = ar.AssetName,
                         }).ToList(),
@@ -547,7 +539,7 @@ namespace ProjectManagement.Services.ProjectUserBills
             await _workScope.UpdateAsync(checkExist);
         }
 
-        public async Task<AccountResourceDto> CreateAccountResource(AccountResource input)
+        public async Task<AccountAssetDto> CreateAccountAsset(AccountAsset input)
         {
             ValidateProjectUserBill(input.ProjectUserBillId);
 
@@ -555,55 +547,55 @@ namespace ProjectManagement.Services.ProjectUserBills
             if (accountType == null)
                 throw new UserFriendlyException("AccountType not exist !");
 
-            var creator = await _workScope.GetAsync<Creator>(input.CreatorId);
+            var creator = await _workScope.GetAsync<AccountAssetCreator>(input.AccountAssetCreatorId);
             if (creator == null)
                 throw new UserFriendlyException("Creator not exist !");
 
-            var entity = new AccountResource
+            var entity = new AccountAsset
             {
                 ProjectUserBillId = input.ProjectUserBillId,
                 AccountTypeId = input.AccountTypeId,
-                CreatorId = input.CreatorId,
+                AccountAssetCreatorId = input.AccountAssetCreatorId,
                 TypeLogin = input.TypeLogin?.Trim(),
                 AssetName = input.AssetName,
             };
 
             var id = await _workScope.InsertAndGetIdAsync(entity);
-            var created = await _workScope.GetAsync<AccountResource>(id);
-            return new AccountResourceDto
+            var created = await _workScope.GetAsync<AccountAsset>(id);
+            return new AccountAssetDto
             {
                 Id = created.Id,
                 ProjectUserBillId = created.ProjectUserBillId,
                 AccountTypeId = created.AccountTypeId,
                 AccountTypeName = created.AccountType?.Name,
-                CreatorId = created.CreatorId,
-                CreatorName = created.Creator?.Name,
+                AccountAssetCreatorId = created.AccountAssetCreatorId,
+                AccountAssetCreatorName = created.AccountAssetCreator?.Name,
                 TypeLogin = created.TypeLogin,
                 AssetName = created.AssetName,
             };
         }
 
-        public async Task DeleteAccountResource(long accountResourceId)
+        public async Task DeleteAccountAsset(long accountAssetId)
         {
-            var accountResource = await _workScope.GetAsync<AccountResource>(accountResourceId);
-            if (accountResource == null)
-                throw new UserFriendlyException("AccountResource not exist !");
+            var accountAsset = await _workScope.GetAsync<AccountAsset>(accountAssetId);
+            if (accountAsset == null)
+                throw new UserFriendlyException("AccountAsset not exist !");
 
-            await _workScope.DeleteAsync(accountResource);
+            await _workScope.DeleteAsync(accountAsset);
         }
 
-        public async Task<AccountResource> UpdateAccountResource(AccountResource input)
+        public async Task<AccountAsset> UpdateAccountAsset(AccountAsset input)
         {
-            var accountResource = await _workScope.GetAsync<AccountResource>(input.Id);
-            if (accountResource == null)
+            var accountAsset = await _workScope.GetAsync<AccountAsset>(input.Id);
+            if (accountAsset == null)
             {
-                throw new UserFriendlyException("AccountResource not exist !");
+                throw new UserFriendlyException("AccountAsset not exist !");
             }
 
             if (input.ProjectUserBillId > 0)
             {
                 ValidateProjectUserBill(input.ProjectUserBillId);
-                accountResource.ProjectUserBillId = input.ProjectUserBillId;
+                accountAsset.ProjectUserBillId = input.ProjectUserBillId;
             }
 
             if (input.AccountTypeId > 0)
@@ -614,32 +606,32 @@ namespace ProjectManagement.Services.ProjectUserBills
                     throw new UserFriendlyException("AccountType not exist !");
                 }
 
-                accountResource.AccountTypeId = input.AccountTypeId;
+                accountAsset.AccountTypeId = input.AccountTypeId;
             }
 
-            if (input.CreatorId > 0)
+            if (input.AccountAssetCreatorId > 0)
             {
-                var creator = await _workScope.GetAsync<Creator>(input.CreatorId);
+                var creator = await _workScope.GetAsync<AccountAssetCreator>(input.AccountAssetCreatorId);
                 if (creator == null)
                 {
                     throw new UserFriendlyException("Creator not exist !");
                 }
 
-                accountResource.CreatorId = input.CreatorId;
+                accountAsset.AccountAssetCreatorId = input.AccountAssetCreatorId;
             }
 
             if (!string.IsNullOrWhiteSpace(input.TypeLogin))
             {
-                accountResource.TypeLogin = input.TypeLogin.Trim();
+                accountAsset.TypeLogin = input.TypeLogin.Trim();
             }
 
             if (!string.IsNullOrWhiteSpace(input.AssetName))
             {
-                accountResource.AssetName = input.AssetName.Trim();
+                accountAsset.AssetName = input.AssetName.Trim();
             }
 
-            await _workScope.UpdateAsync(accountResource);
-            return accountResource;
+            await _workScope.UpdateAsync(accountAsset);
+            return accountAsset;
         }
 
         private async Task<bool> CheckTotalContribute(long projectUserBillId, byte contribute, long userId)

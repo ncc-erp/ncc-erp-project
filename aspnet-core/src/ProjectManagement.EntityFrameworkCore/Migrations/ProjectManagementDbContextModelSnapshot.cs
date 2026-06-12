@@ -1558,12 +1558,15 @@ namespace ProjectManagement.Migrations
                     b.ToTable("AbpUsers");
                 });
 
-            modelBuilder.Entity("ProjectManagement.Entities.AccountResource", b =>
+            modelBuilder.Entity("ProjectManagement.Entities.AccountAsset", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<long>("AccountAssetCreatorId")
+                        .HasColumnType("bigint");
 
                     b.Property<long>("AccountTypeId")
                         .HasColumnType("bigint");
@@ -1573,9 +1576,6 @@ namespace ProjectManagement.Migrations
 
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("datetime2");
-
-                    b.Property<long>("CreatorId")
-                        .HasColumnType("bigint");
 
                     b.Property<long?>("CreatorUserId")
                         .HasColumnType("bigint");
@@ -1606,13 +1606,52 @@ namespace ProjectManagement.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AccountTypeId");
+                    b.HasIndex("AccountAssetCreatorId");
 
-                    b.HasIndex("CreatorId");
+                    b.HasIndex("AccountTypeId");
 
                     b.HasIndex("ProjectUserBillId");
 
-                    b.ToTable("AccountResources");
+                    b.ToTable("AccountAssets");
+                });
+
+            modelBuilder.Entity("ProjectManagement.Entities.AccountAssetCreator", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("CreatorUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("DeleterUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("LastModifierUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("TenantId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AccountAssetCreators");
                 });
 
             modelBuilder.Entity("ProjectManagement.Entities.AccountType", b =>
@@ -2374,45 +2413,6 @@ namespace ProjectManagement.Migrations
                     b.ToTable("Clients");
                 });
 
-            modelBuilder.Entity("ProjectManagement.Entities.Creator", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("CreationTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long?>("CreatorUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("DeleterUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime?>("DeletionTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LastModificationTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long?>("LastModifierUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("TenantId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Creators");
-                });
-
             modelBuilder.Entity("ProjectManagement.Entities.Criteria", b =>
                 {
                     b.Property<long>("Id")
@@ -2660,7 +2660,7 @@ namespace ProjectManagement.Migrations
                     b.Property<DateTime?>("DeletionTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("HistoryAccountResource")
+                    b.Property<string>("HistoryAccountAsset")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("HistoryAsset")
@@ -3327,10 +3327,10 @@ namespace ProjectManagement.Migrations
                     b.Property<long?>("LastModifierUserId")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("ProjectId")
+                    b.Property<long>("ProjectAssetTypeId")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("ProjectResourceId")
+                    b.Property<long>("ProjectId")
                         .HasColumnType("bigint");
 
                     b.Property<int?>("TenantId")
@@ -3338,11 +3338,56 @@ namespace ProjectManagement.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ProjectAssetTypeId");
+
                     b.HasIndex("ProjectId");
 
-                    b.HasIndex("ProjectResourceId");
-
                     b.ToTable("ProjectAssets");
+                });
+
+            modelBuilder.Entity("ProjectManagement.Entities.ProjectAssetType", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("CreatorUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("DeleterUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("LastModifierUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long?>("ParentId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int?>("TenantId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ProjectAssetTypes");
                 });
 
             modelBuilder.Entity("ProjectManagement.Entities.ProjectCheckList", b =>
@@ -3863,51 +3908,6 @@ namespace ProjectManagement.Migrations
                     b.HasIndex("ProjectId");
 
                     b.ToTable("ProjectProcessResults");
-                });
-
-            modelBuilder.Entity("ProjectManagement.Entities.ProjectResource", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("CreationTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long?>("CreatorUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("DeleterUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime?>("DeletionTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LastModificationTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long?>("LastModifierUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Note")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long?>("ParentId")
-                        .HasColumnType("bigint");
-
-                    b.Property<int?>("TenantId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ProjectResources");
                 });
 
             modelBuilder.Entity("ProjectManagement.Entities.ProjectTechnology", b =>
@@ -5415,22 +5415,22 @@ namespace ProjectManagement.Migrations
                         .HasForeignKey("PositionId");
                 });
 
-            modelBuilder.Entity("ProjectManagement.Entities.AccountResource", b =>
+            modelBuilder.Entity("ProjectManagement.Entities.AccountAsset", b =>
                 {
+                    b.HasOne("ProjectManagement.Entities.AccountAssetCreator", "AccountAssetCreator")
+                        .WithMany()
+                        .HasForeignKey("AccountAssetCreatorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("ProjectManagement.Entities.AccountType", "AccountType")
                         .WithMany()
                         .HasForeignKey("AccountTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ProjectManagement.Entities.Creator", "Creator")
-                        .WithMany()
-                        .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("ProjectManagement.Entities.ProjectUserBill", "ProjectUserBill")
-                        .WithMany("AccountResources")
+                        .WithMany("AccountAssets")
                         .HasForeignKey("ProjectUserBillId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -5680,15 +5680,15 @@ namespace ProjectManagement.Migrations
 
             modelBuilder.Entity("ProjectManagement.Entities.ProjectAsset", b =>
                 {
-                    b.HasOne("ProjectManagement.Entities.Project", "Project")
+                    b.HasOne("ProjectManagement.Entities.ProjectAssetType", "ProjectAssetType")
                         .WithMany()
-                        .HasForeignKey("ProjectId")
+                        .HasForeignKey("ProjectAssetTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ProjectManagement.Entities.ProjectResource", "ProjectResource")
+                    b.HasOne("ProjectManagement.Entities.Project", "Project")
                         .WithMany()
-                        .HasForeignKey("ProjectResourceId")
+                        .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

@@ -95,14 +95,14 @@ namespace ProjectManagement.Authorization
         public const string Admin_AccountTypes_Delete = "Admin.AccountTypes.Delete";
         #endregion AccountTypes
 
-        #region Creators
+        #region AccountAssetCreators
 
-        public const string Admin_Creators = "Admin.Creators";
-        public const string Admin_Creators_View = "Admin.Creators.View";
-        public const string Admin_Creators_Create = "Admin.Creators.Create";
-        public const string Admin_Creators_Edit = "Admin.Creators.Edit";
-        public const string Admin_Creators_Delete = "Admin.Creators.Delete";
-        #endregion Creators
+        public const string Admin_AccountAssetCreators = "Admin.AccountAssetCreators";
+        public const string Admin_AccountAssetCreators_View = "Admin.AccountAssetCreators.View";
+        public const string Admin_AccountAssetCreators_Create = "Admin.AccountAssetCreators.Create";
+        public const string Admin_AccountAssetCreators_Edit = "Admin.AccountAssetCreators.Edit";
+        public const string Admin_AccountAssetCreators_Delete = "Admin.AccountAssetCreators.Delete";
+        #endregion AccountAssetCreators
 
         #region ProjectAssetType
         public const string Admin_ProjectAssetTypes = "Admin.ProjectAssetTypes";
@@ -899,15 +899,15 @@ namespace ProjectManagement.Authorization
 
                     #endregion AccountTypes
 
-                    #region Creators
+                    #region AccountAssetCreators
 
-                    PermissionNames.Admin_Creators,
-                    PermissionNames.Admin_Creators_View,
-                    PermissionNames.Admin_Creators_Create,
-                    PermissionNames.Admin_Creators_Edit,
-                    PermissionNames.Admin_Creators_Delete,
+                    PermissionNames.Admin_AccountAssetCreators,
+                    PermissionNames.Admin_AccountAssetCreators_View,
+                    PermissionNames.Admin_AccountAssetCreators_Create,
+                    PermissionNames.Admin_AccountAssetCreators_Edit,
+                    PermissionNames.Admin_AccountAssetCreators_Delete,
 
-                    #endregion Creators
+                    #endregion AccountAssetCreators
 
                     #region Project Asset Type
 
@@ -1710,15 +1710,15 @@ namespace ProjectManagement.Authorization
 
                 #endregion Skill
 
-                #region Creators
+                #region AccountAssetCreators
 
-                 new SystemPermission{ Name =  PermissionNames.Admin_Creators, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Creators" },
-                 new SystemPermission{ Name =  PermissionNames.Admin_Creators_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View" },
-                 new SystemPermission{ Name =  PermissionNames.Admin_Creators_Create, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Create" },
-                 new SystemPermission{ Name =  PermissionNames.Admin_Creators_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit" },
-                 new SystemPermission{ Name =  PermissionNames.Admin_Creators_Delete, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Delete" },
+                 new SystemPermission{ Name =  PermissionNames.Admin_AccountAssetCreators, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "AccountAssetCreators" },
+                 new SystemPermission{ Name =  PermissionNames.Admin_AccountAssetCreators_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View" },
+                 new SystemPermission{ Name =  PermissionNames.Admin_AccountAssetCreators_Create, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Create" },
+                 new SystemPermission{ Name =  PermissionNames.Admin_AccountAssetCreators_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit" },
+                 new SystemPermission{ Name =  PermissionNames.Admin_AccountAssetCreators_Delete, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Delete" },
 
-                #endregion Creators
+                #endregion AccountAssetCreators
 
                 #region AccountTypes
 
@@ -2629,19 +2629,19 @@ namespace ProjectManagement.Authorization
                             #region Creators
 
                             new SystemPermission {
-                                Name = PermissionNames.Admin_Creators, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Creators",
+                                Name = PermissionNames.Admin_AccountAssetCreators, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "AccountAssetCreators",
                                     Childrens = new List < SystemPermission > () {
                                         new SystemPermission {
-                                            Name = PermissionNames.Admin_Creators_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View"
+                                            Name = PermissionNames.Admin_AccountAssetCreators_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View"
                                         },
                                         new SystemPermission {
-                                            Name = PermissionNames.Admin_Creators_Create, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Create"
+                                            Name = PermissionNames.Admin_AccountAssetCreators_Create, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Create"
                                         },
                                         new SystemPermission {
-                                            Name = PermissionNames.Admin_Creators_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit"
+                                            Name = PermissionNames.Admin_AccountAssetCreators_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit"
                                         },
                                         new SystemPermission {
-                                            Name = PermissionNames.Admin_Creators_Delete, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Delete"
+                                            Name = PermissionNames.Admin_AccountAssetCreators_Delete, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Delete"
                                         },
                                     }
                             },

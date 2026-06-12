@@ -38,6 +38,6 @@ namespace ProjectManagement.Entities
         public virtual ICollection<LinkedResource> LinkedResources { get; set; }
         public virtual ICollection<BillUserSkill> BillUserSkills { get; set; }
         public virtual ICollection<TimesheetProjectBill> TimesheetProjectBills { get; set; }
-        public virtual ICollection<AccountResource> AccountResources { get; set; }
+        public virtual ICollection<AccountAsset> AccountAssets { get; set; }
     }
 }

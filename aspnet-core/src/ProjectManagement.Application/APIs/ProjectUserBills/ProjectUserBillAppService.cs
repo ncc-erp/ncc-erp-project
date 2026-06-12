@@ -119,26 +119,26 @@ namespace ProjectManagement.APIs.ProjectUserBills
         }
 
         [HttpPost]
-        public async Task<AccountResourceDto> CreateAccountResource(AccountResourceDto input)
+        public async Task<AccountAssetDto> CreateAccountAsset(AccountAssetDto input)
         {
-            var entity = ObjectMapper.Map<AccountResource>(input);
-            return await projectUserBillManager.CreateAccountResource(entity);
+            var entity = ObjectMapper.Map<AccountAsset>(input);
+            return await projectUserBillManager.CreateAccountAsset(entity);
         }
 
         [HttpDelete]
-        public async Task DeleteAccountResource(long accountResourceId)
+        public async Task DeleteAccountAsset(long accountAssetId)
         {
-            await projectUserBillManager.DeleteAccountResource(accountResourceId);
+            await projectUserBillManager.DeleteAccountAsset(accountAssetId);
         }
 
         [HttpPut]
-        public async Task<AccountResourceDto> UpdateAccountResource(AccountResourceDto input)
+        public async Task<AccountAssetDto> UpdateAccountAsset(AccountAssetDto input)
         {
-            var entity = ObjectMapper.Map<AccountResource>(input);
+            var entity = ObjectMapper.Map<AccountAsset>(input);
             entity.Id = input.Id;
 
-            var updated = await projectUserBillManager.UpdateAccountResource(entity);
-            return ObjectMapper.Map<AccountResourceDto>(updated);
+            var updated = await projectUserBillManager.UpdateAccountAsset(entity);
+            return ObjectMapper.Map<AccountAssetDto>(updated);
         }
 
         [HttpGet]

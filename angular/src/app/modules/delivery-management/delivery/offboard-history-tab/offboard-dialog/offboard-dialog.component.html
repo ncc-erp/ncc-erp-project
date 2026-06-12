@@ -10,18 +10,18 @@
 
     <div class="modal-body custom-scroll">
         <div *ngIf="items && items.length > 0">
-            <ng-container *ngIf="accountResourceItems.length > 0">
+            <ng-container *ngIf="accountAssetItems.length > 0">
                 <div class="mb-2">
                     <strong style="color: #0d6efd;">Account Asset</strong>
                 </div>
-                <div class="checklist-item" *ngFor="let item of accountResourceItems; let i = index">
+                <div class="checklist-item" *ngFor="let item of accountAssetItems; let i = index">
                     <div class="item-label mb-2">
                         <strong style="color: #E86C55;">{{ item.assetName }}</strong>
                     </div>
                     <div class="item-action ml-1" *ngIf="!viewOnly">
                         <mat-checkbox [(ngModel)]="item.isChecked" color="primary" class="text-muted small-checkbox-label">Checked</mat-checkbox>
                     </div>
-                    <div class="separator my-3" style="border-bottom: 1px solid #f1f1f1;" *ngIf="i < accountResourceItems.length - 1"></div>
+                    <div class="separator my-3" style="border-bottom: 1px solid #f1f1f1;" *ngIf="i < accountAssetItems.length - 1"></div>
                 </div>
             </ng-container>
 

@@ -238,13 +238,13 @@ export class OffboardHistoryTabComponent extends PagedListingComponentBase<any> 
     }
   }
 
-  public parseHistoryAccountResource(historyAccountResource: string): any[] {
-    if (!historyAccountResource) {
+  public parseHistoryAccountAsset(historyAccountAsset: string): any[] {
+    if (!historyAccountAsset) {
       return [];
     }
 
     try {
-      const parsed = JSON.parse(historyAccountResource);
+      const parsed = JSON.parse(historyAccountAsset);
       return Array.isArray(parsed) ? parsed : [];
     } catch {
       return [];

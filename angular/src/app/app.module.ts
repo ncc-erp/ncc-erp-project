@@ -252,13 +252,13 @@ import { CreateUpdateAssetComponent } from './modules/pm-management/list-project
 import { UpdateUserAssetDialogComponent } from './modules/pm-management/list-project/list-project-detail/resource-management/update-user-asset-dialog/update-user-asset-dialog.component';
 import { ProductProjectAssetComponent } from './modules/pm-management/product-projects/product-project-detail/product-project-asset/product-project-asset.component';
 import { TrainingProjectAssetComponent } from './modules/pm-management/training-projects/training-project-detail/training-project-asset/training-project-asset.component';
-import { CreatorComponent } from './modules/admin/creator/creator.component';
-import { CreateUpdateCreatorComponent } from './modules/admin/creator/create-update-creator/create-update-creator.component';
+import { AccountAssetCreatorComponent } from './modules/admin/account-asset-creator/account-asset-creator.component';
+import { CreateUpdateCreatorComponent } from './modules/admin/account-asset-creator/create-update-creator/create-update-creator.component';
 import { AccountTypeComponent } from './modules/admin/account-type/account-type.component';
 import { CreateUpdateAccountTypeComponent } from './modules/admin/account-type/create-update-account-type/create-update-account-type.component';
-import { ProjectResourceComponent } from './modules/admin/project-resource/project-resource.component';
-import { CreateEditProjectResourceComponent } from './modules/admin/project-resource/create-edit-project-resource/create-edit-project-resource.component';
-import { AddAccountResourceDialogComponent } from './modules/pm-management/list-project/list-project-detail/project-bill/add-account-resource-dialog/add-account-resource-dialog.component';
+import { ProjectAssetTypeComponent } from './modules/admin/project-asset-type/project-asset-type.component';
+import { CreateEditProjectAssetTypeComponent } from './modules/admin/project-asset-type/create-edit-project-asset-type/create-edit-project-asset-type.component';
+import { AddAccountAssetDialogComponent } from './modules/pm-management/list-project/list-project-detail/project-bill/add-account-asset-dialog/add-account-asset-dialog.component';
 
 
 export function HttpLoaderFactory(http: HttpClient) {
@@ -497,13 +497,13 @@ export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
     UpdateUserAssetDialogComponent,
     ProductProjectAssetComponent,
     TrainingProjectAssetComponent,
-    CreatorComponent,
+    AccountAssetCreatorComponent,
     CreateUpdateCreatorComponent,
     AccountTypeComponent,
     CreateUpdateAccountTypeComponent,
-    ProjectResourceComponent,
-    CreateEditProjectResourceComponent,
-    AddAccountResourceDialogComponent,
+    ProjectAssetTypeComponent,
+    CreateEditProjectAssetTypeComponent,
+    AddAccountAssetDialogComponent,
   ],
   imports: [
     CommonModule,

@@ -96,7 +96,7 @@ namespace ProjectManagement.APIs.ProjectUsers
             var assets = await WorkScope.GetAll<ProjectUserAsset>()
                 .Where(pua => userIds.Contains(pua.UserId) && pua.ProjectAsset.ProjectId == projectId)
                 .Include(pua => pua.ProjectAsset)
-                .Include(pua => pua.ProjectAsset.ProjectResource)
+                .Include(pua => pua.ProjectAsset.ProjectAssetType)
                 .ToListAsync();
 
             var assetsDict = assets
@@ -105,8 +105,8 @@ namespace ProjectManagement.APIs.ProjectUsers
                     x.ProjectAsset != null
                         ? (!string.IsNullOrWhiteSpace(x.ProjectAsset.AssetName)
                             ? x.ProjectAsset.AssetName
-                            : x.ProjectAsset.ProjectResource != null
-                                ? x.ProjectAsset.ProjectResource.Name
+                            : x.ProjectAsset.ProjectAssetType != null
+                                ? x.ProjectAsset.ProjectAssetType.Name
                                 : string.Empty)
                         : string.Empty).ToList());
 

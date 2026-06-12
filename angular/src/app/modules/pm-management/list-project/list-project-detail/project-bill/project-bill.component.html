@@ -481,23 +481,23 @@
                                     <div class="d-flex flex-column gap-1">
                                         <button class="btn btn-xs btn-outline-primary account-resource-create-btn mb-1"
                                                 type="button"
-                                                (click)="openAccountResourceDialog(bill)"
-                                                [matTooltip]="'Create account resource'">
+                                                (click)="openAccountAssetDialog(bill)"
+                                                [matTooltip]="'Create account asset'">
                                             <i class="fa fa-plus"></i>
                                         </button>
-                                        <div *ngIf="bill.accountResources?.length; else noAccountResource" class="d-flex flex-column gap-1">
-                                            <div *ngFor="let ar of bill.accountResources" class="d-flex align-items-center justify-content-between border rounded p-1 account-resource-item">
-                                                <span class="text-truncate account-resource-text" [matTooltip]="(ar.assetName || '') + ' (' + (ar.creatorName || '') + ') (' + (ar.accountTypeName || '') + '): ' + (ar.typeLogin || '')">
-                                                    <strong>{{ ar.assetName || 'Unnamed' }}</strong> ({{ ar.creatorName || 'Unknown creator' }}) ({{ ar.accountTypeName || 'Unknown type' }}): {{ ar.typeLogin || '' }}
+                                        <div *ngIf="bill.accountAssets?.length; else noAccountAsset" class="d-flex flex-column gap-1">
+                                            <div *ngFor="let ar of bill.accountAssets" class="d-flex align-items-center justify-content-between border rounded p-1 account-asset-item">
+                                                <span class="text-truncate account-asset-text" [matTooltip]="(ar.assetName || '') + ' (' + (ar.accountAssetCreatorName || '') + ') (' + (ar.accountTypeName || '') + '): ' + (ar.typeLogin || '')">
+                                                    <strong>{{ ar.assetName || 'Unnamed' }}</strong> [{{ ar.accountAssetCreatorName || 'Unknown creator' }}] [{{ ar.accountTypeName || 'Unknown type' }}] [{{ ar.typeLogin || '' }}]
                                                 </span>
                                                 <span class="d-flex gap-1">
-                                                    <button class="btn btn-xs btn-light" (click)="openAccountResourceDialog(bill, ar)"><i class="fas fa-edit"></i></button>
-                                                    <button class="btn btn-xs btn-light text-danger" (click)="deleteAccountResource(ar)"><i class="fas fa-trash"></i></button>
+                                                    <button class="btn btn-xs btn-light" (click)="openAccountAssetDialog(bill, ar)"><i class="fas fa-edit"></i></button>
+                                                    <button class="btn btn-xs btn-light text-danger" (click)="deleteAccountAsset(ar)"><i class="fas fa-trash"></i></button>
                                                 </span>
                                             </div>
                                         </div>
-                                        <ng-template #noAccountResource>
-                                            <small class="text-muted">No account resource</small>
+                                        <ng-template #noAccountAsset>
+                                            <small class="text-muted">No account asset</small>
                                         </ng-template>
                                     </div>
                                 </td>

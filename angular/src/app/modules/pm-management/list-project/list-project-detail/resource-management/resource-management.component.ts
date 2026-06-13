@@ -165,6 +165,8 @@ export class ResourceManagementComponent
   public listLevels: any[] = [];
   public listProjectUserRoles: IDNameDto[] = [];
   public isViewAllSkillInfo: boolean = false;
+  public maxVisibleAssets = 2;
+  public expandedAssetRows: { [projectUserId: number]: boolean } = {};
 
   public workingTypeList = Object.keys(this.APP_ENUM.ProjectUserWorkingType);
 
@@ -303,6 +305,22 @@ export class ResourceManagementComponent
         return asset?.assetName || asset?.name || "";
       })
       .filter((asset) => asset && asset.trim().length > 0);
+  }
+
+  public getVisibleProjectAssets(user: any): string[] {
+    const assets = this.getProjectAssets(user);
+
+    return this.expandedAssetRows[user.id]
+      ? assets
+      : assets.slice(0, this.maxVisibleAssets);
+  }
+
+  public expandProjectAssets(projectUserId: number): void {
+    this.expandedAssetRows[projectUserId] = true;
+  }
+
+  public collapseProjectAssets(projectUserId: number): void {
+    this.expandedAssetRows[projectUserId] = false;
   }
 
   updateUserAsset(user) {

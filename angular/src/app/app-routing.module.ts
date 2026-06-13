@@ -91,6 +91,7 @@ import { GeneralInformationComponent } from './modules/pm-management/list-projec
 import { CVStatusComponent } from './modules/admin/cvstatus/cvstatus.component';
 import { WillPoolComponent } from './modules/delivery-management/delivery/available-resource-tab/will-pool/will-pool.component';
 import { OnboardingChecklistComponent } from './modules/admin/onboarding-checklist/onboarding-checklist.component';
+import { ConfigItComponent } from './modules/admin/config-it/config-it.component';
 import { ProductAccountInfoComponent } from './modules/pm-management/product-projects/product-project-detail/product-account-info/product-account-info.component';
 import { PunishmentComponent } from './modules/punishment/punishment.component';
 import { WeeklyContributionComponent } from './modules/weekly-contribution/weekly-contribution.component';
@@ -592,6 +593,11 @@ import { TrainingProjectAssetComponent } from './modules/pm-management/training-
           {
             path: "onboarding-checklist",
             component: OnboardingChecklistComponent,
+            canActivate: [AppRouteGuard]
+          },
+          {
+            path: "config-it",
+            component: ConfigItComponent,
             canActivate: [AppRouteGuard]
           },
         ]

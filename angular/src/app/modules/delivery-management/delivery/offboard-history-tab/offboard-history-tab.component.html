@@ -131,18 +131,50 @@
                   <div class="mb-2">
                     <strong>Account Asset:</strong>
                     <ul class="mb-1 pl-3">
-                      <li *ngFor="let resource of parseHistoryAccountAsset(item.historyAccountAsset)">
+                      <li *ngFor="let resource of getVisibleHistoryAccountAssets(item)">
                         {{ getHistoryDisplayValue(resource) }}
                       </li>
                     </ul>
+                    <button
+                      *ngIf="!expandedHistoryAccountAssetRows[item.id] && parseHistoryAccountAsset(item.historyAccountAsset).length > maxVisibleHistoryAssets"
+                      type="button"
+                      class="history-asset-expand-btn"
+                      (click)="expandHistoryAccountAssets(item.id)"
+                    >
+                      ...
+                    </button>
+                    <button
+                      *ngIf="expandedHistoryAccountAssetRows[item.id] && parseHistoryAccountAsset(item.historyAccountAsset).length > maxVisibleHistoryAssets"
+                      type="button"
+                      class="history-asset-expand-btn"
+                      (click)="collapseHistoryAccountAssets(item.id)"
+                    >
+                      <i class="fas fa-chevron-up m-0"></i>
+                    </button>
                   </div>
                   <div>
                     <strong>Project Asset:</strong>
                     <ul class="mb-1 pl-3">
-                      <li *ngFor="let asset of parseHistoryAsset(item.historyAsset)">
+                      <li *ngFor="let asset of getVisibleHistoryProjectAssets(item)">
                         {{ getHistoryDisplayValue(asset) }}
                       </li>
                     </ul>
+                    <button
+                      *ngIf="!expandedHistoryProjectAssetRows[item.id] && parseHistoryAsset(item.historyAsset).length > maxVisibleHistoryAssets"
+                      type="button"
+                      class="history-asset-expand-btn"
+                      (click)="expandHistoryProjectAssets(item.id)"
+                    >
+                      ...
+                    </button>
+                    <button
+                      *ngIf="expandedHistoryProjectAssetRows[item.id] && parseHistoryAsset(item.historyAsset).length > maxVisibleHistoryAssets"
+                      type="button"
+                      class="history-asset-expand-btn"
+                      (click)="collapseHistoryProjectAssets(item.id)"
+                    >
+                      <i class="fas fa-chevron-up m-0"></i>
+                    </button>
                   </div>
                 </td>
                 <td style="width: 150px; text-align: center;">{{ item.offboardDate | date: 'dd/MM/yyyy' }}</td>

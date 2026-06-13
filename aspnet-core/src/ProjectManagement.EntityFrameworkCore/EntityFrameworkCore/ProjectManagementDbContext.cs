@@ -116,6 +116,7 @@ namespace ProjectManagement.EntityFrameworkCore
         public DbSet<AccountType> AccountTypes { get; set; }
         public DbSet<ProjectAssetType> ProjectAssetTypes { get; set; }
         public DbSet<AccountAsset> AccountAssets { get; set; }
+        public DbSet<ConfigIT> ConfigITs { get; set; }
         public ProjectManagementDbContext(DbContextOptions<ProjectManagementDbContext> options)
             : base(options)
         {

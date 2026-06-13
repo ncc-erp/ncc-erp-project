@@ -160,6 +160,12 @@ export class SidebarMenuComponent extends AppComponentBase implements OnInit {
             '/app/onboarding-checklist',
             'fas fa-tasks',
             'Admin.OnboardingChecklist'
+          ),
+          new MenuItem(
+            this.l('Config IT'),
+            '/app/config-it',
+            'fas fa-cog',
+            'Admin.ConfigITs'
           )
         ]
       ),

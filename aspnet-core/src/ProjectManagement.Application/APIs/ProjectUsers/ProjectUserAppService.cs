@@ -96,19 +96,12 @@ namespace ProjectManagement.APIs.ProjectUsers
             var assets = await WorkScope.GetAll<ProjectUserAsset>()
                 .Where(pua => userIds.Contains(pua.UserId) && pua.ProjectAsset.ProjectId == projectId)
                 .Include(pua => pua.ProjectAsset)
-                .Include(pua => pua.ProjectAsset.ProjectAssetType)
+                    .ThenInclude(pa => pa.ProjectAssetType)
                 .ToListAsync();
 
             var assetsDict = assets
                 .GroupBy(pua => pua.UserId)
-                .ToDictionary(g => g.Key, g => g.Select(x =>
-                    x.ProjectAsset != null
-                        ? (!string.IsNullOrWhiteSpace(x.ProjectAsset.AssetName)
-                            ? x.ProjectAsset.AssetName
-                            : x.ProjectAsset.ProjectAssetType != null
-                                ? x.ProjectAsset.ProjectAssetType.Name
-                                : string.Empty)
-                        : string.Empty).ToList());
+                .ToDictionary(g => g.Key, g => g.Select(x => FormatProjectAssetName(x.ProjectAsset)).ToList());
 
             foreach (var user in users)
             {
@@ -118,6 +111,18 @@ namespace ProjectManagement.APIs.ProjectUsers
             }
 
             return users;
+        }
+
+        private static string FormatProjectAssetName(Entities.ProjectAsset projectAsset)
+        {
+            var assetName = !string.IsNullOrWhiteSpace(projectAsset?.AssetName)
+                ? projectAsset.AssetName
+                : "Unnamed";
+            var assetTypeName = !string.IsNullOrWhiteSpace(projectAsset?.ProjectAssetType?.Name)
+                ? projectAsset.ProjectAssetType.Name
+                : "Unknown type";
+
+            return $"{assetName} [{assetTypeName}]";
         }
 
         [HttpGet]

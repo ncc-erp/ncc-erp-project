@@ -76,3 +76,20 @@
   padding: 0.2rem 0.45rem;
   vertical-align: middle;
 }
+
+.history-asset-expand-btn {
+  width: fit-content;
+  min-width: 32px;
+  height: 24px;
+  padding: 0 8px;
+  border: 1px solid #d7dee8;
+  border-radius: 4px;
+  background: #fff;
+  color: #495057;
+  line-height: 1;
+}
+
+.history-asset-expand-btn:hover {
+  background: #eef5ff;
+  border-color: #9ec5fe;
+}

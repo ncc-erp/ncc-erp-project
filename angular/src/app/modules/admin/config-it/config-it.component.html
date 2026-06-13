@@ -1,0 +1,70 @@
+<div *ngIf="permission.isGranted(Admin_ConfigITs_View)">
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row align-items-center">
+      <div class="col-6">
+        <h1>Config IT</h1>
+      </div>
+      <div class="col-6 text-right">
+        <button name="btn-create" class="btn bg-blue" *ngIf="permission.isGranted(Admin_ConfigITs_Create)" (click)="create()">
+          <i class="fa fa-plus-square"></i> Create
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="content px-2">
+  <div class="container-fluid">
+    <div class="card">
+      <div class="card-header">
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <button type="button" class="btn bg-blue" (click)="getData()">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+          <input type="text" class="form-control" name="searchText" placeholder="Search by full name" [(ngModel)]="searchText" (keyup.enter)="getData()" />
+        </div>
+      </div>
+      <div class="card-body table-responsive p-4">
+        <table class="table table-hover text-nowrap" [busy]="isLoading">
+          <thead class="bg-light">
+            <tr>
+              <th style="width: 50px;">STT</th>
+              <th>Config IT</th>
+              <th *ngIf="permission.isGranted(Admin_ConfigITs_Edit) || permission.isGranted(Admin_ConfigITs_Delete)" class="actions-col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of configList; let i = index">
+              <td>{{ i + 1 }}</td>
+              <td>
+                <app-user-info [isSmallerDiv]="true" [userData]="{
+                  fullName: item.fullName,
+                  branch: item.branch,
+                  branchColor: item.branchColor,
+                  branchDisplayName: item.branchDisplayName,
+                  userType: item.userType,
+                  emailAddress: item.emailAddress,
+                  avatarFullPath: item.avatarFullPath,
+                  position: item.positionId,
+                  positionColor: item.positionColor,
+                  positionName: item.positionName,
+                  userLevel: item.userLevel
+                }"></app-user-info>
+              </td>
+              <td class="actions-cell">
+                <div class="actions-wrapper">
+                  <button *ngIf="permission.isGranted(Admin_ConfigITs_Edit)" class="btn btn-sm bg-secondary" (click)="edit(item)"><i class="fas fa-pencil-alt"></i> Edit</button>
+                  <button *ngIf="permission.isGranted(Admin_ConfigITs_Delete)" class="btn btn-sm bg-danger" (click)="delete(item)"><i class="fas fa-trash"></i> Delete</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+</div>

@@ -19,7 +19,7 @@
                     <mat-label>Select project asset type</mat-label>
 
                     <ng-container *ngIf="data.command === 'create'">
-                        <mat-select name="projectAssetTypeIds" [(ngModel)]="asset.projectAssetTypeIds" multiple required #createControl="ngModel" #createControlEl>
+                        <mat-select name="projectAssetTypeId" [(ngModel)]="asset.projectAssetTypeId" required #createControl="ngModel" #createControlEl>
                             <ng-container *ngFor="let parent of projectAssetTypes">
                                 <mat-optgroup *ngIf="parent.childrens?.length" [label]="parent.name">
                                     <mat-option *ngFor="let child of parent.childrens" [value]="child.id">{{ child.name }}</mat-option>

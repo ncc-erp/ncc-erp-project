@@ -62,6 +62,16 @@ export const PERMISSIONS_CONSTANT = {
        Admin_AccountAssetCreators_Delete: "Admin.AccountAssetCreators.Delete",
        // #endregion
 
+       // #region ConfigITs
+
+       Admin_ConfigITs: "Admin.ConfigITs",
+       Admin_ConfigITs_View: "Admin.ConfigITs.View",
+       Admin_ConfigITs_Create: "Admin.ConfigITs.Create",
+       Admin_ConfigITs_Edit: "Admin.ConfigITs.Edit",
+       Admin_ConfigITs_Delete: "Admin.ConfigITs.Delete",
+
+       // #endregion 
+
        // #region Project Asset Type
        Admin_ProjectAssetTypes: "Admin.ProjectAssetTypes",
        Admin_ProjectAssetTypes_View: "Admin.ProjectAssetTypes.View",

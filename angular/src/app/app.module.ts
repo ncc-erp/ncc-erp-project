@@ -259,6 +259,8 @@ import { CreateUpdateAccountTypeComponent } from './modules/admin/account-type/c
 import { ProjectAssetTypeComponent } from './modules/admin/project-asset-type/project-asset-type.component';
 import { CreateEditProjectAssetTypeComponent } from './modules/admin/project-asset-type/create-edit-project-asset-type/create-edit-project-asset-type.component';
 import { AddAccountAssetDialogComponent } from './modules/pm-management/list-project/list-project-detail/project-bill/add-account-asset-dialog/add-account-asset-dialog.component';
+import { ConfigItComponent } from './modules/admin/config-it/config-it.component';
+import { CreateEditConfigItComponent } from './modules/admin/config-it/create-edit-config-it/create-edit-config-it.component';
 
 
 export function HttpLoaderFactory(http: HttpClient) {
@@ -504,6 +506,8 @@ export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
     ProjectAssetTypeComponent,
     CreateEditProjectAssetTypeComponent,
     AddAccountAssetDialogComponent,
+    ConfigItComponent,
+    CreateEditConfigItComponent,
   ],
   imports: [
     CommonModule,

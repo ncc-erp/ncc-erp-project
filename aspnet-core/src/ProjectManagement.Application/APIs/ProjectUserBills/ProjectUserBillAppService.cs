@@ -137,8 +137,7 @@ namespace ProjectManagement.APIs.ProjectUserBills
             var entity = ObjectMapper.Map<AccountAsset>(input);
             entity.Id = input.Id;
 
-            var updated = await projectUserBillManager.UpdateAccountAsset(entity);
-            return ObjectMapper.Map<AccountAssetDto>(updated);
+            return await projectUserBillManager.UpdateAccountAsset(entity);
         }
 
         [HttpGet]

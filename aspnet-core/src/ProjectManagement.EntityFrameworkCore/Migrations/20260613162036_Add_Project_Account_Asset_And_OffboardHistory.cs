@@ -50,6 +50,33 @@ namespace ProjectManagement.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ConfigITs",
+                columns: table => new
+                {
+                    Id = table.Column<long>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CreationTime = table.Column<DateTime>(nullable: false),
+                    CreatorUserId = table.Column<long>(nullable: true),
+                    LastModificationTime = table.Column<DateTime>(nullable: true),
+                    LastModifierUserId = table.Column<long>(nullable: true),
+                    IsDeleted = table.Column<bool>(nullable: false),
+                    DeleterUserId = table.Column<long>(nullable: true),
+                    DeletionTime = table.Column<DateTime>(nullable: true),
+                    TenantId = table.Column<int>(nullable: true),
+                    UserId = table.Column<long>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ConfigITs", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ConfigITs_AbpUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AbpUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "OffboardUsers",
                 columns: table => new
                 {
@@ -241,6 +268,11 @@ namespace ProjectManagement.Migrations
                 column: "ProjectUserBillId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ConfigITs_UserId",
+                table: "ConfigITs",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_OffboardUsers_ProjectId",
                 table: "OffboardUsers",
                 column: "ProjectId");
@@ -275,6 +307,9 @@ namespace ProjectManagement.Migrations
         {
             migrationBuilder.DropTable(
                 name: "AccountAssets");
+
+            migrationBuilder.DropTable(
+                name: "ConfigITs");
 
             migrationBuilder.DropTable(
                 name: "OffboardUsers");

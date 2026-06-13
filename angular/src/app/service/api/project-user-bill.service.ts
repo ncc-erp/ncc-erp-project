@@ -122,9 +122,9 @@ export class ProjectUserBillService extends BaseApiService {
     return this.http.put<any>(this.rootUrl + '/UpdateAccountAsset', request);
   }
 
-  deleteAccountAsset(accountResourceId: number): Observable<any> {
+  deleteAccountAsset(accountAssetId: number): Observable<any> {
     return this.http.delete<any>(this.rootUrl + '/DeleteAccountAsset', {
-      params: { accountResourceId: accountResourceId.toString() }
+      params: { accountAssetId: accountAssetId.toString() }
     });
   }
 

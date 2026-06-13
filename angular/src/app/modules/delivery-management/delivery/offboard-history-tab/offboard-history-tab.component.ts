@@ -26,6 +26,9 @@ export class OffboardHistoryTabComponent extends PagedListingComponentBase<any> 
   public projectId = -1;
   public searchProject: string = '';
   public selectedStatus: number | null = null;
+  public maxVisibleHistoryAssets = 2;
+  public expandedHistoryAccountAssetRows: { [offboardHistoryId: number]: boolean } = {};
+  public expandedHistoryProjectAssetRows: { [offboardHistoryId: number]: boolean } = {};
   public statusOptions = [
     { value: null, displayName: 'All' },
     { value: 0, displayName: 'Todo' },
@@ -178,7 +181,10 @@ export class OffboardHistoryTabComponent extends PagedListingComponentBase<any> 
       !this.permission.isGranted(this.OffboardHistory_CheckList_IT);
 
     const dialogRef = this.dialog.open(OffboardDialogComponent, {
-      width: '720px',
+      width: '640px',
+      maxWidth: '95vw',
+      maxHeight: '85vh',
+      panelClass: 'offboard-dialog-panel',
       data: { offboardHistoryId: item.id, fullName: item.fullName, viewOnly: isReadOnly }
     });
 
@@ -249,6 +255,38 @@ export class OffboardHistoryTabComponent extends PagedListingComponentBase<any> 
     } catch {
       return [];
     }
+  }
+
+  public getVisibleHistoryAccountAssets(item: any): any[] {
+    const assets = this.parseHistoryAccountAsset(item?.historyAccountAsset);
+
+    return this.expandedHistoryAccountAssetRows[item.id]
+      ? assets
+      : assets.slice(0, this.maxVisibleHistoryAssets);
+  }
+
+  public getVisibleHistoryProjectAssets(item: any): any[] {
+    const assets = this.parseHistoryAsset(item?.historyAsset);
+
+    return this.expandedHistoryProjectAssetRows[item.id]
+      ? assets
+      : assets.slice(0, this.maxVisibleHistoryAssets);
+  }
+
+  public expandHistoryAccountAssets(offboardHistoryId: number): void {
+    this.expandedHistoryAccountAssetRows[offboardHistoryId] = true;
+  }
+
+  public collapseHistoryAccountAssets(offboardHistoryId: number): void {
+    this.expandedHistoryAccountAssetRows[offboardHistoryId] = false;
+  }
+
+  public expandHistoryProjectAssets(offboardHistoryId: number): void {
+    this.expandedHistoryProjectAssetRows[offboardHistoryId] = true;
+  }
+
+  public collapseHistoryProjectAssets(offboardHistoryId: number): void {
+    this.expandedHistoryProjectAssetRows[offboardHistoryId] = false;
   }
 
   public getHistoryDisplayValue(item: any): string {

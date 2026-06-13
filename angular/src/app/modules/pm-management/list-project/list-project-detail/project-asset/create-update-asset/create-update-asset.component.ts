@@ -62,7 +62,7 @@ export class CreateUpdateAssetComponent extends AppComponentBase implements OnIn
   }
 
   private buildCreatePayloads(): any[] {
-    const selectedIds = Array.from(new Set(this.asset.projectAssetTypeIds || []));
+    const selectedIds = this.asset.projectAssetTypeId ? [this.asset.projectAssetTypeId] : [];
 
     return selectedIds.map((id: number) => {
       const selectedResource = this.getAllChildAssetTypes().find((resource: any) => resource.id === id);
@@ -78,7 +78,7 @@ export class CreateUpdateAssetComponent extends AppComponentBase implements OnIn
       const payloads = this.buildCreatePayloads();
 
       if (!payloads.length) {
-        abp.message.warn('Please select at least one project asset type.');
+        abp.message.warn('Please select a project asset type.');
         return;
       }
 

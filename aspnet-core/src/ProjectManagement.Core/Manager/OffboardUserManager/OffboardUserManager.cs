@@ -4,23 +4,29 @@ using Microsoft.EntityFrameworkCore;
 using NccCore.Extension;
 using NccCore.IoC;
 using NccCore.Paging;
+using NccCore.Uitls;
 using Newtonsoft.Json;
 using ProjectManagement.Entities;
 using ProjectManagement.Manager;
 using ProjectManagement.Manager.OffboardUserManager.Dto;
+using ProjectManagement.Manager.ProjectAssetManager;
+using ProjectManagement.Services.Komu;
+using ProjectManagement.Services.Komu.KomuDto;
 using ProjectManagement.Utils;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using static ProjectManagement.Constants.Enum.ProjectEnum;
-using ProjectManagement.Manager.ProjectAssetManager;
 
 namespace ProjectManagement.Manager.OffboardUserManager
 {
     public class OffboardUserManager : BaseManager
     {
-        public OffboardUserManager(IWorkScope workScope) : base(workScope)
+        private KomuService _komuService;
+        public OffboardUserManager(IWorkScope workScope, KomuService komuService) : base(workScope)
         {
+            _komuService = komuService;
         }
 
         public async Task<GridResult<OffboardHistoryDto>> GetAllOffboardHistory(InputGetAllOffboardHistoryDto input)
@@ -152,8 +158,7 @@ namespace ProjectManagement.Manager.OffboardUserManager
                     ProjectAssetId = x.ProjectAssetId,
                     AccountAssetId = null,
                     ItemType = "ProjectAsset",
-                    AssetName = !string.IsNullOrWhiteSpace(x.ProjectAsset?.AssetName)
-                        ? x.ProjectAsset.AssetName : string.Empty,
+                    AssetName = FormatProjectAssetName(x.ProjectAsset),
                     IsChecked = checkedItems.ProjectAssetIds.Contains(x.ProjectAssetId)
                 })
                 .ToList();
@@ -289,11 +294,7 @@ namespace ProjectManagement.Manager.OffboardUserManager
             var assetHistory = JsonConvert.SerializeObject(remainAsset.Select(x => new
             {
                 x.ProjectAssetId,
-                AssetName = !string.IsNullOrWhiteSpace(x.ProjectAsset?.AssetName)
-                    ? x.ProjectAsset.AssetName
-                    : x.ProjectAsset?.ProjectAssetType != null
-                        ? x.ProjectAsset.ProjectAssetType.Name
-                        : string.Empty
+                AssetName = FormatProjectAssetName(x.ProjectAsset)
             }));
 
             var accountAssetHistory = JsonConvert.SerializeObject(remainAccountAssets.Select(x => new
@@ -352,6 +353,8 @@ namespace ProjectManagement.Manager.OffboardUserManager
             offboard.OffboardChecklistJson = null;
 
             await WorkScope.UpdateAsync(offboard);
+
+            await SendNoticeMessageToIT(offboadHistoryId);
         }
 
         public async Task<bool> CheckOffboardHistory(long projectUserId)
@@ -374,6 +377,113 @@ namespace ProjectManagement.Manager.OffboardUserManager
                 .AnyAsync(x => x.UserId == projectUser.UserId
                     && x.ProjectId == projectUser.ProjectId
                     && x.OffboardStatus != OffboardStatus.Complete);
+        }
+
+        private async Task SendNoticeMessageToIT(long offboardHistoryId)
+        {
+            var noticeIT = await WorkScope.GetAll<ConfigIT>()
+                .Include(x => x.User)
+                .ToListAsync();
+
+            var offboard = await WorkScope.GetAll<Entities.OffboardUser>()
+                .Include(x => x.User)
+                .Include(x => x.Project)
+                .FirstOrDefaultAsync(x => x.Id == offboardHistoryId);
+
+            if (offboard == null)
+                throw new UserFriendlyException("Offboard history not found");
+
+            var projectAssets = await WorkScope.GetAll<ProjectUserAsset>()
+                .Include(x => x.ProjectAsset)
+                .ThenInclude(x => x.ProjectAssetType)
+                .Where(x => x.UserId == offboard.UserId && x.ProjectAsset.ProjectId == offboard.ProjectId)
+                .ToListAsync();
+
+            var accountAssets = await WorkScope.GetAll<AccountAsset>()
+                .Include(x => x.ProjectUserBill)
+                .Where(x => x.ProjectUserBill.ProjectId == offboard.ProjectId && x.ProjectUserBill.UserId == offboard.UserId)
+                .ToListAsync();
+
+            var sb = new StringBuilder();
+
+            sb.AppendLine("📦 **OFFBOARD REQUEST**");
+            sb.AppendLine($"Project: **{offboard.Project.Name}**");
+            sb.AppendLine($"User: **{offboard.User.FullName}**");
+            sb.AppendLine("--------------------------------");
+
+            if (accountAssets.Any())
+            {
+                sb.AppendLine();
+                sb.AppendLine("🔐 **Account Asset**");
+
+                foreach (var item in accountAssets)
+                {
+                    sb.AppendLine(
+                        $"- {item.AssetName ?? "Unnamed"} " +
+                        $"[{item.AccountAssetCreator?.Name ?? "Unknown creator"}] " +
+                        $"[{item.AccountType?.Name ?? "Unknown type"}] " +
+                        $"[{item.TypeLogin ?? string.Empty}]"
+                    );
+                }
+            }
+
+            if (projectAssets.Any())
+            {
+                sb.AppendLine();
+                sb.AppendLine("🗂️ **Project Asset**");
+
+                foreach (var item in projectAssets)
+                {
+                    var assetName =
+                        item.ProjectAsset?.AssetName
+                        ?? "Unnamed";
+
+                    var assetType =
+                        item.ProjectAsset?.ProjectAssetType?.Name
+                        ?? "Unknown type";
+
+                    sb.AppendLine(
+                        $"- {assetName} [{assetType}]"
+                    );
+                }
+            }
+
+            if (!accountAssets.Any() && !projectAssets.Any())
+            {
+                sb.AppendLine();
+                sb.AppendLine("> No remaining assets.");
+            }
+
+            sb.AppendLine();
+            sb.AppendLine("--------------------------------");
+
+            sb.AppendLine("🗣️ IT Notice:");
+            sb.AppendLine("> Hãy xác nhận đầy đủ các mục trong Offboard Checklist.");
+
+            var messsage = sb.ToString();
+
+            foreach (var it in noticeIT)
+            {
+                var komuUserName = it.User.UserName?.Split('@')[0];
+                await _komuService.NotifyToKomuUserAwait(new KomuMessage
+                {
+                    UserName = komuUserName,
+                    Message = messsage,
+                    CreateDate = DateTimeUtils.GetNow()
+                });
+            }
+        }
+
+        private static string FormatProjectAssetName(ProjectAsset projectAsset)
+        {
+            var assetName = !string.IsNullOrWhiteSpace(projectAsset?.AssetName)
+                ? projectAsset.AssetName
+                : "Unnamed";
+            var assetTypeName = !string.IsNullOrWhiteSpace(projectAsset?.ProjectAssetType?.Name)
+                ? projectAsset.ProjectAssetType.Name
+                : "Unknown type";
+
+            return $"{assetName} [{assetTypeName}]";
         }
     }
 }

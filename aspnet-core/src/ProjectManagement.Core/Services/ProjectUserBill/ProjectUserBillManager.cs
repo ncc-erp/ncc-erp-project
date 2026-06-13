@@ -584,7 +584,7 @@ namespace ProjectManagement.Services.ProjectUserBills
             await _workScope.DeleteAsync(accountAsset);
         }
 
-        public async Task<AccountAsset> UpdateAccountAsset(AccountAsset input)
+        public async Task<AccountAssetDto> UpdateAccountAsset(AccountAsset input)
         {
             var accountAsset = await _workScope.GetAsync<AccountAsset>(input.Id);
             if (accountAsset == null)
@@ -631,7 +631,20 @@ namespace ProjectManagement.Services.ProjectUserBills
             }
 
             await _workScope.UpdateAsync(accountAsset);
-            return accountAsset;
+            return await _workScope.GetAll<AccountAsset>()
+                .Where(x => x.Id == accountAsset.Id)
+                .Select(x => new AccountAssetDto
+                {
+                    Id = x.Id,
+                    ProjectUserBillId = x.ProjectUserBillId,
+                    AccountTypeId = x.AccountTypeId,
+                    AccountTypeName = x.AccountType.Name,
+                    AccountAssetCreatorId = x.AccountAssetCreatorId,
+                    AccountAssetCreatorName = x.AccountAssetCreator.Name,
+                    TypeLogin = x.TypeLogin,
+                    AssetName = x.AssetName,
+                })
+                .FirstOrDefaultAsync();
         }
 
         private async Task<bool> CheckTotalContribute(long projectUserBillId, byte contribute, long userId)

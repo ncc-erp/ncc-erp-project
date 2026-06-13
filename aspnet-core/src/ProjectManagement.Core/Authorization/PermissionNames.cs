@@ -95,6 +95,14 @@ namespace ProjectManagement.Authorization
         public const string Admin_AccountTypes_Delete = "Admin.AccountTypes.Delete";
         #endregion AccountTypes
 
+        #region ConfigIT
+        public const string Admin_ConfigITs = "Admin.ConfigITs";
+        public const string Admin_ConfigITs_View = "Admin.ConfigITs.View";
+        public const string Admin_ConfigITs_Create = "Admin.ConfigITs.Create";
+        public const string Admin_ConfigITs_Edit = "Admin.ConfigITs.Edit";
+        public const string Admin_ConfigITs_Delete = "Admin.ConfigITs.Delete";
+        #endregion ConfigIT
+
         #region AccountAssetCreators
 
         public const string Admin_AccountAssetCreators = "Admin.AccountAssetCreators";
@@ -898,6 +906,16 @@ namespace ProjectManagement.Authorization
                     PermissionNames.Admin_AccountTypes_Delete,
 
                     #endregion AccountTypes
+
+                    #region ConfigITs
+
+                    PermissionNames.Admin_ConfigITs,
+                    PermissionNames.Admin_ConfigITs_View,
+                    PermissionNames.Admin_ConfigITs_Edit,
+                    PermissionNames.Admin_ConfigITs_Create,
+                    PermissionNames.Admin_ConfigITs_Delete,
+
+                    #endregion ConfigITs
 
                     #region AccountAssetCreators
 
@@ -1740,6 +1758,17 @@ namespace ProjectManagement.Authorization
 
 
                 #endregion Project Asset Type
+
+                #region ConfigITs
+
+                 new SystemPermission{ Name =  PermissionNames.Admin_ConfigITs, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Config IT" },
+                 new SystemPermission{ Name =  PermissionNames.Admin_ConfigITs_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View" },
+                 new SystemPermission{ Name =  PermissionNames.Admin_ConfigITs_Create, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Create" },
+                 new SystemPermission{ Name =  PermissionNames.Admin_ConfigITs_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit" },
+                 new SystemPermission{ Name =  PermissionNames.Admin_ConfigITs_Delete, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Delete" },
+
+
+                #endregion ConfigITs
 
                 #region Currency
 
@@ -2691,6 +2720,28 @@ namespace ProjectManagement.Authorization
                             },
 
                             #endregion Project Asset Type
+
+                            #region ConfigITs
+
+                            new SystemPermission {
+                                Name = PermissionNames.Admin_ConfigITs, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Config IT",
+                                    Childrens = new List < SystemPermission > () {
+                                        new SystemPermission {
+                                            Name = PermissionNames.Admin_ConfigITs_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View"
+                                        },
+                                        new SystemPermission {
+                                            Name = PermissionNames.Admin_ConfigITs_Create, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Create"
+                                        },
+                                        new SystemPermission {
+                                            Name = PermissionNames.Admin_ConfigITs_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit"
+                                        },
+                                        new SystemPermission {
+                                            Name = PermissionNames.Admin_ConfigITs_Delete, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Delete"
+                                        },
+                                    }
+                            },
+
+                            #endregion ConfigITs
 
 
                             #region Currency

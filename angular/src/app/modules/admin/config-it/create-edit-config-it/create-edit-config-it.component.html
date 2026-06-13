@@ -1,0 +1,27 @@
+<form class="form-horizontal" autocomplete="off" #form="ngForm" [busy]="isLoading">
+  <abp-modal-header [title]="title" (onCloseClick)="dialogRef.close()"></abp-modal-header>
+
+  <div class="modal-body">
+    <div class="form-group row required">
+      <label class="col-md-3 col-form-label">User:</label>
+      <div class="col-md-9">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-select name="userId" [(ngModel)]="item.userId" #userValid="ngModel" required placeholder="Select a user" (closed)="searchUser=''">
+            <div class="px-3 pt-2 pb-1" style="position: sticky; top: 0; z-index: 2; background: white;">
+              <input matInput class="form-control" [(ngModel)]="searchUser" name="searchUser" placeholder="Search" (keydown)="$event.stopPropagation()" />
+            </div>
+            <mat-option *ngFor="let user of userList | listFilter: 'fullName' : searchUser : 'emailAddress'" [value]="user.id">
+              {{ user.fullName }} - ({{ user.emailAddress }})
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-error *ngIf="userValid.hasError('required') && userValid.touched" class="mt-1" style="font-size: 13px;">This field is required.</mat-error>
+      </div>
+    </div>
+  </div>
+
+  <div class="row justify-content-end px-3 pb-3">
+    <button type="button" class="btn btn-secondary btn-action mr-2" mat-dialog-close>Cancel</button>
+    <button type="button" class="btn btn-primary btn-action" [disabled]="!form.valid || isLoading" (click)="save()">Save</button>
+  </div>
+</form>

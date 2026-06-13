@@ -18,13 +18,13 @@ export class AddAccountAssetDialogComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<AddAccountAssetDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { projectUserBillId: number; accountResource?: AccountAssetDto },
+    @Inject(MAT_DIALOG_DATA) public data: { projectUserBillId: number; accountAsset?: AccountAssetDto },
     private accountTypeService: AccountTypeService,
     private creatorService: AccountAssetCreatorManagerService,
     private projectUserBillService: ProjectUserBillService,
   ) {
-    if (data?.accountResource) {
-      this.model = { ...data.accountResource };
+    if (data?.accountAsset) {
+      this.model = { ...data.accountAsset };
     } else {
       this.model.projectUserBillId = data?.projectUserBillId;
     }
@@ -42,8 +42,10 @@ export class AddAccountAssetDialogComponent implements OnInit {
 
   save(): void {
     this.saving = true;
+    const accountAssetId = this.model.id ?? 0;
+
     const payload = {
-      accountResourceId: this.model.accountResourceId || this.model.id,
+      id: accountAssetId,
       projectUserBillId: this.model.projectUserBillId,
       accountTypeId: this.model.accountTypeId,
       accountAssetCreatorId: this.model.accountAssetCreatorId,
@@ -51,7 +53,7 @@ export class AddAccountAssetDialogComponent implements OnInit {
       assetName: this.model.assetName
     };
 
-    const request$ = this.model.id || this.model.accountResourceId
+    const request$ = accountAssetId > 0
       ? this.projectUserBillService.updateAccountAsset(payload)
       : this.projectUserBillService.createAccountAsset(payload);
 

@@ -106,6 +106,8 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
 
   public listAllResource = []
   public listAvailableResource = []
+  public maxVisibleAccountAssets = 2;
+  public expandedAccountAssetRows: { [projectUserBillId: number]: boolean } = {};
 
   editingRows: { [key: number]: { [key: number]: { [key: string]: boolean } } } = {};
   originalContribute: { [key: number]: { [key: number]: { [key: string]: number } } } = {};
@@ -890,10 +892,10 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     this.showSearchAndFilter = !hasChanged;
   }
 
-  openAccountAssetDialog(bill: projectUserBillDto, accountResource?: AccountAssetDto): void {
+  openAccountAssetDialog(bill: projectUserBillDto, accountAsset?: AccountAssetDto): void {
     const dialogRef = this.dialog.open(AddAccountAssetDialogComponent, {
       width: '420px',
-      data: { projectUserBillId: bill.id, accountResource }
+      data: { projectUserBillId: bill.id, accountAsset }
     });
 
     dialogRef.afterClosed().subscribe((result?: boolean) => {
@@ -903,12 +905,22 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     });
   }
 
-  deleteAccountAsset(accountResource: AccountAssetDto): void {
+  expandAccountAssets(projectUserBillId: number): void {
+    this.expandedAccountAssetRows[projectUserBillId] = true;
+  }
+
+  collapseAccountAssets(projectUserBillId: number): void {
+    this.expandedAccountAssetRows[projectUserBillId] = false;
+  }
+
+  deleteAccountAsset(accountAsset: AccountAssetDto): void {
     if (!confirm('Delete this account asset?')) {
       return;
     }
 
-    this.projectUserBillService.deleteAccountAsset(accountResource.id || accountResource.accountResourceId).subscribe(() => {
+    const accountAssetId = accountAsset.id ?? 0;
+
+    this.projectUserBillService.deleteAccountAsset(accountAssetId).subscribe(() => {
       this.getUserBill();
     });
   }

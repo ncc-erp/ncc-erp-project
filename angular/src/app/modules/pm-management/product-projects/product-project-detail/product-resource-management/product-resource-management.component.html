@@ -33,6 +33,7 @@
                                     <th class="stt">#</th>
                                     <th>Employee</th>
                                     <th>Skills</th>
+                                    <th style="width: 200px">Access Asset</th>
                                     <th style="width: 150px;">Role</th>
                                     <th style="width: 150px;">Start time</th>
                                     <th style="width: 150px;">Work type</th>
@@ -112,6 +113,33 @@
                                                 </div>
                                             </div>
                                         </span>
+                                    </td>
+
+                                    <td style="vertical-align: middle; width: 220px">
+                                        <div class="d-flex align-items-start">
+                                        <div style="width: 90%; text-align: left">
+                                            <p
+                                            class="m-0 mr-1 content-skills"
+                                            *ngFor="let asset of user.projectAssets"
+                                            >
+                                            - {{ asset }}
+                                            </p>
+                                            <div
+                                            *ngIf="!user.projectAssets || user.projectAssets.length === 0"
+                                            class="text-muted"
+                                            >
+                                            No assets
+                                            </div>
+                                        </div>
+                                        <div class="col-skill">
+                                            <i
+                                            class="fas fa-edit ml-1"
+                                            (click)="updateUserAsset(user)"
+                                            *ngIf="!user.createMode && !user.editMode && permission.isGranted(Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserAsset)"
+                                            matTooltip="Edit asset"
+                                            ></i>
+                                        </div>
+                                        </div>
                                     </td>
 
                                     <td class="text-center">

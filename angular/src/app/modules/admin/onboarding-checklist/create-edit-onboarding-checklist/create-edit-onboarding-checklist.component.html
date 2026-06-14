@@ -1,0 +1,57 @@
+<form class="form-horizontal create-update-criteria" autocomplete="off" #timesheetForm="ngForm" novalidate>
+    <abp-modal-header *ngIf="data.command=='create'" title="Create" (onCloseClick)="dialogRef.close()">
+    </abp-modal-header>
+    <abp-modal-header *ngIf="data.command=='edit'" title="Edit" (onCloseClick)="dialogRef.close()">
+    </abp-modal-header>
+    <div class="modal-body">
+        <div class="form-group required col-md-12 " >
+            <label for="name" class="col-form-label">
+                {{ 'Name' | localize }}:
+            </label>
+            <div>
+                <input type="text" class="form-control" name="name" id="name" required
+                    [(ngModel)]="onboardingTemplate.label" #onboardingNameModel="ngModel" #nameEl />
+                <abp-validation-summary [control]="onboardingNameModel" [controlEl]="nameEl">
+                </abp-validation-summary>
+            </div>
+        </div>
+
+        <div class="form-group col-md-12 required">
+            <label for="criteriaGuideLine">
+                {{ 'Guideline' | localize }}:
+            </label>
+            <div>
+                <editor class="w-100" [init]="{
+                                    height: 300,
+                                    selector: 'textarea',
+                                    a_plugin_option: true,
+                                    a_configuration_option: 400,
+                                    class: 'w-100',
+                                    menubar: true,
+                                    plugins: ['table','code','preview','media', 'image', 'template'],
+                                    toolbars: ['image'],
+                                    branding: false
+                                    }" [(ngModel)]="onboardingTemplate.details" #onboardingDetailsModel="ngModel" #detailsEl name="details"
+                    initialValue="{{onboardingTemplate.details}}">
+                </editor>
+            </div>
+        </div>
+         <div class="form-group col-md-12 required">
+            <label for="order">
+                {{ 'Order' | localize }}:
+            </label>
+            <div>
+                 <input type="number" class="form-control" name="order" id="order" required
+                    [(ngModel)]="onboardingTemplate.order" #onboardingOrderModel="ngModel" #orderEl />
+                <abp-validation-summary [control]="onboardingOrderModel" [controlEl]="orderEl">
+                </abp-validation-summary>
+            </div>
+        </div>
+
+    </div>
+    <div align="end" class="mat-dialog-actions" mat-dialog-actions="">
+        <button class="btn btn-default cancel-banks" mat-raised-button mat-dialog-close>Cancel</button>
+        <button mat-raised-button color="primary" class="saving-btn" mat-button
+            [disabled]="!timesheetForm.form.valid ||isLoading" (click)="SaveAndClose()">Save</button>
+    </div>
+</form>

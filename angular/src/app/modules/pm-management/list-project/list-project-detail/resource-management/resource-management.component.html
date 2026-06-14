@@ -78,9 +78,11 @@
                   <th style="width: 340px">Employee</th>
                   <th style="width: 200px">Note</th>
                   <th style="width: 400px">Skills</th>
+                  <th style="width: 200px">Access Asset</th>
                   <th style="width: 90px">Role</th>
                   <th style="width: 90px">Start time</th>
                   <th style="width: 90px">Work type</th>
+                  <th style="width: 90px">Onboard status</th>
                   <th style="width: 60px">Actions</th>
                 </tr>
               </thead>
@@ -302,6 +304,49 @@
                     </span>
                   </td>
 
+                  <td style="vertical-align: middle; width: 220px">
+                    <div class="d-flex align-items-start">
+                      <div style="width: 90%; text-align: left">
+                        <p
+                          class="m-0 mr-1 content-skills"
+                          *ngFor="let asset of getVisibleProjectAssets(user)"
+                        >
+                          - {{ asset }}
+                        </p>
+                        <button
+                          *ngIf="!expandedAssetRows[user.id] && getProjectAssets(user).length > maxVisibleAssets"
+                          type="button"
+                          class="asset-expand-btn"
+                          (click)="expandProjectAssets(user.id)"
+                        >
+                          ...
+                        </button>
+                        <button
+                          *ngIf="expandedAssetRows[user.id] && getProjectAssets(user).length > maxVisibleAssets"
+                          type="button"
+                          class="asset-expand-btn"
+                          (click)="collapseProjectAssets(user.id)"
+                        >
+                          <i class="fas fa-chevron-up m-0"></i>
+                        </button>
+                        <div
+                          *ngIf="getProjectAssets(user).length === 0"
+                          class="text-muted"
+                        >
+                          No assets
+                        </div>
+                      </div>
+                      <div class="col-skill">
+                        <i
+                          class="fas fa-edit ml-1"
+                          (click)="updateUserAsset(user)"
+                          *ngIf="!user.createMode && !user.editMode && permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserAsset)"
+                          matTooltip="Edit asset"
+                        ></i>
+                      </div>
+                    </div>
+                  </td>
+
                   <td class="text-center">
                     <span
                       [ngClass]="APP_CONST.projectUserRole[user.projectRole]"
@@ -417,6 +462,19 @@
                       </mat-radio-group>
                     </div>
                   </td>
+                  <td>
+                    <div class="table-vertical">
+                      <span class="badge" [ngClass]="{
+                                              'badge-secondary': user.onboardingStatus === APP_ENUM.ProjectUserOnboardingStatus['Not Started'],
+                                              'badge-warning': user.onboardingStatus === APP_ENUM.ProjectUserOnboardingStatus['In Progress'],
+                                              'badge-info': user.onboardingStatus === APP_ENUM.ProjectUserOnboardingStatus['Pending Employee'],
+                                              'badge-success': user.onboardingStatus === APP_ENUM.ProjectUserOnboardingStatus['Done'],
+                                              'badge-primary': user.onboardingStatus === APP_ENUM.ProjectUserOnboardingStatus['Pending']
+                                            }">
+                        {{ getOnboardingStatusName(user.onboardingStatus) }}
+                      </span>
+                    </div>
+                  </td>
                   <td style="vertical-align: middle">
                     <div
                       *ngIf="
@@ -435,32 +493,39 @@
                         <i class="fas fa-bars fa-lg"></i>
                       </button>
                       <mat-menu #menu="matMenu" class="p-2">
-                        <button
-                          *ngIf="
-                            permission.isGranted(
-                              Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_Edit
-                            )
-                          "
-                          [disabled]="projectUserProcess"
-                          class="mat-menu-item w-100"
-                          (click)="editProjectUser(user)"
-                        >
+                        <button *ngIf="
+                                                  permission.isGranted(
+                                                    Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_Edit
+                                                  )
+                                                " [disabled]="projectUserProcess" class="mat-menu-item w-100"
+                          (click)="editProjectUser(user)">
                           <i class="fas fa-edit"></i>Edit
                         </button>
-                        <button
-                          *ngIf="
-                            permission.isGranted(
-                              Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_Release
-                            )
-                          "
-                          [disabled]="projectUserProcess"
-                          class="mat-menu-item w-100"
-                          (click)="releaseUser(user)"
-                        >
+                        <button *ngIf="
+                                                                        permission.isGranted(
+                                                                          Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_Edit
+                                                                        ) && user.onboardingStatus !== APP_ENUM.ProjectUserOnboardingStatus['Done']  
+                                                                      " [disabled]="projectUserProcess" class="mat-menu-item w-100"
+                          (click)="onboardUser(user)">
+                          <i class="fa fa-handshake"></i>Onboard
+                        </button>
+                        <button *ngIf="
+                                                                      permission.isGranted(
+                                                                        Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_Edit
+                                                                      ) && (user.onboardingStatus === APP_ENUM.ProjectUserOnboardingStatus['Pending'] || user.onboardingStatus === APP_ENUM.ProjectUserOnboardingStatus['Pending Employee'])
+                                                                    " [disabled]="projectUserProcess" class="mat-menu-item w-100"
+                          (click)="remindUser(user)">
+                          <i class="fa fa-bell text-warning"></i>Remind
+                        </button>
+                        <button *ngIf="
+                                                  permission.isGranted(
+                                                    Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_Release
+                                                  )
+                                                " [disabled]="projectUserProcess" class="mat-menu-item w-100" (click)="releaseUser(user)">
                           <i class="fas fa-sign-out-alt mr-1"></i>Release
                         </button>
                       </mat-menu>
-                    </div>
+                      </div>
                     <div
                       *ngIf="user.createMode || user.editMode"
                       class="pt-2 d-flex flex-baseline align-items-center"

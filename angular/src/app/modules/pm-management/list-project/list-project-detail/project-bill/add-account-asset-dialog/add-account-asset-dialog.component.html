@@ -1,0 +1,32 @@
+<h2 mat-dialog-title>{{ model.id ? 'Edit' : 'Create' }} Account Asset</h2>
+<mat-dialog-content>
+  <div class="row">
+    <mat-form-field class="col-12">
+      <mat-label>Name</mat-label>
+      <input matInput [(ngModel)]="model.assetName" name="assetName" required />
+    </mat-form-field>
+
+    <mat-form-field class="col-12">
+      <mat-label>Account Type</mat-label>
+      <mat-select [(ngModel)]="model.accountTypeId" name="accountTypeId" required>
+        <mat-option *ngFor="let item of accountTypes" [value]="item.id">{{ item.name }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="col-12">
+      <mat-label>Asset Creator</mat-label>
+      <mat-select [(ngModel)]="model.accountAssetCreatorId" name="accountAssetCreatorId" required>
+        <mat-option *ngFor="let item of creators" [value]="item.id">{{ item.name }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="col-12">
+      <mat-label>Type Login</mat-label>
+      <input matInput [(ngModel)]="model.typeLogin" name="typeLogin" required />
+    </mat-form-field>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="dialogRef.close(false)">Cancel</button>
+  <button mat-raised-button color="primary" [disabled]="saving || !model.assetName || !model.accountTypeId || !model.accountAssetCreatorId || !model.typeLogin" (click)="save()">Save</button>
+</mat-dialog-actions>

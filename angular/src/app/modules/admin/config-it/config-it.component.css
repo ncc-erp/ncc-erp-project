@@ -1,0 +1,24 @@
+.table th,
+.table td {
+  vertical-align: middle;
+}
+
+.actions-col {
+  width: 200px;
+  text-align: center;
+}
+
+.actions-cell {
+  text-align: center;
+}
+
+.actions-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.actions-wrapper .btn {
+  margin: 0;
+}

@@ -28,6 +28,9 @@
                     <a *ngIf="permission.isGranted(Projects_TrainingProjects_ProjectDetail_TabProjectFile)" [ngClass]="currentUrl.includes('project-file-tab')?'active':''" mat-tab-link (click)="routingFileTab()">
                         Project Files
                     </a>
+                    <a name="tab-project-asset" *ngIf="permission.isGranted(Projects_TrainingProjects_ProjectDetail_TabProjectAsset)" [ngClass]="currentUrl.includes('training-project-asset')?'active':''" mat-tab-link (click)="routingProjectAssetTab()">
+                        Project Asset
+                    </a>
                 </nav>
                 <router-outlet></router-outlet>
             </div>

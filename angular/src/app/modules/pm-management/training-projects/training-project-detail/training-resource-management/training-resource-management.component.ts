@@ -24,6 +24,7 @@ import { RequestResourceDto } from '@app/service/model/delivery-management.dto';
 import { IDNameDto } from '@app/service/model/id-name.dto';
 import { DeliveryResourceRequestService } from '@app/service/api/delivery-request-resource.service';
 import { getValueByEnum } from '@app/modules/delivery-management/delivery/available-resource-tab/enum-until';
+import { UpdateUserAssetDialogComponent } from '@app/modules/pm-management/list-project/list-project-detail/resource-management/update-user-asset-dialog/update-user-asset-dialog.component';
 
 @Component({
   selector: 'app-training-resource-management',
@@ -40,6 +41,9 @@ export class TrainingResourceManagementComponent extends AppComponentBase implem
   Projects_TrainingProjects_ProjectDetail_TabResourceManagement_CurrentResource_Release = PERMISSIONS_CONSTANT.Projects_TrainingProjects_ProjectDetail_TabResourceManagement_CurrentResource_Release;
   Projects_TrainingProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserSkill = PERMISSIONS_CONSTANT.Projects_TrainingProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserSkill;
   Projects_TrainingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserStarSkill = PERMISSIONS_CONSTANT.Projects_TrainingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserStarSkill;
+  Projects_TrainingProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserAsset = PERMISSIONS_CONSTANT.Projects_TrainingProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserAsset;
+  Projects_TrainingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserAsset = PERMISSIONS_CONSTANT.Projects_TrainingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserAsset;
+
 
   Projects_TrainingProjects_ProjectDetail_TabResourceManagement_PlannedResource = PERMISSIONS_CONSTANT.Projects_TrainingProjects_ProjectDetail_TabResourceManagement_PlannedResource;
   Projects_TrainingProjects_ProjectDetail_TabResourceManagement_PlannedResource_View = PERMISSIONS_CONSTANT.Projects_TrainingProjects_ProjectDetail_TabResourceManagement_PlannedResource_View;
@@ -190,6 +194,26 @@ export class TrainingResourceManagementComponent extends AppComponentBase implem
         this.getProjectUser()
         this.getPlannedtUser()
         this.getAllUser()
+        this.projectUserProcess = false;
+        this.planResourceProcess = false;
+      }
+    })
+  }
+
+  updateUserAsset(user) {
+    let ref = this.dialog.open(UpdateUserAssetDialogComponent, {
+      width: "700px",
+      data: {
+        currentAssets: user?.projectAssets,
+        userId: user.userId,
+        fullName: user.fullName,
+        projectId: this.projectId
+      }
+    });
+    ref.afterClosed().subscribe(rs => {
+      if (rs) {
+        this.getProjectUser()
+        this.getPlannedtUser()
         this.projectUserProcess = false;
         this.planResourceProcess = false;
       }

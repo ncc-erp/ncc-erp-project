@@ -90,7 +90,39 @@ namespace ProjectManagement.APIs.ProjectUsers
                 query = query.Where(x => x.PUStatus != ProjectUserStatus.Future);
             }
 
-            return await query.ToListAsync();
+            var users = await query.ToListAsync();
+
+            var userIds = users.Select(u => u.UserId).ToList();
+            var assets = await WorkScope.GetAll<ProjectUserAsset>()
+                .Where(pua => userIds.Contains(pua.UserId) && pua.ProjectAsset.ProjectId == projectId)
+                .Include(pua => pua.ProjectAsset)
+                    .ThenInclude(pa => pa.ProjectAssetType)
+                .ToListAsync();
+
+            var assetsDict = assets
+                .GroupBy(pua => pua.UserId)
+                .ToDictionary(g => g.Key, g => g.Select(x => FormatProjectAssetName(x.ProjectAsset)).ToList());
+
+            foreach (var user in users)
+            {
+                user.ProjectAssets = assetsDict.ContainsKey(user.UserId)
+                    ? assetsDict[user.UserId]
+                    : new List<string>();
+            }
+
+            return users;
+        }
+
+        private static string FormatProjectAssetName(Entities.ProjectAsset projectAsset)
+        {
+            var assetName = !string.IsNullOrWhiteSpace(projectAsset?.AssetName)
+                ? projectAsset.AssetName
+                : "Unnamed";
+            var assetTypeName = !string.IsNullOrWhiteSpace(projectAsset?.ProjectAssetType?.Name)
+                ? projectAsset.ProjectAssetType.Name
+                : "Unknown type";
+
+            return $"{assetName} [{assetTypeName}]";
         }
 
         [HttpGet]

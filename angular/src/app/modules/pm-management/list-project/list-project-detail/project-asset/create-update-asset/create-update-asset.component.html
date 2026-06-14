@@ -1,0 +1,51 @@
+<form class="form-horizontal create-update-asset" autocomplete="off" #assetForm="ngForm" novalidate>
+    <abp-modal-header title="{{ data.command === 'create' ? 'Create new asset' : 'Edit asset: ' + title }}" (onCloseClick)="dialogRef.close()"></abp-modal-header>
+
+    <div class="modal-body">
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="assetName">Asset Name:</label>
+            <div class="col-md-9">
+                <mat-form-field appearance="outline" class="w-100 mt-1">
+                    <mat-label>Enter asset name</mat-label>
+                    <input matInput name="assetName" [(ngModel)]="asset.assetName" required />
+                </mat-form-field>
+            </div>
+        </div>
+
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="projectAssetTypeId">Project Asset Type:</label>
+            <div class="col-md-9">
+                <mat-form-field appearance="outline" class="w-100 mt-1">
+                    <mat-label>Select project asset type</mat-label>
+
+                    <ng-container *ngIf="data.command === 'create'">
+                        <mat-select name="projectAssetTypeId" [(ngModel)]="asset.projectAssetTypeId" required #createControl="ngModel" #createControlEl>
+                            <ng-container *ngFor="let parent of projectAssetTypes">
+                                <mat-optgroup *ngIf="parent.childrens?.length" [label]="parent.name">
+                                    <mat-option *ngFor="let child of parent.childrens" [value]="child.id">{{ child.name }}</mat-option>
+                                </mat-optgroup>
+                            </ng-container>
+                        </mat-select>
+                        <abp-validation-summary [control]="createControl" [controlEl]="createControlEl"></abp-validation-summary>
+                    </ng-container>
+
+                    <ng-container *ngIf="data.command !== 'create'">
+                        <mat-select name="projectAssetTypeId" [(ngModel)]="asset.projectAssetTypeId" required #editControl="ngModel" #editControlEl>
+                            <ng-container *ngFor="let parent of projectAssetTypes">
+                                <mat-optgroup *ngIf="parent.childrens?.length" [label]="parent.name">
+                                    <mat-option *ngFor="let child of parent.childrens" [value]="child.id">{{ child.name }}</mat-option>
+                                </mat-optgroup>
+                            </ng-container>
+                        </mat-select>
+                        <abp-validation-summary [control]="editControl" [controlEl]="editControlEl"></abp-validation-summary>
+                    </ng-container>
+                </mat-form-field>
+            </div>
+        </div>
+    </div>
+
+    <div align="end" class="row justify-content-end">
+        <button name="btn-cancel" class="btn btn-secondary btn-action mr-2" mat-dialog-close>Cancel</button>
+        <button name="btn-save" class="btn btn-primary btn-action" [disabled]="!assetForm.valid || isLoading" (click)="SaveAndClose()">Save</button>
+    </div>
+</form>

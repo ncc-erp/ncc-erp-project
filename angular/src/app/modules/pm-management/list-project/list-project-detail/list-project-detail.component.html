@@ -28,6 +28,9 @@
                     <a name="tab-project-project-summary" *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabProjectSummary) && isMainProject" [ngClass]="currentUrl.includes('general-information')?'active':''" mat-tab-link (click)="routingGeneralInformation()">
                         Project Summary
                     </a>
+                    <a name="tab-project-asset" *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabProjectAsset)" [ngClass]="currentUrl.includes('project-asset')?'active':''" mat-tab-link (click)="routingProjectAssetTab()">
+                        Project Asset
+                    </a>
                 </nav>
                 <router-outlet></router-outlet>
             </div>

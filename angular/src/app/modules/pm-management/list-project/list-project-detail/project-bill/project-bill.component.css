@@ -101,6 +101,80 @@
     background: #c3c3c3;
     border-radius: 5px;
 }
+
+.account-resource-create-btn {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    line-height: 1;
+}
+
+.account-resource-item {
+    background: #fafcff;
+}
+
+.account-resource-text {
+    font-size: 0.95rem;
+}
+
+.account-asset-cell {
+    width: 300px;
+    min-width: 260px;
+    max-width: 320px;
+    overflow: hidden;
+}
+
+.account-asset-item {
+    background: #fafcff;
+    cursor: pointer;
+    max-width: 100%;
+}
+
+.account-asset-item:hover {
+    background: #eef5ff;
+}
+
+.account-asset-text {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 4px;
+    width: 100%;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    min-width: 0;
+}
+
+.account-asset-segment {
+    display: inline-block;
+    flex: 0 1 auto;
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.account-asset-expand-btn {
+    width: fit-content;
+    min-width: 32px;
+    height: 24px;
+    padding: 0 8px;
+    border: 1px solid #d7dee8;
+    border-radius: 4px;
+    background: #fff;
+    color: #495057;
+    line-height: 1;
+}
+
+.account-asset-expand-btn:hover {
+    background: #eef5ff;
+    border-color: #9ec5fe;
+}
+
 @media screen and (max-width: 600px) {
     .invoice-setting, .bill-account {
         height: 100% !important;

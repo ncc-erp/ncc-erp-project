@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ProjectManagement.Constants.Enum;
+using ProjectManagement.Services.ProjectUserBill.Dto;
 using static ProjectManagement.Constants.Enum.ProjectEnum;
 
 namespace ProjectManagement.Services.ProjectUserBill.Dto
@@ -54,5 +55,6 @@ namespace ProjectManagement.Services.ProjectUserBill.Dto
         public string LinkCV { get; set; }
         public List<BillUserSkillDto> UserSkills { get; set; }
         public string SkillNote { get; set; }
+        public List<AccountAssetDto> AccountAssets { get; set; }
     }
 }

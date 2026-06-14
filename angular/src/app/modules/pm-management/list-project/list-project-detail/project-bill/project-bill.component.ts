@@ -7,7 +7,7 @@ import { UserService } from '@app/service/api/user.service';
 import { PERMISSIONS_CONSTANT } from '@app/constant/permission.constant';
 import { AppComponentBase } from '@shared/app-component-base';
 import { UserDto } from '@shared/service-proxies/service-proxies';
-import { projectUserBillDto, ProjectRateDto } from './../../../../../service/model/project.dto';
+import { AccountAssetDto, projectUserBillDto, ProjectRateDto } from './../../../../../service/model/project.dto';
 import { ProjectUserBillService } from './../../../../../service/api/project-user-bill.service';
 import { Component, OnInit, Injector, ViewChildren, QueryList, ChangeDetectorRef, ViewChild } from '@angular/core';
 import * as moment from 'moment';
@@ -21,6 +21,7 @@ import { ProjectInvoiceSettingDto } from '@app/service/model/project-invoice-set
 import { UpdateInvoiceDto } from '@app/service/model/updateInvoice.dto';
 import { MatDialog } from '@angular/material/dialog';
 import { ShadowAccountDialogComponent } from './shadow-account-dialog/shadow-account-dialog.component';
+import { AddAccountAssetDialogComponent } from './add-account-asset-dialog/add-account-asset-dialog.component';
 import { Observable, concat } from 'rxjs';
 import { SortableModel } from '@shared/components/sortable/sortable.component';
 import { ChargeStatusFilter } from '@app/service/model/project-process-criteria-result.dto';
@@ -105,6 +106,8 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
 
   public listAllResource = []
   public listAvailableResource = []
+  public maxVisibleAccountAssets = 2;
+  public expandedAccountAssetRows: { [projectUserBillId: number]: boolean } = {};
 
   editingRows: { [key: number]: { [key: number]: { [key: string]: boolean } } } = {};
   originalContribute: { [key: number]: { [key: number]: { [key: string]: number } } } = {};
@@ -887,6 +890,39 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
     const hasChanged = userBill.isExpose !== userBill.initialIsExpose;
     this.userBillProcess = hasChanged;
     this.showSearchAndFilter = !hasChanged;
+  }
+
+  openAccountAssetDialog(bill: projectUserBillDto, accountAsset?: AccountAssetDto): void {
+    const dialogRef = this.dialog.open(AddAccountAssetDialogComponent, {
+      width: '420px',
+      data: { projectUserBillId: bill.id, accountAsset }
+    });
+
+    dialogRef.afterClosed().subscribe((result?: boolean) => {
+      if (result) {
+        this.getUserBill();
+      }
+    });
+  }
+
+  expandAccountAssets(projectUserBillId: number): void {
+    this.expandedAccountAssetRows[projectUserBillId] = true;
+  }
+
+  collapseAccountAssets(projectUserBillId: number): void {
+    this.expandedAccountAssetRows[projectUserBillId] = false;
+  }
+
+  deleteAccountAsset(accountAsset: AccountAssetDto): void {
+    if (!confirm('Delete this account asset?')) {
+      return;
+    }
+
+    const accountAssetId = accountAsset.id ?? 0;
+
+    this.projectUserBillService.deleteAccountAsset(accountAssetId).subscribe(() => {
+      this.getUserBill();
+    });
   }
 
   openUploadCvDialog(projectUserBill: projectUserBillDto): void {

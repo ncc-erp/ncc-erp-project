@@ -118,6 +118,28 @@ namespace ProjectManagement.APIs.ProjectUserBills
             await projectUserBillManager.UpdateLinkOneLinkedResource(input);
         }
 
+        [HttpPost]
+        public async Task<AccountAssetDto> CreateAccountAsset(AccountAssetDto input)
+        {
+            var entity = ObjectMapper.Map<AccountAsset>(input);
+            return await projectUserBillManager.CreateAccountAsset(entity);
+        }
+
+        [HttpDelete]
+        public async Task DeleteAccountAsset(long accountAssetId)
+        {
+            await projectUserBillManager.DeleteAccountAsset(accountAssetId);
+        }
+
+        [HttpPut]
+        public async Task<AccountAssetDto> UpdateAccountAsset(AccountAssetDto input)
+        {
+            var entity = ObjectMapper.Map<AccountAsset>(input);
+            entity.Id = input.Id;
+
+            return await projectUserBillManager.UpdateAccountAsset(entity);
+        }
+
         [HttpGet]
         public async Task<List<UserDto>> GetAllUser(bool onlyStaff, long projectId, long? currentUserId, bool isIncludedUserInPUB)
         {

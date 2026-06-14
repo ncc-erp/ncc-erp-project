@@ -17,6 +17,7 @@ export class TrainingProjectDetailComponent extends AppComponentBase implements 
   Projects_TrainingProjects_ProjectDetail_TabProjectDescription=PERMISSIONS_CONSTANT.Projects_TrainingProjects_ProjectDetail_TabProjectDescription;
   Projects_TrainingProjects_ProjectDetail_TabProjectFile=PERMISSIONS_CONSTANT.Projects_TrainingProjects_ProjectDetail_TabProjectFile;
   Projects_TrainingProjects_ProjectDetail_TabTimesheet=PERMISSIONS_CONSTANT.Projects_TrainingProjects_ProjectDetail_TabTimesheet;
+  Projects_TrainingProjects_ProjectDetail_TabProjectAsset=PERMISSIONS_CONSTANT.Projects_TrainingProjects_ProjectDetail_TabProjectAsset;
   currentUrl: string = "";
   requestId: string = "";
   projectName:string;
@@ -115,4 +116,13 @@ export class TrainingProjectDetailComponent extends AppComponentBase implements 
     })
   }
 
+  public routingProjectAssetTab(){
+    this.router.navigate(['training-project-asset'],{
+      relativeTo: this.route, queryParams:{
+        id:this.requestId,
+        projectName: this.projectName,
+        projectCode:this.projectCode
+      }
+    })
+  }
 }

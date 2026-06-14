@@ -41,6 +41,7 @@ import { APP_ENUMS } from "@shared/AppEnums";
 import { Utils } from "@shared/Utils";
 import { ProjectUserOnboardingService } from "./../../../../../service/api/project-user-onboarding.service";
 import { OnboardingDialogComponent } from "./onboarding-dialog/onboarding-dialog.component";
+import { UpdateUserAssetDialogComponent } from "../resource-management/update-user-asset-dialog/update-user-asset-dialog.component";
 
 @Component({
   selector: "app-resource-management",
@@ -69,6 +70,11 @@ export class ResourceManagementComponent
     PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserSkill;
   Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserStarSkill =
     PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserStarSkill;
+  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserAsset = 
+    PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserAsset;
+  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserAsset = 
+    PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserAsset;
+
 
   Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource =
     PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource;
@@ -159,6 +165,8 @@ export class ResourceManagementComponent
   public listLevels: any[] = [];
   public listProjectUserRoles: IDNameDto[] = [];
   public isViewAllSkillInfo: boolean = false;
+  public maxVisibleAssets = 2;
+  public expandedAssetRows: { [projectUserId: number]: boolean } = {};
 
   public workingTypeList = Object.keys(this.APP_ENUM.ProjectUserWorkingType);
 
@@ -279,6 +287,60 @@ export class ResourceManagementComponent
         this.planResourceProcess = false;
       }
     });
+  }
+
+  public getProjectAssets(user: any): string[] {
+    const assets = user?.projectAssets || [];
+
+    if (!Array.isArray(assets)) {
+      return [];
+    }
+
+    return assets
+      .map((asset) => {
+        if (typeof asset === "string") {
+          return asset.trim();
+        }
+
+        return asset?.assetName || asset?.name || "";
+      })
+      .filter((asset) => asset && asset.trim().length > 0);
+  }
+
+  public getVisibleProjectAssets(user: any): string[] {
+    const assets = this.getProjectAssets(user);
+
+    return this.expandedAssetRows[user.id]
+      ? assets
+      : assets.slice(0, this.maxVisibleAssets);
+  }
+
+  public expandProjectAssets(projectUserId: number): void {
+    this.expandedAssetRows[projectUserId] = true;
+  }
+
+  public collapseProjectAssets(projectUserId: number): void {
+    this.expandedAssetRows[projectUserId] = false;
+  }
+
+  updateUserAsset(user) {
+    let ref = this.dialog.open(UpdateUserAssetDialogComponent, {
+      width: "700px",
+      data: {
+        currentAssets: this.getProjectAssets(user),
+        userId: user.userId,
+        fullName: user.fullName,
+        projectId: this.projectId
+      }
+    });
+    ref.afterClosed().subscribe(rs => {
+      if (rs) {
+        this.getProjectUser()
+        this.getPlannedtUser()
+        this.projectUserProcess = false;
+        this.planResourceProcess = false;
+      }
+    })
   }
 
   releaseUser(user) {

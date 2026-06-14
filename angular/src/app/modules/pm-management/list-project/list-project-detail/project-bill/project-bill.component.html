@@ -238,6 +238,7 @@
                                             <i *ngIf="sortColumn !== 'linkedResources'" class="fas fa-sort"></i>
                                         </div>
                                 </th>
+                                <th class="align" style="min-width: 240px;">Account Assets</th>
                                 <th class="align column-rate" (click)="sortData('billRate')" style="cursor: pointer; min-width: 100px;"
                                     *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabBillInfo_Rate_View) && !isHideRates">
                                     <div class="col-bill-account"> 
@@ -480,6 +481,54 @@
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
+                                </td>
+                                <td class="account-asset-cell">
+                                    <div class="d-flex flex-column gap-1">
+                                        <button class="btn btn-xs btn-outline-primary account-resource-create-btn mb-1"
+                                                type="button"
+                                                (click)="openAccountAssetDialog(bill)"
+                                                [matTooltip]="'Create account asset'">
+                                            <i class="fa fa-plus"></i>
+                                        </button>
+                                        <div *ngIf="bill.accountAssets?.length; else noAccountAsset" class="d-flex flex-column gap-1">
+                                            <div *ngFor="let ar of bill.accountAssets | slice:0:(expandedAccountAssetRows[bill.id] ? bill.accountAssets.length : maxVisibleAccountAssets)"
+                                                class="d-flex align-items-center border rounded p-1 account-asset-item"
+                                                [matMenuTriggerFor]="accountAssetMenu"
+                                                [matTooltip]="(ar.assetName || '') + ' (' + (ar.accountAssetCreatorName || '') + ') (' + (ar.accountTypeName || '') + '): ' + (ar.typeLogin || '')">
+                                                <span class="account-asset-text">
+                                                    <strong class="account-asset-segment">{{ ar.assetName || 'Unnamed' }}</strong>
+                                                    <span class="account-asset-segment">[{{ ar.accountAssetCreatorName || 'Unknown creator' }}]</span>
+                                                    <span class="account-asset-segment">[{{ ar.accountTypeName || 'Unknown type' }}]</span>
+                                                    <span class="account-asset-segment">[{{ ar.typeLogin || '' }}]</span>
+                                                </span>
+                                                <mat-menu #accountAssetMenu="matMenu" class="p-2">
+                                                    <button mat-menu-item (click)="openAccountAssetDialog(bill, ar)">
+                                                        <i class="fas fa-edit mr-2 text-secondary"></i>
+                                                        <span>Edit Asset</span>
+                                                    </button>
+                                                    <button mat-menu-item (click)="deleteAccountAsset(ar)">
+                                                        <i class="fas fa-trash mr-2 text-danger"></i>
+                                                        <span>Delete Asset</span>
+                                                    </button>
+                                                </mat-menu>
+                                            </div>
+                                            <button *ngIf="!expandedAccountAssetRows[bill.id] && bill.accountAssets.length > maxVisibleAccountAssets"
+                                                type="button"
+                                                class="account-asset-expand-btn"
+                                                (click)="expandAccountAssets(bill.id)">
+                                                ...
+                                            </button>
+                                            <button *ngIf="expandedAccountAssetRows[bill.id] && bill.accountAssets.length > maxVisibleAccountAssets"
+                                                type="button"
+                                                class="account-asset-expand-btn"
+                                                (click)="collapseAccountAssets(bill.id)">
+                                                ^
+                                            </button>
+                                        </div>
+                                        <ng-template #noAccountAsset>
+                                            <small class="text-muted">No account asset</small>
+                                        </ng-template>
                                     </div>
                                 </td>
                                 <td class="text-center"

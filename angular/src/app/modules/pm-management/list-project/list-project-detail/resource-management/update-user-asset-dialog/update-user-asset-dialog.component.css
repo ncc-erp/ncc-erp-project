@@ -1,0 +1,55 @@
+.card-header {
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 1rem;
+}
+
+.card-header h4 {
+  margin-bottom: 0;
+  font-weight: 600;
+}
+
+.btn-action {
+  min-width: 100px;
+}
+
+mat-spinner {
+  display: inline-block !important;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.justify-content-end {
+  justify-content: flex-end;
+}
+
+.mt-3 {
+  margin-top: 1rem !important;
+}
+
+.mr-2 {
+  margin-right: 0.5rem !important;
+}
+
+.ml-3 {
+  margin-left: 1rem;
+}
+
+.ml-4 {
+  margin-left: 1.5rem;
+}
+
+.mb-2 {
+  margin-bottom: 0.5rem;
+}
+
+.px-3 {
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
+}
+
+.px-0 {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}

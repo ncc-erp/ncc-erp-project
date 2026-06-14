@@ -19,6 +19,8 @@ export class ProductProjectDetailComponent extends AppComponentBase implements O
   Projects_ProductProjects_ProjectDetail_TabProjectDescription=PERMISSIONS_CONSTANT.Projects_ProductProjects_ProjectDetail_TabProjectDescription;
   Projects_ProductProjects_ProjectDetail_TabProjectFile=PERMISSIONS_CONSTANT.Projects_ProductProjects_ProjectDetail_TabProjectFile;
   Projects_ProductProjects_ProjectDetail_TabTimesheet=PERMISSIONS_CONSTANT.Projects_ProductProjects_ProjectDetail_TabTimesheet;
+  Projects_ProductProjects_ProjectDetail_TabProjectAsset=PERMISSIONS_CONSTANT.Projects_ProductProjects_ProjectDetail_TabProjectAsset;
+
 
   public currentUrl: string= '';
   requestId: string = "";
@@ -129,5 +131,13 @@ export class ProductProjectDetailComponent extends AppComponentBase implements O
     })
   }
 
-
+  public routingProjectAssetTab(){
+    this.router.navigate(['product-project-asset'],{
+      relativeTo: this.route, queryParams:{
+        id:this.requestId,
+        projectName: this.projectName,
+        projectCode:this.projectCode
+      }
+    })
+  }
 }

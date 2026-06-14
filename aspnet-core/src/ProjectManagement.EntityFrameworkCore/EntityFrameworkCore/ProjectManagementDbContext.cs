@@ -105,10 +105,30 @@ namespace ProjectManagement.EntityFrameworkCore
         public DbSet<Punishment> Punishments { get; set; }
         public DbSet<WeeklyContributionHistory> WeeklyContributionHistories { get; set; }
         public DbSet<ProjectWeeklySummary> ProjectWeeklySummaries { get; set; }
+        //public DbSet<ProjectDailyReport> ProjectDailyReports { get; set; }
+        public DbSet<ProjectUserOnboarding> ProjectUserOnboardings { get; set; }
+        public DbSet<ProjectUserOnboardingDetail> ProjectUserOnboardingDetails { get; set; }
+        public DbSet<OnboardingChecklist> OnboardingChecklists { get; set; }
+        public DbSet<OffboardUser> OffboardUsers { get; set; }
+        public DbSet<ProjectAsset> ProjectAssets { get; set; }
+        public DbSet<ProjectUserAsset> ProjectUserAssets { get; set; }
+        public DbSet<AccountAssetCreator> AccountAssetCreators { get; set; }
+        public DbSet<AccountType> AccountTypes { get; set; }
+        public DbSet<ProjectAssetType> ProjectAssetTypes { get; set; }
+        public DbSet<AccountAsset> AccountAssets { get; set; }
+        public DbSet<ConfigIT> ConfigITs { get; set; }
         public DbSet<MeetingReportCriteria> MeetingReportCriterias { get; set; } 
         public ProjectManagementDbContext(DbContextOptions<ProjectManagementDbContext> options)
             : base(options)
         {
+        }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<ProjectUser>()
+                .HasOne(p => p.Onboarding)
+                .WithOne(o => o.ProjectUser)
+                .HasForeignKey<ProjectUserOnboarding>(o => o.ProjectUserId);
         }
     }
 }

@@ -165,7 +165,31 @@ export class ViewBillComponent extends AppComponentBase implements OnInit {
     }
     billDetail.otTypes.push(newOt);
 
-    billDetail.pendingOtChanges.added.push(newOt);
+   if (!billDetail.isEditing) {
+      const payload = {
+        timesheetProjectBillId: billDetail.id,
+        projectOtTypeId: newOt.projectOtTypeId,
+        hours: newOt.otHours,
+        mode: 0,
+      };
+
+      this.timesheetProjectBillService
+        .createOrUpdateTimesheetBillOt(payload)
+        .pipe(catchError(this.timesheetProjectBillService.handleError))
+        .subscribe(
+          (response) => {
+            newOt.id = response?.result || response;
+            newOt.isNew = false;
+            billDetail.originalOtTypes = JSON.parse(JSON.stringify(billDetail.otTypes));
+            abp.notify.success(`Update successfull`);
+          },
+          () => {
+            billDetail.otTypes = billDetail.otTypes.filter((item) => item !== newOt);
+          }
+        );
+    } else {
+      billDetail.pendingOtChanges.added.push(newOt);
+    }
 
     // Reset form
     billDetail.createTimesheetBillOtMode = false;

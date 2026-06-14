@@ -19,6 +19,7 @@ namespace ProjectManagement.Services.ResourceService.Dto
     public class InputGetAllResourceDto : GridParam
     {
         public List<UserType> UserTypes { get; set; }
+        public List<UserLevel> UserLevels { get; set; }
         public List<long> BranchIds { get; set; }
         public List<long> PositionIds { get; set; }
         public List<long> SkillIds { get; set; }

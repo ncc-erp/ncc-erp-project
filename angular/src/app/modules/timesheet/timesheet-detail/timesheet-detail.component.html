@@ -132,7 +132,7 @@
     <div class="card">
       <div class="card-header">
         <div class="row g-3">
-          <div class="input-group col-8 pt-1">
+          <div class="input-group col-6 pt-1">
             <div class="input-group-prepend">
               <button type="button" class="btn bg-blue btn-search" (click)="searchProjectTS();">
                 <i class="fas fa-search"></i>
@@ -194,6 +194,11 @@
                 </mat-form-field>
               </div>
             </div>
+          </div>
+          <div class="px-3 py-2">
+            <mat-checkbox [(ngModel)]="viewMultipliedOtTime" name="viewMultipliedOtTime">
+              View Multiplied OT Time
+            </mat-checkbox>
           </div>
         </div>
       </div>
@@ -285,6 +290,9 @@
                         <label *ngIf="isGranted(Timesheets_TimesheetDetail_ViewBillRate)">
                           Total: {{item.projectBillInfomation.length}}
                         </label>
+                        <span class="ml-3 font-weight-bold" *ngIf="item.totalRawOtDays > 0 || item.totalMultipliedOtDays > 0">
+                          Total OT: {{viewMultipliedOtTime ? item.totalMultipliedOtDays : item.totalRawOtDays}} days
+                        </span>
                       </div>
                       <div class="col-2" *ngIf="isGranted(Timesheets_TimesheetDetail_ViewBillRate)">
                         <label>
@@ -315,12 +323,9 @@
                             <span>{{getTotalWorkingTime(bill)}}d</span>
                             <span> (</span>
                             <span [matTooltip]="'Normal working day'">{{bill.workingTime}}d</span>
-                            <ng-container *ngFor="let otType of bill.timesheetProjectBillOtTypes; let i = index">
-                              <span> / </span>
-                              <span [matTooltip]="'OT ' + (otType.otType || 'Type')">
-                                {{getOtDays(otType.hours)}}d x {{otType.multiplier}}
-                              </span>
-                            </ng-container>
+                            <span *ngIf="viewMultipliedOtTime">/</span>
+                            <span *ngIf="!viewMultipliedOtTime">/</span>
+                            <span [matTooltip]="getOtTooltip(bill)">OT: {{getDisplayedOtDays(bill)}}d</span>
                             <span>)</span>
                           </ng-container>
                           <ng-container

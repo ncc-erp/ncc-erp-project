@@ -75,20 +75,18 @@
 }
 
 .change-role {
-    width: 135px; 
+    width: 165px; 
     display: flex; 
     align-items: center; 
-    margin-left: -20px;
+    padding: 0 10px;
 }
 
 .filter-link-resource {
     display: flex; 
     align-items: center; 
-    margin-left: -20px;
 }
 
 .bill-search {
-    margin-left: 10px; 
     width: 100%;
 }
 

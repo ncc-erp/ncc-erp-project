@@ -167,6 +167,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
             UpdateInvoiceSetting(paggingProjects, dicProjectIdToInvoiceInfo);
             UpdateInvoiceSetting(allProjects, dicProjectIdToInvoiceInfo);
             UpdateInvoiceSetting(allProjectFilters, dicProjectIdToInvoiceInfo);
+            UpdateProjectOtTotals(paggingProjects);
             paggingProjects = GetClosedTimeTimesheetProject(paggingProjects);
             var total = await queryFilter.CountAsync();
             var gridResult = new GridResult<GetTimesheetDetailDto>(paggingProjects, total);
@@ -217,6 +218,42 @@ namespace ProjectManagement.APIs.TimesheetProjects
                                              }).ToDictionary(s => s.ProjectId, s => s.InvoiceInfo);
 
             return dicProjectIdToInvoiceInfo;
+        }
+
+        private void UpdateProjectOtTotals(List<GetTimesheetDetailDto> listProject)
+        {
+            if (listProject == null) return;
+
+            foreach (var dto in listProject)
+            {
+                if (dto.ProjectBillInfomation == null) continue;
+
+                double totalRaw = 0;
+                double totalMultiplied = 0;
+
+                foreach (var bill in dto.ProjectBillInfomation)
+                {
+                    double billRaw = 0;
+                    double billMultiplied = 0;
+
+                    if (bill.TimesheetProjectBillOtTypes != null)
+                    {
+                        foreach (var ot in bill.TimesheetProjectBillOtTypes)
+                        {
+                            var rawDays = (double)ot.Hours / 8.0;
+
+                            billRaw += rawDays;
+                            billMultiplied += rawDays * ot.Multiplier;
+                        }
+                    }
+
+                    totalRaw += Math.Round(billRaw, 3);
+                    totalMultiplied += Math.Round(billMultiplied, 3);
+                }
+
+                dto.TotalRawOtDays = Math.Round(totalRaw, 3);
+                dto.TotalMultipliedOtDays = Math.Round(totalMultiplied, 3);
+            }
         }
 
         private void UpdateInvoiceSetting(List<GetTimesheetDetailDto> listToUpdate, Dictionary<long, InvoiceSettingDto> dicProjectIdToInvoiceInfo)

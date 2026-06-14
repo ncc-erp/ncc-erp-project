@@ -3,7 +3,7 @@ import { SubInvoice } from './../model/bill-info.model';
 import { Observable } from 'rxjs';
 import { BaseApiService } from './base-api.service';
 
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ParentInvoice } from '../model/bill-info.model';
 import { ApiResponse } from '../model/api-response.dto';
@@ -137,6 +137,10 @@ export class ProjectUserBillService extends BaseApiService {
     formData.append('Id', request.id.toString());
     formData.append('SelectedFile', request.selectedFile);
     return this.http.post<any>(this.rootUrl + '/UploadCvBillAccount', formData);
+  }
+  
+  ExportToExcel(input): Observable<any> {
+    return this.http.post<any>(this.rootUrl + `/ExportToExcel`, input);
   }
   //#endregion
 }

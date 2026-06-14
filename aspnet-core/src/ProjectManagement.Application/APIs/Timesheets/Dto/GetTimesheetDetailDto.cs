@@ -117,6 +117,8 @@ namespace ProjectManagement.APIs.Timesheets.Dto
         public ProjectStatus ProjectStatus { get; set; }
         public string CloseTime { get; set; }
         public string ListProjectCodes { get; set; }
+        public double TotalRawOtDays { get; set; }
+        public double TotalMultipliedOtDays { get; set; }
     }
 
     public class IdNameDto

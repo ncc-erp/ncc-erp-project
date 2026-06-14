@@ -156,13 +156,13 @@ button {
      background-color: #eaebec;
  }
 
-:host ::ng-deep .mat-checkbox-inner-container.mat-checkbox-inner-container-no-side-margin {
+ :host ::ng-deep .mat-checkbox-inner-container.mat-checkbox-inner-container-no-side-margin {
      margin-top: 80%;
  }
 
 :host ::ng-deep .mat-content{
-    align-items: center;
-}
+     align-items: center;
+ }
  /* .project-list {
   height: 150px;
   padding-top: 20px;
@@ -339,166 +339,211 @@ button {
      border: 2px solid;
  }
  .hyperlink {
-    color: black;
-}
+     color: black;
+ }
 
-.hyperlink:hover {
-    color: rgb(45, 57, 160);
-    text-decoration: underline;
-}
+ .hyperlink:hover {
+     color: rgb(45, 57, 160);
+     text-decoration: underline;
+ }
 
-.weekly-report-left {
-    width: 59%;
-}
-  
-.weekly-report-right {
-    width: 40%;
-}
+ .weekly-report-left {
+     width: 59%;
+ }
 
-.btn-add {
-    width: calc(88% - 5px);
-}
+ .weekly-report-right {
+     width: 40%;
+ }
 
-.weekly-report-dialog {
-    width: 60%;
-}
+ .btn-add {
+     width: calc(88% - 5px);
+ }
 
-.status-weekly-report {
-    width: 220px;
-    margin-left: 10px !important
-}
+ .weekly-report-dialog {
+     width: 60%;
+ }
 
-.select-pm-report {
-    width: 205px;
-}
+ .meeting-report-actions button {
+     min-width: 40px;
+ }
 
-.future-resource-dialog {
-    width: 700px;
-}
+ .meeting-report-scroll {
+     max-height: 700px;
+     overflow-y: auto;
+     overflow-x: hidden;
+     padding-right: 6px;
+ }
 
-.td-fixed-width-100 {
-    width: 100px;
-    box-sizing: border-box;
-    white-space: break-spaces;
-}
+ .meeting-content-preview {
+    font-size: 16px;
+        white-space: pre-line;
+        overflow: visible;
+ }
 
-@media screen and (max-width: 600px) {
+ :host ::ng-deep .meeting-status-select.text-success .mat-form-field-outline {
+     background: #28a745;
+     border-radius: 5px;
+ }
+
+ :host ::ng-deep .meeting-status-select.text-warning .mat-form-field-outline {
+     background: #ffc107;
+     border-radius: 5px;
+ }
+
+ :host ::ng-deep .meeting-status-select.text-danger .mat-form-field-outline {
+     background: #dc3545;
+     border-radius: 5px;
+ }
+
+ :host ::ng-deep .meeting-status-select.text-success .mat-select-value,
+ :host ::ng-deep .meeting-status-select.text-danger .mat-select-value {
+     color: #fff;
+ }
+
+ :host ::ng-deep .meeting-status-select.text-warning .mat-select-value {
+     color: #000;
+ }
+
+ .status-weekly-report {
+     width: 220px;
+     margin-left: 10px !important
+ }
+
+ .select-pm-report {
+     width: 205px;
+ }
+
+ .future-resource-dialog {
+     width: 700px;
+ }
+
+ .td-fixed-width-100 {
+     width: 100px;
+     box-sizing: border-box;
+     white-space: break-spaces;
+ }
+
+ @media screen and (max-width: 600px) {
     .weekly-report-left, .weekly-report-right {
-        width: 100%;
-    }
+         width: 100%;
+     }
 
-    .row-pm-report {
-        gap: 10px;
-        margin-top: 12px !important;
-    }
+     .row-pm-report {
+         gap: 10px;
+         margin-top: 12px !important;
+     }
 
-    :host ::ng-deep .row-pm-report .mat-form-field {
-        margin-left: 0 !important;
-    }
+     :host ::ng-deep .row-pm-report .mat-form-field {
+         margin-left: 0 !important;
+     }
 
-    .row-criteria-result {
-        align-items: normal !important;
-    }
+     .row-criteria-result {
+         align-items: normal !important;
+     }
 
-    .fixTableHead {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-        margin: 10px 0;
-    }
+     .fixTableHead {
+         display: flex;
+         flex-direction: column;
+         gap: 20px;
+         margin: 10px 0;
+     }
 
-    .field-pm-note {
-        margin-left: 0 !important;
-    }
+     .field-pm-note {
+         margin-left: 0 !important;
+     }
 
-    .btn-add {
-        width: fit-content;
-    }
+     .btn-add {
+         width: fit-content;
+     }
 
-    .title-resources {
-        flex-wrap: wrap;
-    }
+     .title-resources {
+         flex-wrap: wrap;
+     }
 
-    .checkbox-view-sub-project {
-        display: none;
-    }
+     .checkbox-view-sub-project {
+         display: none;
+     }
 
-    .title-resources-expand {
-        margin-top: 20px;
-        margin-bottom: 10px;
-    }
+     .title-resources-expand {
+         margin-top: 20px;
+         margin-bottom: 10px;
+     }
 
-    .text-editor {
-        padding: 0 2px;
-        padding-top: 10px;
-    }
+     .text-editor {
+         padding: 0 2px;
+         padding-top: 10px;
+     }
 
-    .title-weekly {
-        justify-content: flex-start !important;
-    }
+     .title-weekly {
+         justify-content: flex-start !important;
+     }
 
-    .content {
-        padding-left: 0 !important;
-        padding-right: 0 !important;
-    }
+     .content {
+         padding-left: 0 !important;
+         padding-right: 0 !important;
+     }
 
-    .mt-6 {
-        margin-top: 6px;
-    }
+     .mt-6 {
+         margin-top: 6px;
+     }
 
-    .weekly-report-dialog {
-        width: 100%;
-    }
+     .weekly-report-dialog {
+         width: 100%;
+     }
 
-    ::ng-deep .cdk-overlay-container .cdk-global-overlay-wrapper .add-risk-dialog,
-    ::ng-deep .cdk-overlay-container .cdk-global-overlay-wrapper .add-edit-issue-dialog,
-    ::ng-deep .cdk-overlay-container .cdk-global-overlay-wrapper .future-resource-dialog {
-        width: 100%;
-        max-width: 100vw !important;
-        padding: 0 15px;
-    }
+     ::ng-deep .cdk-overlay-container .cdk-global-overlay-wrapper .add-risk-dialog,
+     ::ng-deep .cdk-overlay-container .cdk-global-overlay-wrapper .add-edit-issue-dialog,
+     ::ng-deep .cdk-overlay-container .cdk-global-overlay-wrapper .future-resource-dialog {
+         width: 100%;
+         max-width: 100vw !important;
+         padding: 0 15px;
+     }
 
-    .select-status-criteria {
-        align-items: normal !important;
-        height: fit-content;
-    }
+     .select-status-criteria {
+         align-items: normal !important;
+         height: fit-content;
+     }
 
-    :host ::ng-deep .select-status-criteria .mat-button {
-        min-width: 100%;
-        line-height: 44px;
-        padding-right: 0;
-    }
+     :host ::ng-deep .select-status-criteria .mat-button {
+         min-width: 100%;
+         line-height: 44px;
+         padding-right: 0;
+     }
 
-    .action-report {
-        padding-top: 12px;
-    }
+     .action-report {
+         padding-top: 12px;
+     }
 
-    .weekly-report-container {
-        margin: 0;
-    }
+     .weekly-report-container {
+         margin: 0;
+     }
 
-    .row-pm-note {
-        margin-top: -10px;
-        margin-bottom: 10px;
-    }
+     .row-pm-note {
+         margin-top: -10px;
+         margin-bottom: 10px;
+     }
 
-    .card {
-        border-radius: 0;
-    }
+     .card {
+         border-radius: 0;
+     }
 
-    .table-responsive {
-        padding-bottom: 15px;
-    }
+     .table-responsive {
+         padding-bottom: 15px;
+     }
 
-    :host ::ng-deep .content .mat-expansion-panel-body {
-        padding: 0;
-    }
+     :host ::ng-deep .content .mat-expansion-panel-body {
+         padding: 0;
+     }
 
-    .pannel-header-current-resource {
-        height: fit-content !important;
-    }
+     .pannel-header-current-resource {
+         height: fit-content !important;
+     }
 
-    .col-note-resources {
-        min-width: 80px;
-    }
-}
+     .col-note-resources {
+         min-width: 80px;
+     }
+ }
+
+ .meeting-report-apply-row {
+     margin-top: 1.75rem;
+ }

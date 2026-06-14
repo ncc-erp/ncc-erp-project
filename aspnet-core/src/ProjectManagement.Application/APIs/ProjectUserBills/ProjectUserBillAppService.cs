@@ -893,12 +893,19 @@ namespace ProjectManagement.APIs.ProjectUserBills
             }
             await WorkScope.UpdateRangeAsync(userSkillUpdates);
         }
-        
+            
         [HttpPost]
         [AbpAuthorize]
         public async Task<GetCvBillAccountDto> UploadCvBillAccount([FromForm] UploadCvBillAccountDto input)
         {
             return await projectUserBillManager.UploadCvBillAccount(input);
+        }
+
+        [HttpPost]
+        [AbpAuthorize]
+        public async Task<FileBase64Dto> ExportToExcel(GetAllProjectUserBillDto input)
+        {
+            return await projectUserBillManager.ExportBillAccountToExcel(input);
         }
     }
 }

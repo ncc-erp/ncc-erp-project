@@ -396,5 +396,12 @@
             PMAccept = 2,
             Done = 3
         }
+        public enum MeetingReportCriteriaStatus
+        {
+            Red = 3,
+            Yellow = 2,
+            Green = 1,
+            NotAvailable = 0
+        }
     }
 }

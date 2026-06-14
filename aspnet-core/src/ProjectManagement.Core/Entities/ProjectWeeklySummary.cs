@@ -9,8 +9,6 @@ namespace ProjectManagement.Entities
 {
     public class ProjectWeeklySummary : FullAuditedEntity<long>, IMayHaveTenant
     {
-        public string OverallSummary { get; set; }
-
         [ForeignKey(nameof(ProjectId))]
         public Project Project { get; set; }
 
@@ -21,7 +19,7 @@ namespace ProjectManagement.Entities
 
         public long PMReportId { get; set; }
         
-        public virtual ICollection<ProjectDailyReport> DailyReports { get; set; }
+        public virtual ICollection<MeetingReportCriteria> DailyReports { get; set; }
         public int? TenantId { get; set; }
 
     }

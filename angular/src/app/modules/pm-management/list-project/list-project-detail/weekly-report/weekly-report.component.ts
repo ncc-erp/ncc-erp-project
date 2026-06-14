@@ -20,7 +20,7 @@ import {
 } from "./../../../../../service/model/project.dto";
 import { UserService } from "./../../../../../service/api/user.service";
 import { UserDto } from "./../../../../../../shared/service-proxies/service-proxies";
-import { catchError } from "rxjs/operators";
+import { catchError, finalize  } from "rxjs/operators";
 import { AppComponentBase } from "@shared/app-component-base";
 import { ActivatedRoute } from "@angular/router";
 import { PMReportProjectService } from "./../../../../../service/api/pmreport-project.service";
@@ -42,7 +42,7 @@ import { TimesheetProjectService } from "@app/service/api/timesheet-project.serv
 import { ProjectCriteriaResultService } from "../../../../../service/api/project-criteria-result.service";
 import { ProjectCriteriaResultDto } from "../../../../../service/model/project-criteria-result.dto";
 import { ProjectDailyMeetingService } from "../../../../../service/api/project-daily-meeting.service";
-import { ProjectDailyMeetingDto, ProjectDailyReportDto } from "../../../../../service/model/project-daily-meeting.dto";
+import { MeetingReportCriteriaDetailDto, GetProjectDailyMeetingsDto } from "../../../../../service/model/project-daily-meeting.dto";
 import { cloneDeep } from "lodash-es";
 import { map } from "rxjs/operators";
 import { Observable, Observer } from "rxjs";
@@ -125,6 +125,8 @@ export class WeeklyReportComponent
   public futureReportList: projectReportDto[] = [];
   public problemList: projectProblemDto[] = [];
   public problemIssueList: string[] = Object.keys(this.APP_ENUM.ProjectHealth);
+  public meetingCriteriaStatusKeys: string[] = Object.keys(this.APP_ENUM.MeetingReportCriteriaStatus);
+  public weeklySummaryData = {} as any;
   public projectRoleList: string[] = Object.keys(this.APP_ENUM.ProjectUserRole);
   public issueStatusList: string[] = Object.keys(
     this.APP_ENUM.PMReportProjectIssueStatus,
@@ -160,9 +162,7 @@ export class WeeklyReportComponent
   public isShowWeeklyList: boolean = false;
   public isShowFutureList: boolean = false;
   public projectInfo = {} as ProjectInfoDto;
-  public weeklySummaryData = {} as ProjectDailyMeetingDto;
-  public overallSummary: string = "";
-  public listDailyReports: ProjectDailyReportDto[] = [];
+  public listDailyReports: any[] = [];
   public projectCurrentResource: any = [];
   public mondayOf5weeksAgo: any;
   public lastWeekSunday: any;
@@ -196,7 +196,7 @@ export class WeeklyReportComponent
   public listCriteria: ProjectCriteriaDto[] = [];
   public listCriteriaResult: ProjectCriteriaResultDto[] = [];
   public listPreEditCriteriaResult: ProjectCriteriaResultDto[] = [];
-  public listPreEditDailyReports: ProjectDailyReportDto[] = [];
+  public listPreEditDailyReports: any[] = [];
   public bgFlag: string = "";
   public status: string = "";
   public processCriteria: boolean = false;
@@ -204,6 +204,7 @@ export class WeeklyReportComponent
   public isShowActionRisk: boolean;
   public isShowOptionNotRp: boolean = true;
   public isValidCriteria: boolean;
+  public isSyncingMeetingReport: boolean = false;
 
   totalNormalWorkingTimeOfWeekly: number = 0;
   totalNormalWorkingTime1: number = 0;
@@ -526,12 +527,8 @@ export class WeeklyReportComponent
 
   public getProjectDailyMeeting() {
     if (!this.selectedReport || !this.selectedReport.reportId) {
-      this.overallSummary = "";
-      this.listDailyReports = [];
       return;
     }
-
-    this.listDailyReports = [];
 
     this.pjDailyMeetingService
       .getProjectWeeklySummary(this.projectId, this.selectedReport.reportId)
@@ -541,25 +538,107 @@ export class WeeklyReportComponent
 
           this.weeklySummaryData = {
             id: raw.id,
-            projectId: raw.projectId,
-            pmReportId: raw.pmReportId,
-            summary: raw.summary,
+            projectId: raw.projectId || this.projectId,
+            pmReportId: raw.pmReportId || this.selectedReport.reportId,
             editMode: false,
-            dailyReports: raw.dailyReports.map(item => ({
+            criterias: (raw.criterias || []).map((item: MeetingReportCriteriaDetailDto) => ({
               ...item,
+              originalContent: item.content ?? '',
               editMode: false
-            }))
+            })),
           };
-          this.overallSummary = this.weeklySummaryData.summary;
-          this.listDailyReports = this.weeklySummaryData.dailyReports;
-        } else {
-          this.overallSummary = "";
-          this.listDailyReports = [];
         }
-        this.listPreEditDailyReports = cloneDeep(this.listDailyReports);
+        else {
+          this.weeklySummaryData = {} as GetProjectDailyMeetingsDto
+        }
       });
   }
 
+  public syncMeetingCriteria() {
+    if (this.isSyncingMeetingReport) {
+      return;
+    }
+
+    this.isSyncingMeetingReport = true;
+
+    this.pjDailyMeetingService
+      .syncProjectWeeklyReport(this.projectId)
+      .subscribe(
+        (res) => {
+          const result = res?.result ?? res;
+          const success = !!result?.success;
+
+          if (!success) {
+            abp.notify.error(result?.message || 'Sync data failed');
+            return;
+          }
+
+          this.getProjectDailyMeeting();
+          abp.notify.success(result?.message || 'Sync data successfully');
+        },
+        () => {
+          abp.notify.error('Sync data failed');
+        },
+      )
+      .add(() => {
+        this.isSyncingMeetingReport = false;
+      });
+  }
+
+  public changeMeetingCriteriaStatus(criteria: any) {
+    const payload = {
+      criteriaName: criteria.criteriaName,
+      content: criteria.content ?? '',
+      status: criteria.status,
+    };
+    this.pjDailyMeetingService.updateMeetingReportCriteria(criteria.id, payload).subscribe(
+      () => abp.notify.success(`Updated status for "${criteria.criteriaName}" successfully`),
+    );
+  }
+
+  public editMeetingCriteria(criteria: any) {
+    criteria.editMode = true;
+    criteria._editContent = criteria.originalContent;
+    criteria._editStatus = criteria.status;
+  }
+
+  public cancelEditMeetingCriteria(criteria: any) {
+    criteria.editMode = false;
+    criteria.originalContent = criteria._editContent;
+    criteria.status = criteria._editStatus;
+  }
+
+  public saveMeetingCriteria(criteria: any) {
+    const payload = {
+      criteriaName: criteria.criteriaName,
+      content: criteria.originalContent ?? '',
+      status: criteria.status,
+    };
+    this.pjDailyMeetingService.updateMeetingReportCriteria(criteria.id, payload).subscribe(
+      () => {
+        abp.notify.success(`Updated "${criteria.criteriaName}" successfully`);
+        criteria.content = criteria.originalContent;
+        criteria.editMode = false;
+      },
+    );
+  }
+
+  public deleteMeetingCriteria(criteria: any) {
+    abp.message.confirm(
+      `Are you sure you want to delete "${criteria.criteriaName}"?`,
+      '',
+      (result: boolean) => {
+        if (result) {
+          this.pjDailyMeetingService.deleteMeetingReportCriteria(criteria.id).subscribe(() => {
+            abp.notify.success(`Deleted "${criteria.criteriaName}" successfully`);
+            this.weeklySummaryData.criterias = this.weeklySummaryData.criterias.filter(
+              (c) => c.id !== criteria.id
+            );
+          });
+        }
+      }
+    );
+  }
   onChangeStatusProject() {
     this.pjCriteriaResultService
       .updateStatus(
@@ -741,11 +820,16 @@ export class WeeklyReportComponent
   }
 
   getProjectInfo(cancel?: boolean) {
-    this.isLoading = true;
     if (this.selectedReport.pmReportProjectId) {
+      this.isLoading = true;
       this.pmReportProjectService
         .GetInfoProject(this.selectedReport.pmReportProjectId)
-        .pipe(catchError(this.pmReportProjectService.handleError))
+        .pipe(
+          catchError(this.pmReportProjectService.handleError),
+          finalize(() => {
+            this.isLoading = false;
+          }),
+        )
         .subscribe(
           (data) => {
             this.projectInfo = data.result;
@@ -773,7 +857,7 @@ export class WeeklyReportComponent
             });
           },
           () => {
-            this.isLoading = false;
+            // this.isLoading = false;
           },
         );
     }
@@ -1486,6 +1570,7 @@ export class WeeklyReportComponent
   public onReportchange() {
     this.getFuturereport();
     this.getProjectProblem();
+    this.getProjectDailyMeeting();
     this.getProjectInfo();
     this.getAllCriteria();
     this.getRiskOfTheWeek();
@@ -2427,49 +2512,5 @@ export class WeeklyReportComponent
     //   return "Each Bill Account must have at least 1 Linked Resource!";
     // }
     return "";
-  }
-
-  public saveOverallSummary() {
-    const payload = {
-      id: this.weeklySummaryData.id,
-      summary: this.overallSummary
-    };
-
-    this.pjDailyMeetingService.updateSummary(payload).subscribe((res) => {
-      abp.notify.success("Update Weekly Summary successfully");
-      this.weeklySummaryData.editMode = false;
-
-      if (res && res.result) {
-        this.weeklySummaryData.summary = res.result.summary;
-        this.overallSummary = res.result.summary;
-      }
-    });
-  }
-
-  public cancelEditSummary() {
-    this.overallSummary = this.weeklySummaryData.summary;
-    this.weeklySummaryData.editMode = false;
-  }
-
-  public saveDailyDetail(item: ProjectDailyReportDto, index: number) {
-    const payload = {
-      id: item.id,
-      content: item.content
-    };
-
-    this.pjDailyMeetingService.updateDailyReport(payload).subscribe((res) => {
-      abp.notify.success(`Update Daily Report successfully`);
-      item.editMode = false;
-
-      if (res && res.result) {
-        item.content = res.result.content;
-        this.listPreEditDailyReports[index].content = item.content;
-      }
-    });
-  }
-
-  public cancelEditDailyReport(index: number) {
-    this.listDailyReports[index].content = this.listPreEditDailyReports[index].content;
-    this.listDailyReports[index].editMode = false;
   }
 }

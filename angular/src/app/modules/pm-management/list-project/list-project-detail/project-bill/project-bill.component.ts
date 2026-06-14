@@ -2,7 +2,7 @@ import { result } from 'lodash-es';
 import { AddSubInvoiceDialogComponent } from './add-sub-invoice-dialog/add-sub-invoice-dialog.component';
 import { ParentInvoice, SubInvoice } from './../../../../../service/model/bill-info.model';
 import { ActivatedRoute, Router } from '@angular/router';
-import { catchError } from 'rxjs/operators';
+import { catchError, finalize } from 'rxjs/operators';
 import { UserService } from '@app/service/api/user.service';
 import { PERMISSIONS_CONSTANT } from '@app/constant/permission.constant';
 import { AppComponentBase } from '@shared/app-component-base';
@@ -37,6 +37,7 @@ import { UploadCvBillAccountComponent } from '@shared/components/upload-cv-bill-
 import { GetCvBillAccountDto } from '@app/service/model/upload-cv.dto';
 import { FileHandlerService } from '@app/service/utility/file-handler.service';
 import { IGetUserInfo } from '@app/service/model/user.inteface';
+import { SelectionModel } from '@angular/cdk/collections';
 
 @Component({
   selector: 'app-project-bill',
@@ -46,9 +47,9 @@ import { IGetUserInfo } from '@app/service/model/user.inteface';
 
 export class ProjectBillComponent extends AppComponentBase implements OnInit {
   public userBillList: projectUserBillDto[] = [];
-  private filteredUserBillList: projectUserBillDto[] = [];
+  public filteredUserBillList: projectUserBillDto[] = [];
   public totalHeadCount:number;
-
+  public selection = new SelectionModel<number>(true, []);
   public filteredChargeRoles: any;
   public userForUserBill: UserDto[] = [];
   public userIdOld: number;
@@ -102,7 +103,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
 
   public selectedLinkedResources: number[] = [];
   public listSelectLinkedResources: optionDto[] = [];
-  public isHideRates:boolean = false;
+  public isHideRates:boolean = true;
 
   public listAllResource = []
   public listAvailableResource = []
@@ -937,6 +938,33 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
         );
       }
     });
+  }
+  
+  public exportExcel() {
+    this.isLoading = true;
+
+    const exportIds = this.selection.selected.length > 0
+      ? this.filteredUserBillList.filter(x => this.selection.selected.includes(x.id)).map(x => x.id)
+      : this.filteredUserBillList.map(x => x.id);
+
+    const input = {
+      projectId: this.projectId,
+      chargeStatusFilter: this.selectedIsCharge,
+      linkedResourcesFilter: this.selectedLinkedResources,
+      chargeRoleFilter: this.selectedChargeRole,
+      searchText: this.searchText,
+      selectedIds: exportIds,
+      isHideRates: this.isHideRates
+    };
+
+    this.projectUserBillService.ExportToExcel(input).pipe(
+      finalize(() => this.isLoading = false)
+    ).subscribe(
+      (data) => {
+        const exportData = data.result ?? data;
+        this.fileHandlerService.downloadFile(exportData.base64, exportData.fileName);
+      }
+    );
   }
 }
 

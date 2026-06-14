@@ -1,117 +1,172 @@
-import { IDNameDto } from './../../../../../service/model/id-name.dto';
-import { MatDialog } from '@angular/material/dialog';
-import { PERMISSIONS_CONSTANT } from '@app/constant/permission.constant';
+import { IDNameDto } from "./../../../../../service/model/id-name.dto";
+import { MatDialog } from "@angular/material/dialog";
+import { PERMISSIONS_CONSTANT } from "@app/constant/permission.constant";
 
-import { UserDto } from './../../../../../../shared/service-proxies/service-proxies';
-import { UserService } from './../../../../../service/api/user.service';
-import { ActivatedRoute } from '@angular/router';
-import { projectUserDto, projectResourceRequestDto, projectUserBillDto } from './../../../../../service/model/project.dto';
-import { ProjectResourceRequestService } from './../../../../../service/api/project-resource-request.service';
-import { ProjectUserBillService } from './../../../../../service/api/project-user-bill.service';
-import { ProjectUserService } from './../../../../../service/api/project-user.service';
-import { AppComponentBase } from 'shared/app-component-base';
-import { Component, Injector, OnInit, Input } from '@angular/core';
-import { ClientDto } from '@app/service/model/list-project.dto';
-import { InputFilterDto } from '@shared/filter/filter.component';
-import { PagedListingComponentBase, PagedRequestDto } from '@shared/paged-listing-component-base';
-import { finalize, catchError } from 'rxjs/operators';
-import * as moment from 'moment';
-import { UpdateUserSkillDialogComponent } from '@app/users/update-user-skill-dialog/update-user-skill-dialog.component';
-import { ReleaseUserDialogComponent } from './release-user-dialog/release-user-dialog.component';
-import { ConfirmFromPage, ConfirmPopupComponent } from './confirm-popup/confirm-popup.component';
-import { DeliveryResourceRequestService } from '@app/service/api/delivery-request-resource.service';
-import { CreateUpdateResourceRequestComponent } from '@app/modules/delivery-management/delivery/request-resource-tab/create-update-resource-request/create-update-resource-request.component';
-import { ResourcePlanDto } from '@app/service/model/resource-plan.dto';
-import { FormPlanUserComponent } from '@app/modules/delivery-management/delivery/request-resource-tab/form-plan-user/form-plan-user.component';
-import { RequestResourceDto } from '@app/service/model/delivery-management.dto';
-import { FormSetDoneComponent } from '@app/modules/delivery-management/delivery/request-resource-tab/form-set-done/form-set-done.component';
-import { EditNoteResourceComponent } from '@app/modules/delivery-management/delivery/weekly-report-tab/weekly-report-tab-detail/edit-note-resource/edit-note-resource.component';
-import { getValueByEnum } from '@app/modules/delivery-management/delivery/available-resource-tab/enum-until';
+import { UserDto } from "./../../../../../../shared/service-proxies/service-proxies";
+import { UserService } from "./../../../../../service/api/user.service";
+import { ActivatedRoute } from "@angular/router";
+import {
+  projectUserDto,
+  projectResourceRequestDto,
+  projectUserBillDto,
+} from "./../../../../../service/model/project.dto";
+import { ProjectResourceRequestService } from "./../../../../../service/api/project-resource-request.service";
+import { ProjectUserBillService } from "./../../../../../service/api/project-user-bill.service";
+import { ProjectUserService } from "./../../../../../service/api/project-user.service";
+import { AppComponentBase } from "shared/app-component-base";
+import { Component, Injector, OnInit, Input } from "@angular/core";
+import { ClientDto } from "@app/service/model/list-project.dto";
+import { InputFilterDto } from "@shared/filter/filter.component";
+import {
+  PagedListingComponentBase,
+  PagedRequestDto,
+} from "@shared/paged-listing-component-base";
+import { finalize, catchError } from "rxjs/operators";
+import * as moment from "moment";
+import { UpdateUserSkillDialogComponent } from "@app/users/update-user-skill-dialog/update-user-skill-dialog.component";
+import { ReleaseUserDialogComponent } from "./release-user-dialog/release-user-dialog.component";
+import {
+  ConfirmFromPage,
+  ConfirmPopupComponent,
+} from "./confirm-popup/confirm-popup.component";
+import { DeliveryResourceRequestService } from "@app/service/api/delivery-request-resource.service";
+import { CreateUpdateResourceRequestComponent } from "@app/modules/delivery-management/delivery/request-resource-tab/create-update-resource-request/create-update-resource-request.component";
+import { ResourcePlanDto } from "@app/service/model/resource-plan.dto";
+import { FormPlanUserComponent } from "@app/modules/delivery-management/delivery/request-resource-tab/form-plan-user/form-plan-user.component";
+import { RequestResourceDto } from "@app/service/model/delivery-management.dto";
+import { FormSetDoneComponent } from "@app/modules/delivery-management/delivery/request-resource-tab/form-set-done/form-set-done.component";
+import { EditNoteResourceComponent } from "@app/modules/delivery-management/delivery/weekly-report-tab/weekly-report-tab-detail/edit-note-resource/edit-note-resource.component";
+import { getValueByEnum } from "@app/modules/delivery-management/delivery/available-resource-tab/enum-until";
+import { APP_ENUMS } from "@shared/AppEnums";
+import { Utils } from "@shared/Utils";
+import { ProjectUserOnboardingService } from "./../../../../../service/api/project-user-onboarding.service";
+import { OnboardingDialogComponent } from "./onboarding-dialog/onboarding-dialog.component";
+import { UpdateUserAssetDialogComponent } from "../resource-management/update-user-asset-dialog/update-user-asset-dialog.component";
 
 @Component({
-  selector: 'app-resource-management',
-  templateUrl: './resource-management.component.html',
-  styleUrls: ['./resource-management.component.css']
+  selector: "app-resource-management",
+  templateUrl: "./resource-management.component.html",
+  styleUrls: ["./resource-management.component.css"],
 })
-export class ResourceManagementComponent extends AppComponentBase implements OnInit {
-  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource;
-  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_View = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_View;
-  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewHistory = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewHistory;
-  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_AddNewResourceFromPool = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_AddNewResourceFromPool;
-  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_AddNewResourceFromOtherProject = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_AddNewResourceFromOtherProject;
-  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_Edit = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_Edit;
-  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_Release = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_Release;
-  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserSkill = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserSkill;
-  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserStarSkill = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserStarSkill;
-
-  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource;
-  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_View = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_View;
-  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_CreateNewPlan = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_CreateNewPlan;
-  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_ConfirmPickEmployeeFromPoolToProject = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_ConfirmPickEmployeeFromPoolToProject;
-  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_ConfirmMoveEmployeeWorkingOnAProjectToOther = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_ConfirmMoveEmployeeWorkingOnAProjectToOther;
-  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_ConfirmOut = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_ConfirmOut;
-  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_CancelPlan = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_CancelPlan;
-  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_Edit = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_Edit;
-  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_UpdateUserSkill = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_UpdateUserSkill;
-  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_ViewUserStarSkill = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_ViewUserStarSkill;
-
-  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest;
-  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest_View = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest_View;
-  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest_CreateNewRequest = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest_CreateNewRequest;
-  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest_PlanNewResourceForRequest = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest_PlanNewResourceForRequest;
-  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest_SetDone = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest_SetDone;
-  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest_CancelRequest = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest_CancelRequest;
-  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest_Edit = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest_Edit;
-  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest_Delete = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest_Delete;
-  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest_SendRecruitment = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest_SendRecruitment;
+export class ResourceManagementComponent
+  extends AppComponentBase
+  implements OnInit
+{
+  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource =
+    PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource;
+  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_View =
+    PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_View;
+  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewHistory =
+    PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewHistory;
+  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_AddNewResourceFromPool =
+    PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_AddNewResourceFromPool;
+  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_AddNewResourceFromOtherProject =
+    PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_AddNewResourceFromOtherProject;
+  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_Edit =
+    PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_Edit;
+  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_Release =
+    PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_Release;
+  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserSkill =
+    PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserSkill;
+  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserStarSkill =
+    PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserStarSkill;
+  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserAsset = 
+    PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserAsset;
+  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserAsset = 
+    PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserAsset;
 
 
+  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource =
+    PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource;
+  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_View =
+    PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_View;
+  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_CreateNewPlan =
+    PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_CreateNewPlan;
+  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_ConfirmPickEmployeeFromPoolToProject =
+    PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_ConfirmPickEmployeeFromPoolToProject;
+  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_ConfirmMoveEmployeeWorkingOnAProjectToOther =
+    PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_ConfirmMoveEmployeeWorkingOnAProjectToOther;
+  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_ConfirmOut =
+    PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_ConfirmOut;
+  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_CancelPlan =
+    PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_CancelPlan;
+  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_Edit =
+    PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_Edit;
+  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_UpdateUserSkill =
+    PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_UpdateUserSkill;
+  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_ViewUserStarSkill =
+    PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource_ViewUserStarSkill;
 
+  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest =
+    PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest;
+  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest_View =
+    PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest_View;
+  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest_CreateNewRequest =
+    PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest_CreateNewRequest;
+  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest_PlanNewResourceForRequest =
+    PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest_PlanNewResourceForRequest;
+  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest_SetDone =
+    PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest_SetDone;
+  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest_CancelRequest =
+    PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest_CancelRequest;
+  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest_Edit =
+    PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest_Edit;
+  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest_Delete =
+    PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest_Delete;
+  Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest_SendRecruitment =
+    PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest_SendRecruitment;
+  
   private projectId: number;
   public userBillCurrentPage = 1;
   public resourceRequestCurrentPage = 1;
   public userListCurrentPage = 1;
   public plannedResourceCurrentPage = 1;
   public itemPerPage = 50;
-  public maxUserCurrentPage= 50;
+  public maxUserCurrentPage = 50;
   public isEditUserProject: boolean = false;
   public searchUser: string = "";
   public searchUserBill: string = "";
   // project user
   public projectUserList: projectUserDto[] = [];
-  public projectRoleList: string[] = Object.keys(this.APP_ENUM.ProjectUserRole)
-  public userStatusList: string[] = Object.keys(this.APP_ENUM.ProjectUserStatus)
+  public projectRoleList: string[] = Object.keys(this.APP_ENUM.ProjectUserRole);
+  public userStatusList: string[] = Object.keys(
+    this.APP_ENUM.ProjectUserStatus,
+  );
   public userForProjectUser: UserDto[] = [];
   public viewHistory: boolean = false;
   public projectUserProcess: boolean = false;
   public isShowProjectUser: boolean = true;
   // resource request
   public resourceRequestList: RequestResourceDto[] = [];
-  public requestStatusList: string[] = Object.keys(this.APP_ENUM.ResourceRequestStatus);
+  public requestStatusList: string[] = Object.keys(
+    this.APP_ENUM.ResourceRequestStatus,
+  );
   public isEditRequest: boolean = false;
   public requestProcess: boolean = false;
   public isShowRequest: boolean = false;
-  public listStatuses: any[] = []
-  public selectStatus: any = 0
-  public isShowModal: string = 'none'
-  public modal_title: string
-  public strNotePM: string
-  public typePM: string
-  public resourceRequestId: number
+  public listStatuses: any[] = [];
+  public selectStatus: any = 0;
+  public isShowModal: string = "none";
+  public modal_title: string;
+  public strNotePM: string;
+  public typePM: string;
+  public resourceRequestId: number;
   // plan resource
   public planResourceProcess: boolean = false;
-  public plannedUserList: any = []
-  public resourceListCurrentPage = 1
+  public plannedUserList: any = [];
+  public resourceListCurrentPage = 1;
   public isShowCurrentResouce: boolean = true;
-  public isEditPlannedResource: boolean = false
-  public searchPlanResource: string = ""
+  public isEditPlannedResource: boolean = false;
+  public searchPlanResource: string = "";
   public tomorrowDate = new Date();
-  public searchPlannedResource: string = ""
+  public searchPlannedResource: string = "";
   //skills, levels
-  public listSkills: any[] = []
-  public listLevels: any[] = []
-  public listProjectUserRoles: IDNameDto[] = []
-  public isViewAllSkillInfo: boolean = false
+  public listSkills: any[] = [];
+  public listLevels: any[] = [];
+  public listProjectUserRoles: IDNameDto[] = [];
+  public isViewAllSkillInfo: boolean = false;
+  public maxVisibleAssets = 2;
+  public expandedAssetRows: { [projectUserId: number]: boolean } = {};
 
   public workingTypeList = Object.keys(this.APP_ENUM.ProjectUserWorkingType);
 
@@ -123,14 +178,14 @@ export class ResourceManagementComponent extends AppComponentBase implements OnI
     private projectRequestService: ProjectResourceRequestService,
     private route: ActivatedRoute,
     private dialog: MatDialog,
-    private resourceRequestService: DeliveryResourceRequestService
-  )
-  {
-      super(injector)
-      this.tomorrowDate.setDate(this.tomorrowDate.getDate() + 1)
+    private resourceRequestService: DeliveryResourceRequestService,
+    private projectUserOnboardingService: ProjectUserOnboardingService,
+  ) {
+    super(injector);
+    this.tomorrowDate.setDate(this.tomorrowDate.getDate() + 1);
   }
   public readonly FILTER_CONFIG: InputFilterDto[] = [
-    { propertyName: 'name', displayName: "Name", comparisions: [0, 6, 7, 8] },
+    { propertyName: "name", displayName: "Name", comparisions: [0, 6, 7, 8] },
   ];
   ngOnInit(): void {
     this.projectId = Number(this.route.snapshot.queryParamMap.get("id"));
@@ -140,43 +195,79 @@ export class ResourceManagementComponent extends AppComponentBase implements OnI
     this.getPlannedtUser();
     this.getAllSkills();
     this.getLevelsResourceRequest();
-    this.getStatusesResourceRequest()
-    this.getProjectUserRoles()
+    this.getStatusesResourceRequest();
+    this.getProjectUserRoles();
   }
   // get data
   private getProjectUser() {
-      this.projectUserService.getAllProjectUser(this.projectId, this.viewHistory).pipe(catchError(this.projectUserService.handleError)).subscribe(data => {
+    this.projectUserService
+      .getAllProjectUser(this.projectId, this.viewHistory)
+      .pipe(catchError(this.projectUserService.handleError))
+      .subscribe((data) => {
         this.projectUserList = data.result;
-      })
+      });
   }
 
   private getPlannedtUser() {
-    this.projectUserService.GetAllPlannedUserByProject(this.projectId).pipe(catchError(this.projectUserService.handleError)).subscribe(data => {
-      this.plannedUserList = data.result;
-    })
-
+    this.projectUserService
+      .GetAllPlannedUserByProject(this.projectId)
+      .pipe(catchError(this.projectUserService.handleError))
+      .subscribe((data) => {
+        this.plannedUserList = data.result;
+      });
   }
 
-
   public getResourceRequestList(): void {
-
-    if (this.permission.isGranted(this.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest)) {
-      this.resourceRequestService.getAllResourceRequestByProject(this.projectId, this.selectStatus).pipe(catchError(this.projectRequestService.handleError)).subscribe(data => {
-        this.resourceRequestList = data.result
-      })
+    if (
+      this.permission.isGranted(
+        this
+          .Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_ResourceRequest,
+      )
+    ) {
+      this.resourceRequestService
+        .getAllResourceRequestByProject(this.projectId, this.selectStatus)
+        .pipe(catchError(this.projectRequestService.handleError))
+        .subscribe((data) => {
+          this.resourceRequestList = data.result;
+        });
     }
   }
 
   private getAllUser() {
-    this.userService.GetAllUserActive(false, false).pipe(catchError(this.userService.handleError)).subscribe(data => {
-      this.userForProjectUser = data.result;
-      // this.userForUserBill = data.result;
-    })
+    this.userService
+      .GetAllUserActive(false, false)
+      .pipe(catchError(this.userService.handleError))
+      .subscribe((data) => {
+        this.userForProjectUser = data.result;
+        // this.userForUserBill = data.result;
+      });
   }
 
+  getOnboardingStatusName(statusValue: number): string {
+    return Utils.getValueByEnum(
+      statusValue,
+      APP_ENUMS.ProjectUserOnboardingStatus,
+    );
+  }
 
+  onboardUser(user: any) {
+    const dialogRef = this.dialog.open(OnboardingDialogComponent, {
+      width: "700px",
+      maxHeight: "90vh",
+      data: {
+        projectUserId: user.id,
+        fullName: user.fullName,
+      },
+    });
 
-  updateUserSkill(user,viewStarSkillUser) {
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.getProjectUser();
+      }
+    });
+  }
+
+  updateUserSkill(user, viewStarSkillUser) {
     let ref = this.dialog.open(UpdateUserSkillDialogComponent, {
       width: "700px",
       data: {
@@ -184,15 +275,68 @@ export class ResourceManagementComponent extends AppComponentBase implements OnI
         id: user.userId,
         fullName: user.fullName,
         viewStarSkillUser: viewStarSkillUser,
-        note: this.GetUserSkillNote(user)
+        note: this.GetUserSkillNote(user),
+      },
+    });
+    ref.afterClosed().subscribe((rs) => {
+      if (rs) {
+        this.getProjectUser();
+        this.getPlannedtUser();
+        this.getAllUser();
+        this.projectUserProcess = false;
+        this.planResourceProcess = false;
       }
+    });
+  }
 
+  public getProjectAssets(user: any): string[] {
+    const assets = user?.projectAssets || [];
+
+    if (!Array.isArray(assets)) {
+      return [];
+    }
+
+    return assets
+      .map((asset) => {
+        if (typeof asset === "string") {
+          return asset.trim();
+        }
+
+        return asset?.assetName || asset?.name || "";
+      })
+      .filter((asset) => asset && asset.trim().length > 0);
+  }
+
+  public getVisibleProjectAssets(user: any): string[] {
+    const assets = this.getProjectAssets(user);
+
+    return this.expandedAssetRows[user.id]
+      ? assets
+      : assets.slice(0, this.maxVisibleAssets);
+  }
+
+  public expandProjectAssets(projectUserId: number): void {
+    this.expandedAssetRows[projectUserId] = true;
+  }
+
+  public collapseProjectAssets(projectUserId: number): void {
+    this.expandedAssetRows[projectUserId] = false;
+  }
+
+  updateUserAsset(user) {
+    let ref = this.dialog.open(UpdateUserAssetDialogComponent, {
+      width: "700px",
+      data: {
+        currentAssets: this.getProjectAssets(user),
+        userId: user.userId,
+        fullName: user.fullName,
+        projectId: this.projectId
+      }
     });
     ref.afterClosed().subscribe(rs => {
       if (rs) {
         this.getProjectUser()
         this.getPlannedtUser()
-        this.getAllUser()
         this.projectUserProcess = false;
         this.planResourceProcess = false;
       }
@@ -203,105 +347,114 @@ export class ResourceManagementComponent extends AppComponentBase implements OnI
     let ref = this.dialog.open(ReleaseUserDialogComponent, {
       width: "700px",
       data: {
-        user: user
-      }
-    })
-    ref.afterClosed().subscribe(rs => {
+        user: user,
+      },
+    });
+    ref.afterClosed().subscribe((rs) => {
       if (rs) {
-        this.getProjectUser()
-        this.getPlannedtUser()
-        this.planResourceProcess = false
+        this.getProjectUser();
+        this.getPlannedtUser();
+        this.planResourceProcess = false;
       }
-    })
+    });
   }
 
   //  project user
 
   public addProjectUser() {
-    let newUser = {} as projectUserDto
+    let newUser = {} as projectUserDto;
     newUser.isPool = false;
-    newUser.startTime = moment(new Date()).format("YYYY-MM-DD")
+    newUser.startTime = moment(new Date()).format("YYYY-MM-DD");
     newUser.createMode = true;
-    this.projectUserList.unshift(newUser)
+    this.projectUserList.unshift(newUser);
     this.projectUserProcess = true;
     newUser.workingType = 0;
   }
 
   saveProjectUser(user: any) {
     if (this.isEditUserProject) {
-      this.updateProjectCurrentResource(user)
-    }
-    else {
-      user.userId = user.userInfo.id
-      user.fullName = user.userInfo.fullName
+      this.updateProjectCurrentResource(user);
+    } else {
+      user.userId = user.userInfo.id;
+      user.fullName = user.userInfo.fullName;
       let workingProject = [];
-      this.projectUserService.GetAllWorkingProjectByUserId(user.userId).subscribe(data => {
-        workingProject = data.result
-        if (workingProject.length > 0) {
-          user.allocatePercentage = 100
-          let ref = this.dialog.open(ConfirmPopupComponent,
-            {
+      this.projectUserService
+        .GetAllWorkingProjectByUserId(user.userId)
+        .subscribe((data) => {
+          workingProject = data.result;
+          if (workingProject.length > 0) {
+            user.allocatePercentage = 100;
+            let ref = this.dialog.open(ConfirmPopupComponent, {
               width: "700px",
               data: {
-                workingProject : workingProject,
+                workingProject: workingProject,
                 user: user,
-                page: ConfirmFromPage.outsource_workingResource
-
+                page: ConfirmFromPage.outsource_workingResource,
+              },
+            });
+            ref.afterClosed().subscribe((rs) => {
+              if (rs) {
+                this.AddUserToProject(user);
               }
-            }
-            )
-            ref.afterClosed().subscribe(rs =>{
-              if(rs){
-                this.AddUserToProject(user)
-              }
-            })
-        }
-        else {
-          abp.message.confirm(`Add user <strong>${user.userInfo.fullName}</strong> to Project`, "", rs => {
-            if (rs) {
-              this.AddUserToProject(user)
-            }
-          }, {isHtml:true})
-        }
-      })
+            });
+          } else {
+            abp.message.confirm(
+              `Add user <strong>${user.userInfo.fullName}</strong> to Project`,
+              "",
+              (rs) => {
+                if (rs) {
+                  this.AddUserToProject(user);
+                }
+              },
+              { isHtml: true },
+            );
+          }
+        });
     }
-
   }
 
   AddUserToProject(user) {
-    user.startTime = moment(user.startTime).format("YYYY-MM-DD")
-    user.projectId = this.projectId
-    delete user["createMode"]
-    this.projectUserService.AddUserToOutSourcingProject(user).pipe(catchError(this.projectUserService.handleError)).subscribe(data => {
-      this.getProjectUser();
-      this.getPlannedtUser();
-      this.getResourceRequestList();
-      abp.notify.success(`Added new employee to project`);
+    user.startTime = moment(user.startTime).format("YYYY-MM-DD");
+    user.projectId = this.projectId;
+    delete user["createMode"];
+    this.projectUserService
+      .AddUserToOutSourcingProject(user)
+      .pipe(catchError(this.projectUserService.handleError))
+      .subscribe(
+        (data) => {
+          this.getProjectUser();
+          this.getPlannedtUser();
+          this.getResourceRequestList();
+          abp.notify.success(`Added new employee to project`);
 
-      this.projectUserProcess = false
-      this.searchUser = "";
-    },
-      () => {
-        user.createMode = true
-      })
+          this.projectUserProcess = false;
+          this.searchUser = "";
+        },
+        () => {
+          user.createMode = true;
+        },
+      );
   }
   updateProjectCurrentResource(user) {
-    console.log(user)
-    user.startTime = moment(user.startTime).format("YYYY-MM-DD")
-    this.projectUserService.UpdateCurrentResourceDetail(user).pipe(catchError(this.projectUserService.handleError)).subscribe(data => {
-      abp.notify.success(`updated user: ${user.fullName}`);
-      this.getProjectUser();
-      this.isEditUserProject = false;
-      user.editMode = false;
-      this.projectUserProcess = false
-      this.searchUser = "";
-    })
+    console.log(user);
+    user.startTime = moment(user.startTime).format("YYYY-MM-DD");
+    this.projectUserService
+      .UpdateCurrentResourceDetail(user)
+      .pipe(catchError(this.projectUserService.handleError))
+      .subscribe((data) => {
+        abp.notify.success(`updated user: ${user.fullName}`);
+        this.getProjectUser();
+        this.isEditUserProject = false;
+        user.editMode = false;
+        this.projectUserProcess = false;
+        this.searchUser = "";
+      });
   }
 
   editProjectUser(user) {
     this.isEditUserProject = true;
-    user.editMode = true
-    this.projectUserProcess = true
+    user.editMode = true;
+    this.projectUserProcess = true;
   }
   removeUser(user: projectUserDto) {
     abp.message.confirm(
@@ -309,93 +462,111 @@ export class ResourceManagementComponent extends AppComponentBase implements OnI
       "",
       (result: boolean) => {
         if (result) {
-          this.projectUserService.removeProjectUser(user.id).pipe(catchError(this.projectUserService.handleError)).subscribe(() => {
-            abp.notify.success("Removed user " + user.fullName + " from project " + user.projectName);
-            this.getProjectUser()
-          });
+          this.projectUserService
+            .removeProjectUser(user.id)
+            .pipe(catchError(this.projectUserService.handleError))
+            .subscribe(() => {
+              abp.notify.success(
+                "Removed user " +
+                  user.fullName +
+                  " from project " +
+                  user.projectName,
+              );
+              this.getProjectUser();
+            });
         }
-      }
+      },
     );
   }
   filterProjectUser(event) {
     this.viewHistory = event.checked;
-    this.projectUserService.getAllProjectUser(this.projectId, this.viewHistory).pipe(catchError(this.projectUserService.handleError)).subscribe(data => {
-      this.projectUserList = data.result;
-    })
+    this.projectUserService
+      .getAllProjectUser(this.projectId, this.viewHistory)
+      .pipe(catchError(this.projectUserService.handleError))
+      .subscribe((data) => {
+        this.projectUserList = data.result;
+      });
   }
   cancelProjectUser(user) {
     this.getProjectUser();
     this.isEditUserProject = false;
     user.editMode = false;
-    this.projectUserProcess = false
-    this.searchUser = ""
+    this.projectUserProcess = false;
+    this.searchUser = "";
   }
   private filterProjectUserDropDown() {
-
-    let userProjectList = this.projectUserList.map(item => item.userId)
+    let userProjectList = this.projectUserList.map((item) => item.userId);
     // this.userForProjectUser = this.userForUserBill.filter(user => userProjectList.indexOf(user.id) == -1)
   }
   // resource request
 
   public saveProjectRerequest(request: projectResourceRequestDto): void {
-    delete request["createMode"]
+    delete request["createMode"];
     request.timeNeed = moment(request.timeNeed).format("YYYY-MM-DD");
     if (!this.isEditRequest) {
-      request.projectId = this.projectId
-      this.projectRequestService.create(request).pipe(catchError(this.projectRequestService.handleError)).subscribe(res => {
-        abp.notify.success(`Created request: ${request.name}`)
-        this.getResourceRequestList();
-        this.requestProcess = false;
-      },
-        () => { request.createMode = true })
-    }
-    else {
-      this.projectRequestService.update(request).pipe(catchError(this.projectRequestService.handleError)).subscribe(res => {
-        abp.notify.success(`Updated request: ${request.name}`)
-        this.getResourceRequestList();
-        this.requestProcess = false;
-        this.isEditRequest = false;
-
-      },
-        () => { request.createMode = true })
+      request.projectId = this.projectId;
+      this.projectRequestService
+        .create(request)
+        .pipe(catchError(this.projectRequestService.handleError))
+        .subscribe(
+          (res) => {
+            abp.notify.success(`Created request: ${request.name}`);
+            this.getResourceRequestList();
+            this.requestProcess = false;
+          },
+          () => {
+            request.createMode = true;
+          },
+        );
+    } else {
+      this.projectRequestService
+        .update(request)
+        .pipe(catchError(this.projectRequestService.handleError))
+        .subscribe(
+          (res) => {
+            abp.notify.success(`Updated request: ${request.name}`);
+            this.getResourceRequestList();
+            this.requestProcess = false;
+            this.isEditRequest = false;
+          },
+          () => {
+            request.createMode = true;
+          },
+        );
     }
   }
 
   public cancelProjectRerequest(): void {
     this.getResourceRequestList();
-    this.requestProcess = false
+    this.requestProcess = false;
     this.isEditRequest = false;
     this.searchUser = "";
-
   }
   public editProjectRerequest(request: projectResourceRequestDto): void {
-    request.createMode = true
-    this.requestProcess = true
-    this.isEditRequest = true
+    request.createMode = true;
+    this.requestProcess = true;
+    this.isEditRequest = true;
   }
   public removeProjectRerequest(request: projectResourceRequestDto): void {
-    abp.message.confirm(
-      `Delete this request?`,
-      "",
-      (result: boolean) => {
-        if (result) {
-          this.projectRequestService.deleteProjectRequest(request.id).pipe(catchError(this.projectRequestService.handleError)).subscribe(() => {
+    abp.message.confirm(`Delete this request?`, "", (result: boolean) => {
+      if (result) {
+        this.projectRequestService
+          .deleteProjectRequest(request.id)
+          .pipe(catchError(this.projectRequestService.handleError))
+          .subscribe(() => {
             abp.notify.success("Delete request successfully");
             this.getResourceRequestList();
           });
-
-        }
       }
-    );
+    });
   }
 
-
   public filterUser(userId: number) {
-    return this.userForProjectUser.filter(item => item.id == userId)[0];
+    return this.userForProjectUser.filter((item) => item.id == userId)[0];
   }
 
   getPercentage(user, data) {
-    user.allocatePercentage = data
+    user.allocatePercentage = data;
   }
 
   //  Planned resource
@@ -405,82 +576,85 @@ export class ResourceManagementComponent extends AppComponentBase implements OnI
         width: "700px",
         data: {
           user: user,
-          type: "confirmOut"
+          type: "confirmOut",
         },
-      })
-      ref.afterClosed().subscribe(rs => {
+      });
+      ref.afterClosed().subscribe((rs) => {
         if (rs) {
-          this.getProjectUser()
-          this.getPlannedtUser()
-          this.getResourceRequestList()
+          this.getProjectUser();
+          this.getPlannedtUser();
+          this.getResourceRequestList();
         }
-      })
-    }
-    else if (user.allocatePercentage > 0) {
+      });
+    } else if (user.allocatePercentage > 0) {
       let workingProject = [];
-      this.projectUserService.GetAllWorkingProjectByUserId(user.userId).subscribe(data => {
-        workingProject = data.result
-        let ref = this.dialog.open(ConfirmPopupComponent, {
-          width: '700px',
-          data: {
-            workingProject: workingProject,
-            user: user,
-            type: "confirmJoin",
-            page: ConfirmFromPage.outsource_PlannedResource
-          }
-        })
+      this.projectUserService
+        .GetAllWorkingProjectByUserId(user.userId)
+        .subscribe((data) => {
+          workingProject = data.result;
+          let ref = this.dialog.open(ConfirmPopupComponent, {
+            width: "700px",
+            data: {
+              workingProject: workingProject,
+              user: user,
+              type: "confirmJoin",
+              page: ConfirmFromPage.outsource_PlannedResource,
+            },
+          });
 
-        ref.afterClosed().subscribe(rs => {
-          if (rs) {
-            this.getProjectUser()
-            this.getPlannedtUser()
-            this.getResourceRequestList()
-            this.projectUserProcess = false;
-          }
-        })
-      })
+          ref.afterClosed().subscribe((rs) => {
+            if (rs) {
+              this.getProjectUser();
+              this.getPlannedtUser();
+              this.getResourceRequestList();
+              this.projectUserProcess = false;
+            }
+          });
+        });
     }
   }
 
   cancelResourcePlan(user) {
     abp.message.confirm(
-      `Cancel plan for user <strong>${user.fullName}</strong> <strong class = "${user.allocatePercentage > 0 ? 'text-success' : 'text-danger'}">
-      ${user.allocatePercentage > 0 ? 'Join project' : 'Out project'}</strong>?`,
+      `Cancel plan for user <strong>${user.fullName}</strong> <strong class = "${user.allocatePercentage > 0 ? "text-success" : "text-danger"}">
+      ${user.allocatePercentage > 0 ? "Join project" : "Out project"}</strong>?`,
       "",
       (result: boolean) => {
         if (result) {
-          this.projectUserService.CancelResourcePlan(user.id).subscribe(rs => {
-            abp.notify.success(`Cancel plan for user ${user.fullName}`)
-            this.getPlannedtUser()
-          })
+          this.projectUserService
+            .CancelResourcePlan(user.id)
+            .subscribe((rs) => {
+              abp.notify.success(`Cancel plan for user ${user.fullName}`);
+              this.getPlannedtUser();
+            });
         }
-      }, {isHtml:true}
-    )
+      },
+      { isHtml: true },
+    );
   }
 
   saveResourcePlan(projectUser) {
-    projectUser.projectId = this.projectId
-    this.projectUserService.EditProjectUserPlan(projectUser).subscribe(rs => {
-      abp.notify.success(`Edited plan for user ${projectUser.fullName}`)
-      this.getPlannedtUser()
-    })
+    projectUser.projectId = this.projectId;
+    this.projectUserService.EditProjectUserPlan(projectUser).subscribe((rs) => {
+      abp.notify.success(`Edited plan for user ${projectUser.fullName}`);
+      this.getPlannedtUser();
+    });
   }
 
   public addPlanResource() {
-    let newPlan = {} as any
-    newPlan.isPool = false
-    newPlan.allocatePercentage = 100
+    let newPlan = {} as any;
+    newPlan.isPool = false;
+    newPlan.allocatePercentage = 100;
     newPlan.createMode = true;
-    this.plannedUserList.unshift(newPlan)
+    this.plannedUserList.unshift(newPlan);
     this.planResourceProcess = true;
     newPlan.workingType = 0;
   }
   cancelPlanResourceProcess(user) {
     this.getPlannedtUser();
-    this.planResourceProcess = false
-    this.searchUser = ""
+    this.planResourceProcess = false;
+    this.searchUser = "";
   }
-
 
   savePlanResource(projectUser) {
     if (this.isEditPlannedResource) {
@@ -492,17 +666,19 @@ export class ResourceManagementComponent extends AppComponentBase implements OnI
         note: projectUser.note,
         isPool: projectUser.isPool,
         projectRole: projectUser.projectRole,
-        workingType: projectUser.workingType
-      }
-      this.projectUserService.EditProjectUserPlan(requestBody).pipe(catchError(this.projectUserService.handleError)).subscribe(rs => {
-        abp.notify.success(`Edited plan for user ${projectUser.fullName}`)
-        this.getPlannedtUser()
-        this.planResourceProcess = false
-        this.isEditPlannedResource = false
-        this.getResourceRequestList()
-      })
-    }
-    else {
+        workingType: projectUser.workingType,
+      };
+      this.projectUserService
+        .EditProjectUserPlan(requestBody)
+        .pipe(catchError(this.projectUserService.handleError))
+        .subscribe((rs) => {
+          abp.notify.success(`Edited plan for user ${projectUser.fullName}`);
+          this.getPlannedtUser();
+          this.planResourceProcess = false;
+          this.isEditPlannedResource = false;
+          this.getResourceRequestList();
+        });
+    } else {
       let requestBody = {
         userId: projectUser.userId,
         projectId: this.projectId,
@@ -511,29 +687,31 @@ export class ResourceManagementComponent extends AppComponentBase implements OnI
         startTime: moment(projectUser.startTime).format("YYYY-MM-DD"),
         note: projectUser.note,
         projectRole: projectUser.projectRole,
-        workingType: projectUser.workingType
-      }
-      this.projectUserService.PlanNewResourceToProject(requestBody).pipe(catchError(this.projectUserService.handleError)).subscribe(rs => {
-        abp.notify.success("added new plan to project")
-        this.getPlannedtUser()
-        this.planResourceProcess = false;
-      })
+        workingType: projectUser.workingType,
+      };
+      this.projectUserService
+        .PlanNewResourceToProject(requestBody)
+        .pipe(catchError(this.projectUserService.handleError))
+        .subscribe((rs) => {
+          abp.notify.success("added new plan to project");
+          this.getPlannedtUser();
+          this.planResourceProcess = false;
+        });
     }
-
   }
   editResourcePlan(projectUser) {
-    projectUser.editMode = true
+    projectUser.editMode = true;
     this.isEditPlannedResource = true;
-    this.planResourceProcess = true
+    this.planResourceProcess = true;
   }
 
   onUserSelect(user) {
-    user.userSkills = user.userInfo.userSkills
-    user.userId = user.userInfo.id
+    user.userSkills = user.userInfo.userSkills;
+    user.userId = user.userInfo.id;
   }
   onPlanUserSelect(user, u) {
-    user.userSkills = u.userSkills
-    user.userId = u.id
+    user.userSkills = u.userSkills;
+    user.userId = u.id;
   }
 
   public createRequest() {
@@ -546,243 +724,244 @@ export class ResourceManagementComponent extends AppComponentBase implements OnI
   showDialog(command: string, request: any) {
     let resourceRequest = {
       id: request.id ? request.id : null,
-      projectId: this.projectId
-    }
-    console.log(command, 'command')
+      projectId: this.projectId,
+    };
+    console.log(command, "command");
     const show = this.dialog.open(CreateUpdateResourceRequestComponent, {
       data: {
         command: command,
         item: resourceRequest,
         skills: this.listSkills,
         levels: this.listLevels,
-        typeControl: 'requestProject'
+        typeControl: "requestProject",
       },
       width: "700px",
-      maxHeight: '90vh',
-    })
-    show.afterClosed().subscribe(rs => {
-      if(!rs) return
-      if(command == 'create')
-        this.getResourceRequestList()
-      else if(command == 'edit'){
-        let index = this.resourceRequestList.findIndex(x => x.id == rs.id)
-        if(index >= 0){
-          this.resourceRequestList[index] = rs
+      maxHeight: "90vh",
+    });
+    show.afterClosed().subscribe((rs) => {
+      if (!rs) return;
+      if (command == "create") this.getResourceRequestList();
+      else if (command == "edit") {
+        let index = this.resourceRequestList.findIndex((x) => x.id == rs.id);
+        if (index >= 0) {
+          this.resourceRequestList[index] = rs;
         }
       }
     });
   }
 
-  async showModalPlanUser(item: any){
+  async showModalPlanUser(item: any) {
     let data = await this.getPlanResource(item);
     const show = this.dialog.open(FormPlanUserComponent, {
-      data: {...data, projectUserRoles: this.listProjectUserRoles},
+      data: { ...data, projectUserRoles: this.listProjectUserRoles },
       width: "700px",
-      maxHeight:"90vh"
-    })
-    show.afterClosed().subscribe(rs => {
-      if(!rs) return
-      if(rs.type == 'delete'){
-        this.getResourceRequestList()
-        this.getPlannedtUser()
-      }
-      else{
-        this.getPlannedtUser()
-        let index = this.resourceRequestList.findIndex(x => x.id == rs.data.resourceRequestId)
-        if(index >= 0)
-          this.resourceRequestList[index].planUserInfo = rs.data.result
+      maxHeight: "90vh",
+    });
+    show.afterClosed().subscribe((rs) => {
+      if (!rs) return;
+      if (rs.type == "delete") {
+        this.getResourceRequestList();
+        this.getPlannedtUser();
+      } else {
+        this.getPlannedtUser();
+        let index = this.resourceRequestList.findIndex(
+          (x) => x.id == rs.data.resourceRequestId,
+        );
+        if (index >= 0)
+          this.resourceRequestList[index].planUserInfo = rs.data.result;
       }
     });
   }
-  async getPlanResource(item){
+  async getPlanResource(item) {
     let data = new ResourcePlanDto(item.id, 0);
-    if(!item.planUserInfo) return data;
-    let res = await this.resourceRequestService.getPlanResource(item.planUserInfo.projectUserId, item.id)
-    return res.result
+    if (!item.planUserInfo) return data;
+    let res = await this.resourceRequestService.getPlanResource(
+      item.planUserInfo.projectUserId,
+      item.id,
+    );
+    return res.result;
   }
 
-  public setDoneRequest(item){
-    if(!item.planUserInfo){
+  public setDoneRequest(item) {
+    if (!item.planUserInfo) {
       const request = {
         requestId: item.id,
         startTime: moment().format("YYYY-MM-DD"),
         billStartTime: null,
-      }
-      this.resourceRequestService.setDoneRequest(request).subscribe(rs => {
-        if(rs){
+      };
+      this.resourceRequestService.setDoneRequest(request).subscribe((rs) => {
+        if (rs) {
           abp.notify.success(`Set done success`);
-          this.getResourceRequestList()
-          this.getPlannedtUser()
-          this.getProjectUser()
+          this.getResourceRequestList();
+          this.getPlannedtUser();
+          this.getProjectUser();
         }
-      })
+      });
+    } else {
+      let data = {
+        ...item.planUserInfo,
+        requestName: item.name,
+        resourceRequestId: item.id,
+      };
+      const showModal = this.dialog.open(FormSetDoneComponent, {
+        data,
+        width: "700px",
+        maxHeight: "90vh",
+      });
+      showModal.afterClosed().subscribe((rs) => {
+        if (rs) this.getResourceRequestList();
+        this.getPlannedtUser();
+        this.getProjectUser();
+      });
     }
-    else{
-    let data = {
-      ...item.planUserInfo,
-      requestName: item.name,
-      resourceRequestId: item.id
-    }
-    const showModal = this.dialog.open(FormSetDoneComponent, {
-      data,
-      width: "700px",
-      maxHeight: "90vh"
-    })
-    showModal.afterClosed().subscribe((rs) => {
-      if(rs)
-        this.getResourceRequestList()
-        this.getPlannedtUser()
-        this.getProjectUser()
-    })
   }
-}
 
-  cancelRequest(id){
-    abp.message.confirm(
-      'Are you sure cancel request?',
-      '',
-      (result) => {
-        if(result){
-          this.resourceRequestService.cancelResourceRequest(id).subscribe(res => {
-            if(res.success){
-              abp.notify.success('Cancel Request Success!')
-              this.getResourceRequestList()
-              this.getPlannedtUser()
+  cancelRequest(id) {
+    abp.message.confirm("Are you sure cancel request?", "", (result) => {
+      if (result) {
+        this.resourceRequestService
+          .cancelResourceRequest(id)
+          .subscribe((res) => {
+            if (res.success) {
+              abp.notify.success("Cancel Request Success!");
+              this.getResourceRequestList();
+              this.getPlannedtUser();
+            } else {
+              abp.notify.error(res.result);
             }
-            else{
-              abp.notify.error(res.result)
-            }
-          })
-        }
+          });
       }
-    )
+    });
   }
 
-  getStatusesResourceRequest(){
-    this.resourceRequestService.getStatuses().subscribe(res => {
-      this.listStatuses = res.result
-    })
+  getStatusesResourceRequest() {
+    this.resourceRequestService.getStatuses().subscribe((res) => {
+      this.listStatuses = res.result;
+    });
   }
 
-  deleteRequest(item: any){
+  deleteRequest(item: any) {
     abp.message.confirm(
       "Delete request: " + item.name + "?",
       "",
       (result: boolean) => {
         if (result) {
-          this.resourceRequestService.deleteMyRequest(item.id).pipe(catchError(this.resourceRequestService.handleError)).subscribe(() => {
-            abp.notify.success("Deleted request: " + item.name);
-            this.getResourceRequestList();
-          });
-
+          this.resourceRequestService
+            .deleteMyRequest(item.id)
+            .pipe(catchError(this.resourceRequestService.handleError))
+            .subscribe(() => {
+              abp.notify.success("Deleted request: " + item.name);
+              this.getResourceRequestList();
+            });
         }
-      }
-
+      },
     );
   }
 
-  sendRecruitment(){
-    abp.message.info('Chức năng này sẽ được cập nhật trong bản release sắp tới', 'Thông báo')
+  sendRecruitment() {
+    abp.message.info(
+      "Chức năng này sẽ được cập nhật trong bản release sắp tới",
+      "Thông báo",
+    );
   }
 
-  public openModal(name, typePM, content, id){
-    this.typePM = typePM
-    this.modal_title = name
-    this.strNotePM = content
-    this.resourceRequestId = id
-    this.isShowModal = 'block'
+  public openModal(name, typePM, content, id) {
+    this.typePM = typePM;
+    this.modal_title = name;
+    this.strNotePM = content;
+    this.resourceRequestId = id;
+    this.isShowModal = "block";
   }
 
-  public closeModal(){
-    this.isShowModal = 'none'
+  public closeModal() {
+    this.isShowModal = "none";
   }
 
-  public updateNote(){
+  public updateNote() {
     let request = {
       resourceRequestId: this.resourceRequestId,
       note: this.strNotePM,
-    }
-    this.resourceRequestService.updateNote(request,this.typePM).subscribe(rs => {
-      if(rs.success){
-        abp.notify.success('Update Note Successfully!')
-        let index = this.resourceRequestList.findIndex(x => x.id == request.resourceRequestId);
-        if(index >= 0){
-          if(this.typePM == 'PM')
-            this.resourceRequestList[index].pmNote = request.note;
-          else
-            this.resourceRequestList[index].dmNote = request.note;
+    };
+    this.resourceRequestService
+      .updateNote(request, this.typePM)
+      .subscribe((rs) => {
+        if (rs.success) {
+          abp.notify.success("Update Note Successfully!");
+          let index = this.resourceRequestList.findIndex(
+            (x) => x.id == request.resourceRequestId,
+          );
+          if (index >= 0) {
+            if (this.typePM == "PM")
+              this.resourceRequestList[index].pmNote = request.note;
+            else this.resourceRequestList[index].dmNote = request.note;
+          }
+        } else {
+          abp.notify.error(rs.result);
         }
-      }
-      else{
-        abp.notify.error(rs.result)
-      }
-    })
-    this.closeModal()
+      });
+    this.closeModal();
   }
 
-  getAllSkills(){
+  getAllSkills() {
     this.resourceRequestService.getSkills().subscribe((data) => {
       this.listSkills = data.result;
-    })
+    });
   }
-  getLevelsResourceRequest(){
-    this.resourceRequestService.getLevels().subscribe(res => {
-      this.listLevels = res.result
-    })
+  getLevelsResourceRequest() {
+    this.resourceRequestService.getLevels().subscribe((res) => {
+      this.listLevels = res.result;
+    });
   }
 
-  getProjectUserRoles(){
+  getProjectUserRoles() {
     this.resourceRequestService.getProjectUserRoles().subscribe((rs: any) => {
-      this.listProjectUserRoles = rs.result
-    })
+      this.listProjectUserRoles = rs.result;
+    });
   }
 
-  showActionViewRecruitment(status, isRecruitment){
-    if(
+  showActionViewRecruitment(status, isRecruitment) {
+    if (
       isRecruitment &&
-      (status == 'INPROGRESS' || status == 'CANCELLED' || status == 'DONE')
-    )
-    {
-      return true
+      (status == "INPROGRESS" || status == "CANCELLED" || status == "DONE")
+    ) {
+      return true;
     }
-    return false
+    return false;
   }
-  changePageSizeCurrent()
-  {
-    this.userListCurrentPage = 1
+  changePageSizeCurrent() {
+    this.userListCurrentPage = 1;
   }
   public editResoureNote(user) {
     let ref = this.dialog.open(EditNoteResourceComponent, {
       width: "600px",
-      data: user
-    })
-    ref.afterClosed().subscribe(rs => {
+      data: user,
+    });
+    ref.afterClosed().subscribe((rs) => {
       if (rs) {
-        user.note=rs
+        user.note = rs;
       }
-    })
-
+    });
   }
 
-  IsSkillNoteExist = (user) => user.userSkills && user.userSkills[0]?.skillNote ? true : false;
+  IsSkillNoteExist = (user) =>
+    user.userSkills && user.userSkills[0]?.skillNote ? true : false;
 
   GetUserSkillNote = (user) => user.userSkills[0]?.skillNote;
 
-  filterSkillInfo(user){
-    let skillInfoAfterFilter = []
-    if(user.userSkills){
-    if(user.isViewAllSkillInfo){
-      skillInfoAfterFilter = user.userSkills
+  filterSkillInfo(user) {
+    let skillInfoAfterFilter = [];
+    if (user.userSkills) {
+      if (user.isViewAllSkillInfo) {
+        skillInfoAfterFilter = user.userSkills;
+      } else {
+        user.userSkills.forEach((skill, index) => {
+          if (index < 2) {
+            skillInfoAfterFilter.push(skill);
+          }
+        });
+      }
     }
-    else{
-      user.userSkills.forEach((skill, index)=>{
-        if(index < 2){
-          skillInfoAfterFilter.push(skill)
-        }
-      })
-    }
-  }
-    return skillInfoAfterFilter
+    return skillInfoAfterFilter;
   }
 
   getEnumValue(enumValue: number, enumObject) {
@@ -790,7 +969,16 @@ export class ResourceManagementComponent extends AppComponentBase implements OnI
   }
 
   getColorWorkingType(workingType: number): string {
-    return this.workingTypeColorMap[workingType] || 'black';
+    return this.workingTypeColorMap[workingType] || "black";
+  }
+
+  remindUser(user: any) {
+    this.projectUserProcess = true; 
+    this.projectUserOnboardingService.remind(user.id)
+      .pipe(finalize(() => this.projectUserProcess = false))
+      .subscribe(() => {
+        abp.notify.success(`Sent reminder to ${user.fullName} successfully!`);
+        this.getProjectUser();
+      });
   }
 }
-

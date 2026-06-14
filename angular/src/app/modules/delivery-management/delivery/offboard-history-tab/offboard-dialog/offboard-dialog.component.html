@@ -1,0 +1,52 @@
+<div class="onboard-container">
+    <div class="modal-header">
+        <h4 class="modal-title font-weight-bold">
+            Offboard Checklist: <span class="text-primary">{{fullName}}</span>
+        </h4>
+        <button type="button" class="close" (click)="close()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <div class="modal-body custom-scroll">
+        <div *ngIf="items && items.length > 0">
+            <ng-container *ngIf="accountAssetItems.length > 0">
+                <div class="mb-2">
+                    <strong style="color: #0d6efd;">Account Asset</strong>
+                </div>
+                <div class="checklist-item" *ngFor="let item of accountAssetItems; let i = index">
+                    <div class="item-label mb-2">
+                        <strong style="color: #E86C55;">{{ item.assetName }}</strong>
+                    </div>
+                    <div class="item-action ml-1" *ngIf="!viewOnly">
+                        <mat-checkbox [(ngModel)]="item.isChecked" color="primary" class="text-muted small-checkbox-label">Checked</mat-checkbox>
+                    </div>
+                    <div class="separator my-3" style="border-bottom: 1px solid #f1f1f1;" *ngIf="i < accountAssetItems.length - 1"></div>
+                </div>
+            </ng-container>
+
+            <ng-container *ngIf="projectAssetItems.length > 0">
+                <div class="mb-2 mt-3">
+                    <strong style="color: #0d6efd;">Project Asset</strong>
+                </div>
+                <div class="checklist-item" *ngFor="let item of projectAssetItems; let i = index">
+                    <div class="item-label mb-2">
+                        <strong style="color: #E86C55;">{{ item.assetName }}</strong>
+                    </div>
+                    <div class="item-action ml-1" *ngIf="!viewOnly">
+                        <mat-checkbox [(ngModel)]="item.isChecked" color="primary" class="text-muted small-checkbox-label">Checked</mat-checkbox>
+                    </div>
+                    <div class="separator my-3" style="border-bottom: 1px solid #f1f1f1;" *ngIf="i < projectAssetItems.length - 1"></div>
+                </div>
+            </ng-container>
+        </div>
+        <div *ngIf="!items || items.length === 0">No assets assigned to this user for the project.</div>
+    </div>
+
+    <div class="modal-footer" style="border-top: none; padding-top: 0;">
+        <button type="button" class="btn btn-secondary font-weight-bold" (click)="close()">Cancel</button>
+        <button *ngIf="!viewOnly" type="button" class="btn btn-primary font-weight-bold px-4" [disabled]="isSaving || isLoading" (click)="save()">
+            <i class="fa fa-save mr-1"></i> Submit
+        </button>
+    </div>
+</div>

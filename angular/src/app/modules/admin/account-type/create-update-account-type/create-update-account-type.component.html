@@ -1,0 +1,16 @@
+<form class="form-horizontal create-update-account-type" autocomplete="off" #form="ngForm" novalidate>
+  <abp-modal-header title="{{ data.command == 'create' ? 'Add new account type' : 'Edit AccountType: ' + title }}" (onCloseClick)="dialogRef.close()"></abp-modal-header>
+  <div class="modal-body">
+    <div class="form-group row required">
+      <label class="col-md-3 col-form-label" for="name">Name:</label>
+      <div class="col-md-9">
+        <input class="form-control mt-1" type="text" placeholder="Name" required name="name" [(ngModel)]="accountType.name" #name="ngModel" #nameEl />
+        <abp-validation-summary [control]="name" [controlEl]="nameEl"></abp-validation-summary>
+      </div>
+    </div>
+  </div>
+  <div align="end" class="row justify-content-end">
+    <button name="btn-cancel" class="btn btn-secondary btn-action mr-2" mat-dialog-close>Cancel</button>
+    <button name="btn-save" class="btn btn-primary btn-action" [disabled]="!form.valid || isLoading" (click)="SaveAndClose()">Save</button>
+  </div>
+</form>

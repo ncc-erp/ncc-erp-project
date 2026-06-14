@@ -1,0 +1,44 @@
+.tree-panel {
+  min-height: 360px;
+}
+
+.resource-tree {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.tree-node {
+  border-bottom: 1px solid #edf2f7;
+}
+
+.tree-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 6px;
+  cursor: pointer;
+}
+
+.tree-row:hover {
+  background: #f8fbff;
+}
+
+.tree-icon {
+  color: #6c757d;
+  width: 14px;
+}
+
+.tree-name {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.tree-note {
+  color: #6b7280;
+  font-size: 0.92rem;
+}
+
+.child-list {
+  padding-left: 6px;
+}

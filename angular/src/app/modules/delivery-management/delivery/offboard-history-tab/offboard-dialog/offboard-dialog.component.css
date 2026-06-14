@@ -1,0 +1,36 @@
+.onboard-container {
+  display: flex;
+  flex-direction: column;
+  max-height: 85vh;
+}
+
+.modal-header,
+.modal-footer {
+  flex: 0 0 auto;
+}
+
+.modal-body.custom-scroll {
+  flex: 1 1 auto;
+  max-height: calc(85vh - 150px);
+  overflow-y: auto;
+  padding-right: 14px;
+}
+
+.checklist-item {
+  padding-right: 4px;
+}
+
+.item-label {
+  white-space: normal;
+  word-break: break-word;
+}
+
+::ng-deep .offboard-dialog-panel .mat-dialog-container {
+  max-height: 85vh;
+  overflow: hidden;
+  padding: 0;
+}
+
+::ng-deep .offboard-dialog-panel .onboard-container {
+  padding: 24px;
+}

@@ -23,6 +23,8 @@ import * as moment from 'moment';
 import { ConfirmFromPage, ConfirmPopupComponent } from '@app/modules/pm-management/list-project/list-project-detail/resource-management/confirm-popup/confirm-popup.component';
 import { RequestResourceDto } from '@app/service/model/delivery-management.dto';
 import { getValueByEnum } from '@app/modules/delivery-management/delivery/available-resource-tab/enum-until';
+import { UpdateUserAssetDialogComponent } from '@app/modules/pm-management/list-project/list-project-detail/resource-management/update-user-asset-dialog/update-user-asset-dialog.component';
+
 
 @Component({
   selector: 'app-product-resource-management',
@@ -39,6 +41,9 @@ export class ProductResourceManagementComponent extends AppComponentBase impleme
   Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_Release = PERMISSIONS_CONSTANT.Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_Release;
   Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserSkill = PERMISSIONS_CONSTANT.Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserSkill;
   Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserStarSkill = PERMISSIONS_CONSTANT.Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserStarSkill;
+  Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserAsset = PERMISSIONS_CONSTANT.Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserAsset;
+  Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserAsset = PERMISSIONS_CONSTANT.Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserAsset;
+
 
   Projects_ProductProjects_ProjectDetail_TabResourceManagement_PlannedResource = PERMISSIONS_CONSTANT.Projects_ProductProjects_ProjectDetail_TabResourceManagement_PlannedResource;
   Projects_ProductProjects_ProjectDetail_TabResourceManagement_PlannedResource_View = PERMISSIONS_CONSTANT.Projects_ProductProjects_ProjectDetail_TabResourceManagement_PlannedResource_View;
@@ -193,6 +198,26 @@ export class ProductResourceManagementComponent extends AppComponentBase impleme
     })
   }
 
+  updateUserAsset(user) {
+    let ref = this.dialog.open(UpdateUserAssetDialogComponent, {
+      width: "700px",
+      data: {
+        currentAssets: user?.projectAssets,
+        userId: user.userId,
+        fullName: user.fullName,
+        projectId: this.projectId
+      }
+    });
+    ref.afterClosed().subscribe(rs => {
+      if (rs) {
+        this.getProjectUser()
+        this.getPlannedtUser()
+        this.projectUserProcess = false;
+        this.planResourceProcess = false;
+      }
+    })
+  }
+  
   releaseUser(user) {
     let ref = this.dialog.open(ReleaseUserDialogComponent, {
       width: "700px",

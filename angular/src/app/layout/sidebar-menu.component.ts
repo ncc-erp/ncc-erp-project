@@ -101,6 +101,24 @@ export class SidebarMenuComponent extends AppComponentBase implements OnInit {
             'Admin.Skills'
           ),
           new MenuItem(
+            this.l('Account Types'),
+            '/app/account-types',
+            'fas fa-list-alt',
+            'Admin.AccountTypes'
+          ),
+          new MenuItem(
+            this.l('Account Asset Creators'),
+            '/app/account-asset-creators',
+            'fas fa-user-tag',
+            'Admin.AccountAssetCreators'
+          ),
+          new MenuItem(
+            this.l('Project Asset Types'),
+            '/app/project-asset-types',
+            'fas fa-sitemap',
+            'Admin.ProjectAssetTypes'
+          ),
+          new MenuItem(
             this.l('Currencies'),
             '/app/currency',
             'fas fa-money-check',
@@ -135,6 +153,19 @@ export class SidebarMenuComponent extends AppComponentBase implements OnInit {
             '/app/cvstatus',
             'fas fa-file',
             'Admin.CVStatus'
+          )
+          ,
+          new MenuItem(
+            this.l('Onboarding Checklist'),
+            '/app/onboarding-checklist',
+            'fas fa-tasks',
+            'Admin.OnboardingChecklist'
+          ),
+          new MenuItem(
+            this.l('Config IT'),
+            '/app/config-it',
+            'fas fa-cog',
+            'Admin.ConfigITs'
           )
         ]
       ),
@@ -193,6 +224,12 @@ export class SidebarMenuComponent extends AppComponentBase implements OnInit {
         '/app/available-resource/all-resource',
         'fas fa-hockey-puck',
         'Resource'
+      ),
+      new MenuItem(
+        this.l('Offboard History'),
+        '/app/offboard-history',
+        'fas fa-history',
+        'OffboardHistory'
       ),
       new MenuItem(
         this.l('Timesheets'),

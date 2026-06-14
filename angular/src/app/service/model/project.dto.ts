@@ -71,6 +71,7 @@ export class projectUserDto {
   workType:boolean;
   isPool?: boolean;
   workingType: number;
+  projectAssets?: string[];
 }
 
 export class projectResourceRequestDto {
@@ -85,6 +86,17 @@ export class projectResourceRequestDto {
   planUserInfo:any
   pmNote?: string;
   dmNote?: string;
+}
+
+export class AccountAssetDto {
+  id?: number;
+  projectUserBillId?: number;
+  accountTypeId?: number;
+  accountTypeName?: string;
+  accountAssetCreatorId?: number;
+  accountAssetCreatorName?: string;
+  typeLogin?: string;
+  assetName?: string;
 }
 
 export class projectUserBillDto {
@@ -119,6 +131,7 @@ export class projectUserBillDto {
   contribute: number;
   userSkills: ProjectUserSkillDto[];
   skillNote: string;
+  accountAssets?: AccountAssetDto[];
   initialIsExpose: boolean;
 }
 

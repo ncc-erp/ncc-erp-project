@@ -58,6 +58,9 @@ import { SaoDoComponent } from './modules/saodo-management/sao-do/sao-do.compone
 import { ListProjectGeneralComponent } from './modules/pm-management/list-project/list-project-detail/list-project-general/list-project-general.component';
 import { ProjectGeneralComponent } from './modules/pm-management/project-detail/project-general/project-general.component';
 import { SkillComponent } from './modules/admin/skill/skill.component';
+import { AccountTypeComponent } from './modules/admin/account-type/account-type.component';
+import { AccountAssetCreatorComponent } from './modules/admin/account-asset-creator/account-asset-creator.component';
+import { ProjectAssetTypeComponent } from './modules/admin/project-asset-type/project-asset-type.component';
 import { ConfigurationComponent } from './modules/admin/configuration/configuration.component';
 import { CurrencyComponent } from './modules/admin/currency/currency.component';
 import { AllResourceComponent } from './modules/delivery-management/delivery/available-resource-tab/all-resource/all-resource.component';
@@ -87,10 +90,16 @@ import { BillAccountPlanComponent } from './modules/delivery-management/delivery
 import { GeneralInformationComponent } from './modules/pm-management/list-project/list-project-detail/general-information/general-information.component';
 import { CVStatusComponent } from './modules/admin/cvstatus/cvstatus.component';
 import { WillPoolComponent } from './modules/delivery-management/delivery/available-resource-tab/will-pool/will-pool.component';
+import { OnboardingChecklistComponent } from './modules/admin/onboarding-checklist/onboarding-checklist.component';
+import { ConfigItComponent } from './modules/admin/config-it/config-it.component';
 import { ProductAccountInfoComponent } from './modules/pm-management/product-projects/product-project-detail/product-account-info/product-account-info.component';
 import { PunishmentComponent } from './modules/punishment/punishment.component';
 import { WeeklyContributionComponent } from './modules/weekly-contribution/weekly-contribution.component';
 import { DetailWeeklyContributionComponent } from './modules/weekly-contribution/detail-weekly-contribution/detail-weekly-contribution.component';
+import { ProjectAssetComponent } from './modules/pm-management/list-project/list-project-detail/project-asset/project-asset.component';
+import { OffboardHistoryTabComponent } from './modules/delivery-management/delivery/offboard-history-tab/offboard-history-tab.component';
+import { ProductProjectAssetComponent } from './modules/pm-management/product-projects/product-project-detail/product-project-asset/product-project-asset.component';
+import { TrainingProjectAssetComponent } from './modules/pm-management/training-projects/training-project-detail/training-project-asset/training-project-asset.component';
 
 @NgModule({
   imports: [
@@ -167,6 +176,21 @@ import { DetailWeeklyContributionComponent } from './modules/weekly-contribution
           {
             path: "skills",
             component: SkillComponent,
+            canActivate: [AppRouteGuard],
+          },
+          {
+            path: "account-types",
+            component: AccountTypeComponent,
+            canActivate: [AppRouteGuard],
+          },
+          {
+            path: "account-asset-creators",
+            component: AccountAssetCreatorComponent,
+            canActivate: [AppRouteGuard],
+          },
+          {
+            path: "project-asset-types",
+            component: ProjectAssetTypeComponent,
             canActivate: [AppRouteGuard],
           },
           { path: "about", component: AboutComponent },
@@ -279,6 +303,11 @@ import { DetailWeeklyContributionComponent } from './modules/weekly-contribution
                 path: "general-information",
                 component: GeneralInformationComponent,
                 canActivate: [AppRouteGuard]
+              },
+              {
+                path: "project-asset",
+                component: ProjectAssetComponent,
+                canActivate: [AppRouteGuard]
               }
             ],
           },
@@ -330,7 +359,12 @@ import { DetailWeeklyContributionComponent } from './modules/weekly-contribution
                 path: "project-bill-tab",
                 component: ProjectBillComponent,
                 canActivate: [AppRouteGuard]
-              }
+              },
+              {
+                path: "training-project-asset",
+                component: TrainingProjectAssetComponent,
+                canActivate: [AppRouteGuard]
+              },
             ],
           },
           {
@@ -385,6 +419,11 @@ import { DetailWeeklyContributionComponent } from './modules/weekly-contribution
               {
                 path: "product-account-info",
                 component: ProductAccountInfoComponent,
+                canActivate: [AppRouteGuard]
+              },
+              {
+                path: "product-project-asset",
+                component: ProductProjectAssetComponent,
                 canActivate: [AppRouteGuard]
               }
             ],
@@ -449,6 +488,11 @@ import { DetailWeeklyContributionComponent } from './modules/weekly-contribution
                 canActivate: [AppRouteGuard],
               }
             ]
+          },
+          {
+            path: "offboard-history",
+            component: OffboardHistoryTabComponent,
+            canActivate: [AppRouteGuard],
           },
           {
             path: "tags",
@@ -545,6 +589,16 @@ import { DetailWeeklyContributionComponent } from './modules/weekly-contribution
             path:"cvstatus",
             component:CVStatusComponent,
             canActivate:[AppRouteGuard]
+          },
+          {
+            path: "onboarding-checklist",
+            component: OnboardingChecklistComponent,
+            canActivate: [AppRouteGuard]
+          },
+          {
+            path: "config-it",
+            component: ConfigItComponent,
+            canActivate: [AppRouteGuard]
           },
         ]
       }

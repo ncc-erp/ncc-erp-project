@@ -46,6 +46,40 @@ export const PERMISSIONS_CONSTANT = {
        Admin_Skills_Delete: "Admin.Skills.Delete",
        // #endregion
 
+       // #region AccountTypes
+       Admin_AccountTypes: "Admin.AccountTypes",
+       Admin_AccountTypes_View: "Admin.AccountTypes.View",
+       Admin_AccountTypes_Create: "Admin.AccountTypes.Create",
+       Admin_AccountTypes_Edit: "Admin.AccountTypes.Edit",
+       Admin_AccountTypes_Delete: "Admin.AccountTypes.Delete",
+       // #endregion
+
+       // #region AccountAssetCreators
+       Admin_AccountAssetCreators: "Admin.AccountAssetCreators",
+       Admin_AccountAssetCreators_View: "Admin.AccountAssetCreators.View",
+       Admin_AccountAssetCreators_Create: "Admin.AccountAssetCreators.Create",
+       Admin_AccountAssetCreators_Edit: "Admin.AccountAssetCreators.Edit",
+       Admin_AccountAssetCreators_Delete: "Admin.AccountAssetCreators.Delete",
+       // #endregion
+
+       // #region ConfigITs
+
+       Admin_ConfigITs: "Admin.ConfigITs",
+       Admin_ConfigITs_View: "Admin.ConfigITs.View",
+       Admin_ConfigITs_Create: "Admin.ConfigITs.Create",
+       Admin_ConfigITs_Edit: "Admin.ConfigITs.Edit",
+       Admin_ConfigITs_Delete: "Admin.ConfigITs.Delete",
+
+       // #endregion 
+
+       // #region Project Asset Type
+       Admin_ProjectAssetTypes: "Admin.ProjectAssetTypes",
+       Admin_ProjectAssetTypes_View: "Admin.ProjectAssetTypes.View",
+       Admin_ProjectAssetTypes_Create: "Admin.ProjectAssetTypes.Create",
+       Admin_ProjectAssetTypes_Edit: "Admin.ProjectAssetTypes.Edit",
+       Admin_ProjectAssetTypes_Delete: "Admin.ProjectAssetTypes.Delete",
+       // #endregion
+
        // #region Currencies
        Admin_Currencies: "Admin.Currencies",
        Admin_Currencies_View: "Admin.Currencies.View",
@@ -133,6 +167,8 @@ export const PERMISSIONS_CONSTANT = {
        Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_Release: "Projects.OutsourcingProjects.ProjectDetail.TabResourceManagement.CurrentResource.Release",
        Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserSkill: "Projects.OutsourcingProjects.ProjectDetail.TabResourceManagement.CurrentResource.UpdateUserSkill",
        Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserStarSkill: "Projects.OutsourcingProjects.ProjectDetail.TabResourceManagement.CurrentResource.ViewUserStarSkill",
+       Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserAsset : "Projects.OutsourcingProjects.ProjectDetail.TabResourceManagement.CurrentResource.ViewUserAsset",
+       Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserAsset : "Projects.OutsourcingProjects.ProjectDetail.TabResourceManagement.CurrentResource.UpdateUserAsset",
 
 
        Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_PlannedResource: "Projects.OutsourcingProjects.ProjectDetail.TabResourceManagement.PlannedResource",
@@ -224,6 +260,13 @@ export const PERMISSIONS_CONSTANT = {
        Projects_OutsourcingProjects_ProjectDetail_TabProjectFile_DeleteFile: "Projects.OutsourcingProjects.ProjectDetail.TabProjectFile.DeleteFile",
 
        Projects_OutsourcingProjects_ProjectDetail_TabProjectSummary: "Projects.OutsourcingProjects.ProjectDetail.TabProjectSummary",
+       
+       Projects_OutsourcingProjects_ProjectDetail_TabProjectAsset : "Projects.OutsourcingProjects.ProjectDetail.TabProjectAsset",
+       Projects_OutsourcingProjects_ProjectDetail_TabProjectAsset_View : "Projects.OutsourcingProjects.ProjectDetail.TabProjectAsset.View",
+       Projects_OutsourcingProjects_ProjectDetail_TabProjectAsset_Create : "Projects.OutsourcingProjects.ProjectDetail.TabProjectAsset.Create",
+       Projects_OutsourcingProjects_ProjectDetail_TabProjectAsset_Edit : "Projects.OutsourcingProjects.ProjectDetail.TabProjectAsset.Edit",
+       Projects_OutsourcingProjects_ProjectDetail_TabProjectAsset_Delete : "Projects.OutsourcingProjects.ProjectDetail.TabProjectAsset.Delete",
+       
        // #endregion
 
        // #region Projects > Product Project
@@ -264,6 +307,8 @@ export const PERMISSIONS_CONSTANT = {
        Projects_ProductProjects_ProjectDetail_TabResourceManagement_PlannedResource_Edit: "Projects.ProductProjects.ProjectDetail.TabResourceManagement.PlannedResource.Edit",
        Projects_ProductProjects_ProjectDetail_TabResourceManagement_PlannedResource_UpdateUserSkill: "Projects.ProductProjects.ProjectDetail.TabResourceManagement.PlannedResource.UpdateUserSkill",
        Projects_ProductProjects_ProjectDetail_TabResourceManagement_PlannedResource_ViewUserStarSkill: "Projects.ProductProjects.ProjectDetail.TabResourceManagement.PlannedResource.ViewUserStarSkill",
+       Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserAsset: "Projects.ProductProjects.ProjectDetail.TabResourceManagement.CurrentResource.ViewUserAsset",
+       Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserAsset: "Projects.ProductProjects.ProjectDetail.TabResourceManagement.CurrentResource.UpdateUserAsset",
 
 
        Projects_ProductProjects_ProjectDetail_TabResourceManagement_ResourceRequest: "Projects.ProductProjects.ProjectDetail.TabResourceManagement.ResourceRequest",
@@ -329,6 +374,13 @@ export const PERMISSIONS_CONSTANT = {
        Projects_ProductProjects_ProjectDetail_TabProjectFile_View: "Projects.ProductProjects.ProjectDetail.TabProjectFile.View",
        Projects_ProductProjects_ProjectDetail_TabProjectFile_UploadFile: "Projects.ProductProjects.ProjectDetail.TabProjectFile.UploadFile",
        Projects_ProductProjects_ProjectDetail_TabProjectFile_DeleteFile: "Projects.ProductProjects.ProjectDetail.TabProjectFile.DeleteFile",
+       
+       Projects_ProductProjects_ProjectDetail_TabProjectAsset: "Projects.ProductProjects.ProjectDetail.TabProjectAsset",
+       Projects_ProductProjects_ProjectDetail_TabProjectAsset_View: "Projects.ProductProjects.ProjectDetail.TabProjectAsset.View",
+       Projects_ProductProjects_ProjectDetail_TabProjectAsset_Create: "Projects.ProductProjects.ProjectDetail.TabProjectAsset.Create",
+       Projects_ProductProjects_ProjectDetail_TabProjectAsset_Edit: "Projects.ProductProjects.ProjectDetail.TabProjectAsset.Edit",
+       Projects_ProductProjects_ProjectDetail_TabProjectAsset_Delete: "Projects.ProductProjects.ProjectDetail.TabProjectAsset.Delete",
+       
        // #endregion
 
        // #region Projects > Training Project
@@ -357,6 +409,8 @@ export const PERMISSIONS_CONSTANT = {
        Projects_TrainingProjects_ProjectDetail_TabResourceManagement_CurrentResource_Release: "Projects.TrainingProjects.ProjectDetail.TabResourceManagement.CurrentResource.Release",
        Projects_TrainingProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserSkill: "Projects.TrainingProjects.ProjectDetail.TabResourceManagement.CurrentResource.UpdateUserSkill",
        Projects_TrainingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserStarSkill: "Projects.TrainingProjects.ProjectDetail.TabResourceManagement.CurrentResource.ViewUserStarSkill",
+       Projects_TrainingProjects_ProjectDetail_TabResourceManagement_CurrentResource_ViewUserAsset: "Projects.TrainingProjects.ProjectDetail.TabResourceManagement.CurrentResource.ViewUserAsset",
+       Projects_TrainingProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserAsset: "Projects.TrainingProjects.ProjectDetail.TabResourceManagement.CurrentResource.UpdateUserAsset",
 
 
        Projects_TrainingProjects_ProjectDetail_TabResourceManagement_PlannedResource: "Projects.TrainingProjects.ProjectDetail.TabResourceManagement.PlannedResource",
@@ -441,6 +495,13 @@ export const PERMISSIONS_CONSTANT = {
        Projects_TrainingProjects_ProjectDetail_TabProjectFile_View: "Projects.TrainingProjects.ProjectDetail.TabProjectFile.View",
        Projects_TrainingProjects_ProjectDetail_TabProjectFile_UploadFile: "Projects.TrainingProjects.ProjectDetail.TabProjectFile.UploadFile",
        Projects_TrainingProjects_ProjectDetail_TabProjectFile_DeleteFile: "Projects.TrainingProjects.ProjectDetail.TabProjectFile.DeleteFile",
+       
+       Projects_TrainingProjects_ProjectDetail_TabProjectAsset: "Projects.TrainingProjects.ProjectDetail.TabProjectAsset",
+       Projects_TrainingProjects_ProjectDetail_TabProjectAsset_View: "Projects.TrainingProjects.ProjectDetail.TabProjectAsset.View",
+       Projects_TrainingProjects_ProjectDetail_TabProjectAsset_Edit: "Projects.TrainingProjects.ProjectDetail.TabProjectAsset.Edit",
+       Projects_TrainingProjects_ProjectDetail_TabProjectAsset_Create: "Projects.TrainingProjects.ProjectDetail.TabProjectAsset.Create",
+       Projects_TrainingProjects_ProjectDetail_TabProjectAsset_Delete: "Projects.TrainingProjects.ProjectDetail.TabProjectAsset.Delete",
+       
        // #endregion
 
        // #endregion
@@ -693,4 +754,22 @@ export const PERMISSIONS_CONSTANT = {
        Admin_CVStatus_Edit: "Admin.CVStatus.Edit",
        Admin_CVStatus_Delete: "Admin.CVStatus.Delete",
        // #endregion
+
+       // #region OnboardingChecklist
+       Admin_OnboardingChecklist: "Admin.OnboardingChecklist",
+       Admin_OnboardingChecklist_View: "Admin.OnboardingChecklist.View",
+       Admin_OnboardingChecklist_Create: "Admin.OnboardingChecklist.Create",
+       Admin_OnboardingChecklist_Edit: "Admin.OnboardingChecklist.Edit",
+       Admin_OnboardingChecklist_Delete: "Admin.OnboardingChecklist.Delete",
+       Admin_OnboardingChecklist_ForceDone: "Admin.OnboardingChecklist.ForceDone",
+       // #endregion
+
+       // #region OffboardHistory
+        OffboardHistory : "OffboardHistory",
+        OffboardHistory_View : "OffboardHistory.View",
+        OffboardHistory_Edit : "OffboardHistory.Edit",
+        OffboardHistory_CheckList : "OffboardHistory.CheckList",
+        OffboardHistory_CheckList_PM : "OffboardHistory.CheckList.PM",
+        OffboardHistory_CheckList_IT : "OffboardHistory.CheckList.IT",
+       //  #endregion OffboardHistory
 }

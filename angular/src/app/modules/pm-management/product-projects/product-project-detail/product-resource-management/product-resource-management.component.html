@@ -120,12 +120,28 @@
                                         <div style="width: 90%; text-align: left">
                                             <p
                                             class="m-0 mr-1 content-skills"
-                                            *ngFor="let asset of user.projectAssets"
+                                            *ngFor="let asset of getVisibleProjectAssets(user)"
                                             >
                                             - {{ asset }}
                                             </p>
+                                            <button
+                                            *ngIf="!expandedAssetRows[user.id] && getProjectAssets(user).length > maxVisibleAssets"
+                                            type="button"
+                                            class="asset-expand-btn"
+                                            (click)="expandProjectAssets(user.id)"
+                                            >
+                                            ...
+                                            </button>
+                                            <button
+                                            *ngIf="expandedAssetRows[user.id] && getProjectAssets(user).length > maxVisibleAssets"
+                                            type="button"
+                                            class="asset-expand-btn"
+                                            (click)="collapseProjectAssets(user.id)"
+                                            >
+                                            <i class="fas fa-chevron-up m-0"></i>
+                                            </button>
                                             <div
-                                            *ngIf="!user.projectAssets || user.projectAssets.length === 0"
+                                            *ngIf="getProjectAssets(user).length === 0"
                                             class="text-muted"
                                             >
                                             No assets

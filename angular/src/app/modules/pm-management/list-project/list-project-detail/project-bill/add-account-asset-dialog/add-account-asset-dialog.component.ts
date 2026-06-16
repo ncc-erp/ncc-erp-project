@@ -1,7 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { AccountTypeService } from '@app/service/api/account-type.service';
-import { AccountAssetCreatorManagerService } from '@app/service/api/account-asset-creator.service';
+import { ProjectAssetService } from '@app/service/api/project-asset.service';
 import { ProjectUserBillService } from '@app/service/api/project-user-bill.service';
 import { AccountAssetDto } from '@app/service/model/project.dto';
 
@@ -11,16 +10,14 @@ import { AccountAssetDto } from '@app/service/model/project.dto';
   styleUrls: ['./add-account-asset-dialog.component.css']
 })
 export class AddAccountAssetDialogComponent implements OnInit {
-  accountTypes: any[] = [];
-  creators: any[] = [];
-  model: AccountAssetDto = {} as AccountAssetDto;
-  saving = false;
+  public availableAssets: any[] = [];
+  public model: AccountAssetDto = {} as AccountAssetDto;
+  public saving = false;
 
   constructor(
     public dialogRef: MatDialogRef<AddAccountAssetDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { projectUserBillId: number; accountAsset?: AccountAssetDto },
-    private accountTypeService: AccountTypeService,
-    private creatorService: AccountAssetCreatorManagerService,
+    @Inject(MAT_DIALOG_DATA) public data: { projectId: number; projectUserBillId: number; accountAsset?: AccountAssetDto },
+    private projectAssetService: ProjectAssetService,
     private projectUserBillService: ProjectUserBillService,
   ) {
     if (data?.accountAsset) {
@@ -31,12 +28,16 @@ export class AddAccountAssetDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.accountTypeService.getAll().subscribe(res => {
-      this.accountTypes = (res && res.result ? res.result : res) || [];
-    });
+    this.loadProjectAssets();
+  }
 
-    this.creatorService.getAll().subscribe(res => {
-      this.creators = (res && res.result ? res.result : res) || [];
+  private loadProjectAssets(): void {
+    if (!this.data.projectId) {
+      return;
+    }
+
+    this.projectAssetService.GetAllForDropdown(this.data.projectId).subscribe(res => {
+      this.availableAssets = (res && res.result ? res.result : res) || [];
     });
   }
 
@@ -47,10 +48,7 @@ export class AddAccountAssetDialogComponent implements OnInit {
     const payload = {
       id: accountAssetId,
       projectUserBillId: this.model.projectUserBillId,
-      accountTypeId: this.model.accountTypeId,
-      accountAssetCreatorId: this.model.accountAssetCreatorId,
-      typeLogin: this.model.typeLogin,
-      assetName: this.model.assetName
+      projectAssetId: this.model.projectAssetId
     };
 
     const request$ = accountAssetId > 0

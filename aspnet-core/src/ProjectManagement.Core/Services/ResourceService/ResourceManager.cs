@@ -116,7 +116,6 @@ namespace ProjectManagement.Services.ResourceManager
                     SkillNote = s.Note
                 }).ToList(),
                 WorkingType = s.WorkingType,
-                ProjectAssets = new List<string>(),
                 OnboardingStatus = s.Onboarding != null ? s.Onboarding.Status : ProjectUserOnboardingStatus.NotStarted
             })
             .OrderByDescending(s => s.PUStatus == ProjectUserStatus.Present && s.AllocatePercentage > 0)

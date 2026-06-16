@@ -91,12 +91,7 @@ export class projectResourceRequestDto {
 export class AccountAssetDto {
   id?: number;
   projectUserBillId?: number;
-  accountTypeId?: number;
-  accountTypeName?: string;
-  accountAssetCreatorId?: number;
-  accountAssetCreatorName?: string;
-  typeLogin?: string;
-  assetName?: string;
+  projectAssetId?: number;
 }
 
 export class projectUserBillDto {

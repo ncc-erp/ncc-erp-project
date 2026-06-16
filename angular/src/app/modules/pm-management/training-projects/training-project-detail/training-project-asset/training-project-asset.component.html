@@ -36,6 +36,10 @@
                                 <th style="width: 50px;">STT</th>
                                 <th>Asset Name</th>
                                 <th>Asset Type</th>
+                                <th>Account Type</th>
+                                <th>Asset Creator</th>
+                                <th>Type Login</th>
+                                <th>Project User</th>
                                 <th class="actions" style="width: 200px;">Actions</th>
                             </tr>
                         </thead>
@@ -50,6 +54,31 @@
                                 <td class="text-center stt"><span>{{ i + 1 + pageSize * (pageNumber - 1)}}</span></td>
                                 <td class="text-center">{{item.assetName}}</td>
                                 <td class="text-center">{{ item.projectAssetTypeName || item.projectAssetType?.name || item.projectResourceName || item.projectResource?.name || '-' }}</td>
+                                <td class="text-center">{{ item.accountTypeName || '-' }}</td>
+                                <td class="text-center">{{ item.accountAssetCreatorName || '-' }}</td>
+                                <td class="text-center">{{ item.typeLoginName || '-' }}</td>
+                                <td>
+                                    <div *ngIf="item.projectUsers && item.projectUsers.length > 0">
+                                        <app-user-info 
+                                            [isSmallerDiv]="true" 
+                                            *ngFor="let user of item.projectUsers"
+                                            [userData]="{
+                                                fullName: user.fullName,
+                                                branch: user.branch,
+                                                branchColor: user.branchColor,
+                                                branchDisplayName: user.branchDisplayName,
+                                                userType: user.userType,
+                                                emailAddress: user.emailAddress,
+                                                avatarFullPath: user.avatarPath,
+                                                position: user.positionId,
+                                                positionColor: user.positionColor,
+                                                positionName: user.positionName,
+                                                userLevel: user.userLevel
+                                            }">
+                                        </app-user-info>
+                                    </div>
+                                    <div *ngIf="!item.projectUsers || item.projectUsers.length === 0" class="text-center">-</div>
+                                </td>
                                 <td style="width: 200px;" class="text-center">
                                     <button class="btn btn-sm bg-secondary mr-1" (click)="editAsset(item);$event.stopPropagation()" *ngIf="permission.isGranted(Projects_TrainingProjects_ProjectDetail_TabProjectAsset_Edit)">
                                         <i class="fas fa-pencil-alt"></i>

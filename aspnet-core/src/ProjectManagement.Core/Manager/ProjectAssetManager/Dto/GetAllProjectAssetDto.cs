@@ -1,14 +1,12 @@
-using Abp.AutoMapper;
-using ProjectManagement.Entities;
+﻿using Abp.Application.Services.Dto;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace ProjectManagement.Services.ProjectUserBill.Dto
+namespace ProjectManagement.Manager.ProjectAssetManager.Dto
 {
-    [AutoMapTo(typeof(AccountAsset))]
-    public class AccountAssetDto
+    public class GetAllProjectAssetDto : EntityDto<long>
     {
-        public long Id { get; set; }
-        public long ProjectUserBillId { get; set; }
-        public long ProjectAssetId { get; set; }
         public long ProjectAssetTypeId { get; set; }
         public string ProjectAssetTypeName { get; set; }
         public long AccountTypeId { get; set; }
@@ -18,5 +16,7 @@ namespace ProjectManagement.Services.ProjectUserBill.Dto
         public long TypeLoginId { get; set; }
         public string TypeLoginName { get; set; }
         public string AssetName { get; set; }
+        public List<GetAllUserProjectAssetDto> ProjectUsers { get; set; }
+        public List<GetAllUserProjectAssetDto> BillAccounts { get; set; }
     }
 }

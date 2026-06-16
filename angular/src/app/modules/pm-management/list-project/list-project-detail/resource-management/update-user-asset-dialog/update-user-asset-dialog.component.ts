@@ -35,7 +35,7 @@ export class UpdateUserAssetDialogComponent extends AppComponentBase implements 
 
   private loadAssets(): void {
     this.subscription.push(
-      this.projectAssetService.GetAllAssetsByProjectId(this.data.projectId).pipe(
+      this.projectAssetService.GetAllForDropdown(this.data.projectId).pipe(
         catchError(this.projectAssetService.handleError)
       ).subscribe(data => {
         this.allAssets = data.result || [];
@@ -46,10 +46,9 @@ export class UpdateUserAssetDialogComponent extends AppComponentBase implements 
 
   private initializeSelectedAssets(): void {
     if (this.data.currentAssets && this.data.currentAssets.length > 0) {
-      // Map asset names to asset IDs
       this.selectedAssets = this.allAssets
-        .filter(asset => this.data.currentAssets.includes(asset.assetName))
-        .map(asset => asset.id);
+        .filter(asset => this.data.currentAssets.includes(asset.id || asset.Id))
+        .map(asset => asset.id || asset.Id);
       this.selectedAssetsCr = [...this.selectedAssets];
     }
     this.orderListSelect();

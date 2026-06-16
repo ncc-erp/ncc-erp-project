@@ -80,6 +80,16 @@ export const PERMISSIONS_CONSTANT = {
        Admin_ProjectAssetTypes_Delete: "Admin.ProjectAssetTypes.Delete",
        // #endregion
 
+       // #region Type Login
+
+       Admin_TypeLogins : "Admin.TypeLogins",
+       Admin_TypeLogins_View : "Admin.TypeLogins.View",
+       Admin_TypeLogins_Create : "Admin.TypeLogins.Create",
+       Admin_TypeLogins_Edit : "Admin.TypeLogins.Edit",
+       Admin_TypeLogins_Delete : "Admin.TypeLogins.Delete",
+
+       // #endregion
+
        // #region Currencies
        Admin_Currencies: "Admin.Currencies",
        Admin_Currencies_View: "Admin.Currencies.View",

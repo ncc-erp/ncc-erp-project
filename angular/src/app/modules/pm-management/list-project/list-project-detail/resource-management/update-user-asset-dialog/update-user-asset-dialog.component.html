@@ -24,7 +24,7 @@
               Clear
             </button>
           </div>
-          <mat-option *ngFor="let asset of filteredAssets | listFilter : 'name' : searchAsset" 
+          <mat-option *ngFor="let asset of filteredAssets | listFilter : 'name' : searchAsset"
             [value]="asset.id" (click)="$event.stopPropagation(); onSelectChange(asset.id)">
             {{ asset.assetName }}
           </mat-option>

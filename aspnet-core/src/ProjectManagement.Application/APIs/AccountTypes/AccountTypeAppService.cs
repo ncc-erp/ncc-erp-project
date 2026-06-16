@@ -80,6 +80,10 @@ namespace ProjectManagement.APIs.AccountTypes
             if (accountType == null)
                 throw new UserFriendlyException("AccountType not exist !");
 
+            var hasProjectAsset = await WorkScope.GetAll<ProjectAsset>().AnyAsync(x => x.AccountTypeId == accountTypeId);
+            if (hasProjectAsset)
+                throw new UserFriendlyException("There is ProjectAsset with this type");
+
             await WorkScope.DeleteAsync(accountType);
         }
     }

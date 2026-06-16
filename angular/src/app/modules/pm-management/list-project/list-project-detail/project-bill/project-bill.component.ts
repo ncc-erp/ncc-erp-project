@@ -896,7 +896,7 @@ export class ProjectBillComponent extends AppComponentBase implements OnInit {
   openAccountAssetDialog(bill: projectUserBillDto, accountAsset?: AccountAssetDto): void {
     const dialogRef = this.dialog.open(AddAccountAssetDialogComponent, {
       width: '420px',
-      data: { projectUserBillId: bill.id, accountAsset }
+      data: { projectId: this.projectId, projectUserBillId: bill.id, accountAsset }
     });
 
     dialogRef.afterClosed().subscribe((result?: boolean) => {

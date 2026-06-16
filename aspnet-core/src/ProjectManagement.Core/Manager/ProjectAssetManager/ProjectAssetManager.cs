@@ -17,71 +17,125 @@ namespace ProjectManagement.Manager.ProjectAssetManager
         public ProjectAssetManager(IWorkScope workScope) : base(workScope)
         {
         }
-        public async Task<List<ProjectAssetDto>> GetAllAssetsByProjectId(long projectId)
+        public async Task<List<GetAllProjectAssetDto>> GetAllAssetsByProjectId(long projectId)
         {
             var assets = await WorkScope.All<ProjectAsset>()
                 .Include(x => x.ProjectAssetType)
+                .Include(x => x.AccountType)
+                .Include(x => x.AccountAssetCreator)
+                .Include(x => x.TypeLogin)
                 .Where(x => x.ProjectId == projectId)
-                .Select(x => new ProjectAssetDto
+                .Select(x => new GetAllProjectAssetDto
                 {
                     Id = x.Id,
                     ProjectAssetTypeId = x.ProjectAssetTypeId,
                     ProjectAssetTypeName = x.ProjectAssetType != null ? x.ProjectAssetType.Name : string.Empty,
+                    AccountTypeId = x.AccountTypeId,
+                    AccountTypeName = x.AccountType != null ? x.AccountType.Name : string.Empty,
+                    AccountAssetCreatorId = x.AccountAssetCreatorId,
+                    AccountAssetCreatorName = x.AccountAssetCreator != null ? x.AccountAssetCreator.Name : string.Empty,
+                    TypeLoginId = x.TypeLoginId,
+                    TypeLoginName = x.TypeLogin != null ? x.TypeLogin.Name : string.Empty,
                     AssetName = x.AssetName,
+                    ProjectUsers = x.ProjectUserAssets
+                        .Select(pua => new GetAllUserProjectAssetDto
+                        {
+                            Id = pua.Id,
+                            UserId = pua.UserId,
+                            EmailAddress = pua.User.EmailAddress,
+                            AvatarPath = pua.User.AvatarPath,
+                            UserType = pua.User.UserType,
+                            Branch = pua.User.BranchOld,
+                            FullName = pua.User.FullName,
+                            BranchColor = pua.User.Branch.Color,
+                            BranchDisplayName = pua.User.Branch.DisplayName,
+                            PositionId = pua.User.PositionId,
+                            PositionColor = pua.User.Position.Color,
+                            PositionName = pua.User.Position.ShortName,
+                            UserLevel = pua.User.UserLevel
+                        }).ToList(),
+                    BillAccounts = x.AccountAssets
+                        .Select(ar => new GetAllUserProjectAssetDto
+                        {
+                            Id = ar.Id,
+                            UserId = ar.ProjectUserBill.UserId,
+                            EmailAddress = ar.ProjectUserBill.User.EmailAddress,
+                            AvatarPath = ar.ProjectUserBill.User.AvatarPath,
+                            UserType = ar.ProjectUserBill.User.UserType,
+                            Branch = ar.ProjectUserBill.User.BranchOld,
+                            FullName = ar.ProjectUserBill.User.FullName,
+                            BranchColor = ar.ProjectUserBill.User.Branch.Color,
+                            BranchDisplayName = ar.ProjectUserBill.User.Branch.DisplayName,
+                            PositionId = ar.ProjectUserBill.User.PositionId,
+                            PositionColor = ar.ProjectUserBill.User.Position.Color,
+                            PositionName = ar.ProjectUserBill.User.Position.ShortName,
+                            UserLevel = ar.ProjectUserBill.User.UserLevel
+                        }).ToList()
                 })
                 .ToListAsync();
 
             return assets;
         }
 
-        public async Task<List<ProjectAssetDto>> Create(long projectId, List<ProjectAssetDto> input)
+        public async Task<List<ProjectAssetDropdownDto>> GetAllForDropdown(long projectId)
         {
-            if (input == null || input.Count == 0)
-                throw new UserFriendlyException("At least one project asset is required!");
-
-            var projectAssetTypeIds = input
-                .Select(x => x.ProjectAssetTypeId)
-                .Where(x => x > 0)
-                .Distinct()
-                .ToList();
-
-            var projectAssetTypes = await WorkScope.GetAll<ProjectAssetType>()
-                .Where(x => projectAssetTypeIds.Contains(x.Id))
-                .ToDictionaryAsync(x => x.Id);
-
-            foreach (var item in input)
-            {
-                if (item.ProjectAssetTypeId <= 0)
-                    throw new UserFriendlyException("Project asset type is required!");
-
-                if (!projectAssetTypes.ContainsKey(item.ProjectAssetTypeId))
-                    throw new UserFriendlyException("Project asset type not found!");
-            }
-
-            var projectAssetsToInsert = input.Select(item =>
-            {
-                var projectAssetType = projectAssetTypes[item.ProjectAssetTypeId];
-                var assetName = string.IsNullOrWhiteSpace(item.AssetName)
-                    ? projectAssetType.Name
-                    : item.AssetName.Trim();
-
-                return new ProjectAsset
+            return await WorkScope.All<ProjectAsset>()
+                .Where(x => x.ProjectId == projectId)
+                .Select(x => new ProjectAssetDropdownDto
                 {
-                    ProjectId = projectId,
-                    ProjectAssetTypeId = item.ProjectAssetTypeId,
-                    AssetName = assetName
-                };
-            }).ToList();
+                    Id = x.Id,
+                    AssetName = x.AssetName
+                })
+                .ToListAsync();
+        }
 
-            var insertedAssets = await WorkScope.InsertRangeAsync(projectAssetsToInsert);
+        public async Task<ProjectAssetDto> Create(long projectId, ProjectAssetDto input)
+        {
+            var projectAssetType = await WorkScope.GetAsync<ProjectAssetType>(input.ProjectAssetTypeId);
+            if (projectAssetType == null)
+                throw new UserFriendlyException("Project asset type not found!");
 
-            return insertedAssets.Select(x => new ProjectAssetDto
+            var accountType = await WorkScope.GetAsync<AccountType>(input.AccountTypeId);
+            if (accountType == null)
+                throw new UserFriendlyException("Account type not found!");
+
+            var accountAssetCreator = await WorkScope.GetAsync<AccountAssetCreator>(input.AccountAssetCreatorId);
+            if (accountAssetCreator == null)
+                throw new UserFriendlyException("Account asset creator not found!");
+
+            var typeLogin = await WorkScope.GetAsync<TypeLogin>(input.TypeLoginId);
+            if (typeLogin == null)
+                throw new UserFriendlyException("Type login not found!");
+
+            var assetName = string.IsNullOrWhiteSpace(input.AssetName)
+                ? projectAssetType.Name
+                : input.AssetName.Trim();
+
+            var projectAsset = new ProjectAsset
             {
-                Id = x.Id,
-                ProjectAssetTypeId = x.ProjectAssetTypeId,
-                ProjectAssetTypeName = projectAssetTypes[x.ProjectAssetTypeId].Name,
-                AssetName = x.AssetName,
-            }).ToList();
+                ProjectId = projectId,
+                ProjectAssetTypeId = input.ProjectAssetTypeId,
+                AccountTypeId = input.AccountTypeId,
+                AccountAssetCreatorId = input.AccountAssetCreatorId,
+                TypeLoginId = input.TypeLoginId,
+                AssetName = assetName
+            };
+
+            var insertedAsset = await WorkScope.InsertAsync(projectAsset);
+
+            return new ProjectAssetDto
+            {
+                Id = insertedAsset.Id,
+                ProjectAssetTypeId = insertedAsset.ProjectAssetTypeId,
+                ProjectAssetTypeName = projectAssetType.Name,
+                AccountTypeId = insertedAsset.AccountTypeId,
+                AccountTypeName = accountType.Name,
+                AccountAssetCreatorId = insertedAsset.AccountAssetCreatorId,
+                AccountAssetCreatorName = accountAssetCreator.Name,
+                TypeLoginId = insertedAsset.TypeLoginId,
+                TypeLoginName = typeLogin.Name,
+                AssetName = insertedAsset.AssetName,
+            };
         }
 
         public async Task UpdateUserAsset(long userId, long projectId, List<long> projectAssetIds)
@@ -139,11 +193,26 @@ namespace ProjectManagement.Manager.ProjectAssetManager
             if (projectAssetType == null)
                 throw new UserFriendlyException("Project asset type not found!");
 
+            var accountType = await WorkScope.GetAsync<AccountType>(input.AccountTypeId);
+            if (accountType == null)
+                throw new UserFriendlyException("Account type not found!");
+
+            var accountAssetCreator = await WorkScope.GetAsync<AccountAssetCreator>(input.AccountAssetCreatorId);
+            if (accountAssetCreator == null)
+                throw new UserFriendlyException("Account asset creator not found!");
+
+            var typeLogin = await WorkScope.GetAsync<TypeLogin>(input.TypeLoginId);
+            if (typeLogin == null)
+                throw new UserFriendlyException("Type login not found!");
+
             var assetName = string.IsNullOrWhiteSpace(input.AssetName)
                 ? projectAssetType.Name
                 : input.AssetName.Trim();
 
             projectAsset.ProjectAssetTypeId = input.ProjectAssetTypeId;
+            projectAsset.AccountTypeId = input.AccountTypeId;
+            projectAsset.AccountAssetCreatorId = input.AccountAssetCreatorId;
+            projectAsset.TypeLoginId = input.TypeLoginId;
             projectAsset.AssetName = assetName;
             await WorkScope.UpdateAsync(projectAsset);
 
@@ -152,6 +221,12 @@ namespace ProjectManagement.Manager.ProjectAssetManager
                 Id = projectAsset.Id,
                 ProjectAssetTypeId = projectAsset.ProjectAssetTypeId,
                 ProjectAssetTypeName = projectAssetType.Name,
+                AccountTypeId = projectAsset.AccountTypeId,
+                AccountTypeName = accountType.Name,
+                AccountAssetCreatorId = projectAsset.AccountAssetCreatorId,
+                AccountAssetCreatorName = accountAssetCreator.Name,
+                TypeLoginId = projectAsset.TypeLoginId,
+                TypeLoginName = typeLogin.Name,
                 AssetName = projectAsset.AssetName,
             };
         }

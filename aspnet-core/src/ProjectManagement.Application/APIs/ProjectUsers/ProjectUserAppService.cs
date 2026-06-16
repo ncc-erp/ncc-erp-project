@@ -11,6 +11,7 @@ using ProjectManagement.Authorization;
 using ProjectManagement.Authorization.Users;
 using ProjectManagement.Constants;
 using ProjectManagement.Entities;
+using ProjectManagement.Manager.ProjectAssetManager.Dto;
 using ProjectManagement.NccCore.Helper;
 using ProjectManagement.Services.Komu;
 using ProjectManagement.Services.Komu.KomuDto;
@@ -93,36 +94,54 @@ namespace ProjectManagement.APIs.ProjectUsers
             var users = await query.ToListAsync();
 
             var userIds = users.Select(u => u.UserId).ToList();
-            var assets = await WorkScope.GetAll<ProjectUserAsset>()
-                .Where(pua => userIds.Contains(pua.UserId) && pua.ProjectAsset.ProjectId == projectId)
-                .Include(pua => pua.ProjectAsset)
-                    .ThenInclude(pa => pa.ProjectAssetType)
+            var assetsDict = await WorkScope.GetAll<ProjectUserAsset>()
+                .Where(x =>
+                    userIds.Contains(x.UserId) &&
+                    x.ProjectAsset.ProjectId == projectId)
+                .Select(x => new
+                {
+                    x.UserId,
+                    Asset = new ProjectAssetDto
+                    {
+                        Id = x.ProjectAsset.Id,
+                        ProjectAssetTypeId = x.ProjectAsset.ProjectAssetTypeId,
+                        ProjectAssetTypeName = x.ProjectAsset.ProjectAssetType != null
+                                ? x.ProjectAsset.ProjectAssetType.Name
+                                : string.Empty,
+                        AccountTypeId = x.ProjectAsset.AccountTypeId,
+                        AccountTypeName = x.ProjectAsset.AccountType != null
+                                ? x.ProjectAsset.AccountType.Name
+                                : string.Empty,
+                        AccountAssetCreatorId = x.ProjectAsset.AccountAssetCreatorId,
+                        AccountAssetCreatorName = x.ProjectAsset.AccountAssetCreator != null
+                                ? x.ProjectAsset.AccountAssetCreator.Name
+                                : string.Empty,
+                        TypeLoginId = x.ProjectAsset.TypeLoginId,
+                        TypeLoginName = x.ProjectAsset.TypeLogin != null
+                                ? x.ProjectAsset.TypeLogin.Name
+                                : string.Empty,
+                        AssetName = x.ProjectAsset.AssetName
+                    }
+                })
                 .ToListAsync();
 
-            var assetsDict = assets
-                .GroupBy(pua => pua.UserId)
-                .ToDictionary(g => g.Key, g => g.Select(x => FormatProjectAssetName(x.ProjectAsset)).ToList());
+            var groupedAssets = assetsDict
+                .GroupBy(x => x.UserId)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.Select(x => x.Asset).ToList());
 
             foreach (var user in users)
             {
-                user.ProjectAssets = assetsDict.ContainsKey(user.UserId)
-                    ? assetsDict[user.UserId]
-                    : new List<string>();
+                user.ProjectAssets =
+                    groupedAssets.TryGetValue(
+                        user.UserId,
+                        out var projectAssets)
+                        ? projectAssets
+                        : new List<ProjectAssetDto>();
             }
 
             return users;
-        }
-
-        private static string FormatProjectAssetName(Entities.ProjectAsset projectAsset)
-        {
-            var assetName = !string.IsNullOrWhiteSpace(projectAsset?.AssetName)
-                ? projectAsset.AssetName
-                : "Unnamed";
-            var assetTypeName = !string.IsNullOrWhiteSpace(projectAsset?.ProjectAssetType?.Name)
-                ? projectAsset.ProjectAssetType.Name
-                : "Unknown type";
-
-            return $"{assetName} [{assetTypeName}]";
         }
 
         [HttpGet]

@@ -256,30 +256,46 @@
                   </td>
 
                   <td style="vertical-align: middle; width: 220px">
-                      <div class="d-flex align-items-start">
-                          <div style="width: 90%; text-align: left">
-                            <p
-                                class="m-0 mr-1 content-skills"
-                                *ngFor="let asset of user.projectAssets"
-                            >
-                                - {{ asset }}
-                            </p>
-                          <div
-                              *ngIf="!user.projectAssets || user.projectAssets.length === 0"
-                              class="text-muted"
-                          >
-                                  No assets
-                          </div>
-                        </div>
-                        <div class="col-skill">
-                            <i
-                                class="fas fa-edit ml-1"
-                                (click)="updateUserAsset(user)"
-                                *ngIf="!user.createMode && !user.editMode && permission.isGranted(Projects_TrainingProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserAsset)"
-                                matTooltip="Edit asset"
-                            ></i>
+                    <div class="d-flex align-items-start">
+                      <div style="width: 90%; text-align: left">
+                        <p
+                          class="m-0 mr-1 content-skills"
+                          *ngFor="let asset of getVisibleProjectAssets(user)"
+                        >
+                          - {{ asset }}
+                        </p>
+                        <button
+                          *ngIf="!expandedAssetRows[user.id] && getProjectAssets(user).length > maxVisibleAssets"
+                          type="button"
+                          class="asset-expand-btn"
+                          (click)="expandProjectAssets(user.id)"
+                        >
+                          ...
+                        </button>
+                        <button
+                          *ngIf="expandedAssetRows[user.id] && getProjectAssets(user).length > maxVisibleAssets"
+                          type="button"
+                          class="asset-expand-btn"
+                          (click)="collapseProjectAssets(user.id)"
+                        >
+                          <i class="fas fa-chevron-up m-0"></i>
+                        </button>
+                        <div
+                          *ngIf="getProjectAssets(user).length === 0"
+                          class="text-muted"
+                        >
+                          No assets
                         </div>
                       </div>
+                      <div class="col-skill">
+                        <i
+                          class="fas fa-edit ml-1"
+                          (click)="updateUserAsset(user)"
+                          *ngIf="!user.createMode && !user.editMode && permission.isGranted(Projects_TrainingProjects_ProjectDetail_TabResourceManagement_CurrentResource_UpdateUserAsset)"
+                          matTooltip="Edit asset"
+                        ></i>
+                      </div>
+                    </div>
                   </td>
 
                   <td class="text-center">

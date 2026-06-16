@@ -298,11 +298,25 @@ export class ResourceManagementComponent
 
     return assets
       .map((asset) => {
-        if (typeof asset === "string") {
+        if (typeof asset === 'string') {
           return asset.trim();
         }
 
-        return asset?.assetName || asset?.name || "";
+        const assetName = asset?.assetName ?? 'Unnamed';
+        const projectAssetType =
+          asset?.projectAssetTypeName ??
+          'Unknown project type';
+        const accountType =
+          asset?.accountTypeName ??
+          'Unknown account type';
+        const creator =
+          asset?.accountAssetCreatorName ??
+          'Unknown creator';
+        const typeLogin =
+          asset?.typeLoginName ??
+          'Unknown type login';
+
+        return `${assetName} [${projectAssetType}] [${accountType}] [${creator}] [${typeLogin}]`;
       })
       .filter((asset) => asset && asset.trim().length > 0);
   }
@@ -324,10 +338,16 @@ export class ResourceManagementComponent
   }
 
   updateUserAsset(user) {
+    const currentAssets = (user?.projectAssets || []).map((asset: any) => {
+      if (asset && typeof asset === 'object') {
+        return asset.id || asset.Id || null;
+      }
+      return asset;
+    }).filter((id: any) => id != null);
     let ref = this.dialog.open(UpdateUserAssetDialogComponent, {
       width: "700px",
       data: {
-        currentAssets: this.getProjectAssets(user),
+        currentAssets: currentAssets,
         userId: user.userId,
         fullName: user.fullName,
         projectId: this.projectId

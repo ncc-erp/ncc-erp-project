@@ -80,6 +80,10 @@ namespace ProjectManagement.APIs.Creators
             if (creator == null)
                 throw new UserFriendlyException("Creator not exist !");
 
+            var hasProjectAsset = await WorkScope.GetAll<ProjectAsset>().AnyAsync(x => x.AccountAssetCreatorId == creatorId);
+            if (hasProjectAsset)
+                throw new UserFriendlyException("There is ProjectAsset with this Creator");
+
             await WorkScope.DeleteAsync(creator);
         }
     }

@@ -488,13 +488,13 @@
                                         <div *ngIf="bill.accountAssets?.length; else noAccountAsset" class="d-flex flex-column gap-1">
                                             <div *ngFor="let ar of bill.accountAssets | slice:0:(expandedAccountAssetRows[bill.id] ? bill.accountAssets.length : maxVisibleAccountAssets)"
                                                 class="d-flex align-items-center border rounded p-1 account-asset-item"
-                                                [matMenuTriggerFor]="accountAssetMenu"
-                                                [matTooltip]="(ar.assetName || '') + ' (' + (ar.accountAssetCreatorName || '') + ') (' + (ar.accountTypeName || '') + '): ' + (ar.typeLogin || '')">
+                                                [matMenuTriggerFor]="accountAssetMenu">
                                                 <span class="account-asset-text">
                                                     <strong class="account-asset-segment">{{ ar.assetName || 'Unnamed' }}</strong>
+                                                    <span class="account-asset-segment">[{{ ar.projectAssetTypeName || 'Unknown project type' }}]</span>
+                                                    <span class="account-asset-segment">[{{ ar.accountTypeName || 'Unknown account type' }}]</span>
                                                     <span class="account-asset-segment">[{{ ar.accountAssetCreatorName || 'Unknown creator' }}]</span>
-                                                    <span class="account-asset-segment">[{{ ar.accountTypeName || 'Unknown type' }}]</span>
-                                                    <span class="account-asset-segment">[{{ ar.typeLogin || '' }}]</span>
+                                                    <span class="account-asset-segment">[{{ ar.typeLoginName || 'Unknown login type' }}]</span>
                                                 </span>
                                                 <mat-menu #accountAssetMenu="matMenu" class="p-2">
                                                     <button mat-menu-item (click)="openAccountAssetDialog(bill, ar)">

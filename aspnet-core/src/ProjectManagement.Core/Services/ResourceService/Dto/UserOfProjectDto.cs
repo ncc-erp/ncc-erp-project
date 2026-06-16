@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using static ProjectManagement.Constants.Enum.ProjectEnum;
+using ProjectManagement.Manager.ProjectAssetManager.Dto;
 
 namespace ProjectManagement.Services.ResourceManager.Dto
 {
@@ -83,7 +84,7 @@ namespace ProjectManagement.Services.ResourceManager.Dto
 
         public ProjectUserOnboardingStatus OnboardingStatus { get; set; } = ProjectUserOnboardingStatus.NotStarted;
 
-        public List<string> ProjectAssets { get; set; } = new List<string>();
+        public List<ProjectAssetDto> ProjectAssets { get; set; }
     }
     public class ProjectStatusUser
     {

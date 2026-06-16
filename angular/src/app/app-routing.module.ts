@@ -61,6 +61,7 @@ import { SkillComponent } from './modules/admin/skill/skill.component';
 import { AccountTypeComponent } from './modules/admin/account-type/account-type.component';
 import { AccountAssetCreatorComponent } from './modules/admin/account-asset-creator/account-asset-creator.component';
 import { ProjectAssetTypeComponent } from './modules/admin/project-asset-type/project-asset-type.component';
+import { TypeLoginComponent } from './modules/admin/type-login/type-login.component';
 import { ConfigurationComponent } from './modules/admin/configuration/configuration.component';
 import { CurrencyComponent } from './modules/admin/currency/currency.component';
 import { AllResourceComponent } from './modules/delivery-management/delivery/available-resource-tab/all-resource/all-resource.component';
@@ -191,6 +192,11 @@ import { TrainingProjectAssetComponent } from './modules/pm-management/training-
           {
             path: "project-asset-types",
             component: ProjectAssetTypeComponent,
+            canActivate: [AppRouteGuard],
+          },
+          {
+            path: "type-logins",
+            component: TypeLoginComponent,
             canActivate: [AppRouteGuard],
           },
           { path: "about", component: AboutComponent },
@@ -486,7 +492,7 @@ import { TrainingProjectAssetComponent } from './modules/pm-management/training-
                 path: "will-pool",
                 component: WillPoolComponent,
                 canActivate: [AppRouteGuard],
-              }
+              },
             ]
           },
           {

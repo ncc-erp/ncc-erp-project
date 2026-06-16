@@ -207,12 +207,16 @@ namespace ProjectManagement.Services.ProjectUserBills
                         {
                             Id = ar.Id,
                             ProjectUserBillId = ar.ProjectUserBillId,
-                            AccountTypeId = ar.AccountTypeId,
-                            AccountTypeName = ar.AccountType.Name,
-                            AccountAssetCreatorId = ar.AccountAssetCreatorId,
-                            AccountAssetCreatorName = ar.AccountAssetCreator.Name,
-                            TypeLogin = ar.TypeLogin,
-                            AssetName = ar.AssetName,
+                            ProjectAssetId = ar.ProjectAssetId,
+                            ProjectAssetTypeId = ar.ProjectAsset.ProjectAssetTypeId,
+                            ProjectAssetTypeName = ar.ProjectAsset.ProjectAssetType != null ? ar.ProjectAsset.ProjectAssetType.Name : string.Empty,
+                            AccountTypeId = ar.ProjectAsset.AccountTypeId,
+                            AccountTypeName = ar.ProjectAsset.AccountType != null ? ar.ProjectAsset.AccountType.Name : string.Empty,
+                            AccountAssetCreatorId = ar.ProjectAsset.AccountAssetCreatorId,
+                            AccountAssetCreatorName = ar.ProjectAsset.AccountAssetCreator != null ? ar.ProjectAsset.AccountAssetCreator.Name : string.Empty,
+                            TypeLoginId = ar.ProjectAsset.TypeLoginId,
+                            TypeLoginName = ar.ProjectAsset.TypeLogin != null ? ar.ProjectAsset.TypeLogin.Name : string.Empty,
+                            AssetName = ar.ProjectAsset.AssetName,
                         }).ToList(),
                     SkillNote = x.BillUserSkills.Select(s => s.Note).FirstOrDefault() ?? ""
                 });
@@ -326,12 +330,16 @@ namespace ProjectManagement.Services.ProjectUserBills
                         {
                             Id = ar.Id,
                             ProjectUserBillId = ar.ProjectUserBillId,
-                            AccountTypeId = ar.AccountTypeId,
-                            AccountTypeName = ar.AccountType.Name,
-                            AccountAssetCreatorId = ar.AccountAssetCreatorId,
-                            AccountAssetCreatorName = ar.AccountAssetCreator.Name,
-                            TypeLogin = ar.TypeLogin,
-                            AssetName = ar.AssetName,
+                            ProjectAssetId = ar.ProjectAssetId,
+                            ProjectAssetTypeId = ar.ProjectAsset.ProjectAssetTypeId,
+                            ProjectAssetTypeName = ar.ProjectAsset.ProjectAssetType != null ? ar.ProjectAsset.ProjectAssetType.Name : string.Empty,
+                            AccountTypeId = ar.ProjectAsset.AccountTypeId,
+                            AccountTypeName = ar.ProjectAsset.AccountType != null ? ar.ProjectAsset.AccountType.Name : string.Empty,
+                            AccountAssetCreatorId = ar.ProjectAsset.AccountAssetCreatorId,
+                            AccountAssetCreatorName = ar.ProjectAsset.AccountAssetCreator != null ? ar.ProjectAsset.AccountAssetCreator.Name : string.Empty,
+                            TypeLoginId = ar.ProjectAsset.TypeLoginId,
+                            TypeLoginName = ar.ProjectAsset.TypeLogin != null ? ar.ProjectAsset.TypeLogin.Name : string.Empty,
+                            AssetName = ar.ProjectAsset.AssetName,
                         }).ToList(),
                     UserSkills = x.BillUserSkills.Select(us => new BillUserSkillDto
                     {
@@ -543,36 +551,18 @@ namespace ProjectManagement.Services.ProjectUserBills
         {
             ValidateProjectUserBill(input.ProjectUserBillId);
 
-            var accountType = await _workScope.GetAsync<AccountType>(input.AccountTypeId);
-            if (accountType == null)
-                throw new UserFriendlyException("AccountType not exist !");
-
-            var creator = await _workScope.GetAsync<AccountAssetCreator>(input.AccountAssetCreatorId);
-            if (creator == null)
-                throw new UserFriendlyException("Creator not exist !");
+            var projectAsset = await _workScope.GetAsync<ProjectAsset>(input.ProjectAssetId);
+            if (projectAsset == null)
+                throw new UserFriendlyException("Project asset not found!");
 
             var entity = new AccountAsset
             {
                 ProjectUserBillId = input.ProjectUserBillId,
-                AccountTypeId = input.AccountTypeId,
-                AccountAssetCreatorId = input.AccountAssetCreatorId,
-                TypeLogin = input.TypeLogin?.Trim(),
-                AssetName = input.AssetName,
+                ProjectAssetId = input.ProjectAssetId,
             };
 
             var id = await _workScope.InsertAndGetIdAsync(entity);
-            var created = await _workScope.GetAsync<AccountAsset>(id);
-            return new AccountAssetDto
-            {
-                Id = created.Id,
-                ProjectUserBillId = created.ProjectUserBillId,
-                AccountTypeId = created.AccountTypeId,
-                AccountTypeName = created.AccountType?.Name,
-                AccountAssetCreatorId = created.AccountAssetCreatorId,
-                AccountAssetCreatorName = created.AccountAssetCreator?.Name,
-                TypeLogin = created.TypeLogin,
-                AssetName = created.AssetName,
-            };
+            return await GetAccountAssetDtoAsync(id);
         }
 
         public async Task DeleteAccountAsset(long accountAssetId)
@@ -598,51 +588,39 @@ namespace ProjectManagement.Services.ProjectUserBills
                 accountAsset.ProjectUserBillId = input.ProjectUserBillId;
             }
 
-            if (input.AccountTypeId > 0)
+            if (input.ProjectAssetId > 0)
             {
-                var accountType = await _workScope.GetAsync<AccountType>(input.AccountTypeId);
-                if (accountType == null)
+                var projectAsset = await _workScope.GetAsync<ProjectAsset>(input.ProjectAssetId);
+                if (projectAsset == null)
                 {
-                    throw new UserFriendlyException("AccountType not exist !");
+                    throw new UserFriendlyException("Project asset not found!");
                 }
 
-                accountAsset.AccountTypeId = input.AccountTypeId;
-            }
-
-            if (input.AccountAssetCreatorId > 0)
-            {
-                var creator = await _workScope.GetAsync<AccountAssetCreator>(input.AccountAssetCreatorId);
-                if (creator == null)
-                {
-                    throw new UserFriendlyException("Creator not exist !");
-                }
-
-                accountAsset.AccountAssetCreatorId = input.AccountAssetCreatorId;
-            }
-
-            if (!string.IsNullOrWhiteSpace(input.TypeLogin))
-            {
-                accountAsset.TypeLogin = input.TypeLogin.Trim();
-            }
-
-            if (!string.IsNullOrWhiteSpace(input.AssetName))
-            {
-                accountAsset.AssetName = input.AssetName.Trim();
+                accountAsset.ProjectAssetId = input.ProjectAssetId;
             }
 
             await _workScope.UpdateAsync(accountAsset);
+            return await GetAccountAssetDtoAsync(accountAsset.Id);
+        }
+
+        private async Task<AccountAssetDto> GetAccountAssetDtoAsync(long accountAssetId)
+        {
             return await _workScope.GetAll<AccountAsset>()
-                .Where(x => x.Id == accountAsset.Id)
+                .Where(x => x.Id == accountAssetId)
                 .Select(x => new AccountAssetDto
                 {
                     Id = x.Id,
                     ProjectUserBillId = x.ProjectUserBillId,
-                    AccountTypeId = x.AccountTypeId,
-                    AccountTypeName = x.AccountType.Name,
-                    AccountAssetCreatorId = x.AccountAssetCreatorId,
-                    AccountAssetCreatorName = x.AccountAssetCreator.Name,
-                    TypeLogin = x.TypeLogin,
-                    AssetName = x.AssetName,
+                    ProjectAssetId = x.ProjectAssetId,
+                    ProjectAssetTypeId = x.ProjectAsset.ProjectAssetTypeId,
+                    ProjectAssetTypeName = x.ProjectAsset.ProjectAssetType.Name,
+                    AccountTypeId = x.ProjectAsset.AccountTypeId,
+                    AccountTypeName = x.ProjectAsset.AccountType.Name,
+                    AccountAssetCreatorId = x.ProjectAsset.AccountAssetCreatorId,
+                    AccountAssetCreatorName = x.ProjectAsset.AccountAssetCreator.Name,
+                    TypeLoginId = x.ProjectAsset.TypeLoginId,
+                    TypeLoginName = x.ProjectAsset.TypeLogin.Name,
+                    AssetName = x.ProjectAsset.AssetName,
                 })
                 .FirstOrDefaultAsync();
         }

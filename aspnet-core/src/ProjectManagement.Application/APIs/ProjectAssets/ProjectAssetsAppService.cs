@@ -9,35 +9,41 @@ using ProjectManagement.Manager.ProjectAssetManager.Dto;
 using Abp.Authorization;
 using ProjectManagement.Authorization;
 
-namespace ProjectManagement.APIs.ProjectAsset
+namespace ProjectManagement.APIs.ProjectAssets
 {
     [AbpAuthorize]
-    public class ProjectAssetAppService : ProjectManagementAppServiceBase
+    public class ProjectAssetsAppService : ProjectManagementAppServiceBase
     {
         private readonly ProjectAssetManager _projectAssetManager;
 
-        public ProjectAssetAppService(ProjectAssetManager projectAssetManager)
+        public ProjectAssetsAppService(ProjectAssetManager projectAssetManager)
         {
             _projectAssetManager = projectAssetManager;
         }
 
         [HttpGet]
-        public async Task<List<ProjectAssetDto>> GetAllAssetsByProjectId(long projectId)
+        public async Task<List<GetAllProjectAssetDto>> GetAllAssetsByProjectId(long projectId)
         {
             return await _projectAssetManager.GetAllAssetsByProjectId(projectId);
         }
 
         [HttpPost]
-        public async Task<List<ProjectAssetDto>> Create(long projectId, List<ProjectAssetDto> input)
+        public async Task<ProjectAssetDto> Create(long projectId, ProjectAssetDto input)
         {
-            if (input == null || input.Count == 0)
-                throw new UserFriendlyException("At least one project resource is required!");
+            if (input == null)
+                throw new UserFriendlyException("Project asset is required!");
 
-            foreach (var item in input)
-            {
-                if (item.ProjectAssetTypeId <= 0)
-                    throw new UserFriendlyException("Project resource is required!");
-            }
+            if (input.ProjectAssetTypeId <= 0)
+                throw new UserFriendlyException("Project asset type is required!");
+
+            if (input.AccountTypeId <= 0)
+                throw new UserFriendlyException("Account type is required!");
+
+            if (input.AccountAssetCreatorId <= 0)
+                throw new UserFriendlyException("Account asset creator is required!");
+
+            if (input.TypeLoginId <= 0)
+                throw new UserFriendlyException("Type login is required!");
 
             return await _projectAssetManager.Create(projectId, input);
         }
@@ -64,7 +70,16 @@ namespace ProjectManagement.APIs.ProjectAsset
                 throw new UserFriendlyException("Project asset id is invalid!");
 
             if (input.ProjectAssetTypeId <= 0)
-                throw new UserFriendlyException("Project resource is required!");
+                throw new UserFriendlyException("Project asset type is required!");
+
+            if (input.AccountTypeId <= 0)
+                throw new UserFriendlyException("Account type is required!");
+
+            if (input.AccountAssetCreatorId <= 0)
+                throw new UserFriendlyException("Account asset creator is required!");
+
+            if (input.TypeLoginId <= 0)
+                throw new UserFriendlyException("Type login is required!");
 
             return await _projectAssetManager.Edit(projectId, input);
         }
@@ -76,6 +91,12 @@ namespace ProjectManagement.APIs.ProjectAsset
                 throw new UserFriendlyException("Project asset id is invalid!");
 
             await _projectAssetManager.Delete(projectAssetId);
+        }
+
+        [HttpGet]
+        public async Task<List<ProjectAssetDropdownDto>> GetAllForDropdown(long projectId)
+        {
+            return await _projectAssetManager.GetAllForDropdown(projectId);
         }
     }
 }

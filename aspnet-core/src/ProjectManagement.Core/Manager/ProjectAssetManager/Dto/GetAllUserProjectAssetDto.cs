@@ -7,7 +7,7 @@ using static ProjectManagement.Constants.Enum.ProjectEnum;
 
 namespace ProjectManagement.Manager.ProjectAssetManager.Dto
 {
-    public class GetAllUserProjectAsset : EntityDto<long>
+    public class GetAllUserProjectAssetDto : EntityDto<long>
     {
         public long UserId { get; set; }
         public string EmailAddress { get; set; }
@@ -23,6 +23,5 @@ namespace ProjectManagement.Manager.ProjectAssetManager.Dto
         public string PositionName { get; set; }
         public UserLevel UserLevel { get; set; }
         public string UserTypeName => CommonUtil.UserTypeName(UserType);
-        public List<string> ProjectAssets { get; set; }
     }
 }

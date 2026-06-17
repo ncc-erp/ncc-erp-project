@@ -114,6 +114,8 @@ export class ProductResourceManagementComponent extends AppComponentBase impleme
   public listProjectUserRoles: IDNameDto[] = []
 
   public workingTypeList = Object.keys(this.APP_ENUM.ProjectUserWorkingType);
+  public maxVisibleAssets = 2;
+  public expandedAssetRows: { [projectUserId: number]: boolean } = {};
 
 
   constructor(
@@ -212,12 +214,58 @@ export class ProductResourceManagementComponent extends AppComponentBase impleme
       if (rs) {
         this.getProjectUser()
         this.getPlannedtUser()
+        this.getAllUser()
         this.projectUserProcess = false;
         this.planResourceProcess = false;
       }
     })
   }
-  
+
+  public getProjectAssets(user: any): string[] {
+    const assets = user?.projectAssets || [];
+
+    if (!Array.isArray(assets)) {
+      return [];
+    }
+
+    return assets
+      .map((asset) => {
+        if (typeof asset === 'string') {
+          return asset.trim();
+        }
+
+        const assetName = asset?.assetName ?? 'Unnamed';
+        const projectAssetType =
+          asset?.projectAssetTypeName ?? asset?.projectAssetType?.name ?? 'Unknown project type';
+        const accountType =
+          asset?.accountTypeName ?? 'Unknown account type';
+        const creator =
+          asset?.accountAssetCreatorName ?? 'Unknown creator';
+        const typeLogin =
+          asset?.typeLoginName ?? 'Unknown type login';
+
+        return `${assetName} [${projectAssetType}] [${accountType}] [${creator}] [${typeLogin}]`;
+      })
+      .filter((asset) => asset && asset.trim().length > 0);
+  }
+
+  public getVisibleProjectAssets(user: any): string[] {
+    const assets = this.getProjectAssets(user);
+    const key = user?.id ?? user?.userId ?? 0;
+
+    return this.expandedAssetRows[key]
+      ? assets
+      : assets.slice(0, this.maxVisibleAssets);
+  }
+
+  public expandProjectAssets(projectUserId: number): void {
+    this.expandedAssetRows[projectUserId] = true;
+  }
+
+  public collapseProjectAssets(projectUserId: number): void {
+    this.expandedAssetRows[projectUserId] = false;
+  }
+
   releaseUser(user) {
     let ref = this.dialog.open(ReleaseUserDialogComponent, {
       width: "700px",

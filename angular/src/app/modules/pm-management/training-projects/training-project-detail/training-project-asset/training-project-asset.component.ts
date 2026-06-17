@@ -68,10 +68,11 @@ export class TrainingProjectAssetComponent extends PagedListingComponentBase<Tra
   public showDialog(command: string, asset: any) {
     const assetItem = {
       id: asset.id,
-      projectAssetTypeId: asset.projectAssetTypeId || asset.projectAssetType?.id || asset.projectResourceId || asset.projectResource?.id,
-      projectAssetTypeIds: asset.projectAssetTypeIds || [],
-      projectAssetTypeName: asset.projectAssetTypeName || asset.projectAssetType?.name || asset.projectResourceName || asset.projectResource?.name || '',
-      assetName: asset.assetName
+      projectAssetTypeId: asset.projectAssetTypeId,
+      assetName: asset.assetName,
+      accountTypeId: asset.accountTypeId,
+      accountAssetCreatorId: asset.accountAssetCreatorId,
+      typeLoginId: asset.typeLoginId,
     };
     const show = this.dialog.open(CreateUpdateAssetComponent, {
       data: {

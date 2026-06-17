@@ -138,39 +138,70 @@ namespace ProjectManagement.Manager.OffboardUserManager
                 return new List<OffboardChecklistItemDto>();
 
             var assets = await WorkScope.GetAll<ProjectUserAsset>()
-                .Include(x => x.ProjectAsset)
-                    .ThenInclude(x => x.ProjectAssetType)
-                .Where(x => x.UserId == offboard.UserId && x.ProjectAsset.ProjectId == offboard.ProjectId)
-                .ToListAsync();
+                   .Where(x =>
+                       x.UserId == offboard.UserId &&
+                       x.ProjectAsset.ProjectId == offboard.ProjectId)
+                   .Select(x => new
+                   {
+                       x.ProjectAssetId,
+                       x.ProjectAsset.AssetName,
+                       ProjectAssetType = x.ProjectAsset.ProjectAssetType.Name,
+                       AccountType = x.ProjectAsset.AccountType.Name,
+                       Creator = x.ProjectAsset.AccountAssetCreator.Name,
+                       TypeLogin = x.ProjectAsset.TypeLogin.Name
+                   })
+                   .ToListAsync();
 
             var accountAssets = await WorkScope.GetAll<AccountAsset>()
-                .Include(x => x.AccountType)
-                .Include(x => x.AccountAssetCreator)
-                .Include(x => x.ProjectUserBill)
-                .Where(x => x.ProjectUserBill.ProjectId == offboard.ProjectId && x.ProjectUserBill.UserId == offboard.UserId)
+                .Where(x =>
+                    x.ProjectUserBill.ProjectId == offboard.ProjectId &&
+                    x.ProjectUserBill.UserId == offboard.UserId)
+                .Select(x => new
+                {
+                    x.Id,
+                    x.ProjectAssetId,
+                    x.ProjectAsset.AssetName,
+                    ProjectAssetType = x.ProjectAsset.ProjectAssetType.Name,
+                    AccountType = x.ProjectAsset.AccountType.Name,
+                    Creator = x.ProjectAsset.AccountAssetCreator.Name,
+                    TypeLogin = x.ProjectAsset.TypeLogin.Name
+                })
                 .ToListAsync();
 
             var checkedItems = DeserializeCheckedItems(offboard.OffboardChecklistJson);
 
             var checklist = assets
-                .Select(x => new OffboardChecklistItemDto
-                {
-                    ProjectAssetId = x.ProjectAssetId,
-                    AccountAssetId = null,
-                    ItemType = "ProjectAsset",
-                    AssetName = FormatProjectAssetName(x.ProjectAsset),
-                    IsChecked = checkedItems.ProjectAssetIds.Contains(x.ProjectAssetId)
-                })
-                .ToList();
+                    .Select(x => new OffboardChecklistItemDto
+                    {
+                        ProjectAssetId = x.ProjectAssetId,
+                        AccountAssetId = null,
+                        ItemType = "ProjectAsset",
+                        AssetName = FormatProjectAssetName(
+                            x.AssetName,
+                            x.ProjectAssetType,
+                            x.AccountType,
+                            x.Creator,
+                            x.TypeLogin),
+                        IsChecked =
+                            checkedItems.ProjectAssetIds.Contains(x.ProjectAssetId)
+                    })
+                    .ToList();
 
-            checklist.AddRange(accountAssets.Select(x => new OffboardChecklistItemDto
-            {
-                ProjectAssetId = null,
-                AccountAssetId = x.Id,
-                ItemType = "AccountAsset",
-                AssetName = $"{x.AssetName ?? "Unnamed"} [{x.AccountAssetCreator?.Name ?? "Unknown creator"}] [{x.AccountType?.Name ?? "Unknown type"}] [{x.TypeLogin ?? string.Empty}]",
-                IsChecked = checkedItems.AccountAssetIds.Contains(x.Id)
-            }));
+            checklist.AddRange(accountAssets.Select(x =>
+                new OffboardChecklistItemDto
+                {
+                    ProjectAssetId = null,
+                    AccountAssetId = x.Id,
+                    ItemType = "AccountAsset",
+                    AssetName = FormatProjectAssetName(
+                        x.AssetName,
+                        x.ProjectAssetType,
+                        x.AccountType,
+                        x.Creator,
+                        x.TypeLogin),
+                    IsChecked =
+                        checkedItems.AccountAssetIds.Contains(x.Id)
+                }));
 
             return checklist;
         }
@@ -279,28 +310,53 @@ namespace ProjectManagement.Manager.OffboardUserManager
             offboard.OffboardChecklistJson = null;
 
             var remainAsset = await WorkScope.All<ProjectUserAsset>()
-                .Include(x => x.ProjectAsset)
-                    .ThenInclude(x => x.ProjectAssetType)
                 .Where(x => x.UserId == offboard.UserId && x.ProjectAsset.ProjectId == offboard.ProjectId)
+                .Select(x => new
+                {
+                    x.Id,
+                    x.ProjectAssetId,
+                    x.ProjectAsset.AssetName,
+                    ProjectAssetType = x.ProjectAsset.ProjectAssetType.Name,
+                    AccountType = x.ProjectAsset.AccountType.Name,
+                    Creator = x.ProjectAsset.AccountAssetCreator.Name,
+                    TypeLogin = x.ProjectAsset.TypeLogin.Name
+                })
                 .ToListAsync();
 
             var remainAccountAssets = await WorkScope.All<AccountAsset>()
-                .Include(x => x.AccountType)
-                .Include(x => x.AccountAssetCreator)
-                .Include(x => x.ProjectUserBill)
                 .Where(x => x.ProjectUserBill.ProjectId == offboard.ProjectId && x.ProjectUserBill.UserId == offboard.UserId)
+                .Select(x => new
+                {
+                    x.Id,
+                    x.ProjectAssetId,
+                    x.ProjectAsset.AssetName,
+                    ProjectAssetType = x.ProjectAsset.ProjectAssetType.Name,
+                    AccountType = x.ProjectAsset.AccountType.Name,
+                    Creator = x.ProjectAsset.AccountAssetCreator.Name,
+                    TypeLogin = x.ProjectAsset.TypeLogin.Name,
+                })
                 .ToListAsync();
 
-            var assetHistory = JsonConvert.SerializeObject(remainAsset.Select(x => new
-            {
-                x.ProjectAssetId,
-                AssetName = FormatProjectAssetName(x.ProjectAsset)
-            }));
+            var assetHistory = JsonConvert.SerializeObject(
+                    remainAsset.Select(x => new
+                    {
+                        x.ProjectAssetId,
+                        AssetName =
+                            $"{x.AssetName ?? "Unnamed"} " +
+                            $"[{x.ProjectAssetType ?? "Unknown project type"}] " +
+                            $"[{x.AccountType ?? "Unknown account type"}] " +
+                            $"[{x.Creator ?? "Unknown creator"}] " +
+                            $"[{x.TypeLogin ?? "Unknown type login"}]"
+                    }));
 
             var accountAssetHistory = JsonConvert.SerializeObject(remainAccountAssets.Select(x => new
             {
-                x.Id,
-                Value = $"{x.AssetName ?? "Unnamed"} [{x.AccountAssetCreator?.Name ?? "Unknown creator"}] [{x.AccountType?.Name ?? "Unknown type"}] [{x.TypeLogin ?? string.Empty}]"
+                x.ProjectAssetId,
+                Value = $"{x.AssetName ?? "Unnamed"} " +
+                            $"[{x.ProjectAssetType ?? "Unknown project type"}] " +
+                            $"[{x.AccountType ?? "Unknown account type"}] " +
+                            $"[{x.Creator ?? "Unknown creator"}] " +
+                            $"[{x.TypeLogin ?? "Unknown type login"}]"
             }));
 
             offboard.HistoryAsset = assetHistory;
@@ -308,12 +364,12 @@ namespace ProjectManagement.Manager.OffboardUserManager
 
             foreach (var asset in remainAsset)
             {
-                await WorkScope.DeleteAsync(asset);
+                await WorkScope.DeleteAsync<ProjectUserAsset>(asset.Id);
             }
 
-            foreach (var accountResource in remainAccountAssets)
+            foreach (var accountAsset in remainAccountAssets)
             {
-                await WorkScope.DeleteAsync(accountResource);
+                await WorkScope.DeleteAsync<AccountAsset>(accountAsset.Id);
             }
 
             await WorkScope.UpdateAsync(offboard);
@@ -394,14 +450,27 @@ namespace ProjectManagement.Manager.OffboardUserManager
                 throw new UserFriendlyException("Offboard history not found");
 
             var projectAssets = await WorkScope.GetAll<ProjectUserAsset>()
-                .Include(x => x.ProjectAsset)
-                .ThenInclude(x => x.ProjectAssetType)
                 .Where(x => x.UserId == offboard.UserId && x.ProjectAsset.ProjectId == offboard.ProjectId)
+                .Select(x => new
+                {
+                    AssetName = x.ProjectAsset.AssetName,
+                    ProjectAssetType = x.ProjectAsset.ProjectAssetType.Name,
+                    AccountType = x.ProjectAsset.AccountType.Name,
+                    Creator = x.ProjectAsset.AccountAssetCreator.Name,
+                    TypeLogin = x.ProjectAsset.TypeLogin.Name,
+                })
                 .ToListAsync();
 
             var accountAssets = await WorkScope.GetAll<AccountAsset>()
-                .Include(x => x.ProjectUserBill)
                 .Where(x => x.ProjectUserBill.ProjectId == offboard.ProjectId && x.ProjectUserBill.UserId == offboard.UserId)
+                .Select(x => new
+                {
+                    AssetName = x.ProjectAsset.AssetName,
+                    ProjectAssetType = x.ProjectAsset.ProjectAssetType.Name,
+                    AccountType = x.ProjectAsset.AccountType.Name,
+                    Creator = x.ProjectAsset.AccountAssetCreator.Name,
+                    TypeLogin = x.ProjectAsset.TypeLogin.Name,
+                })
                 .ToListAsync();
 
             var sb = new StringBuilder();
@@ -414,14 +483,15 @@ namespace ProjectManagement.Manager.OffboardUserManager
             if (accountAssets.Any())
             {
                 sb.AppendLine();
-                sb.AppendLine("🔐 **Account Asset**");
+                sb.AppendLine("🔐 **Asset with Bill Account**");
 
                 foreach (var item in accountAssets)
                 {
                     sb.AppendLine(
                         $"- {item.AssetName ?? "Unnamed"} " +
-                        $"[{item.AccountAssetCreator?.Name ?? "Unknown creator"}] " +
-                        $"[{item.AccountType?.Name ?? "Unknown type"}] " +
+                        $"[{item.ProjectAssetType ?? "Unknown project type"}] " +
+                        $"[{item.AccountType ?? "Unknown account type"}] " +
+                        $"[{item.Creator ?? "Unknown creator"}]" +
                         $"[{item.TypeLogin ?? string.Empty}]"
                     );
                 }
@@ -430,20 +500,16 @@ namespace ProjectManagement.Manager.OffboardUserManager
             if (projectAssets.Any())
             {
                 sb.AppendLine();
-                sb.AppendLine("🗂️ **Project Asset**");
+                sb.AppendLine("🗂️ **Asset with Project User**");
 
                 foreach (var item in projectAssets)
                 {
-                    var assetName =
-                        item.ProjectAsset?.AssetName
-                        ?? "Unnamed";
-
-                    var assetType =
-                        item.ProjectAsset?.ProjectAssetType?.Name
-                        ?? "Unknown type";
-
                     sb.AppendLine(
-                        $"- {assetName} [{assetType}]"
+                        $"- {item.AssetName ?? "Unnamed"} " +
+                        $"[{item.ProjectAssetType ?? "Unknown project type"}] " +
+                        $"[{item.AccountType ?? "Unknown account type"}] " +
+                        $"[{item.Creator ?? "Unknown creator"}]" +
+                        $"[{item.TypeLogin ?? string.Empty}]"
                     );
                 }
             }
@@ -474,16 +540,19 @@ namespace ProjectManagement.Manager.OffboardUserManager
             }
         }
 
-        private static string FormatProjectAssetName(ProjectAsset projectAsset)
+        private static string FormatProjectAssetName(
+            string assetName,
+            string assetType,
+            string accountType,
+            string creator,
+            string typeLogin)
         {
-            var assetName = !string.IsNullOrWhiteSpace(projectAsset?.AssetName)
-                ? projectAsset.AssetName
-                : "Unnamed";
-            var assetTypeName = !string.IsNullOrWhiteSpace(projectAsset?.ProjectAssetType?.Name)
-                ? projectAsset.ProjectAssetType.Name
-                : "Unknown type";
-
-            return $"{assetName} [{assetTypeName}]";
+            return
+                $"{assetName ?? "Unnamed"} " +
+                $"[{assetType ?? "Unknown project type"}] " +
+                $"[{accountType ?? "Unknown account type"}] " +
+                $"[{creator ?? "Unknown creator"}] " +
+                $"[{typeLogin ?? "Unknown type login"}]";
         }
     }
 }

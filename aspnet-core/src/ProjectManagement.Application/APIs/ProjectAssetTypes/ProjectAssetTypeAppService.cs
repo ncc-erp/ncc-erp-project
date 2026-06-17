@@ -112,6 +112,10 @@ namespace ProjectManagement.APIs.ProjectResources
             if (hasChildren)
                 throw new UserFriendlyException("Cannot delete a project asset type that has child nodes!");
 
+            var hasProjectAsset = await WorkScope.GetAll<ProjectAsset>().AnyAsync(x => x.ProjectAssetTypeId == id);
+            if (hasProjectAsset)
+                throw new UserFriendlyException("There is ProjectAsset with this type");
+
             await WorkScope.DeleteAsync(entity);
         }
 

@@ -8,7 +8,7 @@ import { BaseApiService } from './base-api.service';
 })
 export class ProjectAssetService extends BaseApiService {
   changeUrl() {
-    return 'ProjectAsset';
+    return 'ProjectAssets';
   }
 
   constructor(http: HttpClient) {
@@ -33,5 +33,9 @@ export class ProjectAssetService extends BaseApiService {
 
   public Delete(projectAssetId: number): Observable<any> {
     return this.http.delete<any>(this.rootUrl + `/Delete?projectAssetId=${projectAssetId}`);
+  }
+
+  public GetAllForDropdown(projectId: number): Observable<any> {
+    return this.http.get<any>(this.rootUrl + `/GetAllForDropdown?projectId=${projectId}`);
   }
 }

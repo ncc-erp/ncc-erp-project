@@ -120,6 +120,14 @@ namespace ProjectManagement.Authorization
         public const string Admin_ProjectAssetTypes_Delete = "Admin.ProjectAssetTypes.Delete";
         #endregion ProjectAssetType
 
+        #region TypeLogin
+        public const string Admin_TypeLogins = "Admin.TypeLogins";
+        public const string Admin_TypeLogins_View = "Admin.TypeLogins.View";
+        public const string Admin_TypeLogins_Create = "Admin.TypeLogins.Create";
+        public const string Admin_TypeLogins_Edit = "Admin.TypeLogins.Edit";
+        public const string Admin_TypeLogins_Delete = "Admin.TypeLogins.Delete";
+        #endregion TypeLogin
+
         #region Currencies
 
         public const string Admin_Currencies = "Admin.Currencies";
@@ -937,6 +945,16 @@ namespace ProjectManagement.Authorization
 
 
                     #endregion Project Asset Type
+
+                    #region TypeLogin
+
+                    PermissionNames.Admin_TypeLogins,
+                    PermissionNames.Admin_TypeLogins_View,
+                    PermissionNames.Admin_TypeLogins_Create,
+                    PermissionNames.Admin_TypeLogins_Edit,
+                    PermissionNames.Admin_TypeLogins_Delete,
+
+                    #endregion TypeLogin
 
                     #region Currencies
 
@@ -1759,9 +1777,19 @@ namespace ProjectManagement.Authorization
 
                 #endregion Project Asset Type
 
+                #region TypeLogin
+
+                 new SystemPermission{ Name =  PermissionNames.Admin_TypeLogins, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Type Login" },
+                 new SystemPermission{ Name =  PermissionNames.Admin_TypeLogins_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View" },
+                 new SystemPermission{ Name =  PermissionNames.Admin_TypeLogins_Create, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Create" },
+                 new SystemPermission{ Name =  PermissionNames.Admin_TypeLogins_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit" },
+                 new SystemPermission{ Name =  PermissionNames.Admin_TypeLogins_Delete, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Delete" },
+
+                #endregion TypeLogin
+
                 #region ConfigITs
 
-                 new SystemPermission{ Name =  PermissionNames.Admin_ConfigITs, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Config IT" },
+                new SystemPermission{ Name =  PermissionNames.Admin_ConfigITs, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Config IT" },
                  new SystemPermission{ Name =  PermissionNames.Admin_ConfigITs_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View" },
                  new SystemPermission{ Name =  PermissionNames.Admin_ConfigITs_Create, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Create" },
                  new SystemPermission{ Name =  PermissionNames.Admin_ConfigITs_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit" },
@@ -2720,6 +2748,28 @@ namespace ProjectManagement.Authorization
                             },
 
                             #endregion Project Asset Type
+
+                            #region TypeLogin
+
+                            new SystemPermission {
+                                Name = PermissionNames.Admin_TypeLogins, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Type Login",
+                                    Childrens = new List < SystemPermission > () {
+                                        new SystemPermission {
+                                            Name = PermissionNames.Admin_TypeLogins_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View"
+                                        },
+                                        new SystemPermission {
+                                            Name = PermissionNames.Admin_TypeLogins_Create, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Create"
+                                        },
+                                        new SystemPermission {
+                                            Name = PermissionNames.Admin_TypeLogins_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit"
+                                        },
+                                        new SystemPermission {
+                                            Name = PermissionNames.Admin_TypeLogins_Delete, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Delete"
+                                        },
+                                    }
+                            },
+
+                            #endregion TypeLogin
 
                             #region ConfigITs
 

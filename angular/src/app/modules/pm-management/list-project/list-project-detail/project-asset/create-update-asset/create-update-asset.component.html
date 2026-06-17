@@ -42,10 +42,46 @@
                 </mat-form-field>
             </div>
         </div>
+
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="accountTypeId">Account Type:</label>
+            <div class="col-md-9">
+                <mat-form-field appearance="outline" class="w-100 mt-1">
+                    <mat-label>Select account type</mat-label>
+                    <mat-select name="accountTypeId" [(ngModel)]="asset.accountTypeId" required>
+                        <mat-option *ngFor="let item of accountTypes" [value]="item.id">{{ item.name }}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="accountAssetCreatorId">Asset Creator:</label>
+            <div class="col-md-9">
+                <mat-form-field appearance="outline" class="w-100 mt-1">
+                    <mat-label>Select asset creator</mat-label>
+                    <mat-select name="accountAssetCreatorId" [(ngModel)]="asset.accountAssetCreatorId" required>
+                        <mat-option *ngFor="let item of creators" [value]="item.id">{{ item.name }}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="typeLoginId">Type Login:</label>
+            <div class="col-md-9">
+                <mat-form-field appearance="outline" class="w-100 mt-1">
+                    <mat-label>Select type login</mat-label>
+                    <mat-select name="typeLoginId" [(ngModel)]="asset.typeLoginId" required>
+                        <mat-option *ngFor="let item of typeLogins" [value]="item.id">{{ item.name }}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
     </div>
 
     <div align="end" class="row justify-content-end">
         <button name="btn-cancel" class="btn btn-secondary btn-action mr-2" mat-dialog-close>Cancel</button>
-        <button name="btn-save" class="btn btn-primary btn-action" [disabled]="!assetForm.valid || isLoading" (click)="SaveAndClose()">Save</button>
+        <button name="btn-save" class="btn btn-primary btn-action" [disabled]="!assetForm.valid || isLoading || !asset.accountTypeId || !asset.accountAssetCreatorId || !asset.typeLoginId" (click)="SaveAndClose()">Save</button>
     </div>
 </form>

@@ -17,7 +17,20 @@ namespace ProjectManagement.Entities
         [ForeignKey(nameof(ProjectAssetTypeId))]
         public ProjectAssetType ProjectAssetType { get; set; }
         public long ProjectAssetTypeId { get; set; }
+
+        [ForeignKey(nameof(AccountTypeId))]
+        public AccountType AccountType { get; set; }
+        public long AccountTypeId { get; set; }
+
+        [ForeignKey(nameof(AccountAssetCreatorId))]
+        public AccountAssetCreator AccountAssetCreator { get; set; }
+        public long AccountAssetCreatorId { get; set; }
+
+        [ForeignKey(nameof(TypeLoginId))]
+        public TypeLogin TypeLogin { get; set; }
+        public long TypeLoginId { get; set; }
         public string AssetName { get; set; }
         public ICollection<ProjectUserAsset> ProjectUserAssets { get; set; }
+        public ICollection<AccountAsset> AccountAssets { get; set; }
     }
 }

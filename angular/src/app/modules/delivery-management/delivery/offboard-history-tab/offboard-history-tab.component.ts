@@ -1,5 +1,6 @@
 import { Component, Injector, OnInit } from '@angular/core';
 import { PagedListingComponentBase, PagedRequestDto } from '@shared/paged-listing-component-base';
+import { AppSessionService } from './../../../../../shared/session/app-session.service';
 import { OffboardUserService } from '@app/service/api/offboard-user.service';
 import { ResourceManagerService } from '@app/service/api/resource-manager.service';
 import { catchError, finalize } from 'rxjs/operators';
@@ -20,11 +21,16 @@ export class OffboardHistoryTabComponent extends PagedListingComponentBase<any> 
   OffboardHistory_CheckList = PERMISSIONS_CONSTANT.OffboardHistory_CheckList;
   OffboardHistory_CheckList_PM = PERMISSIONS_CONSTANT.OffboardHistory_CheckList_PM;
   OffboardHistory_CheckList_IT = PERMISSIONS_CONSTANT.OffboardHistory_CheckList_IT;
+  OffboardHistory_Delete = PERMISSIONS_CONSTANT.OffboardHistory_Delete;
+
 
   public offboardHistoryList: any[] = [];
   public listProject: any[] = [];
+  public listPm: any[] = [];
   public projectId = -1;
+  public selectedPmId = -1;
   public searchProject: string = '';
+  public searchPm: string = '';
   public selectedStatus: number | null = null;
   public maxVisibleHistoryAssets = 2;
   public expandedHistoryAccountAssetRows: { [offboardHistoryId: number]: boolean } = {};
@@ -41,14 +47,17 @@ export class OffboardHistoryTabComponent extends PagedListingComponentBase<any> 
     private offboardUserService: OffboardUserService,
     private resourceManagerService: ResourceManagerService,
     injector: Injector,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    public sessionService: AppSessionService
   ) {
     super(injector);
+    this.selectedPmId = Number(this.sessionService.userId);
   }
 
   ngOnInit(): void {
     this.pageSize = this.pageSizeType;
     this.getProjectOptions();
+    this.getPmOptions();
     super.ngOnInit();
   }
 
@@ -56,6 +65,7 @@ export class OffboardHistoryTabComponent extends PagedListingComponentBase<any> 
     const requestBody = {
       ...request,
       projectId: this.projectId === -1 ? null : this.projectId,
+      PMId: this.selectedPmId === -1 ? null : this.selectedPmId,
       offboardStatus: this.selectedStatus,
       searchText: this.searchText,
     };
@@ -82,6 +92,20 @@ export class OffboardHistoryTabComponent extends PagedListingComponentBase<any> 
       .pipe(catchError(this.resourceManagerService.handleError))
       .subscribe((data) => {
         this.listProject = data?.result || [];
+      });
+  }
+
+  public getPmOptions(): void {
+    this.offboardUserService
+      .GetAllPM()
+      .pipe(catchError(this.offboardUserService.handleError))
+      .subscribe((data) => {
+        const rawList = data?.result || data || [];
+        this.listPm = rawList.map((pm: any) => ({
+          id: pm?.id ?? pm?.Id ?? pm?.PMId,
+          fullName: pm?.fullName ?? pm?.FullName ?? pm?.PMName ?? '',
+          emailAddress: pm?.emailAddress ?? pm?.EmailAddress ?? '',
+        }));
       });
   }
 
@@ -162,11 +186,33 @@ export class OffboardHistoryTabComponent extends PagedListingComponentBase<any> 
     );
   }
 
+  public deleteOffboardHistory(item: any): void {
+    abp.message.confirm(
+      `Delete offboard history for ${item.fullName}?`,
+      '',
+      (result: boolean) => {
+        if (result) {
+          this.offboardUserService
+            .Delete(item.id)
+            .pipe(catchError(this.offboardUserService.handleError))
+            .subscribe(() => {
+              abp.notify.success('Deleted successfully');
+              this.getDataPage(1);
+            });
+        }
+      }
+    );
+  }
+
   public onSearch(): void {
     this.getDataPage(1);
   }
 
   public onProjectChanged(): void {
+    this.getDataPage(1);
+  }
+
+  public onPmChanged(): void {
     this.getDataPage(1);
   }
 

@@ -99,6 +99,7 @@ import { WeeklyContributionComponent } from './modules/weekly-contribution/weekl
 import { DetailWeeklyContributionComponent } from './modules/weekly-contribution/detail-weekly-contribution/detail-weekly-contribution.component';
 import { ProjectAssetComponent } from './modules/pm-management/list-project/list-project-detail/project-asset/project-asset.component';
 import { OffboardHistoryTabComponent } from './modules/delivery-management/delivery/offboard-history-tab/offboard-history-tab.component';
+import { OnboardHistoryTabComponent } from './modules/delivery-management/delivery/onboard-history-tab/onboard-history-tab.component';
 import { ProductProjectAssetComponent } from './modules/pm-management/product-projects/product-project-detail/product-project-asset/product-project-asset.component';
 import { TrainingProjectAssetComponent } from './modules/pm-management/training-projects/training-project-detail/training-project-asset/training-project-asset.component';
 
@@ -498,6 +499,11 @@ import { TrainingProjectAssetComponent } from './modules/pm-management/training-
           {
             path: "offboard-history",
             component: OffboardHistoryTabComponent,
+            canActivate: [AppRouteGuard],
+          },
+          {
+            path: "onboard-history",
+            component: OnboardHistoryTabComponent,
             canActivate: [AppRouteGuard],
           },
           {

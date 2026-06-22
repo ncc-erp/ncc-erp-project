@@ -809,10 +809,19 @@ namespace ProjectManagement.Authorization
         public const string OffboardHistory = "OffboardHistory";
         public const string OffboardHistory_View = "OffboardHistory.View";
         public const string OffboardHistory_Edit = "OffboardHistory.Edit";
+        public const string OffboardHistory_Delete = "OffboardHistory.Delete";
         public const string OffboardHistory_CheckList = "OffboardHistory.CheckList";
         public const string OffboardHistory_CheckList_PM = "OffboardHistory.CheckList.PM";
         public const string OffboardHistory_CheckList_IT = "OffboardHistory.CheckList.IT";
         #endregion OffboardHistory
+
+        #region OnboardHistory
+
+        public const string OnboardHistory = "OnboardHistory";
+        public const string OnboardHistory_View = "OnboardHistory.View";
+        public const string OnboardHistory_Edit = "OnboardHistory.Edit";
+
+        #endregion OnboardHistory
     }
 
     public class GrantPermissionRoles
@@ -1645,8 +1654,17 @@ namespace ProjectManagement.Authorization
                     PermissionNames.OffboardHistory_CheckList,
                     PermissionNames.OffboardHistory_CheckList_PM,
                     PermissionNames.OffboardHistory_CheckList_IT,
+                    PermissionNames.OffboardHistory_Delete,
 
                     #endregion OffboardHistory
+
+                    #region OnboardHistory
+
+                    PermissionNames.OnboardHistory,
+                    PermissionNames.OnboardHistory_Edit,
+                    PermissionNames.OnboardHistory_View,
+
+                    #endregion OnboardHistory
                 }
             }
         };
@@ -2482,10 +2500,19 @@ namespace ProjectManagement.Authorization
                  new SystemPermission{ Name =  PermissionNames.OffboardHistory, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "OffboardHistory" },
                  new SystemPermission{ Name =  PermissionNames.OffboardHistory_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View" },
                  new SystemPermission{ Name =  PermissionNames.OffboardHistory_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit" },
+                 new SystemPermission{ Name =  PermissionNames.OffboardHistory_Delete, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Delete" },
                  new SystemPermission{ Name =  PermissionNames.OffboardHistory_CheckList, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "CheckList" },
                  new SystemPermission{ Name =  PermissionNames.OffboardHistory_CheckList_PM, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "PM CheckList" },
                  new SystemPermission{ Name =  PermissionNames.OffboardHistory_CheckList_IT, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "IT CheckList" },
                 #endregion OffboardHistory
+
+                #region OnboardHistory
+
+                 new SystemPermission{ Name =  PermissionNames.OnboardHistory, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "OnboardHistory" },
+                 new SystemPermission{ Name =  PermissionNames.OnboardHistory_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View" },
+                 new SystemPermission{ Name =  PermissionNames.OnboardHistory_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit" },
+
+                #endregion OnboardHistory
 
             };
             public static List<SystemPermission> TreePermissions = new List<SystemPermission>() {
@@ -4601,6 +4628,7 @@ namespace ProjectManagement.Authorization
                      {
                          new SystemPermission{ Name = PermissionNames.OffboardHistory_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "OffboardHistory View"},
                          new SystemPermission{ Name = PermissionNames.OffboardHistory_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Accept/Remove Offboard"},
+                         new SystemPermission{ Name = PermissionNames.OffboardHistory_Delete, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Delete Offboard"},
                          new SystemPermission{ Name = PermissionNames.OffboardHistory_CheckList, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "CheckList Offboard",
                             Childrens = new List<SystemPermission>
                             {
@@ -4609,9 +4637,23 @@ namespace ProjectManagement.Authorization
                             },
                          }
                      }
-                }
+                },
 
                 #endregion OffboardHistory
+
+                #region OnboardHistory 
+                
+                new SystemPermission
+                {
+                    Name = PermissionNames.OnboardHistory, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "OnboardHistory",
+                     Childrens = new List<SystemPermission> ()
+                     {
+                         new SystemPermission{ Name = PermissionNames.OnboardHistory_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "OffboardHistory View"},
+                         new SystemPermission{ Name = PermissionNames.OnboardHistory_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "OnboardHistory Edit"},
+                     }
+                }
+
+                #endregion OnboardHistory
             };
         }
     }

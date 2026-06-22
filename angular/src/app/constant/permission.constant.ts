@@ -781,5 +781,13 @@ export const PERMISSIONS_CONSTANT = {
         OffboardHistory_CheckList : "OffboardHistory.CheckList",
         OffboardHistory_CheckList_PM : "OffboardHistory.CheckList.PM",
         OffboardHistory_CheckList_IT : "OffboardHistory.CheckList.IT",
+        OffboardHistory_Delete : "OffboardHistory.Delete",
        //  #endregion OffboardHistory
+
+       // #region OnboardHistory
+
+       OnboardHistory : "OnboardHistory",
+       OnboardHistory_View : "OnboardHistory.View",
+       OnboardHistory_Edit : "OnboardHistory.Edit",
+       // #endregion OnboardHistory
 }

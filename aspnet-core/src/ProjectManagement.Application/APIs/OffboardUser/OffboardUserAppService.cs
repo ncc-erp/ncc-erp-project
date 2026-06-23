@@ -1,16 +1,17 @@
-﻿using Abp.Authorization;
-using Abp.Application.Services;
+﻿using Abp.Application.Services;
+using Abp.Authorization;
+using Abp.UI;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using NccCore.Paging;
+using Newtonsoft.Json;
+using ProjectManagement.Authorization;
+using ProjectManagement.Entities;
 using ProjectManagement.Manager.OffboardUserManager;
 using ProjectManagement.Manager.OffboardUserManager.Dto;
-using ProjectManagement.Entities;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ProjectManagement.Authorization;
 
 namespace ProjectManagement.APIs.OffboardUser
 {
@@ -71,6 +72,16 @@ namespace ProjectManagement.APIs.OffboardUser
         public async Task<bool> CheckOffboardHistory(long projectUserId)
         {
             return await _offboardUserManager.CheckOffboardHistory(projectUserId);
+        }
+
+        [HttpDelete]
+        public async Task Delete(long offboardHistoryId)
+        {
+            var offboard = await WorkScope.GetAsync<Entities.OffboardUser>(offboardHistoryId);
+            if (offboard == null)
+                throw new UserFriendlyException("Offboard History not exist !");
+
+            await WorkScope.DeleteAsync(offboard);
         }
     }
 }

@@ -3,7 +3,7 @@
     <div>
       <div class="input-group" style="display: block;">
         <div class="row row-first">
-          <div class="col-12 col-md-4 mt-1 d-flex align-items-center mb-3">
+          <div class="col-12 col-lg-2 col-md-2 mt-1 d-flex align-items-center mb-3">
             <div class="input-group w-100">
               <div class="input-group-prepend">
                 <span class="input-group-text bg-white border-right-0">
@@ -26,34 +26,75 @@
             </div>
           </div>
 
-          <div class="col-12 col-md-4 mt-1 d-flex align-items-center mb-3">
-            <mat-form-field appearance="outline" class="flex-grow-1">
-              <mat-label>Project:</mat-label>
-              <mat-select [(ngModel)]="projectId" (selectionChange)="onProjectChanged()" placeholder="Select project">
-                <mat-form-field appearance="outline" style="position: sticky; top: 0; z-index: 2; background-color: white;">
-                  <mat-label>Search project</mat-label>
-                  <input matInput [(ngModel)]="searchProject" placeholder="Type to search" />
+          <div class="col-md-10 col-sm-12">
+            <div class="row filter-wrap">
+              <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 search-pm text-right">
+                <mat-form-field appearance="outline">
+                  <mat-label>Project</mat-label>
+                  <mat-select
+                    name="slt-project"
+                    [(ngModel)]="projectId"
+                    placeholder="select a project"
+                    (selectionChange)="onProjectChanged()"
+                  >
+                    <mat-form-field class="w-100 px-3" style="position: sticky; top: 0; z-index: 2; background-color: white;">
+                      <input
+                        matInput
+                        [(ngModel)]="searchProject"
+                        name="searchProjectName"
+                        placeholder="Search"
+                        #searchProjectInput
+                        (keydown)="$event.stopPropagation()"
+                      />
+                      {{ searchProjectInput.focus() }}
+                    </mat-form-field>
+                    <mat-option [value]="-1">All</mat-option>
+                    <mat-option *ngFor="let project of listProject | listFilter : 'projectName' : searchProject" [value]="project.projectId">
+                      {{ project.projectName }}
+                    </mat-option>
+                  </mat-select>
                 </mat-form-field>
-                <mat-option [value]="-1">All</mat-option>
-                <mat-option
-                  *ngFor="let project of listProject | listFilter : 'projectName' : searchProject"
-                  [value]="project.projectId"
-                >
-                  {{ project.projectName }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
+              </div>
 
-          <div class="col-12 col-md-4 mt-1 d-flex align-items-center mb-3">
-            <mat-form-field appearance="outline" class="flex-grow-1">
-              <mat-label>Status:</mat-label>
-              <mat-select [(ngModel)]="selectedStatus" (selectionChange)="onStatusChanged()" placeholder="Select status">
-                <mat-option *ngFor="let status of statusOptions" [value]="status.value">
-                  {{ status.displayName }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
+              <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 search-pm text-right">
+                <mat-form-field appearance="outline">
+                  <mat-label>PM</mat-label>
+                  <mat-select
+                    name="slt-PM"
+                    [(ngModel)]="selectedPmId"
+                    placeholder="select a PM"
+                    (selectionChange)="onPmChanged()"
+                  >
+                    <mat-form-field class="w-100 px-3" style="position: sticky; top: 0; z-index: 2; background-color: white;">
+                      <input
+                        matInput
+                        [(ngModel)]="searchPm"
+                        name="searchPMName"
+                        placeholder="Search"
+                        #searchPmInput
+                        (keydown)="$event.stopPropagation()"
+                      />
+                      {{ searchPmInput.focus() }}
+                    </mat-form-field>
+                    <mat-option [value]="-1">All</mat-option>
+                    <mat-option *ngFor="let pm of listPm | listFilter : 'fullName' : searchPm : 'emailAddress' : searchPm" [value]="pm.id">
+                      {{ pm.fullName }} - ({{ pm.emailAddress }})
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+
+              <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 pr-2 search-status">
+                <mat-form-field appearance="outline" class="listStatus">
+                  <mat-label>Status</mat-label>
+                  <mat-select [(ngModel)]="selectedStatus" (selectionChange)="onStatusChanged()" placeholder="Select status">
+                    <mat-option *ngFor="let status of statusOptions" [value]="status.value">
+                      {{ status.displayName }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -180,7 +221,7 @@
                 <td style="width: 150px; text-align: center;">{{ item.offboardDate | date: 'dd/MM/yyyy' }}</td>
                 <td style="width: 100px;" class="text-center align-middle">
                   <button
-                    *ngIf="item.offboardStatus !== 3"
+                    *ngIf="item.offboardStatus !== null && item.offboardStatus !== undefined"
                     mat-icon-button
                     [matMenuTriggerFor]="actionMenu"
                     aria-label="Action menu"
@@ -194,6 +235,9 @@
                     </button>
                     <button mat-menu-item *ngIf="item.offboardStatus === 0 && permission.isGranted(OffboardHistory_Edit) " (click)="onUpdateOffboardStatus(item, false)">
                       <i class="fas fa-times mr-2"></i>Don't need Offboard
+                    </button>
+                    <button mat-menu-item *ngIf="(item.offboardStatus === 0 || item.offboardStatus === 3) && permission.isGranted(OffboardHistory_Delete)" (click)="deleteOffboardHistory(item)">
+                      <i class="fas fa-trash mr-2"></i>Delete
                     </button>
                     <button mat-menu-item *ngIf="item.offboardStatus === 1 && permission.isGranted(OffboardHistory_CheckList_PM)" (click)="openOffboardDialog(item)">
                       <i class="fas fa-user-check mr-2"></i>Offboard

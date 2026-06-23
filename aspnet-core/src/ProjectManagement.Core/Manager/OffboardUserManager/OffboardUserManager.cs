@@ -1,5 +1,6 @@
 ﻿using Abp.Linq.Extensions;
 using Abp.UI;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NccCore.Extension;
 using NccCore.IoC;
@@ -19,6 +20,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static ProjectManagement.Constants.Enum.ProjectEnum;
 
+
 namespace ProjectManagement.Manager.OffboardUserManager
 {
     public class OffboardUserManager : BaseManager
@@ -31,15 +33,8 @@ namespace ProjectManagement.Manager.OffboardUserManager
 
         public async Task<GridResult<OffboardHistoryDto>> GetAllOffboardHistory(InputGetAllOffboardHistoryDto input)
         {
-            IQueryable<OffboardUser> baseQuery = WorkScope.All<OffboardUser>()
-                .Include(x => x.User)
-                    .ThenInclude(u => u.Branch)
-                .Include(x => x.User)
-                    .ThenInclude(u => u.Position)
-                .Include(x => x.Project)
-                    .ThenInclude(x => x.PM);
-
-            var query = baseQuery.Select(x => new OffboardHistoryDto
+            var query = WorkScope.GetAll<Entities.OffboardUser>()
+            .Select(x => new OffboardHistoryDto
             {
                 Id = x.Id,
                 UserId = x.UserId,
@@ -61,6 +56,7 @@ namespace ProjectManagement.Manager.OffboardUserManager
                 ProjectRole = x.ProjectRole,
                 ProjectPM = x.Project.PM.FullName != null ? x.Project.PM.FullName : null,
                 PMEmail = x.Project.PM.EmailAddress != null ? x.Project.PM.EmailAddress : null,
+                PMId = x.Project.PMId,
                 HistoryAsset = x.HistoryAsset,
                 HistoryAccountAsset = x.HistoryAccountAsset,
                 CheckOffboardStatus = x.CheckOffboardStatus,
@@ -76,6 +72,11 @@ namespace ProjectManagement.Manager.OffboardUserManager
             if (input.OffboardStatus.HasValue)
             {
                 query = query.Where(x => x.OffboardStatus == input.OffboardStatus.Value);
+            }
+
+            if (input.PMId.HasValue && input.PMId.Value > 0)
+            {
+                query = query.Where(x => x.PMId == input.PMId.Value);
             }
 
             if (!string.IsNullOrEmpty(input.SearchText))
@@ -336,31 +337,6 @@ namespace ProjectManagement.Manager.OffboardUserManager
                     TypeLogin = x.ProjectAsset.TypeLogin.Name,
                 })
                 .ToListAsync();
-
-            var assetHistory = JsonConvert.SerializeObject(
-                    remainAsset.Select(x => new
-                    {
-                        x.ProjectAssetId,
-                        AssetName =
-                            $"{x.AssetName ?? "Unnamed"} " +
-                            $"[{x.ProjectAssetType ?? "Unknown project type"}] " +
-                            $"[{x.AccountType ?? "Unknown account type"}] " +
-                            $"[{x.Creator ?? "Unknown creator"}] " +
-                            $"[{x.TypeLogin ?? "Unknown type login"}]"
-                    }));
-
-            var accountAssetHistory = JsonConvert.SerializeObject(remainAccountAssets.Select(x => new
-            {
-                x.ProjectAssetId,
-                Value = $"{x.AssetName ?? "Unnamed"} " +
-                            $"[{x.ProjectAssetType ?? "Unknown project type"}] " +
-                            $"[{x.AccountType ?? "Unknown account type"}] " +
-                            $"[{x.Creator ?? "Unknown creator"}] " +
-                            $"[{x.TypeLogin ?? "Unknown type login"}]"
-            }));
-
-            offboard.HistoryAsset = assetHistory;
-            offboard.HistoryAccountAsset = accountAssetHistory;
 
             foreach (var asset in remainAsset)
             {

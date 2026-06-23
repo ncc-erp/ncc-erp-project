@@ -1,15 +1,15 @@
 ﻿using Abp.Application.Services.Dto;
-using ProjectManagement.Services.ProjectUserBill.Dto;
 using ProjectManagement.Utils;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using static ProjectManagement.Constants.Enum.ProjectEnum;
 
-namespace ProjectManagement.Manager.OffboardUserManager.Dto
+namespace ProjectManagement.APIs.ProjectUserOnboarding.Dto
 {
-    public class OffboardHistoryDto : EntityDto<long>
+    public class OnboardHistoryDto : EntityDto<long>
     {
+        public long ProjectUserId { get; set; }
         public long UserId { get; set; }
         public string EmailAddress { get; set; }
         public string AvatarPath { get; set; }
@@ -32,10 +32,6 @@ namespace ProjectManagement.Manager.OffboardUserManager.Dto
         public string ProjectPM { get; set; }
         public string PMEmail { get; set; }
         public long PMId { get; set; }
-        public string HistoryAsset { get; set; }
-        public string HistoryAccountAsset { get; set; }
-        public CheckOffboardStatus CheckOffboardStatus { get; set; }
-        public DateTime OffboardDate { get; set; }
-        public OffboardStatus OffboardStatus { get; set; }
+        public ProjectUserOnboardingStatus Status { get; set; }
     }
 }

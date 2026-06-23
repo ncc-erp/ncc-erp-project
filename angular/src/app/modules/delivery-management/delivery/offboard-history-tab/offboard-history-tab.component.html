@@ -236,9 +236,6 @@
                     <button mat-menu-item *ngIf="item.offboardStatus === 0 && permission.isGranted(OffboardHistory_Edit) " (click)="onUpdateOffboardStatus(item, false)">
                       <i class="fas fa-times mr-2"></i>Don't need Offboard
                     </button>
-                    <button mat-menu-item *ngIf="(item.offboardStatus === 0 || item.offboardStatus === 3) && permission.isGranted(OffboardHistory_Delete)" (click)="deleteOffboardHistory(item)">
-                      <i class="fas fa-trash mr-2"></i>Delete
-                    </button>
                     <button mat-menu-item *ngIf="item.offboardStatus === 1 && permission.isGranted(OffboardHistory_CheckList_PM)" (click)="openOffboardDialog(item)">
                       <i class="fas fa-user-check mr-2"></i>Offboard
                     </button>
@@ -250,6 +247,9 @@
                     </button>
                     <button mat-menu-item *ngIf="item.offboardStatus === 2 && item.checkOffboardStatus === 3 && permission.isGranted(OffboardHistory_CheckList_IT)" (click)="moveToComplete(item)">
                       <i class="fas fa-user-shield mr-2"></i>Move to Complete
+                    </button>
+                    <button mat-menu-item *ngIf="permission.isGranted(OffboardHistory_Delete)" (click)="deleteOffboardHistory(item)">
+                      <i class="fas fa-trash mr-2"></i>Delete
                     </button>
                   </mat-menu>
                 </td>

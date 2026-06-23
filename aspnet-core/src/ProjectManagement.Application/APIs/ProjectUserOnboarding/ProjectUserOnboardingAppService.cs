@@ -107,32 +107,33 @@ namespace ProjectManagement.APIs.ProjectUserOnboarding
         public async Task<GridResult<OnboardHistoryDto>> GetAllOnboardHistory(InputGetAllOnboardHistoryDto input)
         {
             var query = WorkScope.GetAll<Entities.ProjectUserOnboarding>()
-            .Select(x => new OnboardHistoryDto
-            {
-                Id = x.Id,
-                ProjectUserId = x.ProjectUserId,
-                UserId = x.ProjectUser.UserId,
-                ProjectId = x.ProjectUser.ProjectId,
-                EmailAddress = x.ProjectUser.User.EmailAddress,
-                AvatarPath = x.ProjectUser.User.AvatarPath,
-                UserType = x.ProjectUser.User.UserType,
-                Branch = x.ProjectUser.User.BranchOld,
-                FullName = x.ProjectUser.User.Name + " " + x.ProjectUser.User.Surname,
-                BranchColor = x.ProjectUser.User.Branch != null ? x.ProjectUser.User.Branch.Color : null,
-                BranchDisplayName = x.ProjectUser.User.Branch != null ? x.ProjectUser.User.Branch.DisplayName : null,
-                PositionId = x.ProjectUser.User.PositionId,
-                PositionName = x.ProjectUser.User.Position != null ? x.ProjectUser.User.Position.Name : null,
-                PositionColor = x.ProjectUser.User.Position != null ? x.ProjectUser.User.Position.Color : null,
-                UserLevel = x.ProjectUser.User.UserLevel,
-                ProjectName = x.ProjectUser.Project != null ? x.ProjectUser.Project.Name : null,
-                ProjectType = x.ProjectUser.Project != null ? x.ProjectUser.Project.ProjectType : 0,
-                ProjectCode = x.ProjectUser.Project != null ? x.ProjectUser.Project.Code : null,
-                ProjectRole = x.ProjectUser.ProjectRole,
-                ProjectPM = x.ProjectUser.Project.PM != null ? x.ProjectUser.Project.PM.FullName : null,
-                PMEmail = x.ProjectUser.Project.PM != null ? x.ProjectUser.Project.PM.EmailAddress : null,
-                PMId = x.ProjectUser.Project.PMId,
-                Status = x.Status,
-            });
+                .AsNoTracking()
+                .Select(x => new OnboardHistoryDto
+                {
+                    Id = x.Id,
+                    ProjectUserId = x.ProjectUserId,
+                    UserId = x.ProjectUser.UserId,
+                    ProjectId = x.ProjectUser.ProjectId,
+                    EmailAddress = x.ProjectUser.User.EmailAddress,
+                    AvatarPath = x.ProjectUser.User.AvatarPath,
+                    UserType = x.ProjectUser.User.UserType,
+                    Branch = x.ProjectUser.User.BranchOld,
+                    FullName = x.ProjectUser.User.Name + " " + x.ProjectUser.User.Surname,
+                    BranchColor = x.ProjectUser.User.Branch != null ? x.ProjectUser.User.Branch.Color : null,
+                    BranchDisplayName = x.ProjectUser.User.Branch != null ? x.ProjectUser.User.Branch.DisplayName : null,
+                    PositionId = x.ProjectUser.User.PositionId,
+                    PositionName = x.ProjectUser.User.Position != null ? x.ProjectUser.User.Position.Name : null,
+                    PositionColor = x.ProjectUser.User.Position != null ? x.ProjectUser.User.Position.Color : null,
+                    UserLevel = x.ProjectUser.User.UserLevel,
+                    ProjectName = x.ProjectUser.Project != null ? x.ProjectUser.Project.Name : null,
+                    ProjectType = x.ProjectUser.Project != null ? x.ProjectUser.Project.ProjectType : 0,
+                    ProjectCode = x.ProjectUser.Project != null ? x.ProjectUser.Project.Code : null,
+                    ProjectRole = x.ProjectUser.ProjectRole,
+                    ProjectPM = x.ProjectUser.Project.PM != null ? x.ProjectUser.Project.PM.FullName : null,
+                    PMEmail = x.ProjectUser.Project.PM != null ? x.ProjectUser.Project.PM.EmailAddress : null,
+                    PMId = x.ProjectUser.Project.PMId,
+                    Status = x.Status,
+                });
 
             if (input.ProjectId.HasValue && input.ProjectId.Value > 0)
             {
@@ -156,8 +157,9 @@ namespace ProjectManagement.APIs.ProjectUserOnboarding
                     x.FullName.ToLower().Contains(input.SearchText.ToLower()));
             }
 
-            var list = await query.TakePage(input).ToListAsync();
             var total = await query.CountAsync();
+            var list = await query.TakePage(input).ToListAsync();
+
             return new GridResult<OnboardHistoryDto>(list, total);
         }
 

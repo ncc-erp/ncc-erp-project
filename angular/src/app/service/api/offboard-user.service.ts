@@ -43,10 +43,6 @@ export class OffboardUserService extends BaseApiService {
     return this.http.get<any>(this.rootUrl + '/CheckOffboardHistory?projectUserId=' + projectUserId);
   }
 
-  public GetAllPM(): Observable<any> {
-    return this.http.get<any>(this.rootUrl + '/GetAllPM');
-  }
-
   public Delete(offboardHistoryId: number): Observable<any> {
     return this.http.delete<any>(this.rootUrl + '/Delete?offboardHistoryId=' + offboardHistoryId);
   }

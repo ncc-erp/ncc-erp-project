@@ -7,7 +7,7 @@ import { catchError, finalize } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { OffboardDialogComponent } from './offboard-dialog/offboard-dialog.component';
 import { PERMISSIONS_CONSTANT } from '@app/constant/permission.constant';
-
+import { TimesheetProjectService } from '@app/service/api/timesheet-project.service';
 
 @Component({
   selector: 'app-offboard-history-tab',
@@ -47,6 +47,7 @@ export class OffboardHistoryTabComponent extends PagedListingComponentBase<any> 
     private offboardUserService: OffboardUserService,
     private resourceManagerService: ResourceManagerService,
     injector: Injector,
+    private timesheetProjectService: TimesheetProjectService,
     private dialog: MatDialog,
     public sessionService: AppSessionService
   ) {
@@ -96,9 +97,9 @@ export class OffboardHistoryTabComponent extends PagedListingComponentBase<any> 
   }
 
   public getPmOptions(): void {
-    this.offboardUserService
-      .GetAllPM()
-      .pipe(catchError(this.offboardUserService.handleError))
+    this.timesheetProjectService
+      .getAllPM()
+      .pipe(catchError(this.timesheetProjectService.handleError))
       .subscribe((data) => {
         const rawList = data?.result || data || [];
         this.listPm = rawList.map((pm: any) => ({

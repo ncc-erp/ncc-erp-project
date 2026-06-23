@@ -8,6 +8,7 @@ import { ResourceManagerService } from '@app/service/api/resource-manager.servic
 import { OffboardUserService } from '@app/service/api/offboard-user.service';
 import { OnboardingDialogComponent } from '../../../pm-management/list-project/list-project-detail/resource-management/onboarding-dialog/onboarding-dialog.component';
 import { PERMISSIONS_CONSTANT } from '@app/constant/permission.constant';
+import { TimesheetProjectService } from '@app/service/api/timesheet-project.service';
 
 @Component({
   selector: 'app-onboard-history-tab',
@@ -40,8 +41,8 @@ export class OnboardHistoryTabComponent extends PagedListingComponentBase<any> i
     injector: Injector,
     private projectUserOnboardingService: ProjectUserOnboardingService,
     private resourceManagerService: ResourceManagerService,
-    private offboardUserService: OffboardUserService,
     private dialog: MatDialog,
+    private timesheetProjectService: TimesheetProjectService,
     public sessionService: AppSessionService
   ) {
     super(injector);
@@ -90,9 +91,9 @@ export class OnboardHistoryTabComponent extends PagedListingComponentBase<any> i
   }
 
   public getPmOptions(): void {
-    this.offboardUserService
-      .GetAllPM()
-      .pipe(catchError(this.offboardUserService.handleError))
+    this.timesheetProjectService
+      .getAllPM()
+      .pipe(catchError(this.timesheetProjectService.handleError))
       .subscribe((data) => {
         const rawList = data?.result || data || [];
         this.listPm = rawList.map((pm: any) => ({

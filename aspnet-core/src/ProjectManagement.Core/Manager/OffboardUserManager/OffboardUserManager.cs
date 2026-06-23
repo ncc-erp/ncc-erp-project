@@ -33,15 +33,8 @@ namespace ProjectManagement.Manager.OffboardUserManager
 
         public async Task<GridResult<OffboardHistoryDto>> GetAllOffboardHistory(InputGetAllOffboardHistoryDto input)
         {
-            IQueryable<OffboardUser> baseQuery = WorkScope.All<OffboardUser>()
-                .Include(x => x.User)
-                    .ThenInclude(u => u.Branch)
-                .Include(x => x.User)
-                    .ThenInclude(u => u.Position)
-                .Include(x => x.Project)
-                    .ThenInclude(x => x.PM);
-
-            var query = baseQuery.Select(x => new OffboardHistoryDto
+            var query = WorkScope.GetAll<Entities.OffboardUser>()
+            .Select(x => new OffboardHistoryDto
             {
                 Id = x.Id,
                 UserId = x.UserId,

@@ -74,26 +74,6 @@ namespace ProjectManagement.APIs.OffboardUser
             return await _offboardUserManager.CheckOffboardHistory(projectUserId);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAllPM()
-        {
-            var pms = await WorkScope.GetAll<Project>()
-                .Where(u => u.PM != null)
-                .Select(u => new PMDto
-                {
-                    Id = u.PMId,
-                    EmailAddress = u.PM != null ? u.PM.EmailAddress : null,
-                    FullName = u.PM != null ? u.PM.FullName : null,
-                    AvatarPath = u.PM != null ? u.PM.AvatarPath : null,
-                    UserType = u.PM != null ? u.PM.UserType : 0,
-                    UserLevel = u.PM != null ? u.PM.UserLevel : 0,
-                    Branch = u.PM.BranchOld,
-                })
-                .Distinct()
-                .ToListAsync();
-            return new OkObjectResult(pms);
-        }
-
         [HttpDelete]
         public async Task Delete(long offboardHistoryId)
         {

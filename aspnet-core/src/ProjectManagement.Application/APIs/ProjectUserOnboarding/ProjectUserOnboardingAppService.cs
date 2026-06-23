@@ -106,14 +106,8 @@ namespace ProjectManagement.APIs.ProjectUserOnboarding
         [HttpPost]
         public async Task<GridResult<OnboardHistoryDto>> GetAllOnboardHistory(InputGetAllOnboardHistoryDto input)
         {
-            IQueryable<Entities.ProjectUserOnboarding> onboardingUser = WorkScope.GetAll<Entities.ProjectUserOnboarding>()
-                .Include(x => x.ProjectUser)
-                    .ThenInclude(x => x.Project)
-                        .ThenInclude(x => x.PM)
-                .Include(x => x.ProjectUser)
-                    .ThenInclude(x => x.User);
-
-            var query = onboardingUser.Select(x => new OnboardHistoryDto
+            var query = WorkScope.GetAll<Entities.ProjectUserOnboarding>()
+            .Select(x => new OnboardHistoryDto
             {
                 Id = x.Id,
                 ProjectUserId = x.ProjectUserId,

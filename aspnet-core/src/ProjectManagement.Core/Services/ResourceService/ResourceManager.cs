@@ -31,6 +31,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ProjectManagement.Services.ProjectUserBill.Dto;
 using static ProjectManagement.Constants.Enum.ProjectEnum;
+using Newtonsoft.Json;
 
 namespace ProjectManagement.Services.ResourceManager
 {
@@ -344,6 +345,56 @@ namespace ProjectManagement.Services.ResourceManager
                 OffboardStatus = OffboardStatus.Todo,
                 OffboardDate = DateTimeUtils.GetNow()
             };
+
+            var remainAsset = await _workScope.All<ProjectUserAsset>()
+                .Where(x => x.UserId == userId && x.ProjectAsset.ProjectId == projectId)
+                .Select(x => new
+                {
+                    x.ProjectAssetId,
+                    x.ProjectAsset.AssetName,
+                    ProjectAssetType = x.ProjectAsset.ProjectAssetType.Name,
+                    AccountType = x.ProjectAsset.AccountType.Name,
+                    Creator = x.ProjectAsset.AccountAssetCreator.Name,
+                    TypeLogin = x.ProjectAsset.TypeLogin.Name
+                })
+                .ToListAsync();
+
+            var remainAccountAssets = await _workScope.All<AccountAsset>()
+                .Where(x => x.ProjectUserBill.ProjectId == projectId && x.ProjectUserBill.UserId == userId)
+                .Select(x => new
+                {
+                    x.ProjectAssetId,
+                    x.ProjectAsset.AssetName,
+                    ProjectAssetType = x.ProjectAsset.ProjectAssetType.Name,
+                    AccountType = x.ProjectAsset.AccountType.Name,
+                    Creator = x.ProjectAsset.AccountAssetCreator.Name,
+                    TypeLogin = x.ProjectAsset.TypeLogin.Name,
+                })
+                .ToListAsync();
+
+            offboardUser.HistoryAsset = JsonConvert.SerializeObject(
+                remainAsset.Select(x => new
+                {
+                    x.ProjectAssetId,
+                    AssetName =
+                        $"{x.AssetName ?? "Unnamed"} " +
+                        $"[{x.ProjectAssetType ?? "Unknown project type"}] " +
+                        $"[{x.AccountType ?? "Unknown account type"}] " +
+                        $"[{x.Creator ?? "Unknown creator"}] " +
+                        $"[{x.TypeLogin ?? "Unknown type login"}]"
+                }));
+
+            offboardUser.HistoryAccountAsset = JsonConvert.SerializeObject(
+                remainAccountAssets.Select(x => new
+                {
+                    x.ProjectAssetId,
+                    Value =
+                        $"{x.AssetName ?? "Unnamed"} " +
+                        $"[{x.ProjectAssetType ?? "Unknown project type"}] " +
+                        $"[{x.AccountType ?? "Unknown account type"}] " +
+                        $"[{x.Creator ?? "Unknown creator"}] " +
+                        $"[{x.TypeLogin ?? "Unknown type login"}]"
+                }));
 
             await _workScope.InsertAsync(offboardUser);
         }

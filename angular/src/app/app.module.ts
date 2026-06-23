@@ -263,6 +263,7 @@ import { ConfigItComponent } from './modules/admin/config-it/config-it.component
 import { CreateEditConfigItComponent } from './modules/admin/config-it/create-edit-config-it/create-edit-config-it.component';
 import { TypeLoginComponent } from './modules/admin/type-login/type-login.component';
 import { CreateUpdateTypeLoginComponent } from './modules/admin/type-login/create-update-type-login/create-update-type-login.component';
+import { OnboardHistoryTabComponent } from './modules/delivery-management/delivery/onboard-history-tab/onboard-history-tab.component';
 
 
 export function HttpLoaderFactory(http: HttpClient) {
@@ -512,6 +513,7 @@ export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
     CreateEditConfigItComponent,
     TypeLoginComponent,
     CreateUpdateTypeLoginComponent,
+    OnboardHistoryTabComponent,
   ],
   imports: [
     CommonModule,

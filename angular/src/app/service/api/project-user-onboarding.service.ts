@@ -43,4 +43,8 @@ export class ProjectUserOnboardingService extends BaseApiService {
       {}
     );
   }
+
+  GetAllOnboardHistory(request: any): Observable<any> {
+    return this.http.post<any>(this.rootUrl + '/GetAllOnboardHistory', request);
+  }
 }

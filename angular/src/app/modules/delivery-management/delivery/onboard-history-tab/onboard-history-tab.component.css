@@ -1,0 +1,116 @@
+.status-pill {
+	display: inline-block;
+	padding: 0.25rem 0.65rem;
+	border-radius: 0.75rem;
+	font-weight: 700;
+	font-size: 0.85rem;
+}
+
+.status-not-started {
+	background-color: #f0f0f0;
+	color: #495057;
+	padding: 0.25rem 0.65rem;
+	border-radius: 0.75rem;
+	font-weight: 700;
+	font-size: 0.85rem;
+	line-height: 1.5;
+	vertical-align: middle;
+}
+
+.status-in-progress {
+	background-color: #fff3cd;
+	color: #856404;
+	padding: 0.25rem 0.65rem;
+	border-radius: 0.75rem;
+	font-weight: 700;
+	font-size: 0.85rem;
+	line-height: 1.5;
+	vertical-align: middle;
+}
+
+.status-pending-employee {
+	background-color: #d1ecf1;
+	color: #0c5460;
+	padding: 0.25rem 0.65rem;
+	border-radius: 0.75rem;
+	font-weight: 700;
+	font-size: 0.85rem;
+	line-height: 1.5;
+	vertical-align: middle;
+}
+
+.status-done {
+	background-color: #d4edda;
+	color: #155724;
+	padding: 0.25rem 0.65rem;
+	border-radius: 0.75rem;
+	font-weight: 700;
+	font-size: 0.85rem;
+	line-height: 1.5;
+	vertical-align: middle;
+}
+
+.status-pending {
+	background-color: #d9ecff;
+	color: #0056b3;
+	padding: 0.25rem 0.65rem;
+	border-radius: 0.75rem;
+	font-weight: 700;
+	font-size: 0.85rem;
+	line-height: 1.5;
+	vertical-align: middle;
+}
+
+.status-unknown {
+	background-color: #f8d7da;
+	color: #721c24;
+}
+
+.badge-project-role {
+	font-size: 0.75rem;
+	padding: 0.2rem 0.45rem;
+	vertical-align: middle;
+}
+
+::ng-deep .filter-wrap .mat-form-field {
+	width: 100%;
+}
+
+.filter-wrap {
+	align-items: flex-start;
+	row-gap: 0.75rem;
+}
+
+.filter-wrap > div {
+	display: flex;
+	justify-content: flex-end;
+}
+
+.filter-wrap .search-status,
+.filter-wrap .search-pm {
+	padding-right: 0.75rem;
+}
+
+.filter-wrap .search-status .mat-form-field,
+.filter-wrap .search-pm .mat-form-field {
+	min-width: 0;
+}
+
+.row-first .input-group {
+	align-items: stretch;
+}
+
+.row-first .input-group-prepend .input-group-text,
+.row-first .input-group-append .btn {
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding-top: 0;
+	padding-bottom: 0;
+}
+
+.row-first .form-control {
+	height: auto;
+	min-height: calc(1.5em + 0.75rem + 2px);
+}

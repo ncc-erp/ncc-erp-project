@@ -258,6 +258,7 @@ namespace ProjectManagement.Services.Timesheet.Dto
         public decimal Hours { get; set; }
         public float Multiplier { get; set; }
         public string OtType { get; set; }
+        public bool IsNormalInvoice { get; set; } = false;
     }
     #region Finfast Integrate
     public class InvoiceGeneralInfoForFinfast

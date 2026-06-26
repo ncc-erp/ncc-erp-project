@@ -12,5 +12,6 @@ namespace ProjectManagement.Entities
         public long ProjectId { get; set; }
         public string OtTypeName { get; set; }
         public float Multiplier { get; set; }
+        public bool IsNormalInvoice { get; set; } = false;
     }
 }

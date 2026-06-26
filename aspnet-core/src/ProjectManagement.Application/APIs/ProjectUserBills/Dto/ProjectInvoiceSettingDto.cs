@@ -26,6 +26,7 @@ namespace ProjectManagement.APIs.ProjectUserBills.Dto
         public long? Id { get; set; }
         public string OtTypeName { get; set; }
         public float Multiplier { get; set; }
+        public bool IsNormalInvoice { get; set; } = false;
     }
 
 }

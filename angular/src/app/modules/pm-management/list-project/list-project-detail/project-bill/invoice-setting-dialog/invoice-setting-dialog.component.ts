@@ -112,7 +112,7 @@ export class InvoiceSettingDialogComponent extends AppComponentBase implements O
   }
 
   addOtType() {
-    this.updateInvoiceDto.otTypes.push({ otTypeName: '', multiplier: null });
+    this.updateInvoiceDto.otTypes.push({ otTypeName: '', multiplier: null, isNormalInvoice: false });
   }
 
   removeOtType(index: number) {

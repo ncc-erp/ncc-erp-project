@@ -248,7 +248,8 @@ namespace ProjectManagement.APIs.TimeSheetProjectBills
                 {
                     Id = x.Id,
                     OtTypeName = x.OtTypeName,
-                    Multiplier = x.Multiplier
+                    Multiplier = x.Multiplier,
+                    IsNormalInvoice = x.IsNormalInvoice
                 }).ToListAsync();
 
             return listProjectOtTypes;

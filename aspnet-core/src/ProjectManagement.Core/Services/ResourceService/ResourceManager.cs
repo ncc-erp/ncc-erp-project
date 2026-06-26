@@ -1183,11 +1183,17 @@ namespace ProjectManagement.Services.ResourceManager
 
         public IQueryable<GetAllResourceDto> ApplyFilterProject(IQueryable<GetAllResourceDto> query, InputGetAllResourceDto input)
         {
-            if (input.ProjectId != null)
+            if (input.ProjectId == null)
             {
-                return query.ToList().Where(x => x.WorkingProjects.Any(wp => wp.ProjectId == input.ProjectId)).AsQueryable();
+                return query;
             }
-            return query;
+
+            if (input.ProjectId == -2)
+            {
+                return query.ToList().Where(x => x.WorkingProjects == null  || !x.WorkingProjects.Any()).AsQueryable();
+            }
+
+            return query.ToList().Where(x => x.WorkingProjects.Any(wp => wp.ProjectId == input.ProjectId)).AsQueryable();
         }
 
         public IQueryable<GetAllResourceDto> ApplyFilterPlannedResource(IQueryable<GetAllResourceDto> query, InputGetAllResourceDto input)

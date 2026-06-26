@@ -310,6 +310,15 @@ namespace ProjectManagement.APIs.TimesheetProjects
                                                         ChargeType = x.ChargeType.HasValue ? x.ChargeType : x.Project.ChargeType,
                                                         DefaultWorkingHours = defaultWorkingHours,
                                                         TimeSheetWorkingDay = tsp.WorkingDay,
+                                                        TimesheetProjectBillOtTypes = x.TimesheetProjectBillOtTypes
+                                                           .Select(ot => new TimesheetProjectBillOtTypeDto
+                                                           {
+                                                               Id = ot.Id,
+                                                               Hours = ot.Hours,
+                                                               Multiplier = ot.ProjectOtType.Multiplier,
+                                                               OtType = ot.ProjectOtType.OtTypeName,
+                                                               IsNormalInvoice = ot.ProjectOtType.IsNormalInvoice
+                                                           }).ToList()
                                                     }).ToList(),
                     ProjectCurrency = tsp.Project.Currency.Code,
                     ProjectChargeType = tsp.Project.ChargeType,
@@ -371,6 +380,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
                                                                Hours = ot.Hours,
                                                                Multiplier = ot.ProjectOtType.Multiplier,
                                                                OtType = ot.ProjectOtType.OtTypeName,
+                                                               IsNormalInvoice = ot.ProjectOtType.IsNormalInvoice
                                                            }).ToList()
                                                     }).ToList(),
                     Note = tsp.Note,
@@ -885,6 +895,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
                                                        Id = ot.Id,
                                                        Hours = ot.Hours,
                                                        Multiplier = ot.ProjectOtType.Multiplier,
+                                                       IsNormalInvoice = ot.ProjectOtType.IsNormalInvoice,
                                                        OtType = ot.ProjectOtType.OtTypeName,
                                                    }).ToList()
                                            }).ToListAsync();
@@ -915,46 +926,61 @@ namespace ProjectManagement.APIs.TimesheetProjects
                 rowRange.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                 rowRange.Style.Fill.BackgroundColor.SetColor(rowIndex % 2 == 0 ? white : ivory);
 
+                // Incase user has OT, we will not show the normal line if the OT type is Normal Invoice
+                var normalInvoiceOts = tsUser.TimesheetProjectBillOtTypes.Where(ot => ot.IsNormalInvoice == true).ToList();
+                var nonNormalInvoiceOts = tsUser.TimesheetProjectBillOtTypes.Where(ot => ot.IsNormalInvoice == false).ToList();
+                double totalWorkingDay = tsUser.NormalWorkingDay;
+                double totalLineTotal = tsUser.NormalLineTotal;
+
+                foreach(var ot in normalInvoiceOts)
+                {
+                    var workingDayOt = ExtensionMethod.GetWorkingDayOT(ot, tsUser);
+                    totalWorkingDay += workingDayOt;
+                    var otMultiplier = (double)ot.Multiplier;
+                    var otBillRate = tsUser.BillRateDisplay * otMultiplier;
+                    totalLineTotal += Math.Round(workingDayOt * otBillRate, 2);
+                }
+
                 //Fill data sheet invoice
                 invoiceSheet.Cells[rowIndex, 2].Value = tsUser.FullName;
                 invoiceSheet.Cells[rowIndex, 3].Value = tsUser.ProjectName;
                 invoiceSheet.Cells[rowIndex, 4].Value = tsUser.BillRateDisplay;
                 invoiceSheet.Cells[rowIndex, 5].Value = tsUser.CurrencyName + "/" + tsUser.ChargeTypeDisplay;
-                invoiceSheet.Cells[rowIndex, 6].Value = tsUser.NormalWorkingDay;
+                invoiceSheet.Cells[rowIndex, 6].Value = totalWorkingDay;
                 invoiceSheet.Cells[rowIndex, 6].Style.Numberformat.Format = "0.00";
-                invoiceSheet.Cells[rowIndex, 7].Value = tsUser.NormalLineTotal;
-                sumLineTotal += tsUser.NormalLineTotal;
+                invoiceSheet.Cells[rowIndex, 7].Value = totalLineTotal;
+                sumLineTotal += totalLineTotal;
                 rowIndex++;
                 isFirstRow = false;
 
-                if (tsUser.TimesheetProjectBillOtTypes.Count > 0)
+                if(nonNormalInvoiceOts.Count == 0)
+                    continue;
+                
+                foreach (var ot in nonNormalInvoiceOts)
                 {
-                    foreach (var ot in tsUser.TimesheetProjectBillOtTypes)
-                    {
-                        invoiceSheet.InsertRow(rowIndex, 1, rowIndex - 1);
+                    invoiceSheet.InsertRow(rowIndex, 1, rowIndex - 1);
 
-                        // Fill Color OT line
-                        rowRange = invoiceSheet.Cells[rowIndex, 2, rowIndex, 7];
-                        rowRange.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-                        rowRange.Style.Fill.BackgroundColor.SetColor(rowIndex % 2 == 0 ? white : ivory);
+                    // Fill Color OT line
+                    rowRange = invoiceSheet.Cells[rowIndex, 2, rowIndex, 7];
+                    rowRange.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                    rowRange.Style.Fill.BackgroundColor.SetColor(rowIndex % 2 == 0 ? white : ivory);
 
-                        // Calculate total OT (in days or hours) based on OT type and user settings
-                        var workingDayOt = ExtensionMethod.GetWorkingDayOT(ot, tsUser);
-                        var otMultiplier = (double)ot.Multiplier;
-                        var otBillRate = tsUser.BillRateDisplay * otMultiplier;
-                        var lineTotalOt = Math.Round(workingDayOt * otBillRate, 2);
+                    // Calculate total OT (in days or hours) based on OT type and user settings
+                    var workingDayOt = ExtensionMethod.GetWorkingDayOT(ot, tsUser);
+                    var otMultiplier = (double)ot.Multiplier;
+                    var otBillRate = tsUser.BillRateDisplay * otMultiplier;
+                    var lineTotalOt = Math.Round(workingDayOt * otBillRate, 2);
 
-                        // Fill OT row
-                        invoiceSheet.Cells[rowIndex, 2].Value = $"{tsUser.FullName} ({ot.OtType})";
-                        invoiceSheet.Cells[rowIndex, 3].Value = tsUser.ProjectName;
-                        invoiceSheet.Cells[rowIndex, 4].Value = otBillRate;
-                        invoiceSheet.Cells[rowIndex, 5].Value = tsUser.CurrencyName + "/" + tsUser.ChargeTypeDisplay;
-                        invoiceSheet.Cells[rowIndex, 6].Value = workingDayOt;
-                        invoiceSheet.Cells[rowIndex, 6].Style.Numberformat.Format = "0.00";
-                        invoiceSheet.Cells[rowIndex, 7].Value = lineTotalOt;
-                        sumLineTotal += lineTotalOt;
-                        rowIndex++;
-                    }
+                    // Fill OT row
+                    invoiceSheet.Cells[rowIndex, 2].Value = $"{tsUser.FullName} ({ot.OtType})";
+                    invoiceSheet.Cells[rowIndex, 3].Value = tsUser.ProjectName;
+                    invoiceSheet.Cells[rowIndex, 4].Value = otBillRate;
+                    invoiceSheet.Cells[rowIndex, 5].Value = tsUser.CurrencyName + "/" + tsUser.ChargeTypeDisplay;
+                    invoiceSheet.Cells[rowIndex, 6].Value = workingDayOt;
+                    invoiceSheet.Cells[rowIndex, 6].Style.Numberformat.Format = "0.00";
+                    invoiceSheet.Cells[rowIndex, 7].Value = lineTotalOt;
+                    sumLineTotal += lineTotalOt;
+                    rowIndex++;
                 }
             }
 

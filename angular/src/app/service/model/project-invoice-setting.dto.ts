@@ -7,7 +7,7 @@ export interface ProjectInvoiceSettingDto {
     subProject: IdNameDto[],
     subProjectNames: string[],
     subProjectIds: number[],
-    otTypes?: { id?: number, otTypeName: string, multiplier: number }[],
+    otTypes?: { id?: number, otTypeName: string, multiplier: number, isNormalInvoice: boolean }[],
 }
 
 export interface IdNameDto {

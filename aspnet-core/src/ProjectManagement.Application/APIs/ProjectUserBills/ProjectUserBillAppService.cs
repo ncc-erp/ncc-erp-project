@@ -466,7 +466,8 @@ namespace ProjectManagement.APIs.ProjectUserBills
                                         {
                                             Id = p.Id,
                                             OtTypeName = p.OtTypeName,
-                                            Multiplier = p.Multiplier
+                                            Multiplier = p.Multiplier,
+                                            IsNormalInvoice = p.IsNormalInvoice,
                                         }).ToList()
                                 }).FirstOrDefaultAsync();
 
@@ -707,7 +708,8 @@ namespace ProjectManagement.APIs.ProjectUserBills
                 {
                     ProjectId = input.ProjectId,
                     OtTypeName = x.OtTypeName,
-                    Multiplier = x.Multiplier
+                    Multiplier = x.Multiplier,
+                    IsNormalInvoice = x.IsNormalInvoice
                 })
                 .ToList();
 
@@ -716,6 +718,7 @@ namespace ProjectManagement.APIs.ProjectUserBills
                 var dto = inputOtTypes.First(i => i.Id == existing.Id);
                 existing.OtTypeName = dto.OtTypeName;
                 existing.Multiplier = dto.Multiplier;
+                existing.IsNormalInvoice = dto.IsNormalInvoice;
             }
 
             var deleteOtTypes = existingOtTypes

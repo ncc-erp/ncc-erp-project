@@ -21,7 +21,9 @@ namespace ProjectManagement.Entities
         public DateTime? SentRequestTime { get; set; }
 
         public DateTime? ConfirmedTime { get; set; }
+        public string Note { get; set; }
 
         public virtual ICollection<ProjectUserOnboardingDetail> ProjectUserOnboardingDetails { get; set; }
+
     }
 }

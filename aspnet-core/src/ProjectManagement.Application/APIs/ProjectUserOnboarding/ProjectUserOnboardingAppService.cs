@@ -103,6 +103,20 @@ namespace ProjectManagement.APIs.ProjectUserOnboarding
             }
         }
 
+        [HttpPut]
+        public async Task UpdateOnboardHistoryNote(UpdateOnboardHistoryNoteDto input)
+        {
+            var onboarding = await WorkScope.GetAsync<Entities.ProjectUserOnboarding>(input.ProjectUserOnboardingId);
+
+            if (onboarding == null)
+            {
+                throw new UserFriendlyException("Onboarding history not found");
+            }
+
+            onboarding.Note = input.Note;
+            await WorkScope.UpdateAsync(onboarding);
+        }
+
         [HttpPost]
         public async Task<GridResult<OnboardHistoryDto>> GetAllOnboardHistory(InputGetAllOnboardHistoryDto input)
         {
@@ -133,6 +147,7 @@ namespace ProjectManagement.APIs.ProjectUserOnboarding
                     PMEmail = x.ProjectUser.Project.PM != null ? x.ProjectUser.Project.PM.EmailAddress : null,
                     PMId = x.ProjectUser.Project.PMId,
                     Status = x.Status,
+                    Note = x.Note,
                 });
 
             if (input.ProjectId.HasValue && input.ProjectId.Value > 0)
@@ -308,6 +323,15 @@ namespace ProjectManagement.APIs.ProjectUserOnboarding
                 IsChecked = d.IsChecked
             }).ToList();
             await SendConfirmationRequestToMember(projectUserId, checklist);
+        }
+
+        [HttpDelete]
+        public async Task Delete(long onboardHistoryId)
+        {
+            var onboard = await WorkScope.GetAsync<Entities.ProjectUserOnboarding>(onboardHistoryId);
+            if (onboard == null)
+                throw new UserFriendlyException("Onboard History not exist");
+            await WorkScope.DeleteAsync(onboard);
         }
 
         #region API Helper methods

@@ -114,3 +114,14 @@
 	height: auto;
 	min-height: calc(1.5em + 0.75rem + 2px);
 }
+
+.fixTableHead.resource-table table {
+	table-layout: fixed;
+}
+
+.col-note {
+	width: 220px;
+	max-width: 220px;
+	overflow-wrap: break-word;
+	word-break: break-all;
+}

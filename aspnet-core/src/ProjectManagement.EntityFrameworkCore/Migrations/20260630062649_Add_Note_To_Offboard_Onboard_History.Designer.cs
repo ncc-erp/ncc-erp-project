@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectManagement.EntityFrameworkCore;
 
 namespace ProjectManagement.Migrations
 {
     [DbContext(typeof(ProjectManagementDbContext))]
-    partial class ProjectManagementDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260630062649_Add_Note_To_Offboard_Onboard_History")]
+    partial class Add_Note_To_Offboard_Onboard_History
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -4320,8 +4322,7 @@ namespace ProjectManagement.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ProjectUserId")
-                        .IsUnique()
-                        .HasFilter("[IsDeleted] = 0");
+                        .IsUnique();
 
                     b.ToTable("ProjectUserOnboardings");
                 });

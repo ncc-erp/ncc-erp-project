@@ -62,7 +62,8 @@ namespace ProjectManagement.Manager.OffboardUserManager
                     HistoryAccountAsset = x.HistoryAccountAsset,
                     CheckOffboardStatus = x.CheckOffboardStatus,
                     OffboardDate = x.OffboardDate,
-                    OffboardStatus = x.OffboardStatus
+                    OffboardStatus = x.OffboardStatus,
+                    Note = x.Note,
                 });
 
             if (input.ProjectId.HasValue && input.ProjectId.Value > 0)
@@ -129,6 +130,19 @@ namespace ProjectManagement.Manager.OffboardUserManager
             await WorkScope.UpdateAsync(offboardUser);
 
             return offboardUser;
+        }
+
+        public async Task UpdateOffboardHistoryNote(UpdateOffboardNoteDto input)
+        {
+            var offboardUser = await WorkScope.GetAsync<OffboardUser>(input.OffboardUserId);
+
+            if (offboardUser == null)
+            {
+                throw new UserFriendlyException($"Not found OffboardUser with Id {input.OffboardUserId}");
+            }
+
+            offboardUser.Note = input.Note;
+            await WorkScope.UpdateAsync(offboardUser);
         }
 
         public async Task<List<OffboardChecklistItemDto>> GetOffboardChecklist(long offboardHistoryId)

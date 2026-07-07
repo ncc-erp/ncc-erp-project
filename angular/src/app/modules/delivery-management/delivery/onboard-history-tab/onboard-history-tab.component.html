@@ -108,6 +108,7 @@
 								<th style="width: 300px;">Employee</th>
 								<th style="width: 300px;">Project</th>
 								<th style="width: 160px;">Status</th>
+								<th style="white-space: pre-line; word-break: break-all; max-width: 250px;" class="col-note">Note</th>
 								<th style="width: 70px;">Action</th>
 							</tr>
 						</thead>
@@ -135,15 +136,31 @@
 										{{ getOnboardStatusLabel(item.status) }}
 									</span>
 								</td>
+								<td style="white-space: pre-line; word-break: break-all; max-width: 250px;" class="col-note">
+									<div class="d-flex" style="flex-direction: column;">
+										<div style="display: flex;">
+											<div style="word-break: break-word">{{ item.note }}</div>
+											<div style="width: 10%; text-align: right;" class="ml-1">
+												<i class="fas fa-edit" (click)="openOnboardNoteDialog(item)" matTooltip="Edit note"></i>
+											</div>
+										</div>
+									</div>
+								</td>
 								<td style="width: 70px;" class="text-center align-middle">
-									<button *ngIf="item.status !== 3" mat-icon-button [matMenuTriggerFor]="actionMenu" aria-label="Action menu" style="margin: 0 auto; display: block;">
+									<button mat-icon-button [matMenuTriggerFor]="actionMenu" aria-label="Action menu" style="margin: 0 auto; display: block;">
 										<i class="fas fa-bars"></i>
 									</button>
 									<mat-menu #actionMenu="matMenu">
 										<button mat-menu-item *ngIf="item.status !== 3 && permission.isGranted(OnboardHistory_Edit)" (click)="openOnboardDialog(item)">
 											<i class="fas fa-handshake mr-2"></i>Onboard
-										</button>
-										<button mat-menu-item *ngIf="item.status === 2 || item.status === 4 && permission.isGranted(OnboardHistory_Edit)" (click)="remind(item)">
+									</button>
+									<button mat-menu-item *ngIf="item.status === 0 && permission.isGranted(OnboardHistory_Edit)" (click)="delete(item)">
+										<i class="fas fa-times-circle mr-2"></i>Don't need onboard
+									</button>
+									<button mat-menu-item *ngIf="item.status !== 0 && permission.isGranted(OnboardHistory_Edit)" (click)="delete(item)">
+										<i class="fas fa-trash-alt mr-2"></i>Delete
+									</button>
+									<button mat-menu-item *ngIf="item.status === 2 || item.status === 4 && permission.isGranted(OnboardHistory_Edit)" (click)="remind(item)">
 											<i class="fa fa-bell text-warning mr-2"></i>Remind
 										</button>
 									</mat-menu>

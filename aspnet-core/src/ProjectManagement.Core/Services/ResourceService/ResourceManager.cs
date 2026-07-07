@@ -438,7 +438,9 @@ namespace ProjectManagement.Services.ResourceManager
                              .ToList();
 
             currentPUs.ForEach(pu => pu.Status = ProjectUserStatus.Past);
-            await _workScope.InsertAsync(joinPU);
+            var joinPuId = await _workScope.InsertAndGetIdAsync(joinPU);
+            joinPU.Id = joinPuId;
+            await CreateProjectUserOnboardingIfNotExist(joinPuId);
 
             if (projectToJoin.ProjectCode == AppConsts.CHO_NGHI_PROJECT_CODE)
             {
@@ -533,6 +535,7 @@ namespace ProjectManagement.Services.ResourceManager
             futurePU.PMReportId = activeReportId;
 
             await _workScope.UpdateAsync(confirmPUExt.PU);
+            await CreateProjectUserOnboardingIfNotExist(confirmPUExt.PU.Id);
 
             if (confirmPUExt.Project.ProjectCode == AppConsts.CHO_NGHI_PROJECT_CODE)
             {
@@ -553,6 +556,26 @@ namespace ProjectManagement.Services.ResourceManager
             return _workScope.GetAll<ProjectUser>()
                  .Where(p => p.UserId == userId && p.ProjectId == projectId
                  && p.Status == ProjectUserStatus.Present && p.AllocatePercentage > 0).FirstOrDefault();
+        }
+
+        private async Task CreateProjectUserOnboardingIfNotExist(long projectUserId)
+        {
+            var existing = await _workScope.GetAll<ProjectUserOnboarding>()
+                .FirstOrDefaultAsync(x => x.ProjectUserId == projectUserId);
+
+            if (existing != null)
+            {
+                return;
+            }
+
+            var onboarding = new ProjectUserOnboarding
+            {
+                ProjectUserId = projectUserId,
+                Status = ProjectUserOnboardingStatus.NotStarted,
+                ProjectUserOnboardingDetails = new List<ProjectUserOnboardingDetail>()
+            };
+
+            await _workScope.InsertAsync(onboarding);
         }
 
         public void nofityKomuDoneResourceRequest(GetResourceRequestDto listRequestDto, KomuUserInfoDto sessionUser, KomuProjectInfoDto project)

@@ -33,5 +33,6 @@ namespace ProjectManagement.APIs.ProjectUserOnboarding.Dto
         public string PMEmail { get; set; }
         public long PMId { get; set; }
         public ProjectUserOnboardingStatus Status { get; set; }
+        public string Note { get; set; }
     }
 }

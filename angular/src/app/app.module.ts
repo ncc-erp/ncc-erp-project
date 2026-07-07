@@ -264,6 +264,8 @@ import { CreateEditConfigItComponent } from './modules/admin/config-it/create-ed
 import { TypeLoginComponent } from './modules/admin/type-login/type-login.component';
 import { CreateUpdateTypeLoginComponent } from './modules/admin/type-login/create-update-type-login/create-update-type-login.component';
 import { OnboardHistoryTabComponent } from './modules/delivery-management/delivery/onboard-history-tab/onboard-history-tab.component';
+import { AddOffboardNoteDialogComponent } from './modules/delivery-management/delivery/offboard-history-tab/add-offboard-note-dialog/add-offboard-note-dialog.component';
+import { AddOnboardNoteDialogComponent } from './modules/delivery-management/delivery/onboard-history-tab/add-onboard-note-dialog/add-onboard-note-dialog.component';
 
 
 export function HttpLoaderFactory(http: HttpClient) {
@@ -514,6 +516,8 @@ export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
     TypeLoginComponent,
     CreateUpdateTypeLoginComponent,
     OnboardHistoryTabComponent,
+    AddOffboardNoteDialogComponent,
+    AddOnboardNoteDialogComponent,
   ],
   imports: [
     CommonModule,

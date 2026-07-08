@@ -4305,6 +4305,9 @@ namespace ProjectManagement.Migrations
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime?>("OnboardDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<long>("ProjectUserId")
                         .HasColumnType("bigint");
 

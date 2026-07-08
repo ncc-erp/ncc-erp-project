@@ -34,5 +34,6 @@ namespace ProjectManagement.APIs.ProjectUserOnboarding.Dto
         public long PMId { get; set; }
         public ProjectUserOnboardingStatus Status { get; set; }
         public string Note { get; set; }
+        public DateTime? OnboardDate { get; set; }
     }
 }

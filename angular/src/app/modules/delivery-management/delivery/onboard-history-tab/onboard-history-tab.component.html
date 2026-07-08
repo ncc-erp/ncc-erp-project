@@ -107,8 +107,9 @@
 								<th style="width: 50px;">#</th>
 								<th style="width: 300px;">Employee</th>
 								<th style="width: 300px;">Project</th>
-								<th style="width: 160px;">Status</th>
+								<th style="width: 160px;">Status</th>								
 								<th style="white-space: pre-line; word-break: break-all; max-width: 250px;" class="col-note">Note</th>
+								<th style="width: 180px;">Onboard Date</th>
 								<th style="width: 70px;">Action</th>
 							</tr>
 						</thead>
@@ -146,6 +147,9 @@
 										</div>
 									</div>
 								</td>
+								<td style="width: 180px; text-align: center;">
+									{{ item.onboardDate ? (item.onboardDate | date: 'dd/MM/yyyy HH:mm') : '-' }}
+								</td>
 								<td style="width: 70px;" class="text-center align-middle">
 									<button mat-icon-button [matMenuTriggerFor]="actionMenu" aria-label="Action menu" style="margin: 0 auto; display: block;">
 										<i class="fas fa-bars"></i>
@@ -167,7 +171,7 @@
 								</td>
 							</tr>
 							<tr *ngIf="onboardHistoryList?.length === 0">
-								<td colspan="5" class="text-center py-5">No records found</td>
+								<td colspan="6" class="text-center py-5">No records found</td>
 							</tr>
 						</tbody>
 					</table>

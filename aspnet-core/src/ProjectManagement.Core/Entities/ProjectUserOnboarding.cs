@@ -22,7 +22,7 @@ namespace ProjectManagement.Entities
 
         public DateTime? ConfirmedTime { get; set; }
         public string Note { get; set; }
-
+        public DateTime? OnboardDate { get; set; }
         public virtual ICollection<ProjectUserOnboardingDetail> ProjectUserOnboardingDetails { get; set; }
 
     }

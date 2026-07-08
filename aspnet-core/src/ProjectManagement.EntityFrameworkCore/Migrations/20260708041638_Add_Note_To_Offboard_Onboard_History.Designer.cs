@@ -10,7 +10,7 @@ using ProjectManagement.EntityFrameworkCore;
 namespace ProjectManagement.Migrations
 {
     [DbContext(typeof(ProjectManagementDbContext))]
-    [Migration("20260630062649_Add_Note_To_Offboard_Onboard_History")]
+    [Migration("20260708041638_Add_Note_To_Offboard_Onboard_History")]
     partial class Add_Note_To_Offboard_Onboard_History
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -4307,6 +4307,9 @@ namespace ProjectManagement.Migrations
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime?>("OnboardDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<long>("ProjectUserId")
                         .HasColumnType("bigint");
 
@@ -4322,7 +4325,8 @@ namespace ProjectManagement.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ProjectUserId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[IsDeleted] = 0");
 
                     b.ToTable("ProjectUserOnboardings");
                 });

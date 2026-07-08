@@ -65,6 +65,7 @@ namespace ProjectManagement.APIs.ProjectUserOnboarding
                     onboarding = new Entities.ProjectUserOnboarding
                     {
                         ProjectUserId = projectUserId,
+                        OnboardDate = DateTimeUtils.GetNow(),
                         ProjectUserOnboardingDetails = new List<ProjectUserOnboardingDetail>()
                     };
                     onboarding.Id = await WorkScope.InsertAndGetIdAsync(onboarding);
@@ -148,6 +149,7 @@ namespace ProjectManagement.APIs.ProjectUserOnboarding
                     PMId = x.ProjectUser.Project.PMId,
                     Status = x.Status,
                     Note = x.Note,
+                    OnboardDate = x.OnboardDate,
                 });
 
             if (input.ProjectId.HasValue && input.ProjectId.Value > 0)
@@ -242,6 +244,7 @@ namespace ProjectManagement.APIs.ProjectUserOnboarding
                     projectUserOnboarding = new Entities.ProjectUserOnboarding
                     {
                         ProjectUserId = input.ProjectUserId,
+                        OnboardDate = DateTimeUtils.GetNow(),
                         ProjectUserOnboardingDetails = new List<ProjectUserOnboardingDetail>()
                     };
                 }

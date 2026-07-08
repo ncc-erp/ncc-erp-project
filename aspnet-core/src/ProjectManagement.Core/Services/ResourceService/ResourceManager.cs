@@ -572,6 +572,7 @@ namespace ProjectManagement.Services.ResourceManager
             {
                 ProjectUserId = projectUserId,
                 Status = ProjectUserOnboardingStatus.NotStarted,
+                OnboardDate = DateTimeUtils.GetNow(),
                 ProjectUserOnboardingDetails = new List<ProjectUserOnboardingDetail>()
             };
 

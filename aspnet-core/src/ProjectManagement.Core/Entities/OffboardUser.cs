@@ -26,6 +26,7 @@ namespace ProjectManagement.Entities
         public string HistoryAccountAsset { get; set; }
         public OffboardStatus OffboardStatus { get; set; }
         public DateTime OffboardDate { get; set; }
+        public string Note { get; set; }
 
     }
 }

@@ -192,6 +192,27 @@ button {
      border-left: none;
  }
 
+.bill-account-table thead th .sortable-column {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+}
+
+.bill-account-table thead th .sortable-column button.sort-btn {
+    min-width: 32px;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bill-account-table thead th .sortable-column button.sort-btn i {
+    line-height: 1;
+}
+
  .green {
      border-left: 7px solid #28a745;
  }
@@ -351,8 +372,111 @@ button {
      width: 59%;
  }
 
+ .weekly-report-left-content {
+     width: 100%;
+  }
+
  .weekly-report-right {
      width: 40%;
+  }
+
+ .weekly-report-container.bill-account-expanded-layout {
+     align-items: flex-start;
+  }
+
+ .weekly-report-container.bill-account-expanded-layout .weekly-report-left {
+     display: contents;
+  }
+
+ .weekly-report-container.bill-account-expanded-layout .weekly-report-left-content {
+     order: 1;
+     width: 59%;
+  }
+
+ .weekly-report-container.bill-account-expanded-layout .weekly-report-right {
+     order: 2;
+     width: 40%;
+  }
+
+ #charge-account {
+     transition: width 0.2s ease;
+  }
+
+ #charge-account.bill-account-horizontal-expanded {
+     order: 3;
+     width: 100%;
+     max-width: 100%;
+     margin-top: 12px;
+  }
+
+ .bill-account-body {
+     position: relative;
+  }
+
+ .bill-account-table-scroll {
+     max-height: none;
+     overflow-x: auto;
+     overflow-y: visible;
+  }
+
+ #charge-account.bill-account-horizontal-expanded .bill-account-table-scroll {
+     overflow-x: visible;
+  }
+
+ .bill-account-table {
+     width: max-content;
+     min-width: 100%;
+  }
+
+ .bill-account-toggle {
+     position: sticky;
+     top: 48px;
+     right: 0;
+     float: right;
+     z-index: 4;
+     width: 24px;
+     height: 44px;
+     margin-right: -12px;
+     padding: 0;
+     border: 1px solid #d7d7d7;
+     border-radius: 4px 0 0 4px;
+     background-color: #ffffff;
+     color: #333333;
+     font-size: 18px;
+     line-height: 1;
+     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+     cursor: pointer;
+  }
+
+ .bill-account-toggle:hover {
+     background-color: #f5f5f5;
+  }
+
+ .sortable-column {
+     display: inline-flex;
+     align-items: center;
+     gap: 4px;
+     cursor: pointer;
+     user-select: none;
+ }
+
+ .sortable-column i {
+     font-size: 10px;
+ }
+
+ .sort-btn {
+     min-width: 32px;
+     height: 28px;
+     width: 32px;
+     border-radius: 4px;
+     border: 1px solid #d2d6de;
+     background: white;
+     color: #333;
+     margin-left: 6px;
+ }
+
+ .sort-btn i {
+     font-size: 12px;
  }
 
  .btn-add {

@@ -95,6 +95,7 @@
                                 />{{ search.focus() }}
                             </mat-form-field>
                             <mat-option [value]="-1"> All </mat-option>
+                            <mat-option [value]="-2"> No Project </mat-option>
                             <mat-option
                                 *ngFor=" let project of listProject | listFilter : 'projectName' : searchProject"
                                 [value]="project.projectId">

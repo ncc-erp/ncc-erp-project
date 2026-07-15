@@ -197,6 +197,7 @@ namespace ProjectManagement.APIs.PMReportProjectContribution
                         ProjectName = g.Project.Name,
                         PMName = g.Project.PM != null ? g.Project.PM.FullName : "No PM",
                         AccountName = g.ProjectUserBill.AccountName ?? g.ProjectUserBill.User.FullName,
+                        ProjectCode = g.Project.Code,
                         BillRole = g.ProjectUserBill.BillRole,
                         g.Contribute,
                         HeadCount = g.ProjectUserBill.HeadCount
@@ -219,11 +220,12 @@ namespace ProjectManagement.APIs.PMReportProjectContribution
                             .Sum(x => x.HeadCount * x.Contribute),
                         Projects = historyData
                             .Where(h => h.UserId == user.Id)
-                            .GroupBy(p => new { p.ProjectId, p.ProjectName, p.PMName })
+                            .GroupBy(p => new { p.ProjectId, p.ProjectName, p.PMName, p.ProjectCode })
                             .Select(pg => new ProjectUserContributionDto
                             {
                                 ProjectId = pg.Key.ProjectId,
                                 ProjectName = pg.Key.ProjectName,
+                                ProjectCode = pg.Key.ProjectCode,
                                 PMName = pg.Key.PMName,
                                 TotalContribute = pg.Sum(x => x.Contribute * x.HeadCount),
                                 BillDetails = pg.Select(detail => new ProjectBillDetailDto

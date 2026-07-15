@@ -39,6 +39,13 @@ namespace ProjectManagement.APIs.OffboardUser
             await _offboardUserManager.UpdateOffboardStatus(input.OffboardHistoryId, input.NeedOffboard);
         }
 
+        [HttpPut]
+        [AbpAuthorize]
+        public async Task UpdateOffboardHistoryNote(UpdateOffboardNoteDto input)
+        {
+            await _offboardUserManager.UpdateOffboardHistoryNote(input);
+        }
+
         [HttpGet]
         [AbpAuthorize]
         public async Task<List<OffboardChecklistItemDto>> GetOffboardChecklist(long offboardHistoryId)

@@ -9,6 +9,7 @@ import { OffboardUserService } from '@app/service/api/offboard-user.service';
 import { OnboardingDialogComponent } from '../../../pm-management/list-project/list-project-detail/resource-management/onboarding-dialog/onboarding-dialog.component';
 import { PERMISSIONS_CONSTANT } from '@app/constant/permission.constant';
 import { TimesheetProjectService } from '@app/service/api/timesheet-project.service';
+import { AddOnboardNoteDialogComponent } from './add-onboard-note-dialog/add-onboard-note-dialog.component';
 
 @Component({
   selector: 'app-onboard-history-tab',
@@ -77,8 +78,22 @@ export class OnboardHistoryTabComponent extends PagedListingComponentBase<any> i
       });
   }
 
-  protected delete(entity: any): void {
-    // History tab has no delete action.
+  protected delete(item: any): void {
+    abp.message.confirm(
+      `Delete onboard history for ${item.fullName}?`,
+      '',
+      (result: boolean) => {
+        if (result) {
+          this.projectUserOnboardingService
+            .Delete(item.id)
+            .pipe(catchError(this.projectUserOnboardingService.handleError))
+            .subscribe(() => {
+              abp.notify.success('Deleted successfully');
+              this.getDataPage(1);
+            });
+        }
+      }
+    );
   }
 
   public getProjectOptions(): void {
@@ -223,6 +238,24 @@ export class OnboardHistoryTabComponent extends PagedListingComponentBase<any> i
         }
       }
     );
+  }
+
+  public openOnboardNoteDialog(item: any): void {
+    const dialogRef = this.dialog.open(AddOnboardNoteDialogComponent, {
+      width: '560px',
+      maxWidth: '95vw',
+      data: {
+        projectUserOnboardingId: item.id,
+        fullName: item.fullName,
+        note: item.note,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result?.success) {
+        this.getDataPage(1);
+      }
+    });
   }
 
 }

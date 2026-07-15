@@ -1,8 +1,10 @@
 <section class="content p-3" id="weekly-report" style="background-color: #f1f1f1;"
      [busy]="isLoading || isSyncingMeetingReport"
     *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_View)">
-    <div class="row justify-content-between weekly-report-container">
+    <div class="row justify-content-between weekly-report-container"
+        [class.bill-account-expanded-layout]="isBillAccountHorizontalExpanded">
         <div class="weekly-report-left">
+            <div class="weekly-report-left-content">
             <div class="px-4 pb-2 pt-2 card"
                 style="display: flex; flex-direction: column; justify-content: space-between; ">
                 <div class="row p-1">
@@ -789,11 +791,14 @@
                 </mat-expansion-panel>
             </div>
 
+            </div>
+
             <div class="card" id="charge-account"
+                [class.bill-account-horizontal-expanded]="isBillAccountHorizontalExpanded"
                 *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabWeeklyReport_BillAccount_View)">
                 <mat-expansion-panel [expanded]="isShowChargeAccount">
                     <mat-expansion-panel-header class="m-0" #resource
-                        (click)="isShowChargeAccount=!isShowChargeAccount">
+                        (click)="toggleChargeAccount()">
                         <mat-panel-title class="align-items-baseline justify-content-between d-flex align-items-center">
                             <div>
                                 <strong style="font-size: 20px;"> Bill accounts</strong>&nbsp;
@@ -805,17 +810,71 @@
                             </div>
                         </mat-panel-title>
                     </mat-expansion-panel-header>
-                    <div class="card-body pt-0">
-                        <div class="fixTableHead" style="max-height: 46vh;">
-                            <table name="tbl-currentResource" class="table table-hover ">
+                    <div class="card-body pt-0 bill-account-body">
+                        <button *ngIf="isShowChargeAccount" type="button" class="bill-account-toggle"
+                            (click)="toggleBillAccountHorizontal($event)">
+                            {{ isBillAccountHorizontalExpanded ? '<' : '>' }}
+                        </button>
+                        <div class="fixTableHead bill-account-table-scroll">
+                            <table name="tbl-currentResource" class="table table-hover bill-account-table">
                                 <thead style="z-index: 1;">
                                     <tr>
-                                        <th style="vertical-align: middle;">Employee</th>
-                                        <th style="vertical-align: middle;">Charge Name</th>
-                                        <th style="vertical-align: middle;">Charge Role</th>
-                                        <th style="vertical-align: middle;">Head Count</th>
-                                        <th style="vertical-align: middle;">Bill Date</th>
-                                        <th style="vertical-align: middle;">Linked Resource</th>
+                                        <th style="vertical-align: middle;">
+                                            <span class="sortable-column" (click)="sortBillAccount('employee')">
+                                                Employee
+                                                <i class="fas" [ngClass]="getSortIcon('employee')"></i>
+                                            </span>
+                                        </th>
+                                        <th style="vertical-align: middle;">
+                                            <span class="sortable-column" (click)="sortBillAccount('chargeName')">
+                                                Charge Name
+                                                <i class="fas" [ngClass]="getSortIcon('chargeName')"></i>
+                                            </span>
+                                        </th>
+                                        <th style="vertical-align: middle;">
+                                            <span class="sortable-column" (click)="sortBillAccount('chargeRole')">
+                                                Charge Role
+                                                <i class="fas" [ngClass]="getSortIcon('chargeRole')"></i>
+                                            </span>
+                                        </th>
+                                        <th style="vertical-align: middle;">
+                                            <span class="sortable-column" (click)="sortBillAccount('headCount')">
+                                                Head Count
+                                                <i class="fas" [ngClass]="getSortIcon('headCount')"></i>
+                                            </span>
+                                        </th>
+                                        <th style="vertical-align: middle;">
+                                            <span class="sortable-column">
+                                                Bill Date
+                                                <button mat-icon-button class="sort-btn" [matMenuTriggerFor]="billDateSortMenu"
+                                                    (click)="$event.stopPropagation()">
+                                                    <i class="fas fa-sort"></i>
+                                                </button>
+                                            </span>
+                                            <mat-menu #billDateSortMenu="matMenu">
+                                                <button mat-menu-item (click)="sortBillAccount(undefined,'default')">
+                                                    Default
+                                                </button>
+                                                <button mat-menu-item (click)="sortBillAccount('startTime','asc')">
+                                                    Start date asc
+                                                </button>
+                                                <button mat-menu-item (click)="sortBillAccount('startTime','desc')">
+                                                    Start date desc
+                                                </button>
+                                                <button mat-menu-item (click)="sortBillAccount('endTime','asc')">
+                                                    End date asc
+                                                </button>
+                                                <button mat-menu-item (click)="sortBillAccount('endTime','desc')">
+                                                    End date desc
+                                                </button>
+                                            </mat-menu>
+                                        </th>
+                                        <th style="vertical-align: middle;">
+                                            <span class="sortable-column" (click)="sortBillAccount('linkedResource')">
+                                                Linked Resource
+                                                <i class="fas" [ngClass]="getSortIcon('linkedResource')"></i>
+                                            </span>
+                                        </th>
                                         <th style="vertical-align: middle;">Note</th>
                                     </tr>
                                 </thead>
@@ -843,14 +902,14 @@
                                                 </button>
                                             </mat-menu>
                                         </td>
-                                        <td class="text-center"
+                                        <td class="text-left"
                                             style="min-width: 100px; max-width: 150px; width: 100px;">
                                             {{pu.billAccountName}}
                                         </td>
-                                        <td class="text-center td-fixed-width-100">
+                                        <td class="text-left td-fixed-width-100">
                                             <span class="d-flex align-items-center justify-content-between">
                                                 <p PrjResizeContent [collapseLine]="2" style="flex: 1;"
-                                                    class="mb-0 p-0  ml-2 max-line-content-2">
+                                                    class="mb-0 p-0 ml-2 max-line-content-2">
                                                     {{pu.billRole}}
                                                 </p>
                                             </span>
@@ -880,7 +939,8 @@
                                                 </button>
                                             </div>
                                             <div *ngIf="pu.createLinkResourceMode" style="max-width: 400px;"
-                                                class="row d-flex">
+                                                class="row d-flex"
+                                                (keydown)="handleLinkResourceKeydown($event, pu)">
                                                 <div class="col-10 mb-2 px-0">
                                                     <mat-form-field appearance="outline" class="col-9">
                                                         <mat-select panelClass="custom-panel-class"
@@ -906,8 +966,8 @@
                                                             </mat-option>
                                                         </mat-select>
                                                     </mat-form-field>
-                                                    <input type="number" class="col-3" placeholder="% contribute"
-                                                        min="0" max="100" matTooltip="% contribute"
+                                                     <input type="number" class="col-3" placeholder="% contribute"
+                                                         min="0" max="100" matTooltip="% contribute"
                                                         [(ngModel)]="pu.contribute" />
                                                     <mat-error class="mt-1"
                                                         *ngIf="userBill.hasError('required') && userBill.touched"

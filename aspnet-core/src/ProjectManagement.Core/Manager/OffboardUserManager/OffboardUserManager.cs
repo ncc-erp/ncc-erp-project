@@ -34,35 +34,37 @@ namespace ProjectManagement.Manager.OffboardUserManager
         public async Task<GridResult<OffboardHistoryDto>> GetAllOffboardHistory(InputGetAllOffboardHistoryDto input)
         {
             var query = WorkScope.GetAll<Entities.OffboardUser>()
-            .Select(x => new OffboardHistoryDto
-            {
-                Id = x.Id,
-                UserId = x.UserId,
-                EmailAddress = x.User.EmailAddress,
-                AvatarPath = x.User.AvatarPath,
-                UserType = x.User.UserType,
-                Branch = x.User.BranchOld,
-                FullName = x.User.Name + " " + x.User.Surname,
-                BranchColor = x.User.Branch != null ? x.User.Branch.Color : null,
-                BranchDisplayName = x.User.Branch != null ? x.User.Branch.DisplayName : null,
-                PositionId = x.User.PositionId,
-                PositionColor = x.User.Position != null ? x.User.Position.Color : null,
-                PositionName = x.User.Position != null ? x.User.Position.Name : null,
-                UserLevel = x.User.UserLevel,
-                ProjectId = x.ProjectId,
-                ProjectName = x.Project != null ? x.Project.Name : null,
-                ProjectType = x.Project != null ? x.Project.ProjectType : 0,
-                ProjectCode = x.Project != null ? x.Project.Code : null,
-                ProjectRole = x.ProjectRole,
-                ProjectPM = x.Project.PM.FullName != null ? x.Project.PM.FullName : null,
-                PMEmail = x.Project.PM.EmailAddress != null ? x.Project.PM.EmailAddress : null,
-                PMId = x.Project.PMId,
-                HistoryAsset = x.HistoryAsset,
-                HistoryAccountAsset = x.HistoryAccountAsset,
-                CheckOffboardStatus = x.CheckOffboardStatus,
-                OffboardDate = x.OffboardDate,
-                OffboardStatus = x.OffboardStatus
-            });
+                .AsNoTracking()
+                .Select(x => new OffboardHistoryDto
+                {
+                    Id = x.Id,
+                    UserId = x.UserId,
+                    EmailAddress = x.User.EmailAddress,
+                    AvatarPath = x.User.AvatarPath,
+                    UserType = x.User.UserType,
+                    Branch = x.User.BranchOld,
+                    FullName = x.User.Name + " " + x.User.Surname,
+                    BranchColor = x.User.Branch != null ? x.User.Branch.Color : null,
+                    BranchDisplayName = x.User.Branch != null ? x.User.Branch.DisplayName : null,
+                    PositionId = x.User.PositionId,
+                    PositionColor = x.User.Position != null ? x.User.Position.Color : null,
+                    PositionName = x.User.Position != null ? x.User.Position.Name : null,
+                    UserLevel = x.User.UserLevel,
+                    ProjectId = x.ProjectId,
+                    ProjectName = x.Project != null ? x.Project.Name : null,
+                    ProjectType = x.Project != null ? x.Project.ProjectType : 0,
+                    ProjectCode = x.Project != null ? x.Project.Code : null,
+                    ProjectRole = x.ProjectRole,
+                    ProjectPM = x.Project.PM != null ? x.Project.PM.FullName : null,
+                    PMEmail = x.Project.PM.EmailAddress != null ? x.Project.PM.EmailAddress : null,
+                    PMId = x.Project.PMId,
+                    HistoryAsset = x.HistoryAsset,
+                    HistoryAccountAsset = x.HistoryAccountAsset,
+                    CheckOffboardStatus = x.CheckOffboardStatus,
+                    OffboardDate = x.OffboardDate,
+                    OffboardStatus = x.OffboardStatus,
+                    Note = x.Note,
+                });
 
             if (input.ProjectId.HasValue && input.ProjectId.Value > 0)
             {
@@ -86,8 +88,8 @@ namespace ProjectManagement.Manager.OffboardUserManager
                     x.FullName.ToLower().Contains(input.SearchText.ToLower()));
             }
 
-            var list = await query.TakePage(input).ToListAsync();
             var total = await query.CountAsync();
+            var list = await query.TakePage(input).ToListAsync();
             return new GridResult<OffboardHistoryDto>(list, total);
         }
 
@@ -128,6 +130,19 @@ namespace ProjectManagement.Manager.OffboardUserManager
             await WorkScope.UpdateAsync(offboardUser);
 
             return offboardUser;
+        }
+
+        public async Task UpdateOffboardHistoryNote(UpdateOffboardNoteDto input)
+        {
+            var offboardUser = await WorkScope.GetAsync<OffboardUser>(input.OffboardUserId);
+
+            if (offboardUser == null)
+            {
+                throw new UserFriendlyException($"Not found OffboardUser with Id {input.OffboardUserId}");
+            }
+
+            offboardUser.Note = input.Note;
+            await WorkScope.UpdateAsync(offboardUser);
         }
 
         public async Task<List<OffboardChecklistItemDto>> GetOffboardChecklist(long offboardHistoryId)

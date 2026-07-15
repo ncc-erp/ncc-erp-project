@@ -130,6 +130,11 @@ namespace ProjectManagement.EntityFrameworkCore
                 .HasOne(p => p.Onboarding)
                 .WithOne(o => o.ProjectUser)
                 .HasForeignKey<ProjectUserOnboarding>(o => o.ProjectUserId);
+
+            modelBuilder.Entity<ProjectUserOnboarding>()
+                .HasIndex(x => x.ProjectUserId)
+                .IsUnique()
+                .HasFilter("[IsDeleted] = 0");
         }
     }
 }

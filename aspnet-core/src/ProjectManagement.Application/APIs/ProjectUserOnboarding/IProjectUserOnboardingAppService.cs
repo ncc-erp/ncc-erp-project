@@ -10,5 +10,6 @@ namespace ProjectManagement.APIs.ProjectUserOnboarding
         Task<GetOnboardingDto> GetOnboardingInfor(long projectUserId);
         Task<long> OnboardingUser(AddOnboardingDto input);
         Task ForceDone(long projectUserId);
+        Task UpdateOnboardHistoryNote(UpdateOnboardHistoryNoteDto input);
     }
 }

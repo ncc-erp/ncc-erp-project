@@ -8,6 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { OffboardDialogComponent } from './offboard-dialog/offboard-dialog.component';
 import { PERMISSIONS_CONSTANT } from '@app/constant/permission.constant';
 import { TimesheetProjectService } from '@app/service/api/timesheet-project.service';
+import { AddOffboardNoteDialogComponent } from './add-offboard-note-dialog/add-offboard-note-dialog.component';
 
 @Component({
   selector: 'app-offboard-history-tab',
@@ -276,6 +277,24 @@ export class OffboardHistoryTabComponent extends PagedListingComponentBase<any> 
         }
       }
     );
+  }
+
+  public openOffboardNoteDialog(item: any): void {
+    const dialogRef = this.dialog.open(AddOffboardNoteDialogComponent, {
+      width: '560px',
+      maxWidth: '95vw',
+      data: {
+        offboardUserId: item.id,
+        fullName: item.fullName,
+        note: item.note,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result?.success) {
+        this.getDataPage(1);
+      }
+    });
   }
 
   public parseHistoryAsset(historyAsset: string): any[] {

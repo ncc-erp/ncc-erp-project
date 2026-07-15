@@ -149,6 +149,10 @@ export class WeeklyReportComponent
   public isShowRisks: boolean = false;
   public isShowCurrentResource: boolean = false;
   public isShowChargeAccount: boolean = false;
+  public isBillAccountHorizontalExpanded: boolean = false;
+  public billAccountSortField: string = 'employee';
+  public billAccountSortDirection: 'asc' | 'desc' | undefined = undefined;
+  public defaultProjectUserBills: projectUserBillDto[] = [];
   public isShowSupportUser = false;
   public processFuture: boolean = false;
   public processProblem: boolean = false;
@@ -833,6 +837,7 @@ export class WeeklyReportComponent
         .subscribe(
           (data) => {
             this.projectInfo = data.result;
+            this.defaultProjectUserBills = [...(this.projectInfo.projectUserBills || [])];
             if (this.projectInfo.projectUserBills.length > 0) {
               this.isShowChargeAccount = true;
             }
@@ -2440,6 +2445,157 @@ export class WeeklyReportComponent
     this.showSearchAndFilter = false;
     this.isAddingResource = true;
     userBill.contribute = 0;
+  }
+
+  public toggleChargeAccount(): void {
+    this.isShowChargeAccount = !this.isShowChargeAccount;
+
+    if (!this.isShowChargeAccount) {
+      this.isBillAccountHorizontalExpanded = false;
+    }
+  }
+
+  public toggleBillAccountHorizontal(event: Event): void {
+    event.stopPropagation();
+    this.isBillAccountHorizontalExpanded = !this.isBillAccountHorizontalExpanded;
+  }
+
+  public sortBillAccount(field?: string, direction?: 'asc' | 'desc' | 'default'): void {
+    if (direction === 'default') {
+      this.billAccountSortField = 'employee';
+      this.billAccountSortDirection = undefined;
+      this.restoreDefaultBillAccountOrder();
+      return;
+    }
+
+    if (!field) {
+      return;
+    }
+
+    if (direction) {
+      this.billAccountSortField = field;
+      this.billAccountSortDirection = direction;
+    } else {
+      if (this.billAccountSortField === field) {
+        if (!this.billAccountSortDirection) {
+          this.billAccountSortDirection = 'asc';
+        } else if (this.billAccountSortDirection === 'asc') {
+          this.billAccountSortDirection = 'desc';
+        } else {
+          this.billAccountSortDirection = undefined;
+        }
+      } else {
+        this.billAccountSortField = field;
+        this.billAccountSortDirection = 'asc';
+      }
+    }
+
+    this.sortProjectUserBills();
+  }
+
+  public getSortIcon(field: string): string {
+    if (this.billAccountSortField !== field || !this.billAccountSortDirection) {
+      return 'fa-sort';
+    }
+    return this.billAccountSortDirection === 'asc' ? 'fa-sort-up' : 'fa-sort-down';
+  }
+
+  private sortProjectUserBills(): void {
+    if (!this.projectInfo?.projectUserBills) {
+      return;
+    }
+
+    if (!this.billAccountSortDirection) {
+      this.restoreDefaultBillAccountOrder();
+      return;
+    }
+
+    this.projectInfo.projectUserBills = [...this.projectInfo.projectUserBills].sort((a, b) => {
+      let valueA: any;
+      let valueB: any;
+
+      switch (this.billAccountSortField) {
+        case 'employee':
+          valueA = (a.fullName || a.userName || '').toString().toLowerCase();
+          valueB = (b.fullName || b.userName || '').toString().toLowerCase();
+          break;
+        case 'chargeName':
+          valueA = (a.billAccountName || '').toString().toLowerCase();
+          valueB = (b.billAccountName || '').toString().toLowerCase();
+          break;
+        case 'chargeRole':
+          valueA = (a.billRole || '').toString().toLowerCase();
+          valueB = (b.billRole || '').toString().toLowerCase();
+          break;
+        case 'headCount':
+          valueA = Number(a.headCount) || 0;
+          valueB = Number(b.headCount) || 0;
+          break;
+        case 'startTime':
+          valueA = new Date(a.startTime || '').getTime() || 0;
+          valueB = new Date(b.startTime || '').getTime() || 0;
+          break;
+        case 'endTime':
+          valueA = new Date(a.endTime || '').getTime() || 0;
+          valueB = new Date(b.endTime || '').getTime() || 0;
+          break;
+        case 'linkedResource':
+          const hasLinkedA = a.linkedResources && a.linkedResources.length > 0;
+          const hasLinkedB = b.linkedResources && b.linkedResources.length > 0;
+          const contributeA = hasLinkedA ? a.linkedResources[0].contribute : null;
+          const contributeB = hasLinkedB ? b.linkedResources[0].contribute : null;
+
+          if (contributeA === null && contributeB === null) {
+            valueA = (a.billAccountName || a.userName || '').toString().toLowerCase();
+            valueB = (b.billAccountName || b.userName || '').toString().toLowerCase();
+          } else if (contributeA === null) {
+            return this.billAccountSortDirection === 'asc' ? -1 : 1;
+          } else if (contributeB === null) {
+            return this.billAccountSortDirection === 'asc' ? 1 : -1;
+          } else {
+            valueA = Number(contributeA || 0);
+            valueB = Number(contributeB || 0);
+            if (valueA === valueB) {
+              valueA = (a.billAccountName || a.userName || '').toString().toLowerCase();
+              valueB = (b.billAccountName || b.userName || '').toString().toLowerCase();
+            }
+          }
+          break;
+        default:
+          valueA = (a.fullName || a.userName || '').toString().toLowerCase();
+          valueB = (b.fullName || b.userName || '').toString().toLowerCase();
+      }
+
+      if (valueA < valueB) {
+        return this.billAccountSortDirection === 'asc' ? -1 : 1;
+      }
+      if (valueA > valueB) {
+        return this.billAccountSortDirection === 'asc' ? 1 : -1;
+      }
+      return 0;
+    });
+  }
+
+  private restoreDefaultBillAccountOrder(): void {
+    if (!this.projectInfo?.projectUserBills) {
+      return;
+    }
+
+    this.projectInfo.projectUserBills = [...this.defaultProjectUserBills];
+  }
+
+  public handleLinkResourceKeydown(event: KeyboardEvent, userBill: projectUserBillDto): void {
+    if (event.key === "Enter" && this.selectedResource != null) {
+      event.preventDefault();
+      event.stopPropagation();
+      this.saveLinkResource(userBill);
+    }
+
+    if (event.key === "Escape") {
+      event.preventDefault();
+      event.stopPropagation();
+      this.cancelLinkResource(userBill);
+    }
   }
 
   private getListUserAndResources() {

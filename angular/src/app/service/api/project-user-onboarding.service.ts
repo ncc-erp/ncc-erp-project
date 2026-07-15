@@ -47,4 +47,12 @@ export class ProjectUserOnboardingService extends BaseApiService {
   GetAllOnboardHistory(request: any): Observable<any> {
     return this.http.post<any>(this.rootUrl + '/GetAllOnboardHistory', request);
   }
+
+  updateOnboardHistoryNote(input: any): Observable<any> {
+    return this.http.put<any>(this.rootUrl + '/UpdateOnboardHistoryNote', input);
+  }
+
+  Delete(onboardHistoryId: number): Observable<any> {
+    return this.http.delete<any>(this.rootUrl + '/Delete?onboardHistoryId=' + onboardHistoryId);
+  }
 }

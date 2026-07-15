@@ -111,6 +111,7 @@
                 <th style="width: 150px;">Checklist Status</th>
                 <th style="width: 300px;">History Asset</th>
                 <th style="width: 150px;">Offboard Date</th>
+                <th style="white-space: pre-line; word-break: break-all; max-width: 250px;" class="col-note">Note</th>
                 <th style="width: 100px;">Action</th>
               </tr>
             </thead>
@@ -219,6 +220,16 @@
                   </div>
                 </td>
                 <td style="width: 150px; text-align: center;">{{ item.offboardDate | date: 'dd/MM/yyyy' }}</td>
+                <td style="white-space: pre-line; word-break: break-all; max-width: 250px;" class="col-note">
+                  <div class="d-flex" style="flex-direction: column;">
+                    <div style="display: flex;">
+                      <div style="word-break: break-word">{{ item.note }}</div>
+                      <div style="width: 10%; text-align: right;" class="ml-1">
+                        <i class="fas fa-edit" (click)="openOffboardNoteDialog(item)" matTooltip="Edit note"></i>
+                      </div>
+                    </div>
+                  </div>
+                </td>
                 <td style="width: 100px;" class="text-center align-middle">
                   <button
                     *ngIf="item.offboardStatus !== null && item.offboardStatus !== undefined"
@@ -236,9 +247,6 @@
                     <button mat-menu-item *ngIf="item.offboardStatus === 0 && permission.isGranted(OffboardHistory_Edit) " (click)="onUpdateOffboardStatus(item, false)">
                       <i class="fas fa-times mr-2"></i>Don't need Offboard
                     </button>
-                    <button mat-menu-item *ngIf="(item.offboardStatus === 0 || item.offboardStatus === 3) && permission.isGranted(OffboardHistory_Delete)" (click)="deleteOffboardHistory(item)">
-                      <i class="fas fa-trash mr-2"></i>Delete
-                    </button>
                     <button mat-menu-item *ngIf="item.offboardStatus === 1 && permission.isGranted(OffboardHistory_CheckList_PM)" (click)="openOffboardDialog(item)">
                       <i class="fas fa-user-check mr-2"></i>Offboard
                     </button>
@@ -250,6 +258,9 @@
                     </button>
                     <button mat-menu-item *ngIf="item.offboardStatus === 2 && item.checkOffboardStatus === 3 && permission.isGranted(OffboardHistory_CheckList_IT)" (click)="moveToComplete(item)">
                       <i class="fas fa-user-shield mr-2"></i>Move to Complete
+                    </button>
+                    <button mat-menu-item *ngIf="permission.isGranted(OffboardHistory_Delete)" (click)="deleteOffboardHistory(item)">
+                      <i class="fas fa-trash mr-2"></i>Delete
                     </button>
                   </mat-menu>
                 </td>

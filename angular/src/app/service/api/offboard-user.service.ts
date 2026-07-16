@@ -23,6 +23,10 @@ export class OffboardUserService extends BaseApiService {
     return this.http.put<any>(this.rootUrl + '/UpdateOffboardStatus', input);
   }
 
+  public UpdateOffboardHistoryNote(input: any): Observable<any> {
+    return this.http.put<any>(this.rootUrl + '/UpdateOffboardHistoryNote', input);
+  }
+
   public GetOffboardChecklist(offboardHistoryId: number): Observable<any> {
     return this.http.get<any>(this.rootUrl + '/GetOffboardChecklist?offboardHistoryId=' + offboardHistoryId);
   }

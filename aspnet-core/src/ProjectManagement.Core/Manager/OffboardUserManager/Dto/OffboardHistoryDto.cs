@@ -37,5 +37,6 @@ namespace ProjectManagement.Manager.OffboardUserManager.Dto
         public CheckOffboardStatus CheckOffboardStatus { get; set; }
         public DateTime OffboardDate { get; set; }
         public OffboardStatus OffboardStatus { get; set; }
+        public string Note { get; set; }
     }
 }

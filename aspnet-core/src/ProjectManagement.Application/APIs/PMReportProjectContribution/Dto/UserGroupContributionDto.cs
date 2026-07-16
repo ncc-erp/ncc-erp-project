@@ -20,6 +20,7 @@ namespace ProjectManagement.APIs.PMReportProjectContribution.Dto
     {
         public long ProjectId { get; set; }
         public string ProjectName { get; set; }
+        public string ProjectCode { get; set; }
         public string PMName { get; set; }
         public double TotalContribute { get; set; } 
         public List<ProjectBillDetailDto> BillDetails { get; set; }

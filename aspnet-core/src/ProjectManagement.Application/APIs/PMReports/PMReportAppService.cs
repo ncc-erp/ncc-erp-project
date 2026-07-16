@@ -337,10 +337,13 @@ namespace ProjectManagement.APIs.PMReports
             var lastWeekHistoryMap = lastReportId > 0
                 ? (await WorkScope.GetAll<WeeklyContributionHistory>()
                       .AsNoTracking()
-                      .Where(x => x.PMReportId == lastReportId && x.ProjectId == project.Id)
+                      .Where(x => x.PMReportId == lastReportId && x.ProjectId == project.Id && !x.IsDeleted)
                       .ToListAsync())
                       .GroupBy(x => (billId: x.ProjectUserBillId, userId: x.UserId))
-                      .ToDictionary(g => g.Key, g => g.First().Contribute)
+                      .ToDictionary(
+                          g => g.Key,
+                          g => g.OrderByDescending(x => x.Id).First().Contribute
+                      )
                 : new Dictionary<(long billId, long userId), byte>();
 
             var historyEntries = currentLinkedResources.Select(lr => new WeeklyContributionHistory

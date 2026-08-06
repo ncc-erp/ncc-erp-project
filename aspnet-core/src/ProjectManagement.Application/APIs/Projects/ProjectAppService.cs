@@ -19,6 +19,8 @@ using ProjectManagement.Authorization.Roles;
 using ProjectManagement.Authorization.Users;
 using ProjectManagement.Configuration;
 using ProjectManagement.Entities;
+using ProjectManagement.Services.PmBot;
+using ProjectManagement.Services.PmBot.Dto;
 using ProjectManagement.Services.ResourceManager;
 using ProjectManagement.Services.ResourceManager.Dto;
 using ProjectManagement.Services.ResourceService.Dto;
@@ -41,13 +43,15 @@ namespace ProjectManagement.APIs.Projects
         private readonly ISettingManager _settingManager;
         private readonly IRepository<UserRole, long> _userRoleRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly PmBotService _pmBotService;
 
         public ProjectAppService(IProjectUserAppService projectUserAppService,
             TimesheetService timesheetService,
             IRepository<UserRole, long> userRoleRepository,
             ResourceManager resourceManager,
             ISettingManager settingManager,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor,
+            PmBotService pmBotService)
         {
             _projectUserAppService = projectUserAppService;
             _timesheetService = timesheetService;
@@ -55,6 +59,7 @@ namespace ProjectManagement.APIs.Projects
             _resourceManager = resourceManager;
             _settingManager = settingManager;
             _httpContextAccessor = httpContextAccessor;
+            _pmBotService = pmBotService;
         }
 
         [HttpPost]
@@ -273,7 +278,7 @@ namespace ProjectManagement.APIs.Projects
                 .ToListAsync();
             return new OkObjectResult(pms);
         }
-       
+
         [HttpGet]
         public async Task<List<ProjectInfoDto>> GetAllProjectInfo()
         {
@@ -572,11 +577,21 @@ namespace ProjectManagement.APIs.Projects
             {
                 throw new UserFriendlyException($"Project {project.Name} is already closed");
             }
+            var previousStatus = project.Status;
             project.Status = ProjectStatus.Closed;
 
             await WorkScope.UpdateAsync(ObjectMapper.Map<Project>(project));
 
             await _resourceManager.ReleaseAllWorkingUserFromProject(project.Id);
+
+            if (previousStatus == ProjectStatus.InProgress)
+            {
+                _ = _pmBotService.InactiveProjectWeeklyReportAsync(
+                    new InactiveProjectWeeklyReportRequestDto
+                    {
+                        ProjectId = project.Id
+                    });
+            }
 
             var isEnableAutoCreateUpdateToTimsheetTool = await IsEnableAutoCreateUpdateToTimsheetTool();
             if (isEnableAutoCreateUpdateToTimsheetTool)
@@ -754,7 +769,7 @@ namespace ProjectManagement.APIs.Projects
                                                s.Status,
                                                s.Project.ProjectType,
                                                s.AllocatePercentage,
-                                               s.StartTime 
+                                               s.StartTime
                                            }).Where(s => s.UserType != UserType.FakeUser && s.Status == ProjectUserStatus.Present && s.AllocatePercentage > 0)
                                              .Where(x => x.ProjectType == ProjectType.TRAINING)
                                              .Where(x => filterStatus != null && valueStatus > -1 ? (valueStatus == 3 ? x.ProjectStatus != ProjectStatus.Closed : x.ProjectStatus == (ProjectStatus)valueStatus) : true)
@@ -763,7 +778,7 @@ namespace ProjectManagement.APIs.Projects
                                                  ProjectId = pu.ProjectId,
                                                  FullName = pu.User.FullName,
                                                  ProjectUserRole = pu.ProjectRole.ToString(),
-                                                 StartTime = pu.StartTime 
+                                                 StartTime = pu.StartTime
                                              }).AsEnumerable()
                                              .GroupBy(pu => pu.ProjectId, pu => pu)
                                              .ToDictionary(group => group.Key, group => group.ToList());

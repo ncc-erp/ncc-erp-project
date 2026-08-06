@@ -15,13 +15,14 @@ namespace ProjectManagement.Services.PmBot
     {
         private const string ServiceName = "PmBotService";
         private const string WeeklyReportByProjectIdEndpoint = "api/weekly-report";
+        private const string InactiveWeeklyReportByProjectIdEndpoint = "api/weekly-report/inactive";
 
         public PmBotService(
             HttpClient httpClient,
             ILogger<PmBotService> logger,
             IConfiguration configuration,
             IAbpSession abpSession
-        ) : base(httpClient, configuration, logger, abpSession, ServiceName){}
+        ) : base(httpClient, configuration, logger, abpSession, ServiceName) { }
         public async Task<SyncMeetingReportResponseDto> SyncProjectMeetingReportAsync(SyncMeetingReportRequestDto input)
         {
             var url = $"{WeeklyReportByProjectIdEndpoint}/{input.ProjectId}";
@@ -47,6 +48,37 @@ namespace ProjectManagement.Services.PmBot
             {
                 logger.LogError($"PmBot sync failed. url={HttpClient.BaseAddress}{url}, projectId={input?.ProjectId}, error={ex.Message}");
                 return new SyncMeetingReportResponseDto
+                {
+                    Success = false
+                };
+            }
+        }
+
+        public async Task<InactiveProjectWeeklyReportResponseDto> InactiveProjectWeeklyReportAsync(InactiveProjectWeeklyReportRequestDto input)
+        {
+            var url = $"{InactiveWeeklyReportByProjectIdEndpoint}/{input.ProjectId}";
+            try
+            {
+                using var request = new HttpRequestMessage(HttpMethod.Post, url);
+                var response = await HttpClient.SendAsync(request);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return new InactiveProjectWeeklyReportResponseDto
+                    {
+                        Success = true
+                    };
+                }
+
+                return new InactiveProjectWeeklyReportResponseDto
+                {
+                    Success = false
+                };
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"PmBot inactive weekly report trigger failed. url={HttpClient.BaseAddress}{url}, projectId={input?.ProjectId}, error={ex.Message}");
+                return new InactiveProjectWeeklyReportResponseDto
                 {
                     Success = false
                 };

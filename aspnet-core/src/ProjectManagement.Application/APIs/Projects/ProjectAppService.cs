@@ -20,7 +20,6 @@ using ProjectManagement.Authorization.Users;
 using ProjectManagement.Configuration;
 using ProjectManagement.Entities;
 using ProjectManagement.Services.PmBot;
-using ProjectManagement.Services.PmBot.Dto;
 using ProjectManagement.Services.ResourceManager;
 using ProjectManagement.Services.ResourceManager.Dto;
 using ProjectManagement.Services.ResourceService.Dto;
@@ -586,11 +585,7 @@ namespace ProjectManagement.APIs.Projects
 
             if (previousStatus == ProjectStatus.InProgress)
             {
-                _ = _pmBotService.InactiveProjectWeeklyReportAsync(
-                    new InactiveProjectWeeklyReportRequestDto
-                    {
-                        ProjectId = project.Id
-                    });
+                _ = _pmBotService.InactiveProjectWeeklyReportAsync(project.Id);
             }
 
             var isEnableAutoCreateUpdateToTimsheetTool = await IsEnableAutoCreateUpdateToTimsheetTool();

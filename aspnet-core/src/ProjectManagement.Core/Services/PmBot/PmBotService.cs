@@ -54,34 +54,25 @@ namespace ProjectManagement.Services.PmBot
             }
         }
 
-        public async Task<InactiveProjectWeeklyReportResponseDto> InactiveProjectWeeklyReportAsync(InactiveProjectWeeklyReportRequestDto input)
+        public async Task InactiveProjectWeeklyReportAsync(long projectId)
         {
-            var url = $"{InactiveWeeklyReportByProjectIdEndpoint}/{input.ProjectId}";
+            if (projectId <= 0)
+            {
+                throw new ArgumentException("ProjectId must be greater than 0.", nameof(projectId));
+            }
+
+            var url = $"{InactiveWeeklyReportByProjectIdEndpoint}/{projectId}";
             try
             {
                 using var request = new HttpRequestMessage(HttpMethod.Post, url);
-                var response = await HttpClient.SendAsync(request);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    return new InactiveProjectWeeklyReportResponseDto
-                    {
-                        Success = true
-                    };
-                }
-
-                return new InactiveProjectWeeklyReportResponseDto
-                {
-                    Success = false
-                };
+                var response = await HttpClient.SendAsync(
+                    request,
+                    HttpCompletionOption.ResponseHeadersRead);
             }
             catch (Exception ex)
             {
-                logger.LogError($"PmBot inactive weekly report trigger failed. url={HttpClient.BaseAddress}{url}, projectId={input?.ProjectId}, error={ex.Message}");
-                return new InactiveProjectWeeklyReportResponseDto
-                {
-                    Success = false
-                };
+                logger.LogError(
+                    $"PmBot inactive weekly report trigger failed. url={HttpClient.BaseAddress}{url}, projectId={projectId}, error={ex.Message}");
             }
         }
     }

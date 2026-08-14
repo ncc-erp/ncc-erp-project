@@ -15,13 +15,14 @@ namespace ProjectManagement.Services.PmBot
     {
         private const string ServiceName = "PmBotService";
         private const string WeeklyReportByProjectIdEndpoint = "api/weekly-report";
+        private const string InactiveWeeklyReportByProjectIdEndpoint = "api/weekly-report/inactive";
 
         public PmBotService(
             HttpClient httpClient,
             ILogger<PmBotService> logger,
             IConfiguration configuration,
             IAbpSession abpSession
-        ) : base(httpClient, configuration, logger, abpSession, ServiceName){}
+        ) : base(httpClient, configuration, logger, abpSession, ServiceName) { }
         public async Task<SyncMeetingReportResponseDto> SyncProjectMeetingReportAsync(SyncMeetingReportRequestDto input)
         {
             var url = $"{WeeklyReportByProjectIdEndpoint}/{input.ProjectId}";
@@ -50,6 +51,28 @@ namespace ProjectManagement.Services.PmBot
                 {
                     Success = false
                 };
+            }
+        }
+
+        public async Task InactiveProjectWeeklyReportAsync(long projectId)
+        {
+            if (projectId <= 0)
+            {
+                throw new ArgumentException("ProjectId must be greater than 0.", nameof(projectId));
+            }
+
+            var url = $"{InactiveWeeklyReportByProjectIdEndpoint}/{projectId}";
+            try
+            {
+                using var request = new HttpRequestMessage(HttpMethod.Post, url);
+                var response = await HttpClient.SendAsync(
+                    request,
+                    HttpCompletionOption.ResponseHeadersRead);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(
+                    $"PmBot inactive weekly report trigger failed. url={HttpClient.BaseAddress}{url}, projectId={projectId}, error={ex.Message}");
             }
         }
     }

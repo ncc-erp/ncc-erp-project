@@ -1326,39 +1326,39 @@
 
                                                             <div class="col-5 d-flex px-1 align-items-end">
                                                                 <div class="col-7 px-0 d-flex align-items-center">
-                                                                    <span *ngIf="!editingRows[resource.id]"
+                                                                    <span *ngIf="!editingRows[user.id + '_' + resource.id]"
                                                                         class="badge text-white"
                                                                         [style.backgroundColor]="Utils.getColorContribute(resource.contribute)"
                                                                         style="min-width: 45px; cursor: pointer;">
                                                                         {{resource.contribute + '%'}}
                                                                     </span>
 
-                                                                    <input *ngIf="editingRows[resource.id]"
+                                                                    <input *ngIf="editingRows[user.id + '_' + resource.id]"
                                                                         type="number"
                                                                         class="form-control form-control-sm px-1"
                                                                         [(ngModel)]="resource.contribute"
                                                                         (keydown.enter)="saveWeeklyContribute(resource, user.id)"
-                                                                        (keydown.esc)="cancelUpdate(resource)"
+                                                                        (keydown.esc)="cancelUpdate(resource, user.id)"
                                                                         appFocus />
                                                                 </div>
 
                                                                 <div *ngIf="isShowEditContribute()"
                                                                     class="col-5 d-flex justify-content-around px-0">
-                                                                    <button *ngIf="!editingRows[resource.id]"
-                                                                        (click)="edit(resource)"
+                                                                    <button *ngIf="!editingRows[user.id + '_' + resource.id]"
+                                                                        (click)="edit(resource, user.id)"
                                                                         class="btn btn-xs btn-clean btn-icon">
                                                                         <i class="fa fa-pencil-alt text-primary"
                                                                             style="font-size: 12px;"></i>
                                                                     </button>
 
-                                                                    <ng-container *ngIf="editingRows[resource.id]">
+                                                                    <ng-container *ngIf="editingRows[user.id + '_' + resource.id]">
                                                                         <button
                                                                             (click)="saveWeeklyContribute(resource, user.id)"
                                                                             class="btn btn-xs btn-clean btn-icon">
                                                                             <i class="fas fa-check text-success"
                                                                                 style="font-size: 14px;"></i>
                                                                         </button>
-                                                                        <button (click)="cancelUpdate(resource)"
+                                                                        <button (click)="cancelUpdate(resource, user.id)"
                                                                             class="btn btn-xs btn-clean btn-icon">
                                                                             <i class="fas fa-undo text-danger"
                                                                                 style="font-size: 14px;"></i>

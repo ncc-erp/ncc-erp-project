@@ -229,8 +229,8 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
     { value: this.APP_ENUM.Priority.Medium, viewValue: 'Medium' },
     { value: this.APP_ENUM.Priority.Critical, viewValue: 'Critical' }]
 
-  editingRows: { [key: number]: boolean } = {};
-  tempContributeValues: { [key: number]: number } = {};
+  editingRows: { [key: string]: boolean } = {};
+  tempContributeValues: { [key: string]: number } = {};
 
   constructor(public pmReportProjectService: PMReportProjectService,
     public pmReportRiskService: PmReportRiskService,
@@ -2116,22 +2116,29 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
     return num;
   }
 
-  edit(resource: any) {
-    this.tempContributeValues[resource.id] = resource.contribute;
-    this.editingRows[resource.id] = true;
+  contributeKey(billId: number, resourceId: number): string {
+    return `${billId}_${resourceId}`;
   }
 
-  cancelUpdate(resource: any) {
-    if (this.tempContributeValues[resource.id] !== undefined) {
-      resource.contribute = this.tempContributeValues[resource.id];
+  edit(resource: any, billId: number) {
+    const key = this.contributeKey(billId, resource.id);
+    this.tempContributeValues[key] = resource.contribute;
+    this.editingRows[key] = true;
+  }
+
+  cancelUpdate(resource: any, billId: number) {
+    const key = this.contributeKey(billId, resource.id);
+    if (this.tempContributeValues[key] !== undefined) {
+      resource.contribute = this.tempContributeValues[key];
     }
-    this.editingRows[resource.id] = false;
-    delete this.tempContributeValues[resource.id];
+    this.editingRows[key] = false;
+    delete this.tempContributeValues[key];
   }
 
 
   saveWeeklyContribute(resource: any, projectUserBillId: number) {
     this.isLoading = true;
+    const key = this.contributeKey(projectUserBillId, resource.id);
     const request = {
       userId: resource.id,
       projectUserBillId: projectUserBillId,
@@ -2142,7 +2149,7 @@ export class WeeklyReportTabDetailComponent extends PagedListingComponentBase<We
     this.PMReportProjectContributionService.updateWeeklyHistory(request).subscribe(
       () => {
         abp.notify.success(`Weekly contributions have been updated: ${this.selectedReport?.pmReportName}`);
-        this.editingRows[resource.id] = false;
+        this.editingRows[key] = false;
         this.isLoading = false;
       },
       () => (this.isLoading = false),

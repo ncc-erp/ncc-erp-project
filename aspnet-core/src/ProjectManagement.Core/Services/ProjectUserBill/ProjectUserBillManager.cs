@@ -455,46 +455,55 @@ namespace ProjectManagement.Services.ProjectUserBills
 
             ValidateProjectUserBill(input.ProjectUserBillId);
 
-            foreach (var userId in input.UserIds)
-            {
-                ValidateUser(userId);
-
-                var existingLinkedResource = await _workScope.GetAll<LinkedResource>()
-                    .Where(lr => lr.UserId == userId && lr.ProjectUserBillId == input.ProjectUserBillId)
-                    .FirstOrDefaultAsync();
-
-                if (existingLinkedResource != null)
+                foreach (var userId in input.UserIds.Distinct())
                 {
-                    existingLinkedResource.IsDeleted = false;
-                    await _workScope.UpdateAsync(existingLinkedResource);
-                    listLinkedResources.Add(existingLinkedResource);
-                }
-                else
-                {
-                    var newLinkedResource = new LinkedResource
+                    ValidateUser(userId);
+
+                    var existingLinkedResource = await _workScope.GetAll<LinkedResource>()
+                        .Where(lr => lr.UserId == userId && lr.ProjectUserBillId == input.ProjectUserBillId)
+                        .FirstOrDefaultAsync();
+
+                    if (existingLinkedResource != null)
                     {
-                        UserId = userId,
-                        ProjectUserBillId = input.ProjectUserBillId,
-                    };
+                        existingLinkedResource.IsDeleted = false;
+                        await _workScope.UpdateAsync(existingLinkedResource);
+                        listLinkedResources.Add(existingLinkedResource);
+                    }
+                    else
+                    {
+                        var newLinkedResource = new LinkedResource
+                        {
+                            UserId = userId,
+                            ProjectUserBillId = input.ProjectUserBillId,
+                        };
 
-                    await _workScope.InsertAsync(newLinkedResource);
-                    listLinkedResources.Add(newLinkedResource);
+                        await _workScope.InsertAsync(newLinkedResource);
+                        listLinkedResources.Add(newLinkedResource);
+                    }
                 }
-            }
 
-            return listLinkedResources;
+                return listLinkedResources;
         }
 
         public async Task<GetUserInfo> LinkOneLinkedResource(LinkedResourceDto input)
         {
-            var projectUserBill = _workScope.GetAll<Entities.ProjectUserBill>()
-                  .Where(s => s.Id == input.ProjectUserBillId)
-                  .FirstOrDefault();
+            ValidateUser(input.UserId);
+
+            var projectUserBill = await _workScope.GetAll<Entities.ProjectUserBill>()
+                .Where(projectUserBill => projectUserBill.Id == input.ProjectUserBillId)
+                .Select(projectUserBill => new
+                {
+                    ProjectId = projectUserBill.ProjectId,
+                    HasLinkedResource = projectUserBill.LinkedResources.Any(lr => lr.UserId == input.UserId)
+                })
+                .FirstOrDefaultAsync();
 
             if (projectUserBill == null)
                 throw new UserFriendlyException($"ProjectUserBill with Id {input.ProjectUserBillId} does not exist!");
 
-            ValidateUser(input.UserId);
+
+            if (projectUserBill.HasLinkedResource)
+                throw new UserFriendlyException("This resource is already linked to the bill account.");
 
             if (await CheckTotalContribute(input.ProjectUserBillId, input.Contribute, input.UserId))
             {
@@ -511,16 +520,26 @@ namespace ProjectManagement.Services.ProjectUserBills
             var linkedId = await _workScope.InsertAndGetIdAsync(newLinkedResource);
             if (input.PmReportId.HasValue)
             {
-                var history = new WeeklyContributionHistory
+                var history = await _workScope.GetAll<WeeklyContributionHistory>()
+                    .Where(x => x.PMReportId == input.PmReportId.Value
+                             && x.ProjectUserBillId == input.ProjectUserBillId
+                             && x.UserId == input.UserId)
+                    .OrderByDescending(x => x.Id)
+                    .FirstOrDefaultAsync();
+
+                if (history == null)
                 {
-                    ProjectUserBillId = input.ProjectUserBillId,
-                    PMReportId = input.PmReportId.Value,
-                    Contribute = input.Contribute,
-                    UserId = input.UserId,
-                    ProjectId = projectUserBill.ProjectId,
-                    TenantId = AbpSession.TenantId
-                };
-                await _workScope.InsertAndGetIdAsync(history);
+                    history = new WeeklyContributionHistory
+                    {
+                        ProjectUserBillId = input.ProjectUserBillId,
+                        PMReportId = input.PmReportId.Value,
+                        Contribute = input.Contribute,
+                        UserId = input.UserId,
+                        ProjectId = projectUserBill.ProjectId,
+                        TenantId = AbpSession.TenantId
+                    };
+                    await _workScope.InsertAndGetIdAsync(history);
+                }
             }
             var userInfo = await _workScope.GetAll<LinkedResource>()
                 .Where( lr => lr.Id == linkedId)

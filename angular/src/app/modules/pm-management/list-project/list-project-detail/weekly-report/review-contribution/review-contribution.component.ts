@@ -2,7 +2,7 @@ import { Component, Inject, Injector, OnInit } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { PMReportProjectContributionService } from "@app/service/api/pmreport-project-contribution.service";
 import { ProjectUserBillService } from "@app/service/api/project-user-bill.service";
-import { catchError } from "@node_modules/rxjs/operators";
+import { finalize } from "@node_modules/rxjs/operators";
 import { Utils } from "@shared/Utils";
 import { IGetUserInfo } from "@app/service/model/user.inteface";
 import { ResourceManagerService } from "@app/service/api/resource-manager.service";
@@ -86,6 +86,10 @@ export class ReviewContributionComponent implements OnInit {
   }
 
   public saveLinkResource(userBill: any): void {
+    if (this.isLoading || this.selectedResource == null) {
+      return;
+    }
+
     const reqAdd = {
       projectUserBillId: userBill.id,
       userId: this.selectedResource,
@@ -94,15 +98,16 @@ export class ReviewContributionComponent implements OnInit {
     };
 
     this.isLoading = true;
-    this.projectUserBillService.LinkOneProjectUserBillAccount(reqAdd).subscribe(
+    this.projectUserBillService.LinkOneProjectUserBillAccount(reqAdd).pipe(
+      finalize(() => (this.isLoading = false)),
+    ).subscribe(
       (data) => {
         abp.notify.success("Linked resource added successfully");
         const userInfo: IGetUserInfo = data.result;
         userBill.linkedResources.push(userInfo);
         this.cancelLinkResource(userBill);
-        this.isLoading = false;
       },
-      () => (this.isLoading = false),
+      () => undefined,
     );
   }
 

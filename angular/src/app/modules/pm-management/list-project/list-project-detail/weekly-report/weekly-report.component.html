@@ -977,7 +977,7 @@
                                                 </div>
                                                 <div class="d-flex col-2 align-items-center"
                                                     style="flex-direction: column;">
-                                                    <button [disabled]="selectedResource == null"
+                                                    <button [disabled]="selectedResource == null || isLinkingResource"
                                                         class="mb-1 submit-btn" style="background: none; border: none;"
                                                         [hidden]="showSearchAndFilter && !pu.createLinkResourceMode"
                                                         (click)="saveLinkResource(pu)">

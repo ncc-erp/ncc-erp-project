@@ -176,6 +176,7 @@ export class WeeklyReportComponent
   public projectCurrentSupportUser: any = [];
   public listAllResource = [];
   public listAvailableResource = [];
+  public isLinkingResource = false;
   overTimeNoCharge: number = 0;
   totalNormalWorkingTime: number = 0;
   totalOverTime: number = 0;
@@ -2585,7 +2586,7 @@ export class WeeklyReportComponent
   }
 
   public handleLinkResourceKeydown(event: KeyboardEvent, userBill: projectUserBillDto): void {
-    if (event.key === "Enter" && this.selectedResource != null) {
+    if (event.key === "Enter" && this.selectedResource != null && !this.isLinkingResource) {
       event.preventDefault();
       event.stopPropagation();
       this.saveLinkResource(userBill);
@@ -2611,6 +2612,10 @@ export class WeeklyReportComponent
   }
 
   public cancelLinkResource(userBill): void {
+    if (this.isLinkingResource) {
+      return;
+    }
+
     userBill.createLinkResourceMode = false;
     this.selectedResource = null;
     this.userBillProcess = false;
@@ -2626,6 +2631,11 @@ export class WeeklyReportComponent
   }
 
   public saveLinkResource(userBill: projectUserBillDto): void {
+    if (this.isLinkingResource || this.selectedResource == null) {
+      return;
+    }
+
+    this.isLinkingResource = true;
     const reqAdd = {
       projectUserBillId: userBill.id,
       userId: this.selectedResource,
@@ -2636,6 +2646,7 @@ export class WeeklyReportComponent
     this.projectUserBillService
       .LinkOneProjectUserBillAccount(reqAdd)
       .pipe(catchError(this.projectUserBillService.handleError))
+      .pipe(finalize(() => (this.isLinkingResource = false)))
       .subscribe((data) => {
         const userInfo: IGetUserInfo = data.result;
         abp.notify.success("Linked resources updated successfully");

@@ -45,7 +45,7 @@
                                 <input type="number" style="width: 70px;" class="form-control mr-2"
                                     [(ngModel)]="pu.tempContribute" placeholder="%">
 
-                                <button mat-icon-button color="primary" [disabled]="!selectedResource"
+                                <button mat-icon-button color="primary" [disabled]="!selectedResource || isLoading"
                                     (click)="saveLinkResource(pu)">
                                     <i class="fas fa-check"></i>
                                 </button>

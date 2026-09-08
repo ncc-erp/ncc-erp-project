@@ -168,7 +168,10 @@ namespace ProjectManagement.APIs.PMReportProjects
                 .ToListAsync();
 
             var contributionLookup = contributions
-                .ToDictionary(k => $"{k.ProjectUserBillId}_{k.UserId}", v => v);
+                .GroupBy(x => new { x.ProjectUserBillId, x.UserId })
+                .ToDictionary(
+                    k => $"{k.Key.ProjectUserBillId}_{k.Key.UserId}",
+                    k => k.OrderByDescending(x => x.Id).First());
 
             var bills = await WorkScope.GetAll<ProjectUserBill>()
                 .Include(x => x.User).ThenInclude(u => u.Position)

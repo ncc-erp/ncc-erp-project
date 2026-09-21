@@ -34,6 +34,7 @@ using ProjectManagement.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using ProjectManagement.Services.Mezon;
 using ProjectManagement.Services.PmBot;
+using ProjectManagement.Services.AI;
 
 namespace ProjectManagement.Web.Host.Startup
 {
@@ -99,6 +100,7 @@ namespace ProjectManagement.Web.Host.Startup
             services.AddHttpClient<BaseWebService>();
             services.AddHttpClient<MezonService>();
             services.AddHttpClient<PmBotService>();
+            services.AddHttpClient<IAiService, AiService>();
 
             RegisterFileService(services);
 

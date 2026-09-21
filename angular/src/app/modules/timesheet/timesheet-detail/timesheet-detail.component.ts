@@ -2,6 +2,7 @@ import { MatMenuTrigger } from '@angular/material/menu';
 import { ViewBillComponent } from './view-bill/view-bill.component';
 import { PERMISSIONS_CONSTANT } from '@app/constant/permission.constant';
 import { TimesheetProjectService } from '@app/service/api/timesheet-project.service';
+import { FileHandlerService } from '@app/service/utility/file-handler.service';
 import { CreateEditTimesheetDetailComponent } from './create-edit-timesheet-detail/create-edit-timesheet-detail.component';
 import { ExportInvoiceComponent } from './export-invoice/export-invoice.component';
 import { ActivatedRoute } from '@angular/router';
@@ -130,6 +131,8 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
   public listTotalAmountByCurrency: TotalAmountByCurrencyDto[] = [];
   public sending: boolean = false;
   public canExportInvoice = false;
+  public acceptanceReportBusy = false;
+  private acceptanceReportSubscription: { unsubscribe(): void } = null;
   public listTimesheetProject = [];
   public viewMultipliedOtTime = true;
   @ViewChild(MatMenuTrigger)
@@ -175,7 +178,8 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
     private userService: UserService,
     private clientService: ClientService,
     private _modalService: BsModalService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private fileHandlerService: FileHandlerService
   ) {
     super(injector)
 
@@ -480,7 +484,13 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
   }
 
   onCheckUncheckAllRow(event) {
-    this.TimesheetDetaiList.forEach(item => (item.isChecked = event.checked));
+    this.TimesheetDetaiList.forEach(item => {
+      item.isChecked = event.checked;
+      const selected = this.listTimesheetProject.some(project => project.id === item.id);
+      if (selected !== event.checked) {
+        this.addProjectToExport({ checked: event.checked, source: { value: item } }, item);
+      }
+    });
     this.indeterminate = false;
     this.CheckAllSelectBox = event.checked;
   }
@@ -493,6 +503,43 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
     this.indeterminate = someChecked && !allChecked;
     this.CheckAllSelectBox = allChecked;
 
+  }
+
+  exportAcceptanceReport(): void {
+    if (this.acceptanceReportBusy || this.listTimesheetProject.length !== 1) {
+      return;
+    }
+
+    this.acceptanceReportBusy = true;
+    this.acceptanceReportSubscription = this.timesheetProjectService.exportAcceptanceReport(this.listTimesheetProject[0].id)
+      .pipe(finalize(() => {
+        this.acceptanceReportBusy = false;
+        this.acceptanceReportSubscription = null;
+      }))
+      .subscribe(response => {
+        const file = response && response.result;
+        if (!file || !file.base64 || !file.fileName) {
+          abp.notify.error('Failed to receive the Acceptance Report file.');
+          return;
+        }
+        this.fileHandlerService.downloadFile(
+          file.base64,
+          file.fileName,
+          file.fileType || 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+        abp.notify.success('Export Acceptance Report Successfully!');
+      }, () => {
+      });
+  }
+
+  cancelAcceptanceReport(): void {
+    if (!this.acceptanceReportBusy) {
+      return;
+    }
+
+    this.acceptanceReportBusy = false;
+    const subscription = this.acceptanceReportSubscription;
+    this.acceptanceReportSubscription = null;
+    subscription && subscription.unsubscribe();
   }
   
   public reloadComponent() {

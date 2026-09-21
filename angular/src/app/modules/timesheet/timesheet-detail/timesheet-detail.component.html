@@ -25,6 +25,14 @@
                   Deactivate
                 </button>
               </div>
+              <div class="mr-2"
+                [matTooltip]="listTimesheetProject.length > 1 ? 'Chỉ hỗ trợ export 1 project mỗi lần' : ''">
+                <button type="button" class="btn bg-info mr-2"
+                  [disabled]="acceptanceReportBusy || listTimesheetProject.length !== 1"
+                  (click)="exportAcceptanceReport()">
+                  Acceptance Report
+                </button>
+              </div>
               <div class="mr-2">
                 <div class="form-group form-float"
                   [matTooltip]="!isShowBtnExportTsDetail() ? 'Chưa chọn Project, không cùng Currency hoặc Client' : '' ">
@@ -123,6 +131,20 @@
             </mat-menu>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="acceptanceReportBusy" class="acceptance-report-modal-backdrop">
+    <div class="acceptance-report-modal" role="dialog" aria-modal="true"
+      aria-label="Acceptance Report export">
+      <button type="button" class="acceptance-report-modal-close"
+        aria-label="Cancel Acceptance Report export" (click)="cancelAcceptanceReport()">
+        &times;
+      </button>
+      <div class="acceptance-report-modal-message">
+        <span class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>
+        Existing timesheet file and waiting for AI processing. Please wait...
       </div>
     </div>
   </div>

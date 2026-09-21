@@ -37,6 +37,7 @@ using ProjectManagement.Services.Komu.KomuDto;
 using ProjectManagement.Services.ProjectTimesheet;
 using ProjectManagement.Services.Timesheet;
 using ProjectManagement.Services.Timesheet.Dto;
+using ProjectManagement.Services.AI;
 using ProjectManagement.UploadFilesService;
 using ProjectManagement.Utils;
 using System;
@@ -45,6 +46,8 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using TextJson = System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using static ProjectManagement.Constants.Enum.ProjectEnum;
 
@@ -64,6 +67,8 @@ namespace ProjectManagement.APIs.TimesheetProjects
         private readonly ExchangeRateService _exchangeRateService = new ExchangeRateService();
         private readonly ReactiveTimesheetProject _reactiveTimesheetProject;
         private readonly IRepository<BackgroundJobInfo, long> _storeJob;
+        private readonly IAiService _aiService;
+        private readonly ExportAcceptanceReportHelper _exportAcceptanceReportHelper;
 
         public TimesheetProjectAppService(
             IWebHostEnvironment environment,
@@ -74,7 +79,9 @@ namespace ProjectManagement.APIs.TimesheetProjects
             TimesheetService timesheetService,
             UploadFileService uploadFileService,
             ReactiveTimesheetProject activeTimesheetProject,
-            IRepository<BackgroundJobInfo, long> storeJob)
+            IRepository<BackgroundJobInfo, long> storeJob,
+            IAiService aiService,
+            ExportAcceptanceReportHelper exportAcceptanceReportHelper)
         {
             _hostingEnvironment = environment;
             _financeService = financeService;
@@ -85,6 +92,8 @@ namespace ProjectManagement.APIs.TimesheetProjects
             _uploadFileService = uploadFileService;
             _reactiveTimesheetProject = activeTimesheetProject;
             _storeJob = storeJob;
+            _aiService = aiService;
+            _exportAcceptanceReportHelper = exportAcceptanceReportHelper;
         }
 
         [HttpGet]
@@ -715,6 +724,73 @@ namespace ProjectManagement.APIs.TimesheetProjects
             }
             timesheetProject.HistoryFile += historyFile;
             await WorkScope.UpdateAsync(timesheetProject);
+        }
+
+        [HttpPost]
+        public async Task<FileBase64Dto> ExportAcceptanceReport(AcceptanceReportRequest input, CancellationToken cancellationToken)
+        {
+            if (input == null || input.TimesheetProjectId <= 0)
+                throw new UserFriendlyException("Invalid TimesheetProjectId.");
+
+            var timesheet = await WorkScope.GetAll<TimesheetProject>()
+                .Where(x => x.Id == input.TimesheetProjectId)
+                .Select(x => new { x.FilePath, x.Project.Name, x.Timesheet.Year, x.Timesheet.Month })
+                .FirstOrDefaultAsync();
+            if (timesheet == null) throw new UserFriendlyException("The timesheet was not found.");
+            if (string.IsNullOrWhiteSpace(timesheet.FilePath)) throw new UserFriendlyException("Project doesn't have Timesheet File.");
+            var bytes = await _uploadFileService.DownloadTimesheetFileAsync(timesheet.FilePath);
+            var dataFile = _exportAcceptanceReportHelper.ReadTimesheetFile(bytes, timesheet.FilePath, cancellationToken);
+            var aiResponse = await _aiService.GenerateAsync(ExportAcceptanceReportHelper.Instructions, $"DATA_BEGIN{dataFile}DATA_END", cancellationToken);
+            var reportItems = ParseAiResponse(aiResponse);
+
+            if (reportItems == null || !_exportAcceptanceReportHelper.ValidateAiResponse(reportItems).IsValid)
+                throw new UserFriendlyException("Failed to get a response from AI. Please try again.");
+
+            var webRootPath = _hostingEnvironment.WebRootPath;
+            if (string.IsNullOrWhiteSpace(webRootPath))
+                webRootPath = Path.Combine(_hostingEnvironment.ContentRootPath, "wwwroot");
+            var templateFilePath = Path.Combine(webRootPath, "template", "AcceptanceReport.docx");
+
+            if (!File.Exists(templateFilePath))
+                throw new UserFriendlyException("Acceptance Report template was not found.");
+
+            var templateBytes = await File.ReadAllBytesAsync(templateFilePath, cancellationToken);
+            var reportBytes = _exportAcceptanceReportHelper.BuildAcceptanceReport(templateBytes, reportItems);
+
+            var safeName = new string((timesheet.Name ?? "Project")
+                .Take(80)
+                .Select(c => char.IsLetterOrDigit(c) || c == '-' || c == '_' ? c : '_')
+                .ToArray());
+
+            if (string.IsNullOrWhiteSpace(safeName)) safeName = "Project";
+            return new FileBase64Dto
+            {
+                FileName = $"BBNT_{safeName}_{timesheet.Year}_{timesheet.Month:00}.docx",
+                FileType = MimeTypeNames.ApplicationVndOpenxmlformatsOfficedocumentWordprocessingmlDocument,
+                Base64 = Convert.ToBase64String(reportBytes)
+            };
+        }
+
+        private static List<AcceptanceReportDto> ParseAiResponse(string aiResponse)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(aiResponse))
+                    throw new TextJson.JsonException();
+
+                var response = TextJson.JsonSerializer.Deserialize<AcceptanceReportResponseDto>(
+                    aiResponse,
+                    new TextJson.JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+                return response?.Items;
+            }
+            catch (TextJson.JsonException)
+            {
+                throw new UserFriendlyException(
+                    "Failed to get a response from AI. Please try again.");
+            }
         }
 
         [HttpGet]

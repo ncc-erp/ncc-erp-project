@@ -126,6 +126,7 @@
       </div>
     </div>
   </div>
+
 </section>
 <section class="content" id="timesheet-detail">
   <div class="container-fluid">
@@ -426,6 +427,17 @@
                       class="btn mat-menu-item w-100">
                       <i class="fas fa-file-export mr-1"></i>
                       Export TS Detail
+                    </button>
+
+                    <button mat-menu-item class="btn w-100"
+                      (click)="exportAcceptanceReport(item, 'en')">
+                      <i class="fas fa-file-export mr-1"></i>
+                      Export Acceptance Report (en)
+                    </button>
+                    <button mat-menu-item class="btn w-100"
+                      (click)="exportAcceptanceReport(item, 'vn')">
+                      <i class="fas fa-file-export mr-1"></i>
+                      Export Acceptance Report (vn)
                     </button>
 
                     <div class="form-group form-float">

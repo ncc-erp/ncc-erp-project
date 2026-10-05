@@ -25,14 +25,6 @@
                   Deactivate
                 </button>
               </div>
-              <div class="mr-2"
-                [matTooltip]="listTimesheetProject.length > 1 ? 'Chỉ hỗ trợ export 1 project mỗi lần' : ''">
-                <button type="button" class="btn bg-info mr-2"
-                  [disabled]="acceptanceReportBusy || listTimesheetProject.length !== 1"
-                  (click)="exportAcceptanceReport()">
-                  Acceptance Report
-                </button>
-              </div>
               <div class="mr-2">
                 <div class="form-group form-float"
                   [matTooltip]="!isShowBtnExportTsDetail() ? 'Chưa chọn Project, không cùng Currency hoặc Client' : '' ">
@@ -135,19 +127,6 @@
     </div>
   </div>
 
-  <div *ngIf="acceptanceReportBusy" class="acceptance-report-modal-backdrop">
-    <div class="acceptance-report-modal" role="dialog" aria-modal="true"
-      aria-label="Acceptance Report export">
-      <button type="button" class="acceptance-report-modal-close"
-        aria-label="Cancel Acceptance Report export" (click)="cancelAcceptanceReport()">
-        &times;
-      </button>
-      <div class="acceptance-report-modal-message">
-        <span class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>
-        Existing timesheet file and waiting for AI processing. Please wait...
-      </div>
-    </div>
-  </div>
 </section>
 <section class="content" id="timesheet-detail">
   <div class="container-fluid">
@@ -448,6 +427,17 @@
                       class="btn mat-menu-item w-100">
                       <i class="fas fa-file-export mr-1"></i>
                       Export TS Detail
+                    </button>
+
+                    <button mat-menu-item class="btn w-100"
+                      (click)="exportAcceptanceReport(item, 'en')">
+                      <i class="fas fa-file-export mr-1"></i>
+                      Export Acceptance Report (en)
+                    </button>
+                    <button mat-menu-item class="btn w-100"
+                      (click)="exportAcceptanceReport(item, 'vn')">
+                      <i class="fas fa-file-export mr-1"></i>
+                      Export Acceptance Report (vn)
                     </button>
 
                     <div class="form-group form-float">

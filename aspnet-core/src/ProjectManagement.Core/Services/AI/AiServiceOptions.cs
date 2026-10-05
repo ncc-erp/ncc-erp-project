@@ -7,5 +7,6 @@ namespace ProjectManagement.Services.AI
         public string Model { get; set; }
         public int TimeoutSeconds { get; set; }
         public int MaxTokens { get; set; }
+        public double? Temperature { get; set; }
     }
 }

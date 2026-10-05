@@ -49,6 +49,7 @@ namespace ProjectManagement.Services.AI
             {
                 Model = options.Model,
                 MaxTokens = options.MaxTokens,
+                Temperature = options.Temperature,
                 EnableThinking = false,
                 ResponseFormat = new ResponseFormat { Type = "json_object" },
                 Messages = new[]

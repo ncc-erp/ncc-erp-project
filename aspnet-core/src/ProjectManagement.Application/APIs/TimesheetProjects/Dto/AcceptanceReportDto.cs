@@ -17,5 +17,7 @@ namespace ProjectManagement.APIs.TimesheetProjects.Dto
     public sealed class AcceptanceReportRequest
     {
         public long TimesheetProjectId { get; set; }
+
+        public string Language { get; set; } = "vn";
     }
 }

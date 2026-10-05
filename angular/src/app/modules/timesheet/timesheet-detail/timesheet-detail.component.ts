@@ -10,7 +10,7 @@ import { TimesheetDetailDto,TotalAmountByCurrencyDto} from './../../../service/m
 import { Component, OnInit, Injector, ViewChild, ViewChildren, QueryList, ChangeDetectorRef } from '@angular/core';
 import { InputFilterDto } from '@shared/filter/filter.component';
 import { TimesheetService } from '@app/service/api/timesheet.service'
-import { catchError, finalize } from 'rxjs/operators';
+import { catchError, finalize, takeUntil } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { ImportFileTimesheetDetailComponent } from './import-file-timesheet-detail/import-file-timesheet-detail.component';
 import * as FileSaver from 'file-saver';
@@ -26,6 +26,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ActiveTimesheetProjectComponent } from './active-timesheet-project/active-timesheet-project.component';
 import { TimeSheetProjectBillService } from '@app/service/api/time-sheet-project-bill.service';
 import { LinkProjectTimesheetComponent } from './link-project-timesheet/link-project-timesheet.component';
+import { ExportModalLoadingComponent } from './export-modal-loading/export-modal-loading.component';
 
 
 @Component({
@@ -131,8 +132,6 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
   public listTotalAmountByCurrency: TotalAmountByCurrencyDto[] = [];
   public sending: boolean = false;
   public canExportInvoice = false;
-  public acceptanceReportBusy = false;
-  private acceptanceReportSubscription: { unsubscribe(): void } = null;
   public listTimesheetProject = [];
   public viewMultipliedOtTime = true;
   @ViewChild(MatMenuTrigger)
@@ -505,17 +504,20 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
 
   }
 
-  exportAcceptanceReport(): void {
-    if (this.acceptanceReportBusy || this.listTimesheetProject.length !== 1) {
+  exportAcceptanceReport(item: TimesheetDetailDto, language: 'en' | 'vn'): void {
+    if (!item || !item.id) {
       return;
     }
 
-    this.acceptanceReportBusy = true;
-    this.acceptanceReportSubscription = this.timesheetProjectService.exportAcceptanceReport(this.listTimesheetProject[0].id)
-      .pipe(finalize(() => {
-        this.acceptanceReportBusy = false;
-        this.acceptanceReportSubscription = null;
-      }))
+    const dialogRef = this.dialog.open(ExportModalLoadingComponent, {
+      disableClose: true
+    });
+
+    this.timesheetProjectService.exportAcceptanceReport(item.id, language)
+      .pipe(
+        takeUntil(dialogRef.beforeClosed()),
+        finalize(() => dialogRef.close())
+      )
       .subscribe(response => {
         const file = response && response.result;
         if (!file || !file.base64 || !file.fileName) {
@@ -531,16 +533,6 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
       });
   }
 
-  cancelAcceptanceReport(): void {
-    if (!this.acceptanceReportBusy) {
-      return;
-    }
-
-    this.acceptanceReportBusy = false;
-    const subscription = this.acceptanceReportSubscription;
-    this.acceptanceReportSubscription = null;
-    subscription && subscription.unsubscribe();
-  }
   
   public reloadComponent() {
     this.router.navigate(['app/timesheetDetail'], {

@@ -732,6 +732,8 @@ namespace ProjectManagement.APIs.TimesheetProjects
             if (input == null || input.TimesheetProjectId <= 0)
                 throw new UserFriendlyException("Invalid TimesheetProjectId.");
 
+            var instructions = ExportAcceptanceReportHelper.GetInstructions(input.Language);
+
             var timesheet = await WorkScope.GetAll<TimesheetProject>()
                 .Where(x => x.Id == input.TimesheetProjectId)
                 .Select(x => new { x.FilePath, x.Project.Name, x.Timesheet.Year, x.Timesheet.Month })
@@ -740,7 +742,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
             if (string.IsNullOrWhiteSpace(timesheet.FilePath)) throw new UserFriendlyException("Project doesn't have Timesheet File.");
             var bytes = await _uploadFileService.DownloadTimesheetFileAsync(timesheet.FilePath);
             var dataFile = _exportAcceptanceReportHelper.ReadTimesheetFile(bytes, timesheet.FilePath, cancellationToken);
-            var aiResponse = await _aiService.GenerateAsync(ExportAcceptanceReportHelper.Instructions, $"DATA_BEGIN{dataFile}DATA_END", cancellationToken);
+            var aiResponse = await _aiService.GenerateAsync(instructions, $"DATA_BEGIN{dataFile}DATA_END", cancellationToken);
             var reportItems = ParseAiResponse(aiResponse);
 
             if (reportItems == null || !_exportAcceptanceReportHelper.ValidateAiResponse(reportItems).IsValid)
@@ -755,7 +757,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
                 throw new UserFriendlyException("Acceptance Report template was not found.");
 
             var templateBytes = await File.ReadAllBytesAsync(templateFilePath, cancellationToken);
-            var reportBytes = _exportAcceptanceReportHelper.BuildAcceptanceReport(templateBytes, reportItems);
+            var reportBytes = _exportAcceptanceReportHelper.BuildAcceptanceReport(templateBytes, reportItems, input.Language);
 
             var safeName = new string((timesheet.Name ?? "Project")
                 .Take(80)
@@ -765,7 +767,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
             if (string.IsNullOrWhiteSpace(safeName)) safeName = "Project";
             return new FileBase64Dto
             {
-                FileName = $"BBNT_{safeName}_{timesheet.Year}_{timesheet.Month:00}.docx",
+                FileName = $"BBNT_{safeName}_{timesheet.Year}_{timesheet.Month:00}{(input.Language == "en" ? "_en" : string.Empty)}.docx",
                 FileType = MimeTypeNames.ApplicationVndOpenxmlformatsOfficedocumentWordprocessingmlDocument,
                 Base64 = Convert.ToBase64String(reportBytes)
             };

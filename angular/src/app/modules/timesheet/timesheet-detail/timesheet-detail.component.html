@@ -430,15 +430,19 @@
                     </button>
 
                     <button mat-menu-item class="btn w-100"
-                      (click)="exportAcceptanceReport(item, 'en')">
+                      [matMenuTriggerFor]="exportAcceptanceReportLanguages">
                       <i class="fas fa-file-export mr-1"></i>
-                      Export Acceptance Report (en)
+                      Export Acceptance Report
                     </button>
-                    <button mat-menu-item class="btn w-100"
-                      (click)="exportAcceptanceReport(item, 'vn')">
-                      <i class="fas fa-file-export mr-1"></i>
-                      Export Acceptance Report (vn)
-                    </button>
+
+                    <mat-menu #exportAcceptanceReportLanguages="matMenu">
+                      <button mat-menu-item (click)="exportAcceptanceReport(item, 'en')">
+                        EN
+                      </button>
+                      <button mat-menu-item (click)="exportAcceptanceReport(item, 'vn')">
+                        VN
+                      </button>
+                    </mat-menu>
 
                     <div class="form-group form-float">
                       <button class="btn mat-menu-item w-100 special" mat-menu-item

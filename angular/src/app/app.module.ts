@@ -87,6 +87,7 @@ import { TimesheetComponent } from './modules/timesheet/timesheet.component';
 import { SaoDoComponent } from './modules/saodo-management/sao-do/sao-do.component';
 import { CreateEditTimesheetComponent } from './modules/timesheet/create-edit-timesheet/create-edit-timesheet.component';
 import { ImportFileTimesheetDetailComponent } from './modules/timesheet/timesheet-detail/import-file-timesheet-detail/import-file-timesheet-detail.component';
+import { ExportModalLoadingComponent } from './modules/timesheet/timesheet-detail/export-modal-loading/export-modal-loading.component';
 import { CreateEditTimesheetDetailComponent } from './modules/timesheet/timesheet-detail/create-edit-timesheet-detail/create-edit-timesheet-detail.component';
 import { DeliveryComponent } from './modules/delivery-management/delivery/delivery.component';
 import { ListProjectGeneralComponent } from './modules/pm-management/list-project/list-project-detail/list-project-general/list-project-general.component';
@@ -324,6 +325,7 @@ export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
     WeeklyReportComponent,
     ProjectChecklistComponent,
     ImportFileTimesheetDetailComponent,
+    ExportModalLoadingComponent,
     CreateEditTimesheetDetailComponent,
     DeliveryComponent,
     ListProjectGeneralComponent,

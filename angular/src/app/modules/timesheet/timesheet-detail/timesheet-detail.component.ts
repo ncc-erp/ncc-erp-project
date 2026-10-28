@@ -2,6 +2,7 @@ import { MatMenuTrigger } from '@angular/material/menu';
 import { ViewBillComponent } from './view-bill/view-bill.component';
 import { PERMISSIONS_CONSTANT } from '@app/constant/permission.constant';
 import { TimesheetProjectService } from '@app/service/api/timesheet-project.service';
+import { FileHandlerService } from '@app/service/utility/file-handler.service';
 import { CreateEditTimesheetDetailComponent } from './create-edit-timesheet-detail/create-edit-timesheet-detail.component';
 import { ExportInvoiceComponent } from './export-invoice/export-invoice.component';
 import { ActivatedRoute } from '@angular/router';
@@ -9,7 +10,7 @@ import { TimesheetDetailDto,TotalAmountByCurrencyDto} from './../../../service/m
 import { Component, OnInit, Injector, ViewChild, ViewChildren, QueryList, ChangeDetectorRef } from '@angular/core';
 import { InputFilterDto } from '@shared/filter/filter.component';
 import { TimesheetService } from '@app/service/api/timesheet.service'
-import { catchError, finalize } from 'rxjs/operators';
+import { catchError, finalize, takeUntil } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { ImportFileTimesheetDetailComponent } from './import-file-timesheet-detail/import-file-timesheet-detail.component';
 import * as FileSaver from 'file-saver';
@@ -25,6 +26,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ActiveTimesheetProjectComponent } from './active-timesheet-project/active-timesheet-project.component';
 import { TimeSheetProjectBillService } from '@app/service/api/time-sheet-project-bill.service';
 import { LinkProjectTimesheetComponent } from './link-project-timesheet/link-project-timesheet.component';
+import { ExportModalLoadingComponent } from './export-modal-loading/export-modal-loading.component';
 
 
 @Component({
@@ -175,7 +177,8 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
     private userService: UserService,
     private clientService: ClientService,
     private _modalService: BsModalService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private fileHandlerService: FileHandlerService
   ) {
     super(injector)
 
@@ -480,7 +483,13 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
   }
 
   onCheckUncheckAllRow(event) {
-    this.TimesheetDetaiList.forEach(item => (item.isChecked = event.checked));
+    this.TimesheetDetaiList.forEach(item => {
+      item.isChecked = event.checked;
+      const selected = this.listTimesheetProject.some(project => project.id === item.id);
+      if (selected !== event.checked) {
+        this.addProjectToExport({ checked: event.checked, source: { value: item } }, item);
+      }
+    });
     this.indeterminate = false;
     this.CheckAllSelectBox = event.checked;
   }
@@ -494,6 +503,36 @@ export class TimesheetDetailComponent extends PagedListingComponentBase<Timeshee
     this.CheckAllSelectBox = allChecked;
 
   }
+
+  exportAcceptanceReport(item: TimesheetDetailDto, language: 'en' | 'vn'): void {
+    if (!item || !item.id) {
+      return;
+    }
+
+    const dialogRef = this.dialog.open(ExportModalLoadingComponent, {
+      disableClose: true
+    });
+
+    this.timesheetProjectService.exportAcceptanceReport(item.id, language)
+      .pipe(
+        takeUntil(dialogRef.beforeClosed()),
+        finalize(() => dialogRef.close())
+      )
+      .subscribe(response => {
+        const file = response && response.result;
+        if (!file || !file.base64 || !file.fileName) {
+          abp.notify.error('Failed to receive the Acceptance Report file.');
+          return;
+        }
+        this.fileHandlerService.downloadFile(
+          file.base64,
+          file.fileName,
+          file.fileType || 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+        abp.notify.success('Export Acceptance Report Successfully!');
+      }, () => {
+      });
+  }
+
   
   public reloadComponent() {
     this.router.navigate(['app/timesheetDetail'], {

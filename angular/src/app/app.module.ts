@@ -35,21 +35,17 @@ import { SharedModule } from "@shared/shared.module";
 import { HomeComponent } from "@app/home/home.component";
 import { AboutComponent } from "@app/about/about.component";
 import { BrowserModule } from "@angular/platform-browser";
-// tenants
 import { TenantsComponent } from "@app/tenants/tenants.component";
 import { CreateTenantDialogComponent } from "./tenants/create-tenant/create-tenant-dialog.component";
 import { EditTenantDialogComponent } from "./tenants/edit-tenant/edit-tenant-dialog.component";
-// roles
 import { RolesComponent } from "@app/roles/roles.component";
 import { CreateRoleDialogComponent } from "./roles/create-role/create-role-dialog.component";
 import { EditRoleDialogComponent } from "./roles/edit-role/edit-role-dialog.component";
-// users
 import { UsersComponent } from "@app/users/users.component";
 import { CreateUserDialogComponent } from "@app/users/create-user/create-user-dialog.component";
 import { EditUserDialogComponent } from "@app/users/edit-user/edit-user-dialog.component";
 import { ChangePasswordComponent } from "./users/change-password/change-password.component";
 import { ResetPasswordDialogComponent } from "./users/reset-password/reset-password.component";
-// layout
 import { HeaderComponent } from "./layout/header.component";
 import { HeaderLeftNavbarComponent } from "./layout/header-left-navbar.component";
 import { HeaderLanguageMenuComponent } from "./layout/header-language-menu.component";
@@ -252,6 +248,9 @@ import { ProjectAssetComponent } from './modules/pm-management/list-project/list
 import { CreateUpdateAssetComponent } from './modules/pm-management/list-project/list-project-detail/project-asset/create-update-asset/create-update-asset.component';
 import { UpdateUserAssetDialogComponent } from './modules/pm-management/list-project/list-project-detail/resource-management/update-user-asset-dialog/update-user-asset-dialog.component';
 import { ProductProjectAssetComponent } from './modules/pm-management/product-projects/product-project-detail/product-project-asset/product-project-asset.component';
+import { ListProjectKnowledgeBaseComponent } from './modules/pm-management/list-project/list-project-detail/list-project-knowledge-base/list-project-knowledge-base.component';
+import { ProductProjectKnowledgeBaseComponent } from './modules/pm-management/product-projects/product-project-detail/product-project-knowledge-base/product-project-knowledge-base.component';
+import { TrainingProjectKnowledgeBaseComponent } from './modules/pm-management/training-projects/training-project-detail/training-project-knowledge-base/training-project-knowledge-base.component';
 import { TrainingProjectAssetComponent } from './modules/pm-management/training-projects/training-project-detail/training-project-asset/training-project-asset.component';
 import { AccountAssetCreatorComponent } from './modules/admin/account-asset-creator/account-asset-creator.component';
 import { CreateUpdateCreatorComponent } from './modules/admin/account-asset-creator/create-update-creator/create-update-creator.component';
@@ -278,22 +277,18 @@ export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
     AppComponent,
     HomeComponent,
     AboutComponent,
-    // tenants
     TenantsComponent,
     CreateTenantDialogComponent,
     EditTenantDialogComponent,
-    // roles
     RolesComponent,
     CreateRoleDialogComponent,
     EditRoleDialogComponent,
     AddUserInRoleComponent,
-    // users
     UsersComponent,
     CreateUserDialogComponent,
     EditUserDialogComponent,
     ChangePasswordComponent,
     ResetPasswordDialogComponent,
-    // layout
     HeaderComponent,
     HeaderLeftNavbarComponent,
     HeaderLanguageMenuComponent,
@@ -411,6 +406,9 @@ export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
     ProjectHistoryByUserComponent,
     AddNoteDialogComponent,
     ProjectFileComponent,
+    ListProjectKnowledgeBaseComponent,
+    ProductProjectKnowledgeBaseComponent,
+    TrainingProjectKnowledgeBaseComponent,
     CollectTimesheetDialogComponent,
     ListTimesheetByProjectCodeDialogComponent,
     UpdateUserSkillDialogComponent,
@@ -579,14 +577,11 @@ export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
     { provide: MAT_DATE_FORMATS, useValue: DATE_FORMATS },
   ],
   entryComponents: [
-    // tenants
     CreateTenantDialogComponent,
     EditTenantDialogComponent,
-    // roles
     CreateRoleDialogComponent,
     EditRoleDialogComponent,
     AddUserInRoleComponent,
-    // users
     CreateUserDialogComponent,
     EditUserDialogComponent,
     ResetPasswordDialogComponent,

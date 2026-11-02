@@ -1,4 +1,4 @@
-﻿using Abp.Authorization;
+using Abp.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProjectManagement.APIs.PmAssistantBot.Dto;
@@ -14,6 +14,35 @@ namespace ProjectManagement.APIs.PmAssistantBot
 {
     public class PmAssistantBotAppService : ProjectManagementAppServiceBase
     {
+        [AbpAllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> GetKnowledgeBase([FromQuery] long projectId)
+        {
+            var secretCode = SettingManager.GetSettingValue(AppSettingNames.SecurityCode);
+            var header = HttpContextAccessor.HttpContext.Request.Headers;
+            var securityCodeHeader = header["X-Secret-Key"].ToString();
+            if (string.IsNullOrWhiteSpace(secretCode) || secretCode != securityCodeHeader)
+            {
+                return new BadRequestObjectResult("You do not have permission to retrieve the project Knowledge Base.");
+            }
+
+            var project = await WorkScope.GetAll<Project>()
+                .AsNoTracking()
+                .Where(p => p.Id == projectId && !p.IsDeleted)
+                .Select(p => p.Id).FirstOrDefaultAsync();
+            if (project <= 0)
+            {
+                return new BadRequestObjectResult("Project does not exist.");
+            }
+
+            var content = await WorkScope.GetAll<ProjectKnowledgeBase>()
+                .AsNoTracking()
+                .Where(kb => kb.ProjectId == project)
+                .Select(kb => kb.Content)
+                .FirstOrDefaultAsync();
+            return new OkObjectResult(content);
+        }
+
         [AbpAllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetPmManualWeeklyReport([FromQuery] PmManualWeeklyReportInput input)

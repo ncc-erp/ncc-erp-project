@@ -167,6 +167,10 @@ export const PERMISSIONS_CONSTANT = {
        Projects_OutsourcingProjects_ProjectDetail_TabGeneral_View: "Projects.OutsourcingProjects.ProjectDetail.TabGeneral.View",
        Projects_OutsourcingProjects_ProjectDetail_TabGeneral_Edit: "Projects.OutsourcingProjects.ProjectDetail.TabGeneral.Edit",
 
+       Projects_OutsourcingProjects_ProjectDetail_TabKnowledgeBase: "Projects.OutsourcingProjects.ProjectDetail.TabKnowledgeBase",
+       Projects_OutsourcingProjects_ProjectDetail_TabKnowledgeBase_View: "Projects.OutsourcingProjects.ProjectDetail.TabKnowledgeBase.View",
+       Projects_OutsourcingProjects_ProjectDetail_TabKnowledgeBase_Edit: "Projects.OutsourcingProjects.ProjectDetail.TabKnowledgeBase.Edit",
+
        Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement: "Projects.OutsourcingProjects.ProjectDetail.TabResourceManagement",
        Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource: "Projects.OutsourcingProjects.ProjectDetail.CurrentResource",
        Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_View: "Projects.OutsourcingProjects.ProjectDetail.TabResourceManagement.CurrentResource.View",
@@ -295,6 +299,10 @@ export const PERMISSIONS_CONSTANT = {
        Projects_ProductProjects_ProjectDetail_TabGeneral_View: "Projects.ProductProjects.ProjectDetail.TabGeneral.View",
        Projects_ProductProjects_ProjectDetail_TabGeneral_Edit: "Projects.ProductProjects.ProjectDetail.TabGeneral.Edit",
 
+       Projects_ProductProjects_ProjectDetail_TabKnowledgeBase: "Projects.ProductProjects.ProjectDetail.TabKnowledgeBase",
+       Projects_ProductProjects_ProjectDetail_TabKnowledgeBase_View: "Projects.ProductProjects.ProjectDetail.TabKnowledgeBase.View",
+       Projects_ProductProjects_ProjectDetail_TabKnowledgeBase_Edit: "Projects.ProductProjects.ProjectDetail.TabKnowledgeBase.Edit",
+
        Projects_ProductProjects_ProjectDetail_TabResourceManagement: "Projects.ProductProjects.ProjectDetail.TabResourceManagement",
        Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource: "Projects.ProductProjects.ProjectDetail.CurrentResource",
        Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_View: "Projects.ProductProjects.ProjectDetail.TabResourceManagement.CurrentResource.View",
@@ -408,6 +416,10 @@ export const PERMISSIONS_CONSTANT = {
        Projects_TrainingProjects_ProjectDetail_TabGeneral: "Projects.TrainingProjects.ProjectDetail.TabGeneral",
        Projects_TrainingProjects_ProjectDetail_TabGeneral_View: "Projects.TrainingProjects.ProjectDetail.TabGeneral.View",
        Projects_TrainingProjects_ProjectDetail_TabGeneral_Edit: "Projects.TrainingProjects.ProjectDetail.TabGeneral.Edit",
+
+       Projects_TrainingProjects_ProjectDetail_TabKnowledgeBase: "Projects.TrainingProjects.ProjectDetail.TabKnowledgeBase",
+       Projects_TrainingProjects_ProjectDetail_TabKnowledgeBase_View: "Projects.TrainingProjects.ProjectDetail.TabKnowledgeBase.View",
+       Projects_TrainingProjects_ProjectDetail_TabKnowledgeBase_Edit: "Projects.TrainingProjects.ProjectDetail.TabKnowledgeBase.Edit",
 
        Projects_TrainingProjects_ProjectDetail_TabResourceManagement: "Projects.TrainingProjects.ProjectDetail.TabResourceManagement",
        Projects_TrainingProjects_ProjectDetail_TabResourceManagement_CurrentResource: "Projects.TrainingProjects.ProjectDetail.CurrentResource",

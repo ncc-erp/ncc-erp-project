@@ -1,4 +1,4 @@
-﻿using Abp.Zero.EntityFrameworkCore;
+using Abp.Zero.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using ProjectManagement.Authorization.Roles;
 using ProjectManagement.Authorization.Users;
@@ -34,6 +34,8 @@ namespace ProjectManagement.EntityFrameworkCore
         public DbSet<PMReportProjectRisk> PMReportProjectRisks { get; set; }
 
         public DbSet<Project> Projects { get; set; }
+        public DbSet<ProjectKnowledgeBase> ProjectKnowledgeBases { get; set; }
+        public DbSet<ProjectKnowledgeBaseHistory> ProjectKnowledgeBaseHistories { get; set; }
 
         public DbSet<ProjectFile> ProjectFiles { get; set; }
 
@@ -126,6 +128,19 @@ namespace ProjectManagement.EntityFrameworkCore
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<ProjectKnowledgeBase>(knowledgeBase =>
+            {
+                knowledgeBase.HasOne(p => p.Project).WithOne()
+                    .HasForeignKey<ProjectKnowledgeBase>(p => p.ProjectId)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+            modelBuilder.Entity<ProjectKnowledgeBaseHistory>(history =>
+            {
+                history.Property(h => h.Content).IsRequired();
+                history.HasOne(h => h.KnowledgeBase).WithMany().HasForeignKey(h => h.KnowledgeBaseId)
+                    .OnDelete(DeleteBehavior.Restrict);
+                history.HasIndex(h => new { h.KnowledgeBaseId, h.CreateAt, h.Id });
+            });
             modelBuilder.Entity<ProjectUser>()
                 .HasOne(p => p.Onboarding)
                 .WithOne(o => o.ProjectUser)

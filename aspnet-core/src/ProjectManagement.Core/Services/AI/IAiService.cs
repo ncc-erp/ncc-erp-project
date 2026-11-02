@@ -9,5 +9,10 @@ namespace ProjectManagement.Services.AI
             string instructions,
             string inputText,
             CancellationToken cancellationToken = default(CancellationToken));
+
+        Task<string> GenerateTextAsync(
+            string instructions,
+            string inputText,
+            CancellationToken cancellationToken = default(CancellationToken));
     }
 }

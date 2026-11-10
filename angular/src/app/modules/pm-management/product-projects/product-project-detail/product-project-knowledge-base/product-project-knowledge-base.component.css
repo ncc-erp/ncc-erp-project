@@ -1,0 +1,13 @@
+.kb-panel-title { min-width: 0; margin-right: 16px; }
+.kb-panel-title h3 { margin: 0; font-size: 20px; font-weight: 700; }
+.kb-panel-actions { flex-shrink: 0; margin-left: auto; margin-right: 16px; }
+.knowledge-base-editor { display: block; width: 100%; }
+.kb-document-list { list-style: none; max-height: 200px; overflow-y: auto; margin: 0 0 0 -24px; padding: 0 0 0 24px; }
+.kb-document-list li { position: relative; display: flex; align-items: center; min-height: 36px; padding: 4px 0; }
+.kb-document-list .fa { position: absolute; left: -24px; color: #697586; width: 18px; text-align: left; }
+.kb-document-name { flex: 1; min-width: 0; text-align: left; overflow-wrap: anywhere; }
+.kb-file-options { list-style: none; max-height: 320px; overflow-y: auto; margin: 0; padding: 0; }
+.kb-file-options label { display: flex; align-items: center; gap: 8px; padding: 8px; cursor: pointer; }
+.kb-file-options label span { overflow-wrap: anywhere; }
+
+.kb-modal-overlay { background-color: rgba(0, 0, 0, 0.5); z-index: 1050; overflow-y: auto; }

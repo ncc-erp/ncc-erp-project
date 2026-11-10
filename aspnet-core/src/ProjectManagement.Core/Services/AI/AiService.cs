@@ -126,6 +126,26 @@ namespace ProjectManagement.Services.AI
             }
         }
 
+        public async Task<string> GenerateTextAsync(string instructions, string inputText, CancellationToken cancellationToken)
+        {
+            var options = _configuration.GetSection("AiService").Get<AiServiceOptions>();
+            var payload = new ChatCompletionRequest
+            {
+                Model = options.Model,
+                MaxTokens = options.MaxTokens,
+                Temperature = options.Temperature,
+                EnableThinking = false,
+                Messages = new[]
+                {
+                    new ChatMessage { Role = "system", Content = instructions },
+                    new ChatMessage { Role = "user", Content = inputText }
+                }
+            };
+
+            var aiResponse = await SendRequestAsync(options, payload, cancellationToken);
+            return ParseCompletion(aiResponse);
+        }
+
         private string ParseCompletion(string aiResponse)
         {
             try

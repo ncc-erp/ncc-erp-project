@@ -193,6 +193,10 @@ namespace ProjectManagement.Authorization
         public const string Projects_OutsourcingProjects_ProjectDetail_TabGeneral_View = "Projects.OutsourcingProjects.ProjectDetail.TabGeneral.View";
         public const string Projects_OutsourcingProjects_ProjectDetail_TabGeneral_Edit = "Projects.OutsourcingProjects.ProjectDetail.TabGeneral.Edit";
 
+        public const string Projects_OutsourcingProjects_ProjectDetail_TabKnowledgeBase = "Projects.OutsourcingProjects.ProjectDetail.TabKnowledgeBase";
+        public const string Projects_OutsourcingProjects_ProjectDetail_TabKnowledgeBase_View = "Projects.OutsourcingProjects.ProjectDetail.TabKnowledgeBase.View";
+        public const string Projects_OutsourcingProjects_ProjectDetail_TabKnowledgeBase_Edit = "Projects.OutsourcingProjects.ProjectDetail.TabKnowledgeBase.Edit";
+
         public const string Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement = "Projects.OutsourcingProjects.ProjectDetail.TabResourceManagement";
         public const string Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource = "Projects.OutsourcingProjects.ProjectDetail.CurrentResource";
         public const string Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource_View = "Projects.OutsourcingProjects.ProjectDetail.TabResourceManagement.CurrentResource.View";
@@ -323,6 +327,10 @@ namespace ProjectManagement.Authorization
         public const string Projects_ProductProjects_ProjectDetail_TabGeneral_View = "Projects.ProductProjects.ProjectDetail.TabGeneral.View";
         public const string Projects_ProductProjects_ProjectDetail_TabGeneral_Edit = "Projects.ProductProjects.ProjectDetail.TabGeneral.Edit";
 
+        public const string Projects_ProductProjects_ProjectDetail_TabKnowledgeBase = "Projects.ProductProjects.ProjectDetail.TabKnowledgeBase";
+        public const string Projects_ProductProjects_ProjectDetail_TabKnowledgeBase_View = "Projects.ProductProjects.ProjectDetail.TabKnowledgeBase.View";
+        public const string Projects_ProductProjects_ProjectDetail_TabKnowledgeBase_Edit = "Projects.ProductProjects.ProjectDetail.TabKnowledgeBase.Edit";
+
         public const string Projects_ProductProjects_ProjectDetail_TabResourceManagement = "Projects.ProductProjects.ProjectDetail.TabResourceManagement";
         public const string Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource = "Projects.ProductProjects.ProjectDetail.CurrentResource";
         public const string Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource_View = "Projects.ProductProjects.ProjectDetail.TabResourceManagement.CurrentResource.View";
@@ -433,6 +441,10 @@ namespace ProjectManagement.Authorization
         public const string Projects_TrainingProjects_ProjectDetail_TabGeneral = "Projects.TrainingProjects.ProjectDetail.TabGeneral";
         public const string Projects_TrainingProjects_ProjectDetail_TabGeneral_View = "Projects.TrainingProjects.ProjectDetail.TabGeneral.View";
         public const string Projects_TrainingProjects_ProjectDetail_TabGeneral_Edit = "Projects.TrainingProjects.ProjectDetail.TabGeneral.Edit";
+
+        public const string Projects_TrainingProjects_ProjectDetail_TabKnowledgeBase = "Projects.TrainingProjects.ProjectDetail.TabKnowledgeBase";
+        public const string Projects_TrainingProjects_ProjectDetail_TabKnowledgeBase_View = "Projects.TrainingProjects.ProjectDetail.TabKnowledgeBase.View";
+        public const string Projects_TrainingProjects_ProjectDetail_TabKnowledgeBase_Edit = "Projects.TrainingProjects.ProjectDetail.TabKnowledgeBase.Edit";
 
         public const string Projects_TrainingProjects_ProjectDetail_TabResourceManagement = "Projects.TrainingProjects.ProjectDetail.TabResourceManagement";
         public const string Projects_TrainingProjects_ProjectDetail_TabResourceManagement_CurrentResource = "Projects.TrainingProjects.ProjectDetail.CurrentResource";
@@ -1882,6 +1894,9 @@ namespace ProjectManagement.Authorization
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabGeneral, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Tab General" },
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabGeneral_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View" },
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabGeneral_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit" },
+                 new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabKnowledgeBase, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Tab Knowledge Base" },
+                 new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabKnowledgeBase_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View" },
+                 new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabKnowledgeBase_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit" },
 
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Tab Resource Management" },
                  new SystemPermission{ Name =  PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement_CurrentResource, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Current Resource" },
@@ -2012,6 +2027,9 @@ namespace ProjectManagement.Authorization
                  new SystemPermission{ Name =  PermissionNames.Projects_ProductProjects_ProjectDetail_TabGeneral, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Tab General" },
                  new SystemPermission{ Name =  PermissionNames.Projects_ProductProjects_ProjectDetail_TabGeneral_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View" },
                  new SystemPermission{ Name =  PermissionNames.Projects_ProductProjects_ProjectDetail_TabGeneral_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit" },
+                 new SystemPermission{ Name =  PermissionNames.Projects_ProductProjects_ProjectDetail_TabKnowledgeBase, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Tab Knowledge Base" },
+                 new SystemPermission{ Name =  PermissionNames.Projects_ProductProjects_ProjectDetail_TabKnowledgeBase_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View" },
+                 new SystemPermission{ Name =  PermissionNames.Projects_ProductProjects_ProjectDetail_TabKnowledgeBase_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit" },
 
                  new SystemPermission{ Name =  PermissionNames.Projects_ProductProjects_ProjectDetail_TabResourceManagement, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Tab Resource Management" },
                  new SystemPermission{ Name =  PermissionNames.Projects_ProductProjects_ProjectDetail_TabResourceManagement_CurrentResource, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Current Resource" },
@@ -2124,6 +2142,9 @@ namespace ProjectManagement.Authorization
                  new SystemPermission{ Name =  PermissionNames.Projects_TrainingProjects_ProjectDetail_TabGeneral, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Tab General" },
                  new SystemPermission{ Name =  PermissionNames.Projects_TrainingProjects_ProjectDetail_TabGeneral_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View" },
                  new SystemPermission{ Name =  PermissionNames.Projects_TrainingProjects_ProjectDetail_TabGeneral_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit" },
+                 new SystemPermission{ Name =  PermissionNames.Projects_TrainingProjects_ProjectDetail_TabKnowledgeBase, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Tab Knowledge Base" },
+                 new SystemPermission{ Name =  PermissionNames.Projects_TrainingProjects_ProjectDetail_TabKnowledgeBase_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View" },
+                 new SystemPermission{ Name =  PermissionNames.Projects_TrainingProjects_ProjectDetail_TabKnowledgeBase_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit" },
 
                  new SystemPermission{ Name =  PermissionNames.Projects_TrainingProjects_ProjectDetail_TabResourceManagement, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Tab Resource Management" },
                  new SystemPermission{ Name =  PermissionNames.Projects_TrainingProjects_ProjectDetail_TabResourceManagement_CurrentResource, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Current Resource" },
@@ -3055,6 +3076,18 @@ namespace ProjectManagement.Authorization
                                                     },
 
                                                     new SystemPermission {
+                                                        Name = PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabKnowledgeBase, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Tab Knowledge Base",
+                                                            Childrens = new List < SystemPermission > () {
+                                                                new SystemPermission {
+                                                                    Name = PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabKnowledgeBase_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View"
+                                                                },
+                                                                new SystemPermission {
+                                                                    Name = PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabKnowledgeBase_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit"
+                                                                }
+                                                            },
+                                                    },
+
+                                                    new SystemPermission {
                                                         Name = PermissionNames.Projects_OutsourcingProjects_ProjectDetail_TabResourceManagement, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Tab Resource Management",
                                                             Childrens = new List < SystemPermission > () {
                                                                 new SystemPermission {
@@ -3430,6 +3463,18 @@ namespace ProjectManagement.Authorization
                                         },
 
                                         new SystemPermission {
+                                            Name = PermissionNames.Projects_ProductProjects_ProjectDetail_TabKnowledgeBase, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Tab Knowledge Base",
+                                                Childrens = new List < SystemPermission > () {
+                                                    new SystemPermission {
+                                                        Name = PermissionNames.Projects_ProductProjects_ProjectDetail_TabKnowledgeBase_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View"
+                                                    },
+                                                    new SystemPermission {
+                                                        Name = PermissionNames.Projects_ProductProjects_ProjectDetail_TabKnowledgeBase_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit"
+                                                    },
+                                                },
+                                        },
+
+                                        new SystemPermission {
                                             Name = PermissionNames.Projects_ProductProjects_ProjectDetail_TabResourceManagement, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Tab Resource Management",
                                                 Childrens = new List < SystemPermission > () {
                                                     new SystemPermission {
@@ -3744,6 +3789,18 @@ namespace ProjectManagement.Authorization
                                                     },
                                                     new SystemPermission {
                                                         Name = PermissionNames.Projects_TrainingProjects_ProjectDetail_TabGeneral_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit"
+                                                    },
+                                                },
+                                        },
+
+                                        new SystemPermission {
+                                            Name = PermissionNames.Projects_TrainingProjects_ProjectDetail_TabKnowledgeBase, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Tab Knowledge Base",
+                                                Childrens = new List < SystemPermission > () {
+                                                    new SystemPermission {
+                                                        Name = PermissionNames.Projects_TrainingProjects_ProjectDetail_TabKnowledgeBase_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "View"
+                                                    },
+                                                    new SystemPermission {
+                                                        Name = PermissionNames.Projects_TrainingProjects_ProjectDetail_TabKnowledgeBase_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Edit"
                                                     },
                                                 },
                                         },

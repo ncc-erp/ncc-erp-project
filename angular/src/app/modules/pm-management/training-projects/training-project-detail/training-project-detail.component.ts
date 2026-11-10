@@ -9,6 +9,7 @@ import { Component, OnInit, Injector } from '@angular/core';
   styleUrls: ['./training-project-detail.component.css']
 })
 export class TrainingProjectDetailComponent extends AppComponentBase implements OnInit {
+  Projects_TrainingProjects_ProjectDetail_TabKnowledgeBase = PERMISSIONS_CONSTANT.Projects_TrainingProjects_ProjectDetail_TabKnowledgeBase;
   Projects_TrainingProjects_ProjectDetail_TabGeneral=PERMISSIONS_CONSTANT.Projects_TrainingProjects_ProjectDetail_TabGeneral;
   Projects_TrainingProjects_ProjectDetail_TabResourceManagement=PERMISSIONS_CONSTANT.Projects_TrainingProjects_ProjectDetail_TabResourceManagement;
   Projects_TrainingProjects_ProjectDetail_TabWeeklyReport=PERMISSIONS_CONSTANT.Projects_TrainingProjects_ProjectDetail_TabWeeklyReport;
@@ -43,6 +44,16 @@ export class TrainingProjectDetailComponent extends AppComponentBase implements 
     })
   }
 
+  public routingKnowledgeBaseTab(){
+    this.router.navigate(['training-knowledge-base'],{
+      relativeTo:this.route, queryParams:{
+        id:this.requestId,
+        projectName: this.projectName,
+        projectCode:this.projectCode
+      },
+    })
+  }
+
   public routingResourceTab() {
     this.router.navigate(['training-resource-management'], {
       relativeTo: this.route, queryParams: {
@@ -50,7 +61,6 @@ export class TrainingProjectDetailComponent extends AppComponentBase implements 
         projectName: this.projectName,
         projectCode:this.projectCode
       },
-      // replaceUrl: true
     })
     
   }
@@ -63,7 +73,6 @@ export class TrainingProjectDetailComponent extends AppComponentBase implements 
         projectName: this.projectName,
         projectCode:this.projectCode
       },
-      // replaceUrl: true
     })
   }
   public routingWeeklyReportTab(){
@@ -73,7 +82,6 @@ export class TrainingProjectDetailComponent extends AppComponentBase implements 
         projectName: this.projectName,
         projectCode:this.projectCode
       },
-      // replaceUrl: true
     })
   }
   public routingProjectChecklistTab(){
@@ -83,7 +91,6 @@ export class TrainingProjectDetailComponent extends AppComponentBase implements 
         projectName: this.projectName,
         projectCode:this.projectCode
       },
-      // replaceUrl: true
     })
   }
   public routingTimesheetTab(){
@@ -93,7 +100,6 @@ export class TrainingProjectDetailComponent extends AppComponentBase implements 
         projectName: this.projectName,
         projectCode:this.projectCode
       },
-      // replaceUrl: true
     })
   }
   

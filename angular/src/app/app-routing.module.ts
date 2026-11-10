@@ -102,6 +102,9 @@ import { OffboardHistoryTabComponent } from './modules/delivery-management/deliv
 import { OnboardHistoryTabComponent } from './modules/delivery-management/delivery/onboard-history-tab/onboard-history-tab.component';
 import { ProductProjectAssetComponent } from './modules/pm-management/product-projects/product-project-detail/product-project-asset/product-project-asset.component';
 import { TrainingProjectAssetComponent } from './modules/pm-management/training-projects/training-project-detail/training-project-asset/training-project-asset.component';
+import { ListProjectKnowledgeBaseComponent, ListProjectKnowledgeBaseLeaveGuard } from './modules/pm-management/list-project/list-project-detail/list-project-knowledge-base/list-project-knowledge-base.component';
+import { ProductProjectKnowledgeBaseComponent, ProductProjectKnowledgeBaseLeaveGuard } from './modules/pm-management/product-projects/product-project-detail/product-project-knowledge-base/product-project-knowledge-base.component';
+import { TrainingProjectKnowledgeBaseComponent, TrainingProjectKnowledgeBaseLeaveGuard } from './modules/pm-management/training-projects/training-project-detail/training-project-knowledge-base/training-project-knowledge-base.component';
 
 @NgModule({
   imports: [
@@ -202,13 +205,11 @@ import { TrainingProjectAssetComponent } from './modules/pm-management/training-
           },
           { path: "about", component: AboutComponent },
           { path: "update-password", component: ChangePasswordComponent },
-          // timesheet
           {
             path: "timesheet",
             component: TimesheetComponent,
             canActivate: [AppRouteGuard],
           },
-          // punishment
           {
             path: "punishment",
             component: PunishmentComponent,
@@ -265,6 +266,12 @@ import { TrainingProjectAssetComponent } from './modules/pm-management/training-
                 path: "list-project-general",
                 component: ListProjectGeneralComponent,
                 canActivate: [AppRouteGuard],
+              },
+              {
+                path: "knowledge-base",
+                component: ListProjectKnowledgeBaseComponent,
+                canActivate: [AppRouteGuard],
+                canDeactivate: [ListProjectKnowledgeBaseLeaveGuard]
               },
               {
                 path: "resourcemanagement",
@@ -329,6 +336,12 @@ import { TrainingProjectAssetComponent } from './modules/pm-management/training-
                 canActivate: [AppRouteGuard],
               },
               {
+                path: "training-knowledge-base",
+                component: TrainingProjectKnowledgeBaseComponent,
+                canActivate: [AppRouteGuard],
+                canDeactivate: [TrainingProjectKnowledgeBaseLeaveGuard]
+              },
+              {
                 path: "training-resource-management",
                 component: TrainingResourceManagementComponent
               },
@@ -383,6 +396,12 @@ import { TrainingProjectAssetComponent } from './modules/pm-management/training-
                 path: "product-project-general",
                 component: ProductProjectGeneralComponent,
                 canActivate: [AppRouteGuard],
+              },
+              {
+                path: "product-knowledge-base",
+                component: ProductProjectKnowledgeBaseComponent,
+                canActivate: [AppRouteGuard],
+                canDeactivate: [ProductProjectKnowledgeBaseLeaveGuard]
               },
               {
                 path: "product-resource-management",

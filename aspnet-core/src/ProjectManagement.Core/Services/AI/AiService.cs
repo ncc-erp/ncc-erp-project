@@ -6,18 +6,20 @@ using ProjectManagement.Services.AI.Dto;
 using System;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using static Google.Apis.Requests.BatchRequest;
 
 namespace ProjectManagement.Services.AI
 {
     public sealed class AiService : IAiService, ITransientDependency
     {
+        private static readonly string[] FallbackModels = { "gemini-4-hydrogen", "gpt-6-luna" };
+
         private static readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -48,7 +50,6 @@ namespace ProjectManagement.Services.AI
             var payload = new ChatCompletionRequest
             {
                 Model = options.Model,
-                MaxTokens = options.MaxTokens,
                 Temperature = options.Temperature,
                 EnableThinking = false,
                 ResponseFormat = new ResponseFormat { Type = "json_object" },
@@ -59,11 +60,47 @@ namespace ProjectManagement.Services.AI
                 }
             };
 
-            var aiResponse = await SendRequestAsync(options, payload, cancellationToken);
-            return ParseCompletion(aiResponse);
+            return await SendWithFallbackAsync(options, payload, cancellationToken);
         }
 
-        private async Task<string> SendRequestAsync(
+        private async Task<string> SendWithFallbackAsync(
+            AiServiceOptions options,
+            ChatCompletionRequest payload,
+            CancellationToken cancellationToken)
+        {
+            var models = new[] { payload.Model }.Concat(FallbackModels).Distinct(StringComparer.OrdinalIgnoreCase);
+            foreach (var model in models)
+            {
+                payload.Model = model;
+                var (statusCode, body) = await SendRequestAsync(options, payload, cancellationToken);
+                var content = ParseCompletion(body);
+
+                for (var retry = 0; retry <= 2; retry++)
+                {
+                    if (statusCode == HttpStatusCode.ServiceUnavailable || !string.IsNullOrWhiteSpace(content))
+                        break;
+
+                    _logger.LogWarning("LLM model {Model} returned empty content on attempt {Attempt}.", model, retry + 1);
+                    (statusCode, body) = await SendRequestAsync(options, payload, cancellationToken);
+                    content = ParseCompletion(body);
+                }
+
+                if (statusCode == HttpStatusCode.ServiceUnavailable)
+                    continue;
+
+                if (string.IsNullOrWhiteSpace(content))
+                {
+                    _logger.LogWarning("LLM model {Model} returned empty content after all retries.", model);
+                    throw new UserFriendlyException("Failed to get a response from AI. Please try again.");
+                }
+
+                return content;
+            }
+
+            throw new UserFriendlyException("The AI service is unavailable. Please try again.");
+        }
+
+        private async Task<(HttpStatusCode StatusCode, string Body)> SendRequestAsync(
             AiServiceOptions options,
             ChatCompletionRequest payload,
             CancellationToken cancellationToken)
@@ -77,51 +114,49 @@ namespace ProjectManagement.Services.AI
                     Encoding.UTF8,
                     "application/json");
 
-                using (var timeoutSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken))
+                try
                 {
-                    timeoutSource.CancelAfter(TimeSpan.FromSeconds(options.TimeoutSeconds));
-                    try
+                    _logger.LogInformation("Sending request to LLM model {Model}...", payload.Model);
+                    using (var response = await _httpClient.SendAsync(
+                        request,
+                        HttpCompletionOption.ResponseHeadersRead,
+                        cancellationToken))
                     {
-                        using (var response = await _httpClient.SendAsync(
-                            request,
-                            HttpCompletionOption.ResponseHeadersRead,
-                            timeoutSource.Token))
+                        if (!response.IsSuccessStatusCode)
                         {
-                            if (!response.IsSuccessStatusCode)
-                            {
-                                _logger.LogWarning(
-                                    "LLM provider returned HTTP {StatusCode} for model {Model}.",
-                                    (int)response.StatusCode,
-                                    payload.Model);
-                                throw new UserFriendlyException(
-                                    "Failed to generate the report.");
-                            }
+                            if (response.StatusCode == HttpStatusCode.ServiceUnavailable)
+                                return (response.StatusCode, null);
+                            _logger.LogError("LLM provider returned HTTP {StatusCode} for model {Model}.", (int)response.StatusCode, payload.Model);
+                            throw new UserFriendlyException("Failed to generate the report.");
+                        }
 
-                            using (var stream = await response.Content.ReadAsStreamAsync())
-                            using (var buffer = new MemoryStream())
+                        if (response.Content == null || response.StatusCode == HttpStatusCode.NoContent)
+                            return (response.StatusCode, null);
+
+                        using (var stream = await response.Content.ReadAsStreamAsync())
+                        using (var buffer = new MemoryStream())
+                        {
+                            var block = new byte[8192];
+                            int read;
+                            while ((read = await stream.ReadAsync(block, 0, block.Length, cancellationToken)) > 0)
                             {
-                                var block = new byte[8192];
-                                int read;
-                                while ((read = await stream.ReadAsync(block, 0, block.Length, timeoutSource.Token)) > 0)
-                                {
-                                    buffer.Write(block, 0, read);
-                                }
-                                return Encoding.UTF8.GetString(buffer.ToArray());
+                                buffer.Write(block, 0, read);
                             }
+                            return (response.StatusCode, Encoding.UTF8.GetString(buffer.ToArray()));
                         }
                     }
-                    catch (OperationCanceledException ex)
-                        when (!cancellationToken.IsCancellationRequested)
-                    {
-                        _logger.LogError(ex, "LLM request timeout.");
-                        throw new UserFriendlyException("The AI request timed out. Failed to generate the report.");
-                    }
-                    catch (Exception ex)
-                        when (ex is HttpRequestException || ex is IOException)
-                    {
-                        _logger.LogError(ex, "LLM request failed.");
-                        throw new UserFriendlyException("Unable to connect to the LLM. Failed to generate the report.");
-                    }
+                }
+                catch (OperationCanceledException ex)
+                    when (!cancellationToken.IsCancellationRequested)
+                {
+                    _logger.LogError(ex, "LLM request timeout.");
+                    throw new UserFriendlyException("The AI request timed out. Failed to generate the report.");
+                }
+                catch (Exception ex)
+                    when (ex is HttpRequestException || ex is IOException)
+                {
+                    _logger.LogError(ex, "LLM request failed.");
+                    throw new UserFriendlyException("Unable to connect to the LLM. Failed to generate the report.");
                 }
             }
         }
@@ -132,7 +167,6 @@ namespace ProjectManagement.Services.AI
             var payload = new ChatCompletionRequest
             {
                 Model = options.Model,
-                MaxTokens = options.MaxTokens,
                 Temperature = options.Temperature,
                 EnableThinking = false,
                 Messages = new[]
@@ -142,29 +176,27 @@ namespace ProjectManagement.Services.AI
                 }
             };
 
-            var aiResponse = await SendRequestAsync(options, payload, cancellationToken);
-            return ParseCompletion(aiResponse);
+            return await SendWithFallbackAsync(options, payload, cancellationToken);
         }
 
         private string ParseCompletion(string aiResponse)
         {
+            if (string.IsNullOrWhiteSpace(aiResponse))
+                return null;
+
             try
             {
                 var completion = JsonSerializer.Deserialize<ChatCompletionResponse>(
                     aiResponse,
                     JsonOptions);
-                var content = completion?.Choices?.FirstOrDefault()?.Message?.Content;
-                if (string.IsNullOrWhiteSpace(content))
-                    throw new JsonException();
-                return content.Trim();
+                return completion?.Choices?.FirstOrDefault()?.Message?.Content?.Trim();
             }
             catch (JsonException ex)
             {
                 _logger.LogWarning(
                     ex,
                     "Failed to parse the AI provider response or extract message content.");
-                throw new UserFriendlyException(
-                    "Failed to get a response from AI. Please try again.");
+                throw new UserFriendlyException("Failed to get a response from AI. Please try again.");
             }
         }
 

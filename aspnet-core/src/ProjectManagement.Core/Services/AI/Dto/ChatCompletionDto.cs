@@ -3,7 +3,6 @@ namespace ProjectManagement.Services.AI.Dto
     internal sealed class ChatCompletionRequest
     {
         public string Model { get; set; }
-        public int MaxTokens { get; set; }
         public double? Temperature { get; set; }
         public bool EnableThinking { get; set; }
         public ResponseFormat ResponseFormat { get; set; }

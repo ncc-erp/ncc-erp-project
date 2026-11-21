@@ -13,6 +13,7 @@ import { Subject } from 'rxjs';
   styleUrls: ['./list-project-detail.component.css']
 })
 export class ListProjectDetailComponent extends AppComponentBase implements OnInit, OnDestroy {
+  Projects_OutsourcingProjects_ProjectDetail_TabKnowledgeBase = PERMISSIONS_CONSTANT.Projects_OutsourcingProjects_ProjectDetail_TabKnowledgeBase;
   private onDestroy$: Subject<void> = new Subject<void>()
   requestId: any;
   projectType: any;
@@ -56,6 +57,16 @@ export class ListProjectDetailComponent extends AppComponentBase implements OnIn
     })
   }
 
+  public routingKnowledgeBaseTab(){
+    this.router.navigate(['knowledge-base'],{
+      relativeTo:this.route, queryParams:{
+        id:this.requestId,
+        projectName: this.projectName,
+        projectCode:this.projectCode
+      },
+    })
+  }
+
   public routingResourceTab() {
     this.router.navigate(['resourcemanagement'], {
       relativeTo: this.route, queryParams: {
@@ -63,7 +74,6 @@ export class ListProjectDetailComponent extends AppComponentBase implements OnIn
         projectName: this.projectName,
         projectCode:this.projectCode
       },
-      // replaceUrl: true
     })
     
   }
@@ -76,7 +86,6 @@ export class ListProjectDetailComponent extends AppComponentBase implements OnIn
         projectName: this.projectName,
         projectCode:this.projectCode
       },
-      // replaceUrl: true
     })
   }
   public routingWeeklyReportTab(){
@@ -87,7 +96,6 @@ export class ListProjectDetailComponent extends AppComponentBase implements OnIn
         projectName: this.projectName,
         projectCode:this.projectCode,
       },
-      // replaceUrl: true
     })
   }
   public routingProjectChecklistTab(){
@@ -98,7 +106,6 @@ export class ListProjectDetailComponent extends AppComponentBase implements OnIn
         projectName: this.projectName,
         projectCode:this.projectCode
       },
-      // replaceUrl: true
     })
   }
   public routingTimesheetTab(){
@@ -108,7 +115,6 @@ export class ListProjectDetailComponent extends AppComponentBase implements OnIn
         projectName: this.projectName,
         projectCode:this.projectCode
       },
-      // replaceUrl: true
     })
   }
   

@@ -1,0 +1,102 @@
+<section class="content px-2" aria-label="Knowledge Base" [attr.aria-busy]="isLoading">
+  <div class="container-fluid">
+    <div class="alert alert-danger mt-3" role="alert" *ngIf="error">{{ error }}</div>
+
+    <ng-container *ngIf="canViewKnowledgeBase && knowledgeBase">
+      <div class="card mt-3">
+        <mat-expansion-panel [expanded]="!isReferencesCollapsed"
+          (opened)="isReferencesCollapsed = false" (closed)="isReferencesCollapsed = true">
+          <mat-expansion-panel-header class="m-0">
+            <mat-panel-title class="kb-panel-title">
+              <h3>References</h3>
+            </mat-panel-title>
+            <div class="kb-panel-actions d-flex align-items-center" (click)="$event.stopPropagation()"
+              (keydown)="$event.stopPropagation()">
+              <button [hidden]="isReferencesCollapsed" *ngIf="canEditKnowledgeBase" name="btn-choose-reference-files" type="button" class="btn bg-blue"
+                (click)="openFile()" [disabled]="isLoading || !areReferencesLoaded || isSavingReferences || isFileModalOpen">
+                Choose from Project Files
+              </button>
+            </div>
+          </mat-expansion-panel-header>
+
+          <div class="card-body pt-2 px-0 pb-0">
+            <p *ngIf="areReferencesLoaded && !documents.length" class="text-muted mb-0">No references selected.</p>
+            <ul class="kb-document-list" *ngIf="documents.length" aria-live="polite">
+              <li *ngFor="let document of documents; trackBy: trackByFileId" [attr.data-project-file-id]="document.projectFileId">
+                <i class="fa" [ngClass]="iconClass(document.name)" aria-hidden="true"></i>
+                <span class="kb-document-name">{{ document.name }}</span>
+              </li>
+            </ul>
+          </div>
+        </mat-expansion-panel>
+      </div>
+
+      <div class="card mt-3">
+        <mat-expansion-panel [expanded]="!isContentCollapsed"
+          (opened)="isContentCollapsed = false" (closed)="isContentCollapsed = true">
+          <mat-expansion-panel-header class="m-0">
+            <mat-panel-title class="kb-panel-title">
+              <h3>Content</h3>
+            </mat-panel-title>
+            <div class="kb-panel-actions d-flex align-items-center" (click)="$event.stopPropagation()"
+              (keydown)="$event.stopPropagation()">
+              <button [hidden]="isContentCollapsed" *ngIf="canEditKnowledgeBase" name="btn-generate-knowledge-base" type="button" class="btn bg-blue"
+                (click)="generateKnowledgeBase()" [disabled]="!canGenerateKnowledgeBase">
+                Summary with AI
+              </button>
+            </div>
+          </mat-expansion-panel-header>
+
+          <div class="card-body pt-2 px-0 pb-0">
+            <label class="sr-only" for="knowledge-base-content">Content</label>
+            <editor id="knowledge-base-content" name="content" class="knowledge-base-editor" [(ngModel)]="content"
+              [init]="editorConfig" [disabled]="isLoading || !canEditKnowledgeBase"></editor>
+          </div>
+
+          <div class="card-footer bg-transparent border-0 d-flex align-items-center px-0 pt-2 pb-0">
+            <p *ngIf="knowledgeBase.updatedAt" class="text-muted small mb-0 mr-3">
+              Last saved: {{ knowledgeBase.updatedAt | date:'dd/MM/yyyy HH:mm' }}
+            </p>
+            <button *ngIf="canEditKnowledgeBase" name="btn-save-knowledge-base" type="button" class="btn btn-primary ml-auto flex-shrink-0"
+              (click)="saveKnowledgeBase()" [disabled]="isLoading || !isDirty">Save</button>
+          </div>
+        </mat-expansion-panel>
+      </div>
+    </ng-container>
+  </div>
+</section>
+
+<div class="modal fade show d-block kb-modal-overlay" *ngIf="canEditKnowledgeBase && isFileModalOpen" (click)="closeFile()" role="dialog" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered" role="document" (click)="$event.stopPropagation()">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Choose references</h4>
+        <button type="button" class="close" (click)="closeFile()" [disabled]="isSavingReferences || isLoadingFiles">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-danger" role="alert" *ngIf="documentError">{{ documentError }}</div>
+        <p>Support PDF, DOCX, MD, and TXT format to use as AI sources.</p>
+        <p *ngIf="isLoadingFiles" role="status">Loading files…</p>
+        <p *ngIf="areFilesLoaded && !fileOptions.length">No supported files in Project Files.</p>
+        <ul *ngIf="areFilesLoaded && fileOptions.length" class="kb-file-options">
+          <li *ngFor="let file of fileOptions; trackBy: trackByFileId">
+            <label>
+              <input type="checkbox" [(ngModel)]="file.isSelected"
+                [disabled]="isLoading || isSavingReferences || !areReferencesLoaded" />
+              <i class="fa" [ngClass]="iconClass(file.name)" aria-hidden="true"></i>
+              <span>{{ file.name }}</span>
+            </label>
+          </li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button name="btn-cancel-reference-files" type="button" class="btn btn-secondary mr-2" (click)="closeFile()"
+          [disabled]="isSavingReferences || isLoadingFiles">Cancel</button>
+        <button name="btn-confirm-reference-files" type="button" class="btn btn-primary" (click)="saveReferenceFiles()"
+          [disabled]="isLoading || isSavingReferences || isLoadingFiles || !areReferencesLoaded || !isSelectionDirty">
+          Confirm
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

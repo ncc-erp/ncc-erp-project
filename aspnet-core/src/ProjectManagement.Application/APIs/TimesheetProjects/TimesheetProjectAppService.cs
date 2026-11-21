@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
+using Microsoft.Extensions.Logging;
 using NccCore.Extension;
 using NccCore.Paging;
 using NccCore.Uitls;
@@ -69,6 +70,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
         private readonly IRepository<BackgroundJobInfo, long> _storeJob;
         private readonly IAiService _aiService;
         private readonly ExportAcceptanceReportHelper _exportAcceptanceReportHelper;
+        private readonly ILogger<TimesheetProjectAppService> _logger;
 
         public TimesheetProjectAppService(
             IWebHostEnvironment environment,
@@ -81,7 +83,8 @@ namespace ProjectManagement.APIs.TimesheetProjects
             ReactiveTimesheetProject activeTimesheetProject,
             IRepository<BackgroundJobInfo, long> storeJob,
             IAiService aiService,
-            ExportAcceptanceReportHelper exportAcceptanceReportHelper)
+            ExportAcceptanceReportHelper exportAcceptanceReportHelper,
+            ILogger<TimesheetProjectAppService> logger)
         {
             _hostingEnvironment = environment;
             _financeService = financeService;
@@ -94,6 +97,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
             _storeJob = storeJob;
             _aiService = aiService;
             _exportAcceptanceReportHelper = exportAcceptanceReportHelper;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -740,13 +744,34 @@ namespace ProjectManagement.APIs.TimesheetProjects
                 .FirstOrDefaultAsync();
             if (timesheet == null) throw new UserFriendlyException("The timesheet was not found.");
             if (string.IsNullOrWhiteSpace(timesheet.FilePath)) throw new UserFriendlyException("Project doesn't have Timesheet File.");
+            _logger.LogInformation("Downloading timesheet file...");
             var bytes = await _uploadFileService.DownloadTimesheetFileAsync(timesheet.FilePath);
+            _logger.LogInformation("Download timesheet file successfully");
             var dataFile = _exportAcceptanceReportHelper.ReadTimesheetFile(bytes, timesheet.FilePath, cancellationToken);
-            var aiResponse = await _aiService.GenerateAsync(instructions, $"DATA_BEGIN{dataFile}DATA_END", cancellationToken);
+            _logger.LogInformation("Read timesheet file successfully");
+            string aiResponse;
+            try
+            {
+                _logger.LogInformation("Generate AI response...");
+                aiResponse = await _aiService.GenerateAsync(instructions, $"DATA_BEGIN{dataFile}DATA_END", cancellationToken);
+                _logger.LogInformation("Generate AI response completed");
+            }
+            catch
+            {
+                _logger.LogError("Generate AI response failed");
+                throw;
+            }
+            _logger.LogInformation("Generate AI response successfully");
+            _logger.LogInformation("Parse AI response...");
             var reportItems = ParseAiResponse(aiResponse);
+            _logger.LogInformation("Parse AI response completed successfully");
 
             if (reportItems == null || !_exportAcceptanceReportHelper.ValidateAiResponse(reportItems).IsValid)
-                throw new UserFriendlyException("Failed to get a response from AI. Please try again.");
+            {
+                _logger.LogWarning("Validate AI response failed");
+                throw new UserFriendlyException("AI couldn't generate a valid acceptance report. Please try again.");
+            }
+            _logger.LogInformation("Validate AI response successfully");
 
             var webRootPath = _hostingEnvironment.WebRootPath;
             if (string.IsNullOrWhiteSpace(webRootPath))
@@ -757,7 +782,20 @@ namespace ProjectManagement.APIs.TimesheetProjects
                 throw new UserFriendlyException("Acceptance Report template was not found.");
 
             var templateBytes = await File.ReadAllBytesAsync(templateFilePath, cancellationToken);
-            var reportBytes = _exportAcceptanceReportHelper.BuildAcceptanceReport(templateBytes, reportItems, input.Language);
+
+            byte[] reportBytes;
+            try
+            {
+                _logger.LogInformation("Build acceptance report...");
+                reportBytes = _exportAcceptanceReportHelper.BuildAcceptanceReport(templateBytes, reportItems, input.Language);
+                _logger.LogInformation("Build acceptance report completed");
+            }
+            catch
+            {
+                _logger.LogError("Build acceptance report failed");
+                throw;
+            }
+            _logger.LogInformation("Build acceptance report successfully");
 
             var safeName = new string((timesheet.Name ?? "Project")
                 .Take(80)
@@ -773,7 +811,7 @@ namespace ProjectManagement.APIs.TimesheetProjects
             };
         }
 
-        private static List<AcceptanceReportDto> ParseAiResponse(string aiResponse)
+        private List<AcceptanceReportDto> ParseAiResponse(string aiResponse)
         {
             try
             {
@@ -790,8 +828,8 @@ namespace ProjectManagement.APIs.TimesheetProjects
             }
             catch (TextJson.JsonException)
             {
-                throw new UserFriendlyException(
-                    "Failed to get a response from AI. Please try again.");
+                _logger.LogWarning("Parse AI response failed");
+                throw new UserFriendlyException("AI couldn't generate a valid acceptance report. Please try again.");
             }
         }
 

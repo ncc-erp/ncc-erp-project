@@ -31,6 +31,9 @@
                     <a name="tab-project-asset" *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabProjectAsset)" [ngClass]="currentUrl.includes('project-asset')?'active':''" mat-tab-link (click)="routingProjectAssetTab()">
                         Project Asset
                     </a>
+                    <a name="tab-project-knowledge-base" *ngIf="permission.isGranted(Projects_OutsourcingProjects_ProjectDetail_TabKnowledgeBase)" [ngClass]="currentUrl.includes('knowledge-base')?'active':''" mat-tab-link (click)="routingKnowledgeBaseTab()">
+                        Knowledge Base
+                    </a>
                 </nav>
                 <router-outlet></router-outlet>
             </div>

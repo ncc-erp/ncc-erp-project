@@ -9,6 +9,7 @@ import { Component, OnInit, Injector } from '@angular/core';
   styleUrls: ['./product-project-detail.component.css']
 })
 export class ProductProjectDetailComponent extends AppComponentBase implements OnInit {
+  Projects_ProductProjects_ProjectDetail_TabKnowledgeBase = PERMISSIONS_CONSTANT.Projects_ProductProjects_ProjectDetail_TabKnowledgeBase;
 
   Projects_ProductProjects_ProjectDetail_TabGeneral=PERMISSIONS_CONSTANT.Projects_ProductProjects_ProjectDetail_TabGeneral;
   Projects_ProductProjects_ProjectDetail_TabResourceManagement=PERMISSIONS_CONSTANT.Projects_ProductProjects_ProjectDetail_TabResourceManagement;
@@ -48,6 +49,16 @@ export class ProductProjectDetailComponent extends AppComponentBase implements O
     })
   }
 
+  public routingKnowledgeBaseTab(){
+    this.router.navigate(['product-knowledge-base'],{
+      relativeTo:this.route, queryParams:{
+        id:this.requestId,
+        projectName: this.projectName,
+        projectCode:this.projectCode
+      },
+    })
+  }
+
   public routingResourceTab() {
     this.router.navigate(['product-resource-management'], {
       relativeTo: this.route, queryParams: {
@@ -55,7 +66,6 @@ export class ProductProjectDetailComponent extends AppComponentBase implements O
         projectName: this.projectName,
         projectCode:this.projectCode
       },
-      // replaceUrl: true
     })
 
   }
@@ -68,7 +78,6 @@ export class ProductProjectDetailComponent extends AppComponentBase implements O
         projectName: this.projectName,
         projectCode:this.projectCode
       },
-      // replaceUrl: true
     })
   }
   public routingWeeklyReportTab(){
@@ -78,7 +87,6 @@ export class ProductProjectDetailComponent extends AppComponentBase implements O
         projectName: this.projectName,
         projectCode:this.projectCode
       },
-      // replaceUrl: true
     })
   }
   public routingProjectChecklistTab(){
@@ -88,7 +96,6 @@ export class ProductProjectDetailComponent extends AppComponentBase implements O
         projectName: this.projectName,
         projectCode:this.projectCode
       },
-      // replaceUrl: true
     })
   }
   public routingTimesheetTab(){
@@ -98,7 +105,6 @@ export class ProductProjectDetailComponent extends AppComponentBase implements O
         projectName: this.projectName,
         projectCode:this.projectCode
       },
-      // replaceUrl: true
     })
   }
 

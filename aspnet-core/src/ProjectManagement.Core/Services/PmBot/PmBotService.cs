@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.Text;
 using Abp.Runtime.Session;
+using Abp.UI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using ProjectManagement.Services.PmBot.Dto;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 
@@ -23,6 +26,42 @@ namespace ProjectManagement.Services.PmBot
             IConfiguration configuration,
             IAbpSession abpSession
         ) : base(httpClient, configuration, logger, abpSession, ServiceName) { }
+
+        public async Task<KnowledgeBaseSourcesDto> GetKnowledgeBaseSourcesAsync(
+            long projectId, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            try
+            {
+                if (projectId <= 0)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(projectId));
+                }
+                using (var request = new HttpRequestMessage(
+                    HttpMethod.Get, $"{WeeklyReportByProjectIdEndpoint}/{projectId}"))
+                {
+                    request.Headers.TryAddWithoutValidation("Abp-TenantName", Array.Empty<string>());
+
+                    using (var response = await HttpClient.SendAsync(request, cancellationToken))
+                    {
+                        response.EnsureSuccessStatusCode();
+                        var responseContent = await response.Content.ReadAsStringAsync();
+                        var sources = JsonConvert.DeserializeObject<KnowledgeBaseSourcesDto>(responseContent);
+                        return sources ?? new KnowledgeBaseSourcesDto();
+                    }
+                }
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "KB bot source request failed. projectId={ProjectId}", projectId);
+                throw new UserFriendlyException("Unable to generate the knowledge base because bot data could not be retrieved.");
+            }
+        }
+
         public async Task<SyncMeetingReportResponseDto> SyncProjectMeetingReportAsync(SyncMeetingReportRequestDto input)
         {
             var url = $"{WeeklyReportByProjectIdEndpoint}/{input.ProjectId}";

@@ -9,9 +9,6 @@
                     <a *ngIf="permission.isGranted(Projects_ProductProjects_ProjectDetail_TabResourceManagement)" [ngClass]="currentUrl.includes('product-resource-management')?'active':''" mat-tab-link (click)="routingResourceTab()">
                         Resource Management
                     </a>    
-                    <!-- <a  *ngIf="permission.isGranted(PmManager_CanViewMenu_Milestone)"  [ngClass]="currentUrl.includes('product-milestone')?'active':''" mat-tab-link (click)="routingMilestoneTab()">
-                        Milestone
-                    </a> -->
                     <a *ngIf="permission.isGranted(Projects_ProductProjects_ProjectDetail_TabWeeklyReport)
                     && permission.isGranted(Projects_ProductProjects_ProjectDetail_TabWeeklyReport_View)" [ngClass]="currentUrl.includes('product-weekly-report')?'active':''" mat-tab-link (click)="routingWeeklyReportTab()">
                         Weekly Report
@@ -20,9 +17,6 @@
                     <a [ngClass]="currentUrl.includes('product-account-info')?'active':''" mat-tab-link (click)="routingAccountInforTab()">
                         Account Info
                     </a>
-                    <!-- <a *ngIf="permission.isGranted(PmManager_CanViewMenu_ProjectChecklist)"  [ngClass]="currentUrl.includes('training-timesheet-tab')?'active':''" mat-tab-link (click)="routingProjectChecklistTab()">
-                        Project Checklist
-                    </a> -->
                     <a *ngIf="permission.isGranted(Projects_ProductProjects_ProjectDetail_TabTimesheet)" [ngClass]="currentUrl.includes('product-timesheet-tab')?'active':''" mat-tab-link (click)="routingTimesheetTab()">
                         Timesheet
                     </a>
@@ -34,6 +28,9 @@
                     </a>
                     <a name="tab-project-asset" *ngIf="permission.isGranted(Projects_ProductProjects_ProjectDetail_TabProjectAsset)" [ngClass]="currentUrl.includes('product-project-asset')?'active':''" mat-tab-link (click)="routingProjectAssetTab()">
                         Project Asset
+                    </a>
+                    <a name="tab-project-knowledge-base" *ngIf="permission.isGranted(Projects_ProductProjects_ProjectDetail_TabKnowledgeBase)" [ngClass]="currentUrl.includes('knowledge-base')?'active':''" mat-tab-link (click)="routingKnowledgeBaseTab()">
+                        Knowledge Base
                     </a>
                 </nav>
                 <router-outlet></router-outlet>
